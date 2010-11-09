@@ -18,6 +18,10 @@
 
 #define EVENT_METHOD(i, x) GTK_WIDGET_GET_CLASS(i)->x
 
+extern GdkColor	color_black;
+extern GdkColor	color_button0;
+extern GdkColor	color_button1;
+
 /*探头(Probe)*/
 typedef struct Probe {
 	guint	Elem_qty;		/*阵元数*/
@@ -150,6 +154,7 @@ typedef struct Measure_data {
 /*画界面结构体*/
 typedef struct Draw_interface {
 	guint			pos;
+	guint			pos_qty;
 	guint			pos1;
 	guint			pos2;
 	GdkColor		col;
@@ -193,6 +198,8 @@ typedef struct Draw_interface {
 	GtkWidget		*data[6];			/* 三级菜单内容*/
 
 	gint			xx;
+	GtkWidget		*window;
+	CONFIG_P		p_config;			/**/
 
 } DRAW_UI, *DRAW_UI_P;
 

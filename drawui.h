@@ -6,19 +6,11 @@
 #ifndef	__DRAW_UI_H_
 #define	__DRAW_UI_H_
 #include "base.h"
+#include "content_en.h"
 
-static const gchar *content1[] = {
-	/* 一级菜单名称 */
-	"  Wizard  ","  UT Settings", "  Gate/Alarm  ", "  Measurements  ",
-	"  Display  ", "  Probe/Part  ",  "  Focal Law  ",  "  Scan  ",
-	"  File  "	, "  Prefenrences  ",
-	"","","","",
-	"","","","",
-	"","","",""	
-};
-
-
-
-extern void init_ui(DRAW_UI_P p, GtkWidget *window);		/*初始化界面,*/
+extern void change_language();										/*选择语言*/
+extern void draw_2_menu(DRAW_UI_P p);
+extern void draw_3_menu(DRAW_UI_P p);
+extern void init_ui(DRAW_UI_P p);				/*初始化界面,*/
 
 #endif
