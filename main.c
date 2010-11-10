@@ -18,7 +18,7 @@ GdkColor	color_button0= {0x9999, 0x9999, 0x9999};
 GdkColor	color_button1= {0x7e00, 0xb700, 0xf300};
 
 /* You have to start somewhere */
-int main(int argc, char *argv[])
+int main (int argc, char *argv[])
 {
 	DRAW_UI_P	p_ui;
 	CONFIG_P	p_config;

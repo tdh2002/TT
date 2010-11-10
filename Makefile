@@ -1,8 +1,8 @@
 
 CC = gcc
 
-main: main.c
-	$(CC) main.c drawui.c -o main `pkg-config gtk+-2.0 --cflags --libs` -Wall
+main: main.c drawui.c callback.c drawui.h base.h content_en.h
+	$(CC) main.c drawui.c callback.c -o main `pkg-config --cflags --libs gtk+-2.0` -Wall
 
 .PHONY:clean
 clean: 

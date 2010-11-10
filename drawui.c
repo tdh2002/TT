@@ -11,6 +11,11 @@ void draw_2_menu(DRAW_UI_P p);
 void draw_3_menu(DRAW_UI_P p);
 void init_ui(DRAW_UI_P p);				/*初始化界面,*/
 
+/**/
+static const gchar **con0_p		= content_en10;
+static const gchar ***con1_p	= content1_en;
+static const gchar ****con2_p	= content2_en;
+
 void menuitem0_function(GtkMenuItem *menuitem, gpointer data);
 void menuitem1_function(GtkMenuItem *menuitem, gpointer data);
 void menuitem2_function(GtkMenuItem *menuitem, gpointer data);
@@ -31,11 +36,6 @@ void (*menu_fun[10])(GtkMenuItem *menuitem, gpointer data) =
 	menuitem8_function,	menuitem9_function
 };
 
-/**/
-static const gchar **con0_p		= content_en10;
-static const gchar ***con1_p	= content1_en;
-static const gchar ****con2_p	= content2_en;
-
 /*1级菜单 回调函数*/
 void menuitem0_function(GtkMenuItem *menuitem, gpointer data)
 {
@@ -45,6 +45,7 @@ void menuitem0_function(GtkMenuItem *menuitem, gpointer data)
 	p->pos = 0, p->pos1 = 0, p->pos2 = 0;
 	g_print("pos = %d\n", p->pos);
 	draw_2_menu(p);
+	draw_3_menu(p);
 }
 
 void menuitem1_function(GtkMenuItem *menuitem, gpointer data)
@@ -55,6 +56,7 @@ void menuitem1_function(GtkMenuItem *menuitem, gpointer data)
 	p->pos = 1, p->pos1 = 0, p->pos2 = 0;
 	g_print("pos = %d\n", p->pos);
 	draw_2_menu(p);
+	draw_3_menu(p);
 }
 
 void menuitem2_function(GtkMenuItem *menuitem, gpointer data)
@@ -65,6 +67,7 @@ void menuitem2_function(GtkMenuItem *menuitem, gpointer data)
 	p->pos = 2, p->pos1 = 0, p->pos2 = 0;
 	g_print("pos = %d\n", p->pos);
 	draw_2_menu(p);
+	draw_3_menu(p);
 }
 
 void menuitem3_function(GtkMenuItem *menuitem, gpointer data)
@@ -75,6 +78,7 @@ void menuitem3_function(GtkMenuItem *menuitem, gpointer data)
 	p->pos = 3, p->pos1 = 0, p->pos2 = 0;
 	g_print("pos = %d\n", p->pos);
 	draw_2_menu(p);
+	draw_3_menu(p);
 }
 
 void menuitem4_function(GtkMenuItem *menuitem, gpointer data)
@@ -85,6 +89,7 @@ void menuitem4_function(GtkMenuItem *menuitem, gpointer data)
 	p->pos = 4, p->pos1 = 0, p->pos2 = 0;
 	g_print("pos = %d\n", p->pos);
 	draw_2_menu(p);
+	draw_3_menu(p);
 }
 
 void menuitem5_function(GtkMenuItem *menuitem, gpointer data)
@@ -95,6 +100,7 @@ void menuitem5_function(GtkMenuItem *menuitem, gpointer data)
 	p->pos = 5, p->pos1 = 0, p->pos2 = 0;
 	g_print("pos = %d\n", p->pos);
 	draw_2_menu(p);
+	draw_3_menu(p);
 }
 
 void menuitem6_function(GtkMenuItem *menuitem, gpointer data)
@@ -105,6 +111,7 @@ void menuitem6_function(GtkMenuItem *menuitem, gpointer data)
 	p->pos = 6, p->pos1 = 0, p->pos2 = 0;
 	g_print("pos = %d \n", p->pos);
 	draw_2_menu(p);
+	draw_3_menu(p);
 }
 
 void menuitem7_function(GtkMenuItem *menuitem, gpointer data)
@@ -115,6 +122,7 @@ void menuitem7_function(GtkMenuItem *menuitem, gpointer data)
 	p->pos = 7, p->pos1 = 0, p->pos2 = 0;
 	g_print("pos = %d\n", p->pos);
 	draw_2_menu(p);
+	draw_3_menu(p);
 }
 
 void menuitem8_function(GtkMenuItem *menuitem, gpointer data)
@@ -125,6 +133,7 @@ void menuitem8_function(GtkMenuItem *menuitem, gpointer data)
 	p->pos = 8, p->pos1 = 0, p->pos2 = 0;
 	g_print("pos = %d\n", p->pos);
 	draw_2_menu(p);
+	draw_3_menu(p);
 }
 
 void menuitem9_function(GtkMenuItem *menuitem, gpointer data)
@@ -135,6 +144,7 @@ void menuitem9_function(GtkMenuItem *menuitem, gpointer data)
 	p->pos = 9, p->pos1 = 0, p->pos2 = 0;
 	g_print("pos = %d\n", p->pos);
 	draw_2_menu(p);
+	draw_3_menu(p);
 }
 
 /**/
@@ -153,7 +163,6 @@ void draw_1_menu(DRAW_UI_P p)
 	gtk_menu_item_set_label(GTK_MENU_ITEM (p->menuitem_main), con0_p[p->pos]);
 }
 
-
 /* 画二级菜单*/
 void draw_2_menu(DRAW_UI_P p)
 {
@@ -164,42 +173,38 @@ void draw_2_menu(DRAW_UI_P p)
 		if (con1_p[p->pos][i]) 
 		{
 			gtk_button_set_label (GTK_BUTTON (p->button2[i]), con1_p[p->pos][i]);
-			gtk_widget_modify_bg(p->button2[p->pos1], GTK_STATE_NORMAL, &color_button1);
-			gtk_widget_show(p->button2[i]);
+			gtk_widget_modify_bg (p->button2[i], GTK_STATE_NORMAL, &color_button1);
+			gtk_widget_show (p->button2[i]);
 		}
 		else
 		{
 			gtk_button_set_label (GTK_BUTTON (p->button2[i]), " ");
-			gtk_widget_hide(p->button2[i]);
+			gtk_widget_hide (p->button2[i]);
 		}
 	}
-	gtk_widget_modify_bg(p->button2[p->pos1], GTK_STATE_NORMAL, &color_button0);
+	gtk_widget_modify_bg (p->button2[p->pos1], GTK_STATE_NORMAL, &color_button0);
 }
 
-/* 画3级菜单*/
+/* 画三级菜单*/
 void draw_3_menu(DRAW_UI_P p)
 {
 	gint i;
 
 	for ( i = 0 ; i < 6 ; i++) 
 	{
-		if (con1_p[p->pos][i]) 
+		if (con2_p[p->pos][p->pos1][i]) 
 		{
-			gtk_button_set_label (GTK_BUTTON (p->button2[i]), con1_p[p->pos][i]);
-			gtk_widget_modify_bg(p->button2[p->pos1], GTK_STATE_NORMAL, &color_button1);
-			gtk_widget_show(p->button2[i]);
+			gtk_button_set_label (GTK_BUTTON (p->button3[i]), con2_p[p->pos][p->pos1][i]);
+			gtk_widget_modify_bg (p->button3[i], GTK_STATE_NORMAL, &color_button1);
+			gtk_widget_show (p->button3[i]);
 		}
 		else
 		{
-			gtk_button_set_label (GTK_BUTTON (p->button2[i]), " ");
-			gtk_widget_hide(p->button2[i]);
+			gtk_button_set_label (GTK_BUTTON (p->button3[i]), " ");
+			gtk_widget_hide (p->button3[i]);
 		}
 	}
-	gtk_widget_modify_bg(p->button2[p->pos1], GTK_STATE_NORMAL, &color_button0);
-
-
-
-
+	gtk_widget_modify_bg (p->button3[p->pos2], GTK_STATE_NORMAL, &color_button0);
 }
 
 
@@ -272,8 +277,9 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 		p->button2[i] = gtk_button_new();
 		gtk_widget_set_size_request(GTK_WIDGET(p->button2[i]), 114, 60);
 		/*		color_green.red = 0x7e00, color_green.green = 0xb700, color_green.blue = 0xf300;      
-				gtk_widget_modify_bg(p->button2[i], GTK_STATE_NORMAL, &color_green);
-				g_signal_connect(G_OBJECT(p->button2[i]), "clicked", G_CALLBACK(function), "E");*/
+				gtk_widget_modify_bg(p->button2[i], GTK_STATE_NORMAL, &color_green); */
+				g_signal_connect(G_OBJECT(p->button2[i]), "clicked", 
+						G_CALLBACK(button2_fun[i]), (gpointer) (p));
 		gtk_box_pack_start(GTK_BOX(p->hbox212), p->button2[i], FALSE, FALSE, 0);
 		gtk_widget_show(p->button2[i]);
 	}
@@ -333,7 +339,7 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 
 	draw_1_menu(p);
 	draw_2_menu(p);
-
+	draw_3_menu(p);
 
 
 	/*
