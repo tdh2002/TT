@@ -1,6 +1,6 @@
 
 /*345678901234567890123456789012345678901234567890123456789012345678901234567890
- *		10		  20		30		  40		50		  60		70		  80
+ *      10        20        30        40        50        60        70        80
  * base.h
  * 定义各种基本数据结构,包括探头 楔块 工件等
  * 及各种配置文件
@@ -155,8 +155,8 @@ typedef struct Measure_data {
 typedef struct Draw_interface {
 	guint			pos;
 	guint			pos_qty;
-	guint			pos1;
-	guint			pos2;
+	guint			pos1[10];
+	guint			pos2[10][5];
 	GdkColor		col;
 	GtkAdjustment	*adj;
 	GSList			*group;

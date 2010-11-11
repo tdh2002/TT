@@ -11,6 +11,8 @@
 extern void change_language();										/*选择语言*/
 extern void draw_2_menu(DRAW_UI_P p);
 extern void draw_3_menu(DRAW_UI_P p);
-extern void init_ui(DRAW_UI_P p);				/*初始化界面,*/
+extern void init_ui(DRAW_UI_P p);									/*初始化界面,*/
+
+extern void (*button2_fun[5])(GtkButton *button, gpointer data);
 
 #endif

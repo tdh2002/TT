@@ -1,6 +1,6 @@
 
 /*345678901234567890123456789012345678901234567890123456789012345678901234567890
- *		10		  20		30		  40		50		  60		70		  80
+ *      10        20        30        40        50        60        70        80
  */
 
 #include "drawui.h"
@@ -42,7 +42,8 @@ void menuitem0_function(GtkMenuItem *menuitem, gpointer data)
 	DRAW_UI_P p = (DRAW_UI_P)(data);
 	gtk_menu_item_set_label(GTK_MENU_ITEM (p->menuitem_main), 
 			gtk_menu_item_get_label(menuitem));
-	p->pos = 0, p->pos1 = 0, p->pos2 = 0;
+	p->pos = 0;
+	// p->pos1 = 0, p->pos2 = 0;
 	g_print("pos = %d\n", p->pos);
 	draw_2_menu(p);
 	draw_3_menu(p);
@@ -53,7 +54,8 @@ void menuitem1_function(GtkMenuItem *menuitem, gpointer data)
 	DRAW_UI_P p = (DRAW_UI_P)(data);
 	gtk_menu_item_set_label(GTK_MENU_ITEM (p->menuitem_main), 
 			gtk_menu_item_get_label(menuitem));
-	p->pos = 1, p->pos1 = 0, p->pos2 = 0;
+	p->pos = 1;
+	//p->pos1 = 0, p->pos2 = 0;
 	g_print("pos = %d\n", p->pos);
 	draw_2_menu(p);
 	draw_3_menu(p);
@@ -64,7 +66,8 @@ void menuitem2_function(GtkMenuItem *menuitem, gpointer data)
 	DRAW_UI_P p = (DRAW_UI_P)(data);
 	gtk_menu_item_set_label(GTK_MENU_ITEM (p->menuitem_main),
 			gtk_menu_item_get_label(menuitem));
-	p->pos = 2, p->pos1 = 0, p->pos2 = 0;
+	p->pos = 2;
+	//p->pos1 = 0, p->pos2 = 0;
 	g_print("pos = %d\n", p->pos);
 	draw_2_menu(p);
 	draw_3_menu(p);
@@ -75,7 +78,8 @@ void menuitem3_function(GtkMenuItem *menuitem, gpointer data)
 	DRAW_UI_P p = (DRAW_UI_P)(data);
 	gtk_menu_item_set_label(GTK_MENU_ITEM (p->menuitem_main), 
 			gtk_menu_item_get_label(menuitem));
-	p->pos = 3, p->pos1 = 0, p->pos2 = 0;
+	p->pos = 3;
+	//p->pos1 = 0, p->pos2 = 0;
 	g_print("pos = %d\n", p->pos);
 	draw_2_menu(p);
 	draw_3_menu(p);
@@ -86,7 +90,8 @@ void menuitem4_function(GtkMenuItem *menuitem, gpointer data)
 	DRAW_UI_P p = (DRAW_UI_P)(data);
 	gtk_menu_item_set_label(GTK_MENU_ITEM (p->menuitem_main),
 			gtk_menu_item_get_label(menuitem));
-	p->pos = 4, p->pos1 = 0, p->pos2 = 0;
+	p->pos = 4;
+	//p->pos1 = 0, p->pos2 = 0;
 	g_print("pos = %d\n", p->pos);
 	draw_2_menu(p);
 	draw_3_menu(p);
@@ -97,7 +102,8 @@ void menuitem5_function(GtkMenuItem *menuitem, gpointer data)
 	DRAW_UI_P p = (DRAW_UI_P)(data);
 	gtk_menu_item_set_label(GTK_MENU_ITEM (p->menuitem_main), 
 			gtk_menu_item_get_label(menuitem));
-	p->pos = 5, p->pos1 = 0, p->pos2 = 0;
+	p->pos = 5;
+	//p->pos1 = 0, p->pos2 = 0;
 	g_print("pos = %d\n", p->pos);
 	draw_2_menu(p);
 	draw_3_menu(p);
@@ -108,7 +114,8 @@ void menuitem6_function(GtkMenuItem *menuitem, gpointer data)
 	DRAW_UI_P p = (DRAW_UI_P)(data);
 	gtk_menu_item_set_label(GTK_MENU_ITEM (p->menuitem_main), 
 			gtk_menu_item_get_label(menuitem));
-	p->pos = 6, p->pos1 = 0, p->pos2 = 0;
+	p->pos = 6;
+	// p->pos1 = 0, p->pos2 = 0;
 	g_print("pos = %d \n", p->pos);
 	draw_2_menu(p);
 	draw_3_menu(p);
@@ -119,7 +126,8 @@ void menuitem7_function(GtkMenuItem *menuitem, gpointer data)
 	DRAW_UI_P p = (DRAW_UI_P)(data);
 	gtk_menu_item_set_label(GTK_MENU_ITEM (p->menuitem_main), 
 			gtk_menu_item_get_label(menuitem));
-	p->pos = 7, p->pos1 = 0, p->pos2 = 0;
+	p->pos = 7;
+	// p->pos1 = 0, p->pos2 = 0;
 	g_print("pos = %d\n", p->pos);
 	draw_2_menu(p);
 	draw_3_menu(p);
@@ -130,7 +138,8 @@ void menuitem8_function(GtkMenuItem *menuitem, gpointer data)
 	DRAW_UI_P p = (DRAW_UI_P)(data);
 	gtk_menu_item_set_label(GTK_MENU_ITEM (p->menuitem_main), 
 			gtk_menu_item_get_label(menuitem));
-	p->pos = 8, p->pos1 = 0, p->pos2 = 0;
+	p->pos = 8;
+	// p->pos1 = 0, p->pos2 = 0;
 	g_print("pos = %d\n", p->pos);
 	draw_2_menu(p);
 	draw_3_menu(p);
@@ -141,7 +150,8 @@ void menuitem9_function(GtkMenuItem *menuitem, gpointer data)
 	DRAW_UI_P p = (DRAW_UI_P)(data);
 	gtk_menu_item_set_label(GTK_MENU_ITEM (p->menuitem_main), 
 			gtk_menu_item_get_label(menuitem));
-	p->pos = 9, p->pos1 = 0, p->pos2 = 0;
+	p->pos = 9;
+	// p->pos1 = 0, p->pos2 = 0;
 	g_print("pos = %d\n", p->pos);
 	draw_2_menu(p);
 	draw_3_menu(p);
@@ -182,7 +192,7 @@ void draw_2_menu(DRAW_UI_P p)
 			gtk_widget_hide (p->button2[i]);
 		}
 	}
-	gtk_widget_modify_bg (p->button2[p->pos1], GTK_STATE_NORMAL, &color_button0);
+	gtk_widget_modify_bg (p->button2[p->pos1[p->pos]], GTK_STATE_NORMAL, &color_button0);
 }
 
 /* 画三级菜单*/
@@ -192,9 +202,10 @@ void draw_3_menu(DRAW_UI_P p)
 
 	for ( i = 0 ; i < 6 ; i++) 
 	{
-		if (con2_p[p->pos][p->pos1][i]) 
+		if (con2_p[p->pos][p->pos1[p->pos]][i]) 
 		{
-			gtk_button_set_label (GTK_BUTTON (p->button3[i]), con2_p[p->pos][p->pos1][i]);
+			gtk_button_set_label (GTK_BUTTON (p->button3[i]), 
+					con2_p[p->pos][p->pos1[p->pos]][i]);
 			gtk_widget_modify_bg (p->button3[i], GTK_STATE_NORMAL, &color_button1);
 			gtk_widget_show (p->button3[i]);
 		}
@@ -204,7 +215,8 @@ void draw_3_menu(DRAW_UI_P p)
 			gtk_widget_hide (p->button3[i]);
 		}
 	}
-	gtk_widget_modify_bg (p->button3[p->pos2], GTK_STATE_NORMAL, &color_button0);
+	gtk_widget_modify_bg (p->button3[p->pos2[p->pos][p->pos1[p->pos]]],
+			GTK_STATE_NORMAL, &color_button0);
 }
 
 
@@ -215,8 +227,8 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 	GtkWidget *window = p->window;
 
 	p->pos	= 1;
-	p->pos1	= 0;
-	p->pos2	= 0;
+	p->pos1[0]	= 0;
+	p->pos2[0][0]	= 0;
 
 	p->vbox			= gtk_vbox_new(FALSE, 0);	
 	p->hbox1		= gtk_hbox_new(FALSE, 0);	
