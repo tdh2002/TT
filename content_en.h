@@ -106,7 +106,7 @@ static const gchar *content_en204[] = {
 
 static const gchar *content_en210[] = {
 	/* 二级菜单第1页下的第0页三级菜单 */
-	"  Gain  ","  Start  ", "  Range  ","  Wedge Delay  ", "  Velocity  ", NULL
+	"  Gain(dB)  ","  Start  ", "  Range  ","  Wedge Delay  ", "  Velocity  ", NULL
 };
 
 static const gchar *content_en211[] = {

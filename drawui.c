@@ -202,12 +202,25 @@ void draw_3_menu(DRAW_UI_P p)
 
 	for ( i = 0 ; i < 6 ; i++) 
 	{
+		if (p->data[i]) 
+		{
+			gtk_widget_destroy (p->data[i]);
+			p->data[i] = NULL;
+		}
+
 		if (con2_p[p->pos][p->pos1[p->pos]][i]) 
 		{
 			gtk_button_set_label (GTK_BUTTON (p->button3[i]), 
 					con2_p[p->pos][p->pos1[p->pos]][i]);
 			gtk_widget_modify_bg (p->button3[i], GTK_STATE_NORMAL, &color_button1);
 			gtk_widget_show (p->button3[i]);
+
+			p->adj = (GtkAdjustment *) gtk_adjustment_new (21.0, 0.0, 74.0, 0.1, 10.0, 0.0);
+			p->data[i] = gtk_spin_button_new (p->adj, 0, 1);
+			gtk_box_pack_start (GTK_BOX (p->vbox221[i]), p->data[i], FALSE, FALSE, 0);
+			gtk_widget_show(p->data[i]);
+			gtk_widget_set_can_focus (p->data[i], FALSE);
+
 		}
 		else
 		{
@@ -290,21 +303,30 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 		gtk_widget_set_size_request(GTK_WIDGET(p->button2[i]), 114, 60);
 		/*		color_green.red = 0x7e00, color_green.green = 0xb700, color_green.blue = 0xf300;      
 				gtk_widget_modify_bg(p->button2[i], GTK_STATE_NORMAL, &color_green); */
-				g_signal_connect(G_OBJECT(p->button2[i]), "clicked", 
-						G_CALLBACK(button2_fun[i]), (gpointer) (p));
+		g_signal_connect(G_OBJECT(p->button2[i]), "clicked", 
+				G_CALLBACK(button2_fun[i]), (gpointer) (p));
+
+		g_signal_connect(G_OBJECT(p->button2[i]), "focus-in-event", 
+				G_CALLBACK(button20_fun[i]), (gpointer) (p));
 		gtk_box_pack_start(GTK_BOX(p->hbox212), p->button2[i], FALSE, FALSE, 0);
 		gtk_widget_show(p->button2[i]);
 	}
 
 
+	/*三级菜单的初始化*/
 	for (i = 0; i < 6; i++)
 	{
 		p->button3[i] = gtk_button_new();
-		gtk_widget_set_size_request(GTK_WIDGET(p->button3[i]), 115, 87);
+		p->adj = (GtkAdjustment *) gtk_adjustment_new (21.0, 0.0, 74.0, 0.1, 10.0, 0.0);
+		p->data[i] = gtk_spin_button_new (p->adj, 0, 1);
+		gtk_widget_set_size_request(GTK_WIDGET(p->button3[i]), 115, 58);
+		gtk_widget_set_size_request(GTK_WIDGET(p->data[i]), 115, 29);
 		gtk_box_pack_start (GTK_BOX (p->vbox221[i]), p->button3[i], FALSE, FALSE, 0);
-		/*		gtk_box_pack_start (GTK_BOX (p->vbox221[i]), p->data[i], FALSE, FALSE, 0);*/
+		g_signal_connect(G_OBJECT(p->button3[i]), "clicked", 
+				G_CALLBACK(button3_fun[i]), (gpointer) (p));
+		gtk_box_pack_start (GTK_BOX (p->vbox221[i]), p->data[i], FALSE, FALSE, 0);
 		gtk_widget_show(p->button3[i]);
-		/*		gtk_widget_show(p->data[i]);*/
+		gtk_widget_show(p->data[i]);
 	}
 
 

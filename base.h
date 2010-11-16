@@ -142,6 +142,11 @@ typedef	struct Config {
 
 } CONFIG, *CONFIG_P;
 
+typedef struct tmp_config {
+	guint	db_reg;		/**/
+
+} TMP_CONFIG, *TMP_CONFIG_P;
+
 /*测量数据 (MEASURE_DATA)*/
 typedef struct Measure_data {
 
@@ -200,6 +205,7 @@ typedef struct Draw_interface {
 	gint			xx;
 	GtkWidget		*window;
 	CONFIG_P		p_config;			/**/
+	TMP_CONFIG_P	p_tmp_config;		/**/
 
 } DRAW_UI, *DRAW_UI_P;
 
