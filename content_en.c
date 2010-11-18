@@ -4,11 +4,9 @@
  *		10		  20		30		  40		50		  60		70		  80
  */
 
-#ifndef	__CONTENT_EN_
-#define	__CONTENT_EN_
+#include "language.h"
 
-
-static const gchar *content_en10[] = {
+const gchar *content_en10[] = {
 	/* 一级菜单名称 */
 	" Wizard  ",	" UT Settings",		" Gate/Alarm  ",	" Measurements  ",
 	" Display  ",	" Probe/Part  ",	" Focal Law  ",		" Scan  ",
@@ -106,7 +104,7 @@ static const gchar *content_en204[] = {
 
 static const gchar *content_en210[] = {
 	/* 二级菜单第1页下的第0页三级菜单 */
-	"  Gain(dB)  ","  Start  ", "  Range  ","  Wedge Delay  ", "  Velocity  ", NULL
+	"Gain增益(dB)  ","  Start  ", "  Range  ","  Wedge Delay  ", "  Velocity  ", NULL
 };
 
 static const gchar *content_en211[] = {
@@ -357,7 +355,7 @@ static const gchar *content_en294[] = {
 	"  DHCP  ","  IP Address  ", "  Subnet Mask ","  Apply  ", "  Remote Pc  ", "  Connect  "
 };
 
-static const gchar **content1_en[] = 
+const gchar **content1_en[] = 
 {
 	content_en20,	content_en21,	content_en22,	content_en23,	content_en24,
 	content_en25,	content_en26,	content_en27,	content_en28,	content_en29
@@ -374,10 +372,9 @@ static const gchar **content2_en7[] = {	content_en270,	content_en271,	content_en
 static const gchar **content2_en8[] = {	content_en280,	content_en281,	content_en282,	content_en283,	content_en284 };
 static const gchar **content2_en9[] = {	content_en290,	content_en291,	content_en292,	content_en293,	content_en294 };
 
-static const gchar ***content2_en[] = 
+const gchar ***content2_en[] = 
 {
 	content2_en0,	content2_en1,	content2_en2,	content2_en3,	content2_en4,
 	content2_en5,	content2_en6,	content2_en7,	content2_en8,	content2_en9
 };
 
-#endif

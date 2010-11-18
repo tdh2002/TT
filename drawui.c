@@ -5,16 +5,19 @@
 
 #include "drawui.h"
 
+GdkPoint a[512] = {{0,0},{240,200},{400,200}};
+
 void change_language();
 void draw_1_menu(DRAW_UI_P p);
 void draw_2_menu(DRAW_UI_P p);
 void draw_3_menu(DRAW_UI_P p);
+void draw_3_menu1(DRAW_UI_P p);
 void init_ui(DRAW_UI_P p);				/*初始化界面,*/
 
 /**/
-static const gchar **con0_p		= content_en10;
-static const gchar ***con1_p	= content1_en;
-static const gchar ****con2_p	= content2_en;
+const gchar **con0_p		= content_en10;
+const gchar ***con1_p	= content1_en;
+const gchar ****con2_p	= content2_en;
 
 void menuitem0_function(GtkMenuItem *menuitem, gpointer data);
 void menuitem1_function(GtkMenuItem *menuitem, gpointer data);
@@ -195,6 +198,140 @@ void draw_2_menu(DRAW_UI_P p)
 	gtk_widget_modify_bg (p->button2[p->pos1[p->pos]], GTK_STATE_NORMAL, &color_button0);
 }
 
+void draw3_data0(DRAW_UI_P p) 
+{
+	switch (p->pos) 
+	{
+		case 0:
+			switch (p->pos1[0])
+			{
+				 case 0:break;
+				 case 1:break;
+				 case 2:break;
+				 case 3:break;
+				 case 4:break;
+				 default:break;
+			}
+			break;
+		case 1:
+			switch (p->pos1[1])
+			{
+				 case 0:
+					 p->adj = (GtkAdjustment *) gtk_adjustment_new (21.0, 0.0, 74.0, 0.1, 10.0, 0.0);
+					 p->data[0] = gtk_spin_button_new (p->adj, 0, 1);
+					 gtk_box_pack_start (GTK_BOX (p->vbox221[0]), p->data[0], FALSE, FALSE, 0);
+					 gtk_widget_set_size_request(GTK_WIDGET(p->data[0]), 115, 29);
+					 gtk_widget_show(p->data[0]);
+//					 gtk_widget_set_can_focus (p->data[0], FALSE);
+
+//					 g_signal_connect(G_OBJECT(p->data[0]), "button-press-event", 
+//							 G_CALLBACK(data_fun[0]), (gpointer) (p));
+					 break;
+				 case 1:
+					 p->adj = (GtkAdjustment *) gtk_adjustment_new (21.0, 0.0, 74.0, 0.1, 10.0, 0.0);
+					 p->data[0] = gtk_spin_button_new (p->adj, 0, 1);
+					 gtk_box_pack_start (GTK_BOX (p->vbox221[0]), p->data[0], FALSE, FALSE, 0);
+					 gtk_widget_set_size_request(GTK_WIDGET(p->data[0]), 115, 29);
+					 gtk_widget_show(p->data[0]);
+					 break;
+				 case 2:break;
+				 case 3:break;
+				 case 4:break;
+				 default:break;
+			}
+			break;
+		case 2:
+			switch (p->pos1[0])
+			{
+				 case 0:break;
+				 case 1:break;
+				 case 2:break;
+				 case 3:break;
+				 case 4:break;
+				 default:break;
+			}
+			break;
+		case 3:
+			switch (p->pos1[0])
+			{
+				 case 0:break;
+				 case 1:break;
+				 case 2:break;
+				 case 3:break;
+				 case 4:break;
+				 default:break;
+			}
+			break;
+		case 4:
+			switch (p->pos1[0])
+			{
+				 case 0:break;
+				 case 1:break;
+				 case 2:break;
+				 case 3:break;
+				 case 4:break;
+				 default:break;
+			}
+			break;
+		case 5:
+			switch (p->pos1[0])
+			{
+				 case 0:break;
+				 case 1:break;
+				 case 2:break;
+				 case 3:break;
+				 case 4:break;
+				 default:break;
+			}
+			break;
+		case 6:
+			switch (p->pos1[0])
+			{
+				 case 0:break;
+				 case 1:break;
+				 case 2:break;
+				 case 3:break;
+				 case 4:break;
+				 default:break;
+			}
+			break;
+		case 7:
+			switch (p->pos1[0])
+			{
+				 case 0:break;
+				 case 1:break;
+				 case 2:break;
+				 case 3:break;
+				 case 4:break;
+				 default:break;
+			}
+			break;
+		case 8:
+			switch (p->pos1[0])
+			{
+				 case 0:break;
+				 case 1:break;
+				 case 2:break;
+				 case 3:break;
+				 case 4:break;
+				 default:break;
+			}
+			break;
+		case 9:
+			switch (p->pos1[0])
+			{
+				 case 0:break;
+				 case 1:break;
+				 case 2:break;
+				 case 3:break;
+				 case 4:break;
+				 default:break;
+			}
+			break;
+		default:break;
+	}
+}
+
 /* 画三级菜单*/
 void draw_3_menu(DRAW_UI_P p)
 {
@@ -215,11 +352,45 @@ void draw_3_menu(DRAW_UI_P p)
 			gtk_widget_modify_bg (p->button3[i], GTK_STATE_NORMAL, &color_button1);
 			gtk_widget_show (p->button3[i]);
 
-			p->adj = (GtkAdjustment *) gtk_adjustment_new (21.0, 0.0, 74.0, 0.1, 10.0, 0.0);
-			p->data[i] = gtk_spin_button_new (p->adj, 0, 1);
-			gtk_box_pack_start (GTK_BOX (p->vbox221[i]), p->data[i], FALSE, FALSE, 0);
-			gtk_widget_show(p->data[i]);
-			gtk_widget_set_can_focus (p->data[i], FALSE);
+			if (i == 0)
+				draw3_data0(p);
+
+#if 0			
+			else if (i == 1)
+			{
+				p->data[i] = gtk_combo_box_entry_new_text();
+				gtk_combo_box_append_text(GTK_COMBO_BOX (p->data[i]), "Law Wizard");
+				gtk_combo_box_append_text(GTK_COMBO_BOX (p->data[i]), "Law Wizard");
+				gtk_combo_box_append_text(GTK_COMBO_BOX (p->data[i]), "Law Wizariiiiiiiiiiiiid");
+				gtk_combo_box_set_active(GTK_COMBO_BOX (p->data[i]), 0);
+				gtk_widget_set_size_request(GTK_WIDGET(p->data[i]), 115, 29);
+				//				gtk_combo_box_set_wrap_width (GTK_COMBO_BOX (p->data[i]), 115);
+				gtk_box_pack_start (GTK_BOX (p->vbox221[i]), p->data[i], FALSE, FALSE, 0);
+				gtk_widget_show(p->data[i]);
+
+//				gtk_widget_set_can_focus (p->data[i], FALSE);
+
+				g_object_set (gtk_bin_get_child(GTK_BIN (p->data[i])), "editable", FALSE, NULL);
+				g_signal_connect(G_OBJECT(p->data[i]), "button-press-event", 
+						G_CALLBACK(data_fun[i]), (gpointer) (p));
+				g_signal_connect(G_OBJECT(gtk_bin_get_child(GTK_BIN (p->data[i]))), 
+						"button-press-event", G_CALLBACK(data_fun[i]), (gpointer) (p));
+			}
+			else 
+			{
+				p->data[i] = gtk_combo_box_entry_new_text();
+				gtk_combo_box_set_active(GTK_COMBO_BOX (p->data[i]), 0);
+				gtk_widget_set_size_request(GTK_WIDGET(p->data[i]), 115, 29);
+				//				gtk_combo_box_set_wrap_width (GTK_COMBO_BOX (p->data[i]), 115);
+				gtk_box_pack_start (GTK_BOX (p->vbox221[i]), p->data[i], FALSE, FALSE, 0);
+				gtk_widget_show(p->data[i]);
+
+//				gtk_widget_set_can_focus (p->data[i], FALSE);
+
+				g_signal_connect(G_OBJECT(p->data[i]), "button-press-event", 
+						G_CALLBACK(data_fun[i]), (gpointer) (p));
+			}
+#endif
 
 		}
 		else
@@ -232,13 +403,98 @@ void draw_3_menu(DRAW_UI_P p)
 			GTK_STATE_NORMAL, &color_button0);
 }
 
+/* 画三级菜单*/
+void draw_3_menu1(DRAW_UI_P p)
+{
+	gint i;
+
+	for ( i = 0 ; i < 6 ; i++) 
+	{
+		if (con2_p[p->pos][p->pos1[p->pos]][i]) 
+		{
+			gtk_button_set_label (GTK_BUTTON (p->button3[i]), 
+					con2_p[p->pos][p->pos1[p->pos]][i]);
+			gtk_widget_modify_bg (p->button3[i], GTK_STATE_NORMAL, &color_button1);
+			gtk_widget_show (p->button3[i]);
+		}
+		else
+		{
+			gtk_button_set_label (GTK_BUTTON (p->button3[i]), " ");
+			gtk_widget_hide (p->button3[i]);
+		}
+	}
+	gtk_widget_modify_bg (p->button3[p->pos2[p->pos][p->pos1[p->pos]]],
+			GTK_STATE_NORMAL, &color_button0);
+}
+
+static void travel_path (cairo_t *cr)
+{
+   gint i;
+
+//   cairo_set_source_rgb (cr, 1, 1, 1);
+//   cairo_paint (cr);
+
+   /* Use IBM Blue Pen Color with no ALPHA */
+   cairo_set_source_rgba (cr, 1, 0, 0, 1);
+   cairo_set_line_width (cr, 1);
+//   cairo_move_to (cr, 10, 10);
+//   cairo_line_to (cr, 11, 200);
+//   cairo_set_line_width (cr, 1);
+   cairo_stroke (cr);
+
+   //   cairo_set_line_cap(cr, CAIRO_LINE_CAP_ROUND);
+
+//	   cairo_move_to (cr, a3[i].x, a3[i].y);
+//	   cairo_move_to (cr, a3[0].x, a3[0].y);
+   for (i = 0; i < 500; i++) {
+	   cairo_move_to (cr, a[i].x + 0.5, a[i].y );
+	   cairo_line_to (cr, a[i].x + 0.5, (a[i + 1].y + a[i].y)/2); 
+	   cairo_move_to (cr, a[i + 1].x + 0.5, (a[i + 1].y + a[i].y)/2); 
+	   cairo_line_to (cr, a[i + 1].x + 0.5, a[i + 1].y); 
+   }
+
+   cairo_stroke(cr);
+}
+
+static void draw_gtk (GtkWidget      *widget, GdkEventExpose *eev, gpointer        data)
+{
+  cairo_t *cr;
+  cr = gdk_cairo_create (widget->window);
+  travel_path (cr);
+  cairo_destroy (cr);
+}
+
+static gboolean time_handler(GtkWidget *widget)
+{
+	gint32 i;
+
+
+	while (1) {
+		for ( i = 0; i < 512; i++)
+			a[i].y = g_random_int_range(1, 512);
+
+		gdk_threads_enter();
+		gtk_widget_queue_draw(widget);
+		gdk_threads_leave();
+		g_usleep(100000);
+	}
+	g_thread_exit(NULL);
+	return TRUE;
+}
 
 void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 {
-	gint i, j, k;
+	gint i;
 	GtkWidget *drawing_area;
 	GtkWidget *window = p->window;
 
+	for (i = 0; i < 512; i++) {
+		a[i].x =  i;
+		a[i].y =  i;
+	}
+
+
+	/* New a window */
 	p->pos	= 1;
 	p->pos1[0]	= 0;
 	p->pos2[0][0]	= 0;
@@ -364,6 +620,7 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 	p->col.red = 0x5555, p->col.green = 0x0, p->col.blue = 0x5555;
 	gtk_widget_modify_bg(drawing_area, GTK_STATE_NORMAL, &(p->col));
 	gtk_widget_show(drawing_area);
+	g_signal_connect(G_OBJECT (drawing_area), "expose_event", G_CALLBACK(draw_gtk), NULL);
 
 	for (i = 0; i < 6; i++)
 	{
@@ -376,6 +633,7 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 	draw_3_menu(p);
 
 
+	g_thread_create((GThreadFunc)(time_handler), (gpointer) (drawing_area), FALSE, NULL);
 	/*
 	   gtk_box_pack_start (GTK_BOX (p->vbox22), p->vbox221, FALSE, FALSE, 0);
 	   gtk_widget_show(p->vbox221);

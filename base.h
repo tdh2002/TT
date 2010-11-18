@@ -143,7 +143,9 @@ typedef	struct Config {
 } CONFIG, *CONFIG_P;
 
 typedef struct tmp_config {
-	guint	db_reg;		/**/
+	guint	db_reg;		/*增益步进*/
+
+	gint	fd_config;
 
 } TMP_CONFIG, *TMP_CONFIG_P;
 
