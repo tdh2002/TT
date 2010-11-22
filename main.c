@@ -62,6 +62,8 @@ int main (int argc, char *argv[])
 	
 	gtk_widget_show (window);
 
+	g_print("float = %d, double= %d\n", sizeof(gfloat), sizeof(gdouble));
+
 	gdk_threads_enter();
 	gtk_main();
 	gdk_threads_leave();

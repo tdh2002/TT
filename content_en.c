@@ -104,12 +104,12 @@ static const gchar *content_en204[] = {
 
 static const gchar *content_en210[] = {
 	/* 二级菜单第1页下的第0页三级菜单 */
-	"Gain增益(dB)  ","  Start  ", "  Range  ","  Wedge Delay  ", "  Velocity  ", NULL
+	"Gain", "Start", "  Range  ","  Wedge Delay  ", "  Velocity  ", NULL
 };
 
 static const gchar *content_en211[] = {
 	/* 二级菜单第1页下的第1页三级菜单 */
-	"  Pulser  ","  Tx/Rx mode  ", "  Freq.(MHz)  ","  Voltage(V)  ", "  PW(ns)  ", "  PRF  "
+	"Pulser","  Tx/Rx mode  ", "  Freq.(MHz)  ","  Voltage(V)  ", "  PW(ns)  ", "  PRF  "
 };
 
 static const gchar *content_en212[] = {

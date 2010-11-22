@@ -128,7 +128,7 @@ typedef	struct Config {
 	guint	display;		/*显示模式 A B C A+B A+B+C A+S ...*/
 	guint	c_scan;			/*c扫描参考*/
 
-	guint	ut_unit;		/**/
+	guchar	ut_unit;		/*单位 mm(0) or inch(1) or ..*/
 	guint	color;			/**/
 	
 
@@ -143,7 +143,8 @@ typedef	struct Config {
 } CONFIG, *CONFIG_P;
 
 typedef struct tmp_config {
-	guint	db_reg;		/*增益步进*/
+	guchar	db_reg;			/*增益步进*/
+	guchar	start_reg;		/*start ? 扫描延时步进*/
 
 	gint	fd_config;
 

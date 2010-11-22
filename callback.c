@@ -31,6 +31,8 @@ gboolean data_function3 (GtkWidget *widget,	GdkEventButton *event,	gpointer     
 gboolean data_function4 (GtkWidget *widget,	GdkEventButton *event,	gpointer       data);
 gboolean data_function5 (GtkWidget *widget,	GdkEventButton *event,	gpointer       data);
 
+void data_100 (GtkSpinButton *spinbutton, gpointer data);
+
 /*二级菜单5个按钮的回调函数*/
 /*button click 回调函数*/
 void (*button2_fun[5])(GtkButton *button, gpointer data) = 
@@ -151,7 +153,10 @@ void b3_fun0(DRAW_UI_P p)
 				switch (p->pos1[p->pos])
 				{
 					case 0:
-						(p->p_tmp_config->db_reg > 0) ? p->p_tmp_config->db_reg-- : (p->p_tmp_config->db_reg = 3);
+						(p->p_tmp_config->db_reg > 0) ? p->p_tmp_config->db_reg-- : (p->p_tmp_config->db_reg = 4);
+//						g_stpcpy(temp, gtk_button_get_label(GTK_BUTTON(p->button3[0])));
+//						g_print("%s", temp);/*Δ*/
+
 						break;
 					default:break;
 				}
@@ -161,7 +166,7 @@ void b3_fun0(DRAW_UI_P p)
 		}
 
 	p->pos2[p->pos][p->pos1[p->pos]] = 0;
-	draw_3_menu1(p);
+	draw_3_menu(p);
 	gtk_widget_set_can_focus (p->data[0], TRUE);
 	if ( p->data[p->pos2[p->pos][p->pos1[p->pos]]] &&
 			gtk_widget_get_can_focus( p->data[p->pos2[p->pos][p->pos1[p->pos]]]) )  
@@ -173,8 +178,27 @@ void b3_fun0(DRAW_UI_P p)
 
 void b3_fun1(DRAW_UI_P p)
 {
+	/*处理微调*/
+	if (p->pos2[p->pos][p->pos1[p->pos]] == 1)
+		switch (p->pos) 
+		{
+			case 0:
+				break;
+			case 1:
+				switch (p->pos1[p->pos])
+				{
+					case 0:
+						(p->p_tmp_config->start_reg > 0) ? p->p_tmp_config->start_reg-- : (p->p_tmp_config->start_reg = 3);
+
+						break;
+					default:break;
+				}
+				break;
+			default:break;
+
+		}
 	p->pos2[p->pos][p->pos1[p->pos]] = 1;
-	draw_3_menu1(p);
+	draw_3_menu(p);
 	gtk_widget_set_can_focus (p->data[1], TRUE);
 	if ( p->data[p->pos2[p->pos][p->pos1[p->pos]]] &&
 			gtk_widget_get_can_focus( p->data[p->pos2[p->pos][p->pos1[p->pos]]]) )  
@@ -186,7 +210,7 @@ void b3_fun1(DRAW_UI_P p)
 void b3_fun2(DRAW_UI_P p)
 {
 	p->pos2[p->pos][p->pos1[p->pos]] = 2;
-	draw_3_menu1(p);
+	draw_3_menu(p);
 	gtk_widget_set_can_focus (p->data[2], TRUE);
 	if ( p->data[p->pos2[p->pos][p->pos1[p->pos]]] &&
 			gtk_widget_get_can_focus( p->data[p->pos2[p->pos][p->pos1[p->pos]]]) )  
@@ -198,7 +222,7 @@ void b3_fun2(DRAW_UI_P p)
 void b3_fun3(DRAW_UI_P p)
 {
 	p->pos2[p->pos][p->pos1[p->pos]] = 3;
-	draw_3_menu1(p);
+	draw_3_menu(p);
 	gtk_widget_set_can_focus (p->data[3], TRUE);
 	if ( p->data[p->pos2[p->pos][p->pos1[p->pos]]] &&
 			gtk_widget_get_can_focus( p->data[p->pos2[p->pos][p->pos1[p->pos]]]) )  
@@ -210,7 +234,7 @@ void b3_fun3(DRAW_UI_P p)
 void b3_fun4(DRAW_UI_P p)
 {
 	p->pos2[p->pos][p->pos1[p->pos]] = 4;
-	draw_3_menu1(p);
+	draw_3_menu(p);
 	gtk_widget_set_can_focus (p->data[4], TRUE);
 	if ( p->data[p->pos2[p->pos][p->pos1[p->pos]]] &&
 			gtk_widget_get_can_focus( p->data[p->pos2[p->pos][p->pos1[p->pos]]]) )  
@@ -222,7 +246,7 @@ void b3_fun4(DRAW_UI_P p)
 void b3_fun5(DRAW_UI_P p)
 {
 	p->pos2[p->pos][p->pos1[p->pos]] = 5;
-	draw_3_menu1(p);
+	draw_3_menu(p);
 	gtk_widget_set_can_focus (p->data[5], TRUE);
 	if ( p->data[p->pos2[p->pos][p->pos1[p->pos]]] &&
 			gtk_widget_get_can_focus( p->data[p->pos2[p->pos][p->pos1[p->pos]]]) )  
@@ -314,4 +338,13 @@ gboolean data_function5 (GtkWidget *widget,	GdkEventButton *event,	gpointer     
 	b3_fun5(p);
 	return TRUE;
 }
+
+void data_100 (GtkSpinButton *spinbutton, gpointer data)
+{
+	DRAW_UI_P p = (DRAW_UI_P)(data);
+	p->p_config->gain = gtk_spin_button_get_value (spinbutton) * 10;
+
+	/*发送增益给硬件*/
+}
+
 

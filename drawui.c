@@ -4,6 +4,7 @@
  */
 
 #include "drawui.h"
+#include <glib/gprintf.h>
 
 GdkPoint a[512] = {{0,0},{240,200},{400,200}};
 
@@ -11,11 +12,10 @@ void change_language();
 void draw_1_menu(DRAW_UI_P p);
 void draw_2_menu(DRAW_UI_P p);
 void draw_3_menu(DRAW_UI_P p);
-void draw_3_menu1(DRAW_UI_P p);
 void init_ui(DRAW_UI_P p);				/*初始化界面,*/
 
 /**/
-const gchar **con0_p		= content_en10;
+const gchar **con0_p	= content_en10;
 const gchar ***con1_p	= content1_en;
 const gchar ****con2_p	= content2_en;
 
@@ -198,134 +198,838 @@ void draw_2_menu(DRAW_UI_P p)
 	gtk_widget_modify_bg (p->button2[p->pos1[p->pos]], GTK_STATE_NORMAL, &color_button0);
 }
 
+/**/
 void draw3_data0(DRAW_UI_P p) 
+{
+	gchar temp[52];
+	gfloat tmpf;/**/
+
+	switch (p->pos) 
+	{
+		case 0:
+			switch (p->pos1[0])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 1:
+			switch (p->pos1[1])
+			{
+				case 0:/*增益 Gain */
+					/*当前步进*/
+					switch (p->p_tmp_config->db_reg)
+					{
+						case 0:	tmpf = 0.1; break;
+						case 1:	tmpf = 0.5; break;
+						case 2:	tmpf = 1.0; break;
+						case 3:	tmpf = 2.0; break;
+						case 4:	tmpf = 6.0; break;
+						default:break;
+					}
+					if (p->pos2[p->pos][p->pos1[p->pos]] == 0)
+						g_sprintf (temp,"%s\ndB Δ%.1f", con2_p[1][0][0], tmpf);
+					else 
+						g_sprintf (temp,"%s\ndB", con2_p[1][0][0]);
+
+					gtk_button_set_label (GTK_BUTTON (p->button3[0]), temp);
+					gtk_widget_modify_bg (p->button3[0], GTK_STATE_NORMAL, &color_button1);
+					gtk_widget_show (p->button3[0]);
+
+					p->adj = (GtkAdjustment *) gtk_adjustment_new
+						(p->p_config->gain / 10.0, 0.0, 74.0, tmpf, 10.0, 0.0);
+					p->data[0] = gtk_spin_button_new (p->adj, 0, 1);
+					gtk_box_pack_start (GTK_BOX (p->vbox221[0]), p->data[0], FALSE, FALSE, 0);
+					gtk_widget_set_size_request(GTK_WIDGET(p->data[0]), 115, 29);
+					gtk_widget_show(p->data[0]);
+					g_signal_connect(G_OBJECT(p->data[0]), "value-changed", 
+							G_CALLBACK(data_100), (gpointer) (p));
+					//					 gtk_widget_set_can_focus (p->data[0], FALSE);
+					//					 g_signal_connect(G_OBJECT(p->data[0]), "button-press-event", 
+					//							 G_CALLBACK(data_fun[0]), (gpointer) (p));
+					break;
+				case 1:/*发射 Pulser*/
+					break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 2:
+			switch (p->pos1[0])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 3:
+			switch (p->pos1[0])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 4:
+			switch (p->pos1[0])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 5:
+			switch (p->pos1[0])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 6:
+			switch (p->pos1[0])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 7:
+			switch (p->pos1[0])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 8:
+			switch (p->pos1[0])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 9:
+			switch (p->pos1[0])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		default:break;
+	}
+}
+
+void draw3_data1(DRAW_UI_P p) 
+{
+	gchar temp[50];
+	gfloat tmpf;
+	switch (p->pos) 
+	{
+		case 0:
+			switch (p->pos1[0])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 1:
+			switch (p->pos1[1])
+			{
+				case 0:
+					/*当前步进*/
+					switch (p->p_tmp_config->start_reg)
+					{
+						case 0:	tmpf = 0.11; break;
+						case 1:	tmpf = 0.55; break;
+						case 2:	tmpf = 1.00; break;
+						case 3:	tmpf = 12.0; break;
+						default:break;
+					}
+					if (p->pos2[p->pos][p->pos1[p->pos]] == 1)
+						g_sprintf (temp,"%s\n(%s) Δ%.2f", 
+								con2_p[1][0][1], !p->p_config->ut_unit ? "mm" : "inch", tmpf);
+					else 
+						g_sprintf (temp,"%s\n(%s)",
+								con2_p[1][0][1], !p->p_config->ut_unit ? "mm" : "inch");
+
+					gtk_button_set_label (GTK_BUTTON (p->button3[1]), temp);
+					gtk_widget_modify_bg (p->button3[1], GTK_STATE_NORMAL, &color_button1);
+					gtk_widget_show (p->button3[1]);
+
+					p->adj = (GtkAdjustment *) gtk_adjustment_new
+						(21.0, 0.0, 74.0, tmpf, 10.0, 0.0);
+					p->data[1] = gtk_spin_button_new (p->adj, 0, 2);
+					gtk_box_pack_start (GTK_BOX (p->vbox221[1]), p->data[1], FALSE, FALSE, 0);
+					gtk_widget_set_size_request(GTK_WIDGET(p->data[1]), 115, 29);
+					gtk_widget_show(p->data[1]);
+					break;
+				case 1:
+					break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 2:
+			switch (p->pos1[0])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 3:
+			switch (p->pos1[0])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 4:
+			switch (p->pos1[0])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 5:
+			switch (p->pos1[0])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 6:
+			switch (p->pos1[0])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 7:
+			switch (p->pos1[0])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 8:
+			switch (p->pos1[0])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 9:
+			switch (p->pos1[0])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		default:break;
+	}
+}
+
+void draw3_data2(DRAW_UI_P p) 
 {
 	switch (p->pos) 
 	{
 		case 0:
 			switch (p->pos1[0])
 			{
-				 case 0:break;
-				 case 1:break;
-				 case 2:break;
-				 case 3:break;
-				 case 4:break;
-				 default:break;
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
 			}
 			break;
 		case 1:
 			switch (p->pos1[1])
 			{
-				 case 0:
-					 p->adj = (GtkAdjustment *) gtk_adjustment_new (21.0, 0.0, 74.0, 0.1, 10.0, 0.0);
-					 p->data[0] = gtk_spin_button_new (p->adj, 0, 1);
-					 gtk_box_pack_start (GTK_BOX (p->vbox221[0]), p->data[0], FALSE, FALSE, 0);
-					 gtk_widget_set_size_request(GTK_WIDGET(p->data[0]), 115, 29);
-					 gtk_widget_show(p->data[0]);
-//					 gtk_widget_set_can_focus (p->data[0], FALSE);
+				case 0:
+					p->adj = (GtkAdjustment *) gtk_adjustment_new (21.0, 0.0, 74.0, 0.1, 10.0, 0.0);
+					p->data[0] = gtk_spin_button_new (p->adj, 0, 1);
+					gtk_box_pack_start (GTK_BOX (p->vbox221[0]), p->data[0], FALSE, FALSE, 0);
+					gtk_widget_set_size_request(GTK_WIDGET(p->data[0]), 115, 29);
+					gtk_widget_show(p->data[0]);
+					//					 gtk_widget_set_can_focus (p->data[0], FALSE);
 
-//					 g_signal_connect(G_OBJECT(p->data[0]), "button-press-event", 
-//							 G_CALLBACK(data_fun[0]), (gpointer) (p));
-					 break;
-				 case 1:
-					 p->adj = (GtkAdjustment *) gtk_adjustment_new (21.0, 0.0, 74.0, 0.1, 10.0, 0.0);
-					 p->data[0] = gtk_spin_button_new (p->adj, 0, 1);
-					 gtk_box_pack_start (GTK_BOX (p->vbox221[0]), p->data[0], FALSE, FALSE, 0);
-					 gtk_widget_set_size_request(GTK_WIDGET(p->data[0]), 115, 29);
-					 gtk_widget_show(p->data[0]);
-					 break;
-				 case 2:break;
-				 case 3:break;
-				 case 4:break;
-				 default:break;
+					//					 g_signal_connect(G_OBJECT(p->data[0]), "button-press-event", 
+					//							 G_CALLBACK(data_fun[0]), (gpointer) (p));
+					break;
+				case 1:
+					p->adj = (GtkAdjustment *) gtk_adjustment_new (21.0, 0.0, 74.0, 0.1, 10.0, 0.0);
+					p->data[0] = gtk_spin_button_new (p->adj, 0, 1);
+					gtk_box_pack_start (GTK_BOX (p->vbox221[0]), p->data[0], FALSE, FALSE, 0);
+					gtk_widget_set_size_request(GTK_WIDGET(p->data[0]), 115, 29);
+					gtk_widget_show(p->data[0]);
+					break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
 			}
 			break;
 		case 2:
 			switch (p->pos1[0])
 			{
-				 case 0:break;
-				 case 1:break;
-				 case 2:break;
-				 case 3:break;
-				 case 4:break;
-				 default:break;
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
 			}
 			break;
 		case 3:
 			switch (p->pos1[0])
 			{
-				 case 0:break;
-				 case 1:break;
-				 case 2:break;
-				 case 3:break;
-				 case 4:break;
-				 default:break;
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
 			}
 			break;
 		case 4:
 			switch (p->pos1[0])
 			{
-				 case 0:break;
-				 case 1:break;
-				 case 2:break;
-				 case 3:break;
-				 case 4:break;
-				 default:break;
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
 			}
 			break;
 		case 5:
 			switch (p->pos1[0])
 			{
-				 case 0:break;
-				 case 1:break;
-				 case 2:break;
-				 case 3:break;
-				 case 4:break;
-				 default:break;
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
 			}
 			break;
 		case 6:
 			switch (p->pos1[0])
 			{
-				 case 0:break;
-				 case 1:break;
-				 case 2:break;
-				 case 3:break;
-				 case 4:break;
-				 default:break;
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
 			}
 			break;
 		case 7:
 			switch (p->pos1[0])
 			{
-				 case 0:break;
-				 case 1:break;
-				 case 2:break;
-				 case 3:break;
-				 case 4:break;
-				 default:break;
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
 			}
 			break;
 		case 8:
 			switch (p->pos1[0])
 			{
-				 case 0:break;
-				 case 1:break;
-				 case 2:break;
-				 case 3:break;
-				 case 4:break;
-				 default:break;
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
 			}
 			break;
 		case 9:
 			switch (p->pos1[0])
 			{
-				 case 0:break;
-				 case 1:break;
-				 case 2:break;
-				 case 3:break;
-				 case 4:break;
-				 default:break;
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		default:break;
+	}
+}
+
+void draw3_data3(DRAW_UI_P p) 
+{
+	switch (p->pos) 
+	{
+		case 0:
+			switch (p->pos1[0])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 1:
+			switch (p->pos1[1])
+			{
+				case 0:
+					p->adj = (GtkAdjustment *) gtk_adjustment_new (21.0, 0.0, 74.0, 0.1, 10.0, 0.0);
+					p->data[0] = gtk_spin_button_new (p->adj, 0, 1);
+					gtk_box_pack_start (GTK_BOX (p->vbox221[0]), p->data[0], FALSE, FALSE, 0);
+					gtk_widget_set_size_request(GTK_WIDGET(p->data[0]), 115, 29);
+					gtk_widget_show(p->data[0]);
+					//					 gtk_widget_set_can_focus (p->data[0], FALSE);
+
+					//					 g_signal_connect(G_OBJECT(p->data[0]), "button-press-event", 
+					//							 G_CALLBACK(data_fun[0]), (gpointer) (p));
+					break;
+				case 1:
+					p->adj = (GtkAdjustment *) gtk_adjustment_new (21.0, 0.0, 74.0, 0.1, 10.0, 0.0);
+					p->data[0] = gtk_spin_button_new (p->adj, 0, 1);
+					gtk_box_pack_start (GTK_BOX (p->vbox221[0]), p->data[0], FALSE, FALSE, 0);
+					gtk_widget_set_size_request(GTK_WIDGET(p->data[0]), 115, 29);
+					gtk_widget_show(p->data[0]);
+					break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 2:
+			switch (p->pos1[0])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 3:
+			switch (p->pos1[0])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 4:
+			switch (p->pos1[0])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 5:
+			switch (p->pos1[0])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 6:
+			switch (p->pos1[0])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 7:
+			switch (p->pos1[0])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 8:
+			switch (p->pos1[0])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 9:
+			switch (p->pos1[0])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		default:break;
+	}
+}
+
+void draw3_data4(DRAW_UI_P p) 
+{
+	switch (p->pos) 
+	{
+		case 0:
+			switch (p->pos1[0])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 1:
+			switch (p->pos1[1])
+			{
+				case 0:
+					p->adj = (GtkAdjustment *) gtk_adjustment_new (21.0, 0.0, 74.0, 0.1, 10.0, 0.0);
+					p->data[0] = gtk_spin_button_new (p->adj, 0, 1);
+					gtk_box_pack_start (GTK_BOX (p->vbox221[0]), p->data[0], FALSE, FALSE, 0);
+					gtk_widget_set_size_request(GTK_WIDGET(p->data[0]), 115, 29);
+					gtk_widget_show(p->data[0]);
+					//					 gtk_widget_set_can_focus (p->data[0], FALSE);
+
+					//					 g_signal_connect(G_OBJECT(p->data[0]), "button-press-event", 
+					//							 G_CALLBACK(data_fun[0]), (gpointer) (p));
+					break;
+				case 1:
+					p->adj = (GtkAdjustment *) gtk_adjustment_new (21.0, 0.0, 74.0, 0.1, 10.0, 0.0);
+					p->data[0] = gtk_spin_button_new (p->adj, 0, 1);
+					gtk_box_pack_start (GTK_BOX (p->vbox221[0]), p->data[0], FALSE, FALSE, 0);
+					gtk_widget_set_size_request(GTK_WIDGET(p->data[0]), 115, 29);
+					gtk_widget_show(p->data[0]);
+					break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 2:
+			switch (p->pos1[0])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 3:
+			switch (p->pos1[0])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 4:
+			switch (p->pos1[0])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 5:
+			switch (p->pos1[0])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 6:
+			switch (p->pos1[0])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 7:
+			switch (p->pos1[0])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 8:
+			switch (p->pos1[0])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 9:
+			switch (p->pos1[0])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		default:break;
+	}
+}
+
+void draw3_data5(DRAW_UI_P p) 
+{
+	switch (p->pos) 
+	{
+		case 0:
+			switch (p->pos1[0])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 1:
+			switch (p->pos1[1])
+			{
+				case 0:
+					p->adj = (GtkAdjustment *) gtk_adjustment_new (21.0, 0.0, 74.0, 0.1, 10.0, 0.0);
+					p->data[0] = gtk_spin_button_new (p->adj, 0, 1);
+					gtk_box_pack_start (GTK_BOX (p->vbox221[0]), p->data[0], FALSE, FALSE, 0);
+					gtk_widget_set_size_request(GTK_WIDGET(p->data[0]), 115, 29);
+					gtk_widget_show(p->data[0]);
+					//					 gtk_widget_set_can_focus (p->data[0], FALSE);
+
+					//					 g_signal_connect(G_OBJECT(p->data[0]), "button-press-event", 
+					//							 G_CALLBACK(data_fun[0]), (gpointer) (p));
+					break;
+				case 1:
+					p->adj = (GtkAdjustment *) gtk_adjustment_new (21.0, 0.0, 74.0, 0.1, 10.0, 0.0);
+					p->data[0] = gtk_spin_button_new (p->adj, 0, 1);
+					gtk_box_pack_start (GTK_BOX (p->vbox221[0]), p->data[0], FALSE, FALSE, 0);
+					gtk_widget_set_size_request(GTK_WIDGET(p->data[0]), 115, 29);
+					gtk_widget_show(p->data[0]);
+					break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 2:
+			switch (p->pos1[0])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 3:
+			switch (p->pos1[0])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 4:
+			switch (p->pos1[0])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 5:
+			switch (p->pos1[0])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 6:
+			switch (p->pos1[0])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 7:
+			switch (p->pos1[0])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 8:
+			switch (p->pos1[0])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 9:
+			switch (p->pos1[0])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
 			}
 			break;
 		default:break;
@@ -347,13 +1051,18 @@ void draw_3_menu(DRAW_UI_P p)
 
 		if (con2_p[p->pos][p->pos1[p->pos]][i]) 
 		{
-			gtk_button_set_label (GTK_BUTTON (p->button3[i]), 
-					con2_p[p->pos][p->pos1[p->pos]][i]);
-			gtk_widget_modify_bg (p->button3[i], GTK_STATE_NORMAL, &color_button1);
-			gtk_widget_show (p->button3[i]);
+
+			/*
+			   gtk_button_set_label (GTK_BUTTON (p->button3[i]), 
+			   con2_p[p->pos][p->pos1[p->pos]][i]);
+			   gtk_widget_modify_bg (p->button3[i], GTK_STATE_NORMAL, &color_button1);
+			   gtk_widget_show (p->button3[i]);
+			   */
 
 			if (i == 0)
 				draw3_data0(p);
+			else if (i == 1)
+				draw3_data1(p);
 
 #if 0			
 			else if (i == 1)
@@ -368,7 +1077,7 @@ void draw_3_menu(DRAW_UI_P p)
 				gtk_box_pack_start (GTK_BOX (p->vbox221[i]), p->data[i], FALSE, FALSE, 0);
 				gtk_widget_show(p->data[i]);
 
-//				gtk_widget_set_can_focus (p->data[i], FALSE);
+				//				gtk_widget_set_can_focus (p->data[i], FALSE);
 
 				g_object_set (gtk_bin_get_child(GTK_BIN (p->data[i])), "editable", FALSE, NULL);
 				g_signal_connect(G_OBJECT(p->data[i]), "button-press-event", 
@@ -385,7 +1094,7 @@ void draw_3_menu(DRAW_UI_P p)
 				gtk_box_pack_start (GTK_BOX (p->vbox221[i]), p->data[i], FALSE, FALSE, 0);
 				gtk_widget_show(p->data[i]);
 
-//				gtk_widget_set_can_focus (p->data[i], FALSE);
+				//				gtk_widget_set_can_focus (p->data[i], FALSE);
 
 				g_signal_connect(G_OBJECT(p->data[i]), "button-press-event", 
 						G_CALLBACK(data_fun[i]), (gpointer) (p));
@@ -403,65 +1112,42 @@ void draw_3_menu(DRAW_UI_P p)
 			GTK_STATE_NORMAL, &color_button0);
 }
 
-/* 画三级菜单*/
-void draw_3_menu1(DRAW_UI_P p)
-{
-	gint i;
-
-	for ( i = 0 ; i < 6 ; i++) 
-	{
-		if (con2_p[p->pos][p->pos1[p->pos]][i]) 
-		{
-			gtk_button_set_label (GTK_BUTTON (p->button3[i]), 
-					con2_p[p->pos][p->pos1[p->pos]][i]);
-			gtk_widget_modify_bg (p->button3[i], GTK_STATE_NORMAL, &color_button1);
-			gtk_widget_show (p->button3[i]);
-		}
-		else
-		{
-			gtk_button_set_label (GTK_BUTTON (p->button3[i]), " ");
-			gtk_widget_hide (p->button3[i]);
-		}
-	}
-	gtk_widget_modify_bg (p->button3[p->pos2[p->pos][p->pos1[p->pos]]],
-			GTK_STATE_NORMAL, &color_button0);
-}
 
 static void travel_path (cairo_t *cr)
 {
-   gint i;
+	gint i;
 
-//   cairo_set_source_rgb (cr, 1, 1, 1);
-//   cairo_paint (cr);
+	//   cairo_set_source_rgb (cr, 1, 1, 1);
+	//   cairo_paint (cr);
 
-   /* Use IBM Blue Pen Color with no ALPHA */
-   cairo_set_source_rgba (cr, 1, 0, 0, 1);
-   cairo_set_line_width (cr, 1);
-//   cairo_move_to (cr, 10, 10);
-//   cairo_line_to (cr, 11, 200);
-//   cairo_set_line_width (cr, 1);
-   cairo_stroke (cr);
+	/* Use IBM Blue Pen Color with no ALPHA */
+	cairo_set_source_rgba (cr, 1, 0, 0, 1);
+	cairo_set_line_width (cr, 1);
+	//   cairo_move_to (cr, 10, 10);
+	//   cairo_line_to (cr, 11, 200);
+	//   cairo_set_line_width (cr, 1);
+	cairo_stroke (cr);
 
-   //   cairo_set_line_cap(cr, CAIRO_LINE_CAP_ROUND);
+	//   cairo_set_line_cap(cr, CAIRO_LINE_CAP_ROUND);
 
-//	   cairo_move_to (cr, a3[i].x, a3[i].y);
-//	   cairo_move_to (cr, a3[0].x, a3[0].y);
-   for (i = 0; i < 500; i++) {
-	   cairo_move_to (cr, a[i].x + 0.5, a[i].y );
-	   cairo_line_to (cr, a[i].x + 0.5, (a[i + 1].y + a[i].y)/2); 
-	   cairo_move_to (cr, a[i + 1].x + 0.5, (a[i + 1].y + a[i].y)/2); 
-	   cairo_line_to (cr, a[i + 1].x + 0.5, a[i + 1].y); 
-   }
+	//	   cairo_move_to (cr, a3[i].x, a3[i].y);
+	//	   cairo_move_to (cr, a3[0].x, a3[0].y);
+	for (i = 0; i < 500; i++) {
+		cairo_move_to (cr, a[i].x + 0.5, a[i].y );
+		cairo_line_to (cr, a[i].x + 0.5, (a[i + 1].y + a[i].y)/2); 
+		cairo_move_to (cr, a[i + 1].x + 0.5, (a[i + 1].y + a[i].y)/2); 
+		cairo_line_to (cr, a[i + 1].x + 0.5, a[i + 1].y); 
+	}
 
-   cairo_stroke(cr);
+	cairo_stroke(cr);
 }
 
 static void draw_gtk (GtkWidget      *widget, GdkEventExpose *eev, gpointer        data)
 {
-  cairo_t *cr;
-  cr = gdk_cairo_create (widget->window);
-  travel_path (cr);
-  cairo_destroy (cr);
+	cairo_t *cr;
+	cr = gdk_cairo_create (widget->window);
+	travel_path (cr);
+	cairo_destroy (cr);
 }
 
 static gboolean time_handler(GtkWidget *widget)
