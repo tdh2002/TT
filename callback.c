@@ -4,6 +4,10 @@
  */
 
 #include "drawui.h"
+#include <gdk/gdkkeysyms.h>
+
+gboolean foo (GtkAccelGroup *accel_group, GObject *acceleratable,
+		guint keyval, GdkModifierType modifier, gpointer data);
 
 void button2_function0 (GtkButton *button, gpointer data);
 void button2_function1 (GtkButton *button, gpointer data);
@@ -32,6 +36,10 @@ gboolean data_function4 (GtkWidget *widget,	GdkEventButton *event,	gpointer     
 gboolean data_function5 (GtkWidget *widget,	GdkEventButton *event,	gpointer       data);
 
 void data_100 (GtkSpinButton *spinbutton, gpointer data);
+void data_101 (GtkSpinButton *spinbutton, gpointer data);
+void data_102 (GtkSpinButton *spinbutton, gpointer data);
+void data_103 (GtkSpinButton *spinbutton, gpointer data);
+void data_104 (GtkSpinButton *spinbutton, gpointer data);
 
 /*二级菜单5个按钮的回调函数*/
 /*button click 回调函数*/
@@ -167,12 +175,20 @@ void b3_fun0(DRAW_UI_P p)
 
 	p->pos2[p->pos][p->pos1[p->pos]] = 0;
 	draw_3_menu(p);
+#if 0
+	if (gtk_widget_is_focus(p->data[0])) {
+		g_object_set (( (p->data[0])), "editable", TRUE, NULL); 
+	return ;
+	}
 	gtk_widget_set_can_focus (p->data[0], TRUE);
+	g_object_set (( (p->data[0])), "editable", FALSE, NULL); 
 	if ( p->data[p->pos2[p->pos][p->pos1[p->pos]]] &&
-			gtk_widget_get_can_focus( p->data[p->pos2[p->pos][p->pos1[p->pos]]]) )  
+			gtk_widget_get_can_focus( p->data[p->pos2[p->pos][p->pos1[p->pos]]]) ) ;
 		g_object_set ( p->data[p->pos2[p->pos][p->pos1[p->pos]]],			
 				"is-focus", TRUE,	NULL); 
+	g_object_set (( (p->data[0])), "editable", TRUE, NULL); 
 	gtk_widget_set_can_focus (p->data[0], FALSE);
+#endif
 	g_print("db_reg= %d\n", p->p_tmp_config->db_reg);
 }
 
@@ -188,7 +204,7 @@ void b3_fun1(DRAW_UI_P p)
 				switch (p->pos1[p->pos])
 				{
 					case 0:
-						(p->p_tmp_config->start_reg > 0) ? p->p_tmp_config->start_reg-- : (p->p_tmp_config->start_reg = 3);
+						(p->p_tmp_config->start_reg > 0) ? p->p_tmp_config->start_reg-- : (p->p_tmp_config->start_reg = 2);
 
 						break;
 					default:break;
@@ -209,6 +225,25 @@ void b3_fun1(DRAW_UI_P p)
 
 void b3_fun2(DRAW_UI_P p)
 {
+	/*处理微调*/
+	if (p->pos2[p->pos][p->pos1[p->pos]] == 2)
+		switch (p->pos) 
+		{
+			case 0:
+				break;
+			case 1:
+				switch (p->pos1[p->pos])
+				{
+					case 0:
+						(p->p_tmp_config->range_reg > 0) ? p->p_tmp_config->range_reg-- : (p->p_tmp_config->range_reg = 2);
+
+						break;
+					default:break;
+				}
+				break;
+			default:break;
+
+		}
 	p->pos2[p->pos][p->pos1[p->pos]] = 2;
 	draw_3_menu(p);
 	gtk_widget_set_can_focus (p->data[2], TRUE);
@@ -221,6 +256,25 @@ void b3_fun2(DRAW_UI_P p)
 
 void b3_fun3(DRAW_UI_P p)
 {
+	/*处理微调*/
+	if (p->pos2[p->pos][p->pos1[p->pos]] == 3)
+		switch (p->pos) 
+		{
+			case 0:
+				break;
+			case 1:
+				switch (p->pos1[p->pos])
+				{
+					case 0:
+						(p->p_tmp_config->wedge_delay_reg > 0) ? p->p_tmp_config->wedge_delay_reg-- : (p->p_tmp_config->wedge_delay_reg = 2);
+
+						break;
+					default:break;
+				}
+				break;
+			default:break;
+
+		}
 	p->pos2[p->pos][p->pos1[p->pos]] = 3;
 	draw_3_menu(p);
 	gtk_widget_set_can_focus (p->data[3], TRUE);
@@ -233,6 +287,25 @@ void b3_fun3(DRAW_UI_P p)
 
 void b3_fun4(DRAW_UI_P p)
 {
+	/*处理微调*/
+	if (p->pos2[p->pos][p->pos1[p->pos]] == 4)
+		switch (p->pos) 
+		{
+			case 0:
+				break;
+			case 1:
+				switch (p->pos1[p->pos])
+				{
+					case 0:
+						(p->p_tmp_config->velocity_reg > 0) ? p->p_tmp_config->velocity_reg-- : (p->p_tmp_config->velocity_reg = 3);
+
+						break;
+					default:break;
+				}
+				break;
+			default:break;
+
+		}
 	p->pos2[p->pos][p->pos1[p->pos]] = 4;
 	draw_3_menu(p);
 	gtk_widget_set_can_focus (p->data[4], TRUE);
@@ -253,6 +326,26 @@ void b3_fun5(DRAW_UI_P p)
 		g_object_set ( p->data[p->pos2[p->pos][p->pos1[p->pos]]],			
 				"is-focus", TRUE,	NULL); 
 	gtk_widget_set_can_focus (p->data[5], FALSE);
+}
+
+gboolean foo (GtkAccelGroup *accel_group, GObject *acceleratable,
+		guint keyval, GdkModifierType modifier, gpointer data)
+{
+	DRAW_UI_P p = (DRAW_UI_P)(data);
+
+	switch ( keyval ) 
+	{
+		case GDK_F7:	b3_fun0(p);	break;
+		case GDK_F8:	b3_fun1(p);	break;
+		case GDK_F9:	b3_fun2(p);	break;
+		case GDK_F10:	b3_fun3(p);	break;
+		case GDK_F11:	b3_fun4(p);	break;
+		case GDK_F12:	b3_fun5(p);	break;
+		default: break;
+	}
+
+	
+	return 0;
 }
 
 void button3_function0 (GtkButton *button, gpointer data)
@@ -339,10 +432,48 @@ gboolean data_function5 (GtkWidget *widget,	GdkEventButton *event,	gpointer     
 	return TRUE;
 }
 
-void data_100 (GtkSpinButton *spinbutton, gpointer data)
+void data_100 (GtkSpinButton *spinbutton, gpointer data) /*增益Gain*/
 {
 	DRAW_UI_P p = (DRAW_UI_P)(data);
-	p->p_config->gain = gtk_spin_button_get_value (spinbutton) * 10;
+	p->p_config->gain = (gshort) (gtk_spin_button_get_value (spinbutton) * 10.0);
+
+	/*发送增益给硬件*/
+}
+
+void data_101 (GtkSpinButton *spinbutton, gpointer data) /*Start 扫描延时 */
+{
+	DRAW_UI_P p = (DRAW_UI_P)(data);
+	if (p->p_config->ut_unit == 0) 
+		p->p_config->start = (gint) (gtk_spin_button_get_value (spinbutton) * 100.0 / (p->p_config->part.Velocity / 20000.0));
+	else
+		p->p_config->start = (gint) (gtk_spin_button_get_value (spinbutton) * 100.0);
+
+	/*发送增益给硬件*/
+}
+
+void data_102 (GtkSpinButton *spinbutton, gpointer data) /*Range 范围 */
+{
+	DRAW_UI_P p = (DRAW_UI_P)(data);
+	if (p->p_config->ut_unit == 0) 
+		p->p_config->range = (guint) (gtk_spin_button_get_value (spinbutton) * 100.0 / (p->p_config->part.Velocity / 20000.0));
+	else
+		p->p_config->range = (guint) (gtk_spin_button_get_value (spinbutton) * 100.0);
+
+	/*发送增益给硬件*/
+}
+
+void data_103 (GtkSpinButton *spinbutton, gpointer data) /*楔块延时  Wedge Delay */
+{
+	DRAW_UI_P p = (DRAW_UI_P)(data);
+	p->p_config->wedge_delay = (guint) (gtk_spin_button_get_value (spinbutton) * 100.0);
+
+	/*发送增益给硬件*/
+}
+
+void data_104 (GtkSpinButton *spinbutton, gpointer data) /*声速 Velocity */
+{
+	DRAW_UI_P p = (DRAW_UI_P)(data);
+	p->p_config->part.Velocity = (guint) (gtk_spin_button_get_value (spinbutton) * 10.0);
 
 	/*发送增益给硬件*/
 }

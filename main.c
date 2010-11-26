@@ -12,6 +12,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include <gdk/gdkkeysyms.h>
 
 GdkColor	color_black= {0x0, 0x0, 0x0, 0x0};
 GdkColor	color_button0= {0x0, 0x9999, 0x9999, 0x9999};
@@ -20,14 +21,17 @@ GdkColor	color_button1= {0x0, 0x7e00, 0xb700, 0xf300};
 /* You have to start somewhere */
 int main (int argc, char *argv[])
 {
-	DRAW_UI_P	p_ui;					
-	CONFIG_P	p_config;				
+	DRAW_UI_P		p_ui;					
+	CONFIG_P		p_config;				
 	TMP_CONFIG_P	p_tmp_config;					
-	GtkWidget	*window;
+	GtkWidget		*window;
+	GtkAccelGroup	*accel;
+	GClosure		*closure;
 
 	g_thread_init(NULL);
 	gdk_threads_init();
 	gtk_init (&argc, &argv);
+	accel = gtk_accel_group_new();/**/
 
 	p_ui		= (DRAW_UI_P)g_malloc0(sizeof(DRAW_UI));
 	p_config	= (CONFIG_P)g_malloc0(sizeof(CONFIG));
@@ -50,9 +54,7 @@ int main (int argc, char *argv[])
 
 	p_ui->p_tmp_config->fd_config = open ("default.cfg", O_RDWR);
 	if (p_ui->p_tmp_config->fd_config < 0)
-	{
 		g_print("error open config file\n");
-	}
 	else 
 		g_print("success open config file\n");
 
@@ -63,6 +65,21 @@ int main (int argc, char *argv[])
 	gtk_widget_show (window);
 
 	g_print("float = %d, double= %d\n", sizeof(gfloat), sizeof(gdouble));
+
+	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) p_ui, NULL);
+	gtk_accel_group_connect(accel, GDK_F7, 0, GTK_ACCEL_VISIBLE, closure);
+	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) p_ui, NULL);
+	gtk_accel_group_connect(accel, GDK_F8, 0, GTK_ACCEL_VISIBLE, closure);
+	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) p_ui, NULL);
+	gtk_accel_group_connect(accel, GDK_F9, 0, GTK_ACCEL_VISIBLE, closure);
+	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) p_ui, NULL);
+	gtk_accel_group_connect(accel, GDK_F10, 0, GTK_ACCEL_VISIBLE, closure);
+	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) p_ui, NULL);
+	gtk_accel_group_connect(accel, GDK_F11, 0, GTK_ACCEL_VISIBLE, closure);
+	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) p_ui, NULL);
+	gtk_accel_group_connect(accel, GDK_F12, 0, GTK_ACCEL_VISIBLE, closure);
+
+	gtk_window_add_accel_group(GTK_WINDOW(window), accel);
 
 	gdk_threads_enter();
 	gtk_main();

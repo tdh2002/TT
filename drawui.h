@@ -18,5 +18,14 @@ extern gboolean (*button20_fun[5])(GtkWidget *widget, GdkEventFocus *event,	gpoi
 extern void (*button3_fun[6])(GtkButton *button, gpointer data);
 extern gboolean (*data_fun[6])(GtkWidget *widget, GdkEventButton *event,	gpointer user_data);
 
-extern void data_100 (GtkSpinButton *spinbutton, gpointer data);	/**/
+extern void data_100 (GtkSpinButton *spinbutton, gpointer data);	/*100*/
+extern void data_101 (GtkSpinButton *spinbutton, gpointer data);	/*101*/
+extern void data_102 (GtkSpinButton *spinbutton, gpointer data);	/*102*/
+extern void data_103 (GtkSpinButton *spinbutton, gpointer data);	/*103*/
+extern void data_104 (GtkSpinButton *spinbutton, gpointer data);	/*104*/
+
+extern gboolean foo (GtkAccelGroup *accel_group, GObject *acceleratable,
+		guint keyval, GdkModifierType modifier, gpointer data);
+
+
 #endif

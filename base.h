@@ -44,13 +44,13 @@ typedef struct Part {
 	guint	Geometry;		/*集合形状 FLAT/ID/OD*/
 	guint	Thickness;		/*厚度*/
 	guint	Diameter;		/*直径*/
-	guint	Volecity;		/*声速*/
+	guint	Velocity;		/*声速 ( 0.1 m )/s */
 	guint	Material;		/*材料*/
 } PART, *PART_P;
 
 /*材料 (Material)*/
 typedef struct Material {
-	guint	Volecity;		/*声速*/
+	guint	Velocity;		/*声速 */
 	guint	Name[20];		/*材料名字*/
 } MATERIAL, *MATERIAL_P;
 
@@ -61,10 +61,10 @@ typedef	struct Config {
 	PROBE	probe;
 	WEDGE	wedge;
 	PART	part;
-	gint	gain;			/*增益 0.1dB 单位*/
-	guint	range;			/*显示范围 以0.01mm为单位*/
-	gint	start;			/*扫描延时 以0.01mm为单位*/
-	gint	wedge_delay;	/*楔款延时 以0.01mm为单位*/
+	gshort	gain;			/*增益 0.1dB 单位*/
+	gint	start;			/*扫描延时 以0.01 μs为单位*/
+	guint	range;			/*显示范围 以0.01 μs为单位*/
+	guint	wedge_delay;	/*楔款延时 以0.01 μs为单位*/
 	
 	/*发射*/
 	gint	pulser;
@@ -128,12 +128,12 @@ typedef	struct Config {
 	guint	display;		/*显示模式 A B C A+B A+B+C A+S ...*/
 	guint	c_scan;			/*c扫描参考*/
 
-	guchar	ut_unit;		/*单位 mm(0) or inch(1) or ..*/
+	guchar	ut_unit;		/*检测单位 时间2 声程1 实际深度0 .*/
 	guint	color;			/**/
 	
 
 	/*选项*/
-	guint	unit;
+	guchar	unit;
 	guint	bright;
 
 	guint	date;			/**/
@@ -145,6 +145,9 @@ typedef	struct Config {
 typedef struct tmp_config {
 	guchar	db_reg;			/*增益步进*/
 	guchar	start_reg;		/*start ? 扫描延时步进*/
+	guchar	range_reg;		/*范围(range) 步进 */
+	guchar	wedge_delay_reg;		/*楔块延时(wedge_delay) 步进 */
+	guchar	velocity_reg;		/*声速(velocity) 步进 */
 
 	gint	fd_config;
 
@@ -165,6 +168,9 @@ typedef struct Draw_interface {
 	guint			pos_qty;
 	guint			pos1[10];
 	guint			pos2[10][5];
+	guint			pos_last;
+	guint			pos_last1;
+	guint			pos_last2;
 	GdkColor		col;
 	GtkAdjustment	*adj;
 	GSList			*group;
