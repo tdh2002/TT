@@ -41,6 +41,8 @@ void data_102 (GtkSpinButton *spinbutton, gpointer data);
 void data_103 (GtkSpinButton *spinbutton, gpointer data);
 void data_104 (GtkSpinButton *spinbutton, gpointer data);
 
+void data_110 (GtkSpinButton *spinbutton, gpointer data);
+
 /*二级菜单5个按钮的回调函数*/
 /*button click 回调函数*/
 void (*button2_fun[5])(GtkButton *button, gpointer data) = 
@@ -162,9 +164,10 @@ void b3_fun0(DRAW_UI_P p)
 				{
 					case 0:
 						(p->p_tmp_config->db_reg > 0) ? p->p_tmp_config->db_reg-- : (p->p_tmp_config->db_reg = 4);
-//						g_stpcpy(temp, gtk_button_get_label(GTK_BUTTON(p->button3[0])));
-//						g_print("%s", temp);/*Δ*/
 
+						break;
+					case 1:
+						(p->p_tmp_config->pulser_reg > 0) ? p->p_tmp_config->pulser_reg-- : (p->p_tmp_config->pulser_reg = 3);
 						break;
 					default:break;
 				}
@@ -180,16 +183,13 @@ void b3_fun0(DRAW_UI_P p)
 		g_object_set (( (p->data[0])), "editable", TRUE, NULL); 
 	return ;
 	}
+#endif
 	gtk_widget_set_can_focus (p->data[0], TRUE);
-	g_object_set (( (p->data[0])), "editable", FALSE, NULL); 
 	if ( p->data[p->pos2[p->pos][p->pos1[p->pos]]] &&
 			gtk_widget_get_can_focus( p->data[p->pos2[p->pos][p->pos1[p->pos]]]) ) ;
 		g_object_set ( p->data[p->pos2[p->pos][p->pos1[p->pos]]],			
 				"is-focus", TRUE,	NULL); 
-	g_object_set (( (p->data[0])), "editable", TRUE, NULL); 
 	gtk_widget_set_can_focus (p->data[0], FALSE);
-#endif
-	g_print("db_reg= %d\n", p->p_tmp_config->db_reg);
 }
 
 void b3_fun1(DRAW_UI_P p)
@@ -269,6 +269,8 @@ void b3_fun3(DRAW_UI_P p)
 						(p->p_tmp_config->wedge_delay_reg > 0) ? p->p_tmp_config->wedge_delay_reg-- : (p->p_tmp_config->wedge_delay_reg = 2);
 
 						break;
+					case 2:
+						p->p_config->video_filter = !p->p_config->video_filter;
 					default:break;
 				}
 				break;
@@ -474,6 +476,14 @@ void data_104 (GtkSpinButton *spinbutton, gpointer data) /*声速 Velocity */
 {
 	DRAW_UI_P p = (DRAW_UI_P)(data);
 	p->p_config->part.Velocity = (guint) (gtk_spin_button_get_value (spinbutton) * 10.0);
+
+	/*发送增益给硬件*/
+}
+
+void data_110 (GtkSpinButton *spinbutton, gpointer data) /*声速 Velocity */
+{
+	DRAW_UI_P p = (DRAW_UI_P)(data);
+	p->p_config->pulser =  (guchar) (gtk_spin_button_get_value (spinbutton));
 
 	/*发送增益给硬件*/
 }

@@ -25,7 +25,7 @@ static const gchar *content_en20[] = {
 
 static const gchar *content_en21[] = {
 	/* 二级菜单第1页 */
-	"  General  ","  Pulser  ", "  Receiver  ","  Beam  ", "  Advanced  "
+	"General", "Pulser", "Receiver", "Beam", "Advanced"
 };
 
 static const gchar *content_en22[] = {
@@ -77,17 +77,17 @@ static const gchar *content_en29[] = {
 
 static const gchar *content_en200[] = {
 	/* 二级菜单第0页下的第0页三级菜单 */
-	"  Back  ","  Start  ", NULL, NULL, NULL, NULL
+	"Back", "Start", NULL, NULL, NULL, NULL
 };
 
 static const gchar *content_en201[] = {
 	/* 二级菜单第0页下的第1页三级菜单 */
-	"  Back  ","  Start  ", NULL, NULL, NULL, NULL
+	"Back", "Start", NULL, NULL, NULL, NULL
 };
 
 static const gchar *content_en202[] = {
 	/* 二级菜单第0页下的第2页三级菜单 */
-	"  Back  ","  Start  ", "  Type  ","  Mode  ", "  Clear Calib  ", NULL
+	"Back", "Start", "Type", "Mode", "Clear Calib", NULL
 };
 
 static const gchar *content_en203[] = {
@@ -104,34 +104,34 @@ static const gchar *content_en204[] = {
 
 static const gchar *content_en210[] = {
 	/* 二级菜单第1页下的第0页三级菜单 */
-	"Gain", "Start", "  Range  ","  Wedge Delay  ", "  Velocity  ", NULL
+	"Gain", "Start", "Range", "Wedge Delay" , "Velocity",  NULL
 };
 
 static const gchar *content_en211[] = {
 	/* 二级菜单第1页下的第1页三级菜单 */
-	"Pulser","  Tx/Rx mode  ", "  Freq.(MHz)  ","  Voltage(V)  ", "  PW(ns)  ", "  PRF  "
+	"Pulser" , "Tx/Rx mode", "Freq.(MHz)", "Voltage(V)", "PW(ns)" , "Max PRF"
 };
 
 static const gchar *content_en212[] = {
 	/* 二级菜单第1页下的第2页三级菜单 */
-	"  Receiver  ","  Filter  ", "  Rectifier  ","  Video Filter  ", "  Averaging  ", "  Reject  "
+	"Receiver", "Filter", "Rectifier", "Video Filter", "Averaging", "Reject"
 };
 
 static const gchar *content_en213[] = {
 	/* 二级菜单第1页下的第3页三级菜单 */
-	"  Scan Offset  ","  Indes Offset  ", "  Angle(deg.)  ","  Skew(deg.)  ", "  Beam Delay  ", "  Gain Offset  "
+	"Scan Offset", "Indes Offset", "Angle(deg.)", "Skew(deg.)", "Beam Delay", "Gain Offset"
 };
 
 static const gchar *content_en214[] = {
 	/* 二级菜单第1页下的第4页三级菜单 */
-	"  Set 80%  ","  Set Ref.  ", "  dB Ref.  ","  Points Qty.  ", "  Scale Factor  ", "  Sum Gain  "
+	"Set 80%", "Set Ref.", "dB Ref.", "Points Qty.", "Scale Factor", "Sum Gain"
 };
 
 
 
 static const gchar *content_en220[] = {
 	/* 二级菜单第2页下的第0页三级菜单 */
-	"  Gate  ","  Parameters  ", "  Start  ","  Width  ", "  Threshold ", NULL
+	"Gate", "Parameters", "Start", "Width", "Threshold", NULL
 };
 
 static const gchar *content_en221[] = {

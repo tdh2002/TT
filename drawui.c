@@ -249,12 +249,54 @@ void draw3_data0(DRAW_UI_P p)
 					g_signal_connect(G_OBJECT(p->data[0]), "value-changed", 
 							G_CALLBACK(data_100), (gpointer) (p));
 					//					 gtk_widget_set_can_focus (p->data[0], FALSE);
-					//					 g_signal_connect(G_OBJECT(p->data[0]), "button-press-event", 
-					//							 G_CALLBACK(data_fun[0]), (gpointer) (p));
+					//g_signal_connect(G_OBJECT(p->data[0]), "button-press-event", 
+				//		G_CALLBACK(data_fun[0]), (gpointer) (p));
 					break;
 				case 1:/*发射 Pulser*/
+					/*当前步进*/
+					switch (p->p_tmp_config->pulser_reg)
+					{
+						case 0:	tmpf = 0.0; break;
+						case 1:	tmpf = 1.0; break;
+						case 2:	tmpf = 10.0; break;
+						case 3:	tmpf = 100.0; break;
+						default:break;
+					}
+					if (p->pos2[p->pos][p->pos1[p->pos]] == 0)
+						g_sprintf (temp,"%s\n(1 to 100) Δ%d", con2_p[1][1][0], (guint)(tmpf));
+					else 
+						g_sprintf (temp,"%s\n(1 to 100)", con2_p[1][1][0]);
+
+					gtk_button_set_label (GTK_BUTTON (p->button3[0]), temp);
+					gtk_widget_modify_bg (p->button3[0], GTK_STATE_NORMAL, &color_button1);
+					gtk_widget_show (p->button3[0]);
+
+					p->adj = (GtkAdjustment *) gtk_adjustment_new
+						(p->p_config->pulser , 0.0, 100.0, tmpf, 10.0, 0.0);
+					p->data[0] = gtk_spin_button_new (p->adj, 0, 0);
+					gtk_box_pack_start (GTK_BOX (p->vbox221[0]), p->data[0], FALSE, FALSE, 0);
+					gtk_widget_set_size_request(GTK_WIDGET(p->data[0]), 115, 29);
+					gtk_widget_show(p->data[0]);
+					g_signal_connect(G_OBJECT(p->data[0]), "value-changed", 
+							G_CALLBACK(data_110), (gpointer) (p));
+
 					break;
-				case 2:break;
+				case 2:
+					g_sprintf (temp,"%s\n(1 to 100)", con2_p[1][2][0]);
+
+					gtk_button_set_label (GTK_BUTTON (p->button3[0]), temp);
+					gtk_widget_modify_bg (p->button3[0], GTK_STATE_NORMAL, &color_button1);
+					gtk_widget_show (p->button3[0]);
+
+					p->adj = (GtkAdjustment *) gtk_adjustment_new
+						(p->p_config->pulser , p->p_config->pulser, p->p_config->pulser, 1.0, 10.0, 0.0);
+					p->data[0] = gtk_spin_button_new (p->adj, 0, 0);
+					gtk_box_pack_start (GTK_BOX (p->vbox221[0]), p->data[0], FALSE, FALSE, 0);
+					gtk_widget_set_size_request(GTK_WIDGET(p->data[0]), 115, 29);
+					gtk_widget_show(p->data[0]);
+//					g_signal_connect(G_OBJECT(p->data[0]), "value-changed", 
+//							G_CALLBACK(data_110), (gpointer) (p));
+					break;
 				case 3:break;
 				case 4:break;
 				default:break;
@@ -416,9 +458,40 @@ void draw3_data1(DRAW_UI_P p)
 					g_signal_connect(G_OBJECT(p->data[1]), "value-changed", 
 							G_CALLBACK(data_101), (gpointer) (p));
 					break;
-				case 1:
+				case 1:/*Tx/Rx mode*/
+					g_sprintf (temp, "%s", con2_p[1][1][1]);
+
+					gtk_button_set_label (GTK_BUTTON (p->button3[1]), temp);
+					gtk_widget_modify_bg (p->button3[1], GTK_STATE_NORMAL, &color_button1);
+					gtk_widget_show (p->button3[1]);
+
+					p->data[1] = gtk_combo_box_new_text();
+					gtk_combo_box_append_text(GTK_COMBO_BOX (p->data[1]), "PC Pitch-and-Catch");
+					gtk_combo_box_append_text(GTK_COMBO_BOX (p->data[1]), "PE pulse-Echo");
+					gtk_combo_box_append_text(GTK_COMBO_BOX (p->data[1]), "TT Through-Transmission");
+					gtk_combo_box_set_active(GTK_COMBO_BOX (p->data[1]), 0);
+					gtk_widget_set_size_request(GTK_WIDGET(p->data[1]), 115, 29);
+					gtk_box_pack_start (GTK_BOX (p->vbox221[1]), p->data[1], FALSE, FALSE, 0);
+					gtk_widget_show(p->data[1]);
+
 					break;
-				case 2:break;
+				case 2:/*Filter 滤波*/
+					g_sprintf (temp, "%s", con2_p[1][2][1]);
+
+					gtk_button_set_label (GTK_BUTTON (p->button3[1]), temp);
+					gtk_widget_modify_bg (p->button3[1], GTK_STATE_NORMAL, &color_button1);
+					gtk_widget_show (p->button3[1]);
+
+					p->data[1] = gtk_combo_box_new_text();
+					gtk_combo_box_append_text(GTK_COMBO_BOX (p->data[1]), "None (0.5-21.0 Mhz)");
+					gtk_combo_box_append_text(GTK_COMBO_BOX (p->data[1]), "Auto");
+					gtk_combo_box_append_text(GTK_COMBO_BOX (p->data[1]), "1 Mhz");
+					gtk_combo_box_set_active(GTK_COMBO_BOX (p->data[1]), 0);
+					gtk_widget_set_size_request(GTK_WIDGET(p->data[1]), 115, 29);
+					gtk_box_pack_start (GTK_BOX (p->vbox221[1]), p->data[1], FALSE, FALSE, 0);
+					gtk_widget_show(p->data[1]);
+
+					break;
 				case 3:break;
 				case 4:break;
 				default:break;
@@ -583,9 +656,43 @@ void draw3_data2(DRAW_UI_P p)
 					g_signal_connect(G_OBJECT(p->data[2]), "value-changed", 
 							G_CALLBACK(data_102), (gpointer) (p));
 					break;
-				case 1:
+				case 1:/*Tx/Rx mode*/
+					g_sprintf (temp, "%s", con2_p[1][1][2]);
+
+					gtk_button_set_label (GTK_BUTTON (p->button3[2]), temp);
+					gtk_widget_modify_bg (p->button3[2], GTK_STATE_NORMAL, &color_button1);
+					gtk_widget_show (p->button3[2]);
+
+					p->data[2] = gtk_combo_box_new_text();
+					gtk_widget_modify_bg (gtk_bin_get_child(GTK_BIN (p->data[2])), 
+							GTK_STATE_NORMAL, &color_button1);
+					gtk_combo_box_append_text(GTK_COMBO_BOX (p->data[2]), "1");
+					gtk_combo_box_append_text(GTK_COMBO_BOX (p->data[2]), "1.5");
+					gtk_combo_box_append_text(GTK_COMBO_BOX (p->data[2]), "2");
+					gtk_combo_box_append_text(GTK_COMBO_BOX (p->data[2]), "20");
+					gtk_combo_box_set_active(GTK_COMBO_BOX (p->data[2]), 0);
+					gtk_widget_set_size_request(GTK_WIDGET(p->data[2]), 115, 29);
+					gtk_box_pack_start (GTK_BOX (p->vbox221[2]), p->data[2], FALSE, FALSE, 0);
+					gtk_widget_show(p->data[2]);
+
 					break;
-				case 2:break;
+				case 2: /*检波*/
+					g_sprintf (temp, "%s", con2_p[1][2][2]);
+
+					gtk_button_set_label (GTK_BUTTON (p->button3[2]), temp);
+					gtk_widget_modify_bg (p->button3[2], GTK_STATE_NORMAL, &color_button1);
+					gtk_widget_show (p->button3[2]);
+
+					p->data[2] = gtk_combo_box_new_text();
+					gtk_combo_box_append_text(GTK_COMBO_BOX (p->data[2]), "RF");
+					gtk_combo_box_append_text(GTK_COMBO_BOX (p->data[2]), "HW +");
+					gtk_combo_box_append_text(GTK_COMBO_BOX (p->data[2]), "HW -");
+					gtk_combo_box_append_text(GTK_COMBO_BOX (p->data[2]), "FW");
+					gtk_combo_box_set_active(GTK_COMBO_BOX (p->data[2]), 0);
+					gtk_widget_set_size_request(GTK_WIDGET(p->data[2]), 115, 29);
+					gtk_box_pack_start (GTK_BOX (p->vbox221[2]), p->data[2], FALSE, FALSE, 0);
+					gtk_widget_show(p->data[2]);
+					break;
 				case 3:break;
 				case 4:break;
 				default:break;
@@ -735,9 +842,40 @@ void draw3_data3(DRAW_UI_P p)
 					g_signal_connect(G_OBJECT(p->data[3]), "value-changed", 
 							G_CALLBACK(data_103), (gpointer) (p));
 					break;
-				case 1:
+				case 1: /*电压 功率 福特*/
+					g_sprintf (temp, "%s", con2_p[1][1][3]);
+
+					gtk_button_set_label (GTK_BUTTON (p->button3[3]), temp);
+					gtk_widget_modify_bg (p->button3[3], GTK_STATE_NORMAL, &color_button1);
+					gtk_widget_show (p->button3[3]);
+
+					p->data[3] = gtk_combo_box_new_text();
+					gtk_widget_modify_bg (gtk_bin_get_child(GTK_BIN (p->data[3])), 
+							GTK_STATE_NORMAL, &color_button1);
+					gtk_combo_box_append_text(GTK_COMBO_BOX (p->data[3]), "45 Low");
+					gtk_combo_box_append_text(GTK_COMBO_BOX (p->data[3]), "90 High");
+					gtk_combo_box_set_active(GTK_COMBO_BOX (p->data[3]), 0);
+					gtk_widget_set_size_request(GTK_WIDGET(p->data[3]), 115, 29);
+					gtk_box_pack_start (GTK_BOX (p->vbox221[3]), p->data[3], FALSE, FALSE, 0);
+					gtk_widget_show(p->data[3]);
+
 					break;
-				case 2:break;
+				case 2: /*视频滤波 video filter*/
+					g_sprintf (temp, "%s", con2_p[1][2][3]);
+
+					gtk_button_set_label (GTK_BUTTON (p->button3[3]), temp);
+					gtk_widget_modify_bg (p->button3[3], GTK_STATE_NORMAL, &color_button1);
+					gtk_widget_show (p->button3[3]);
+					if (!p->p_config->video_filter)
+						p->data[3] = gtk_label_new("On");
+					else
+						p->data[3] = gtk_label_new("Off");
+
+					gtk_widget_set_size_request(GTK_WIDGET(p->data[3]), 115, 29);
+					gtk_box_pack_start (GTK_BOX (p->vbox221[3]), p->data[3], FALSE, FALSE, 0);
+					gtk_widget_show(p->data[3]);
+
+					break;
 				case 3:break;
 				case 4:break;
 				default:break;
@@ -888,9 +1026,41 @@ void draw3_data4(DRAW_UI_P p)
 					g_signal_connect(G_OBJECT(p->data[4]), "value-changed", 
 							G_CALLBACK(data_104), (gpointer) (p));
 					break;
-				case 1:
+				case 1: /*脉冲宽度 pulser width*/
+					g_sprintf (temp, "%s", con2_p[1][1][4]);
+
+					gtk_button_set_label (GTK_BUTTON (p->button3[4]), temp);
+					gtk_widget_modify_bg (p->button3[4], GTK_STATE_NORMAL, &color_button1);
+					gtk_widget_show (p->button3[4]);
+
+					p->data[4] = gtk_combo_box_new_text();
+					gtk_combo_box_append_text(GTK_COMBO_BOX (p->data[4]), "Auto");
+					gtk_combo_box_append_text(GTK_COMBO_BOX (p->data[4]), "User define");
+					gtk_combo_box_set_active(GTK_COMBO_BOX (p->data[4]), 0);
+					gtk_widget_set_size_request(GTK_WIDGET(p->data[4]), 115, 29);
+					gtk_box_pack_start (GTK_BOX (p->vbox221[4]), p->data[4], FALSE, FALSE, 0);
+					gtk_widget_show(p->data[4]);
+
 					break;
-				case 2:break;
+				case 2: /*平均 averaging*/
+					g_sprintf (temp, "%s", con2_p[1][2][4]);
+
+					gtk_button_set_label (GTK_BUTTON (p->button3[4]), temp);
+					gtk_widget_modify_bg (p->button3[4], GTK_STATE_NORMAL, &color_button1);
+					gtk_widget_show (p->button3[4]);
+
+					p->data[4] = gtk_combo_box_new_text();
+					gtk_combo_box_append_text(GTK_COMBO_BOX (p->data[4]), "1");
+					gtk_combo_box_append_text(GTK_COMBO_BOX (p->data[4]), "2");
+					gtk_combo_box_append_text(GTK_COMBO_BOX (p->data[4]), "4");
+					gtk_combo_box_append_text(GTK_COMBO_BOX (p->data[4]), "8");
+					gtk_combo_box_append_text(GTK_COMBO_BOX (p->data[4]), "16");
+					gtk_combo_box_set_active(GTK_COMBO_BOX (p->data[4]), 0);
+					gtk_widget_set_size_request(GTK_WIDGET(p->data[4]), 115, 29);
+					gtk_box_pack_start (GTK_BOX (p->vbox221[4]), p->data[4], FALSE, FALSE, 0);
+					gtk_widget_show(p->data[4]);
+
+					break;
 				case 3:break;
 				case 4:break;
 				default:break;
@@ -990,6 +1160,9 @@ void draw3_data4(DRAW_UI_P p)
 
 void draw3_data5(DRAW_UI_P p) 
 {
+	gchar temp[52];
+	gfloat tmpf;/**/
+
 	switch (p->pos) 
 	{
 		case 0:
@@ -1006,15 +1179,55 @@ void draw3_data5(DRAW_UI_P p)
 		case 1:
 			switch (p->pos1[1])
 			{
-				case 0:
-					//					 gtk_widget_set_can_focus (p->data[0], FALSE);
+				case 0: /*空白的地方*/
+					break;
+				case 1: /*重复频率*/
+					g_sprintf (temp, "%s", con2_p[1][1][5]);
 
-					//					 g_signal_connect(G_OBJECT(p->data[0]), "button-press-event", 
-					//							 G_CALLBACK(data_fun[0]), (gpointer) (p));
+					gtk_button_set_label (GTK_BUTTON (p->button3[5]), temp);
+					gtk_widget_modify_bg (p->button3[5], GTK_STATE_NORMAL, &color_button1);
+					gtk_widget_show (p->button3[5]);
+
+					p->data[5] = gtk_combo_box_new_text();
+					gtk_widget_modify_bg (gtk_bin_get_child(GTK_BIN (p->data[5])), 
+							GTK_STATE_NORMAL, &color_button1);
+					gtk_combo_box_append_text(GTK_COMBO_BOX (p->data[5]), "Auto Max");
+					gtk_combo_box_append_text(GTK_COMBO_BOX (p->data[5]), "Max/2");
+					gtk_combo_box_append_text(GTK_COMBO_BOX (p->data[5]), "Optimum");
+					gtk_combo_box_append_text(GTK_COMBO_BOX (p->data[5]), "User define");
+					gtk_combo_box_set_active(GTK_COMBO_BOX (p->data[5]), 0);
+					gtk_widget_set_size_request(GTK_WIDGET(p->data[5]), 115, 29);
+					gtk_box_pack_start (GTK_BOX (p->vbox221[5]), p->data[5], FALSE, FALSE, 0);
+					gtk_widget_show(p->data[5]);
+
 					break;
-				case 1:
+				case 2:
+					switch (p->p_tmp_config->reject_reg)
+					{
+						case 0:	tmpf = 0.0; break;
+						case 1:	tmpf = 1.0; break;
+						case 2:	tmpf = 10.0; break;
+						case 3:	tmpf = 100.0; break;
+						default:break;
+					}
+					if (p->pos2[p->pos][p->pos1[p->pos]] == 5)
+						g_sprintf (temp,"%s\n(1 to 100) Δ%d", con2_p[1][2][5], (guint)(tmpf));
+					else 
+						g_sprintf (temp,"%s\n(1 to 100)", con2_p[1][2][5]);
+
+					gtk_button_set_label (GTK_BUTTON (p->button3[5]), temp);
+					gtk_widget_modify_bg (p->button3[5], GTK_STATE_NORMAL, &color_button1);
+					gtk_widget_show (p->button3[5]);
+
+					p->adj = (GtkAdjustment *) gtk_adjustment_new
+						(p->p_config->pulser , 0.0, 100.0, tmpf, 10.0, 0.0);
+					p->data[5] = gtk_spin_button_new (p->adj, 0, 0);
+					gtk_box_pack_start (GTK_BOX (p->vbox221[5]), p->data[5], FALSE, FALSE, 0);
+					gtk_widget_set_size_request(GTK_WIDGET(p->data[5]), 115, 29);
+					gtk_widget_show(p->data[5]);
+					g_signal_connect(G_OBJECT(p->data[5]), "value-changed", 
+							G_CALLBACK(data_110), (gpointer) (p));
 					break;
-				case 2:break;
 				case 3:break;
 				case 4:break;
 				default:break;
@@ -1136,7 +1349,7 @@ void draw_3_menu(DRAW_UI_P p)
 			   */
 
 			if (i == 0)
-				draw3_data0(p);
+				draw3_data0(p);		/*第一个数值*/
 			else if (i == 1)
 				draw3_data1(p);
 			else if (i == 2)
@@ -1193,6 +1406,8 @@ void draw_3_menu(DRAW_UI_P p)
 		}
 	}
 	gtk_widget_modify_bg (p->button3[p->pos2[p->pos][p->pos1[p->pos]]],
+			GTK_STATE_NORMAL, &color_button0);
+	gtk_widget_modify_bg (p->data[p->pos2[p->pos][p->pos1[p->pos]]],
 			GTK_STATE_NORMAL, &color_button0);
 #if 0
 	g_object_set ( p->data[p->pos2[p->pos][p->pos1[p->pos]]],

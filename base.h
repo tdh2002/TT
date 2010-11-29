@@ -67,7 +67,7 @@ typedef	struct Config {
 	guint	wedge_delay;	/*楔款延时 以0.01 μs为单位*/
 	
 	/*发射*/
-	gint	pulser;
+	guchar	pulser;
 	gint	tx_rxmode;
 	gint	frequence;
 	gint	voltage;
@@ -78,7 +78,7 @@ typedef	struct Config {
 	gint	receiver;
 	gint	filter;
 	gint	rectifier;
-	gint	video_filter;
+	guchar	video_filter;	/**/
 	gint	averaging;
 	gint	recject;
 
@@ -148,6 +148,8 @@ typedef struct tmp_config {
 	guchar	range_reg;		/*范围(range) 步进 */
 	guchar	wedge_delay_reg;		/*楔块延时(wedge_delay) 步进 */
 	guchar	velocity_reg;		/*声速(velocity) 步进 */
+	guchar	pulser_reg;		/*脉冲发射pulser  步进 */
+	guchar	reject_reg;		/*抑制reject  步进 */
 
 	gint	fd_config;
 
