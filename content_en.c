@@ -119,7 +119,7 @@ static const gchar *content_en212[] = {
 
 static const gchar *content_en213[] = {
 	/* 二级菜单第1页下的第3页三级菜单 */
-	"Scan Offset", "Indes Offset", "Angle(deg.)", "Skew(deg.)", "Beam Delay", "Gain Offset"
+	"Scan Offset", "Index Offset", "Angle(deg.)", "Skew(deg.)", "Beam Delay", "Gain Offset"
 };
 
 static const gchar *content_en214[] = {

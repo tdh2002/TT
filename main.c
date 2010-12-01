@@ -31,6 +31,10 @@ int main (int argc, char *argv[])
 	g_thread_init(NULL);
 	gdk_threads_init();
 	gtk_init (&argc, &argv);
+
+	g_type_class_unref (g_type_class_ref (GTK_TYPE_IMAGE_MENU_ITEM));
+	g_object_set (gtk_settings_get_default (), "gtk-menu-bar-accel", NULL, NULL);
+
 	accel = gtk_accel_group_new();/**/
 
 	p_ui		= (DRAW_UI_P)g_malloc0(sizeof(DRAW_UI));
@@ -43,7 +47,7 @@ int main (int argc, char *argv[])
 	window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_decorated (GTK_WINDOW (window), FALSE);			/*不可以装饰*/
 	gtk_window_set_default_size (GTK_WINDOW(window), 800, 600);		/*设置窗口大小*/
-	gtk_window_fullscreen (GTK_WINDOW(window));						/*全屏幕*/
+//	gtk_window_fullscreen (GTK_WINDOW(window));						/*全屏幕*/
 	gtk_widget_modify_bg (window, GTK_STATE_NORMAL, &color_black);	/*黑色背景*/
 	g_signal_connect (G_OBJECT(window), "delete_event",
 			G_CALLBACK(gtk_main_quit), NULL);			/**/
@@ -66,21 +70,32 @@ int main (int argc, char *argv[])
 
 	g_print("float = %d, double= %d\n", sizeof(gfloat), sizeof(gdouble));
 
-#if 0	
-	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) p_ui, NULL);
+	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) NULL, NULL);
+	gtk_accel_group_connect(accel, GDK_F1, 0, GTK_ACCEL_VISIBLE, closure);
+	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) NULL, NULL);
+	gtk_accel_group_connect(accel, GDK_F2, 0, GTK_ACCEL_VISIBLE, closure);
+	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) NULL, NULL);
+	gtk_accel_group_connect(accel, GDK_F3, 0, GTK_ACCEL_VISIBLE, closure);
+	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) NULL, NULL);
+	gtk_accel_group_connect(accel, GDK_F4, 0, GTK_ACCEL_VISIBLE, closure);
+	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) NULL, NULL);
+	gtk_accel_group_connect(accel, GDK_F5, 0, GTK_ACCEL_VISIBLE, closure);
+	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) NULL, NULL);
+	gtk_accel_group_connect(accel, GDK_F6, 0, GTK_ACCEL_VISIBLE, closure);
+	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) NULL, NULL);
 	gtk_accel_group_connect(accel, GDK_F7, 0, GTK_ACCEL_VISIBLE, closure);
-	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) p_ui, NULL);
+	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) NULL, NULL);
 	gtk_accel_group_connect(accel, GDK_F8, 0, GTK_ACCEL_VISIBLE, closure);
-	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) p_ui, NULL);
+	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) NULL, NULL);
 	gtk_accel_group_connect(accel, GDK_F9, 0, GTK_ACCEL_VISIBLE, closure);
-	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) p_ui, NULL);
+	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) NULL, NULL);
 	gtk_accel_group_connect(accel, GDK_F10, 0, GTK_ACCEL_VISIBLE, closure);
-	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) p_ui, NULL);
+	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) NULL, NULL);
 	gtk_accel_group_connect(accel, GDK_F11, 0, GTK_ACCEL_VISIBLE, closure);
-	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) p_ui, NULL);
+	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) NULL, NULL);
 	gtk_accel_group_connect(accel, GDK_F12, 0, GTK_ACCEL_VISIBLE, closure);
 
-#endif	
+
 
 	gtk_window_add_accel_group(GTK_WINDOW(window), accel);
 

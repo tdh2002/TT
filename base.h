@@ -75,19 +75,19 @@ typedef	struct Config {
 	gint	prf;
 
 	/*接收*/
-	gint	receiver;
-	gint	filter;
-	gint	rectifier;
+	gint	receiver;		/**/
+	gint	filter;			/**/
+	gint	rectifier;		/**/
 	guchar	video_filter;	/**/
-	gint	averaging;
-	gint	recject;
+	gint	averaging;		/**/
+	guchar	reject;		/**/
 
 	/*波束 beam*/
-	gint	scan_offset;
-	gint	index_offset;
-	gint	angle;
-	guint	skew;
-	gint	beam_delay;
+	gint	scan_offset;		/**/
+	gint	index_offset;		/**/
+	gint	angle;				/**/
+	gint	skew;				/**/
+	guint	beam_delay;			/**/
 	gint	gain_offset;
 
 	/*高级*/
@@ -143,13 +143,18 @@ typedef	struct Config {
 } CONFIG, *CONFIG_P;
 
 typedef struct tmp_config {
-	guchar	db_reg;			/*增益步进*/
-	guchar	start_reg;		/*start ? 扫描延时步进*/
-	guchar	range_reg;		/*范围(range) 步进 */
-	guchar	wedge_delay_reg;		/*楔块延时(wedge_delay) 步进 */
+	guchar	db_reg;				/*增益步进*/
+	guchar	start_reg;			/*start ? 扫描延时步进*/
+	guchar	range_reg;			/*范围(range) 步进 */
+	guchar	wedge_delay_reg;	/*楔块延时(wedge_delay) 步进 */
 	guchar	velocity_reg;		/*声速(velocity) 步进 */
-	guchar	pulser_reg;		/*脉冲发射pulser  步进 */
-	guchar	reject_reg;		/*抑制reject  步进 */
+	guchar	pulser_reg;			/*脉冲发射pulser  步进 */
+	guchar	reject_reg;			/*抑制reject  步进 */
+	guchar	scanoffset_reg;		/*scan offset  步进 */
+	guchar	indexoffset_reg;	/*index offset  步进 */
+	guchar	gainoffset_reg;	/*gain offset  步进 */
+
+	guchar beam_delay_reg;		/*beam delay 步进*/
 
 	gint	fd_config;
 

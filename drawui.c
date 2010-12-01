@@ -297,8 +297,43 @@ void draw3_data0(DRAW_UI_P p)
 //					g_signal_connect(G_OBJECT(p->data[0]), "value-changed", 
 //							G_CALLBACK(data_110), (gpointer) (p));
 					break;
-				case 3:break;
-				case 4:break;
+				case 3:
+					switch (p->p_tmp_config->scanoffset_reg)
+					{
+						case 0:	tmpf = 0.01; break;
+						case 1:	tmpf = 0.1; break;
+						case 2:	tmpf = 1.0; break;
+						default:break;
+					}
+					if (p->pos2[p->pos][p->pos1[p->pos]] == 0)
+						g_sprintf (temp,"%s\n(mm) Δ%.2f", con2_p[1][3][0], tmpf);
+					else 
+						g_sprintf (temp,"%s\n(mm)", con2_p[1][3][0]);
+
+					gtk_button_set_label (GTK_BUTTON (p->button3[0]), temp);
+					gtk_widget_modify_bg (p->button3[0], GTK_STATE_NORMAL, &color_button1);
+					gtk_widget_show (p->button3[0]);
+
+					p->adj = (GtkAdjustment *) gtk_adjustment_new
+						(p->p_config->scan_offset / 100.0, -1000.0, 1000.0, tmpf, 10.0, 0.0);
+					p->data[0] = gtk_spin_button_new (p->adj, 0, 2);
+					gtk_box_pack_start (GTK_BOX (p->vbox221[0]), p->data[0], FALSE, FALSE, 0);
+					gtk_widget_set_size_request(GTK_WIDGET(p->data[0]), 115, 29);
+					gtk_widget_show(p->data[0]);
+					g_signal_connect(G_OBJECT(p->data[0]), "value-changed", 
+							G_CALLBACK(data_130), (gpointer) (p));
+					break;
+				case 4:
+					g_sprintf (temp,"%s", con2_p[1][4][0]);
+
+					gtk_button_set_label (GTK_BUTTON (p->button3[0]), temp);
+					gtk_widget_set_size_request(GTK_WIDGET(p->button3[0]), 115, 87);
+					gtk_widget_modify_bg (p->button3[0], GTK_STATE_NORMAL, &color_button1);
+					gtk_widget_show (p->button3[0]);
+
+//					g_signal_connect(G_OBJECT(p->data[0]), "value-changed", 
+//							G_CALLBACK(data_110), (gpointer) (p));
+					break;
 				default:break;
 			}
 			break;
@@ -492,7 +527,32 @@ void draw3_data1(DRAW_UI_P p)
 					gtk_widget_show(p->data[1]);
 
 					break;
-				case 3:break;
+				case 3:
+					switch (p->p_tmp_config->indexoffset_reg)
+					{
+						case 0:	tmpf = 0.01; break;
+						case 1:	tmpf = 0.1; break;
+						case 2:	tmpf = 1.0; break;
+						default:break;
+					}
+					if (p->pos2[p->pos][p->pos1[p->pos]] == 1)
+						g_sprintf (temp,"%s\n(mm) Δ%.2f", con2_p[1][3][1], tmpf);
+					else 
+						g_sprintf (temp,"%s\n(mm)", con2_p[1][3][1]);
+
+					gtk_button_set_label (GTK_BUTTON (p->button3[1]), temp);
+					gtk_widget_modify_bg (p->button3[1], GTK_STATE_NORMAL, &color_button1);
+					gtk_widget_show (p->button3[1]);
+
+					p->adj = (GtkAdjustment *) gtk_adjustment_new
+						(p->p_config->index_offset / 100.0, -1000.0, 1000.0, tmpf, 10.0, 0.0);
+					p->data[1] = gtk_spin_button_new (p->adj, 0, 2);
+					gtk_box_pack_start (GTK_BOX (p->vbox221[1]), p->data[1], FALSE, FALSE, 0);
+					gtk_widget_set_size_request(GTK_WIDGET(p->data[1]), 115, 29);
+					gtk_widget_show(p->data[1]);
+					g_signal_connect(G_OBJECT(p->data[1]), "value-changed", 
+							G_CALLBACK(data_131), (gpointer) (p));
+					break;
 				case 4:break;
 				default:break;
 			}
@@ -693,7 +753,22 @@ void draw3_data2(DRAW_UI_P p)
 					gtk_box_pack_start (GTK_BOX (p->vbox221[2]), p->data[2], FALSE, FALSE, 0);
 					gtk_widget_show(p->data[2]);
 					break;
-				case 3:break;
+				case 3:
+					g_sprintf (temp,"%s\n", con2_p[1][3][2]);
+
+					gtk_button_set_label (GTK_BUTTON (p->button3[2]), temp);
+					gtk_widget_modify_bg (p->button3[2], GTK_STATE_NORMAL, &color_button1);
+					gtk_widget_show (p->button3[2]);
+
+					p->adj = (GtkAdjustment *) gtk_adjustment_new
+						(p->p_config->angle / 10.0, 0.0, 0.0, 0.0, 10.0, 0.0);
+					p->data[2] = gtk_spin_button_new (p->adj, 0, 1);
+					gtk_box_pack_start (GTK_BOX (p->vbox221[2]), p->data[2], FALSE, FALSE, 0);
+					gtk_widget_set_size_request(GTK_WIDGET(p->data[2]), 115, 29);
+					gtk_widget_show(p->data[2]);
+					g_signal_connect(G_OBJECT(p->data[2]), "value-changed", 
+							G_CALLBACK(data_132), (gpointer) (p));
+					break;
 				case 4:break;
 				default:break;
 			}
@@ -871,12 +946,29 @@ void draw3_data3(DRAW_UI_P p)
 					else
 						p->data[3] = gtk_label_new("Off");
 
+					gtk_widget_modify_fg (p->data[3], GTK_STATE_NORMAL, &color_button1);
+
 					gtk_widget_set_size_request(GTK_WIDGET(p->data[3]), 115, 29);
 					gtk_box_pack_start (GTK_BOX (p->vbox221[3]), p->data[3], FALSE, FALSE, 0);
 					gtk_widget_show(p->data[3]);
 
 					break;
-				case 3:break;
+				case 3: /*Angle*/
+					g_sprintf (temp,"%s\n", con2_p[1][3][3]);
+
+					gtk_button_set_label (GTK_BUTTON (p->button3[3]), temp);
+					gtk_widget_modify_bg (p->button3[3], GTK_STATE_NORMAL, &color_button1);
+					gtk_widget_show (p->button3[3]);
+
+					p->adj = (GtkAdjustment *) gtk_adjustment_new
+						(p->p_config->skew / 10.0, 0.0, 0.0, 0.0, 10.0, 0.0);
+					p->data[3] = gtk_spin_button_new (p->adj, 0, 1);
+					gtk_box_pack_start (GTK_BOX (p->vbox221[3]), p->data[3], FALSE, FALSE, 0);
+					gtk_widget_set_size_request(GTK_WIDGET(p->data[3]), 115, 29);
+					gtk_widget_show(p->data[3]);
+					g_signal_connect(G_OBJECT(p->data[3]), "value-changed", 
+							G_CALLBACK(data_132), (gpointer) (p));
+					break;
 				case 4:break;
 				default:break;
 			}
@@ -1061,7 +1153,36 @@ void draw3_data4(DRAW_UI_P p)
 					gtk_widget_show(p->data[4]);
 
 					break;
-				case 3:break;
+				case 3: /*Beam delay*/
+					switch (p->p_tmp_config->beam_delay_reg)
+					{
+						case 0:	tmpf = 0.01; break;
+						case 1:	tmpf = 0.1; break;
+						case 2:	tmpf = 1.0; break;
+						default:break;
+					}
+					if (p->pos2[p->pos][p->pos1[p->pos]] == 4)
+						g_sprintf (temp,"%s\n(%s) Δ%.2f", 
+								con2_p[1][3][4], "μs", tmpf);
+					else 
+						g_sprintf (temp,"%s\n(%s)",
+								con2_p[1][3][4], "μs");
+
+					gtk_button_set_label (GTK_BUTTON (p->button3[4]), temp);
+					gtk_widget_modify_bg (p->button3[4], GTK_STATE_NORMAL, &color_button1);
+					gtk_widget_show (p->button3[4]);
+
+					p->adj = (GtkAdjustment *) gtk_adjustment_new
+						(p->p_config->beam_delay / 100.0, 
+						 0.0, 1000.0,
+						 tmpf, 10.0, 0.0);
+					p->data[4] = gtk_spin_button_new (p->adj, 0, 2);
+					gtk_box_pack_start (GTK_BOX (p->vbox221[4]), p->data[4], FALSE, FALSE, 0);
+					gtk_widget_set_size_request(GTK_WIDGET(p->data[4]), 115, 29);
+					gtk_widget_show(p->data[4]);
+					g_signal_connect(G_OBJECT(p->data[4]), "value-changed", 
+							G_CALLBACK(data_134), (gpointer) (p));
+					break;
 				case 4:break;
 				default:break;
 			}
@@ -1220,15 +1341,42 @@ void draw3_data5(DRAW_UI_P p)
 					gtk_widget_show (p->button3[5]);
 
 					p->adj = (GtkAdjustment *) gtk_adjustment_new
-						(p->p_config->pulser , 0.0, 100.0, tmpf, 10.0, 0.0);
+						(p->p_config->reject , 0.0, 100.0, tmpf, 10.0, 0.0);
 					p->data[5] = gtk_spin_button_new (p->adj, 0, 0);
 					gtk_box_pack_start (GTK_BOX (p->vbox221[5]), p->data[5], FALSE, FALSE, 0);
 					gtk_widget_set_size_request(GTK_WIDGET(p->data[5]), 115, 29);
 					gtk_widget_show(p->data[5]);
 					g_signal_connect(G_OBJECT(p->data[5]), "value-changed", 
-							G_CALLBACK(data_110), (gpointer) (p));
+							G_CALLBACK(data_125), (gpointer) (p));
 					break;
-				case 3:break;
+				case 3:
+					switch (p->p_tmp_config->gainoffset_reg)
+					{
+						case 0:	tmpf = 0.1; break;
+						case 1:	tmpf = 0.5; break;
+						case 2:	tmpf = 1.0; break;
+						case 3:	tmpf = 2.0; break;
+						case 4:	tmpf = 6.0; break;
+						default:break;
+					}
+					if (p->pos2[p->pos][p->pos1[p->pos]] == 5)
+						g_sprintf (temp,"%s\ndB Δ%.1f", con2_p[1][3][5], tmpf);
+					else 
+						g_sprintf (temp,"%s\ndB", con2_p[1][3][5]);
+
+					gtk_button_set_label (GTK_BUTTON (p->button3[5]), temp);
+					gtk_widget_modify_bg (p->button3[5], GTK_STATE_NORMAL, &color_button1);
+					gtk_widget_show (p->button3[5]);
+
+					p->adj = (GtkAdjustment *) gtk_adjustment_new
+						(p->p_config->gain_offset / 10.0, 0.0, 74.0, tmpf, 10.0, 0.0);
+					p->data[5] = gtk_spin_button_new (p->adj, 0, 1);
+					gtk_box_pack_start (GTK_BOX (p->vbox221[5]), p->data[5], FALSE, FALSE, 0);
+					gtk_widget_set_size_request(GTK_WIDGET(p->data[5]), 115, 29);
+					gtk_widget_show(p->data[5]);
+					g_signal_connect(G_OBJECT(p->data[5]), "value-changed", 
+							G_CALLBACK(data_135), (gpointer) (p));
+					break;
 				case 4:break;
 				default:break;
 			}

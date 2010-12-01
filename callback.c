@@ -42,6 +42,13 @@ void data_103 (GtkSpinButton *spinbutton, gpointer data);
 void data_104 (GtkSpinButton *spinbutton, gpointer data);
 
 void data_110 (GtkSpinButton *spinbutton, gpointer data);
+void data_125 (GtkSpinButton *spinbutton, gpointer data);
+
+void data_130 (GtkSpinButton *spinbutton, gpointer data);
+void data_131 (GtkSpinButton *spinbutton, gpointer data);
+void data_132 (GtkSpinButton *spinbutton, gpointer data);
+void data_134 (GtkSpinButton *spinbutton, gpointer data);
+void data_135 (GtkSpinButton *spinbutton, gpointer data);
 
 /*二级菜单5个按钮的回调函数*/
 /*button click 回调函数*/
@@ -169,6 +176,9 @@ void b3_fun0(DRAW_UI_P p)
 					case 1:
 						(p->p_tmp_config->pulser_reg > 0) ? p->p_tmp_config->pulser_reg-- : (p->p_tmp_config->pulser_reg = 3);
 						break;
+					case 3:
+						(p->p_tmp_config->scanoffset_reg > 0) ? p->p_tmp_config->scanoffset_reg-- : (p->p_tmp_config->scanoffset_reg = 2);
+						break;
 					default:break;
 				}
 				break;
@@ -205,7 +215,10 @@ void b3_fun1(DRAW_UI_P p)
 				{
 					case 0:
 						(p->p_tmp_config->start_reg > 0) ? p->p_tmp_config->start_reg-- : (p->p_tmp_config->start_reg = 2);
-
+					
+						break;
+					case 3:
+						(p->p_tmp_config->indexoffset_reg > 0) ? p->p_tmp_config->indexoffset_reg-- : (p->p_tmp_config->indexoffset_reg = 2);
 						break;
 					default:break;
 				}
@@ -236,7 +249,8 @@ void b3_fun2(DRAW_UI_P p)
 				{
 					case 0:
 						(p->p_tmp_config->range_reg > 0) ? p->p_tmp_config->range_reg-- : (p->p_tmp_config->range_reg = 2);
-
+						break;
+					case 3:
 						break;
 					default:break;
 				}
@@ -300,7 +314,9 @@ void b3_fun4(DRAW_UI_P p)
 				{
 					case 0:
 						(p->p_tmp_config->velocity_reg > 0) ? p->p_tmp_config->velocity_reg-- : (p->p_tmp_config->velocity_reg = 3);
-
+						break;
+					case 3:
+						(p->p_tmp_config->beam_delay_reg > 0) ? p->p_tmp_config->beam_delay_reg-- : (p->p_tmp_config->beam_delay_reg = 2);
 						break;
 					default:break;
 				}
@@ -320,6 +336,29 @@ void b3_fun4(DRAW_UI_P p)
 
 void b3_fun5(DRAW_UI_P p)
 {
+	/*处理微调*/
+	if (p->pos2[p->pos][p->pos1[p->pos]] == 5)
+		switch (p->pos) 
+		{
+			case 0:
+				break;
+			case 1:
+				switch (p->pos1[p->pos])
+				{
+					case 0:
+						break;
+					case 2:
+						(p->p_tmp_config->reject_reg > 0) ? p->p_tmp_config->reject_reg-- : (p->p_tmp_config->reject_reg = 2);
+						break;
+					case 3:
+						(p->p_tmp_config->gainoffset_reg > 0) ? p->p_tmp_config->gainoffset_reg-- : (p->p_tmp_config->gainoffset_reg = 2);
+						break;
+					default:break;
+				}
+				break;
+			default:break;
+
+		}
 	p->pos2[p->pos][p->pos1[p->pos]] = 5;
 	draw_3_menu(p);
 	gtk_widget_set_can_focus (p->data[5], TRUE);
@@ -333,20 +372,10 @@ void b3_fun5(DRAW_UI_P p)
 gboolean foo (GtkAccelGroup *accel_group, GObject *acceleratable,
 		guint keyval, GdkModifierType modifier, gpointer data)
 {
-	DRAW_UI_P p = (DRAW_UI_P)(data);
+//	DRAW_UI_P p = (DRAW_UI_P)(data);
 
-	switch ( keyval ) 
-	{
-		case GDK_F7:	b3_fun0(p);	break;
-		case GDK_F8:	b3_fun1(p);	break;
-		case GDK_F9:	b3_fun2(p);	break;
-		case GDK_F10:	b3_fun3(p);	break;
-		case GDK_F11:	b3_fun4(p);	break;
-		case GDK_F12:	b3_fun5(p);	break;
-		default: break;
-	}
+	g_print("%d  %c\n", keyval);
 
-	
 	return 0;
 }
 
@@ -484,6 +513,54 @@ void data_110 (GtkSpinButton *spinbutton, gpointer data) /*声速 Velocity */
 {
 	DRAW_UI_P p = (DRAW_UI_P)(data);
 	p->p_config->pulser =  (guchar) (gtk_spin_button_get_value (spinbutton));
+
+	/*发送增益给硬件*/
+}
+
+void data_125 (GtkSpinButton *spinbutton, gpointer data) /*抑制 Reject */
+{
+	DRAW_UI_P p = (DRAW_UI_P)(data);
+	p->p_config->reject =  (guchar) (gtk_spin_button_get_value (spinbutton));
+
+	/*发送增益给硬件*/
+}
+
+void data_130 (GtkSpinButton *spinbutton, gpointer data) /*scan offset */
+{
+	DRAW_UI_P p = (DRAW_UI_P)(data);
+	p->p_config->scan_offset =  (gint) (gtk_spin_button_get_value (spinbutton) * 100.0);
+
+	/*发送增益给硬件*/
+}
+
+void data_131 (GtkSpinButton *spinbutton, gpointer data) /*scan offset */
+{
+	DRAW_UI_P p = (DRAW_UI_P)(data);
+	p->p_config->index_offset =  (gint) (gtk_spin_button_get_value (spinbutton) * 100.0);
+
+	/*发送增益给硬件*/
+}
+
+void data_132 (GtkSpinButton *spinbutton, gpointer data) /*scan offset */
+{
+	DRAW_UI_P p = (DRAW_UI_P)(data);
+	p->p_config->angle =  (gint) (gtk_spin_button_get_value (spinbutton) * 10.0);
+
+	/*发送增益给硬件*/
+}
+
+void data_134 (GtkSpinButton *spinbutton, gpointer data) /*scan offset */
+{
+	DRAW_UI_P p = (DRAW_UI_P)(data);
+	p->p_config->beam_delay =  (guint) (gtk_spin_button_get_value (spinbutton) * 100.0);
+
+	/*发送增益给硬件*/
+}
+
+void data_135 (GtkSpinButton *spinbutton, gpointer data) /*gain offset */
+{
+	DRAW_UI_P p = (DRAW_UI_P)(data);
+	p->p_config->gain_offset =  (guint) (gtk_spin_button_get_value (spinbutton) * 10.0);
 
 	/*发送增益给硬件*/
 }
