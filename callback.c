@@ -50,6 +50,12 @@ void data_132 (GtkSpinButton *spinbutton, gpointer data);
 void data_134 (GtkSpinButton *spinbutton, gpointer data);
 void data_135 (GtkSpinButton *spinbutton, gpointer data);
 
+gboolean eventbox2_function0 (GtkWidget *widget, GdkEventButton *event,	gpointer data);
+gboolean eventbox2_function1 (GtkWidget *widget, GdkEventButton *event,	gpointer data);
+gboolean eventbox2_function2 (GtkWidget *widget, GdkEventButton *event,	gpointer data);
+gboolean eventbox2_function3 (GtkWidget *widget, GdkEventButton *event,	gpointer data);
+gboolean eventbox2_function4 (GtkWidget *widget, GdkEventButton *event,	gpointer data);
+
 /*二级菜单5个按钮的回调函数*/
 /*button click 回调函数*/
 void (*button2_fun[5])(GtkButton *button, gpointer data) = 
@@ -78,6 +84,12 @@ gboolean (*data_fun[6])(GtkWidget *widget, GdkEventButton *event, gpointer data)
 	data_function3,	data_function4,	data_function5
 };
 
+/*二级菜单 button press 回调函数*/
+gboolean (*eventbox2_fun[5])(GtkWidget *widget, GdkEventButton *event, gpointer data) = 
+{
+	eventbox2_function0,	eventbox2_function1,	eventbox2_function2,	
+	eventbox2_function3,	eventbox2_function4
+};
 
 /*5个二级菜单按钮的回调函数*/
 void b2_fun0(DRAW_UI_P p, gint pos)
@@ -157,216 +169,87 @@ gboolean button2_function04 (GtkWidget *widget,	GdkEventFocus *event,	gpointer  
 	return TRUE;
 }
 
+gboolean eventbox2_function0 (GtkWidget *widget, GdkEventButton *event,	gpointer data)
+{
+	DRAW_UI_P p = (DRAW_UI_P)(data);
+	b2_fun0(p, 0);
+	return TRUE;
+}
+
+gboolean eventbox2_function1 (GtkWidget *widget, GdkEventButton *event,	gpointer data)
+{
+	DRAW_UI_P p = (DRAW_UI_P)(data);
+	b2_fun0(p, 1);
+	return TRUE;
+}
+
+gboolean eventbox2_function2 (GtkWidget *widget, GdkEventButton *event,	gpointer data)
+{
+	DRAW_UI_P p = (DRAW_UI_P)(data);
+	b2_fun0(p, 2);
+	return TRUE;
+}
+
+gboolean eventbox2_function3 (GtkWidget *widget, GdkEventButton *event,	gpointer data)
+{
+	DRAW_UI_P p = (DRAW_UI_P)(data);
+	b2_fun0(p, 3);
+	return TRUE;
+}
+
+gboolean eventbox2_function4 (GtkWidget *widget, GdkEventButton *event,	gpointer data)
+{
+	DRAW_UI_P p = (DRAW_UI_P)(data);
+	b2_fun0(p, 4);
+	return TRUE;
+}
+
 /*6个数值区域共有的处理函数*/
 void b3_fun0(DRAW_UI_P p)
 {
 	/*处理微调*/
-	if (p->pos2[p->pos][p->pos1[p->pos]] == 0)
-		switch (p->pos) 
-		{
-			case 0:
-				break;
-			case 1:
-				switch (p->pos1[p->pos])
-				{
-					case 0:
-						(p->p_tmp_config->db_reg > 0) ? p->p_tmp_config->db_reg-- : (p->p_tmp_config->db_reg = 4);
-
-						break;
-					case 1:
-						(p->p_tmp_config->pulser_reg > 0) ? p->p_tmp_config->pulser_reg-- : (p->p_tmp_config->pulser_reg = 3);
-						break;
-					case 3:
-						(p->p_tmp_config->scanoffset_reg > 0) ? p->p_tmp_config->scanoffset_reg-- : (p->p_tmp_config->scanoffset_reg = 2);
-						break;
-					default:break;
-				}
-				break;
-			default:break;
-
-		}
 
 	p->pos2[p->pos][p->pos1[p->pos]] = 0;
 	draw_3_menu(p);
+
+	g_print("0000000000000\nooo\n00000000000000000\n");
 #if 0
-	if (gtk_widget_is_focus(p->data[0])) {
-		g_object_set (( (p->data[0])), "editable", TRUE, NULL); 
+	if (gtk_widget_is_focus(p->data3[0])) {
+		g_object_set (( (p->data3[0])), "editable", TRUE, NULL); 
 	return ;
 	}
 #endif
-	gtk_widget_set_can_focus (p->data[0], TRUE);
+	gtk_widget_set_can_focus (p->data3[0], TRUE);
 	if ( p->data[p->pos2[p->pos][p->pos1[p->pos]]] &&
 			gtk_widget_get_can_focus( p->data[p->pos2[p->pos][p->pos1[p->pos]]]) ) ;
-		g_object_set ( p->data[p->pos2[p->pos][p->pos1[p->pos]]],			
+		g_object_set ( p->data3[p->pos2[p->pos][p->pos1[p->pos]]],			
 				"is-focus", TRUE,	NULL); 
-	gtk_widget_set_can_focus (p->data[0], FALSE);
+	gtk_widget_set_can_focus (p->data3[0], FALSE);
 }
 
 void b3_fun1(DRAW_UI_P p)
 {
 	/*处理微调*/
-	if (p->pos2[p->pos][p->pos1[p->pos]] == 1)
-		switch (p->pos) 
-		{
-			case 0:
-				break;
-			case 1:
-				switch (p->pos1[p->pos])
-				{
-					case 0:
-						(p->p_tmp_config->start_reg > 0) ? p->p_tmp_config->start_reg-- : (p->p_tmp_config->start_reg = 2);
-					
-						break;
-					case 3:
-						(p->p_tmp_config->indexoffset_reg > 0) ? p->p_tmp_config->indexoffset_reg-- : (p->p_tmp_config->indexoffset_reg = 2);
-						break;
-					default:break;
-				}
-				break;
-			default:break;
-
-		}
-	p->pos2[p->pos][p->pos1[p->pos]] = 1;
-	draw_3_menu(p);
-	gtk_widget_set_can_focus (p->data[1], TRUE);
-	if ( p->data[p->pos2[p->pos][p->pos1[p->pos]]] &&
-			gtk_widget_get_can_focus( p->data[p->pos2[p->pos][p->pos1[p->pos]]]) )  
-		g_object_set ( p->data[p->pos2[p->pos][p->pos1[p->pos]]],			
-				"is-focus", TRUE,	NULL); 
-	gtk_widget_set_can_focus (p->data[1], FALSE);
 }
 
 void b3_fun2(DRAW_UI_P p)
 {
 	/*处理微调*/
-	if (p->pos2[p->pos][p->pos1[p->pos]] == 2)
-		switch (p->pos) 
-		{
-			case 0:
-				break;
-			case 1:
-				switch (p->pos1[p->pos])
-				{
-					case 0:
-						(p->p_tmp_config->range_reg > 0) ? p->p_tmp_config->range_reg-- : (p->p_tmp_config->range_reg = 2);
-						break;
-					case 3:
-						break;
-					default:break;
-				}
-				break;
-			default:break;
-
-		}
-	p->pos2[p->pos][p->pos1[p->pos]] = 2;
-	draw_3_menu(p);
-	gtk_widget_set_can_focus (p->data[2], TRUE);
-	if ( p->data[p->pos2[p->pos][p->pos1[p->pos]]] &&
-			gtk_widget_get_can_focus( p->data[p->pos2[p->pos][p->pos1[p->pos]]]) )  
-		g_object_set ( p->data[p->pos2[p->pos][p->pos1[p->pos]]],			
-				"is-focus", TRUE,	NULL); 
-	gtk_widget_set_can_focus (p->data[2], FALSE);
 }
 
 void b3_fun3(DRAW_UI_P p)
 {
 	/*处理微调*/
-	if (p->pos2[p->pos][p->pos1[p->pos]] == 3)
-		switch (p->pos) 
-		{
-			case 0:
-				break;
-			case 1:
-				switch (p->pos1[p->pos])
-				{
-					case 0:
-						(p->p_tmp_config->wedge_delay_reg > 0) ? p->p_tmp_config->wedge_delay_reg-- : (p->p_tmp_config->wedge_delay_reg = 2);
-
-						break;
-					case 2:
-						p->p_config->video_filter = !p->p_config->video_filter;
-					default:break;
-				}
-				break;
-			default:break;
-
-		}
-	p->pos2[p->pos][p->pos1[p->pos]] = 3;
-	draw_3_menu(p);
-	gtk_widget_set_can_focus (p->data[3], TRUE);
-	if ( p->data[p->pos2[p->pos][p->pos1[p->pos]]] &&
-			gtk_widget_get_can_focus( p->data[p->pos2[p->pos][p->pos1[p->pos]]]) )  
-		g_object_set ( p->data[p->pos2[p->pos][p->pos1[p->pos]]],			
-				"is-focus", TRUE,	NULL); 
-	gtk_widget_set_can_focus (p->data[3], FALSE);
 }
 
 void b3_fun4(DRAW_UI_P p)
 {
 	/*处理微调*/
-	if (p->pos2[p->pos][p->pos1[p->pos]] == 4)
-		switch (p->pos) 
-		{
-			case 0:
-				break;
-			case 1:
-				switch (p->pos1[p->pos])
-				{
-					case 0:
-						(p->p_tmp_config->velocity_reg > 0) ? p->p_tmp_config->velocity_reg-- : (p->p_tmp_config->velocity_reg = 3);
-						break;
-					case 3:
-						(p->p_tmp_config->beam_delay_reg > 0) ? p->p_tmp_config->beam_delay_reg-- : (p->p_tmp_config->beam_delay_reg = 2);
-						break;
-					default:break;
-				}
-				break;
-			default:break;
-
-		}
-	p->pos2[p->pos][p->pos1[p->pos]] = 4;
-	draw_3_menu(p);
-	gtk_widget_set_can_focus (p->data[4], TRUE);
-	if ( p->data[p->pos2[p->pos][p->pos1[p->pos]]] &&
-			gtk_widget_get_can_focus( p->data[p->pos2[p->pos][p->pos1[p->pos]]]) )  
-		g_object_set ( p->data[p->pos2[p->pos][p->pos1[p->pos]]],			
-				"is-focus", TRUE,	NULL); 
-	gtk_widget_set_can_focus (p->data[4], FALSE);
 }
 
 void b3_fun5(DRAW_UI_P p)
 {
 	/*处理微调*/
-	if (p->pos2[p->pos][p->pos1[p->pos]] == 5)
-		switch (p->pos) 
-		{
-			case 0:
-				break;
-			case 1:
-				switch (p->pos1[p->pos])
-				{
-					case 0:
-						break;
-					case 2:
-						(p->p_tmp_config->reject_reg > 0) ? p->p_tmp_config->reject_reg-- : (p->p_tmp_config->reject_reg = 2);
-						break;
-					case 3:
-						(p->p_tmp_config->gainoffset_reg > 0) ? p->p_tmp_config->gainoffset_reg-- : (p->p_tmp_config->gainoffset_reg = 2);
-						break;
-					default:break;
-				}
-				break;
-			default:break;
-
-		}
-	p->pos2[p->pos][p->pos1[p->pos]] = 5;
-	draw_3_menu(p);
-	gtk_widget_set_can_focus (p->data[5], TRUE);
-	if ( p->data[p->pos2[p->pos][p->pos1[p->pos]]] &&
-			gtk_widget_get_can_focus( p->data[p->pos2[p->pos][p->pos1[p->pos]]]) )  
-		g_object_set ( p->data[p->pos2[p->pos][p->pos1[p->pos]]],			
-				"is-focus", TRUE,	NULL); 
-	gtk_widget_set_can_focus (p->data[5], FALSE);
 }
 
 gboolean foo (GtkAccelGroup *accel_group, GObject *acceleratable,
@@ -374,7 +257,7 @@ gboolean foo (GtkAccelGroup *accel_group, GObject *acceleratable,
 {
 //	DRAW_UI_P p = (DRAW_UI_P)(data);
 
-	g_print("%d  %c\n", keyval);
+	g_print("%x  %c\n", keyval, keyval);
 
 	return 0;
 }

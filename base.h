@@ -21,6 +21,7 @@
 extern GdkColor	color_black;
 extern GdkColor	color_button0;
 extern GdkColor	color_button1;
+extern GdkColor	color_button2;
 
 /*探头(Probe)*/
 typedef struct Probe {
@@ -171,13 +172,13 @@ typedef struct Measure_data {
 
 /*画界面结构体*/
 typedef struct Draw_interface {
-	guint			pos;
-	guint			pos_qty;
-	guint			pos1[10];
-	guint			pos2[10][5];
-	guint			pos_last;
-	guint			pos_last1;
-	guint			pos_last2;
+	guchar			pos_pos;       /* 指示当前位置信息 0 2级停留 1 2级按下 2 3级停留 3 3级按下 */
+	guchar			pos;           /**/
+	guchar			pos1[10];
+	guchar			pos2[10][5];
+	guchar			pos_last;      /**/
+	guchar			pos_last1;     /**/
+	guchar			pos_last2;     /**/
 	GdkColor		col;
 	GtkAdjustment	*adj;
 	GSList			*group;
@@ -213,10 +214,15 @@ typedef struct Draw_interface {
 
 	GtkWidget		*menuitem[10];		/* 一级菜单选项*/
 
-	GtkWidget		*button2[6];		/* 二级菜单*/
+	GtkWidget		*eventbox2[5];      /* 二级菜单 一个 eventbox + 一个label */
+	GtkWidget		*label2[5];         /*  */
 
 	GtkWidget		*button3[6];		/* 三级菜单*/
 	GtkWidget		*data[6];			/* 三级菜单内容*/
+	GtkWidget		*eventbox30[6];     /* 三级菜单 二个 eventbox + 一个lable + 一个data*/
+	GtkWidget		*label3[6];         /* data 可以是lable 或者是 entry */
+	GtkWidget		*eventbox31[6];     /* 三级菜单 二个 eventbox + 一个lable + 一个data*/
+	GtkWidget		*data3[6];			/*  */
 
 	gint			xx;
 	GtkWidget		*window;

@@ -16,7 +16,8 @@ extern void init_ui(DRAW_UI_P p);									/*初始化界面,*/
 extern void (*button2_fun[5])(GtkButton *button, gpointer data);
 extern gboolean (*button20_fun[5])(GtkWidget *widget, GdkEventFocus *event,	gpointer user_data);
 extern void (*button3_fun[6])(GtkButton *button, gpointer data);
-extern gboolean (*data_fun[6])(GtkWidget *widget, GdkEventButton *event,	gpointer user_data);
+extern gboolean (*data_fun[6])(GtkWidget *widget, GdkEventButton *event, gpointer user_data);
+extern gboolean (*eventbox2_fun[5])(GtkWidget *widget, GdkEventButton *event, gpointer data);
 
 extern void data_100 (GtkSpinButton *spinbutton, gpointer data);	/*100*/
 extern void data_101 (GtkSpinButton *spinbutton, gpointer data);	/*101*/

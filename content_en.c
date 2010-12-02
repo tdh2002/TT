@@ -20,7 +20,7 @@ const gchar *content_en10[] = {
 
 static const gchar *content_en20[] = {
 	/* 二级菜单第0页 */
-	"  Group  ","  Focal Law  ", "  Calibration  ", NULL, NULL
+	"Group", "Focal Law", "Calibration", NULL, NULL
 };
 
 static const gchar *content_en21[] = {
@@ -30,42 +30,42 @@ static const gchar *content_en21[] = {
 
 static const gchar *content_en22[] = {
 	/* 二级菜单第2页 */
-	"  Gate  ","  Alarm  ", "  Output  ","  Sizing Curves", NULL
+	"Gate", "Alarm", "Output", "Sizing Curves", NULL
 };
 
 static const gchar *content_en23[] = {
 	/* 二级菜单第3页 */
-	"  Reading  ","  Cursors  ", "  Table  ","  Thickness  ", "  Export  "
+	"Reading", "Cursors", "Table", "Thickness", "Export"
 };
 
 static const gchar *content_en24[] = {
 	/* 二级菜单第4页 */
-	"  Selection  ","  Overlay  ", "  Zoom  ","  Color  ", "  Properties  "
+	"Selection", "Overlay", "Zoom", "Color", "Properties"
 };
 
 static const gchar *content_en25[] = {
 	/* 二级菜单第5页 */
-	"  Select  ","  Position  ", "  Characterize  ","  Parts", NULL
+	"Select", "Position", "Characterize", "Parts", NULL
 };
 
 static const gchar *content_en26[] = {
 	/* 二级菜单第6页 */
-	"  Configuration  ","  Aperature  ", "  Beam  ","  Laws", NULL
+	"Configuration", "Aperature", "Beam", "Laws", NULL
 };
 
 static const gchar *content_en27[] = {
 	/* 二级菜单第7页 */
-	"  Encoder  ","  Inspection  ", "  Area  ","  Start", "  Data  "
+	"Encoder", "Inspection", "Area", "Start", "Data"
 };
 
 static const gchar *content_en28[] = {
 	/* 二级菜单第8页 */
-	"  File  ","  Report  ", "  Format  ","  User Field  ", "  Notes  "
+	"File", "Report", "Format", "User Field", "Notes"
 };
 
 static const gchar *content_en29[] = {
 	/* 二级菜单第9页 */
-	"  Pref.  ","  System", "  Service  ","  Options  ", "  Network  "
+	"Pref.", "System", "Service", "Options", "Network"
 };
 
 

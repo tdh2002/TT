@@ -15,8 +15,9 @@
 #include <gdk/gdkkeysyms.h>
 
 GdkColor	color_black= {0x0, 0x0, 0x0, 0x0};
-GdkColor	color_button0= {0x0, 0x9999, 0x9999, 0x9999};
-GdkColor	color_button1= {0x0, 0x7e00, 0xb700, 0xf300};
+GdkColor	color_button0= {0x0, 0x3100, 0x0900, 0x9f00}; /*按下*/
+GdkColor	color_button1= {0x0, 0x2200, 0x5f00, 0xe700}; /*未选中*/
+GdkColor	color_button2= {0x0, 0x7e00, 0xb700, 0xf300}; /*停留*/
 
 /* You have to start somewhere */
 int main (int argc, char *argv[])
@@ -94,6 +95,18 @@ int main (int argc, char *argv[])
 	gtk_accel_group_connect(accel, GDK_F11, 0, GTK_ACCEL_VISIBLE, closure);
 	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) NULL, NULL);
 	gtk_accel_group_connect(accel, GDK_F12, 0, GTK_ACCEL_VISIBLE, closure);
+	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) NULL, NULL);
+	gtk_accel_group_connect(accel, GDK_Return, 0, GTK_ACCEL_VISIBLE, closure);
+	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) NULL, NULL);
+	gtk_accel_group_connect(accel, GDK_Escape, 0, GTK_ACCEL_VISIBLE, closure);
+	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) NULL, NULL);
+	gtk_accel_group_connect(accel, GDK_Up, 0, GTK_ACCEL_VISIBLE, closure);
+	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) NULL, NULL);
+	gtk_accel_group_connect(accel, GDK_Down, 0, GTK_ACCEL_VISIBLE, closure);
+	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) NULL, NULL);
+	gtk_accel_group_connect(accel, GDK_Left, 0, GTK_ACCEL_VISIBLE, closure);
+	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) NULL, NULL);
+	gtk_accel_group_connect(accel, GDK_Right, 0, GTK_ACCEL_VISIBLE, closure);
 
 
 
