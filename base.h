@@ -232,4 +232,11 @@ typedef struct Draw_interface {
 } DRAW_UI, *DRAW_UI_P;
 
 
+
+#define MENU1_STOP    4
+#define MENU2_STOP    0 
+#define MENU2_PRESSED 1
+#define MENU3_STOP    2
+#define MENU3_PRESSED 3
+
 #endif

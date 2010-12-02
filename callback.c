@@ -117,6 +117,7 @@ void b3_fun0(DRAW_UI_P p)
 	/*处理微调*/
 
 	p->pos2[p->pos][p->pos1[p->pos]] = 0;
+	pp->pos_pos = MENU3_PRESSED;
 	draw_3_menu(p);
 
 	g_print("0000000000000\nooo\n00000000000000000\n");
@@ -127,10 +128,10 @@ void b3_fun0(DRAW_UI_P p)
 	}
 #endif
 	gtk_widget_set_can_focus (p->data3[0], TRUE);
-	if ( p->data[p->pos2[p->pos][p->pos1[p->pos]]] &&
-			gtk_widget_get_can_focus( p->data[p->pos2[p->pos][p->pos1[p->pos]]]) ) ;
-		g_object_set ( p->data3[p->pos2[p->pos][p->pos1[p->pos]]],			
-				"is-focus", TRUE,	NULL); 
+	if ( p->data3[p->pos2[p->pos][p->pos1[p->pos]]] &&
+			gtk_widget_get_can_focus( p->data3[p->pos2[p->pos][p->pos1[p->pos]]]))
+		g_object_set ( p->data3[0],			
+				"is-focus", TRUE,	NULL);
 	gtk_widget_set_can_focus (p->data3[0], FALSE);
 }
 
@@ -159,14 +160,68 @@ void b3_fun5(DRAW_UI_P p)
 	/*处理微调*/
 }
 
+/* 快捷键处理函数 */
 gboolean foo (GtkAccelGroup *accel_group, GObject *acceleratable,
 		guint keyval, GdkModifierType modifier, gpointer data)
 {
-//	DRAW_UI_P p = (DRAW_UI_P)(data);
 
-	g_print("%x  %c\n", keyval, keyval);
+	guchar tmp = pp->pos_pos;
+	switch (keyval) 
+	{
+		case GDK_Escape:
+			switch (pp->pos_pos)
+			{
+				case MENU2_STOP:
+					g_print("menu2stop\n");
+					break;
+				case MENU2_PRESSED:
+					pp->pos_pos = MENU2_STOP;
+					g_print("menu3pressed\n");
+					break;
+				case MENU3_STOP:
+					pp->pos_pos = MENU2_STOP;
+					g_print("menu3stop\n");
+					break;
+				case MENU3_PRESSED:
+					pp->pos_pos = MENU3_STOP;
+					g_print("menu3pressed\n");
+					break;
+				default:break;
+			}
+			break;
+		case GDK_Return:
+			switch (pp->pos_pos)
+			{
+				case MENU2_STOP:
+					pp->pos_pos = MENU3_STOP;
+					break;
+				case MENU2_PRESSED:
+				case MENU3_STOP:
+					pp->pos_pos = MENU3_PRESSED;
+					/* 按下的动作在这里实现 */
+					break;
+				case MENU3_PRESSED:
+					pp->pos_pos = MENU3_STOP;
+					break;
+				default:break;
+
+			}
+		default:break;
+	}
+
+	if (tmp != pp->pos_pos)
+	{
+		draw_2_menu(0);
+		draw_3_menu(pp);
+	}
+
+
+	g_print("%x  \n", keyval);
 
 	return 0;
+
+
+
 }
 
 void button3_function0 (GtkButton *button, gpointer data)
