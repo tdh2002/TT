@@ -301,26 +301,22 @@ void draw3_data0(DRAW_UI_P p)
 						case 4:	tmpf = 6.0; break;
 						default:break;
 					}
-					if (p->pos2[p->pos][p->pos1[p->pos]] == 0)
+					if ( (pp->pos_pos == MENU3_PRESSED) && (p->pos2[p->pos][p->pos1[p->pos]] == 0) )
 						g_sprintf (temp,"%s\ndB Δ%.1f", con2_p[1][0][0], tmpf);
 					else 
 						g_sprintf (temp,"%s\ndB", con2_p[1][0][0]);
 
 					gtk_label_set_text (GTK_LABEL (p->label3[0]), temp);
 					gtk_widget_modify_bg (p->eventbox30[0], GTK_STATE_NORMAL, &color_button1);
-					gtk_widget_modify_bg (p->eventbox31[0], GTK_STATE_NORMAL, &color_button1);
-
-					p->data3[0] = gtk_entry_new  ();
-/*					gtk_entry_digit_only(p->data3[0]);*/
-					gtk_container_add(GTK_CONTAINER(p->eventbox31[0]), p->data3[0]);
+/*					gtk_widget_modify_bg (p->eventbox31[0], GTK_STATE_NORMAL, &color_button1);*/
 
 					gtk_widget_show (p->eventbox30[0]);
-					gtk_widget_show (p->eventbox31[0]);
-					gtk_widget_show (p->data3[0]);
+					gtk_widget_hide (p->eventbox31[0]);
+					gtk_widget_show (p->entry3[0]);
 
-					g_object_set ( p->data3[0],	"is-focus", FALSE,	NULL);
-/*					gtk_widget_set_can_focus (p->data3[0], FALSE);*/
-					g_signal_connect(G_OBJECT(p->data3[0]), "button-press-event", 
+					gtk_widget_set_can_focus (p->entry3[0], FALSE);
+					g_object_set ( p->entry3[0],	"is-focus", FALSE,	NULL);
+					g_signal_connect(G_OBJECT(p->entry3[0]), "button-press-event", 
 							G_CALLBACK(data_fun[0]), (gpointer) (p));
 					//g_signal_connect(G_OBJECT(p->data[0]), "button-press-event", 
 				//		G_CALLBACK(data_fun[0]), (gpointer) (p));
@@ -473,11 +469,6 @@ void draw_3_menu(gint pa)
 	{
 		if (pp->pos_last2 == i || pp->pos2[pp->pos][pp->pos1[pp->pos]] == i || pa) 
 		{
-			if (pp->data3[i]) 
-			{
-				gtk_widget_destroy (pp->data3[i]);
-				pp->data3[i] = NULL;
-			}
 
 			if (con2_p[pp->pos][pp->pos1[pp->pos]][i]) 
 			{
@@ -510,15 +501,25 @@ void draw_3_menu(gint pa)
 				GTK_STATE_NORMAL, &color_button0);
 		gtk_widget_modify_bg (pp->eventbox31[pp->pos2[pp->pos][pp->pos1[pp->pos]]],
 				GTK_STATE_NORMAL, &color_button0);
-		if (gtk_widget_get_can_focus (pp->data3[pp->pos2[pp->pos][pp->pos1[pp->pos]]]))
-			g_object_set (            pp->data3[pp->pos2[pp->pos][pp->pos1[pp->pos]]],	"is-focus", TRUE,	NULL);
+		if (!gtk_widget_get_can_focus (pp->entry3[pp->pos2[pp->pos][pp->pos1[pp->pos]]]))
+			gtk_widget_set_can_focus ((pp->entry3[pp->pos2[pp->pos][pp->pos1[pp->pos]]]), TRUE);
+//		g_object_set ( pp->entry3[pp->pos2[pp->pos][pp->pos1[pp->pos]]],	"is-focus", TRUE,	NULL );
+		gtk_widget_grab_focus ( 	pp->entry3[pp->pos2[pp->pos][pp->pos1[pp->pos]]]);
 	}
 	else if (pp->pos_pos == MENU3_STOP) 
 	{
-		gtk_widget_modify_bg (pp->eventbox30[pp->pos2[pp->pos][pp->pos1[pp->pos]]],
+		gtk_widget_modify_bg ( pp->eventbox30[pp->pos2[pp->pos][pp->pos1[pp->pos]]],
 				GTK_STATE_NORMAL, &color_button2);
-		gtk_widget_modify_bg (pp->eventbox31[pp->pos2[pp->pos][pp->pos1[pp->pos]]],
+		gtk_widget_modify_bg ( pp->eventbox31[pp->pos2[pp->pos][pp->pos1[pp->pos]]],
 				GTK_STATE_NORMAL, &color_button2);
+		g_object_set ( pp->entry3[pp->pos2[pp->pos][pp->pos1[pp->pos]]],	"is-focus", FALSE,	NULL );
+		printf("%d \n", 2 );
+		gtk_widget_set_can_focus ( pp->entry3[pp->pos2[pp->pos][pp->pos1[pp->pos]]], FALSE );
+	}
+	else
+	{
+		gtk_widget_set_can_focus ( pp->entry3[pp->pos2[pp->pos][pp->pos1[pp->pos]]], FALSE );
+		g_object_set ( pp->entry3[pp->pos2[pp->pos][pp->pos1[pp->pos]]],	"is-focus", FALSE,	NULL );
 	}
 
 #if 0
@@ -590,7 +591,7 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 	gint i;
 	GtkWidget *drawing_area;
 	GtkWidget *window = p->window;
-	pp->pos_pos = MENU3_PRESSED;
+	pp->pos_pos = MENU3_STOP;
 	pp->menu2_qty = 5;
 
 	for (i = 0; i < 512; i++) {
@@ -664,7 +665,7 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 		gtk_widget_set_size_request(GTK_WIDGET(p->eventbox2[i]), 114, 60);
 		p->label2[i] = gtk_label_new("<^_^>");
 		gtk_container_add(GTK_CONTAINER(p->eventbox2[i]), p->label2[i]);
-		gtk_container_set_border_width( GTK_CONTAINER(p->eventbox2[i]), 1);     /*设置边框大小，这个地方使用图片*/
+		gtk_container_set_border_width( GTK_CONTAINER(p->eventbox2[i]), 1);     /*设置边框大小，这个地方使用图片做背景*/
 /*		color_green.red = 0x7e00, color_green.green = 0xb700, color_green.blue = 0xf300;      
 		gtk_widget_modify_bg(p->eventbox2[i], GTK_STATE_NORMAL, &color_green);*/
 		g_signal_connect(G_OBJECT(p->eventbox2[i]), "button-press-event", 
@@ -681,27 +682,30 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 	{
 		p->eventbox30[i] = gtk_event_box_new();
 		p->eventbox31[i] = gtk_event_box_new();
-		p->label3[i] = gtk_label_new("<^_^>");
-		p->data3[i] = gtk_entry_new();
+		p->label3[i]     = gtk_label_new("<^_^>");
+		p->data3[i]      = gtk_label_new("<^_^>");
+		p->entry3[i]     = gtk_entry_new();
 
 		gtk_widget_set_size_request(GTK_WIDGET(p->eventbox30[i]), 115, 58);            /* 配置名称 */
-		gtk_widget_set_size_request(GTK_WIDGET(p->eventbox31[i]), 115, 29);            /* 数值 或者 选项 */
-		gtk_container_set_border_width( GTK_CONTAINER(p->eventbox30[i]), 1);     /*设置边框大小，这个地方使用图片*/
-		gtk_container_set_border_width( GTK_CONTAINER(p->eventbox31[i]), 1);     /*设置边框大小，这个地方使用图片*/
+		gtk_widget_set_size_request(GTK_WIDGET(p->eventbox31[i]), 115, 29);            /* 标签 */
+		gtk_widget_set_size_request(GTK_WIDGET(p->entry3[i]), 115, 29);            /* 输入项目  */
+		gtk_container_set_border_width( GTK_CONTAINER(p->eventbox30[i]), 0);     /*设置边框大小，这个地方使用图片*/
+		gtk_container_set_border_width( GTK_CONTAINER(p->eventbox31[i]), 0);     /*设置边框大小，这个地方使用图片*/
 		gtk_container_add(GTK_CONTAINER(p->eventbox30[i]), p->label3[i]);
 		gtk_container_add(GTK_CONTAINER(p->eventbox31[i]), p->data3[i]);
-		gtk_box_pack_start (GTK_BOX (p->vbox221[i]), p->eventbox30[i], FALSE, FALSE, 0);
-		gtk_box_pack_start (GTK_BOX (p->vbox221[i]), p->eventbox31[i], FALSE, FALSE, 0);
+		gtk_box_pack_start (GTK_BOX (p->vbox221[i]), p->eventbox30[i], FALSE, FALSE, 1);
+		gtk_box_pack_start (GTK_BOX (p->vbox221[i]), p->eventbox31[i], FALSE, FALSE, 1);
+		gtk_box_pack_start (GTK_BOX (p->vbox221[i]), p->entry3[i], FALSE, FALSE, 1);
 		g_signal_connect(G_OBJECT(p->eventbox30[i]), "button-press-event", 
 				G_CALLBACK(data_fun[i]), (gpointer) (p));
 		g_signal_connect(G_OBJECT(p->eventbox31[i]), "button-press-event", 
 				G_CALLBACK(data_fun[i]), (gpointer) (p));
+		g_signal_connect(G_OBJECT(p->entry3[i]), "button-press-event", 
+				G_CALLBACK(data_fun[i]), (gpointer) (p));
 		gtk_widget_show(p->eventbox30[i]);
 		gtk_widget_show(p->eventbox31[i]);
 		gtk_widget_show(p->label3[i]);
-		gtk_widget_show(p->data3[i]);
 	}
-	gtk_entry_digit_only(p->data3[0]);    /* 设置 只有数值 可以 输入*/
 
 
 
