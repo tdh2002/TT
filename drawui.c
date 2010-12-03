@@ -12,7 +12,7 @@ GdkPoint a[512] = {{0,0},{240,200},{400,200}};
 void change_language();
 void draw_1_menu(DRAW_UI_P p);
 void draw_2_menu(gint pa);
-void draw_3_menu(DRAW_UI_P p);
+void draw_3_menu(gint pa);
 void init_ui(DRAW_UI_P p);				/*初始化界面,*/
 
 /**/
@@ -47,6 +47,16 @@ static gint gtk_entry_digit_only_keypress_event(GtkWidget *widget, GdkEventKey *
 		case GDK_7:
 		case GDK_8:
 		case GDK_9: 
+		case GDK_KP_0:
+		case GDK_KP_1:
+		case GDK_KP_2:
+		case GDK_KP_3:
+		case GDK_KP_4:
+		case GDK_KP_5:
+		case GDK_KP_6:
+		case GDK_KP_7:
+		case GDK_KP_8:
+		case GDK_KP_9:
 		case GDK_period:
 		case GDK_Delete:
 		case GDK_BackSpace:
@@ -90,10 +100,11 @@ void menuitem0_function(GtkMenuItem *menuitem, gpointer data)
 	gtk_menu_item_set_label(GTK_MENU_ITEM (p->menuitem_main), 
 			gtk_menu_item_get_label(menuitem));
 	p->pos = 0;
+	pp->menu2_qty = 3;
 	// p->pos1 = 0, p->pos2 = 0;
 	g_print("pos = %d\n", p->pos);
 	draw_2_menu(1);
-	draw_3_menu(p);
+	draw_3_menu(1);
 }
 
 void menuitem1_function(GtkMenuItem *menuitem, gpointer data)
@@ -102,10 +113,11 @@ void menuitem1_function(GtkMenuItem *menuitem, gpointer data)
 	gtk_menu_item_set_label(GTK_MENU_ITEM (p->menuitem_main), 
 			gtk_menu_item_get_label(menuitem));
 	p->pos = 1;
+	pp->menu2_qty = 5;
 	//p->pos1 = 0, p->pos2 = 0;
 	g_print("pos = %d\n", p->pos);
 	draw_2_menu(1);
-	draw_3_menu(p);
+	draw_3_menu(1);
 }
 
 void menuitem2_function(GtkMenuItem *menuitem, gpointer data)
@@ -114,10 +126,11 @@ void menuitem2_function(GtkMenuItem *menuitem, gpointer data)
 	gtk_menu_item_set_label(GTK_MENU_ITEM (p->menuitem_main),
 			gtk_menu_item_get_label(menuitem));
 	p->pos = 2;
+	pp->menu2_qty = 4;
 	//p->pos1 = 0, p->pos2 = 0;
 	g_print("pos = %d\n", p->pos);
 	draw_2_menu(1);
-	draw_3_menu(p);
+	draw_3_menu(1);
 }
 
 void menuitem3_function(GtkMenuItem *menuitem, gpointer data)
@@ -126,10 +139,11 @@ void menuitem3_function(GtkMenuItem *menuitem, gpointer data)
 	gtk_menu_item_set_label(GTK_MENU_ITEM (p->menuitem_main), 
 			gtk_menu_item_get_label(menuitem));
 	p->pos = 3;
+	pp->menu2_qty = 5;
 	//p->pos1 = 0, p->pos2 = 0;
 	g_print("pos = %d\n", p->pos);
 	draw_2_menu(1);
-	draw_3_menu(p);
+	draw_3_menu(1);
 }
 
 void menuitem4_function(GtkMenuItem *menuitem, gpointer data)
@@ -138,10 +152,11 @@ void menuitem4_function(GtkMenuItem *menuitem, gpointer data)
 	gtk_menu_item_set_label(GTK_MENU_ITEM (p->menuitem_main),
 			gtk_menu_item_get_label(menuitem));
 	p->pos = 4;
+	pp->menu2_qty = 5;
 	//p->pos1 = 0, p->pos2 = 0;
 	g_print("pos = %d\n", p->pos);
 	draw_2_menu(1);
-	draw_3_menu(p);
+	draw_3_menu(1);
 }
 
 void menuitem5_function(GtkMenuItem *menuitem, gpointer data)
@@ -150,10 +165,11 @@ void menuitem5_function(GtkMenuItem *menuitem, gpointer data)
 	gtk_menu_item_set_label(GTK_MENU_ITEM (p->menuitem_main), 
 			gtk_menu_item_get_label(menuitem));
 	p->pos = 5;
+	pp->menu2_qty = 4;
 	//p->pos1 = 0, p->pos2 = 0;
 	g_print("pos = %d\n", p->pos);
 	draw_2_menu(1);
-	draw_3_menu(p);
+	draw_3_menu(1);
 }
 
 void menuitem6_function(GtkMenuItem *menuitem, gpointer data)
@@ -162,10 +178,11 @@ void menuitem6_function(GtkMenuItem *menuitem, gpointer data)
 	gtk_menu_item_set_label(GTK_MENU_ITEM (p->menuitem_main), 
 			gtk_menu_item_get_label(menuitem));
 	p->pos = 6;
+	pp->menu2_qty = 4;
 	// p->pos1 = 0, p->pos2 = 0;
 	g_print("pos = %d \n", p->pos);
 	draw_2_menu(1);
-	draw_3_menu(p);
+	draw_3_menu(1);
 }
 
 void menuitem7_function(GtkMenuItem *menuitem, gpointer data)
@@ -174,10 +191,11 @@ void menuitem7_function(GtkMenuItem *menuitem, gpointer data)
 	gtk_menu_item_set_label(GTK_MENU_ITEM (p->menuitem_main), 
 			gtk_menu_item_get_label(menuitem));
 	p->pos = 7;
+	pp->menu2_qty = 5;
 	// p->pos1 = 0, p->pos2 = 0;
 	g_print("pos = %d\n", p->pos);
 	draw_2_menu(1);
-	draw_3_menu(p);
+	draw_3_menu(1);
 }
 
 void menuitem8_function(GtkMenuItem *menuitem, gpointer data)
@@ -186,10 +204,11 @@ void menuitem8_function(GtkMenuItem *menuitem, gpointer data)
 	gtk_menu_item_set_label(GTK_MENU_ITEM (p->menuitem_main), 
 			gtk_menu_item_get_label(menuitem));
 	p->pos = 8;
+	pp->menu2_qty = 5;
 	// p->pos1 = 0, p->pos2 = 0;
 	g_print("pos = %d\n", p->pos);
 	draw_2_menu(1);
-	draw_3_menu(p);
+	draw_3_menu(1);
 }
 
 void menuitem9_function(GtkMenuItem *menuitem, gpointer data)
@@ -198,10 +217,11 @@ void menuitem9_function(GtkMenuItem *menuitem, gpointer data)
 	gtk_menu_item_set_label(GTK_MENU_ITEM (p->menuitem_main), 
 			gtk_menu_item_get_label(menuitem));
 	p->pos = 9;
+	pp->menu2_qty = 5;
 	// p->pos1 = 0, p->pos2 = 0;
 	g_print("pos = %d\n", p->pos);
 	draw_2_menu(1);
-	draw_3_menu(p);
+	draw_3_menu(1);
 }
 
 /**/
@@ -287,7 +307,8 @@ void draw3_data0(DRAW_UI_P p)
 						g_sprintf (temp,"%s\ndB", con2_p[1][0][0]);
 
 					gtk_label_set_text (GTK_LABEL (p->label3[0]), temp);
-					gtk_widget_modify_bg (p->label3[0], GTK_STATE_NORMAL, &color_button1);
+					gtk_widget_modify_bg (p->eventbox30[0], GTK_STATE_NORMAL, &color_button1);
+					gtk_widget_modify_bg (p->eventbox31[0], GTK_STATE_NORMAL, &color_button1);
 
 					p->data3[0] = gtk_entry_new  ();
 /*					gtk_entry_digit_only(p->data3[0]);*/
@@ -297,7 +318,8 @@ void draw3_data0(DRAW_UI_P p)
 					gtk_widget_show (p->eventbox31[0]);
 					gtk_widget_show (p->data3[0]);
 
-					gtk_widget_set_can_focus (p->data3[0], FALSE);
+					g_object_set ( p->data3[0],	"is-focus", FALSE,	NULL);
+/*					gtk_widget_set_can_focus (p->data3[0], FALSE);*/
 					g_signal_connect(G_OBJECT(p->data3[0]), "button-press-event", 
 							G_CALLBACK(data_fun[0]), (gpointer) (p));
 					//g_signal_connect(G_OBJECT(p->data[0]), "button-press-event", 
@@ -443,99 +465,59 @@ void draw3_data5(DRAW_UI_P p)
 }
 
 /* 画三级菜单*/
-void draw_3_menu(DRAW_UI_P p)
+void draw_3_menu(gint pa)
 {
 	gint i;
 
 	for ( i = 0 ; i < 6 ; i++) 
 	{
-		if (p->data3[i]) 
+		if (pp->pos_last2 == i || pp->pos2[pp->pos][pp->pos1[pp->pos]] == i || pa) 
 		{
-			gtk_widget_destroy (p->data3[i]);
-			p->data3[i] = NULL;
-		}
-
-		if (con2_p[p->pos][p->pos1[p->pos]][i]) 
-		{
-
-			/*
-			   gtk_button_set_label (GTK_BUTTON (p->button3[i]), 
-			   con2_p[p->pos][p->pos1[p->pos]][i]);
-			   gtk_widget_modify_bg (p->button3[i], GTK_STATE_NORMAL, &color_button1);
-			   gtk_widget_show (p->button3[i]);
-			   */
-
-			if (i == 0)
-				draw3_data0(p);		/*第一个数值*/
-			else if (i == 1)
-				draw3_data1(p);
-			else if (i == 2)
-				draw3_data2(p);
-			else if (i == 3)
-				draw3_data3(p);
-			else if (i == 4)
-				draw3_data4(p);
-			else if (i == 5)
-				draw3_data5(p);
-
-#if 0			
-			else if (i == 1)
+			if (pp->data3[i]) 
 			{
-				p->data[i] = gtk_combo_box_entry_new_text();
-				gtk_combo_box_append_text(GTK_COMBO_BOX (p->data[i]), "Law Wizard");
-				gtk_combo_box_append_text(GTK_COMBO_BOX (p->data[i]), "Law Wizard");
-				gtk_combo_box_append_text(GTK_COMBO_BOX (p->data[i]), "Law Wizariiiiiiiiiiiiid");
-				gtk_combo_box_set_active(GTK_COMBO_BOX (p->data[i]), 0);
-				gtk_widget_set_size_request(GTK_WIDGET(p->data[i]), 115, 29);
-				//				gtk_combo_box_set_wrap_width (GTK_COMBO_BOX (p->data[i]), 115);
-				gtk_box_pack_start (GTK_BOX (p->vbox221[i]), p->data[i], FALSE, FALSE, 0);
-				gtk_widget_show(p->data[i]);
-
-				//				gtk_widget_set_can_focus (p->data[i], FALSE);
-
-				g_object_set (gtk_bin_get_child(GTK_BIN (p->data[i])), "editable", FALSE, NULL);
-				g_signal_connect(G_OBJECT(p->data[i]), "button-press-event", 
-						G_CALLBACK(data_fun[i]), (gpointer) (p));
-				g_signal_connect(G_OBJECT(gtk_bin_get_child(GTK_BIN (p->data[i]))), 
-						"button-press-event", G_CALLBACK(data_fun[i]), (gpointer) (p));
+				gtk_widget_destroy (pp->data3[i]);
+				pp->data3[i] = NULL;
 			}
-			else 
+
+			if (con2_p[pp->pos][pp->pos1[pp->pos]][i]) 
 			{
-				p->data[i] = gtk_combo_box_entry_new_text();
-				gtk_combo_box_set_active(GTK_COMBO_BOX (p->data[i]), 0);
-				gtk_widget_set_size_request(GTK_WIDGET(p->data[i]), 115, 29);
-				//				gtk_combo_box_set_wrap_width (GTK_COMBO_BOX (p->data[i]), 115);
-				gtk_box_pack_start (GTK_BOX (p->vbox221[i]), p->data[i], FALSE, FALSE, 0);
-				gtk_widget_show(p->data[i]);
 
-				//				gtk_widget_set_can_focus (p->data[i], FALSE);
-
-				g_signal_connect(G_OBJECT(p->data[i]), "button-press-event", 
-						G_CALLBACK(data_fun[i]), (gpointer) (p));
+				if (i == 0)
+					draw3_data0(pp);		/*第一个数值*/
+				else if (i == 1)
+					draw3_data1(pp);
+				else if (i == 2)
+					draw3_data2(pp);
+				else if (i == 3)
+					draw3_data3(pp);
+				else if (i == 4)
+					draw3_data4(pp);
+				else if (i == 5)
+					draw3_data5(pp);
 			}
-#endif
-
-		}
-		else
-		{
-			gtk_label_set_text (GTK_LABEL (p->label3[i]), " ");
-			gtk_widget_hide (p->eventbox30[i]);
-			gtk_widget_hide (p->eventbox31[i]);
+			else
+			{
+				gtk_label_set_text (GTK_LABEL (pp->label3[i]), " ");
+				gtk_widget_hide (pp->eventbox30[i]);
+				gtk_widget_hide (pp->eventbox31[i]);
+			}
 		}
 	}
 	/* 停留 或者 按下 颜色*/
-	if (p->pos_pos == 3)
+	if (pp->pos_pos == MENU3_PRESSED)
 	{
-		gtk_widget_modify_bg (p->eventbox30[p->pos2[p->pos][p->pos1[p->pos]]],
+		gtk_widget_modify_bg (pp->eventbox30[pp->pos2[pp->pos][pp->pos1[pp->pos]]],
 				GTK_STATE_NORMAL, &color_button0);
-		gtk_widget_modify_bg (p->eventbox31[p->pos2[p->pos][p->pos1[p->pos]]],
+		gtk_widget_modify_bg (pp->eventbox31[pp->pos2[pp->pos][pp->pos1[pp->pos]]],
 				GTK_STATE_NORMAL, &color_button0);
+		if (gtk_widget_get_can_focus (pp->data3[pp->pos2[pp->pos][pp->pos1[pp->pos]]]))
+			g_object_set (            pp->data3[pp->pos2[pp->pos][pp->pos1[pp->pos]]],	"is-focus", TRUE,	NULL);
 	}
-	else if (p->pos_pos == 2) 
+	else if (pp->pos_pos == MENU3_STOP) 
 	{
-		gtk_widget_modify_bg (p->eventbox30[p->pos2[p->pos][p->pos1[p->pos]]],
+		gtk_widget_modify_bg (pp->eventbox30[pp->pos2[pp->pos][pp->pos1[pp->pos]]],
 				GTK_STATE_NORMAL, &color_button2);
-		gtk_widget_modify_bg (p->eventbox31[p->pos2[p->pos][p->pos1[p->pos]]],
+		gtk_widget_modify_bg (pp->eventbox31[pp->pos2[pp->pos][pp->pos1[pp->pos]]],
 				GTK_STATE_NORMAL, &color_button2);
 	}
 
@@ -543,7 +525,7 @@ void draw_3_menu(DRAW_UI_P p)
 	g_object_set ( p->data[p->pos2[p->pos][p->pos1[p->pos]]],
 			0, "is-focus", TRUE,	NULL); 
 	g_object_set ( p->data[p->pos2[p->pos][p->pos1[p->pos]]],
-				0, "editable", FALSE, NULL); 
+			0, "editable", FALSE, NULL); 
 #endif
 }
 
@@ -608,6 +590,8 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 	gint i;
 	GtkWidget *drawing_area;
 	GtkWidget *window = p->window;
+	pp->pos_pos = MENU3_PRESSED;
+	pp->menu2_qty = 5;
 
 	for (i = 0; i < 512; i++) {
 		a[i].x =  i;
@@ -764,7 +748,7 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 
 	draw_1_menu(p);
 	draw_2_menu(1);
-	draw_3_menu(p);
+	draw_3_menu(1);
 
 
 	g_thread_create((GThreadFunc)(time_handler), (gpointer) (drawing_area), FALSE, NULL);

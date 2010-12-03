@@ -176,9 +176,10 @@ typedef struct Draw_interface {
 	guchar			pos;           /**/
 	guchar			pos1[10];
 	guchar			pos2[10][5];
-	guchar			pos_last;      /**/
-	guchar			pos_last1;     /**/
-	guchar			pos_last2;     /**/
+	guchar			pos_last;      /*  */
+	guchar			pos_last1;     /*  */
+	guchar			pos_last2;     /*  */
+	guchar			menu2_qty;     /*  */
 	GdkColor		col;
 	GtkAdjustment	*adj;
 	GSList			*group;

@@ -12,7 +12,7 @@ extern DRAW_UI_P pp;
 
 extern void change_language();										/*选择语言*/
 extern void draw_2_menu(gint pa);
-extern void draw_3_menu(DRAW_UI_P p);
+extern void draw_3_menu(gint pa);
 extern void init_ui(DRAW_UI_P p);									/*初始化界面,*/
 
 extern void (*button3_fun[6])(GtkButton *button, gpointer data);
@@ -37,5 +37,7 @@ extern void data_135 (GtkSpinButton *spinbutton, gpointer data);	/*135*/
 extern gboolean foo (GtkAccelGroup *accel_group, GObject *acceleratable,
 		guint keyval, GdkModifierType modifier, gpointer data);
 
+extern gboolean key_press_handler (GtkWidget* pWidget,
+		GdkEventKey* pEvent, gpointer pointerBunch);
 
 #endif
