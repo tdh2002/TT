@@ -469,7 +469,6 @@ void draw_3_menu(gint pa)
 	{
 		if (pp->pos_last2 == i || pp->pos2[pp->pos][pp->pos1[pp->pos]] == i || pa) 
 		{
-
 			if (con2_p[pp->pos][pp->pos1[pp->pos]][i]) 
 			{
 
@@ -504,7 +503,7 @@ void draw_3_menu(gint pa)
 		if (!gtk_widget_get_can_focus (pp->entry3[pp->pos2[pp->pos][pp->pos1[pp->pos]]]))
 			gtk_widget_set_can_focus ((pp->entry3[pp->pos2[pp->pos][pp->pos1[pp->pos]]]), TRUE);
 //		g_object_set ( pp->entry3[pp->pos2[pp->pos][pp->pos1[pp->pos]]],	"is-focus", TRUE,	NULL );
-		gtk_widget_grab_focus ( 	pp->entry3[pp->pos2[pp->pos][pp->pos1[pp->pos]]]);
+		gtk_widget_grab_focus ( pp->entry3[pp->pos2[pp->pos][pp->pos1[pp->pos]]]);
 	}
 	else if (pp->pos_pos == MENU3_STOP) 
 	{
@@ -512,14 +511,13 @@ void draw_3_menu(gint pa)
 				GTK_STATE_NORMAL, &color_button2);
 		gtk_widget_modify_bg ( pp->eventbox31[pp->pos2[pp->pos][pp->pos1[pp->pos]]],
 				GTK_STATE_NORMAL, &color_button2);
-		g_object_set ( pp->entry3[pp->pos2[pp->pos][pp->pos1[pp->pos]]],	"is-focus", FALSE,	NULL );
-		printf("%d \n", 2 );
-		gtk_widget_set_can_focus ( pp->entry3[pp->pos2[pp->pos][pp->pos1[pp->pos]]], FALSE );
+//		g_object_set ( pp->entry3[pp->pos2[pp->pos][pp->pos1[pp->pos]]],	"is-focus", FALSE,	NULL );
+		gtk_widget_grab_focus ( pp->button);
 	}
 	else
 	{
-		gtk_widget_set_can_focus ( pp->entry3[pp->pos2[pp->pos][pp->pos1[pp->pos]]], FALSE );
-		g_object_set ( pp->entry3[pp->pos2[pp->pos][pp->pos1[pp->pos]]],	"is-focus", FALSE,	NULL );
+//		g_object_set ( pp->entry3[pp->pos2[pp->pos][pp->pos1[pp->pos]]],	"is-focus", FALSE,	NULL );
+		gtk_widget_grab_focus ( pp->button);
 	}
 
 #if 0
@@ -630,6 +628,10 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 		p->buffer[i]	= gtk_text_buffer_new (NULL);
 
 	p->view			= gtk_text_view_new ();
+
+	pp->button = gtk_button_new_with_label(" ");
+	gtk_box_pack_start(GTK_BOX(pp->hbox1), pp->button, FALSE, FALSE, 0);
+	gtk_widget_show(pp->button);
 
 	/*一级菜单的初始化*/
 	p->menubar		= gtk_menu_bar_new();
