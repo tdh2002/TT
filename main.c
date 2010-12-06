@@ -35,7 +35,7 @@ int main (int argc, char *argv[])
 	gtk_init (&argc, &argv);
 
 	g_type_class_unref (g_type_class_ref (GTK_TYPE_IMAGE_MENU_ITEM));
-/*	g_object_set (gtk_settings_get_default (), "gtk-menu-bar-accel", NULL, NULL); */ 
+	g_object_set (gtk_settings_get_default (), "gtk-menu-bar-accel", NULL, NULL); 
 
 /*	accel = gtk_accel_group_new();*/
 

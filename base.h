@@ -241,4 +241,6 @@ typedef struct Draw_interface {
 #define MENU3_STOP    2
 #define MENU3_PRESSED 3
 
+#define CUR_POS (pp->pos2[pp->pos][pp->pos1[pp->pos]])
+
 #endif
