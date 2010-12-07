@@ -314,7 +314,7 @@ void draw3_data0(DRAW_UI_P p)
 		case 1:
 			switch (pp->pos1[1])
 			{
-				case 0:/* 增益 Gain */
+				case 0: /* 增益 Gain */
 					/* 当前步进 */
 					switch (pp->p_tmp_config->db_reg)
 					{
@@ -348,27 +348,26 @@ void draw3_data0(DRAW_UI_P p)
 					gtk_editable_set_position (GTK_EDITABLE (pp->entry3[0]), 1);
 					g_free(str);
 					break;
-				case 1:/*发射 Pulser*/
-                                       /* 当前步进 */
+				case 1: /*发射 Pulser*/
+					/* 当前步进 */
 					switch (pp->p_tmp_config->pulser_reg)
 					{
-						case 0:	tmpf = 0.1; break;
-						case 1:	tmpf = 0.5; break;
-						case 2:	tmpf = 1.0; break;
-						case 3:	tmpf = 10.0; break;
-						case 4:	tmpf = 100.0; break;
+						case 0:	tmpf = 1.0; break;
+						case 1:	tmpf = 10.0; break;
+						case 2:	tmpf = 100.0; break;
 						default:break;
 					}
 
 					/* 格式化字符串 */
 					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0) )
-						g_sprintf (temp,"%s\n(1 to 1) Δ%.1f", con2_p[1][1][0], tmpf);
+						g_sprintf (temp,"%s\n(1 to 1) Δ%d", con2_p[1][1][0], (gint) (tmpf));
 					else 
 						g_sprintf (temp,"%s\n(1 to 1)", con2_p[1][1][0]);
 
 					/* 设置label */
 					gtk_label_set_text (GTK_LABEL (pp->label3[0]), temp);
 					gtk_widget_modify_bg (pp->eventbox30[0], GTK_STATE_NORMAL, &color_button1);
+					gtk_widget_modify_base (pp->entry3[0], GTK_STATE_NORMAL, &color_button1);/* 设置entry背景颜色 */
 
 					/* 显示和隐藏控件 */
 					gtk_widget_show (pp->eventbox30[0]);
@@ -376,13 +375,43 @@ void draw3_data0(DRAW_UI_P p)
 					gtk_widget_show (pp->entry3[0]);
 					
 					/* 更新当前pulser值显示 */
-					str = g_strdup_printf ("%0.1f", pp->p_config->pulser / 10.0);
+					str = g_strdup_printf ("%d", (guint) (pp->p_config->pulser / 10.0));
 					gtk_entry_set_text(GTK_ENTRY (pp->entry3[0]),  (const gchar *) (str));
 					gtk_editable_set_position (GTK_EDITABLE (pp->entry3[0]), 1);
 					g_free(str);
 					/*当前步进*/
 					break;
-				case 2:
+				case 2: /* Reveiver 接收器  */
+					/* 当前步进 */
+					switch (pp->p_tmp_config->receiver_reg)
+					{
+						case 0:	tmpf = 1.0; break;
+						case 1:	tmpf = 10.0; break;
+						case 2:	tmpf = 100.0; break;
+						default:break;
+					}
+
+					/* 格式化字符串 */
+					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0) )
+						g_sprintf (temp,"%s\n(1 to 1) Δ%d", con2_p[1][2][0], (gint) (tmpf));
+					else 
+						g_sprintf (temp,"%s\n(1 to 1)", con2_p[1][2][0]);
+
+					/* 设置label */
+					gtk_label_set_text (GTK_LABEL (pp->label3[0]), temp);
+					gtk_widget_modify_bg (pp->eventbox30[0], GTK_STATE_NORMAL, &color_button1);
+					gtk_widget_modify_base (pp->entry3[0], GTK_STATE_NORMAL, &color_button1);/* 设置entry背景颜色 */
+
+					/* 显示和隐藏控件 */
+					gtk_widget_show (pp->eventbox30[0]);
+					gtk_widget_hide (pp->eventbox31[0]);
+					gtk_widget_show (pp->entry3[0]);
+					
+					/* 更新当前pulser值显示 */
+					str = g_strdup_printf ("%d", (guint) (pp->p_config->receiver / 10.0));
+					gtk_entry_set_text(GTK_ENTRY (pp->entry3[0]),  (const gchar *) (str));
+					gtk_editable_set_position (GTK_EDITABLE (pp->entry3[0]), 1);
+					g_free(str);
 					break;
 				case 3:
 					break;
@@ -537,18 +566,19 @@ void draw3_data1(DRAW_UI_P p)
 					gtk_editable_set_position (GTK_EDITABLE (pp->entry3[1]), 1);
 					g_free(str);
 					break;
-
-
-				case 1:
-					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1) )
-						g_sprintf (temp,"%s", con2_p[1][1][1]);
-					else 
-						g_sprintf (temp,"%s", con2_p[1][1][1]);
+				case 1: /* Tx/Rx Mode 收发模式  */
+					g_sprintf (temp,"%s", con2_p[1][1][1]);
 					/* 设置label */
 					gtk_label_set_text (GTK_LABEL (pp->label3[1]), temp);
 					gtk_widget_modify_bg (pp->eventbox30[1], GTK_STATE_NORMAL, &color_button1);
 
-					gtk_label_set_text (GTK_LABEL (pp->data3[1]), "PE");
+					switch (pp->p_config->tx_rxmode) 
+					{
+						case 0:	gtk_label_set_text (GTK_LABEL (pp->data3[1]), "PC"); break;
+						case 1:	gtk_label_set_text (GTK_LABEL (pp->data3[1]), "PE"); break;
+						case 2:	gtk_label_set_text (GTK_LABEL (pp->data3[1]), "TT"); break;
+						default:break;
+					}
 					gtk_widget_modify_bg (pp->eventbox31[1], GTK_STATE_NORMAL, &color_button1);
 
 					/* 显示和隐藏控件 */
@@ -556,12 +586,6 @@ void draw3_data1(DRAW_UI_P p)
 					gtk_widget_show (pp->eventbox31[1]);
 					gtk_widget_show (pp->data3[1]);
 					gtk_widget_hide (pp->entry3[1]);
-					
-					/* 更新当前增益值显示 */
-					/*str = g_strdup_printf ("%0.1f", pp->p_config->start / 10.0);
-					gtk_entry_set_text(GTK_ENTRY (pp->entry3[1]),  (const gchar *) (str));
-					gtk_editable_set_position (GTK_EDITABLE (pp->entry3[1]), 1);
-					g_free(str);*/
 					break;
 				case 2:
 					break;
@@ -687,7 +711,7 @@ void draw3_data2(DRAW_UI_P p)
 		case 1:
 			switch (pp->pos1[1])
 			{
-				case 0:/* range */
+				case 0: /* range范围 */
 					/*当前步进*/
 					switch (p->p_tmp_config->range_reg)
 					{
@@ -718,10 +742,25 @@ void draw3_data2(DRAW_UI_P p)
 					gtk_entry_set_text(GTK_ENTRY (pp->entry3[2]),  (const gchar *) (str));
 					gtk_editable_set_position (GTK_EDITABLE (pp->entry3[2]), 1);
 					g_free(str);
-
-
 					break;
-				case 1:
+				case 1: /* Freq频带(Mhz) */
+					g_sprintf (temp,"%s", con2_p[1][1][2]);
+					/* 设置label */
+					gtk_label_set_text (GTK_LABEL (pp->label3[2]), temp);
+					gtk_widget_modify_bg (pp->eventbox30[2], GTK_STATE_NORMAL, &color_button1);
+
+					gtk_widget_modify_bg (pp->eventbox31[2], GTK_STATE_NORMAL, &color_button1);
+
+					/* 显示和隐藏控件 */
+					gtk_widget_show (pp->eventbox30[2]);
+					gtk_widget_show (pp->eventbox31[2]);
+					gtk_widget_show (pp->data3[2]);
+					gtk_widget_hide (pp->entry3[2]);
+
+					/* 更新当前增益值显示 */
+					str = g_strdup_printf ("%0.2f", pp->p_config->frequence / 100.0);
+					gtk_label_set_text(GTK_LABEL (pp->data3[2]),  (const gchar *) (str));
+					g_free(str);
 					break;
 				case 2:
 					break;
@@ -861,7 +900,7 @@ void draw3_data3(DRAW_UI_P p)
 					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3) )
 						g_sprintf (temp,"%s\n(us) Δ%.1f", con2_p[1][0][3], tmpf);
 					else 
-						g_sprintf (temp,"%s\n     (us)", con2_p[1][0][3]);
+						g_sprintf (temp,"%s\n(us)", con2_p[1][0][3]);
 
 					/* 设置label */
 					gtk_label_set_text (GTK_LABEL (pp->label3[3]), temp);
@@ -878,11 +917,26 @@ void draw3_data3(DRAW_UI_P p)
 					gtk_entry_set_text(GTK_ENTRY (pp->entry3[3]),  (const gchar *) (str));
 					gtk_editable_set_position (GTK_EDITABLE (pp->entry3[3]), 1);
 					g_free(str);
-
-
-
 					break;
-				case 1:
+				case 1: /* 电压高低 功率? */
+					g_sprintf (temp,"%s", con2_p[1][1][3]);
+					/* 设置label */
+					gtk_label_set_text (GTK_LABEL (pp->label3[3]), temp);
+					gtk_widget_modify_bg (pp->eventbox30[3], GTK_STATE_NORMAL, &color_button1);
+
+					switch (pp->p_config->voltage) 
+					{
+						case VOL_LOW:	gtk_label_set_text (GTK_LABEL (pp->data3[3]), "45"); break;	/* 低 45V */
+						case VOL_HIGH:	gtk_label_set_text (GTK_LABEL (pp->data3[3]), "90"); break; /* 高 90V */
+						default:break;
+					}
+					gtk_widget_modify_bg (pp->eventbox31[3], GTK_STATE_NORMAL, &color_button1);
+
+					/* 显示和隐藏控件 */
+					gtk_widget_show (pp->eventbox30[3]);
+					gtk_widget_show (pp->eventbox31[3]);
+					gtk_widget_show (pp->data3[3]);
+					gtk_widget_hide (pp->entry3[3]);
 					break;
 				case 2:
 					break;
@@ -1022,9 +1076,9 @@ void draw3_data4(DRAW_UI_P p)
 
 					/* 格式化字符串 */
 					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4) )
-						g_sprintf (temp,"%s\n(us) Δ%.1f", con2_p[1][0][4], tmpf);
+						g_sprintf (temp,"%s\n(m/s) Δ%.1f", con2_p[1][0][4], tmpf);
 					else 
-						g_sprintf (temp,"%s\n   (us)", con2_p[1][0][4]);
+						g_sprintf (temp,"%s\n(m/s)", con2_p[1][0][4]);
 
 					/* 设置label */
 					gtk_label_set_text (GTK_LABEL (pp->label3[4]), temp);
@@ -1043,7 +1097,23 @@ void draw3_data4(DRAW_UI_P p)
 					g_free(str);
 
 					break;
-				case 1:
+				case 1: /* 脉冲宽度 pulser width */
+					g_sprintf (temp,"%s", con2_p[1][1][4]);
+					/* 设置label */
+					gtk_label_set_text (GTK_LABEL (pp->label3[4]), temp);
+					gtk_widget_modify_bg (pp->eventbox30[4], GTK_STATE_NORMAL, &color_button1);
+					gtk_widget_modify_bg (pp->eventbox31[4], GTK_STATE_NORMAL, &color_button1);
+
+					/* 显示和隐藏控件 */
+					gtk_widget_show (pp->eventbox30[4]);
+					gtk_widget_show (pp->eventbox31[4]);
+					gtk_widget_show (pp->data3[4]);
+					gtk_widget_hide (pp->entry3[4]);
+
+					/* 更新当前增益值显示 */
+					str = g_strdup_printf ("%0.1f", pp->p_config->pulser_width / 10.0);
+					gtk_label_set_text (GTK_LABEL (pp->data3[4]),  (const gchar *) (str));
+					g_free(str);
 					break;
 				case 2:
 					break;
@@ -1152,7 +1222,7 @@ void draw3_data5(DRAW_UI_P p)
 {
 	gchar temp[52];
 	gfloat tmpf;/**/
-        gchar *str;
+	gchar *str;
 
 	switch (pp->pos) 
 	{
@@ -1170,10 +1240,25 @@ void draw3_data5(DRAW_UI_P p)
 		case 1:
 			switch (pp->pos1[1])
 			{
-				case 0:/* start */
-
+				case 0: /* NULL 空 */
 					break;
-				case 1:
+				case 1: /* 重复频率 PRF */
+					g_sprintf (temp,"%s", con2_p[1][1][5]);
+					/* 设置label */
+					gtk_label_set_text (GTK_LABEL (pp->label3[5]), temp);
+					gtk_widget_modify_bg (pp->eventbox30[5], GTK_STATE_NORMAL, &color_button1);
+					gtk_widget_modify_bg (pp->eventbox31[5], GTK_STATE_NORMAL, &color_button1);
+
+					/* 显示和隐藏控件 */
+					gtk_widget_show (pp->eventbox30[5]);
+					gtk_widget_show (pp->eventbox31[5]);
+					gtk_widget_show (pp->data3[5]);
+					gtk_widget_hide (pp->entry3[5]);
+
+					/* 更新当前增益值显示 */
+					str = g_strdup_printf ("%d", pp->p_config->prf);
+					gtk_label_set_text (GTK_LABEL (pp->data3[5]),  (const gchar *) (str));
+					g_free(str);
 					break;
 				case 2:
 					break;
@@ -1295,6 +1380,10 @@ void draw_3_menu(gint pa)
 				(( pp->pos_last1 == i ) || ( pp->pos1[pp->pos] == i )) ||
 				(pp->pos_last2 == i || pp->pos2[pp->pos][pp->pos1[pp->pos]] == i) || pa) 
 		{
+			gtk_widget_set_sensitive (pp->eventbox30[i], TRUE);
+			gtk_widget_set_sensitive (pp->eventbox31[i], TRUE);
+			gtk_widget_set_sensitive (pp->entry3[i], TRUE);
+			gtk_widget_set_size_request(GTK_WIDGET(pp->eventbox30[i]), 115, 56);            /* */
 			/*
 			 * 如果三级菜单存在, 显示出来, 并显示 选项或者数值
 			 * 不存在就隐藏
@@ -1515,9 +1604,9 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 		p->data3[i]      = gtk_label_new("<^_^>");
 		p->entry3[i]     = gtk_entry_new();
 
-		gtk_widget_set_size_request(GTK_WIDGET(p->eventbox30[i]), 115, 58);            /* 配置名称 */
-		gtk_widget_set_size_request(GTK_WIDGET(p->eventbox31[i]), 115, 29);            /* 标签 */
-		gtk_widget_set_size_request(GTK_WIDGET(p->entry3[i]), 115, 29);            /* 输入项目  */
+		gtk_widget_set_size_request(GTK_WIDGET(p->eventbox30[i]), 115, 56);            /* 配置名称 */
+		gtk_widget_set_size_request(GTK_WIDGET(p->eventbox31[i]), 115, 27);            /* 标签 */
+		gtk_widget_set_size_request(GTK_WIDGET(p->entry3[i]), 115, 27);            /* 输入项目  */
 		gtk_container_set_border_width( GTK_CONTAINER(p->eventbox30[i]), 0);     /*设置边框大小，这个地方使用图片*/
 		gtk_container_set_border_width( GTK_CONTAINER(p->eventbox31[i]), 0);     /*设置边框大小，这个地方使用图片*/
 		gtk_container_add(GTK_CONTAINER(p->eventbox30[i]), p->label3[i]);
@@ -1527,7 +1616,7 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 		gtk_box_pack_start (GTK_BOX (p->vbox221[i]), p->entry3[i], FALSE, FALSE, 1);
 		gtk_widget_modify_fg(p->label3[i], GTK_STATE_NORMAL, &color_white);					/* 字体颜色白色 */
 		gtk_widget_modify_fg(p->data3[i], GTK_STATE_NORMAL, &color_white);
-		gtk_widget_modify_text (pp->entry3[i], GTK_STATE_NORMAL, &color_white);
+		gtk_widget_modify_text (pp->entry3[i], GTK_STATE_NORMAL, &color_white);				/* 字体与背景色 */
 		gtk_widget_modify_base (pp->entry3[i], GTK_STATE_NORMAL, &color_button1);
 		g_signal_connect(G_OBJECT(p->eventbox30[i]), "button-press-event", 
 				G_CALLBACK(data_fun[i]), (GUINT_TO_POINTER (i)));
@@ -1539,7 +1628,6 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 		gtk_widget_show(p->eventbox31[i]);
 		gtk_widget_show(p->label3[i]);
 	}
-
 
 
 

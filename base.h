@@ -69,12 +69,12 @@ typedef	struct Config {
 	guint	wedge_delay;	/*楔款延时 以0.01 μs为单位*/
 	
 	/*发射*/
-	guchar	pulser;
-	gint	tx_rxmode;
-	gint	frequence;
-	gint	voltage;
-	gint	pw;
-	gint	prf;
+	guchar	pulser;			/**/
+	guchar	tx_rxmode;		/**/
+	gushort	frequence;		/**/
+	guchar	voltage;		/**/
+	gushort	pulser_width;	/**/
+	guint	prf;			/**/
 
 	/*接收*/
 	gint	receiver;		/**/
@@ -145,16 +145,18 @@ typedef	struct Config {
 } CONFIG, *CONFIG_P;
 
 typedef struct tmp_config {
-	guchar	db_reg;				/*增益步进*/
-	guchar	start_reg;			/*start ? 扫描延时步进*/
-	guchar	range_reg;			/*范围(range) 步进 */
-	guchar	wedge_delay_reg;	/*楔块延时(wedge_delay) 步进 */
-	guchar	velocity_reg;		/*声速(velocity) 步进 */
-	guchar	pulser_reg;			/*脉冲发射pulser  步进 */
-	guchar	reject_reg;			/*抑制reject  步进 */
-	guchar	scanoffset_reg;		/*scan offset  步进 */
-	guchar	indexoffset_reg;	/*index offset  步进 */
-	guchar	gainoffset_reg;	/*gain offset  步进 */
+	guchar	db_reg;				/* 增益步进 */
+	guchar	start_reg;			/* start ? 扫描延时步进 */
+	guchar	range_reg;			/* 范围(range) 步进 */
+	guchar	wedge_delay_reg;	/* 楔块延时(wedge_delay) 步进 */
+	guchar	velocity_reg;		/* 声速(velocity) 步进 */
+
+	guchar	pulser_reg;			/* 脉冲发射pulser  步进 */
+	guchar	receiver_reg;		/* 接收器receiver 步进 */
+	guchar	reject_reg;			/* 抑制reject  步进 */
+	guchar	scanoffset_reg;		/* scan offset  步进 */
+	guchar	indexoffset_reg;	/* index offset  步进 */
+	guchar	gainoffset_reg;		/* gain offset  步进 */
 
 	guchar beam_delay_reg;		/*beam delay 步进*/
 
@@ -186,7 +188,7 @@ typedef struct Draw_interface {
 	GSList			*group;
 
 	/*boxes*/
-	GtkWidget		*vbox;			/*整个window*/
+	GtkWidget		*vbox;			/* 整个window */
 	GtkWidget		*hbox1;			/**/
 	GtkWidget		*vbox11;
 	GtkWidget		*hbox111;
@@ -235,6 +237,8 @@ typedef struct Draw_interface {
 } DRAW_UI, *DRAW_UI_P;
 
 
+#define VOL_LOW		0
+#define VOL_HIGH	1
 
 #define MENU1_STOP    4
 #define MENU2_STOP    0 

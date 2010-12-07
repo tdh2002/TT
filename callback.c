@@ -148,7 +148,9 @@ void b3_fun0(gpointer p)
 			case 1:
 				   switch (pp->pos1[1])
 				   {
-					   case 0:data_process(&(pp->p_tmp_config->db_reg), 4); break; /* 010增益 5种步进 */
+					   case 0:data_process(&(pp->p_tmp_config->db_reg), 4);			break; /* 100增益 5种步进 */
+					   case 1:data_process(&(pp->p_tmp_config->pulser_reg), 2);		break; /* 110pulser发射 3种步进 */
+					   case 2:data_process(&(pp->p_tmp_config->receiver_reg), 2);	break; /* 120receiver接收 3种步进 */
 					   default:break;
 				   }
 			default:break;
@@ -177,6 +179,7 @@ void b3_fun1(gpointer p)
 				   switch (pp->pos1[1])
 				   {
 					   case 0:data_process(&(pp->p_tmp_config->start_reg), 2); break; /* 011start扫描延时 3种步进 */
+					   case 1: /* 弹出一个选择菜单,选择 */ break; /* 收发模式Tx/Rx Mode  */
 					   default:break;
 				   }
 			default:break;
@@ -205,6 +208,7 @@ void b3_fun2(gpointer p)
 				   switch (pp->pos1[2])
 				   {
 					   case 0:data_process(&(pp->p_tmp_config->range_reg), 2); break; /* 012range范围 3种步进 */
+					   case 1: /* 弹出一个选择菜单,选择 */ break; /* 频率 Freq.  */
 					   default:break;
 				   }
 			default:break;
@@ -233,6 +237,7 @@ void b3_fun3(gpointer p)
 				   switch (pp->pos1[3])
 				   {
 					   case 0:data_process(&(pp->p_tmp_config->wedge_delay_reg), 2); break; /* 013wedge delay 楔款延时 3种步进 */
+					   case 1: /* 弹出一个选择菜单,选择 */ break; /* 电压功率 Voltage  */
 					   default:break;
 				   }
 			default:break;
@@ -261,6 +266,7 @@ void b3_fun4(gpointer p)
 				   switch (pp->pos1[4])
 				   {
 					   case 0:data_process(&(pp->p_tmp_config->velocity_reg), 3); break; /* 014velocity声速  3种步进 */
+					   case 1: /* 弹出一个选择菜单,选择 */ break; /* 脉冲宽度 PW  */
 					   default:break;
 				   }
 			default:break;
@@ -277,7 +283,7 @@ void b3_fun5(gpointer p)
 {
 	/* 之前的位置 */
 	pp->pos_last2 = pp->pos2[pp->pos][pp->pos1[pp->pos]];
-	pp->pos2[pp->pos][pp->pos1[pp->pos]] = 4;
+	pp->pos2[pp->pos][pp->pos1[pp->pos]] = 5;
 	pp->pos_pos = MENU3_PRESSED;
 	/*处理微调*/
 	if (pp->pos_last2 == pp->pos2[pp->pos][pp->pos1[pp->pos]])
@@ -289,6 +295,7 @@ void b3_fun5(gpointer p)
 				   switch (pp->pos1[4])
 				   {
 					   case 0: break; /* 015 空 */
+					   case 1: /* 弹出一个选择菜单,选择 */ break; /* 重复频率 PRF */
 					   default:break;
 				   }
 			default:break;
