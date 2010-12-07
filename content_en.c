@@ -129,24 +129,25 @@ static const gchar *content_en214[] = {
 
 
 
+
 static const gchar *content_en220[] = {
 	/* 二级菜单第2页下的第0页三级菜单 */
-	"Gate", "Parameters", "Start", "Width", "Threshold", NULL
+	"Gate", "Parameters", "Start", "Width", "Threshold", NULL, "Synchro.", "Measure", "RF"
 };
 
 static const gchar *content_en221[] = {
 	/* 二级菜单第2页下的第1页三级菜单 */
-	"  Alarm  ","  Group A  ", "  Condition  ","  Operator  ", "  Group B  ", "  Condition  "
+	"Alarm", "Group A", "Condition", "Operator", "Group B", "Condition"
 };
 
 static const gchar *content_en222[] = {
 	/* 二级菜单第2页下的第2页三级菜单 */
-	"  Output  ","  Alarm #  ", "  Count  ","  Sound  ", "  Delay  ", "  Hold Time  "
+	"Output", "Alarm #", "Count", "Sound", "Delay", "Hold Time"
 };
 
 static const gchar *content_en223[] = {
 	/* 二级菜单第2页下的第3页三级菜单 */
-	"  Mode  ","  Curve  ", NULL, NULL, NULL, NULL
+	"Mode", "Curve", NULL, NULL, NULL, NULL
 };
 
 static const gchar *content_en224[] = {

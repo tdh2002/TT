@@ -144,15 +144,31 @@ void b3_fun0(gpointer p)
 	{
 		switch (pp->pos) 
 		{
-			case 0:break;
-			case 1:
+			case 0: /* Wizard */
+				break;
+			case 1: /* UT Settings*/
 				   switch (pp->pos1[1])
 				   {
-					   case 0:data_process(&(pp->p_tmp_config->db_reg), 4);			break; /* 100增益 5种步进 */
-					   case 1:data_process(&(pp->p_tmp_config->pulser_reg), 2);		break; /* 110pulser发射 3种步进 */
-					   case 2:data_process(&(pp->p_tmp_config->receiver_reg), 2);	break; /* 120receiver接收 3种步进 */
+					   case 0: data_process (&(pp->p_tmp_config->db_reg), 4);			break; /* 100增益 5种步进 */
+					   case 1: data_process (&(pp->p_tmp_config->pulser_reg), 2);		break; /* 110pulser发射 3种步进 */
+					   case 2: data_process (&(pp->p_tmp_config->receiver_reg), 2);		break; /* 120receiver接收 3种步进 */
+					   case 3: break; /* 130scan offset 这里只有显示数值 不能更改 */
+					   case 4: /* 自动80% */	break; /* 140 自动80%  */
 					   default:break;
 				   }
+				   break;
+			case 2: /* Gate/Alarm */
+				   switch (pp->pos1[1])
+				   {
+					   case 0: /* 弹出一个菜单选择  */			break; /* 200闸门3种选择  */
+					   case 1: /* 弹出一个菜单选择  */			break; /* 210 Alarm  */
+					   case 2: /* 弹出一个菜单选择  */			break; /* 220 Alarm  */
+					   case 3: break; /* 230 */
+					   default:break;
+				   }
+				   break;
+
+				   break;
 			default:break;
 		}
 	}
@@ -178,8 +194,11 @@ void b3_fun1(gpointer p)
 			case 1:
 				   switch (pp->pos1[1])
 				   {
-					   case 0:data_process(&(pp->p_tmp_config->start_reg), 2); break; /* 011start扫描延时 3种步进 */
-					   case 1: /* 弹出一个选择菜单,选择 */ break; /* 收发模式Tx/Rx Mode  */
+					   case 0:data_process(&(pp->p_tmp_config->start_reg), 2); break; /* 101start扫描延时 3种步进 */
+					   case 1: /* 弹出一个选择菜单,选择 */ break; /*111 收发模式Tx/Rx Mode  */
+					   case 2: /* 弹出一个选择菜单,选择 */ break; /*121 滤波Filter  */
+					   case 3: /* 弹出一个选择菜单,选择 */ break; /*131 Index offset 不能更改  */
+					   case 4: /* Set Ref. */ break; /*141 Set Ref.参考增益  */
 					   default:break;
 				   }
 			default:break;
@@ -207,8 +226,11 @@ void b3_fun2(gpointer p)
 			case 1:
 				   switch (pp->pos1[2])
 				   {
-					   case 0:data_process(&(pp->p_tmp_config->range_reg), 2); break; /* 012range范围 3种步进 */
-					   case 1: /* 弹出一个选择菜单,选择 */ break; /* 频率 Freq.  */
+					   case 0:data_process(&(pp->p_tmp_config->range_reg), 2); break; /* 102range范围 3种步进 */
+					   case 1: /* 弹出一个选择菜单,选择 */ break; /* 112 频率 Freq.  */
+					   case 2: /* 弹出一个选择菜单,选择 */ break; /* 122 检波 Recitify  */
+					   case 3: /* Angle. (deg) */ break; /* 132 角度 不能更改 */
+					   case 4: /* dB Ref. 开关 */ break; /* 142 dB Ref, on or off  */
 					   default:break;
 				   }
 			default:break;
@@ -236,8 +258,11 @@ void b3_fun3(gpointer p)
 			case 1:
 				   switch (pp->pos1[3])
 				   {
-					   case 0:data_process(&(pp->p_tmp_config->wedge_delay_reg), 2); break; /* 013wedge delay 楔款延时 3种步进 */
-					   case 1: /* 弹出一个选择菜单,选择 */ break; /* 电压功率 Voltage  */
+					   case 0:data_process(&(pp->p_tmp_config->wedge_delay_reg), 2); break; /* 103wedge delay 楔款延时 3种步进 */
+					   case 1: /* 弹出一个选择菜单,选择 */ break; /* 113 电压功率 Voltage  */
+					   case 2: /* 视频滤波 */ break; /* 123 视频滤波 on or off  */
+					   case 3: /* Skew  */ break; /* 133 Skew (deg)  */
+					   case 4: /* 弹出一个选择菜单,选择 */ break; /* 143 Points Qty. */
 					   default:break;
 				   }
 			default:break;
@@ -265,8 +290,11 @@ void b3_fun4(gpointer p)
 			case 1:
 				   switch (pp->pos1[4])
 				   {
-					   case 0:data_process(&(pp->p_tmp_config->velocity_reg), 3); break; /* 014velocity声速  3种步进 */
-					   case 1: /* 弹出一个选择菜单,选择 */ break; /* 脉冲宽度 PW  */
+					   case 0:data_process(&(pp->p_tmp_config->velocity_reg), 3); break; /* 104velocity声速  3种步进 */
+					   case 1: /* 弹出一个选择菜单,选择 */ break; /* 114 脉冲宽度 PW  */
+					   case 2: /* 弹出一个选择菜单,选择 */ break; /* 124 平均 averaging  */
+					   case 3:data_process(&(pp->p_tmp_config->beam_delay_reg), 2); break; /* 134 beamdelay 波束延时 */
+					   case 4: /*  */ break; /* 144 Scale Factor 多少点压缩一点 只能看  */
 					   default:break;
 				   }
 			default:break;
@@ -294,8 +322,11 @@ void b3_fun5(gpointer p)
 			case 1:
 				   switch (pp->pos1[4])
 				   {
-					   case 0: break; /* 015 空 */
-					   case 1: /* 弹出一个选择菜单,选择 */ break; /* 重复频率 PRF */
+					   case 0: break; /* 105 空 */
+					   case 1: /* 弹出一个选择菜单,选择 */ break; /* 115 重复频率 PRF */
+					   case 2:data_process(&(pp->p_tmp_config->reject_reg), 3); break; /* 125 Reject 抑制  */
+					   case 3:data_process(&(pp->p_tmp_config->gainoffset_reg), 3); break; /* 135 Gain Offset  */
+					   case 4: /* 弹出一个选择菜单,选择 */ break; /* 145 Sum Gain  */
 					   default:break;
 				   }
 			default:break;

@@ -99,20 +99,20 @@ typedef	struct Config {
 	gint	sum_gain;		/**/
 
 	/*闸门报警 */
-	guint	agate_mode;
-	gint	agate_start;
-	guint	agate_width;
-	guint	agate_height;
+	guint	agate_mode;		
+	gint	agate_start;	
+	guint	agate_width;	
+	guint	agate_height;	
 
-	guint	bgate_mode;
-	gint	bgate_start;
-	guint	bgate_width;
-	guint	bgate_height;
+	guint	bgate_mode;	
+	gint	bgate_start;	
+	guint	bgate_width;	
+	guint	bgate_height;	
 
-	guint	cgate_mode;
-	gint	cgate_start;
-	guint	cgate_width;
-	guint	cgate_height;
+	guint	cgate_mode;		
+	gint	cgate_start;	
+	guint	cgate_width;	
+	guint	cgate_height;	
 
 	gint	groupA;
 	gint	groupB;
