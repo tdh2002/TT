@@ -335,12 +335,13 @@ void draw3_data0(DRAW_UI_P p)
 					/* 设置label */
 					gtk_label_set_text (GTK_LABEL (pp->label3[0]), temp);
 					gtk_widget_modify_bg (pp->eventbox30[0], GTK_STATE_NORMAL, &color_button1);
+					gtk_widget_modify_base (pp->entry3[0], GTK_STATE_NORMAL, &color_button1);/* 设置entry背景颜色 */
 
 					/* 显示和隐藏控件 */
 					gtk_widget_show (pp->eventbox30[0]);
 					gtk_widget_hide (pp->eventbox31[0]);
 					gtk_widget_show (pp->entry3[0]);
-					
+
 					/* 更新当前增益值显示 */
 					str = g_strdup_printf ("%0.1f", pp->p_config->gain / 10.0);
 					gtk_entry_set_text(GTK_ENTRY (pp->entry3[0]),  (const gchar *) (str));
@@ -523,6 +524,7 @@ void draw3_data1(DRAW_UI_P p)
 					/* 设置label */
 					gtk_label_set_text (GTK_LABEL (pp->label3[1]), temp);
 					gtk_widget_modify_bg (pp->eventbox30[1], GTK_STATE_NORMAL, &color_button1);
+					gtk_widget_modify_base (pp->entry3[1], GTK_STATE_NORMAL, &color_button1);/* 设置entry背景颜色 */
 
 					/* 显示和隐藏控件 */
 					gtk_widget_show (pp->eventbox30[1]);
@@ -704,6 +706,7 @@ void draw3_data2(DRAW_UI_P p)
 					/* 设置label */
 					gtk_label_set_text (GTK_LABEL (pp->label3[2]), temp);
 					gtk_widget_modify_bg (pp->eventbox30[2], GTK_STATE_NORMAL, &color_button1);
+					gtk_widget_modify_base (pp->entry3[2], GTK_STATE_NORMAL, &color_button1);/* 设置entry背景颜色 */
 
 					/* 显示和隐藏控件 */
 					gtk_widget_show (pp->eventbox30[2]);
@@ -863,6 +866,7 @@ void draw3_data3(DRAW_UI_P p)
 					/* 设置label */
 					gtk_label_set_text (GTK_LABEL (pp->label3[3]), temp);
 					gtk_widget_modify_bg (pp->eventbox30[3], GTK_STATE_NORMAL, &color_button1);
+					gtk_widget_modify_base (pp->entry3[3], GTK_STATE_NORMAL, &color_button1);/* 设置entry背景颜色 */
 
 					/* 显示和隐藏控件 */
 					gtk_widget_show (pp->eventbox30[3]);
@@ -1025,6 +1029,7 @@ void draw3_data4(DRAW_UI_P p)
 					/* 设置label */
 					gtk_label_set_text (GTK_LABEL (pp->label3[4]), temp);
 					gtk_widget_modify_bg (pp->eventbox30[4], GTK_STATE_NORMAL, &color_button1);
+					gtk_widget_modify_base (pp->entry3[4], GTK_STATE_NORMAL, &color_button1);/* 设置entry背景颜色 */
 
 					/* 显示和隐藏控件 */
 					gtk_widget_show (pp->eventbox30[4]);
@@ -1324,6 +1329,7 @@ void draw_3_menu(gint pa)
 		gtk_widget_modify_bg (pp->eventbox31[pp->pos2[pp->pos][pp->pos1[pp->pos]]],
 				GTK_STATE_NORMAL, &color_button0);
 		gtk_widget_grab_focus (pp->entry3[pp->pos2[pp->pos][pp->pos1[pp->pos]]]);
+		gtk_widget_modify_base (pp->entry3[CUR_POS], GTK_STATE_NORMAL, &color_button0);
 	}
 	else if (pp->pos_pos == MENU3_STOP) 
 	{
@@ -1332,6 +1338,7 @@ void draw_3_menu(gint pa)
 		gtk_widget_modify_bg (pp->eventbox31[pp->pos2[pp->pos][pp->pos1[pp->pos]]],
 				GTK_STATE_NORMAL, &color_button2);
 		gtk_widget_grab_focus (pp->button);
+		gtk_widget_modify_base (pp->entry3[CUR_POS], GTK_STATE_NORMAL, &color_button2);
 	}
 	else
 	{
@@ -1487,8 +1494,9 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 		p->label2[i] = gtk_label_new("<^_^>");
 		gtk_container_add(GTK_CONTAINER(p->eventbox2[i]), p->label2[i]);
 		gtk_container_set_border_width( GTK_CONTAINER(p->eventbox2[i]), 1);     /*设置边框大小，这个地方使用图片做背景*/
-/*		color_green.red = 0x7e00, color_green.green = 0xb700, color_green.blue = 0xf300;      
-		gtk_widget_modify_bg(p->eventbox2[i], GTK_STATE_NORMAL, &color_green);*/
+/*		color_green.red = 0x7e00, color_green.green = 0xb700, color_green.blue = 0xf300;      */
+/*		gtk_widget_modify_fg(p->eventbox2[i], GTK_STATE_NORMAL, &color_white);*/
+		gtk_widget_modify_fg(p->label2[i], GTK_STATE_NORMAL, &color_white);
 		g_signal_connect(G_OBJECT(p->eventbox2[i]), "button-press-event", 
 				G_CALLBACK(eventbox2_fun[i]), (gpointer) (p));
 
@@ -1517,6 +1525,10 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 		gtk_box_pack_start (GTK_BOX (p->vbox221[i]), p->eventbox30[i], FALSE, FALSE, 1);
 		gtk_box_pack_start (GTK_BOX (p->vbox221[i]), p->eventbox31[i], FALSE, FALSE, 1);
 		gtk_box_pack_start (GTK_BOX (p->vbox221[i]), p->entry3[i], FALSE, FALSE, 1);
+		gtk_widget_modify_fg(p->label3[i], GTK_STATE_NORMAL, &color_white);					/* 字体颜色白色 */
+		gtk_widget_modify_fg(p->data3[i], GTK_STATE_NORMAL, &color_white);
+		gtk_widget_modify_text (pp->entry3[i], GTK_STATE_NORMAL, &color_white);
+		gtk_widget_modify_base (pp->entry3[i], GTK_STATE_NORMAL, &color_button1);
 		g_signal_connect(G_OBJECT(p->eventbox30[i]), "button-press-event", 
 				G_CALLBACK(data_fun[i]), (GUINT_TO_POINTER (i)));
 		g_signal_connect(G_OBJECT(p->eventbox31[i]), "button-press-event", 

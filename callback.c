@@ -11,12 +11,6 @@ gboolean foo (GtkAccelGroup *accel_group, GObject *acceleratable,
 
 gboolean key_press_handler (GtkWidget* pWidget,
 		GdkEventKey* pEvent, gpointer pointerBunch);
-void button3_function0 (GtkButton *button, gpointer data);
-void button3_function1 (GtkButton *button, gpointer data);
-void button3_function2 (GtkButton *button, gpointer data);
-void button3_function3 (GtkButton *button, gpointer data);
-void button3_function4 (GtkButton *button, gpointer data);
-void button3_function5 (GtkButton *button, gpointer data);
 
 gboolean data_function0 (GtkWidget *widget,	GdkEventButton *event,	gpointer       data);
 gboolean data_function1 (GtkWidget *widget,	GdkEventButton *event,	gpointer       data);
@@ -48,19 +42,9 @@ gboolean eventbox2_function4 (GtkWidget *widget, GdkEventButton *event,	gpointer
 
 
 /*   */
-static void data_process(guchar *data, guint pa);
-static void data_press010(gint pa);
-static void data_press011(gint pa);
-
-
+static inline void data_process(guchar *data, guint pa);
 
 /*三级菜单6个按钮的回调函数*/
-/*button click 回调函数*/
-void (*button3_fun[6])(GtkButton *button, gpointer data) = 
-{
-	button3_function0,	button3_function1,	button3_function2,	
-	button3_function3,	button3_function4,	button3_function5
-};
 
 /*data button press 回调函数*/
 gboolean (*data_fun[6])(GtkWidget *widget, GdkEventButton *event, gpointer data) = 
@@ -141,21 +125,9 @@ gboolean eventbox2_function4 (GtkWidget *widget, GdkEventButton *event,	gpointer
 	return TRUE;
 }
 
-static void data_process(guchar* data, guint pa)
+static inline void data_process(guchar* data, guint pa)
 {
 	(*data > 0) ? (*data)-- : (*data = pa);
-	return ;
-}
-
-static void data_press010(gint pa)
-{
-	(pp->p_tmp_config->db_reg > 0) ? pp->p_tmp_config->db_reg-- : (pp->p_tmp_config->db_reg = 4); 
-	return ;
-}
-
-static void data_press011(gint pa)
-{
-	(pp->p_tmp_config->db_reg > 0) ? pp->p_tmp_config->db_reg-- : (pp->p_tmp_config->db_reg = 4); 
 	return ;
 }
 
@@ -219,22 +191,114 @@ void b3_fun1(gpointer p)
 
 void b3_fun2(gpointer p)
 {
+	/* 之前的位置 */
+	pp->pos_last2 = pp->pos2[pp->pos][pp->pos1[pp->pos]];
+	pp->pos2[pp->pos][pp->pos1[pp->pos]] = 2;
+	pp->pos_pos = MENU3_PRESSED;
 	/*处理微调*/
+	if (pp->pos_last2 == pp->pos2[pp->pos][pp->pos1[pp->pos]])
+	{
+		switch (pp->pos) 
+		{
+			case 0:break;
+			case 1:
+				   switch (pp->pos1[2])
+				   {
+					   case 0:data_process(&(pp->p_tmp_config->range_reg), 2); break; /* 012range范围 3种步进 */
+					   default:break;
+				   }
+			default:break;
+		}
+	}
+
+	draw_2_menu(0);
+	draw_3_menu(0);                          /**/
+
+	return ;
 }
 
 void b3_fun3(gpointer p)
 {
+	/* 之前的位置 */
+	pp->pos_last2 = pp->pos2[pp->pos][pp->pos1[pp->pos]];
+	pp->pos2[pp->pos][pp->pos1[pp->pos]] = 3;
+	pp->pos_pos = MENU3_PRESSED;
 	/*处理微调*/
+	if (pp->pos_last2 == pp->pos2[pp->pos][pp->pos1[pp->pos]])
+	{
+		switch (pp->pos) 
+		{
+			case 0:break;
+			case 1:
+				   switch (pp->pos1[3])
+				   {
+					   case 0:data_process(&(pp->p_tmp_config->wedge_delay_reg), 2); break; /* 013wedge delay 楔款延时 3种步进 */
+					   default:break;
+				   }
+			default:break;
+		}
+	}
+
+	draw_2_menu(0);
+	draw_3_menu(0);                          /**/
+
+	return ;
 }
 
 void b3_fun4(gpointer p)
 {
+	/* 之前的位置 */
+	pp->pos_last2 = pp->pos2[pp->pos][pp->pos1[pp->pos]];
+	pp->pos2[pp->pos][pp->pos1[pp->pos]] = 4;
+	pp->pos_pos = MENU3_PRESSED;
 	/*处理微调*/
+	if (pp->pos_last2 == pp->pos2[pp->pos][pp->pos1[pp->pos]])
+	{
+		switch (pp->pos) 
+		{
+			case 0:break;
+			case 1:
+				   switch (pp->pos1[4])
+				   {
+					   case 0:data_process(&(pp->p_tmp_config->velocity_reg), 3); break; /* 014velocity声速  3种步进 */
+					   default:break;
+				   }
+			default:break;
+		}
+	}
+
+	draw_2_menu(0);
+	draw_3_menu(0);                          /**/
+
+	return ;
 }
 
 void b3_fun5(gpointer p)
 {
+	/* 之前的位置 */
+	pp->pos_last2 = pp->pos2[pp->pos][pp->pos1[pp->pos]];
+	pp->pos2[pp->pos][pp->pos1[pp->pos]] = 4;
+	pp->pos_pos = MENU3_PRESSED;
 	/*处理微调*/
+	if (pp->pos_last2 == pp->pos2[pp->pos][pp->pos1[pp->pos]])
+	{
+		switch (pp->pos) 
+		{
+			case 0:break;
+			case 1:
+				   switch (pp->pos1[4])
+				   {
+					   case 0: break; /* 015 空 */
+					   default:break;
+				   }
+			default:break;
+		}
+	}
+
+	draw_2_menu(0);
+	draw_3_menu(0);                          /**/
+
+	return ;
 }
 
 /* 快捷键处理函数 */
@@ -352,24 +416,10 @@ gboolean foo (GtkAccelGroup *accel_group, GObject *acceleratable,
 return 0;
 }
 
-void button3_function0 (GtkButton *button, gpointer data)
-{
-	DRAW_UI_P p = (DRAW_UI_P)(data);
-	b3_fun0(p);
-	return ;
-}
-
 gboolean data_function0 (GtkWidget *widget,	GdkEventButton *event,	gpointer       data)
 {
 	b3_fun0(data);
 	return TRUE;
-}
-
-void button3_function1 (GtkButton *button, gpointer data)
-{
-	DRAW_UI_P p = (DRAW_UI_P)(data);
-	b3_fun1(p);
-	return ;
 }
 
 gboolean data_function1 (GtkWidget *widget,	GdkEventButton *event,	gpointer       data)
@@ -378,24 +428,10 @@ gboolean data_function1 (GtkWidget *widget,	GdkEventButton *event,	gpointer     
 	return TRUE;
 }
 
-void button3_function2 (GtkButton *button, gpointer data)
-{
-	DRAW_UI_P p = (DRAW_UI_P)(data);
-	b3_fun2(p);
-	return ;
-}
-
 gboolean data_function2 (GtkWidget *widget,	GdkEventButton *event,	gpointer       data)
 {
 	b3_fun2(data);
 	return TRUE;
-}
-
-void button3_function3 (GtkButton *button, gpointer data)
-{
-	DRAW_UI_P p = (DRAW_UI_P)(data);
-	b3_fun3(p);
-	return ;
 }
 
 gboolean data_function3 (GtkWidget *widget,	GdkEventButton *event,	gpointer       data)
@@ -404,24 +440,10 @@ gboolean data_function3 (GtkWidget *widget,	GdkEventButton *event,	gpointer     
 	return TRUE;
 }
 
-void button3_function4 (GtkButton *button, gpointer data)
-{
-	DRAW_UI_P p = (DRAW_UI_P)(data);
-	b3_fun4(p);
-	return ;
-}
-
 gboolean data_function4 (GtkWidget *widget,	GdkEventButton *event,	gpointer       data)
 {
 	b3_fun4(data);
 	return TRUE;
-}
-
-void button3_function5 (GtkButton *button, gpointer data)
-{
-	DRAW_UI_P p = (DRAW_UI_P)(data);
-	b3_fun5(p);
-	return ;
 }
 
 gboolean data_function5 (GtkWidget *widget,	GdkEventButton *event,	gpointer       data)

@@ -19,6 +19,7 @@
 #define EVENT_METHOD(i, x) GTK_WIDGET_GET_CLASS(i)->x
 
 extern GdkColor	color_black;
+extern GdkColor	color_white;
 extern GdkColor	color_button0;
 extern GdkColor	color_button1;
 extern GdkColor	color_button2;

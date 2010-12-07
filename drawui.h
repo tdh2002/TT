@@ -13,9 +13,8 @@ extern DRAW_UI_P pp;
 extern void change_language();										/* 选择语言 */
 extern void draw_2_menu(gint pa);									/* 更新二级菜单 */
 extern void draw_3_menu(gint pa);									/* 更新三级菜单 */
-extern void init_ui(DRAW_UI_P p);									/*初始化界面,*/
+extern void init_ui(DRAW_UI_P p);									/* 初始化界面, */
 
-extern void (*button3_fun[6])(GtkButton *button, gpointer data);
 extern gboolean (*data_fun[6])(GtkWidget *widget, GdkEventButton *event, gpointer user_data);
 extern gboolean (*eventbox2_fun[5])(GtkWidget *widget, GdkEventButton *event, gpointer data);
 
