@@ -328,9 +328,9 @@ void draw3_data0(DRAW_UI_P p)
 
 					/* 格式化字符串 */
 					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0) )
-						g_sprintf (temp,"%s\ndB Δ%.1f", con2_p[1][0][0], tmpf);
+						g_sprintf (temp,"%s\n(dB) Δ%.1f", con2_p[1][0][0], tmpf);
 					else 
-						g_sprintf (temp,"%s\ndB", con2_p[1][0][0]);
+						g_sprintf (temp,"%s\n(dB)", con2_p[1][0][0]);
 
 					/* 设置label */
 					gtk_label_set_text (GTK_LABEL (pp->label3[0]), temp);
@@ -344,10 +344,41 @@ void draw3_data0(DRAW_UI_P p)
 					/* 更新当前增益值显示 */
 					str = g_strdup_printf ("%0.1f", pp->p_config->gain / 10.0);
 					gtk_entry_set_text(GTK_ENTRY (pp->entry3[0]),  (const gchar *) (str));
-/*					gtk_editable_set_position (GTK_EDITABLE (pp->entry3[0]), 1);*/
+					gtk_editable_set_position (GTK_EDITABLE (pp->entry3[0]), 1);
 					g_free(str);
 					break;
 				case 1:/*发射 Pulser*/
+                                       /* 当前步进 */
+					switch (pp->p_tmp_config->pulser_reg)
+					{
+						case 0:	tmpf = 0.1; break;
+						case 1:	tmpf = 0.5; break;
+						case 2:	tmpf = 1.0; break;
+						case 3:	tmpf = 10.0; break;
+						case 4:	tmpf = 100.0; break;
+						default:break;
+					}
+
+					/* 格式化字符串 */
+					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0) )
+						g_sprintf (temp,"%s\n(1 to 1) Δ%.1f", con2_p[1][1][0], tmpf);
+					else 
+						g_sprintf (temp,"%s\n(1 to 1)", con2_p[1][1][0]);
+
+					/* 设置label */
+					gtk_label_set_text (GTK_LABEL (pp->label3[0]), temp);
+					gtk_widget_modify_bg (pp->eventbox30[0], GTK_STATE_NORMAL, &color_button1);
+
+					/* 显示和隐藏控件 */
+					gtk_widget_show (pp->eventbox30[0]);
+					gtk_widget_hide (pp->eventbox31[0]);
+					gtk_widget_show (pp->entry3[0]);
+					
+					/* 更新当前pulser值显示 */
+					str = g_strdup_printf ("%0.1f", pp->p_config->pulser / 10.0);
+					gtk_entry_set_text(GTK_ENTRY (pp->entry3[0]),  (const gchar *) (str));
+					gtk_editable_set_position (GTK_EDITABLE (pp->entry3[0]), 1);
+					g_free(str);
 					/*当前步进*/
 					break;
 				case 2:
@@ -360,7 +391,7 @@ void draw3_data0(DRAW_UI_P p)
 			}
 			break;
 		case 2:
-			switch (p->pos1[0])
+			switch (p->pos1[2])
 			{
 				case 0:break;
 				case 1:break;
@@ -371,7 +402,7 @@ void draw3_data0(DRAW_UI_P p)
 			}
 			break;
 		case 3:
-			switch (p->pos1[0])
+			switch (p->pos1[3])
 			{
 				case 0:break;
 				case 1:break;
@@ -382,7 +413,7 @@ void draw3_data0(DRAW_UI_P p)
 			}
 			break;
 		case 4:
-			switch (p->pos1[0])
+			switch (p->pos1[4])
 			{
 				case 0:break;
 				case 1:break;
@@ -393,7 +424,7 @@ void draw3_data0(DRAW_UI_P p)
 			}
 			break;
 		case 5:
-			switch (p->pos1[0])
+			switch (p->pos1[5])
 			{
 				case 0:break;
 				case 1:break;
@@ -404,7 +435,7 @@ void draw3_data0(DRAW_UI_P p)
 			}
 			break;
 		case 6:
-			switch (p->pos1[0])
+			switch (p->pos1[6])
 			{
 				case 0:break;
 				case 1:break;
@@ -415,7 +446,7 @@ void draw3_data0(DRAW_UI_P p)
 			}
 			break;
 		case 7:
-			switch (p->pos1[0])
+			switch (p->pos1[7])
 			{
 				case 0:break;
 				case 1:break;
@@ -426,7 +457,7 @@ void draw3_data0(DRAW_UI_P p)
 			}
 			break;
 		case 8:
-			switch (p->pos1[0])
+			switch (p->pos1[8])
 			{
 				case 0:break;
 				case 1:break;
@@ -437,7 +468,7 @@ void draw3_data0(DRAW_UI_P p)
 			}
 			break;
 		case 9:
-			switch (p->pos1[0])
+			switch (p->pos1[9])
 			{
 				case 0:break;
 				case 1:break;
@@ -455,6 +486,180 @@ void draw3_data1(DRAW_UI_P p)
 {
 	gchar temp[52];
 	gfloat tmpf;
+        gchar *str;
+
+	switch (pp->pos) 
+	{
+		case 0:
+			switch (pp->pos1[0])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 1:
+			switch (pp->pos1[1])
+			{
+				case 0:/* start */
+					/* 当前步进 */
+					switch (pp->p_tmp_config->start_reg)
+					{
+						case 0:	tmpf = p->p_config->range / (1 * 1000.0); break;
+						case 1:	tmpf = p->p_config->range / (2 * 1000.0); break;
+						case 2:	tmpf = p->p_config->range / (32 * 1000.0); break;
+						default:break;
+					}
+
+					/* 格式化字符串 */
+					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1) )
+						g_sprintf (temp,"%s\n(mm) Δ%.1f", con2_p[1][0][1], tmpf);
+					else 
+						g_sprintf (temp,"%s\n(mm)", con2_p[1][0][1]);
+
+					/* 设置label */
+					gtk_label_set_text (GTK_LABEL (pp->label3[1]), temp);
+					gtk_widget_modify_bg (pp->eventbox30[1], GTK_STATE_NORMAL, &color_button1);
+
+					/* 显示和隐藏控件 */
+					gtk_widget_show (pp->eventbox30[1]);
+					gtk_widget_hide (pp->eventbox31[1]);
+					gtk_widget_show (pp->entry3[1]);
+					
+					/* 更新当前start值显示 */
+					str = g_strdup_printf ("%0.1f", pp->p_config->start / 10.0);
+					gtk_entry_set_text(GTK_ENTRY (pp->entry3[1]),  (const gchar *) (str));
+					gtk_editable_set_position (GTK_EDITABLE (pp->entry3[1]), 1);
+					g_free(str);
+					break;
+
+
+				case 1:
+					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1) )
+						g_sprintf (temp,"%s", con2_p[1][1][1]);
+					else 
+						g_sprintf (temp,"%s", con2_p[1][1][1]);
+					/* 设置label */
+					gtk_label_set_text (GTK_LABEL (pp->label3[1]), temp);
+					gtk_widget_modify_bg (pp->eventbox30[1], GTK_STATE_NORMAL, &color_button1);
+
+					gtk_label_set_text (GTK_LABEL (pp->data3[1]), "PE");
+					gtk_widget_modify_bg (pp->eventbox31[1], GTK_STATE_NORMAL, &color_button1);
+
+					/* 显示和隐藏控件 */
+					gtk_widget_show (pp->eventbox30[1]);
+					gtk_widget_show (pp->eventbox31[1]);
+					gtk_widget_show (pp->data3[1]);
+					gtk_widget_hide (pp->entry3[1]);
+					
+					/* 更新当前增益值显示 */
+					/*str = g_strdup_printf ("%0.1f", pp->p_config->start / 10.0);
+					gtk_entry_set_text(GTK_ENTRY (pp->entry3[1]),  (const gchar *) (str));
+					gtk_editable_set_position (GTK_EDITABLE (pp->entry3[1]), 1);
+					g_free(str);*/
+					break;
+				case 2:
+					break;
+				case 3:
+					break;
+				case 4:
+					break;
+				default:break;
+			}
+			break;
+		case 2:
+			switch (p->pos1[2])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 3:
+			switch (p->pos1[3])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 4:
+			switch (p->pos1[4])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 5:
+			switch (p->pos1[5])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 6:
+			switch (p->pos1[6])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 7:
+			switch (p->pos1[7])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 8:
+			switch (p->pos1[8])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 9:
+			switch (p->pos1[9])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		default:break;
+	}
 
 }
 
@@ -462,6 +667,158 @@ void draw3_data2(DRAW_UI_P p)
 {
 	gchar temp[52];
 	gfloat tmpf;/**/
+        gchar *str;
+
+	switch (pp->pos) 
+	{
+		case 0:
+			switch (pp->pos1[0])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 1:
+			switch (pp->pos1[1])
+			{
+				case 0:/* range */
+					/*当前步进*/
+					switch (p->p_tmp_config->range_reg)
+					{
+						case 0:	tmpf = p->p_config->part.Velocity * 1.6 / 5000.0; break;
+						case 1:	tmpf = p->p_config->part.Velocity * 8.0 / 5000.0; break;
+						case 2:	tmpf = p->p_config->part.Velocity * 16.0 / 5000.0; break;
+						default:break;
+					}
+
+					/* 格式化字符串 */
+					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2) )
+						g_sprintf (temp,"%s\n(%s) Δ%.1f", con2_p[1][0][2],!p->p_config->unit ? "mm" : "inch", tmpf);
+					else 
+						g_sprintf (temp,"%s\n (%s)", con2_p[1][0][2],!p->p_config->unit ? "mm" : "inch");
+
+					/* 设置label */
+					gtk_label_set_text (GTK_LABEL (pp->label3[2]), temp);
+					gtk_widget_modify_bg (pp->eventbox30[2], GTK_STATE_NORMAL, &color_button1);
+
+					/* 显示和隐藏控件 */
+					gtk_widget_show (pp->eventbox30[2]);
+					gtk_widget_hide (pp->eventbox31[2]);
+					gtk_widget_show (pp->entry3[2]);
+					
+					/* 更新当前增益值显示 */
+					str = g_strdup_printf ("%0.1f", pp->p_config->range / 10.0);
+					gtk_entry_set_text(GTK_ENTRY (pp->entry3[2]),  (const gchar *) (str));
+					gtk_editable_set_position (GTK_EDITABLE (pp->entry3[2]), 1);
+					g_free(str);
+
+
+					break;
+				case 1:
+					break;
+				case 2:
+					break;
+				case 3:
+					break;
+				case 4:
+					break;
+				default:break;
+			}
+			break;
+		case 2:
+			switch (p->pos1[2])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 3:
+			switch (p->pos1[3])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 4:
+			switch (p->pos1[4])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 5:
+			switch (p->pos1[5])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 6:
+			switch (p->pos1[6])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 7:
+			switch (p->pos1[7])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 8:
+			switch (p->pos1[8])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 9:
+			switch (p->pos1[9])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		default:break;
+	}
 
 }
 
@@ -469,6 +826,160 @@ void draw3_data3(DRAW_UI_P p)
 {
 	gchar temp[52];
 	gfloat tmpf;/**/
+        gchar *str;
+
+	switch (pp->pos) 
+	{
+		case 0:
+			switch (pp->pos1[0])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 1:
+			switch (pp->pos1[1])
+			{
+				case 0:/* wedge delay */
+					/* 当前步进 */
+					switch (pp->p_tmp_config->wedge_delay_reg)
+					{
+						case 0:	tmpf = 0.01; break;
+						case 1:	tmpf = 0.1; break;
+						case 2:	tmpf = 1.0; break;						
+						default:break;
+					}
+
+					/* 格式化字符串 */
+					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3) )
+						g_sprintf (temp,"%s\n(us) Δ%.1f", con2_p[1][0][3], tmpf);
+					else 
+						g_sprintf (temp,"%s\n     (us)", con2_p[1][0][3]);
+
+					/* 设置label */
+					gtk_label_set_text (GTK_LABEL (pp->label3[3]), temp);
+					gtk_widget_modify_bg (pp->eventbox30[3], GTK_STATE_NORMAL, &color_button1);
+
+					/* 显示和隐藏控件 */
+					gtk_widget_show (pp->eventbox30[3]);
+					gtk_widget_hide (pp->eventbox31[3]);
+					gtk_widget_show (pp->entry3[3]);
+					
+					/* 更新当前增益值显示 */
+					str = g_strdup_printf ("%0.1f", pp->p_config->wedge_delay / 10.0);
+					gtk_entry_set_text(GTK_ENTRY (pp->entry3[3]),  (const gchar *) (str));
+					gtk_editable_set_position (GTK_EDITABLE (pp->entry3[3]), 1);
+					g_free(str);
+
+
+
+					break;
+				case 1:
+					break;
+				case 2:
+					break;
+				case 3:
+					break;
+				case 4:
+					break;
+				default:break;
+			}
+			break;
+		case 2:
+			switch (p->pos1[2])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 3:
+			switch (p->pos1[3])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 4:
+			switch (p->pos1[4])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 5:
+			switch (p->pos1[5])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 6:
+			switch (p->pos1[6])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 7:
+			switch (p->pos1[7])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 8:
+			switch (p->pos1[8])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 9:
+			switch (p->pos1[9])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		default:break;
+	}
+
 
 }
 
@@ -476,6 +987,159 @@ void draw3_data4(DRAW_UI_P p)
 {
 	gchar temp[52];
 	gfloat tmpf;/**/
+        gchar *str;
+
+	switch (pp->pos) 
+	{
+		case 0:
+			switch (pp->pos1[0])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 1:
+			switch (pp->pos1[1])
+			{
+				case 0:/* wedge delay */
+					/* 当前步进 */
+					switch (pp->p_tmp_config->velocity_reg)
+					{
+						case 0:	tmpf = 0.1; break;
+						case 1:	tmpf = 1.0; break;
+						case 2:	tmpf = 10.0; break;
+                                                case 3:	tmpf = 100.0; break;						
+						default:break;
+					}
+
+					/* 格式化字符串 */
+					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4) )
+						g_sprintf (temp,"%s\n(us) Δ%.1f", con2_p[1][0][4], tmpf);
+					else 
+						g_sprintf (temp,"%s\n   (us)", con2_p[1][0][4]);
+
+					/* 设置label */
+					gtk_label_set_text (GTK_LABEL (pp->label3[4]), temp);
+					gtk_widget_modify_bg (pp->eventbox30[4], GTK_STATE_NORMAL, &color_button1);
+
+					/* 显示和隐藏控件 */
+					gtk_widget_show (pp->eventbox30[4]);
+					gtk_widget_hide (pp->eventbox31[4]);
+					gtk_widget_show (pp->entry3[4]);
+					
+					/* 更新当前增益值显示 */
+					str = g_strdup_printf ("%0.1f", pp->p_config->part.Velocity / 10.0);
+					gtk_entry_set_text(GTK_ENTRY (pp->entry3[4]),  (const gchar *) (str));
+					gtk_editable_set_position (GTK_EDITABLE (pp->entry3[4]), 1);
+					g_free(str);
+
+					break;
+				case 1:
+					break;
+				case 2:
+					break;
+				case 3:
+					break;
+				case 4:
+					break;
+				default:break;
+			}
+			break;
+		case 2:
+			switch (p->pos1[2])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 3:
+			switch (p->pos1[3])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 4:
+			switch (p->pos1[4])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 5:
+			switch (p->pos1[5])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 6:
+			switch (p->pos1[6])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 7:
+			switch (p->pos1[7])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 8:
+			switch (p->pos1[8])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 9:
+			switch (p->pos1[9])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		default:break;
+	}
+
 
 }
 
@@ -483,6 +1147,129 @@ void draw3_data5(DRAW_UI_P p)
 {
 	gchar temp[52];
 	gfloat tmpf;/**/
+        gchar *str;
+
+	switch (pp->pos) 
+	{
+		case 0:
+			switch (pp->pos1[0])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 1:
+			switch (pp->pos1[1])
+			{
+				case 0:/* start */
+
+					break;
+				case 1:
+					break;
+				case 2:
+					break;
+				case 3:
+					break;
+				case 4:
+					break;
+				default:break;
+			}
+			break;
+		case 2:
+			switch (p->pos1[2])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 3:
+			switch (p->pos1[3])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 4:
+			switch (p->pos1[4])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 5:
+			switch (p->pos1[5])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 6:
+			switch (p->pos1[6])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 7:
+			switch (p->pos1[7])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 8:
+			switch (p->pos1[8])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		case 9:
+			switch (p->pos1[9])
+			{
+				case 0:break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				case 4:break;
+				default:break;
+			}
+			break;
+		default:break;
+	}
+
 
 }
 
@@ -731,11 +1518,11 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 		gtk_box_pack_start (GTK_BOX (p->vbox221[i]), p->eventbox31[i], FALSE, FALSE, 1);
 		gtk_box_pack_start (GTK_BOX (p->vbox221[i]), p->entry3[i], FALSE, FALSE, 1);
 		g_signal_connect(G_OBJECT(p->eventbox30[i]), "button-press-event", 
-				G_CALLBACK(data_fun[i]), (gpointer) (p));
+				G_CALLBACK(data_fun[i]), (GUINT_TO_POINTER (i)));
 		g_signal_connect(G_OBJECT(p->eventbox31[i]), "button-press-event", 
-				G_CALLBACK(data_fun[i]), (gpointer) (p));
+				G_CALLBACK(data_fun[i]), (GUINT_TO_POINTER (i)));
 		g_signal_connect(G_OBJECT(p->entry3[i]), "button-press-event", 
-				G_CALLBACK(data_fun[i]), (gpointer) (p));
+				G_CALLBACK(data_fun[i]), (GUINT_TO_POINTER (i)));
 		gtk_widget_show(p->eventbox30[i]);
 		gtk_widget_show(p->eventbox31[i]);
 		gtk_widget_show(p->label3[i]);
