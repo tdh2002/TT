@@ -141,6 +141,15 @@ typedef	struct Config {
 	guint	date;			/**/
 	guint	time;			/**/
 
+	guint	count;               /*Gate/Alarm->Output->count*/
+	guint	active_delay;        /*Gate/Alarm->Output->delay*/
+	guint	holdtime;            /*Gate/Alarm->Output->holdtime*/
+
+	guint	VPA;                 /*Measurements->Cursors->VPA*/
+	guint	cursors_scan;                 /*Measurements->Cursors->Scan*/
+	guint	cursors_index;                 /*Measurements->Cursors->index*/
+	guint	min_thickness;                 /*Measurements->Thickness->min*/
+
 
 } CONFIG, *CONFIG_P;
 
@@ -159,6 +168,17 @@ typedef struct tmp_config {
 	guchar	gainoffset_reg;		/* gain offset  步进 */
 
 	guchar beam_delay_reg;		/*beam delay 步进*/
+
+	guchar	agate_start_reg;        /*agate_start步进*/
+	guchar	agate_width_reg;        /*agate_width步进*/
+	guchar	agate_height_reg;       /*agate_height步进*/
+	guchar	count_reg;              /*count步进*/
+	guchar	active_delay_reg;       /* active_delay  步进 */
+	guchar	holdtime_reg;		/* holdtime  步进 */
+	guchar	VPA_reg;		/* VPA  步进 */
+	guchar	cursors_scan_reg;		/* cursors_scan  步进 */
+	guchar  cursors_index_reg;           /*cursors_index步进*/
+	guchar  min_thickness_reg;           /*min_thickness步进*/
 
 	gint	fd_config;
 
@@ -231,6 +251,9 @@ typedef struct Draw_interface {
 
 	gint			xx;
 	GtkWidget		*window;
+	GtkWidget		*spinbutton;
+	GtkWidget		*window1;
+	GtkWidget		*window2;
 	CONFIG_P		p_config;			/**/
 	TMP_CONFIG_P	p_tmp_config;		/**/
 
