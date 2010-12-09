@@ -10,7 +10,7 @@ gboolean foo (GtkAccelGroup *accel_group, GObject *acceleratable,
 		guint keyval, GdkModifierType modifier, gpointer data);
 
 gboolean key_press_handler (GtkWidget* pWidget,
-		GdkEventKey* pEvent, gpointer pointerBunch);
+		GdkEventKey* pEvent, gpointer data);
 
 gboolean data_function0 (GtkWidget *widget,	GdkEventButton *event,	gpointer       data);
 gboolean data_function1 (GtkWidget *widget,	GdkEventButton *event,	gpointer       data);
@@ -86,6 +86,7 @@ void b2_fun0(DRAW_UI_P p, gint pos)
 {
 	p->pos_last1 = p->pos1[p->pos];
 	p->pos1[p->pos] = pos;
+	pp->pos_pos = MENU3_STOP;
 	draw_2_menu(0);
 	draw_3_menu(0);
 }
@@ -340,9 +341,7 @@ void b3_fun5(gpointer p)
 }
 
 /* 快捷键处理函数 */
-gboolean key_press_handler (GtkWidget* pWidget,
-		GdkEventKey* pEvent,
-		gpointer pointerBunch)
+gboolean key_press_handler (GtkWidget* pWidget,	GdkEventKey* pEvent, gpointer data)
 {
 	if (pEvent->type == GDK_KEY_PRESS)
 	{

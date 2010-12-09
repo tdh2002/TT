@@ -36,8 +36,7 @@ extern void data_135 (GtkSpinButton *spinbutton, gpointer data);	/*135*/
 extern gboolean foo (GtkAccelGroup *accel_group, GObject *acceleratable,
 		guint keyval, GdkModifierType modifier, gpointer data);
 
-extern gboolean key_press_handler (GtkWidget* pWidget,
-		GdkEventKey* pEvent, gpointer pointerBunch);
+extern gboolean key_press_handler (GtkWidget* pWidget, GdkEventKey* pEvent, gpointer data);
 
 
 #endif

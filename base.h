@@ -149,6 +149,11 @@ typedef	struct Config {
 	guint	cursors_scan;                 /*Measurements->Cursors->Scan*/
 	guint	cursors_index;                 /*Measurements->Cursors->index*/
 	guint	min_thickness;                 /*Measurements->Thickness->min*/
+	guint	max_thickness;                 /*Measurements->Thickness->max*/
+	guint	echo_qty;                      /*Measurements->Thickness->echo_qty*/
+
+        guint   color_start;                   /*Display -> Color -> Start*/
+        guint   color_end;                     /*Display -> Color -> end*/
 
 
 } CONFIG, *CONFIG_P;
@@ -179,6 +184,31 @@ typedef struct tmp_config {
 	guchar	cursors_scan_reg;		/* cursors_scan  步进 */
 	guchar  cursors_index_reg;           /*cursors_index步进*/
 	guchar  min_thickness_reg;           /*min_thickness步进*/
+	guchar  max_thickness_reg;           /*max_thickness步进*/
+	guchar  echo_qty_reg;                /*echo_qty步进*/
+
+        guchar   color_start_reg;                   /*Display -> Color -> Start步进*/
+        guchar   color_end_reg;                   /*Display -> Color -> end步进*/
+        guchar   part_thickness_reg;                   /*Probe/Part -> parts -> thickness步进*/
+
+        guchar   connection_P_reg;                  /*Focal_Law -> configuration -> connection P*/
+
+        guchar   element_qty_reg;                  /*Focal_Law -> aperture -> element qty*/
+        guchar   first_element_reg;                  /*Focal_Law -> aperture -> first element*/
+        guchar   last_element_reg;                  /*Focal_Law -> aperture -> last_element*/
+        guchar   element_step_reg;                  /*Focal_Law -> aperture -> element_step*/
+
+        guchar   min_angle_reg;                      /*Focal Law -> Beam -> Min_angle*/
+        guchar   focus_depth_reg;                      /*Focal Law -> Beam -> focus_depth*/
+
+        guchar    scan_speed_reg;                      /* Scan -> Inspection -> Scan speed*/
+
+        guchar    scan_start_reg;                      /* Scan -> Area -> Scan start*/
+        guchar    scan_end_reg;                        /* Scan -> Area -> Scan end*/
+        guchar    scan_resolution_reg;                 /* Scan -> Area -> Scan resolution*/
+
+        guchar    bright_reg;                          /*preferences -> pref. -> bright*/
+
 
 	gint	fd_config;
 
