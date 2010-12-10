@@ -367,13 +367,13 @@ void draw3_data0(DRAW_UI_P p)
 					}
 
 					/* 格式化字符串 */
-					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0) )
+					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 					{
 						g_sprintf (temp,"%s\n(dB) Δ%.1f", con2_p[1][0][0], tmpf);
+						gtk_widget_show_all(pp->window1);
 						gtk_window_set_keep_above( GTK_WINDOW (pp->window1), TRUE);
 						gtk_window_get_position (GTK_WINDOW (pp->window), &x, &y);
 						gtk_window_move(GTK_WINDOW (pp->window1), x + 685, y + 137);
-						gtk_widget_show_all(pp->window1);
 					}
 					else 
 						g_sprintf (temp,"%s\n(dB)", con2_p[1][0][0]);
@@ -405,8 +405,15 @@ void draw3_data0(DRAW_UI_P p)
 					}
 
 					/* 格式化字符串 */
-					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0) )
+					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
+					{
 						g_sprintf (temp,"%s\n(1 to 1) Δ%d", con2_p[1][1][0], (gint) (tmpf));
+/*						gtk_window_set_keep_above( GTK_WINDOW (pp->window1), TRUE);
+						gtk_window_get_position (GTK_WINDOW (pp->window), &x, &y);
+						gtk_window_move(GTK_WINDOW (pp->window1), x + 685, y + 137);
+						gtk_widget_show_all(pp->window1);
+						*/
+					}
 					else 
 						g_sprintf (temp,"%s\n(1 to 1)", con2_p[1][1][0]);
 
@@ -1212,7 +1219,8 @@ void draw3_data1(DRAW_UI_P p)
 {
 	gchar temp[52];
 	gfloat tmpf;
-        gchar *str;
+	gchar *str;
+	gint x, y;
 
 	switch (pp->pos) 
 	{
@@ -1281,7 +1289,13 @@ void draw3_data1(DRAW_UI_P p)
 
 					/* 格式化字符串 */
 					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1) )
+					{
 						g_sprintf (temp,"%s\n(mm) Δ%.1f", con2_p[1][0][1], tmpf);
+						gtk_widget_show_all(pp->window1);
+						gtk_window_set_keep_above( GTK_WINDOW (pp->window1), TRUE);
+						gtk_window_get_position (GTK_WINDOW (pp->window), &x, &y);
+						gtk_window_move(GTK_WINDOW (pp->window1), x + 685, y + 137 + 87 * 1);
+					}
 					else 
 						g_sprintf (temp,"%s\n(mm)", con2_p[1][0][1]);
 
@@ -2166,7 +2180,8 @@ void draw3_data2(DRAW_UI_P p)
 {
 	gchar temp[52];
 	gfloat tmpf;/**/
-        gchar *str;
+	gchar *str;
+	gint x, y;
 
 	switch (pp->pos) 
 	{
@@ -2209,7 +2224,13 @@ void draw3_data2(DRAW_UI_P p)
 
 					/* 格式化字符串 */
 					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2) )
+					{
 						g_sprintf (temp,"%s\n(%s) Δ%.1f", con2_p[1][0][2],!p->p_config->unit ? "mm" : "inch", tmpf);
+						gtk_widget_show_all(pp->window1);
+						gtk_window_set_keep_above( GTK_WINDOW (pp->window1), TRUE);
+						gtk_window_get_position (GTK_WINDOW (pp->window), &x, &y);
+						gtk_window_move(GTK_WINDOW (pp->window1), x + 685, y + 137 + 87 * 2);
+					}
 					else 
 						g_sprintf (temp,"%s\n (%s)", con2_p[1][0][2],!p->p_config->unit ? "mm" : "inch");
 
@@ -2984,7 +3005,8 @@ void draw3_data3(DRAW_UI_P p)
 {
 	gchar temp[52];
 	gfloat tmpf;/**/
-        gchar *str;
+	gchar *str;
+	gint x, y;
 
 	switch (pp->pos) 
 	{
@@ -3027,7 +3049,13 @@ void draw3_data3(DRAW_UI_P p)
 
 					/* 格式化字符串 */
 					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3) )
+					{
 						g_sprintf (temp,"%s\n(us) Δ%.1f", con2_p[1][0][3], tmpf);
+						gtk_widget_show_all(pp->window1);
+						gtk_window_set_keep_above( GTK_WINDOW (pp->window1), TRUE);
+						gtk_window_get_position (GTK_WINDOW (pp->window), &x, &y);
+						gtk_window_move(GTK_WINDOW (pp->window1), x + 685, y + 137 + 87 * 3);
+					}
 					else 
 						g_sprintf (temp,"%s\n(us)", con2_p[1][0][3]);
 
@@ -3720,7 +3748,8 @@ void draw3_data4(DRAW_UI_P p)
 {
 	gchar temp[52];
 	gfloat tmpf;/**/
-        gchar *str;
+	gchar *str;
+	gint x, y;
 
 	switch (pp->pos) 
 	{
@@ -3745,13 +3774,19 @@ void draw3_data4(DRAW_UI_P p)
 						case 0:	tmpf = 0.1; break;
 						case 1:	tmpf = 1.0; break;
 						case 2:	tmpf = 10.0; break;
-                                                case 3:	tmpf = 100.0; break;						
+						case 3:	tmpf = 100.0; break;						
 						default:break;
 					}
 
 					/* 格式化字符串 */
 					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4) )
+					{
 						g_sprintf (temp,"%s\n(m/s) Δ%.1f", con2_p[1][0][4], tmpf);
+						gtk_widget_show_all(pp->window1);
+						gtk_window_set_keep_above( GTK_WINDOW (pp->window1), TRUE);
+						gtk_window_get_position (GTK_WINDOW (pp->window), &x, &y);
+						gtk_window_move(GTK_WINDOW (pp->window1), x + 685, y + 137 + 87 * 4);
+					}
 					else 
 						g_sprintf (temp,"%s\n(m/s)", con2_p[1][0][4]);
 
@@ -4705,7 +4740,7 @@ void draw_3_menu(gint pa)
 		 *
 		 * */
 		if ( (pp->pos_last != pp->pos) || 
-				(( pp->pos_last1 == i ) || ( pp->pos1[pp->pos] == i )) ||
+				( pp->pos_last1 != pp->pos1[pp->pos] ) ||
 				(pp->pos_last2 == i || pp->pos2[pp->pos][pp->pos1[pp->pos]] == i) || pa) 
 		{
 			gtk_widget_set_sensitive (pp->eventbox30[i], TRUE);
@@ -4748,8 +4783,8 @@ void draw_3_menu(gint pa)
 				GTK_STATE_NORMAL, &color_button0);
 		gtk_widget_modify_bg (pp->eventbox31[pp->pos2[pp->pos][pp->pos1[pp->pos]]],
 				GTK_STATE_NORMAL, &color_button0);
-/*		gtk_widget_grab_focus (pp->entry3[pp->pos2[pp->pos][pp->pos1[pp->pos]]]);
-		gtk_widget_modify_base (pp->entry3[CUR_POS], GTK_STATE_NORMAL, &color_button0);*/
+/*		gtk_widget_grab_focus (pp->entry3[pp->pos2[pp->pos][pp->pos1[pp->pos]]]); */
+		gtk_widget_modify_base (pp->entry3[CUR_POS], GTK_STATE_NORMAL, &color_button0);
 	}
 	else if (pp->pos_pos == MENU3_STOP) 
 	{
@@ -5001,7 +5036,7 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 	drawing_area = gtk_drawing_area_new();
 	gtk_widget_set_size_request(GTK_WIDGET(drawing_area), 685, 460);
 	gtk_box_pack_start (GTK_BOX (p->hbox211), drawing_area, FALSE, FALSE, 0);
-	p->col.red = 0x5555, p->col.green = 0x0, p->col.blue = 0x5555;
+	p->col.red = 0x0, p->col.green = 0x0, p->col.blue = 0x0;
 	gtk_widget_modify_bg(drawing_area, GTK_STATE_NORMAL, &(p->col));
 	gtk_widget_show(drawing_area);
 	g_signal_connect(G_OBJECT (drawing_area), "expose_event", G_CALLBACK(draw_gtk), NULL);
