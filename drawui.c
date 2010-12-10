@@ -478,7 +478,7 @@ void draw3_data0(DRAW_UI_P p)
 
 					/* 格式化字符串 */
 					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0) )
-						g_sprintf (temp,"%s\n(mm) Δ%d", con2_p[1][3][0], (gint) (tmpf));
+						g_sprintf (temp,"%s\n(mm) Δ%d", con2_p[1][3][0], (guint) (tmpf));
 					else 
 						g_sprintf (temp,"%s\n  (mm)", con2_p[1][3][0]);
 
@@ -791,9 +791,9 @@ void draw3_data0(DRAW_UI_P p)
 
 					/* 格式化字符串 */
 					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0) )
-						g_sprintf (temp,"%s\n   (mm) Δ%d", con2_p[5][1][0], (gint) (tmpf));
+						g_sprintf (temp,"%s\n  (mm)   Δ%.1f", con2_p[5][1][0], tmpf);
 					else 
-						g_sprintf (temp,"%s\n     (mm)", con2_p[5][1][0]);
+						g_sprintf (temp,"%s\n      (mm)", con2_p[5][1][0]);
  
 					/* 设置label */
 					gtk_label_set_text (GTK_LABEL (pp->label3[0]), temp);
@@ -867,10 +867,9 @@ void draw3_data0(DRAW_UI_P p)
 					/* 当前步进 */
 					switch (pp->p_tmp_config->element_qty_reg)
 					{
-						case 0:	tmpf = 0.1; break;
-						case 1:	tmpf = 1.0; break;
-						case 2:	tmpf = 10.0; break;
-						case 3:	tmpf = 100.0; break;
+						case 0:	tmpf = 1.0; break;
+						case 1:	tmpf = 10.0; break;
+						case 2:	tmpf = 100.0; break;
 						default:break;
 					}
 
@@ -904,7 +903,7 @@ void draw3_data0(DRAW_UI_P p)
 
 					/* 格式化字符串 */
 					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0) )
-						g_sprintf (temp,"%s\n   (deg)  Δ%d", con2_p[6][2][0], (gint) (tmpf));
+						g_sprintf (temp,"%s\n   (deg)  Δ%.1f", con2_p[6][2][0], tmpf);
 					else 
 						g_sprintf (temp,"%s\n      (deg)", con2_p[6][2][0]);
 
@@ -1496,7 +1495,7 @@ void draw3_data1(DRAW_UI_P p)
 					gtk_widget_show (pp->data3[1]);
 					gtk_widget_hide (pp->entry3[1]);
                                         break;
-				case 1:/*Measurements -> Cursors -> VPA*/
+				case 1:/*Measurements -> Cursors -> Angle*/
 					/* 当前步进 */
 					switch (pp->p_tmp_config->VPA_reg)
 					{
@@ -1507,9 +1506,9 @@ void draw3_data1(DRAW_UI_P p)
 
 					/* 格式化字符串 */
 					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1) )
-						g_sprintf (temp,"%s\n        Δ%d", con2_p[3][1][1], (gint) (tmpf));
+						g_sprintf (temp,"%s\n(o)     Δ%d", con2_p[3][1][1], (gint) (tmpf));
 					else 
-						g_sprintf (temp,"%s", con2_p[3][1][1]);
+						g_sprintf (temp,"%s\n    (o)", con2_p[3][1][1]);
 
 					/* 设置label */
 					gtk_label_set_text (GTK_LABEL (pp->label3[1]), temp);
@@ -1556,9 +1555,9 @@ void draw3_data1(DRAW_UI_P p)
 
 					/* 格式化字符串 */
 					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1) )
-						g_sprintf (temp,"%s\n(mm) Δ%d", con2_p[3][3][1], (gint) (tmpf));
+						g_sprintf (temp,"%s\n(mm) Δ%.2f", con2_p[3][3][1], tmpf);
 					else 
-						g_sprintf (temp,"%s\n(mm)", con2_p[3][3][1]);
+						g_sprintf (temp,"%s\n (mm)", con2_p[3][3][1]);
 
 					/* 设置label */
 					gtk_label_set_text (GTK_LABEL (pp->label3[1]), temp);
@@ -1642,9 +1641,9 @@ void draw3_data1(DRAW_UI_P p)
 
 					/* 格式化字符串 */
 					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1) )
-						g_sprintf (temp,"%s\n(%%) Δ%d", con2_p[4][3][1], (gint) (tmpf));
+						g_sprintf (temp,"%s\n(%%)  Δ%d", con2_p[4][3][1], (gint) (tmpf));
 					else 
-						g_sprintf (temp,"%s\n(%%)", con2_p[4][3][1]);
+						g_sprintf (temp,"%s\n   (%%)", con2_p[4][3][1]);
 
 					/* 设置label */
 					gtk_label_set_text (GTK_LABEL (pp->label3[1]), temp);
@@ -1712,9 +1711,9 @@ void draw3_data1(DRAW_UI_P p)
 
 					/* 格式化字符串 */
 					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1) )
-						g_sprintf (temp,"%s\n   (mm) Δ%d", con2_p[5][1][1], (gint) (tmpf));
+						g_sprintf (temp,"%s\n  (mm)   Δ%.1f", con2_p[5][1][1], tmpf);
 					else 
-						g_sprintf (temp,"%s\n     (mm)", con2_p[5][1][1]);
+						g_sprintf (temp,"%s\n      (mm)", con2_p[5][1][1]);
  
 					/* 设置label */
 					gtk_label_set_text (GTK_LABEL (pp->label3[1]), temp);
@@ -1741,7 +1740,7 @@ void draw3_data1(DRAW_UI_P p)
 
 					/* 格式化字符串 */
 					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1) )
-						g_sprintf (temp,"%s\n(dB) Δ%d", con2_p[5][2][1], (gint) (tmpf));
+						g_sprintf (temp,"%s\n(dB) Δ%.1f", con2_p[5][2][1], tmpf);
 					else 
 						g_sprintf (temp,"%s\n  (dB)", con2_p[5][2][1]);
  
@@ -1770,9 +1769,9 @@ void draw3_data1(DRAW_UI_P p)
 
 					/* 格式化字符串 */
 					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1) )
-						g_sprintf (temp,"%s\n (dB) Δ%d", con2_p[5][3][1], (gint) (tmpf));
+						g_sprintf (temp,"%s\n  (mm)  Δ%.2f", con2_p[5][3][1], tmpf);
 					else 
-						g_sprintf (temp,"%s\n     (dB)", con2_p[5][3][1]);
+						g_sprintf (temp,"%s\n      (mm)", con2_p[5][3][1]);
  
 					/* 设置label */
 					gtk_label_set_text (GTK_LABEL (pp->label3[1]), temp);
@@ -1805,10 +1804,10 @@ void draw3_data1(DRAW_UI_P p)
 					}
 
 					/* 格式化字符串 */
-					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1) )
-						g_sprintf (temp,"%s\n (1 to 1)  Δ%d", con2_p[6][0][1], (gint) (tmpf));
-					else 
-						g_sprintf (temp,"%s\n     (1 to 1)", con2_p[6][0][1]);
+					//if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1) )
+						//g_sprintf (temp,"%s\n  (1 to 113)  Δ%d", con2_p[6][0][1], (gint) (tmpf));
+					//else 
+						g_sprintf (temp,"%s\n     (1 to 113)", con2_p[6][0][1]);
  
 					/* 设置label */
 					gtk_label_set_text (GTK_LABEL (pp->label3[1]), temp);
@@ -1827,10 +1826,9 @@ void draw3_data1(DRAW_UI_P p)
 					/* 当前步进 */
 					switch (pp->p_tmp_config->first_element_reg)
 					{
-						case 0:	tmpf = 0.1; break;
-						case 1:	tmpf = 1.0; break;
-						case 2:	tmpf = 10.0; break;
-						case 3:	tmpf = 100.0; break;
+						case 0:	tmpf = 1.0; break;
+						case 1:	tmpf = 10.0; break;
+						case 2:	tmpf = 100.0; break;
 						default:break;
 					}
 
@@ -1853,9 +1851,21 @@ void draw3_data1(DRAW_UI_P p)
 					gtk_widget_hide (pp->entry3[1]);
                                         break;
 				case 2:/*focal law -> beam -> max angle*/
+					/* 当前步进 */
+					switch (pp->p_tmp_config->max_angle_reg)
+					{
+						case 0:	tmpf = 0.1; break;
+						case 1:	tmpf = 1.0; break;
+						case 2:	tmpf = 10.0; break;
+						default:break;
+					}
 
 					/* 格式化字符串 */
-					g_sprintf (temp,"%s\n     (deg)", con2_p[6][2][1]);
+					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1) )
+						g_sprintf (temp,"%s\n(deg)  Δ%.1f", con2_p[6][2][1], tmpf);
+					else 
+						g_sprintf (temp,"%s\n      (deg)", con2_p[6][2][1]);
+
 
 					/* 设置label */
 					gtk_label_set_text (GTK_LABEL (pp->label3[1]), temp);
@@ -2329,15 +2339,15 @@ void draw3_data2(DRAW_UI_P p)
 					switch (pp->p_tmp_config->agate_start_reg)
 					{
 						case 0:	tmpf = 0.01; break;
-						case 1:	tmpf = 0.1; break;
-						case 2:	tmpf = 1.0; break;
-						case 3:	tmpf = 10.0; break;						
+						case 1:	tmpf = 0.10; break;
+						case 2:	tmpf = 1.00; break;
+						case 3:	tmpf = 10.00; break;						
 						default:break;
 					}
 
 					/* 格式化字符串 */
 					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2) )
-						g_sprintf (temp,"%s\n(mm) Δ%.1f", con2_p[2][0][2], tmpf);
+						g_sprintf (temp,"%s\n(mm) Δ%.2f", con2_p[2][0][2], tmpf);
 					else 
 						g_sprintf (temp,"%s\n(mm)", con2_p[2][0][2]);
 
@@ -2384,7 +2394,7 @@ void draw3_data2(DRAW_UI_P p)
 
 					/* 格式化字符串 */
 					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2) )
-						g_sprintf (temp,"%s\n   Δ%.1f", con2_p[2][2][2], tmpf);
+						g_sprintf (temp,"%s\n            Δ%d", con2_p[2][2][2], (guint) (tmpf));
 					else 
 						g_sprintf (temp,"%s", con2_p[2][2][2]);
 
@@ -2442,9 +2452,9 @@ void draw3_data2(DRAW_UI_P p)
 
 					/* 格式化字符串 */
 					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2) )
-						g_sprintf (temp,"%s\n(mm) Δ%.1f", con2_p[3][1][2], tmpf);
+						g_sprintf (temp,"%s\n(mm) Δ%.2f", con2_p[3][1][2], tmpf);
 					else 
-						g_sprintf (temp,"%s\n(mm)", con2_p[3][1][2]);
+						g_sprintf (temp,"%s\n  (mm)", con2_p[3][1][2]);
 
 					/* 设置label */
 					gtk_label_set_text (GTK_LABEL (pp->label3[2]), temp);
@@ -2491,9 +2501,9 @@ void draw3_data2(DRAW_UI_P p)
 
 					/* 格式化字符串 */
 					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2) )
-						g_sprintf (temp,"%s\n(mm) Δ%d", con2_p[3][3][2], (gint) (tmpf));
+						g_sprintf (temp,"%s\n(mm) Δ%.2f", con2_p[3][3][2], tmpf);
 					else 
-						g_sprintf (temp,"%s\n(mm)", con2_p[3][3][2]);
+						g_sprintf (temp,"%s\n (mm)", con2_p[3][3][2]);
 
 					/* 设置label */
 					gtk_label_set_text (GTK_LABEL (pp->label3[2]), temp);
@@ -2547,9 +2557,9 @@ void draw3_data2(DRAW_UI_P p)
 
 					/* 格式化字符串 */
 					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2) )
-						g_sprintf (temp,"%s\n(%%) Δ%d", con2_p[4][3][2], (gint) (tmpf));
+						g_sprintf (temp,"%s\n(%%)   Δ%d", con2_p[4][3][2], (gint) (tmpf));
 					else 
-						g_sprintf (temp,"%s\n(%%)", con2_p[4][3][2]);
+						g_sprintf (temp,"%s\n   (%%)", con2_p[4][3][2]);
 
 					/* 设置label */
 					gtk_label_set_text (GTK_LABEL (pp->label3[2]), temp);
@@ -2634,7 +2644,7 @@ void draw3_data2(DRAW_UI_P p)
 
 					/* 格式化字符串 */
 					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2) )
-						g_sprintf (temp,"%s\n(mm) Δ%.1f", con2_p[5][2][2], tmpf);
+						g_sprintf (temp,"%s\n(mm) Δ%.2f", con2_p[5][2][2], tmpf);
 					else 
 						g_sprintf (temp,"%s\n  (mm)", con2_p[5][2][2]);
 
@@ -2651,13 +2661,26 @@ void draw3_data2(DRAW_UI_P p)
 					gtk_widget_hide (pp->entry3[2]);
                                         break;
 				case 3:/*Probe/Part -> Parts -> diameter*/
+					/* 当前步进 */
+					switch (pp->p_tmp_config->diameter_reg)
+					{
+						case 0:	tmpf = 0.01; break;
+						case 1:	tmpf = 0.1; break;
+						case 2:	tmpf = 1.0; break;
+						case 3:	tmpf = 10.0; break;						
+						default:break;
+					}
 					/* 格式化字符串 */
-					g_sprintf (temp,"%s", con2_p[5][3][2]);
+					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2) )
+						g_sprintf (temp,"%s\n(mm) Δ%.2f", con2_p[5][3][2], tmpf);
+					else 
+						g_sprintf (temp,"%s\n     (mm)", con2_p[5][3][2]);
+
 
 					/* 设置label */
 					gtk_label_set_text (GTK_LABEL (pp->label3[2]), temp);
 					gtk_widget_modify_bg (pp->eventbox30[2], GTK_STATE_NORMAL, &color_button1);
-					gtk_label_set_text (GTK_LABEL (pp->data3[2]), " ");
+					gtk_label_set_text (GTK_LABEL (pp->data3[2]), "100.00");
 					gtk_widget_modify_bg (pp->eventbox31[2], GTK_STATE_NORMAL, &color_button1);
 
 					/* 显示和隐藏控件 */
@@ -2675,7 +2698,7 @@ void draw3_data2(DRAW_UI_P p)
 			{
 				case 0:/*Focal Law -> Configuration -> connection R*/
 					/* 格式化字符串 */
-					g_sprintf (temp,"%s", con2_p[6][0][2]);
+					g_sprintf (temp,"%s\n     (1 to 113)", con2_p[6][0][2]);
 
 					/* 设置label */
 					gtk_label_set_text (GTK_LABEL (pp->label3[2]), temp);
@@ -2701,9 +2724,9 @@ void draw3_data2(DRAW_UI_P p)
 					}
 
 					/* 格式化字符串 */
-					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2) )
-						g_sprintf (temp,"%s\n           Δ%d", con2_p[6][1][2], (gint) (tmpf));
-					else 
+					//if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2) )
+						//g_sprintf (temp,"%s\n           Δ%d", con2_p[6][1][2], (gint) (tmpf));
+					//else 
 						g_sprintf (temp,"%s", con2_p[6][1][2]);
 
 					/* 设置label */
@@ -2719,9 +2742,20 @@ void draw3_data2(DRAW_UI_P p)
 					gtk_widget_hide (pp->entry3[2]);
                                         break;
 				case 2:/*focal law -> beam -> angel step*/
+					/* 当前步进 */
+					switch (pp->p_tmp_config->angle_step_reg)
+					{
+						case 0:	tmpf = 0.1; break;
+						case 1:	tmpf = 1.0; break;
+						case 2:	tmpf = 10.0; break;
+						default:break;
+					}
 
 					/* 格式化字符串 */
-					g_sprintf (temp,"%s\n     (deg)", con2_p[6][2][2]);
+					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2) )
+						g_sprintf (temp,"%s\n  (deg) Δ%.1f", con2_p[6][2][2], tmpf);
+					else 
+						g_sprintf (temp,"%s\n     (deg)", con2_p[6][2][2]);
 
 					/* 设置label */
 					gtk_label_set_text (GTK_LABEL (pp->label3[2]), temp);
@@ -2795,15 +2829,15 @@ void draw3_data2(DRAW_UI_P p)
 					/* 当前步进 */
 					switch (pp->p_tmp_config->scan_resolution_reg)
 					{
-						case 0:	tmpf = 1.0; break;
-						case 1:	tmpf = 10.0; break;
-						case 2:	tmpf = 100.0; break;
+						case 0:	tmpf = 0.1; break;
+						case 1:	tmpf = 0.5; break;
+						case 2:	tmpf = 1.0; break;
 						default:break;
 					}
 
 					/* 格式化字符串 */
 					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2) )
-						g_sprintf (temp,"%s\n       (mm)  Δ%d", con2_p[7][2][2], (gint) (tmpf));
+						g_sprintf (temp,"%s\n       (mm)  Δ%.1f", con2_p[7][2][2], tmpf);
 					else 
 						g_sprintf (temp,"%s\n          (mm)", con2_p[7][2][2]);
 
@@ -3050,7 +3084,7 @@ void draw3_data3(DRAW_UI_P p)
 					/* 格式化字符串 */
 					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3) )
 					{
-						g_sprintf (temp,"%s\n(us) Δ%.1f", con2_p[1][0][3], tmpf);
+						g_sprintf (temp,"%s\n(us) Δ%.2f", con2_p[1][0][3], tmpf);
 						gtk_widget_show_all(pp->window1);
 						gtk_window_set_keep_above( GTK_WINDOW (pp->window1), TRUE);
 						gtk_window_get_position (GTK_WINDOW (pp->window), &x, &y);
@@ -3161,7 +3195,7 @@ void draw3_data3(DRAW_UI_P p)
 
 					/* 格式化字符串 */
 					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3) )
-						g_sprintf (temp,"%s\n(mm) Δ%.1f", con2_p[2][0][3], tmpf);
+						g_sprintf (temp,"%s\n(mm) Δ%.2f", con2_p[2][0][3], tmpf);
 					else 
 						g_sprintf (temp,"%s\n(mm)", con2_p[2][0][3]);
 
@@ -3252,7 +3286,7 @@ void draw3_data3(DRAW_UI_P p)
 					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3) )
 						g_sprintf (temp,"%s\n(mm) Δ%.1f", con2_p[3][1][3], tmpf);
 					else 
-						g_sprintf (temp,"%s\n (mm)", con2_p[3][1][3]);
+						g_sprintf (temp,"%s\n  (mm)", con2_p[3][1][3]);
 
 					/* 设置label */
 					gtk_label_set_text (GTK_LABEL (pp->label3[3]), temp);
@@ -3297,7 +3331,7 @@ void draw3_data3(DRAW_UI_P p)
 
 					/* 格式化字符串 */
 					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3) )
-						g_sprintf (temp,"%s\n    Δ%d", con2_p[3][3][3], (gint) (tmpf));
+						g_sprintf (temp,"%s\n        Δ%d", con2_p[3][3][3], (gint) (tmpf));
 					else 
 						g_sprintf (temp,"%s", con2_p[3][3][3]);
 
@@ -3411,7 +3445,7 @@ void draw3_data3(DRAW_UI_P p)
 
 					/* 格式化字符串 */
 					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3) )
-						g_sprintf (temp,"%s\n(mm) Δ%.1f", con2_p[5][2][3], tmpf);
+						g_sprintf (temp,"%s\n(mm) Δ%.2f", con2_p[5][2][3], tmpf);
 					else 
 						g_sprintf (temp,"%s\n  (mm)", con2_p[5][2][3]);
 
@@ -3463,9 +3497,9 @@ void draw3_data3(DRAW_UI_P p)
 					}
 
 					/* 格式化字符串 */
-					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3) )
-						g_sprintf (temp,"%s\n           Δ%d", con2_p[6][1][3], (gint) (tmpf));
-					else 
+					//if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3) )
+						//g_sprintf (temp,"%s\n           Δ%d", con2_p[6][1][3], (gint) (tmpf));
+					//else 
 						g_sprintf (temp,"%s", con2_p[6][1][3]);
 
 					/* 设置label */
@@ -3492,7 +3526,7 @@ void draw3_data3(DRAW_UI_P p)
 
 					/* 格式化字符串 */
 					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3) )
-						g_sprintf (temp,"%s\n    (mm) Δ%d", con2_p[6][2][3], (gint) (tmpf));
+						g_sprintf (temp,"%s\n    (mm) Δ%.1f", con2_p[6][2][3], tmpf);
 					else 
 						g_sprintf (temp,"%s\n       (mm)", con2_p[6][2][3]);
 
@@ -3853,7 +3887,7 @@ void draw3_data4(DRAW_UI_P p)
 
 					/* 格式化字符串 */
 					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4) )
-						g_sprintf (temp,"%s\n(us) Δ%.1f", con2_p[1][3][4], tmpf);
+						g_sprintf (temp,"%s\n(us) Δ%.2f", con2_p[1][3][4], tmpf);
 					else 
 						g_sprintf (temp,"%s\n(us)", con2_p[1][3][4]);
 
@@ -3899,16 +3933,14 @@ void draw3_data4(DRAW_UI_P p)
 					/* 当前步进 */
 					switch (pp->p_tmp_config->agate_height_reg)
 					{
-						case 0:	tmpf = 0.01; break;
-						case 1:	tmpf = 0.1; break;
-						case 2:	tmpf = 1.0; break;
-						case 3:	tmpf = 10.0; break;						
+						case 0:	tmpf = 1.0; break;
+						case 1:	tmpf = 10.0; break;						
 						default:break;
 					}
 
 					/* 格式化字符串 */
 					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4) )
-						g_sprintf (temp,"%s\n(%%) Δ%.1f", con2_p[2][0][4], tmpf);
+						g_sprintf (temp,"%s\n(%%) Δ%d", con2_p[2][0][4], (guint) (tmpf));
 					else 
 						g_sprintf (temp,"%s\n(%%)", con2_p[2][0][4]);
 
@@ -3957,9 +3989,9 @@ void draw3_data4(DRAW_UI_P p)
 
 					/* 格式化字符串 */
 					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4) )
-						g_sprintf (temp,"%s\n(ms) Δ%.1f", con2_p[2][2][4], tmpf);
+						g_sprintf (temp,"%s\n(ms) Δ%.2f", con2_p[2][2][4], tmpf);
 					else 
-						g_sprintf (temp,"%s\n  (ms)", con2_p[2][2][4]);
+						g_sprintf (temp,"%s\n (ms)", con2_p[2][2][4]);
 
 					/* 设置label */
 					gtk_label_set_text (GTK_LABEL (pp->label3[4]), temp);
@@ -4392,9 +4424,9 @@ void draw3_data5(DRAW_UI_P p)
 
 					/* 格式化字符串 */
 					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 5) )
-						g_sprintf (temp,"%s\n(dB) Δ%d", con2_p[1][2][5], (guint) (tmpf));
+						g_sprintf (temp,"%s\n(dB) Δ%.1f", con2_p[1][3][5], tmpf);
 					else 
-						g_sprintf (temp,"%s\n(dB)", con2_p[1][2][5]);
+						g_sprintf (temp,"%s\n(dB)", con2_p[1][3][5]);
 
 					/* 设置label */
 					gtk_label_set_text (GTK_LABEL (pp->label3[5]), temp);
@@ -4466,9 +4498,9 @@ void draw3_data5(DRAW_UI_P p)
 
 					/* 格式化字符串 */
 					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 5) )
-						g_sprintf (temp,"%s\n  (ms) Δ%.1f", con2_p[2][2][5], tmpf);
+						g_sprintf (temp,"%s\n(ms) Δ%.2f", con2_p[2][2][5], tmpf);
 					else 
-						g_sprintf (temp,"%s\n      (ms)", con2_p[2][2][5]);
+						g_sprintf (temp,"%s\n     (ms)", con2_p[2][2][5]);
 
 					/* 设置label */
 					gtk_label_set_text (GTK_LABEL (pp->label3[5]), temp);
@@ -4827,7 +4859,7 @@ static void travel_path (cairo_t *cr)
 	//   cairo_paint (cr);
 
 	/* Use IBM Blue Pen Color with no ALPHA */
-	cairo_set_source_rgba (cr, 1, 0, 0, 1);
+	cairo_set_source_rgba (cr, 1, 1, 0, 1);
 	cairo_set_line_width (cr, 1);
 	//   cairo_move_to (cr, 10, 10);
 	//   cairo_line_to (cr, 11, 200);

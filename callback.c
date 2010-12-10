@@ -160,7 +160,7 @@ void b3_fun0(gpointer p)
 				   }
 				   break;
 			case 2: /* Gate/Alarm */
-				   switch (pp->pos1[1])
+				   switch (pp->pos1[2])
 				   {
 					   case 0: /* 弹出一个菜单选择  */			break; /* 200闸门3种选择  */
 					   case 1: /* 弹出一个菜单选择  */			break; /* 210 Alarm  */
@@ -169,7 +169,39 @@ void b3_fun0(gpointer p)
 					   default:break;
 				   }
 				   break;
-
+			case 3:
+				   break;
+			case 4:
+				   break;
+			case 5:
+				   switch (pp->pos1[5])
+				   {
+					   case 0: break; /*   */
+					   case 1: data_process (&(pp->p_tmp_config->scanoffset_reg), 2);  break; /*510 */
+					   case 2: /* 弹出一个菜单选择  */			break; /*   */
+					   case 3: break; 
+					   default:break;
+				   }
+				   break;
+			case 6:
+				   switch (pp->pos1[6])
+				   {
+					   case 0: break; /*   */
+					   case 1: data_process (&(pp->p_tmp_config->element_qty_reg), 2);  break; /*610 */
+					   case 2: data_process (&(pp->p_tmp_config->min_angle_reg), 2);  break;   /*620  */
+					   case 3: break; 
+					   default:break;
+				   }
+				   break;
+			case 7:
+				   switch (pp->pos1[7])
+				   {
+					   case 0: break; /*   */
+					   case 1: break; /*710 */
+					   case 2: data_process (&(pp->p_tmp_config->scan_start_reg), 2);  break;   /*720  */
+					   case 3: break; 
+					   default:break;
+				   }
 				   break;
 			default:break;
 		}
@@ -204,6 +236,73 @@ void b3_fun1(gpointer p)
 					   case 4: /* Set Ref. */ break; /*141 Set Ref.参考增益  */
 					   default:break;
 				   }
+                                break;
+			case 2: break;
+			case 3:
+				   switch (pp->pos1[3])
+				   {
+					   case 0: break; 
+					   case 1: data_process(&(pp->p_tmp_config->VPA_reg), 1); break;
+					   case 2: /* 弹出一个选择菜单,选择 */ break; 
+					   case 3: data_process(&(pp->p_tmp_config->min_thickness_reg), 3); break;  /*331 */
+					   case 4: /* Set Ref. */ break; 
+					   default:break;
+				   }
+                                break;
+			case 4: 
+				   switch (pp->pos1[4])
+				   {
+					   case 0: break; 
+					   case 1: break;
+					   case 2: break; 
+					   case 3: data_process(&(pp->p_tmp_config->color_start_reg), 1); break;  /*431 */
+					   case 4: break; 
+					   default:break;
+				   }
+                                break;
+
+			case 5:
+				   switch (pp->pos1[5])
+				   {
+					   case 0: break; 
+					   case 1: data_process (&(pp->p_tmp_config->indexoffset_reg), 2);  break; /*511 */
+					   case 2: data_process (&(pp->p_tmp_config->db_reg), 2);  break;     /*521*/
+					   case 3: data_process (&(pp->p_tmp_config->part_thickness_reg), 3);  break;     /*531*/
+					   case 4: break; 
+					   default:break;
+				   }
+                                break;
+
+			case 6:
+				   switch (pp->pos1[6])
+				   {
+					   case 0: break; /*   */
+					   case 1: data_process (&(pp->p_tmp_config->first_element_reg), 2);  break; /*611 */
+					   case 2: data_process (&(pp->p_tmp_config->max_angle_reg), 2);  break; /*621 */
+					   case 3: break; 
+					   default:break;
+				   }
+				   break;
+			case 7:
+				   switch (pp->pos1[7])
+				   {
+					   case 0: break; /*    */
+					   case 1: break; /*710 */
+					   case 2: data_process (&(pp->p_tmp_config->scan_end_reg), 2);  break;   /*721  */
+					   case 3: break; 
+					   default:break;
+				   }
+				   break;
+			case 9:
+				   switch (pp->pos1[9])
+				   {
+					   case 0: data_process (&(pp->p_tmp_config->bright_reg), 2);  break; /*901  */
+					   case 1: break; /*710 */
+					   case 2: break;   /*721  */
+					   case 3: break; 
+					   default:break;
+				   }
+				   break;
 			default:break;
 		}
 	}
@@ -227,7 +326,7 @@ void b3_fun2(gpointer p)
 		{
 			case 0:break;
 			case 1:
-				   switch (pp->pos1[2])
+				   switch (pp->pos1[1])
 				   {
 					   case 0:data_process(&(pp->p_tmp_config->range_reg), 2); break; /* 102range范围 3种步进 */
 					   case 1: /* 弹出一个选择菜单,选择 */ break; /* 112 频率 Freq.  */
@@ -236,6 +335,73 @@ void b3_fun2(gpointer p)
 					   case 4: /* dB Ref. 开关 */ break; /* 142 dB Ref, on or off  */
 					   default:break;
 				   }
+                                   break;
+			case 2:
+				   switch (pp->pos1[2])
+				   {
+					   case 0:data_process(&(pp->p_tmp_config->agate_start_reg), 3); break; /* 202 agate start*/
+					   case 1: /* 弹出一个选择菜单,选择 */ break; 
+					   case 2:data_process(&(pp->p_tmp_config->count_reg), 1); break; /* 222 output count*/
+					   case 3: /* Angle. (deg) */ break; 
+					   case 4: break;
+					   default:break;
+				   }
+                                   break;
+			case 3:
+				   switch (pp->pos1[3])
+				   {
+					   case 0: break; /* 202 agate start*/
+					   case 1: data_process(&(pp->p_tmp_config->cursors_scan_reg), 3); break; 
+					   case 2: break; /* 222 output count*/
+					   case 3: data_process(&(pp->p_tmp_config->max_thickness_reg), 3); break; /*332 */
+					   case 4: break;
+					   default:break;
+				   }
+                                   break;
+			case 4:
+				   switch (pp->pos1[4])
+				   {
+					   case 0: break; 
+					   case 1: break; 
+					   case 2: break; 
+					   case 3: data_process(&(pp->p_tmp_config->color_end_reg), 1); break; /*432 */
+					   case 4: break;
+					   default:break;
+				   }
+                                   break;
+			case 5:
+				   switch (pp->pos1[5])
+				   {
+					   case 0: break; 
+					   case 1: break; 
+					   case 2: data_process(&(pp->p_tmp_config->agate_start_reg), 3); break;  /*522*/
+					   case 3: data_process(&(pp->p_tmp_config->diameter_reg), 3); break;  /*532*/
+					   case 4: break;
+					   default:break;
+				   }
+                                   break;
+			case 6:
+				   switch (pp->pos1[6])
+				   {
+					   case 0: break; 
+					   case 1: break; 
+					   case 2: data_process(&(pp->p_tmp_config->angle_step_reg), 2); break;  /*622*/
+					   case 3: break;  /*632*/
+					   case 4: break;
+					   default:break;
+				   }
+                                   break;
+			case 7:
+				   switch (pp->pos1[7])
+				   {
+					   case 0: break; /*    */
+					   case 1: break; /*712 */
+					   case 2: data_process (&(pp->p_tmp_config->scan_resolution_reg), 2);  break;   /*722  */
+					   case 3: break; 
+					   default:break;
+				   }
+				   break;
+
 			default:break;
 		}
 	}
@@ -259,7 +425,7 @@ void b3_fun3(gpointer p)
 		{
 			case 0:break;
 			case 1:
-				   switch (pp->pos1[3])
+				   switch (pp->pos1[1])
 				   {
 					   case 0:data_process(&(pp->p_tmp_config->wedge_delay_reg), 2); break; /* 103wedge delay 楔款延时 3种步进 */
 					   case 1: /* 弹出一个选择菜单,选择 */ break; /* 113 电压功率 Voltage  */
@@ -268,6 +434,65 @@ void b3_fun3(gpointer p)
 					   case 4: /* 弹出一个选择菜单,选择 */ break; /* 143 Points Qty. */
 					   default:break;
 				   }
+                                   break;
+			case 2:
+				   switch (pp->pos1[2])
+				   {
+					   case 0:data_process(&(pp->p_tmp_config->agate_width_reg), 3); break; /* 203 agate width 3种步进 */
+					   case 1: /* 弹出一个选择菜单,选择 */ break; /* 113 电压功率 Voltage  */
+					   case 2: /* 视频滤波 */ break; /* 123 视频滤波 on or off  */
+					   case 3: /* Skew  */ break; /* 133 Skew (deg)  */
+					   case 4: /* 弹出一个选择菜单,选择 */ break; /* 143 Points Qty. */
+					   default:break;
+				   }
+                                   break;
+			case 3:
+				   switch (pp->pos1[3])
+				   {
+					   case 0: break;
+					   case 1: data_process(&(pp->p_tmp_config->cursors_index_reg), 2); break;/* 313  index */ 
+					   case 2: /* 视频滤波 */ break; 
+					   case 3: data_process(&(pp->p_tmp_config->echo_qty_reg), 1); break;  /*333 */
+					   case 4: /* 弹出一个选择菜单,选择 */ break; 
+					   default:break;
+				   }
+                                   break;
+			case 4:break;
+			case 5:
+				   switch (pp->pos1[5])
+				   {
+					   case 0: break;
+					   case 1: break;
+					   case 2: data_process(&(pp->p_tmp_config->agate_width_reg), 3);  break; 
+					   case 3: break;  
+					   case 4: break; 
+					   default:break;
+				   }
+                                   break;
+
+			case 6:
+				   switch (pp->pos1[6])
+				   {
+					   case 0: break;
+					   case 1: break;
+					   case 2: data_process(&(pp->p_tmp_config->focus_depth_reg), 2);  break; 
+					   case 3: break;  
+					   case 4: break; 
+					   default:break;
+				   }
+                                   break;
+			case 7:
+				   switch (pp->pos1[7])
+				   {
+					   case 0: break;
+					   case 1: data_process(&(pp->p_tmp_config->scan_speed_reg), 2);  break; 
+					   case 2: break; 
+					   case 3: break;  
+					   case 4: break; 
+					   default:break;
+				   }
+                                   break;
+
 			default:break;
 		}
 	}
@@ -291,7 +516,7 @@ void b3_fun4(gpointer p)
 		{
 			case 0:break;
 			case 1:
-				   switch (pp->pos1[4])
+				   switch (pp->pos1[1])
 				   {
 					   case 0:data_process(&(pp->p_tmp_config->velocity_reg), 3); break; /* 104velocity声速  3种步进 */
 					   case 1: /* 弹出一个选择菜单,选择 */ break; /* 114 脉冲宽度 PW  */
@@ -300,6 +525,19 @@ void b3_fun4(gpointer p)
 					   case 4: /*  */ break; /* 144 Scale Factor 多少点压缩一点 只能看  */
 					   default:break;
 				   }
+			case 2:
+				   switch (pp->pos1[2])
+				   {
+					   case 0:data_process(&(pp->p_tmp_config->agate_height_reg), 1); break; /* 204 threshold  2种步进 */
+					   case 1: /* 弹出一个选择菜单,选择 */ break; /* 114 脉冲宽度 PW  */
+					   case 2: data_process(&(pp->p_tmp_config->active_delay_reg), 3); break; /*224 Delay*/
+					   case 3:  break; /* 134 beamdelay 波束延时 */
+					   case 4: /*  */ break; /* 144 Scale Factor 多少点压缩一点 只能看  */
+					   default:break;
+				   }
+			case 3:
+                              break;
+				   
 			default:break;
 		}
 	}
@@ -323,15 +561,28 @@ void b3_fun5(gpointer p)
 		{
 			case 0:break;
 			case 1:
-				   switch (pp->pos1[4])
+				   switch (pp->pos1[1])
 				   {
 					   case 0: break; /* 105 空 */
 					   case 1: /* 弹出一个选择菜单,选择 */ break; /* 115 重复频率 PRF */
-					   case 2:data_process(&(pp->p_tmp_config->reject_reg), 3); break; /* 125 Reject 抑制  */
-					   case 3:data_process(&(pp->p_tmp_config->gainoffset_reg), 3); break; /* 135 Gain Offset  */
+					   case 2:data_process(&(pp->p_tmp_config->reject_reg), 2); break; /* 125 Reject 抑制  */
+					   case 3:data_process(&(pp->p_tmp_config->gainoffset_reg), 4); break; /* 135 Gain Offset  */
 					   case 4: /* 弹出一个选择菜单,选择 */ break; /* 145 Sum Gain  */
 					   default:break;
 				   }
+			case 2:
+				   switch (pp->pos1[2])
+				   {
+					   case 0: break; 
+					   case 1: break;
+					   case 2: data_process(&(pp->p_tmp_config->holdtime_reg), 3); break; 
+					   case 3: break; 
+					   case 4: break; 
+					   default:break;
+				   }
+                               break;
+			case 3:
+                               break;
 			default:break;
 		}
 	}

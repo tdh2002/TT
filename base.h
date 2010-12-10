@@ -190,6 +190,7 @@ typedef struct tmp_config {
         guchar   color_start_reg;                   /*Display -> Color -> Start步进*/
         guchar   color_end_reg;                   /*Display -> Color -> end步进*/
         guchar   part_thickness_reg;                   /*Probe/Part -> parts -> thickness步进*/
+        guchar   diameter_reg;                   /*Probe/Part -> parts -> diameter步进*/
 
         guchar   connection_P_reg;                  /*Focal_Law -> configuration -> connection P*/
 
@@ -198,8 +199,11 @@ typedef struct tmp_config {
         guchar   last_element_reg;                  /*Focal_Law -> aperture -> last_element*/
         guchar   element_step_reg;                  /*Focal_Law -> aperture -> element_step*/
 
+
         guchar   min_angle_reg;                      /*Focal Law -> Beam -> Min_angle*/
-        guchar   focus_depth_reg;                      /*Focal Law -> Beam -> focus_depth*/
+        guchar   max_angle_reg;                      /*Focal Law -> Beam -> Max_angle*/
+        guchar   focus_depth_reg;                    /*Focal Law -> Beam -> focus_depth*/
+        guchar   angle_step_reg;                     /*Focal_Law -> Beam -> angle_step*/
 
         guchar    scan_speed_reg;                      /* Scan -> Inspection -> Scan speed*/
 
