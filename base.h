@@ -283,6 +283,8 @@ typedef struct Draw_interface {
 //	GtkWidget		*entry3[6];
 	GtkWidget		*sbutton[6];
 	GtkWidget		*button;
+	GtkWidget		*vscalebox;
+	GtkWidget		*vscale;
 
 	gint			xx;
 	GtkWidget		*window;
