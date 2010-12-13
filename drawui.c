@@ -423,6 +423,7 @@ void draw3_data0(DRAW_UI_P p)
 						/* 更新当前增益值显示 */
 						str = g_strdup_printf ("%0.1f", (gfloat)(pp->p_config->gain) / 100.0);
 						gtk_label_set_text (GTK_LABEL (pp->data3[0]), str);
+						gtk_label_set_text (GTK_LABEL (pp->label[1]), str);
 						g_free(str);
 						widget_window_class->key_press_event = my_keypress_event;
 						/* 显示和隐藏控件 */
@@ -4653,9 +4654,9 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 	p->hbox1		= gtk_hbox_new(FALSE, 0);	
 	p->vbox11		= gtk_vbox_new(FALSE, 0);	
 	p->hbox111		= gtk_hbox_new(FALSE, 0);	
-	p->hbox1111[0]	= gtk_hbox_new(FALSE, 0);	
-	p->hbox1111[1]	= gtk_hbox_new(FALSE, 0);	
-	p->hbox1111[2]	= gtk_hbox_new(FALSE, 0);	
+	p->vbox1111[0]	= gtk_vbox_new(FALSE, 0);	
+	p->vbox1111[1]	= gtk_vbox_new(FALSE, 0);	
+	p->vbox1111[2]	= gtk_vbox_new(FALSE, 0);	
 	p->hbox112		= gtk_hbox_new(FALSE, 0);	
 
 	p->hbox2		= gtk_hbox_new(FALSE, 0);	
@@ -4670,8 +4671,14 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 	for (i = 0; i < 6; i++)
 		p->vbox221[i]	= gtk_vbox_new(FALSE, 0);	
 
-	for (i = 0; i < 20; i++)
-		p->buffer[i]	= gtk_text_buffer_new (NULL);
+	for (i = 0; i < 20; i++) {
+		pp->label[i]	= gtk_label_new ("AA");
+		gtk_widget_modify_fg(pp->label[i], GTK_STATE_NORMAL, &color_white);					/* 字体颜色白色 */
+		pp->event[i]  =  gtk_event_box_new();
+		gtk_container_add(GTK_CONTAINER(p->event[i]), p->label[i]);
+		gtk_container_set_border_width( GTK_CONTAINER(pp->event[i]), 1);     /*设置边框大小，这个地方使用图片*/
+		gtk_widget_modify_bg (pp->event[i], GTK_STATE_NORMAL, &color_button1);
+	}
 
 	p->view			= gtk_text_view_new ();
 
@@ -4774,13 +4781,69 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 	gtk_widget_show(p->hbox2);
 
 
-
+/*
 	drawing_area = gtk_drawing_area_new();
-	gtk_widget_set_size_request(GTK_WIDGET(drawing_area), 800, 78);
+	gtk_widget_set_size_request (GTK_WIDGET(drawing_area), 800, 78);
 	gtk_box_pack_start (GTK_BOX (p->hbox1), drawing_area, FALSE, FALSE, 0);
 	p->col.red = 0x5555, p->col.green = 0x5555, p->col.blue = 0x5555;
 	gtk_widget_modify_bg(drawing_area, GTK_STATE_NORMAL, &(p->col));
 	gtk_widget_show(drawing_area);
+	*/
+
+	/* 上方数据显示  */
+	gtk_box_pack_start (GTK_BOX (p->hbox1), pp->vbox11, FALSE, FALSE, 0);
+
+	gtk_box_pack_start (GTK_BOX (p->vbox11), pp->hbox111, FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (p->vbox11), pp->hbox112, FALSE, FALSE, 0);
+
+	gtk_box_pack_start (GTK_BOX (p->hbox111), pp->event[0], FALSE, FALSE, 0);
+	gtk_widget_set_size_request (GTK_WIDGET(pp->event[0]), 34, 34);
+	gtk_label_set_text (GTK_LABEL (pp->label[0]), "Gain\n(dB)");
+	gtk_box_pack_start (GTK_BOX (p->hbox111), pp->event[1], FALSE, FALSE, 0);
+	gtk_widget_set_size_request (GTK_WIDGET(pp->event[1]), 137, 34);
+	gtk_box_pack_start (GTK_BOX (p->hbox111), pp->vbox1111[0], FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (p->hbox111), pp->vbox1111[1], FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (p->hbox111), pp->vbox1111[2], FALSE, FALSE, 0);
+
+	gtk_box_pack_start (GTK_BOX (p->vbox1111[0]), pp->event[2], FALSE, FALSE, 0);
+	gtk_widget_set_size_request (GTK_WIDGET(pp->event[2]), 171, 16);
+	gtk_box_pack_start (GTK_BOX (p->vbox1111[0]), pp->event[3], FALSE, FALSE, 0);
+	gtk_widget_set_size_request (GTK_WIDGET(pp->event[3]), 171, 16);
+
+	gtk_box_pack_start (GTK_BOX (p->vbox1111[1]), pp->event[4], FALSE, FALSE, 0);
+	gtk_widget_set_size_request (GTK_WIDGET(pp->event[4]), 171, 16);
+	gtk_box_pack_start (GTK_BOX (p->vbox1111[1]), pp->event[5], FALSE, FALSE, 0);
+	gtk_widget_set_size_request (GTK_WIDGET(pp->event[5]), 171, 16);
+
+	gtk_box_pack_start (GTK_BOX (p->vbox1111[2]), pp->event[6], FALSE, FALSE, 0);
+	gtk_widget_set_size_request (GTK_WIDGET(pp->event[6]), 171, 16);
+	gtk_box_pack_start (GTK_BOX (p->vbox1111[2]), pp->event[7], FALSE, FALSE, 0);
+	gtk_widget_set_size_request (GTK_WIDGET(pp->event[7]), 171, 16);
+
+	gtk_box_pack_start (GTK_BOX (p->hbox112), pp->event[8], FALSE, FALSE, 0);
+	gtk_label_set_text (GTK_LABEL (pp->label[8]), "%A\n(%)");
+	gtk_widget_set_size_request (GTK_WIDGET(pp->event[8]), 34, 34);
+	gtk_box_pack_start (GTK_BOX (p->hbox112), pp->event[9], FALSE, FALSE, 0);
+	gtk_widget_set_size_request (GTK_WIDGET(pp->event[9]), 137, 34);
+
+	gtk_box_pack_start (GTK_BOX (p->hbox112), pp->event[10], FALSE, FALSE, 0);
+	gtk_label_set_text (GTK_LABEL (pp->label[10]), "%A\n(%)");
+	gtk_widget_set_size_request (GTK_WIDGET(pp->event[10]), 34, 34);
+	gtk_box_pack_start (GTK_BOX (p->hbox112), pp->event[11], FALSE, FALSE, 0);
+	gtk_widget_set_size_request (GTK_WIDGET(pp->event[11]), 137, 34);
+
+	gtk_box_pack_start (GTK_BOX (p->hbox112), pp->event[12], FALSE, FALSE, 0);
+	gtk_label_set_text (GTK_LABEL (pp->label[12]), "%A\n(%)");
+	gtk_widget_set_size_request (GTK_WIDGET(pp->event[12]), 34, 34);
+	gtk_box_pack_start (GTK_BOX (p->hbox112), pp->event[13], FALSE, FALSE, 0);
+	gtk_widget_set_size_request (GTK_WIDGET(pp->event[13]), 137, 34);
+
+	gtk_box_pack_start (GTK_BOX (p->hbox112), pp->event[14], FALSE, FALSE, 0);
+	gtk_label_set_text (GTK_LABEL (pp->label[14]), "%A\n(%)");
+	gtk_widget_set_size_request (GTK_WIDGET(pp->event[14]), 34, 34);
+	gtk_box_pack_start (GTK_BOX (p->hbox112), pp->event[15], FALSE, FALSE, 0);
+	gtk_widget_set_size_request (GTK_WIDGET(pp->event[15]), 137, 34);
+
 
 	gtk_box_pack_start (GTK_BOX (p->hbox2), p->vbox21, FALSE, FALSE, 0);
 	gtk_box_pack_start (GTK_BOX (p->hbox2), p->vbox22, FALSE, FALSE, 0);
@@ -4791,6 +4854,8 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 	gtk_box_pack_start (GTK_BOX (p->vbox21), p->hbox212, FALSE, FALSE, 0);
 	gtk_widget_show(p->hbox211);
 	gtk_widget_show(p->hbox212);
+
+	gtk_widget_show_all (pp->hbox1);
 
 	drawing_area = gtk_drawing_area_new();
 	gtk_widget_set_size_request (GTK_WIDGET(drawing_area), 655, 460);
@@ -4829,8 +4894,6 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 	pp->window2 = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_decorated (GTK_WINDOW (pp->window2), FALSE);			/*不可以装饰*/
 
-	gtk_widget_modify_text (pp->spinbutton, GTK_STATE_NORMAL, &color_white);				/* 字体与背景色 */
-	gtk_widget_modify_base (pp->spinbutton, GTK_STATE_NORMAL, &color_button0);
 
 	g_thread_create((GThreadFunc)(time_handler), (gpointer) (drawing_area), FALSE, NULL);
 	/*

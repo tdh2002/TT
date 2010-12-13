@@ -246,7 +246,7 @@ typedef struct Draw_interface {
 	GtkWidget		*hbox1;			/**/
 	GtkWidget		*vbox11;
 	GtkWidget		*hbox111;
-	GtkWidget		*hbox1111[3];
+	GtkWidget		*vbox1111[3];
 	GtkWidget		*hbox112;
 
 	
@@ -263,7 +263,8 @@ typedef struct Draw_interface {
 
 
 	/*menubar menu menuitem_main 可以不用放在这里*/
-	GtkTextBuffer	*buffer[20];	/*测量信息等的显示*/
+	GtkWidget	*event[20];	/*测量信息等的显示*/
+	GtkWidget	*label[20];	/*测量信息等的显示*/
 	GtkWidget		*view;			/*把buffer放在这个里面*/
 
 	GtkWidget		*menubar;			/* 一级菜单 */
