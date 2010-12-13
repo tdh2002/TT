@@ -755,9 +755,9 @@ void data_100 (GtkSpinButton *spinbutton, gpointer data) /*增益Gain*/
 {
 	DRAW_UI_P p = (DRAW_UI_P)(data);
 	gchar *str;
-	p->p_config->gain = (gshort) (gtk_spin_button_get_value (spinbutton) * 100.0);
+	p->p_config->gain = gtk_spin_button_get_value (spinbutton);
 
-	str = g_strdup_printf ("%0.1f", (gfloat)(pp->p_config->gain) / 100.0);
+	str = g_strdup_printf ("%0.1f", pp->p_config->gain) ;
 	gtk_label_set_text (GTK_LABEL (pp->label[1]), str);
 	g_free(str);
 	/*发送增益给硬件*/

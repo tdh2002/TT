@@ -63,7 +63,7 @@ typedef	struct Config {
 	PROBE	probe;
 	WEDGE	wedge;
 	PART	part;
-	gshort	gain;			/*增益 0.1dB 单位*/
+	gfloat	gain;			/*增益 dB 单位*/
 	gint	start;			/*扫描延时 以0.01 μs为单位*/
 	guint	range;			/*显示范围 以0.01 μs为单位*/
 	guint	wedge_delay;	/*楔款延时 以0.01 μs为单位*/

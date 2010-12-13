@@ -303,14 +303,124 @@ void draw_2_menu(gint pa)
 	return ;
 }
 
+
+/*
+ * 处理 三级菜单按下状态的画图  
+ * fun   为回调函数 
+ * cur_value 为菜单当前数值
+ * lower 为菜单最小值
+ * upper 为菜单最大值
+ * step  为菜单步进
+ * digit 为保留小数点数
+ */
+
+static void draw3_pressed(void (*fun)(GtkSpinButton*, gpointer), 
+		gfloat cur_value, gfloat lower, gfloat upper, gfloat step, guint digit)
+{
+	gint  x, y, z;       /* xyz 分别为123级菜单位置 */
+	gchar *str = NULL;
+	GtkAdjustment *adj;
+
+	x = pp->pos;
+	y = pp->pos1[x];
+	z = pp->pos2[x][y];
+	gtk_widget_destroy (pp->vscale);
+
+	switch (digit)
+	{
+		case 0:
+			str = g_strdup_printf ("%s\n(dB) Δ%0.0f", con2_p[x][y][z], step);			break;
+		case 1:
+			str = g_strdup_printf ("%s\n(dB) Δ%0.1f", con2_p[x][y][z], step);			break;
+		case 2:
+			str = g_strdup_printf ("%s\n(dB) Δ%0.2f", con2_p[x][y][z], step);			break;
+		case 3:
+			str = g_strdup_printf ("%s\n(dB) Δ%0.3f", con2_p[x][y][z], step);			break;
+		default:break;
+	}
+	gtk_label_set_text (GTK_LABEL (pp->label3[z]), str);
+	gtk_widget_modify_bg (pp->eventbox30[z], GTK_STATE_NORMAL, &color_button0);
+	widget_window_class->key_press_event = window_keypress_event_orig;
+	g_signal_connect (G_OBJECT(pp->sbutton[z]), "value-changed", G_CALLBACK(fun), (gpointer) (pp));
+
+	/* 显示和隐藏控件 */
+	gtk_widget_show (pp->eventbox30[z]);
+	gtk_widget_hide (pp->eventbox31[z]);
+	gtk_widget_show (pp->sbutton[z]);
+	gtk_widget_grab_focus (pp->sbutton[z]);
+	/* 设置值的范围 */
+	adj = gtk_spin_button_get_adjustment (GTK_SPIN_BUTTON (pp->sbutton[z]));
+	gtk_adjustment_configure (adj, cur_value, lower, upper, step , 10.0, 0.0);
+	gtk_spin_button_set_digits (GTK_SPIN_BUTTON (pp->sbutton[z]), digit);
+
+	pp->vscale = gtk_vscale_new(adj);
+	gtk_widget_set_size_request (GTK_WIDGET(pp->vscale), 30, 460);
+	gtk_scale_set_draw_value (GTK_SCALE (pp->vscale), FALSE);
+	gtk_box_pack_start (GTK_BOX (pp->vscalebox), pp->vscale, TRUE, TRUE, 0);
+	gtk_widget_show (pp->vscale);
+
+	if (str)
+		g_free(str);
+}
+
+static void draw3_stop(gfloat cur_value, guint digit)
+{
+	gint  x, y, z;       /* xyz 分别为123级菜单位置 */
+	gchar *str = NULL;
+
+	x = pp->pos;
+	y = pp->pos1[x];
+	z = pp->pos2[x][y];
+
+	str = g_strdup_printf ("%s\n(dB)", con2_p[x][y][z]);	
+	gtk_label_set_text (GTK_LABEL (pp->label3[z]), str);
+	if ((CUR_POS) == 0 && (pp->pos_pos == MENU3_STOP))
+	{
+		gtk_widget_modify_bg (pp->eventbox30[z], GTK_STATE_NORMAL, &color_button2);
+		gtk_widget_modify_bg (pp->eventbox31[z], GTK_STATE_NORMAL, &color_button2);
+	}
+	else
+	{
+		gtk_widget_modify_bg (pp->eventbox30[z], GTK_STATE_NORMAL, &color_button1);
+		gtk_widget_modify_bg (pp->eventbox31[z], GTK_STATE_NORMAL, &color_button1);
+	}
+	/* 更新当前增益值显示 */
+	switch (digit)
+	{
+		case 0:
+			str = g_strdup_printf ("%0.0f", cur_value);			break;
+		case 1:
+			str = g_strdup_printf ("%0.1f", cur_value);			break;
+		case 2:
+			str = g_strdup_printf ("%0.2f", cur_value);			break;
+		case 3:
+			str = g_strdup_printf ("%0.3f", cur_value);			break;
+		default:break;
+	}
+	gtk_label_set_text (GTK_LABEL (pp->data3[z]), str);
+/*	gtk_label_set_text (GTK_LABEL (pp->label[1]), str);*/
+	if (str)
+		g_free(str);
+	widget_window_class->key_press_event = my_keypress_event;
+	/* 显示和隐藏控件 */
+	gtk_widget_show (pp->eventbox30[z]);
+	gtk_widget_show (pp->eventbox31[z]);
+	gtk_widget_show (pp->data3[z]);
+	gtk_widget_hide (pp->sbutton[z]);
+	gtk_widget_hide (pp->vscale);
+	/*						gtk_widget_grab_focus (pp->button);*/
+}
+
+static void draw3_none()
+{
+}
+
 /* 三级菜单第一个 */
 void draw3_data0(DRAW_UI_P p) 
 {
 	gchar temp[52];
 	gchar *str;
-	GtkAdjustment	*adj;
 	gfloat tmpf;/**/
-	GtkWidget		*vscale;
 
 
 	switch (pp->pos) 
@@ -365,7 +475,7 @@ void draw3_data0(DRAW_UI_P p)
 		case 1:
 			switch (pp->pos1[1])
 			{
-				case 0: /* 增益 Gain */
+				case 0: /* 增益 Gain 100 */
 					/* 当前步进 */
 					switch (pp->p_tmp_config->db_reg)
 					{
@@ -377,63 +487,10 @@ void draw3_data0(DRAW_UI_P p)
 						default:break;
 					}
 
-					/* 格式化字符串 */
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
-					{
-						gtk_widget_destroy (pp->vscale);
-
-						g_sprintf (temp,"%s\n(dB) Δ%.1f", con2_p[1][0][0], tmpf);
-						gtk_label_set_text (GTK_LABEL (pp->label3[0]), temp);
-						gtk_widget_modify_bg (pp->eventbox30[0], GTK_STATE_NORMAL, &color_button0);
-						widget_window_class->key_press_event = window_keypress_event_orig;
-						g_signal_connect(G_OBJECT(pp->sbutton[0]), "value-changed", 
-								G_CALLBACK(data_100), (gpointer) (p));
-						/* 显示和隐藏控件 */
-						gtk_widget_show (pp->eventbox30[0]);
-						gtk_widget_hide (pp->eventbox31[0]);
-						gtk_widget_show (pp->sbutton[0]);
-						gtk_widget_grab_focus (pp->sbutton[0]);
-						/* 设置值的范围 */
-						adj = gtk_spin_button_get_adjustment(GTK_SPIN_BUTTON (pp->sbutton[0]));
-						gtk_adjustment_configure (adj , p->p_config->gain / 100.0, 
-								0.0, 74.0, tmpf , 10.0, 0.0);
-						gtk_spin_button_set_digits (GTK_SPIN_BUTTON (pp->sbutton[0]), 1);
-
-
-						pp->vscale = gtk_vscale_new(adj);
-						gtk_widget_set_size_request(GTK_WIDGET(pp->vscale), 30, 460);
-						gtk_scale_set_draw_value (pp->vscale, FALSE);
-						gtk_box_pack_start (GTK_BOX (pp->vscalebox), pp->vscale, TRUE, TRUE, 0);
-						gtk_widget_show (pp->vscale);
-					}
+						draw3_pressed (data_100, p->p_config->gain ,	0.0, 74.0, tmpf, 1);
 					else 
-					{
-						g_sprintf (temp,"%s\n(dB)", con2_p[1][0][0]);
-						gtk_label_set_text (GTK_LABEL (pp->label3[0]), temp);
-						if ((CUR_POS) == 0 && (pp->pos_pos == MENU3_STOP))
-						{
-							gtk_widget_modify_bg (pp->eventbox30[0], GTK_STATE_NORMAL, &color_button2);
-							gtk_widget_modify_bg (pp->eventbox31[0], GTK_STATE_NORMAL, &color_button2);
-						}
-						else
-						{
-							gtk_widget_modify_bg (pp->eventbox30[0], GTK_STATE_NORMAL, &color_button1);
-							gtk_widget_modify_bg (pp->eventbox31[0], GTK_STATE_NORMAL, &color_button1);
-						}
-						/* 更新当前增益值显示 */
-						str = g_strdup_printf ("%0.1f", (gfloat)(pp->p_config->gain) / 100.0);
-						gtk_label_set_text (GTK_LABEL (pp->data3[0]), str);
-						gtk_label_set_text (GTK_LABEL (pp->label[1]), str);
-						g_free(str);
-						widget_window_class->key_press_event = my_keypress_event;
-						/* 显示和隐藏控件 */
-						gtk_widget_show (pp->eventbox30[0]);
-						gtk_widget_show (pp->eventbox31[0]);
-						gtk_widget_show (pp->data3[0]);
-						gtk_widget_hide (pp->sbutton[0]);
-						gtk_widget_hide (pp->vscale);
-/*						gtk_widget_grab_focus (pp->button);*/
-					}
+						draw3_stop (pp->p_config->gain, 1);
 					break;
 				case 1: /*发射 Pulser*/
 					/* 当前步进 */
@@ -1211,6 +1268,7 @@ void draw3_data1(DRAW_UI_P p)
 	gfloat tmpf;
 	gchar *str;
 	gint x, y;
+	GtkAdjustment *adj;
 
 	switch (pp->pos) 
 	{
@@ -1262,9 +1320,10 @@ void draw3_data1(DRAW_UI_P p)
 			}
 			break;
 		case 1:
+#if 0
 			switch (pp->pos1[1])
 			{
-				case 0:/* start */
+				case 0: /* start 扫描延时 101 */
 					/* 当前步进 */
 					switch (pp->p_tmp_config->start_reg)
 					{
@@ -1275,30 +1334,61 @@ void draw3_data1(DRAW_UI_P p)
 					}
 
 					/* 格式化字符串 */
-					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1) )
+					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 					{
-						g_sprintf (temp,"%s\n(mm) Δ%.1f", con2_p[1][0][1], tmpf);
-						/*
-						gtk_widget_show_all(pp->window1);
-						gtk_window_set_keep_above( GTK_WINDOW (pp->window1), TRUE);
-						gtk_window_get_position (GTK_WINDOW (pp->window), &x, &y);
-						gtk_window_move(GTK_WINDOW (pp->window1), x + 685, y + 137 + 87 * 1);
-						*/
+						gtk_widget_destroy (pp->vscale);
+
+						g_sprintf (temp,"%s\n(dB) Δ%.1f", con2_p[1][0][1], tmpf);
+						gtk_label_set_text (GTK_LABEL (pp->label3[1]), temp);
+						gtk_widget_modify_bg (pp->eventbox30[1], GTK_STATE_NORMAL, &color_button0);
+						widget_window_class->key_press_event = window_keypress_event_orig;
+						g_signal_connect(G_OBJECT(pp->sbutton[1]), "value-changed", 
+								G_CALLBACK(data_101), (gpointer) (p));
+						/* 显示和隐藏控件 */
+						gtk_widget_show (pp->eventbox30[1]);
+						gtk_widget_hide (pp->eventbox31[1]);
+						gtk_widget_show (pp->sbutton[1]);
+						gtk_widget_grab_focus (pp->sbutton[1]);
+						/* 设置值的范围 */
+						adj = gtk_spin_button_get_adjustment(GTK_SPIN_BUTTON (pp->sbutton[1]));
+						gtk_adjustment_configure (adj , p->p_config->gain / 100.0, 
+								0.0, 74.0, tmpf , 10.0, 0.0);
+						gtk_spin_button_set_digits (GTK_SPIN_BUTTON (pp->sbutton[1]), 1);
+
+
+						pp->vscale = gtk_vscale_new(adj);
+						gtk_widget_set_size_request(GTK_WIDGET(pp->vscale), 30, 460);
+						gtk_scale_set_draw_value (pp->vscale, FALSE);
+						gtk_box_pack_start (GTK_BOX (pp->vscalebox), pp->vscale, TRUE, TRUE, 0);
+						gtk_widget_show (pp->vscale);
 					}
 					else 
-						g_sprintf (temp,"%s\n(mm)", con2_p[1][0][1]);
-
-					/* 设置label */
-					gtk_label_set_text (GTK_LABEL (pp->label3[1]), temp);
-					gtk_widget_modify_bg (pp->eventbox30[1], GTK_STATE_NORMAL, &color_button1);
-
-					/* 显示和隐藏控件 */
-					gtk_widget_show (pp->eventbox30[1]);
-					gtk_widget_hide (pp->eventbox31[1]);
-					
-					/* 更新当前start值显示 */
-					str = g_strdup_printf ("%0.1f", pp->p_config->start / 10.0);
-					g_free(str);
+					{
+						g_sprintf (temp,"%s\n(dB)", con2_p[1][0][1]);
+						gtk_label_set_text (GTK_LABEL (pp->label3[1]), temp);
+						if ((CUR_POS) == 0 && (pp->pos_pos == MENU3_STOP))
+						{
+							gtk_widget_modify_bg (pp->eventbox30[1], GTK_STATE_NORMAL, &color_button2);
+							gtk_widget_modify_bg (pp->eventbox31[1], GTK_STATE_NORMAL, &color_button2);
+						}
+						else
+						{
+							gtk_widget_modify_bg (pp->eventbox30[1], GTK_STATE_NORMAL, &color_button1);
+							gtk_widget_modify_bg (pp->eventbox31[1], GTK_STATE_NORMAL, &color_button1);
+						}
+						/* 更新当前增益值显示 */
+						str = g_strdup_printf ("%0.1f", (gfloat)(pp->p_config->gain) / 100.0);
+						gtk_label_set_text (GTK_LABEL (pp->data3[1]), str);
+						g_free(str);
+						widget_window_class->key_press_event = my_keypress_event;
+						/* 显示和隐藏控件 */
+						gtk_widget_show (pp->eventbox30[1]);
+						gtk_widget_show (pp->eventbox31[1]);
+						gtk_widget_show (pp->data3[1]);
+						gtk_widget_hide (pp->sbutton[1]);
+						gtk_widget_hide (pp->vscale);
+/*						gtk_widget_grab_focus (pp->button);*/
+					}
 					break;
 				case 1: /* Tx/Rx Mode 收发模式  */
 					g_sprintf (temp,"%s", con2_p[1][1][1]);
@@ -1383,7 +1473,9 @@ void draw3_data1(DRAW_UI_P p)
 					break;
 				default:break;
 			}
+#endif
 			break;
+
 		case 2:
 			switch (p->pos1[2])
 			{
