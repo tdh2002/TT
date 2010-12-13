@@ -33,8 +33,8 @@ int main (int argc, char *argv[])
 	CONFIG_P		p_config;				
 	TMP_CONFIG_P	p_tmp_config;					
 	GtkWidget		*window;
-/*	GtkAccelGroup	*accel;
-	GClosure		*closure;*/
+	GtkAccelGroup	*accel;
+	GClosure		*closure;
 
 	g_thread_init(NULL);
 	gdk_threads_init();
@@ -43,7 +43,7 @@ int main (int argc, char *argv[])
 	g_type_class_unref (g_type_class_ref (GTK_TYPE_IMAGE_MENU_ITEM));
 	g_object_set (gtk_settings_get_default (), "gtk-menu-bar-accel", NULL, NULL); 
 
-/*	accel = gtk_accel_group_new();*/
+	accel = gtk_accel_group_new();
 
 	p_ui		= (DRAW_UI_P)g_malloc0(sizeof(DRAW_UI));
 	p_config	= (CONFIG_P)g_malloc0(sizeof(CONFIG));
@@ -79,8 +79,10 @@ int main (int argc, char *argv[])
 
 	g_print("float = %d, double= %d\n", sizeof(gfloat), sizeof(gdouble));
 
-	g_signal_connect (G_OBJECT (window), "key-press-event",
+/*
+ g_signal_connect (G_OBJECT (window), "key-press-event",
 			G_CALLBACK (key_press_handler), NULL);
+			*/
 
 #if 0
 	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) NULL, NULL);
@@ -109,19 +111,11 @@ int main (int argc, char *argv[])
 	gtk_accel_group_connect(accel, GDK_F12, 0, GTK_ACCEL_VISIBLE, closure);
 	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) NULL, NULL);
 	gtk_accel_group_connect(accel, GDK_Return, 0, GTK_ACCEL_VISIBLE, closure);
+#endif
 	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) NULL, NULL);
 	gtk_accel_group_connect(accel, GDK_Escape, 0, GTK_ACCEL_VISIBLE, closure);
-	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) NULL, NULL);
-	gtk_accel_group_connect(accel, GDK_Up, 0, GTK_ACCEL_VISIBLE, closure);
-	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) NULL, NULL);
-	gtk_accel_group_connect(accel, GDK_Down, 0, GTK_ACCEL_VISIBLE, closure);
-	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) NULL, NULL);
-	gtk_accel_group_connect(accel, GDK_Left, 0, GTK_ACCEL_VISIBLE, closure);
-	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) NULL, NULL);
-	gtk_accel_group_connect(accel, GDK_Right, 0, GTK_ACCEL_VISIBLE, closure);
 
 	gtk_window_add_accel_group(GTK_WINDOW(window), accel);
-#endif
 
 	gdk_threads_enter();
 	gtk_main();

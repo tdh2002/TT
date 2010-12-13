@@ -276,11 +276,12 @@ typedef struct Draw_interface {
 	GtkWidget		*label2[5];         /*  */
 
 	GtkWidget		*eventbox30[6];     /* */
-	GtkWidget		*eventbox31[6];     /* 三级菜单 二个 eventbox + 一个lable + 一个data + 一个 entry data和entry同时只能有一个显示*/
-	GtkWidget		*label3[6];         /* data 是lable  entry 是可以 输入的控件 */
-	GtkWidget		*data3[6];			/*  */
-	GtkWidget		*eventbox32[6];     /* 三级菜单 二个 eventbox + 一个lable + 一个data + 一个 entry data和entry同时只能有一个显示*/
-	GtkWidget		*entry3[6];
+	GtkWidget		*eventbox31[6];     /* 三级菜单 二个 eventbox + 一个lable + 一个data + 一个 spinbutton data和spinbutton同时只能有一个显示*/
+	GtkWidget		*label3[6];         /* data 是lable   */
+	GtkWidget		*data3[6];			/* */
+	GtkWidget		*eventbox32[6];     /* */
+//	GtkWidget		*entry3[6];
+	GtkWidget		*sbutton[6];
 	GtkWidget		*button;
 
 	gint			xx;

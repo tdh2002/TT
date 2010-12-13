@@ -8,6 +8,10 @@
 #include "base.h"
 #include "language.h"
 
+extern gint (*window_keypress_event_orig)(GtkWidget *widget, GdkEventKey *event);
+extern gint my_keypress_event(GtkWidget *widget, GdkEventKey *event);
+extern GtkWidgetClass *widget_window_class;
+
 extern DRAW_UI_P pp;					
 
 extern void change_language();										/* 选择语言 */

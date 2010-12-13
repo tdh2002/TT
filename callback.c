@@ -6,6 +6,8 @@
 #include "drawui.h"
 #include <gdk/gdkkeysyms.h>
 
+static void handler_key(guint keyval);
+
 gboolean foo (GtkAccelGroup *accel_group, GObject *acceleratable,
 		guint keyval, GdkModifierType modifier, gpointer data);
 
@@ -593,109 +595,115 @@ void b3_fun5(gpointer p)
 	return ;
 }
 
-/* 快捷键处理函数 */
-gboolean key_press_handler (GtkWidget* pWidget,	GdkEventKey* pEvent, gpointer data)
+static void handler_key(guint keyval)
 {
-	if (pEvent->type == GDK_KEY_PRESS)
-	{
 		guchar tmp = pp->pos_pos;
-		g_print("%x  \n", pEvent->keyval);
-		switch (pEvent->keyval) 
-		{
-			case GDK_Escape:
-				switch (pp->pos_pos)
-				{
-					case MENU2_STOP:
-						g_print("menu2stop\n");
-						break;
-					case MENU2_PRESSED:
-						pp->pos_pos = MENU2_STOP;
-						g_print("menu3pressed\n");
-						break;
-					case MENU3_STOP:
-						pp->pos_pos = MENU2_STOP;
-						g_print("menu3stop\n");
-						break;
-					case MENU3_PRESSED:
-						pp->pos_pos = MENU3_STOP;
-						g_print("menu3pressed\n");
-						break;
-					default:break;
-				}
-				break;
-			case GDK_Return:
-				switch (pp->pos_pos)
-				{
-					case MENU2_STOP:
-						pp->pos_pos = MENU3_STOP;
-						break;
-					case MENU2_PRESSED:
-					case MENU3_STOP:
-						pp->pos_pos = MENU3_PRESSED;
-						/* 按下的动作在这里实现 */
-						break;
-					case MENU3_PRESSED:
-						pp->pos_pos = MENU3_STOP;
-						break;
-					default:break;
-
-				}
-				break;
-			case GDK_F12:
-				if (pp->pos_pos == MENU3_PRESSED)
-				{
-					b3_fun0(NULL);
-				}
-				else 
+		g_print("%x  \n", keyval);
+	switch (keyval) 
+	{
+		case GDK_Escape:
+			switch (pp->pos_pos)
+			{
+				case MENU2_STOP:
+					g_print("menu2stop\n");
+					break;
+				case MENU2_PRESSED:
+					pp->pos_pos = MENU2_STOP;
+					g_print("menu2pressed\n");
+					break;
+				case MENU3_STOP:
+					pp->pos_pos = MENU2_STOP;
+					g_print("menu3stop\n");
+					break;
+				case MENU3_PRESSED:
+					pp->pos_pos = MENU3_STOP;
+					g_print("menu3pressed\n");
+					break;
+				default:break;
+			}
+			break;
+		case GDK_Return:
+			switch (pp->pos_pos)
+			{
+				case MENU2_STOP:
+					pp->pos_pos = MENU3_STOP;
+					break;
+				case MENU2_PRESSED:
+				case MENU3_STOP:
 					pp->pos_pos = MENU3_PRESSED;
-				break;
-			case GDK_Up:
-				switch (pp->pos_pos)
-				{
-					case MENU2_STOP:
-						pp->pos_last1 = pp->pos1[pp->pos];
-						pp->pos1[pp->pos] < (pp->menu2_qty - 1) ? pp->pos1[pp->pos]++ :  (pp->pos1[pp->pos] = 0);
-						draw_2_menu(0);
-						draw_3_menu(1);
-						break;
-					case MENU2_PRESSED:
-						break;
-					case MENU3_STOP:
-						break;
-					case MENU3_PRESSED:
-						break;
-				}
-				break;
-			case GDK_Right:
-				break;
-			case GDK_Down:
-				switch (pp->pos_pos)
-				{
-					case MENU2_STOP:
-						pp->pos_last1 = pp->pos1[pp->pos];
-						pp->pos1[pp->pos] > 0 ? pp->pos1[pp->pos]-- :  (pp->pos1[pp->pos] = (pp->menu2_qty - 1));
-						draw_2_menu(0);
-						draw_3_menu(1);
-						break;
-					case MENU2_PRESSED:
-						break;
-					case MENU3_STOP:
-						break;
-					case MENU3_PRESSED:
-						break;
-				}
-				break;
-			case GDK_Left:
-				break;
-			default:break;
-		}
+					/* 按下的动作在这里实现 */
+					break;
+				case MENU3_PRESSED:
+					pp->pos_pos = MENU3_STOP;
+					break;
+				default:break;
 
+			}
+			break;
+		case GDK_F12:
+			if (pp->pos_pos == MENU3_PRESSED)
+			{
+				b3_fun0(NULL);
+			}
+			else 
+				pp->pos_pos = MENU3_PRESSED;
+			break;
+		case GDK_Up:
+			switch (pp->pos_pos)
+			{
+				case MENU2_STOP:
+					pp->pos_last1 = pp->pos1[pp->pos];
+					pp->pos1[pp->pos] < (pp->menu2_qty - 1) ? pp->pos1[pp->pos]++ :  (pp->pos1[pp->pos] = 0);
+					draw_2_menu(0);
+					draw_3_menu(1);
+					break;
+				case MENU2_PRESSED:
+					break;
+				case MENU3_STOP:
+					break;
+				case MENU3_PRESSED:
+					break;
+			}
+			break;
+		case GDK_Right:
+			break;
+		case GDK_Down:
+			switch (pp->pos_pos)
+			{
+				case MENU2_STOP:
+					pp->pos_last1 = pp->pos1[pp->pos];
+					pp->pos1[pp->pos] > 0 ? pp->pos1[pp->pos]-- :  (pp->pos1[pp->pos] = (pp->menu2_qty - 1));
+					draw_2_menu(0);
+					draw_3_menu(1);
+					break;
+				case MENU2_PRESSED:
+					break;
+				case MENU3_STOP:
+					break;
+				case MENU3_PRESSED:
+					break;
+			}
+			break;
+		case GDK_Left:
+			break;
+		default:break;
+	}
 		if (tmp != pp->pos_pos)
 		{
 			draw_2_menu(0);
 			draw_3_menu(0);
 		}
 
+	return ;
+
+}
+
+/* 快捷键处理函数 */
+gboolean key_press_handler (GtkWidget* pWidget,	GdkEventKey* pEvent, gpointer data)
+{
+	if (pEvent->type == GDK_KEY_PRESS)
+	{
+		handler_key(pEvent->keyval);
 	}
 	return TRUE;
 }
@@ -703,7 +711,8 @@ gboolean key_press_handler (GtkWidget* pWidget,	GdkEventKey* pEvent, gpointer da
 gboolean foo (GtkAccelGroup *accel_group, GObject *acceleratable,
 		guint keyval, GdkModifierType modifier, gpointer data)
 {
-return 0;
+	handler_key(keyval);
+	return 0;
 }
 
 gboolean data_function0 (GtkWidget *widget,	GdkEventButton *event,	gpointer       data)
@@ -745,7 +754,7 @@ gboolean data_function5 (GtkWidget *widget,	GdkEventButton *event,	gpointer     
 void data_100 (GtkSpinButton *spinbutton, gpointer data) /*增益Gain*/
 {
 	DRAW_UI_P p = (DRAW_UI_P)(data);
-	p->p_config->gain = (gshort) (gtk_spin_button_get_value (spinbutton) * 10.0);
+	p->p_config->gain = (gshort) (gtk_spin_button_get_value (spinbutton) * 100.0);
 
 	/*发送增益给硬件*/
 }
