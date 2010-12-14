@@ -313,10 +313,11 @@ void draw_2_menu(gint pa)
  * upper 为菜单最大值
  * step  为菜单步进
  * digit 为保留小数点数
+ * pos 为第几个3级菜单
  */
 
 static void draw3_pressed(void (*fun)(GtkSpinButton*, gpointer),const gchar *unit, 
-		gfloat cur_value, gfloat lower, gfloat upper, gfloat step, guint digit, gpointer p)
+		gfloat cur_value, gfloat lower, gfloat upper, gfloat step, guint digit, gpointer p, guint pos)
 {
 	gint  x, y, z;       /* xyz 分别为123级菜单位置 */
 	gchar *str = NULL;
@@ -325,7 +326,7 @@ static void draw3_pressed(void (*fun)(GtkSpinButton*, gpointer),const gchar *uni
 
 	x = pp->pos;
 	y = pp->pos1[x];
-	z = pp->pos2[x][y];
+	z = pos;
 	gtk_widget_destroy (pp->vscale);
 
 
@@ -393,18 +394,18 @@ void draw3_pressed1(gfloat step, guint digit)
 		g_free(str);
 }
 
-static void draw3_stop(gfloat cur_value, const gchar *unit,  guint digit)
+static void draw3_stop(gfloat cur_value, const gchar *unit,  guint digit, guint pos)
 {
 	gint  x, y, z;       /* xyz 分别为123级菜单位置 */
 	gchar *str = NULL;
 
 	x = pp->pos;
 	y = pp->pos1[x];
-	z = pp->pos2[x][y];
+	z = pos;
 
 	str = g_strdup_printf ("%s\n(%s)", con2_p[x][y][z], unit);	
 	gtk_label_set_text (GTK_LABEL (pp->label3[z]), str);
-	if ((CUR_POS) == 0 && (pp->pos_pos == MENU3_STOP))
+	if ((CUR_POS == z) && (pp->pos_pos == MENU3_STOP))
 	{
 		gtk_widget_modify_bg (pp->eventbox30[z], GTK_STATE_NORMAL, &color_button2);
 		gtk_widget_modify_bg (pp->eventbox31[z], GTK_STATE_NORMAL, &color_button2);
@@ -518,9 +519,9 @@ void draw3_data0(gpointer p)
 					}
 
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
-						draw3_pressed (data_100, "dB", pp->p_config->gain ,	0.0, 74.0, tmpf, 1, p);
+						draw3_pressed (data_100, "dB", pp->p_config->gain ,	0.0, 74.0, tmpf, 1, p, 0);
 					else 
-						draw3_stop (pp->p_config->gain, "dB", 1);
+						draw3_stop (pp->p_config->gain, "dB", 1, 0);
 					break;
 				case 1: /*发射 Pulser*/
 					/* 当前步进 */
@@ -1292,7 +1293,7 @@ void draw3_data0(gpointer p)
 	}
 }
 
-void draw3_data1(DRAW_UI_P p) 
+void draw3_data1(gpointer p) 
 {
 	gchar temp[52];
 	gfloat tmpf;
@@ -1350,6 +1351,26 @@ void draw3_data1(DRAW_UI_P p)
 			}
 			break;
 		case 1:
+			switch (pp->pos1[1])
+			{
+				case 0: /* start 扫描延时 101 */
+					/* 当前步进 */
+					switch (pp->p_tmp_config->start_reg)
+					{
+						case 0:	tmpf = pp->p_config->range / (1 * 1000.0); break;
+						case 1:	tmpf = pp->p_config->range / (2 * 1000.0); break;
+						case 2:	tmpf = pp->p_config->range / (32 * 1000.0); break;
+						default:break;
+					}
+
+					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
+						draw3_pressed (data_101, "mm", pp->p_config->start , 0.0, 74.0, 0.1, 1, p, 1);
+					else 
+						draw3_stop (pp->p_config->start, "mm", 1, 1);
+					break;
+				default:break;
+			}
+			break;
 #if 0
 			switch (pp->pos1[1])
 			{
@@ -1507,7 +1528,7 @@ void draw3_data1(DRAW_UI_P p)
 			break;
 
 		case 2:
-			switch (p->pos1[2])
+			switch (pp->pos1[2])
 			{
 				case 0:/*Gate->Parameters*/
 					/* 格式化字符串 */
@@ -1574,7 +1595,7 @@ void draw3_data1(DRAW_UI_P p)
 			}
 			break;
 		case 3:
-			switch (p->pos1[3])
+			switch (pp->pos1[3])
 			{
 				case 0:/*Measurements -> Reading -> Group*/
 					/* 格式化字符串 */
@@ -1667,7 +1688,7 @@ void draw3_data1(DRAW_UI_P p)
 			}
 			break;
 		case 4:
-			switch (p->pos1[4])
+			switch (pp->pos1[4])
 			{
 				case 0:/*Display -> Selection -> group*/
 					/* 格式化字符串 */
@@ -1760,7 +1781,7 @@ void draw3_data1(DRAW_UI_P p)
 			}
 			break;
 		case 5:
-			switch (p->pos1[5])
+			switch (pp->pos1[5])
 			{
 				case 0:/*Probe/Part -> Select -> Group Mode*/
 					/* 格式化字符串 */
@@ -1865,7 +1886,7 @@ void draw3_data1(DRAW_UI_P p)
 			}
 			break;
 		case 6:
-			switch (p->pos1[6])
+			switch (pp->pos1[6])
 			{
 				case 0:/*Focal Law -> configuration -> Law Config.*/
 					/* 当前步进 */
@@ -1971,7 +1992,7 @@ void draw3_data1(DRAW_UI_P p)
 			}
 			break;
 		case 7:
-			switch (p->pos1[7])
+			switch (pp->pos1[7])
 			{
 				case 0:/*Scan -> Encoder -> polarity*/
 					/* 格式化字符串 */
@@ -2064,7 +2085,7 @@ void draw3_data1(DRAW_UI_P p)
 			}
 			break;
 		case 8:
-			switch (p->pos1[8])
+			switch (pp->pos1[8])
 			{
 				case 0:/*File -> File -> Open*/
 					/* 格式化字符串 */
@@ -2145,7 +2166,7 @@ void draw3_data1(DRAW_UI_P p)
 			}
 			break;
 		case 9:
-			switch (p->pos1[9])
+			switch (pp->pos1[9])
 			{
 				case 0:/*preferences -> pref. -> bright*/
 					/* 当前步进 */
@@ -4619,7 +4640,7 @@ void draw_3_menu(gint pa, gpointer p)
 		 * */
 		if ( (pp->pos_last != pp->pos) || 
 				( pp->pos_last1 != pp->pos1[pp->pos] ) ||
-				(pp->pos_last2 == i || pp->pos2[pp->pos][pp->pos1[pp->pos]] == i) || pa) 
+				(pp->pos_last2 == i) || (pp->pos2[pp->pos][pp->pos1[pp->pos]] == i) || pa) 
 		{
 			gtk_widget_set_sensitive (pp->eventbox30[i], TRUE);
 			gtk_widget_set_sensitive (pp->eventbox31[i], TRUE);
@@ -4632,16 +4653,18 @@ void draw_3_menu(gint pa, gpointer p)
 			 * */
 			if ( con2_p[pp->pos][pp->pos1[pp->pos]][i] ) 
 			{
+				if (CUR_POS != i) {
 				/* 0-5 表示6个3三级菜单 */
-				switch (i)
-				{
-					case 0:	draw3_data0(p);break;
-					case 1:	draw3_data1(pp);break;
-					case 2:	draw3_data2(pp);break;
-					case 3:	draw3_data3(pp);break;
-					case 4:	draw3_data4(pp);break;
-					case 5:	draw3_data5(pp);break;
-					default:break;
+					switch (i)
+					{
+						case 0:	draw3_data0(p);break;
+						case 1:	draw3_data1(p);break;
+						case 2:	draw3_data2(pp);break;
+						case 3:	draw3_data3(pp);break;
+						case 4:	draw3_data4(pp);break;
+						case 5:	draw3_data5(pp);break;
+						default:break;
+					}
 				}
 			}
 			else
@@ -4652,6 +4675,16 @@ void draw_3_menu(gint pa, gpointer p)
 				gtk_widget_hide (pp->sbutton[i]);	/**/
 			}
 		}
+	}
+	switch (CUR_POS)
+	{
+		case 0:	draw3_data0(p);break;
+		case 1:	draw3_data1(p);break;
+		case 2:	draw3_data2(pp);break;
+		case 3:	draw3_data3(pp);break;
+		case 4:	draw3_data4(pp);break;
+		case 5:	draw3_data5(pp);break;
+		default:break;
 	}
 #if 0
 	/* 停留或者按下 颜色不一样 按下时候获取焦点*/

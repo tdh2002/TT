@@ -226,7 +226,6 @@ void b3_fun1(gpointer p)
 	/* 之前的位置 */
 	pp->pos_last2 = pp->pos2[pp->pos][pp->pos1[pp->pos]];
 	pp->pos2[pp->pos][pp->pos1[pp->pos]] = 1;
-	pp->pos_pos = MENU3_PRESSED;
 	/*处理微调*/
 	if (pp->pos_last2 == pp->pos2[pp->pos][pp->pos1[pp->pos]])
 	{
@@ -314,6 +313,7 @@ void b3_fun1(gpointer p)
 		}
 	}
 
+	pp->pos_pos = MENU3_PRESSED;
 	draw_2_menu(0);
 	draw_3_menu(0, NULL);                          /**/
 
