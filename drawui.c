@@ -340,6 +340,8 @@ static void draw3_pressed(void (*fun)(GtkSpinButton*, gpointer),const gchar *uni
 			str = g_strdup_printf ("%s\n(%s) Δ%0.2f", con2_p[x][y][z], unit, step);			break;
 		case 3:
 			str = g_strdup_printf ("%s\n(%s) Δ%0.3f", con2_p[x][y][z], unit, step);			break;
+		case 4:
+			str = g_strdup_printf ("%s\n(%s) Δ%0.4f", con2_p[x][y][z], unit, step);			break;
 		default:break;
 	}
 	gtk_label_set_text (GTK_LABEL (pp->label3[z]), str);
@@ -426,6 +428,8 @@ static void draw3_stop(gfloat cur_value, const gchar *unit,  guint digit, guint 
 			str = g_strdup_printf ("%0.2f", cur_value);			break;
 		case 3:
 			str = g_strdup_printf ("%0.3f", cur_value);			break;
+		case 4:
+			str = g_strdup_printf ("%0.4f", cur_value);			break;
 		default:break;
 	}
 	gtk_label_set_text (GTK_LABEL (pp->data3[z]), str);
@@ -2302,22 +2306,53 @@ void draw3_data2(DRAW_UI_P p)
 					/*当前步进*/
 					switch (p->p_tmp_config->range_reg)
 					{
-						case 0:	tmpf = p->p_config->part.Velocity * 1.6 / 5000.0; break;
-						case 1:	tmpf = p->p_config->part.Velocity * 8.0 / 5000.0; break;
-						case 2:	tmpf = p->p_config->part.Velocity * 16.0 / 5000.0; break;
+						case 0:	tmpf = 3.2; break;
+						case 1:	tmpf = 16.0; break;
+						case 2:	tmpf = 32.0; break;
 						default:break;
 					}
 
+					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
+					{
+						if (pp->p_config->ut_unit == 0)
+						{
+							if (pp->p_config->unit == 0)
+								draw3_pressed (data_102, "mm", 
+										pp->p_config->range * (pp->p_config->part.Velocity / 1000.0),  
+										3.2 * (pp->p_config->part.Velocity / 1000.0), 
+										6400.0 * (pp->p_config->part.Velocity / 1000.0), 
+										tmpf * (pp->p_config->part.Velocity / 1000.0), 
+										2, p, 2);
+							else
+								draw3_pressed (data_102, "in", 
+										pp->p_config->range * 0.03937 / (2 * pp->p_config->part.Velocity), 
+										3.2 * 0.03937 / (2 * pp->p_config->part.Velocity), 
+										6400.0 * 0.03937 / (2 * pp->p_config->part.Velocity), 
+										tmpf * 0.03937 / (2 * pp->p_config->part.Velocity), 
+										2, p, 2);
+						}
+						else 
+							draw3_pressed (data_102, "μs", pp->p_config->range, 3.2, 6400.0, tmpf , 2, p, 2);
+					}
+					else
+					{
+						if (pp->p_config->ut_unit == 0)
+						{
+							if (pp->p_config->unit == 0)
+								draw3_stop (pp->p_config->range / (2 * pp->p_config->part.Velocity),
+										"mm", 2, 2);
+							else
+								draw3_stop (pp->p_config->range * 0.03497 / (2 * pp->p_config->part.Velocity),
+										"in", 2, 2);
+						}
+						else 
+							draw3_stop (pp->p_config->range , "μs", 2, 2);
+					}
+					break;
 					/* 格式化字符串 */
 					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2) )
 					{
 						g_sprintf (temp,"%s\n(%s) Δ%.1f", con2_p[1][0][2],!p->p_config->unit ? "mm" : "inch", tmpf);
-						/*
-						gtk_widget_show_all(pp->window1);
-						gtk_window_set_keep_above( GTK_WINDOW (pp->window1), TRUE);
-						gtk_window_get_position (GTK_WINDOW (pp->window), &x, &y);
-						gtk_window_move(GTK_WINDOW (pp->window1), x + 685, y + 137 + 87 * 2);
-						*/
 					}
 					else 
 						g_sprintf (temp,"%s\n (%s)", con2_p[1][0][2],!p->p_config->unit ? "mm" : "inch");
@@ -3070,31 +3105,10 @@ void draw3_data3(DRAW_UI_P p)
 						default:break;
 					}
 
-					/* 格式化字符串 */
-					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3) )
-					{
-						g_sprintf (temp,"%s\n(us) Δ%.2f", con2_p[1][0][3], tmpf);
-						/*
-						gtk_widget_show_all(pp->window1);
-						gtk_window_set_keep_above( GTK_WINDOW (pp->window1), TRUE);
-						gtk_window_get_position (GTK_WINDOW (pp->window), &x, &y);
-						gtk_window_move(GTK_WINDOW (pp->window1), x + 685, y + 137 + 87 * 3);
-						*/
-					}
+					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
+						draw3_pressed (data_103, "μs", pp->p_config->wedge_delay, 0.0, 1000.0, tmpf, 2, p, 3);
 					else 
-						g_sprintf (temp,"%s\n(us)", con2_p[1][0][3]);
-
-					/* 设置label */
-					gtk_label_set_text (GTK_LABEL (pp->label3[3]), temp);
-					gtk_widget_modify_bg (pp->eventbox30[3], GTK_STATE_NORMAL, &color_button1);
-
-					/* 显示和隐藏控件 */
-					gtk_widget_show (pp->eventbox30[3]);
-					gtk_widget_hide (pp->eventbox31[3]);
-					
-					/* 更新当前增益值显示 */
-					str = g_strdup_printf ("%0.1f", pp->p_config->wedge_delay / 10.0);
-					g_free(str);
+						draw3_stop (pp->p_config->wedge_delay, "μs", 2, 3);
 					break;
 				case 1: /* 电压高低 功率? */
 					g_sprintf (temp,"%s", con2_p[1][1][3]);
@@ -3738,32 +3752,20 @@ void draw3_data4(DRAW_UI_P p)
 						default:break;
 					}
 
-					/* 格式化字符串 */
-					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4) )
+					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
 					{
-						g_sprintf (temp,"%s\n(m/s) Δ%.1f", con2_p[1][0][4], tmpf);
-						/*
-						gtk_widget_show_all(pp->window1);
-						gtk_window_set_keep_above( GTK_WINDOW (pp->window1), TRUE);
-						gtk_window_get_position (GTK_WINDOW (pp->window), &x, &y);
-						gtk_window_move(GTK_WINDOW (pp->window1), x + 685, y + 137 + 87 * 4);
-						*/
+						if (pp->p_config->unit == 0)
+							draw3_pressed (data_104, "m/s", pp->p_config->part.Velocity , 635.0, 15240.0, tmpf, 1, p, 4);
+						else
+							draw3_pressed (data_104, "in/μs", pp->p_config->part.Velocity * 0.0000394  , 0.025, 0.6, tmpf / 10000.0, 4, p, 4);
 					}
-					else 
-						g_sprintf (temp,"%s\n(m/s)", con2_p[1][0][4]);
-
-					/* 设置label */
-					gtk_label_set_text (GTK_LABEL (pp->label3[4]), temp);
-					gtk_widget_modify_bg (pp->eventbox30[4], GTK_STATE_NORMAL, &color_button1);
-
-					/* 显示和隐藏控件 */
-					gtk_widget_show (pp->eventbox30[4]);
-					gtk_widget_hide (pp->eventbox31[4]);
-					
-					/* 更新当前增益值显示 */
-					str = g_strdup_printf ("%0.1f", pp->p_config->part.Velocity / 10.0);
-					g_free(str);
-
+					else
+					{
+						if (pp->p_config->unit == 0)
+							draw3_stop (pp->p_config->part.Velocity, "m/s", 1, 4);
+						else
+							draw3_stop (pp->p_config->part.Velocity * 0.0000394, "in/μs", 4, 4);
+					}
 					break;
 				case 1: /* 脉冲宽度 pulser width */
 					g_sprintf (temp,"%s", con2_p[1][1][4]);
@@ -5049,6 +5051,7 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 	pp->window2 = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_decorated (GTK_WINDOW (pp->window2), FALSE);			/*不可以装饰*/
 
+/*	pp->p_config->unit = 1;*/
 
 	g_thread_create((GThreadFunc)(time_handler), (gpointer) (drawing_area), FALSE, NULL);
 	/*

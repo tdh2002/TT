@@ -785,9 +785,9 @@ void data_102 (GtkSpinButton *spinbutton, gpointer data) /*Range 范围 */
 {
 	DRAW_UI_P p = (DRAW_UI_P)(data);
 	if (p->p_config->ut_unit == 0) 
-		p->p_config->range = (guint) (gtk_spin_button_get_value (spinbutton) * 100.0 / (p->p_config->part.Velocity / 20000.0));
+		p->p_config->range = (gtk_spin_button_get_value (spinbutton) / (p->p_config->part.Velocity ));
 	else
-		p->p_config->range = (guint) (gtk_spin_button_get_value (spinbutton) * 100.0);
+		p->p_config->range = gtk_spin_button_get_value (spinbutton) ;
 
 	/*发送增益给硬件*/
 }
@@ -795,7 +795,7 @@ void data_102 (GtkSpinButton *spinbutton, gpointer data) /*Range 范围 */
 void data_103 (GtkSpinButton *spinbutton, gpointer data) /*楔块延时  Wedge Delay */
 {
 	DRAW_UI_P p = (DRAW_UI_P)(data);
-	p->p_config->wedge_delay = (guint) (gtk_spin_button_get_value (spinbutton) * 100.0);
+	p->p_config->wedge_delay = gtk_spin_button_get_value (spinbutton) ;
 
 	/*发送增益给硬件*/
 }
@@ -803,7 +803,10 @@ void data_103 (GtkSpinButton *spinbutton, gpointer data) /*楔块延时  Wedge D
 void data_104 (GtkSpinButton *spinbutton, gpointer data) /*声速 Velocity */
 {
 	DRAW_UI_P p = (DRAW_UI_P)(data);
-	p->p_config->part.Velocity = (guint) (gtk_spin_button_get_value (spinbutton) * 10.0);
+	if (pp->p_config->unit == 0)	/* 0mm1 1inch */
+		p->p_config->part.Velocity =  gtk_spin_button_get_value (spinbutton);
+	else
+		p->p_config->part.Velocity =  gtk_spin_button_get_value (spinbutton) * 25380.7;
 
 	/*发送增益给硬件*/
 }

@@ -46,7 +46,7 @@ typedef struct Part {
 	guint	Geometry;		/*集合形状 FLAT/ID/OD*/
 	guint	Thickness;		/*厚度*/
 	guint	Diameter;		/*直径*/
-	guint	Velocity;		/*声速 ( 0.1 m )/s */
+	gfloat	Velocity;		/*声速 m/s */
 	guint	Material;		/*材料*/
 } PART, *PART_P;
 
@@ -65,8 +65,8 @@ typedef	struct Config {
 	PART	part;
 	gfloat	gain;			/*增益 dB 单位*/
 	gint	start;			/*扫描延时 以0.01 μs为单位*/
-	guint	range;			/*显示范围 以0.01 μs为单位*/
-	guint	wedge_delay;	/*楔款延时 以0.01 μs为单位*/
+	gfloat	range;			/*显示范围 以 μs为单位*/
+	gfloat	wedge_delay;	/*楔款延时 以 μs 为单位*/
 	
 	/*发射*/
 	guchar	pulser;			/**/
@@ -130,16 +130,16 @@ typedef	struct Config {
 	guint	display;		/*显示模式 A B C A+B A+B+C A+S ...*/
 	guint	c_scan;			/*c扫描参考*/
 
-	guchar	ut_unit;		/*检测单位 时间2 声程1 实际深度0 .*/
+	guchar	ut_unit;		/*检测单位 时间2 声程1  实际深度0 .*/
 	guint	color;			/**/
 	
 
 	/*选项*/
-	guchar	unit;
+	guchar	unit;			/* 0 mm 1 inch */
 	guint	bright;
 
-	guint	date;			/**/
-	guint	time;			/**/
+	guint	date;			/*  */
+	guint	time;			/*  */
 
 	guint	count;               /*Gate/Alarm->Output->count*/
 	guint	active_delay;        /*Gate/Alarm->Output->delay*/
