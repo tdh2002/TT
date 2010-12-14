@@ -315,7 +315,7 @@ void draw_2_menu(gint pa)
  * digit 为保留小数点数
  */
 
-static void draw3_pressed(void (*fun)(GtkSpinButton*, gpointer), 
+static void draw3_pressed(void (*fun)(GtkSpinButton*, gpointer),const gchar *unit, 
 		gfloat cur_value, gfloat lower, gfloat upper, gfloat step, guint digit, gpointer p)
 {
 	gint  x, y, z;       /* xyz 分别为123级菜单位置 */
@@ -332,13 +332,13 @@ static void draw3_pressed(void (*fun)(GtkSpinButton*, gpointer),
 	switch (digit)
 	{
 		case 0:
-			str = g_strdup_printf ("%s\n(dB) Δ%0.0f", con2_p[x][y][z], step);			break;
+			str = g_strdup_printf ("%s\n(%s) Δ%0.0f", con2_p[x][y][z], unit, step);			break;
 		case 1:
-			str = g_strdup_printf ("%s\n(dB) Δ%0.1f", con2_p[x][y][z], step);			break;
+			str = g_strdup_printf ("%s\n(%s) Δ%0.1f", con2_p[x][y][z], unit, step);			break;
 		case 2:
-			str = g_strdup_printf ("%s\n(dB) Δ%0.2f", con2_p[x][y][z], step);			break;
+			str = g_strdup_printf ("%s\n(%s) Δ%0.2f", con2_p[x][y][z], unit, step);			break;
 		case 3:
-			str = g_strdup_printf ("%s\n(dB) Δ%0.3f", con2_p[x][y][z], step);			break;
+			str = g_strdup_printf ("%s\n(%s) Δ%0.3f", con2_p[x][y][z], unit, step);			break;
 		default:break;
 	}
 	gtk_label_set_text (GTK_LABEL (pp->label3[z]), str);
@@ -393,7 +393,7 @@ void draw3_pressed1(gfloat step, guint digit)
 		g_free(str);
 }
 
-static void draw3_stop(gfloat cur_value, guint digit)
+static void draw3_stop(gfloat cur_value, const gchar *unit,  guint digit)
 {
 	gint  x, y, z;       /* xyz 分别为123级菜单位置 */
 	gchar *str = NULL;
@@ -402,7 +402,7 @@ static void draw3_stop(gfloat cur_value, guint digit)
 	y = pp->pos1[x];
 	z = pp->pos2[x][y];
 
-	str = g_strdup_printf ("%s\n(dB)", con2_p[x][y][z]);	
+	str = g_strdup_printf ("%s\n(%s)", con2_p[x][y][z], unit);	
 	gtk_label_set_text (GTK_LABEL (pp->label3[z]), str);
 	if ((CUR_POS) == 0 && (pp->pos_pos == MENU3_STOP))
 	{
@@ -518,9 +518,9 @@ void draw3_data0(gpointer p)
 					}
 
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
-						draw3_pressed (data_100, pp->p_config->gain ,	0.0, 74.0, tmpf, 1, p);
+						draw3_pressed (data_100, "dB", pp->p_config->gain ,	0.0, 74.0, tmpf, 1, p);
 					else 
-						draw3_stop (pp->p_config->gain, 1);
+						draw3_stop (pp->p_config->gain, "dB", 1);
 					break;
 				case 1: /*发射 Pulser*/
 					/* 当前步进 */
