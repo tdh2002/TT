@@ -16,7 +16,7 @@ extern DRAW_UI_P pp;
 
 extern void change_language();										/* 选择语言 */
 extern void draw_2_menu(gint pa);									/* 更新二级菜单 */
-extern void draw_3_menu(gint pa);									/* 更新三级菜单 */
+extern void draw_3_menu(gint pa, gpointer p);									/* 更新三级菜单 */
 extern void init_ui(DRAW_UI_P p);									/* 初始化界面, */
 
 extern gboolean (*data_fun[6])(GtkWidget *widget, GdkEventButton *event, gpointer user_data);
@@ -42,5 +42,7 @@ extern gboolean foo (GtkAccelGroup *accel_group, GObject *acceleratable,
 
 extern gboolean key_press_handler (GtkWidget* pWidget, GdkEventKey* pEvent, gpointer data);
 
+
+extern void draw3_pressed1(gfloat step, guint digit);
 
 #endif

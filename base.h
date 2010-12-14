@@ -295,6 +295,8 @@ typedef struct Draw_interface {
 	CONFIG_P		p_config;			/**/
 	TMP_CONFIG_P	p_tmp_config;		/**/
 
+	guint			mark3;
+
 } DRAW_UI, *DRAW_UI_P;
 
 

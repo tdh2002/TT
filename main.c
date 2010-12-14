@@ -84,7 +84,6 @@ int main (int argc, char *argv[])
 			G_CALLBACK (key_press_handler), NULL);
 			*/
 
-#if 0
 	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) NULL, NULL);
 	gtk_accel_group_connect(accel, GDK_F1, 0, GTK_ACCEL_VISIBLE, closure);
 	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) NULL, NULL);
@@ -111,7 +110,7 @@ int main (int argc, char *argv[])
 	gtk_accel_group_connect(accel, GDK_F12, 0, GTK_ACCEL_VISIBLE, closure);
 	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) NULL, NULL);
 	gtk_accel_group_connect(accel, GDK_Return, 0, GTK_ACCEL_VISIBLE, closure);
-#endif
+
 	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) NULL, NULL);
 	gtk_accel_group_connect(accel, GDK_Escape, 0, GTK_ACCEL_VISIBLE, closure);
 

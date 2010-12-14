@@ -16,9 +16,10 @@ GdkPoint a[512] = {{0,0},{240,200},{400,200}};
 void change_language();
 void draw_1_menu(DRAW_UI_P p);
 void draw_2_menu(gint pa);
-void draw_3_menu(gint pa);
+void draw_3_menu(gint pa, gpointer p);
 void init_ui(DRAW_UI_P p);				/*初始化界面,*/
 
+void draw3_pressed1(gfloat step, guint digit);
 /**/
 const gchar **con0_p	= content_en10;
 const gchar ***con1_p	= content1_en;
@@ -117,7 +118,7 @@ void menuitem0_function(GtkMenuItem *menuitem, gpointer data)
 	// p->pos1 = 0, p->pos2 = 0;
 	g_print("pos = %d\n", p->pos);
 	draw_2_menu(1);
-	draw_3_menu(1);
+	draw_3_menu(1, NULL);
 }
 
 void menuitem1_function(GtkMenuItem *menuitem, gpointer data)
@@ -131,7 +132,7 @@ void menuitem1_function(GtkMenuItem *menuitem, gpointer data)
 	//p->pos1 = 0, p->pos2 = 0;
 	g_print("pos = %d\n", p->pos);
 	draw_2_menu(1);
-	draw_3_menu(1);
+	draw_3_menu(1, NULL);
 }
 
 void menuitem2_function(GtkMenuItem *menuitem, gpointer data)
@@ -145,7 +146,7 @@ void menuitem2_function(GtkMenuItem *menuitem, gpointer data)
 	//p->pos1 = 0, p->pos2 = 0;
 	g_print("pos = %d\n", p->pos);
 	draw_2_menu(1);
-	draw_3_menu(1);
+	draw_3_menu(1, NULL);
 }
 
 void menuitem3_function(GtkMenuItem *menuitem, gpointer data)
@@ -159,7 +160,7 @@ void menuitem3_function(GtkMenuItem *menuitem, gpointer data)
 	//p->pos1 = 0, p->pos2 = 0;
 	g_print("pos = %d\n", p->pos);
 	draw_2_menu(1);
-	draw_3_menu(1);
+	draw_3_menu(1, NULL);
 }
 
 void menuitem4_function(GtkMenuItem *menuitem, gpointer data)
@@ -173,7 +174,7 @@ void menuitem4_function(GtkMenuItem *menuitem, gpointer data)
 	//p->pos1 = 0, p->pos2 = 0;
 	g_print("pos = %d\n", p->pos);
 	draw_2_menu(1);
-	draw_3_menu(1);
+	draw_3_menu(1, NULL);
 }
 
 void menuitem5_function(GtkMenuItem *menuitem, gpointer data)
@@ -187,7 +188,7 @@ void menuitem5_function(GtkMenuItem *menuitem, gpointer data)
 	//p->pos1 = 0, p->pos2 = 0;
 	g_print("pos = %d\n", p->pos);
 	draw_2_menu(1);
-	draw_3_menu(1);
+	draw_3_menu(1, NULL);
 }
 
 void menuitem6_function(GtkMenuItem *menuitem, gpointer data)
@@ -201,7 +202,7 @@ void menuitem6_function(GtkMenuItem *menuitem, gpointer data)
 	// p->pos1 = 0, p->pos2 = 0;
 	g_print("pos = %d \n", p->pos);
 	draw_2_menu(1);
-	draw_3_menu(1);
+	draw_3_menu(1, NULL);
 }
 
 void menuitem7_function(GtkMenuItem *menuitem, gpointer data)
@@ -215,7 +216,7 @@ void menuitem7_function(GtkMenuItem *menuitem, gpointer data)
 	// p->pos1 = 0, p->pos2 = 0;
 	g_print("pos = %d\n", p->pos);
 	draw_2_menu(1);
-	draw_3_menu(1);
+	draw_3_menu(1, NULL);
 }
 
 void menuitem8_function(GtkMenuItem *menuitem, gpointer data)
@@ -229,7 +230,7 @@ void menuitem8_function(GtkMenuItem *menuitem, gpointer data)
 	// p->pos1 = 0, p->pos2 = 0;
 	g_print("pos = %d\n", p->pos);
 	draw_2_menu(1);
-	draw_3_menu(1);
+	draw_3_menu(1, NULL);
 }
 
 void menuitem9_function(GtkMenuItem *menuitem, gpointer data)
@@ -243,7 +244,7 @@ void menuitem9_function(GtkMenuItem *menuitem, gpointer data)
 	// p->pos1 = 0, p->pos2 = 0;
 	g_print("pos = %d\n", p->pos);
 	draw_2_menu(1);
-	draw_3_menu(1);
+	draw_3_menu(1, NULL);
 }
 
 /**/
@@ -315,16 +316,18 @@ void draw_2_menu(gint pa)
  */
 
 static void draw3_pressed(void (*fun)(GtkSpinButton*, gpointer), 
-		gfloat cur_value, gfloat lower, gfloat upper, gfloat step, guint digit)
+		gfloat cur_value, gfloat lower, gfloat upper, gfloat step, guint digit, gpointer p)
 {
 	gint  x, y, z;       /* xyz 分别为123级菜单位置 */
 	gchar *str = NULL;
 	GtkAdjustment *adj;
+	guint temp = GPOINTER_TO_UINT (p);
 
 	x = pp->pos;
 	y = pp->pos1[x];
 	z = pp->pos2[x][y];
 	gtk_widget_destroy (pp->vscale);
+
 
 	switch (digit)
 	{
@@ -358,6 +361,33 @@ static void draw3_pressed(void (*fun)(GtkSpinButton*, gpointer),
 	gtk_scale_set_draw_value (GTK_SCALE (pp->vscale), FALSE);
 	gtk_box_pack_start (GTK_BOX (pp->vscalebox), pp->vscale, TRUE, TRUE, 0);
 	gtk_widget_show (pp->vscale);
+
+	if (str)
+		g_free(str);
+}
+
+void draw3_pressed1(gfloat step, guint digit)
+{
+	gint  x, y, z;       /* xyz 分别为123级菜单位置 */
+	gchar *str = NULL;
+
+	x = pp->pos;
+	y = pp->pos1[x];
+	z = pp->pos2[x][y];
+
+	switch (digit)
+	{
+		case 0:
+			str = g_strdup_printf ("%s\n(dB) Δ%0.0f", con2_p[x][y][z], step);			break;
+		case 1:
+			str = g_strdup_printf ("%s\n(dB) Δ%0.1f", con2_p[x][y][z], step);			break;
+		case 2:
+			str = g_strdup_printf ("%s\n(dB) Δ%0.2f", con2_p[x][y][z], step);			break;
+		case 3:
+			str = g_strdup_printf ("%s\n(dB) Δ%0.3f", con2_p[x][y][z], step);			break;
+		default:break;
+	}
+	gtk_label_set_text (GTK_LABEL (pp->label3[z]), str);
 
 	if (str)
 		g_free(str);
@@ -416,7 +446,7 @@ static void draw3_none()
 }
 
 /* 三级菜单第一个 */
-void draw3_data0(DRAW_UI_P p) 
+void draw3_data0(gpointer p) 
 {
 	gchar temp[52];
 	gchar *str;
@@ -488,7 +518,7 @@ void draw3_data0(DRAW_UI_P p)
 					}
 
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
-						draw3_pressed (data_100, p->p_config->gain ,	0.0, 74.0, tmpf, 1);
+						draw3_pressed (data_100, pp->p_config->gain ,	0.0, 74.0, tmpf, 1, p);
 					else 
 						draw3_stop (pp->p_config->gain, 1);
 					break;
@@ -603,7 +633,7 @@ void draw3_data0(DRAW_UI_P p)
 			}
 			break;
 		case 2:
-			switch (p->pos1[2])
+			switch (pp->pos1[2])
 			{
 				case 0:/*Gate*/
 					/* 格式化字符串 */
@@ -670,7 +700,7 @@ void draw3_data0(DRAW_UI_P p)
 			}
 			break;
 		case 3:
-			switch (p->pos1[3])
+			switch (pp->pos1[3])
 			{
 				case 0:/*Measurements -> Reading -> List*/
 					/* 格式化字符串 */
@@ -751,7 +781,7 @@ void draw3_data0(DRAW_UI_P p)
 			}
 			break;
 		case 4:
-			switch (p->pos1[4])
+			switch (pp->pos1[4])
 			{
 				case 0:/*Display -> Selection -> Display*/
 					/* 格式化字符串 */
@@ -832,7 +862,7 @@ void draw3_data0(DRAW_UI_P p)
 			}
 			break;
 		case 5:
-			switch (p->pos1[5])
+			switch (pp->pos1[5])
 			{
 				case 0:/*Probe/Part -> Select -> group*/
 					/* 格式化字符串 */
@@ -912,7 +942,7 @@ void draw3_data0(DRAW_UI_P p)
 			}
 			break;
 		case 6:
-			switch (p->pos1[6])
+			switch (pp->pos1[6])
 			{
 				case 0:/*Focal Law -> configuration -> Law Config.*/
 					/* 格式化字符串 */
@@ -1003,7 +1033,7 @@ void draw3_data0(DRAW_UI_P p)
 			}
 			break;
 		case 7:
-			switch (p->pos1[7])
+			switch (pp->pos1[7])
 			{
 				case 0:/*Scan -> Encoder -> Encoder*/
 					/* 格式化字符串 */
@@ -1097,7 +1127,7 @@ void draw3_data0(DRAW_UI_P p)
 			}
 			break;
 		case 8:
-			switch (p->pos1[8])
+			switch (pp->pos1[8])
 			{
 				case 0:/*File -> File -> Storage*/
 					/* 格式化字符串 */
@@ -1178,7 +1208,7 @@ void draw3_data0(DRAW_UI_P p)
 			}
 			break;
 		case 9:
-			switch (p->pos1[9])
+			switch (pp->pos1[9])
 			{
 				case 0:/*Preferences -> pref.-> units*/
 					/* 格式化字符串 */
@@ -4575,7 +4605,7 @@ void draw3_data5(DRAW_UI_P p)
 }
 
 /* 三级菜单*/
-void draw_3_menu(gint pa)
+void draw_3_menu(gint pa, gpointer p)
 {
 	gint i;
 
@@ -4605,7 +4635,7 @@ void draw_3_menu(gint pa)
 				/* 0-5 表示6个3三级菜单 */
 				switch (i)
 				{
-					case 0:	draw3_data0(pp);break;
+					case 0:	draw3_data0(p);break;
 					case 1:	draw3_data1(pp);break;
 					case 2:	draw3_data2(pp);break;
 					case 3:	draw3_data3(pp);break;
@@ -4979,7 +5009,7 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 
 	draw_1_menu(p);
 	draw_2_menu(1);
-	draw_3_menu(1);
+	draw_3_menu(1, NULL);
 
 	pp->window1 = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_decorated (GTK_WINDOW (pp->window1), FALSE);			/*不可以装饰*/

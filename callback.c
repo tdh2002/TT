@@ -90,7 +90,7 @@ void b2_fun0(DRAW_UI_P p, gint pos)
 	p->pos1[p->pos] = pos;
 	pp->pos_pos = MENU3_STOP;
 	draw_2_menu(0);
-	draw_3_menu(0);
+	draw_3_menu(0, NULL);
 }
 
 gboolean eventbox2_function0 (GtkWidget *widget, GdkEventButton *event,	gpointer data)
@@ -138,6 +138,8 @@ static inline void data_process(guchar* data, guint pa)
 /* 第一个数值按键 快捷键是F12  */
 void b3_fun0(gpointer p)
 {
+	gfloat tmpf;
+	guint temp = GPOINTER_TO_UINT (p);
 	/* 之前的位置 */
 	pp->pos_last2 = pp->pos2[pp->pos][pp->pos1[pp->pos]];
 	pp->pos2[pp->pos][pp->pos1[pp->pos]] = 0;
@@ -153,7 +155,9 @@ void b3_fun0(gpointer p)
 			case 1: /* UT Settings*/
 				   switch (pp->pos1[1])
 				   {
-					   case 0: data_process (&(pp->p_tmp_config->db_reg), 4);			break; /* 100增益 5种步进 */
+					   case 0: data_process (&(pp->p_tmp_config->db_reg), 4);	
+							   g_print("db comes%d\n", temp);
+							   break; /* 100增益 5种步进 */
 					   case 1: data_process (&(pp->p_tmp_config->pulser_reg), 2);		break; /* 110pulser发射 3种步进 */
 					   case 2: data_process (&(pp->p_tmp_config->receiver_reg), 2);		break; /* 120receiver接收 3种步进 */
 					   case 3: break; /* 130scan offset 这里只有显示数值 不能更改 */
@@ -207,11 +211,12 @@ void b3_fun0(gpointer p)
 				   break;
 			default:break;
 		}
+
 	}
 
 	pp->pos_pos = MENU3_PRESSED;
-	draw_2_menu(0);
-	draw_3_menu(0);                          /**/
+	draw_2_menu (0);
+	draw_3_menu (0, p);                          /**/
 
 	return ;
 }
@@ -310,7 +315,7 @@ void b3_fun1(gpointer p)
 	}
 
 	draw_2_menu(0);
-	draw_3_menu(0);                          /**/
+	draw_3_menu(0, NULL);                          /**/
 
 	return ;
 }
@@ -409,7 +414,7 @@ void b3_fun2(gpointer p)
 	}
 
 	draw_2_menu(0);
-	draw_3_menu(0);                          /**/
+	draw_3_menu(0, NULL);                          /**/
 
 	return ;
 }
@@ -500,7 +505,7 @@ void b3_fun3(gpointer p)
 	}
 
 	draw_2_menu(0);
-	draw_3_menu(0);                          /**/
+	draw_3_menu(0, NULL);                          /**/
 
 	return ;
 }
@@ -545,7 +550,7 @@ void b3_fun4(gpointer p)
 	}
 
 	draw_2_menu(0);
-	draw_3_menu(0);                          /**/
+	draw_3_menu(0, NULL);                          /**/
 
 	return ;
 }
@@ -590,15 +595,15 @@ void b3_fun5(gpointer p)
 	}
 
 	draw_2_menu(0);
-	draw_3_menu(0);                          /**/
+	draw_3_menu(0, NULL);                          /**/
 
 	return ;
 }
 
 static void handler_key(guint keyval)
 {
-		guchar tmp = pp->pos_pos;
-		g_print("%x  \n", keyval);
+	guchar tmp = pp->pos_pos;
+	g_print("%x  \n", keyval);
 	switch (keyval) 
 	{
 		case GDK_Escape:
@@ -643,7 +648,9 @@ static void handler_key(guint keyval)
 		case GDK_F12:
 			if (pp->pos_pos == MENU3_PRESSED)
 			{
-				b3_fun0(NULL);
+				if (pp->mark3 )
+					b3_fun0(GUINT_TO_POINTER (0x01));
+				pp->mark3 = !pp->mark3 ;
 			}
 			else 
 				pp->pos_pos = MENU3_PRESSED;
@@ -655,7 +662,7 @@ static void handler_key(guint keyval)
 					pp->pos_last1 = pp->pos1[pp->pos];
 					pp->pos1[pp->pos] < (pp->menu2_qty - 1) ? pp->pos1[pp->pos]++ :  (pp->pos1[pp->pos] = 0);
 					draw_2_menu(0);
-					draw_3_menu(1);
+					draw_3_menu(1, NULL);
 					break;
 				case MENU2_PRESSED:
 					break;
@@ -674,7 +681,7 @@ static void handler_key(guint keyval)
 					pp->pos_last1 = pp->pos1[pp->pos];
 					pp->pos1[pp->pos] > 0 ? pp->pos1[pp->pos]-- :  (pp->pos1[pp->pos] = (pp->menu2_qty - 1));
 					draw_2_menu(0);
-					draw_3_menu(1);
+					draw_3_menu(1, NULL);
 					break;
 				case MENU2_PRESSED:
 					break;
@@ -691,7 +698,7 @@ static void handler_key(guint keyval)
 		if (tmp != pp->pos_pos)
 		{
 			draw_2_menu(0);
-			draw_3_menu(0);
+			draw_3_menu(0, NULL);
 		}
 
 	return ;
