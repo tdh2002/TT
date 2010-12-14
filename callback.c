@@ -785,7 +785,7 @@ void data_102 (GtkSpinButton *spinbutton, gpointer data) /*Range 范围 */
 {
 	DRAW_UI_P p = (DRAW_UI_P)(data);
 	if (p->p_config->ut_unit == 0) 
-		p->p_config->range = (gtk_spin_button_get_value (spinbutton) / (p->p_config->part.Velocity ));
+		p->p_config->range = (gtk_spin_button_get_value (spinbutton) * p->p_config->part.Velocity / 1000.0);
 	else
 		p->p_config->range = gtk_spin_button_get_value (spinbutton) ;
 

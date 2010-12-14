@@ -1367,10 +1367,44 @@ void draw3_data1(gpointer p)
 						default:break;
 					}
 
-					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
-						draw3_pressed (data_101, "mm", pp->p_config->start , 0.0, 74.0, 0.1, 1, p, 1);
-					else 
-						draw3_stop (pp->p_config->start, "mm", 1, 1);
+#if 0
+					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
+					{
+						if (pp->p_config->ut_unit == 0)
+						{
+							if (pp->p_config->unit == 0)
+								draw3_pressed (data_102, "mm", 
+										pp->p_config->range * (pp->p_config->part.Velocity / 1000.0),  
+										3.2 * (pp->p_config->part.Velocity / 1000.0), 
+										6400.0 * (pp->p_config->part.Velocity / 1000.0), 
+										tmpf * (pp->p_config->part.Velocity / 1000.0), 
+										2, p, 2);
+							else
+								draw3_pressed (data_102, "in", 
+										pp->p_config->range * 0.03937 * pp->p_config->part.Velocity / 1000.0, 
+										3.2 * 0.03937 * pp->p_config->part.Velocity / 1000.0, 
+										6400.0 * 0.03937 * pp->p_config->part.Velocity / 1000.0, 
+										tmpf * 0.03937 * pp->p_config->part.Velocity / 1000.0, 
+										2, p, 2);
+						}
+						else 
+							draw3_pressed (data_102, "μs", pp->p_config->range, 3.2, 6400.0, tmpf , 2, p, 2);
+					}
+					else
+					{
+						if (pp->p_config->ut_unit == 0)
+						{
+							if (pp->p_config->unit == 0)
+								draw3_stop (pp->p_config->range * pp->p_config->part.Velocity / 1000.0,
+										"mm", 2, 2);
+							else
+								draw3_stop (pp->p_config->range * 0.03437 * pp->p_config->part.Velocity / 1000.0,
+										"in", 2, 2);
+						}
+						else 
+							draw3_stop (pp->p_config->range , "μs", 2, 2);
+					}
+#endif				
 					break;
 				default:break;
 			}
@@ -2302,7 +2336,7 @@ void draw3_data2(DRAW_UI_P p)
 		case 1:
 			switch (pp->pos1[1])
 			{
-				case 0: /* range范围 */
+				case 0: /* range范围 101 */
 					/*当前步进*/
 					switch (p->p_tmp_config->range_reg)
 					{
@@ -2325,10 +2359,10 @@ void draw3_data2(DRAW_UI_P p)
 										2, p, 2);
 							else
 								draw3_pressed (data_102, "in", 
-										pp->p_config->range * 0.03937 / (2 * pp->p_config->part.Velocity), 
-										3.2 * 0.03937 / (2 * pp->p_config->part.Velocity), 
-										6400.0 * 0.03937 / (2 * pp->p_config->part.Velocity), 
-										tmpf * 0.03937 / (2 * pp->p_config->part.Velocity), 
+										pp->p_config->range * 0.03937 * pp->p_config->part.Velocity / 1000.0, 
+										3.2 * 0.03937 * pp->p_config->part.Velocity / 1000.0, 
+										6400.0 * 0.03937 * pp->p_config->part.Velocity / 1000.0, 
+										tmpf * 0.03937 * pp->p_config->part.Velocity / 1000.0, 
 										2, p, 2);
 						}
 						else 
@@ -2339,35 +2373,15 @@ void draw3_data2(DRAW_UI_P p)
 						if (pp->p_config->ut_unit == 0)
 						{
 							if (pp->p_config->unit == 0)
-								draw3_stop (pp->p_config->range / (2 * pp->p_config->part.Velocity),
+								draw3_stop (pp->p_config->range * pp->p_config->part.Velocity / 1000.0,
 										"mm", 2, 2);
 							else
-								draw3_stop (pp->p_config->range * 0.03497 / (2 * pp->p_config->part.Velocity),
+								draw3_stop (pp->p_config->range * 0.03437 * pp->p_config->part.Velocity / 1000.0,
 										"in", 2, 2);
 						}
 						else 
 							draw3_stop (pp->p_config->range , "μs", 2, 2);
 					}
-					break;
-					/* 格式化字符串 */
-					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2) )
-					{
-						g_sprintf (temp,"%s\n(%s) Δ%.1f", con2_p[1][0][2],!p->p_config->unit ? "mm" : "inch", tmpf);
-					}
-					else 
-						g_sprintf (temp,"%s\n (%s)", con2_p[1][0][2],!p->p_config->unit ? "mm" : "inch");
-
-					/* 设置label */
-					gtk_label_set_text (GTK_LABEL (pp->label3[2]), temp);
-					gtk_widget_modify_bg (pp->eventbox30[2], GTK_STATE_NORMAL, &color_button1);
-
-					/* 显示和隐藏控件 */
-					gtk_widget_show (pp->eventbox30[2]);
-					gtk_widget_hide (pp->eventbox31[2]);
-					
-					/* 更新当前增益值显示 */
-					str = g_strdup_printf ("%0.1f", pp->p_config->range / 10.0);
-					g_free(str);
 					break;
 				case 1: /* Freq频带(Mhz) */
 					g_sprintf (temp,"%s", con2_p[1][1][2]);
