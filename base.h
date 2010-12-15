@@ -63,26 +63,26 @@ typedef	struct Config {
 	PROBE	probe;
 	WEDGE	wedge;
 	PART	part;
-	gfloat	gain;			/*增益 dB 单位*/
-	gint	start;			/*扫描延时 以0.01 μs为单位*/
-	gfloat	range;			/*显示范围 以 μs为单位*/
-	gfloat	wedge_delay;	/*楔款延时 以 μs 为单位*/
+	gfloat	gain;			/* 增益 dB 单位 */
+	gfloat	start;			/* 扫描延时 以 μs 为单位 */
+	gfloat	range;			/* 显示范围 以 μs 为单位 */
+	gfloat	wedge_delay;	/* 楔款延时 以 μs 为单位 */
 	
 	/*发射*/
-	guchar	pulser;			/**/
-	guchar	tx_rxmode;		/**/
-	gushort	frequence;		/**/
-	guchar	voltage;		/**/
-	gushort	pulser_width;	/**/
-	guint	prf;			/**/
+	guchar	pulser;			/*  */
+	guchar	tx_rxmode;		/*  */
+	gushort	frequence;		/*  */
+	guchar	voltage;		/*  */
+	gushort	pulser_width;	/*  */
+	guint	prf;			/*  */
 
 	/*接收*/
-	gint	receiver;		/**/
-	gint	filter;			/**/
-	gint	rectifier;		/**/
-	guchar	video_filter;	/**/
-	gint	averaging;		/**/
-	guchar	reject;		/**/
+	gint	receiver;		/*  */
+	gint	filter;			/*  */
+	gint	rectifier;		/*  */
+	guchar	video_filter;	/*  */
+	gint	averaging;		/*  */
+	guchar	reject;		    /*  */
 
 	/*波束 beam*/
 	gint	scan_offset;		/**/
@@ -310,5 +310,12 @@ typedef struct Draw_interface {
 #define MENU3_PRESSED 3
 
 #define CUR_POS (pp->pos2[pp->pos][pp->pos1[pp->pos]])
+
+#define UNIT_MM		0
+#define UNIT_INCH	1
+#define UNIT_US		2
+#define UNIT_NONE	3
+#define UNIT_M_S	4
+#define UNIT_IN_US	5
 
 #endif

@@ -774,9 +774,9 @@ void data_101 (GtkSpinButton *spinbutton, gpointer data) /*Start 扫描延时 */
 {
 	DRAW_UI_P p = (DRAW_UI_P)(data);
 	if (p->p_config->ut_unit == 0) 
-		p->p_config->start = (gint) (gtk_spin_button_get_value (spinbutton) * 100.0 / (p->p_config->part.Velocity / 20000.0));
+		p->p_config->start =  gtk_spin_button_get_value (spinbutton) * 2000.0 / p->p_config->part.Velocity;
 	else
-		p->p_config->start = (gint) (gtk_spin_button_get_value (spinbutton) * 100.0);
+		p->p_config->start = gtk_spin_button_get_value (spinbutton) ;
 
 	/*发送增益给硬件*/
 }
@@ -785,7 +785,7 @@ void data_102 (GtkSpinButton *spinbutton, gpointer data) /*Range 范围 */
 {
 	DRAW_UI_P p = (DRAW_UI_P)(data);
 	if (p->p_config->ut_unit == 0) 
-		p->p_config->range = (gtk_spin_button_get_value (spinbutton) * p->p_config->part.Velocity / 1000.0);
+		p->p_config->range = gtk_spin_button_get_value (spinbutton) * 2000.0 / p->p_config->part.Velocity;
 	else
 		p->p_config->range = gtk_spin_button_get_value (spinbutton) ;
 

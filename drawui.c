@@ -11,7 +11,8 @@ gint (*window_keypress_event_orig)(GtkWidget *widget, GdkEventKey *event);
 gint my_keypress_event(GtkWidget *widget, GdkEventKey *event);
 GtkWidgetClass *widget_window_class;
 
-GdkPoint a[512] = {{0,0},{240,200},{400,200}};
+GdkPoint a[512] = {{0,0}, {240,200}, {400,200}};
+
 
 void change_language();
 void draw_1_menu(DRAW_UI_P p);
@@ -24,6 +25,7 @@ void draw3_pressed1(gfloat step, guint digit);
 const gchar **con0_p	= content_en10;
 const gchar ***con1_p	= content1_en;
 const gchar ****con2_p	= content2_en;
+const gchar **units		= units_en;
 
 void menuitem0_function(GtkMenuItem *menuitem, gpointer data);
 void menuitem1_function(GtkMenuItem *menuitem, gpointer data);
@@ -322,13 +324,11 @@ static void draw3_pressed(void (*fun)(GtkSpinButton*, gpointer),const gchar *uni
 	gint  x, y, z;       /* xyz 分别为123级菜单位置 */
 	gchar *str = NULL;
 	GtkAdjustment *adj;
-	guint temp = GPOINTER_TO_UINT (p);
 
 	x = pp->pos;
 	y = pp->pos1[x];
 	z = pos;
 	gtk_widget_destroy (pp->vscale);
-
 
 	switch (digit)
 	{
@@ -457,6 +457,9 @@ void draw3_data0(gpointer p)
 	gchar *str;
 	gfloat tmpf;/**/
 
+	gfloat cur_value, lower, upper, step;
+	guint digit, pos, unit;
+
 
 	switch (pp->pos) 
 	{
@@ -523,9 +526,24 @@ void draw3_data0(gpointer p)
 					}
 
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
-						draw3_pressed (data_100, "dB", pp->p_config->gain ,	0.0, 74.0, tmpf, 1, p, 0);
+					{
+						cur_value = pp->p_config->gain;
+						lower = 0.0;
+						upper = 74.0;
+						step = tmpf;
+						digit = 1;
+						pos = 0;
+						unit = UNIT_MM;
+						draw3_pressed (data_100, units[unit], cur_value , lower, upper, step, digit, p, pos);
+					}
 					else 
-						draw3_stop (pp->p_config->gain, "dB", 1, 0);
+					{
+						cur_value = pp->p_config->gain;
+						digit = 1;
+						pos = 0;
+						unit = UNIT_MM;
+						draw3_stop (cur_value, units[unit], digit, pos);
+					}
 					break;
 				case 1: /*发射 Pulser*/
 					/* 当前步进 */
@@ -1305,6 +1323,9 @@ void draw3_data1(gpointer p)
 	gint x, y;
 	GtkAdjustment *adj;
 
+	gfloat cur_value, lower, upper, step;
+	guint digit, pos, unit;
+
 	switch (pp->pos) 
 	{
 		case 0:
@@ -1361,208 +1382,80 @@ void draw3_data1(gpointer p)
 					/* 当前步进 */
 					switch (pp->p_tmp_config->start_reg)
 					{
-						case 0:	tmpf = pp->p_config->range / (1 * 1000.0); break;
-						case 1:	tmpf = pp->p_config->range / (2 * 1000.0); break;
-						case 2:	tmpf = pp->p_config->range / (32 * 1000.0); break;
+						case 0:	tmpf = pp->p_config->range / 320.0; break;
+						case 1:	tmpf = pp->p_config->range / 20.0 ; break;
+						case 2:	tmpf = pp->p_config->range / 10.0 ; break;
 						default:break;
 					}
 
-#if 0
-					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
+					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 					{
 						if (pp->p_config->ut_unit == 0)
 						{
 							if (pp->p_config->unit == 0)
-								draw3_pressed (data_102, "mm", 
-										pp->p_config->range * (pp->p_config->part.Velocity / 1000.0),  
-										3.2 * (pp->p_config->part.Velocity / 1000.0), 
-										6400.0 * (pp->p_config->part.Velocity / 1000.0), 
-										tmpf * (pp->p_config->part.Velocity / 1000.0), 
-										2, p, 2);
+							{
+								cur_value = pp->p_config->start * (pp->p_config->part.Velocity / 2000.0);
+								lower = 0.0 * (pp->p_config->part.Velocity / 2000.0);
+								upper =	(9900.8 - pp->p_config->range) * (pp->p_config->part.Velocity / 2000.0);
+								step = tmpf * (pp->p_config->part.Velocity / 2000.0);
+								digit = 2;
+								pos = 1;
+								unit = UNIT_MM;
+							}
 							else
-								draw3_pressed (data_102, "in", 
-										pp->p_config->range * 0.03937 * pp->p_config->part.Velocity / 1000.0, 
-										3.2 * 0.03937 * pp->p_config->part.Velocity / 1000.0, 
-										6400.0 * 0.03937 * pp->p_config->part.Velocity / 1000.0, 
-										tmpf * 0.03937 * pp->p_config->part.Velocity / 1000.0, 
-										2, p, 2);
+							{
+								cur_value = pp->p_config->start * 0.03937 * pp->p_config->part.Velocity / 2000.0;
+								lower =	0.0 * 0.03937 * pp->p_config->part.Velocity / 2000.0;
+								upper =	(9900.8 - pp->p_config->range) * 0.03937 * pp->p_config->part.Velocity / 2000.0;
+								step = tmpf * 0.03937 * pp->p_config->part.Velocity / 2000.0;
+								digit = 2;
+								pos = 1;
+								unit = UNIT_INCH;
+							}
 						}
 						else 
-							draw3_pressed (data_102, "μs", pp->p_config->range, 3.2, 6400.0, tmpf , 2, p, 2);
+						{
+							cur_value = pp->p_config->start;
+							lower =	0.0;
+							upper =	(9900.8 - pp->p_config->range);
+							step = tmpf;
+							digit = 2;
+							pos = 1;
+							unit = UNIT_US;
+						}
+						draw3_pressed (data_101, units[unit], cur_value , lower, upper, step, digit, p, pos);
 					}
 					else
 					{
 						if (pp->p_config->ut_unit == 0)
 						{
 							if (pp->p_config->unit == 0)
-								draw3_stop (pp->p_config->range * pp->p_config->part.Velocity / 1000.0,
-										"mm", 2, 2);
+							{
+								cur_value = pp->p_config->start * pp->p_config->part.Velocity / 2000.0;
+								unit = UNIT_MM;
+								pos = 1;
+								digit = 2;
+							}
 							else
-								draw3_stop (pp->p_config->range * 0.03437 * pp->p_config->part.Velocity / 1000.0,
-										"in", 2, 2);
-						}
-						else 
-							draw3_stop (pp->p_config->range , "μs", 2, 2);
-					}
-#endif				
-					break;
-				default:break;
-			}
-			break;
-#if 0
-			switch (pp->pos1[1])
-			{
-				case 0: /* start 扫描延时 101 */
-					/* 当前步进 */
-					switch (pp->p_tmp_config->start_reg)
-					{
-						case 0:	tmpf = p->p_config->range / (1 * 1000.0); break;
-						case 1:	tmpf = p->p_config->range / (2 * 1000.0); break;
-						case 2:	tmpf = p->p_config->range / (32 * 1000.0); break;
-						default:break;
-					}
-
-					/* 格式化字符串 */
-					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
-					{
-						gtk_widget_destroy (pp->vscale);
-
-						g_sprintf (temp,"%s\n(dB) Δ%.1f", con2_p[1][0][1], tmpf);
-						gtk_label_set_text (GTK_LABEL (pp->label3[1]), temp);
-						gtk_widget_modify_bg (pp->eventbox30[1], GTK_STATE_NORMAL, &color_button0);
-						widget_window_class->key_press_event = window_keypress_event_orig;
-						g_signal_connect(G_OBJECT(pp->sbutton[1]), "value-changed", 
-								G_CALLBACK(data_101), (gpointer) (p));
-						/* 显示和隐藏控件 */
-						gtk_widget_show (pp->eventbox30[1]);
-						gtk_widget_hide (pp->eventbox31[1]);
-						gtk_widget_show (pp->sbutton[1]);
-						gtk_widget_grab_focus (pp->sbutton[1]);
-						/* 设置值的范围 */
-						adj = gtk_spin_button_get_adjustment(GTK_SPIN_BUTTON (pp->sbutton[1]));
-						gtk_adjustment_configure (adj , p->p_config->gain / 100.0, 
-								0.0, 74.0, tmpf , 10.0, 0.0);
-						gtk_spin_button_set_digits (GTK_SPIN_BUTTON (pp->sbutton[1]), 1);
-
-
-						pp->vscale = gtk_vscale_new(adj);
-						gtk_widget_set_size_request(GTK_WIDGET(pp->vscale), 30, 460);
-						gtk_scale_set_draw_value (pp->vscale, FALSE);
-						gtk_box_pack_start (GTK_BOX (pp->vscalebox), pp->vscale, TRUE, TRUE, 0);
-						gtk_widget_show (pp->vscale);
-					}
-					else 
-					{
-						g_sprintf (temp,"%s\n(dB)", con2_p[1][0][1]);
-						gtk_label_set_text (GTK_LABEL (pp->label3[1]), temp);
-						if ((CUR_POS) == 0 && (pp->pos_pos == MENU3_STOP))
-						{
-							gtk_widget_modify_bg (pp->eventbox30[1], GTK_STATE_NORMAL, &color_button2);
-							gtk_widget_modify_bg (pp->eventbox31[1], GTK_STATE_NORMAL, &color_button2);
+							{
+								cur_value = pp->p_config->start * 0.03937 * pp->p_config->part.Velocity / 2000.0;
+								unit = UNIT_INCH;
+								pos = 1;
+								digit = 2;
+							}
 						}
 						else
 						{
-							gtk_widget_modify_bg (pp->eventbox30[1], GTK_STATE_NORMAL, &color_button1);
-							gtk_widget_modify_bg (pp->eventbox31[1], GTK_STATE_NORMAL, &color_button1);
+								cur_value = pp->p_config->start;
+								unit = UNIT_US;
+								pos = 1;
+								digit = 2;
 						}
-						/* 更新当前增益值显示 */
-						str = g_strdup_printf ("%0.1f", (gfloat)(pp->p_config->gain) / 100.0);
-						gtk_label_set_text (GTK_LABEL (pp->data3[1]), str);
-						g_free(str);
-						widget_window_class->key_press_event = my_keypress_event;
-						/* 显示和隐藏控件 */
-						gtk_widget_show (pp->eventbox30[1]);
-						gtk_widget_show (pp->eventbox31[1]);
-						gtk_widget_show (pp->data3[1]);
-						gtk_widget_hide (pp->sbutton[1]);
-						gtk_widget_hide (pp->vscale);
-/*						gtk_widget_grab_focus (pp->button);*/
+						draw3_stop (cur_value , units[unit], digit, pos);
 					}
-					break;
-				case 1: /* Tx/Rx Mode 收发模式  */
-					g_sprintf (temp,"%s", con2_p[1][1][1]);
-					/* 设置label */
-					gtk_label_set_text (GTK_LABEL (pp->label3[1]), temp);
-					gtk_widget_modify_bg (pp->eventbox30[1], GTK_STATE_NORMAL, &color_button1);
-
-					switch (pp->p_config->tx_rxmode) 
-					{
-						case 0:	gtk_label_set_text (GTK_LABEL (pp->data3[1]), "PC"); break;
-						case 1:	gtk_label_set_text (GTK_LABEL (pp->data3[1]), "PE"); break;
-						case 2:	gtk_label_set_text (GTK_LABEL (pp->data3[1]), "TT"); break;
-						default:break;
-					}
-					gtk_widget_modify_bg (pp->eventbox31[1], GTK_STATE_NORMAL, &color_button1);
-
-					/* 显示和隐藏控件 */
-					gtk_widget_show (pp->eventbox30[1]);
-					gtk_widget_show (pp->eventbox31[1]);
-					gtk_widget_show (pp->data3[1]);
-					break;
-				case 2: /*Filter*/					
-
-					/* 格式化字符串 */
-					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1) )
-						g_sprintf (temp,"%s", con2_p[1][2][1]);
-					else 
-						g_sprintf (temp,"%s", con2_p[1][2][1]);
-
-					/* 设置label */
-					gtk_label_set_text (GTK_LABEL (pp->label3[1]), temp);
-					gtk_widget_modify_bg (pp->eventbox30[1], GTK_STATE_NORMAL, &color_button1);
-					gtk_label_set_text (GTK_LABEL (pp->data3[1]), "None");
-					gtk_widget_modify_bg (pp->eventbox31[1], GTK_STATE_NORMAL, &color_button1);
-
-					/* 显示和隐藏控件 */
-					gtk_widget_show (pp->eventbox30[1]);
-					gtk_widget_show (pp->eventbox31[1]);
-					gtk_widget_show (pp->data3[1]);
-					break;
-				case 3:/*Index Offset*/
-					/* 当前步进 */
-					switch (pp->p_tmp_config->indexoffset_reg)
-					{
-						case 0:	tmpf = 1.0; break;
-						case 1:	tmpf = 10.0; break;
-						case 2:	tmpf = 100.0; break;
-						default:break;
-					}
-
-					/* 格式化字符串 */
-					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1) )
-						g_sprintf (temp,"%s\n(mm) Δ%d", con2_p[1][3][1], (gint) (tmpf));
-					else 
-						g_sprintf (temp,"%s\n  (mm)", con2_p[1][3][1]);
-
-					/* 设置label */
-					gtk_label_set_text (GTK_LABEL (pp->label3[1]), temp);
-					gtk_widget_modify_bg (pp->eventbox30[1], GTK_STATE_NORMAL, &color_button1);
-
-					/* 显示和隐藏控件 */
-					gtk_widget_show (pp->eventbox30[1]);
-					gtk_widget_hide (pp->eventbox31[1]);
-					
-					/* 更新当前pulser值显示 */
-					str = g_strdup_printf ("%d", (guint) (pp->p_config->index_offset / 10.0));
-					g_free(str);
-					break;
-				case 4:/*Set Ref.*/
-					g_sprintf (temp,"%s", con2_p[1][4][1]);
-					/* 设置label */
-					gtk_label_set_text (GTK_LABEL (pp->label3[1]), temp);
-					gtk_widget_modify_bg (pp->eventbox30[1], GTK_STATE_NORMAL, &color_button1);
-					gtk_label_set_text (GTK_LABEL (pp->data3[1]), "");
-
-					gtk_widget_modify_bg (pp->eventbox31[1], GTK_STATE_NORMAL, &color_button1);
-
-					/* 显示和隐藏控件 */
-					gtk_widget_show (pp->eventbox30[1]);
-					gtk_widget_show (pp->eventbox31[1]);
-					gtk_widget_show (pp->data3[1]);
 					break;
 				default:break;
 			}
-#endif
 			break;
 
 		case 2:
@@ -1582,7 +1475,7 @@ void draw3_data1(gpointer p)
 					gtk_widget_show (pp->eventbox30[1]);
 					gtk_widget_show (pp->eventbox31[1]);
 					gtk_widget_show (pp->data3[1]);
-                                        break;
+					break;
 				case 1:/*Group A*/
 					/* 格式化字符串 */
 					g_sprintf (temp,"%s", con2_p[2][1][1]);
@@ -1597,7 +1490,7 @@ void draw3_data1(gpointer p)
 					gtk_widget_show (pp->eventbox30[1]);
 					gtk_widget_show (pp->eventbox31[1]);
 					gtk_widget_show (pp->data3[1]);
-                                        break;
+					break;
 				case 2:/*Alarm #*/
 					/* 格式化字符串 */
 					g_sprintf (temp,"%s", con2_p[2][2][1]);
@@ -1612,7 +1505,7 @@ void draw3_data1(gpointer p)
 					gtk_widget_show (pp->eventbox30[1]);
 					gtk_widget_show (pp->eventbox31[1]);
 					gtk_widget_show (pp->data3[1]);
-                                        break;
+					break;
 				case 3:/*Sizing Curves -> Curve*/
 					/* 格式化字符串 */
 					g_sprintf (temp,"%s", con2_p[2][3][1]);
@@ -1627,7 +1520,7 @@ void draw3_data1(gpointer p)
 					gtk_widget_show (pp->eventbox30[1]);
 					gtk_widget_show (pp->eventbox31[1]);
 					gtk_widget_show (pp->data3[1]);
-                                        break;
+					break;
 				case 4:break;
 				default:break;
 			}
@@ -1649,7 +1542,7 @@ void draw3_data1(gpointer p)
 					gtk_widget_show (pp->eventbox30[1]);
 					gtk_widget_show (pp->eventbox31[1]);
 					gtk_widget_show (pp->data3[1]);
-                                        break;
+					break;
 				case 1:/*Measurements -> Cursors -> Angle*/
 					/* 当前步进 */
 					switch (pp->p_tmp_config->VPA_reg)
@@ -2308,6 +2201,9 @@ void draw3_data2(DRAW_UI_P p)
 	gchar *str;
 	gint x, y;
 
+	gfloat cur_value, lower, upper, step;
+	guint digit, pos, unit;
+
 	switch (pp->pos) 
 	{
 		case 0:
@@ -2351,36 +2247,67 @@ void draw3_data2(DRAW_UI_P p)
 						if (pp->p_config->ut_unit == 0)
 						{
 							if (pp->p_config->unit == 0)
-								draw3_pressed (data_102, "mm", 
-										pp->p_config->range * (pp->p_config->part.Velocity / 1000.0),  
-										3.2 * (pp->p_config->part.Velocity / 1000.0), 
-										6400.0 * (pp->p_config->part.Velocity / 1000.0), 
-										tmpf * (pp->p_config->part.Velocity / 1000.0), 
-										2, p, 2);
+							{
+								cur_value = pp->p_config->range * (pp->p_config->part.Velocity / 2000.0);
+								lower = 3.2 * (pp->p_config->part.Velocity / 2000.0);
+								upper = ((9900.8 - pp->p_config->start) > 6400.0 ? 6400.0 : (9900.8 - pp->p_config->start)) *
+										(pp->p_config->part.Velocity / 2000.0);
+								step = tmpf * (pp->p_config->part.Velocity / 2000.0);
+								digit = 2;
+								pos = 2;
+								unit = UNIT_MM;
+							}
 							else
-								draw3_pressed (data_102, "in", 
-										pp->p_config->range * 0.03937 * pp->p_config->part.Velocity / 1000.0, 
-										3.2 * 0.03937 * pp->p_config->part.Velocity / 1000.0, 
-										6400.0 * 0.03937 * pp->p_config->part.Velocity / 1000.0, 
-										tmpf * 0.03937 * pp->p_config->part.Velocity / 1000.0, 
-										2, p, 2);
+							{
+								cur_value = pp->p_config->range * 0.03937 * pp->p_config->part.Velocity / 2000.0;
+								lower =	3.2 * 0.03937 * pp->p_config->part.Velocity / 2000.0;
+								upper =	((9900.8 - pp->p_config->start) > 6400.0 ? 6400.0 : (9900.8 - pp->p_config->start)) *
+									0.03937 * pp->p_config->part.Velocity / 2000.0;
+								step = tmpf * 0.03937 * pp->p_config->part.Velocity / 2000.0;
+								digit = 2;
+								pos = 2;
+								unit = UNIT_INCH;
+							}
 						}
 						else 
-							draw3_pressed (data_102, "μs", pp->p_config->range, 3.2, 6400.0, tmpf , 2, p, 2);
+						{
+							cur_value = pp->p_config->range;
+							lower =	3.2;
+							upper =	((9900.8 - pp->p_config->start) > 6400.0 ? 6400.0 : (9900.8 - pp->p_config->start));
+							step = tmpf;
+							digit = 2;
+							pos = 2;
+							unit = UNIT_US;
+						}
+						draw3_pressed (data_102, units[unit], cur_value , lower, upper, step, digit, p, pos);
 					}
 					else
 					{
 						if (pp->p_config->ut_unit == 0)
 						{
 							if (pp->p_config->unit == 0)
-								draw3_stop (pp->p_config->range * pp->p_config->part.Velocity / 1000.0,
-										"mm", 2, 2);
+							{
+								cur_value = pp->p_config->range * (pp->p_config->part.Velocity / 2000.0);
+								unit = UNIT_MM;
+								pos = 2;
+								digit = 2;
+							}
 							else
-								draw3_stop (pp->p_config->range * 0.03437 * pp->p_config->part.Velocity / 1000.0,
-										"in", 2, 2);
+							{
+								cur_value = pp->p_config->range * 0.03937 * (pp->p_config->part.Velocity / 2000.0);
+								unit = UNIT_INCH;
+								pos = 2;
+								digit = 2;
+							}
 						}
-						else 
-							draw3_stop (pp->p_config->range , "μs", 2, 2);
+						else
+						{
+								cur_value = pp->p_config->range;
+								unit = UNIT_US;
+								pos = 2;
+								digit = 2;
+						}
+						draw3_stop (cur_value , units[unit], digit, pos);
 					}
 					break;
 				case 1: /* Freq频带(Mhz) */
@@ -3081,6 +3008,9 @@ void draw3_data3(DRAW_UI_P p)
 	gchar *str;
 	gint x, y;
 
+	gfloat cur_value, lower, upper, step;
+	guint digit, pos, unit;
+
 	switch (pp->pos) 
 	{
 		case 0:
@@ -3118,11 +3048,25 @@ void draw3_data3(DRAW_UI_P p)
 						case 2:	tmpf = 1.0; break;						
 						default:break;
 					}
-
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
-						draw3_pressed (data_103, "μs", pp->p_config->wedge_delay, 0.0, 1000.0, tmpf, 2, p, 3);
+					{
+						cur_value = pp->p_config->wedge_delay;
+						lower = 0.0;
+						upper = 1000.0;
+						step = tmpf;
+						digit = 2;
+						pos = 3;
+						unit = UNIT_US;
+						draw3_pressed (data_103, units[unit], cur_value , lower, upper, step, digit, p, pos);
+					}
 					else 
-						draw3_stop (pp->p_config->wedge_delay, "μs", 2, 3);
+					{
+						cur_value = pp->p_config->wedge_delay;
+						digit = 2;
+						pos = 3;
+						unit = UNIT_US;
+						draw3_stop (cur_value, units[unit], digit, pos);
+					}
 					break;
 				case 1: /* 电压高低 功率? */
 					g_sprintf (temp,"%s", con2_p[1][1][3]);
@@ -3739,6 +3683,9 @@ void draw3_data4(DRAW_UI_P p)
 	gchar *str;
 	gint x, y;
 
+	gfloat cur_value, lower, upper, step;
+	guint digit, pos, unit;
+
 	switch (pp->pos) 
 	{
 		case 0:
@@ -3769,16 +3716,42 @@ void draw3_data4(DRAW_UI_P p)
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
 					{
 						if (pp->p_config->unit == 0)
-							draw3_pressed (data_104, "m/s", pp->p_config->part.Velocity , 635.0, 15240.0, tmpf, 1, p, 4);
+						{
+							cur_value = pp->p_config->part.Velocity;
+							lower = 635.0;
+							upper = 15240.0;
+							step = tmpf;
+							digit = 2;
+							unit = UNIT_M_S;
+						}
 						else
-							draw3_pressed (data_104, "in/μs", pp->p_config->part.Velocity * 0.0000394  , 0.025, 0.6, tmpf / 10000.0, 4, p, 4);
+						{
+							cur_value = pp->p_config->part.Velocity;
+							lower = 0.025;
+							upper = 0.6;
+							step = tmpf / 10000.0;
+							digit = 4;
+							unit = UNIT_IN_US;
+						}
+						pos = 4;
+						draw3_pressed (data_104, units[unit], cur_value , lower, upper, step, digit, p, pos);
 					}
-					else
+					else 
 					{
 						if (pp->p_config->unit == 0)
-							draw3_stop (pp->p_config->part.Velocity, "m/s", 1, 4);
+						{
+							cur_value = pp->p_config->part.Velocity;
+							digit = 1;
+							unit = UNIT_M_S;
+						}
 						else
-							draw3_stop (pp->p_config->part.Velocity * 0.0000394, "in/μs", 4, 4);
+						{
+							cur_value = pp->p_config->wedge_delay * 0.0000394;
+							digit = 4;
+							unit = UNIT_IN_US;
+						}
+						pos = 4;
+						draw3_stop (cur_value, units[unit], digit, pos);
 					}
 					break;
 				case 1: /* 脉冲宽度 pulser width */

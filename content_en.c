@@ -379,3 +379,5 @@ const gchar ***content2_en[] =
 	content2_en5,	content2_en6,	content2_en7,	content2_en8,	content2_en9
 };
 
+/* 0mm 1英寸 2微秒  */
+const gchar *units_en[] = {"mm", "in", "μs", " ", "m/s", "in/μs"};

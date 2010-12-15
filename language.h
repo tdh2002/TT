@@ -14,4 +14,5 @@ extern const gchar *content_en10[];
 extern const gchar **content1_en[]; 
 extern const gchar ***content2_en[];
 
+extern const gchar *units_en[];
 #endif
