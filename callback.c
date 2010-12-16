@@ -36,6 +36,55 @@ void data_132 (GtkSpinButton *spinbutton, gpointer data);
 void data_134 (GtkSpinButton *spinbutton, gpointer data);
 void data_135 (GtkSpinButton *spinbutton, gpointer data);
 
+void data_202 (GtkSpinButton *spinbutton, gpointer data);
+void data_203 (GtkSpinButton *spinbutton, gpointer data);
+void data_204 (GtkSpinButton *spinbutton, gpointer data);
+
+void data_222 (GtkSpinButton *spinbutton, gpointer data);
+void data_224 (GtkSpinButton *spinbutton, gpointer data);
+void data_225 (GtkSpinButton *spinbutton, gpointer data);
+
+void data_311 (GtkSpinButton *spinbutton, gpointer data);
+void data_313 (GtkSpinButton *spinbutton, gpointer data);
+
+void data_331 (GtkSpinButton *spinbutton, gpointer data);
+void data_332 (GtkSpinButton *spinbutton, gpointer data);
+void data_333 (GtkSpinButton *spinbutton, gpointer data);
+
+void data_431 (GtkSpinButton *spinbutton, gpointer data);
+void data_432 (GtkSpinButton *spinbutton, gpointer data);
+
+void data_510 (GtkSpinButton *spinbutton, gpointer data);
+void data_511 (GtkSpinButton *spinbutton, gpointer data);
+
+void data_521 (GtkSpinButton *spinbutton, gpointer data);
+void data_522 (GtkSpinButton *spinbutton, gpointer data);
+void data_523 (GtkSpinButton *spinbutton, gpointer data);
+
+void data_531 (GtkSpinButton *spinbutton, gpointer data);
+
+void data_601 (GtkSpinButton *spinbutton, gpointer data);
+
+void data_610 (GtkSpinButton *spinbutton, gpointer data);
+void data_611 (GtkSpinButton *spinbutton, gpointer data);
+void data_612 (GtkSpinButton *spinbutton, gpointer data);
+void data_613 (GtkSpinButton *spinbutton, gpointer data);
+
+void data_620 (GtkSpinButton *spinbutton, gpointer data);
+void data_623 (GtkSpinButton *spinbutton, gpointer data);
+
+void data_713 (GtkSpinButton *spinbutton, gpointer data);
+
+void data_720 (GtkSpinButton *spinbutton, gpointer data);
+void data_721 (GtkSpinButton *spinbutton, gpointer data);
+void data_722 (GtkSpinButton *spinbutton, gpointer data);
+void data_723 (GtkSpinButton *spinbutton, gpointer data);
+void data_724 (GtkSpinButton *spinbutton, gpointer data);
+void data_725 (GtkSpinButton *spinbutton, gpointer data);
+
+void data_901 (GtkSpinButton *spinbutton, gpointer data);
+
+
 gboolean eventbox2_function0 (GtkWidget *widget, GdkEventButton *event,	gpointer data);
 gboolean eventbox2_function1 (GtkWidget *widget, GdkEventButton *event,	gpointer data);
 gboolean eventbox2_function2 (GtkWidget *widget, GdkEventButton *event,	gpointer data);
@@ -282,9 +331,9 @@ void b3_fun1(gpointer p)
 			case 6:
 				   switch (pp->pos1[6])
 				   {
-					   case 0: break; /*   */
+					   case 0: data_process (&(pp->p_tmp_config->connection_P_reg), 3);  break;  /*601 */
 					   case 1: data_process (&(pp->p_tmp_config->first_element_reg), 2);  break; /*611 */
-					   case 2: data_process (&(pp->p_tmp_config->max_angle_reg), 2);  break; /*621 */
+					   case 2: data_process (&(pp->p_tmp_config->max_angle_reg), 2);  break;     /*621 */
 					   case 3: break; 
 					   default:break;
 				   }
@@ -357,9 +406,9 @@ void b3_fun2(gpointer p)
 			case 3:
 				   switch (pp->pos1[3])
 				   {
-					   case 0: break; /* 202 agate start*/
-					   case 1: data_process(&(pp->p_tmp_config->cursors_scan_reg), 3); break; 
-					   case 2: break; /* 222 output count*/
+					   case 0: break; 
+					   case 1: data_process(&(pp->p_tmp_config->cursors_scan_reg), 3); break; /*312*/
+					   case 2: break;
 					   case 3: data_process(&(pp->p_tmp_config->max_thickness_reg), 3); break; /*332 */
 					   case 4: break;
 					   default:break;
@@ -391,7 +440,7 @@ void b3_fun2(gpointer p)
 				   switch (pp->pos1[6])
 				   {
 					   case 0: break; 
-					   case 1: break; 
+					   case 1: data_process(&(pp->p_tmp_config->last_element_reg), 2);  break; /*612 */ 
 					   case 2: data_process(&(pp->p_tmp_config->angle_step_reg), 2); break;  /*622*/
 					   case 3: break;  /*632*/
 					   case 4: break;
@@ -481,8 +530,8 @@ void b3_fun3(gpointer p)
 				   switch (pp->pos1[6])
 				   {
 					   case 0: break;
-					   case 1: break;
-					   case 2: data_process(&(pp->p_tmp_config->focus_depth_reg), 2);  break; 
+					   case 1: data_process(&(pp->p_tmp_config->element_step_reg), 2);  break; /*613 */
+					   case 2: data_process(&(pp->p_tmp_config->focus_depth_reg), 2);  break; /*623*/
 					   case 3: break;  
 					   case 4: break; 
 					   default:break;
@@ -493,7 +542,7 @@ void b3_fun3(gpointer p)
 				   {
 					   case 0: break;
 					   case 1: data_process(&(pp->p_tmp_config->scan_speed_reg), 2);  break; 
-					   case 2: break; 
+					   case 2: data_process(&(pp->p_tmp_config->index_start_reg), 2);  break; 
 					   case 3: break;  
 					   case 4: break; 
 					   default:break;
@@ -544,8 +593,19 @@ void b3_fun4(gpointer p)
 				   }
 			case 3:
                               break;
+			case 7:
+				   switch (pp->pos1[7])
+				   {
+					   case 0:break; 
+					   case 1:break; 
+					   case 2:data_process(&(pp->p_tmp_config->index_end_reg), 2);  break; /*724*/
+					   case 3:break; 
+					   case 4:break; 
+					   default:break;
+				   }
 				   
 			default:break;
+ 
 		}
 	}
 
@@ -590,6 +650,16 @@ void b3_fun5(gpointer p)
                                break;
 			case 3:
                                break;
+			case 7:
+				   switch (pp->pos1[7])
+				   {
+					   case 0:break; 
+					   case 1:break; 
+					   case 2:data_process(&(pp->p_tmp_config->index_resolution_reg), 2);  break; /*725*/
+					   case 3:break; 
+					   case 4:break; 
+					   default:break;
+				   }
 			default:break;
 		}
 	}
@@ -867,4 +937,264 @@ void data_135 (GtkSpinButton *spinbutton, gpointer data) /*gain offset */
 	/*发送增益给硬件*/
 }
 
+void data_202 (GtkSpinButton *spinbutton, gpointer data) /*agate start */
+{
+	DRAW_UI_P p = (DRAW_UI_P)(data);
+	p->p_config->agate_start =  (guint) (gtk_spin_button_get_value (spinbutton) * 100.0);
 
+	/*发送增益给硬件*/
+}
+
+void data_203 (GtkSpinButton *spinbutton, gpointer data) /*agate width */
+{
+	DRAW_UI_P p = (DRAW_UI_P)(data);
+	p->p_config->agate_width =  (guint) (gtk_spin_button_get_value (spinbutton) * 100.0);
+
+	/*发送增益给硬件*/
+}
+
+void data_204 (GtkSpinButton *spinbutton, gpointer data) /*agate height */
+{
+	DRAW_UI_P p = (DRAW_UI_P)(data);
+	p->p_config->agate_height =  (guint) (gtk_spin_button_get_value (spinbutton));
+
+	/*发送增益给硬件*/
+}
+
+void data_222 (GtkSpinButton *spinbutton, gpointer data) /*count */
+{
+	DRAW_UI_P p = (DRAW_UI_P)(data);
+	p->p_config->count =  (guint) (gtk_spin_button_get_value (spinbutton));
+
+	/*发送增益给硬件*/
+}
+
+void data_224 (GtkSpinButton *spinbutton, gpointer data) /*active_delay */
+{
+	DRAW_UI_P p = (DRAW_UI_P)(data);
+	p->p_config->active_delay =  (guint) (gtk_spin_button_get_value (spinbutton) * 100.0);
+
+	/*发送增益给硬件*/
+}
+
+void data_225 (GtkSpinButton *spinbutton, gpointer data) /*holdtime */
+{
+	DRAW_UI_P p = (DRAW_UI_P)(data);
+	p->p_config->holdtime =  (guint) (gtk_spin_button_get_value (spinbutton) * 100.0);
+
+	/*发送增益给硬件*/
+}
+
+void data_311 (GtkSpinButton *spinbutton, gpointer data) /*VPA */
+{
+	DRAW_UI_P p = (DRAW_UI_P)(data);
+	p->p_config->VPA =  (guint) (gtk_spin_button_get_value (spinbutton));
+
+	/*发送增益给硬件*/
+}
+
+void data_312 (GtkSpinButton *spinbutton, gpointer data) /*VPA */
+{
+	DRAW_UI_P p = (DRAW_UI_P)(data);
+	p->p_config->cursors_scan =  (guint) (gtk_spin_button_get_value (spinbutton));
+
+	/*发送增益给硬件*/
+}
+
+void data_313 (GtkSpinButton *spinbutton, gpointer data) /*Index */
+{
+	DRAW_UI_P p = (DRAW_UI_P)(data);
+	p->p_config->cursors_index =  (guint) (gtk_spin_button_get_value (spinbutton));
+
+	/*发送增益给硬件*/
+}
+
+void data_331 (GtkSpinButton *spinbutton, gpointer data) /*min_thickness */
+{
+	DRAW_UI_P p = (DRAW_UI_P)(data);
+	p->p_config->min_thickness =  (guint) (gtk_spin_button_get_value (spinbutton) * 100.0);
+
+	/*发送增益给硬件*/
+}
+
+void data_332 (GtkSpinButton *spinbutton, gpointer data) /*max_thickness */
+{
+	DRAW_UI_P p = (DRAW_UI_P)(data);
+	p->p_config->max_thickness =  (guint) (gtk_spin_button_get_value (spinbutton) * 100.0);
+
+	/*发送增益给硬件*/
+}
+
+void data_333 (GtkSpinButton *spinbutton, gpointer data) /*echo_qty */
+{
+	DRAW_UI_P p = (DRAW_UI_P)(data);
+	p->p_config->echo_qty =  (guint) (gtk_spin_button_get_value (spinbutton));
+
+	/*发送增益给硬件*/
+}
+
+void data_431 (GtkSpinButton *spinbutton, gpointer data) /*color_start */
+{
+	DRAW_UI_P p = (DRAW_UI_P)(data);
+	p->p_config->color_start =  (guint) (gtk_spin_button_get_value (spinbutton));
+
+	/*发送增益给硬件*/
+}
+
+void data_432 (GtkSpinButton *spinbutton, gpointer data) /*color_end */
+{
+	DRAW_UI_P p = (DRAW_UI_P)(data);
+	p->p_config->color_end =  (guint) (gtk_spin_button_get_value (spinbutton));
+
+	/*发送增益给硬件*/
+}
+
+void data_510 (GtkSpinButton *spinbutton, gpointer data) /*scanoffset */
+{
+	DRAW_UI_P p = (DRAW_UI_P)(data);
+	p->p_config->scan_offset =  (guint) (gtk_spin_button_get_value (spinbutton) * 10.0);
+
+	/*发送增益给硬件*/
+}
+
+void data_511 (GtkSpinButton *spinbutton, gpointer data) /*indexoffset */
+{
+	DRAW_UI_P p = (DRAW_UI_P)(data);
+	p->p_config->index_offset =  (guint) (gtk_spin_button_get_value (spinbutton) * 10.0);
+
+	/*发送增益给硬件*/
+}
+
+void data_521 (GtkSpinButton *spinbutton, gpointer data) /*gain */
+{
+	DRAW_UI_P p = (DRAW_UI_P)(data);
+	p->p_config->gain =  (guint) (gtk_spin_button_get_value (spinbutton) * 10.0);
+
+	/*发送增益给硬件*/
+}
+
+void data_522 (GtkSpinButton *spinbutton, gpointer data) /*agate_start */
+{
+	DRAW_UI_P p = (DRAW_UI_P)(data);
+	p->p_config->agate_start =  (guint) (gtk_spin_button_get_value (spinbutton) * 100.0);
+
+	/*发送增益给硬件*/
+}
+
+void data_523 (GtkSpinButton *spinbutton, gpointer data) /*agate_width */
+{
+	DRAW_UI_P p = (DRAW_UI_P)(data);
+	p->p_config->agate_width =  (guint) (gtk_spin_button_get_value (spinbutton) * 100.0);
+
+	/*发送增益给硬件*/
+}
+
+void data_531 (GtkSpinButton *spinbutton, gpointer data) /*part_thickness*/
+{
+	DRAW_UI_P p = (DRAW_UI_P)(data);
+	p->p_config->part_thickness =  (guint) (gtk_spin_button_get_value (spinbutton) * 100.0);
+
+	/*发送增益给硬件*/
+}
+
+void data_601 (GtkSpinButton *spinbutton, gpointer data) /*connection_P*/
+{
+	DRAW_UI_P p = (DRAW_UI_P)(data);
+	p->p_config->connection_P =  (guint) (gtk_spin_button_get_value (spinbutton));
+
+	/*发送增益给硬件*/
+}
+
+void data_610 (GtkSpinButton *spinbutton, gpointer data) /*element_qty*/
+{
+	DRAW_UI_P p = (DRAW_UI_P)(data);
+	p->p_config->element_qty =  (guint) (gtk_spin_button_get_value (spinbutton));
+
+}
+
+void data_611 (GtkSpinButton *spinbutton, gpointer data) /*first_element*/
+{
+	DRAW_UI_P p = (DRAW_UI_P)(data);
+	p->p_config->first_element =  (guint) (gtk_spin_button_get_value (spinbutton));
+
+}
+
+void data_612 (GtkSpinButton *spinbutton, gpointer data) /*last_element*/
+{
+	DRAW_UI_P p = (DRAW_UI_P)(data);
+	p->p_config->last_element =  (guint) (gtk_spin_button_get_value (spinbutton));
+
+}
+
+void data_613 (GtkSpinButton *spinbutton, gpointer data) /*element_step*/
+{
+	DRAW_UI_P p = (DRAW_UI_P)(data);
+	p->p_config->element_step =  (guint) (gtk_spin_button_get_value (spinbutton));
+
+}
+
+void data_620 (GtkSpinButton *spinbutton, gpointer data) /*min_angle*/
+{
+	DRAW_UI_P p = (DRAW_UI_P)(data);
+	p->p_config->min_angle =  (guint) (gtk_spin_button_get_value (spinbutton) * 10.0);
+
+	/*发送增益给硬件*/
+}
+
+void data_623 (GtkSpinButton *spinbutton, gpointer data) /*focus_depth*/
+{
+	DRAW_UI_P p = (DRAW_UI_P)(data);
+	p->p_config->focus_depth =  (guint) (gtk_spin_button_get_value (spinbutton) * 10.0);
+
+	/*发送增益给硬件*/
+}
+
+void data_713 (GtkSpinButton *spinbutton, gpointer data) /*scan_speed*/
+{
+	DRAW_UI_P p = (DRAW_UI_P)(data);
+	p->p_config->scan_speed =  (guint) (gtk_spin_button_get_value (spinbutton) * 10.0);
+
+	/*发送增益给硬件*/
+}
+
+void data_720 (GtkSpinButton *spinbutton, gpointer data) /*scan_start*/
+{
+	DRAW_UI_P p = (DRAW_UI_P)(data);
+	p->p_config->scan_start =  (guint) (gtk_spin_button_get_value (spinbutton));
+}
+
+void data_721 (GtkSpinButton *spinbutton, gpointer data) /*scan_end*/
+{
+	DRAW_UI_P p = (DRAW_UI_P)(data);
+	p->p_config->scan_end =  (guint) (gtk_spin_button_get_value (spinbutton));
+}
+
+void data_722 (GtkSpinButton *spinbutton, gpointer data) /*scan_resolution*/
+{
+	DRAW_UI_P p = (DRAW_UI_P)(data);
+	p->p_config->scan_resolution =  (guint) (gtk_spin_button_get_value (spinbutton));
+}
+
+void data_723 (GtkSpinButton *spinbutton, gpointer data) /*index_start*/
+{
+	DRAW_UI_P p = (DRAW_UI_P)(data);
+	p->p_config->index_start =  (guint) (gtk_spin_button_get_value (spinbutton));
+}
+
+void data_724 (GtkSpinButton *spinbutton, gpointer data) /*index_end*/
+{
+	DRAW_UI_P p = (DRAW_UI_P)(data);
+	p->p_config->index_end =  (guint) (gtk_spin_button_get_value (spinbutton));
+}
+
+void data_725 (GtkSpinButton *spinbutton, gpointer data) /*index_resolution*/
+{
+	DRAW_UI_P p = (DRAW_UI_P)(data);
+	p->p_config->index_resolution =  (guint) (gtk_spin_button_get_value (spinbutton));
+}
+
+void data_901 (GtkSpinButton *spinbutton, gpointer data) /*scan_resolution*/
+{
+	DRAW_UI_P p = (DRAW_UI_P)(data);
+	p->p_config->bright =  (guint) (gtk_spin_button_get_value (spinbutton));
+}

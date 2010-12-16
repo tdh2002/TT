@@ -155,6 +155,25 @@ typedef	struct Config {
         guint   color_start;                   /*Display -> Color -> Start*/
         guint   color_end;                     /*Display -> Color -> end*/
 
+        guint   part_thickness;                  /*Probe/Part -> Parts -> thickness*/
+
+        guint   connection_P;                    /*Focal_Law -> configuration -> connection P*/
+        guint   element_qty;                     /*Focal_Law -> aperture -> element qty*/
+        guint   first_element;                  /*Focal_Law -> aperture -> first element*/
+        guint   last_element;                  /*Focal_Law -> aperture -> last element*/
+        guint   element_step;                  /*Focal_Law -> aperture -> element step*/
+        guint   min_angle;                       /*Focal Law -> Beam -> Min_angle*/
+        guint   focus_depth;                     /*Focal Law -> Beam -> focus_depth*/
+        guint   scan_speed;                      /* Scan -> Inspection -> Scan speed*/
+
+        guint    scan_start;                      /* Scan -> Area -> Scan start*/
+        guint    scan_end;                        /* Scan -> Area -> Scan end*/
+        guint    scan_resolution;                 /* Scan -> Area -> Scan resolution*/
+
+        guint    index_start;                      /* Scan -> Area -> index_start*/
+        guint    index_end;                        /* Scan -> Area -> index_end*/
+        guint    index_resolution;                 /* Scan -> Area -> index_resolution*/
+
 
 } CONFIG, *CONFIG_P;
 
@@ -210,6 +229,10 @@ typedef struct tmp_config {
         guchar    scan_start_reg;                      /* Scan -> Area -> Scan start*/
         guchar    scan_end_reg;                        /* Scan -> Area -> Scan end*/
         guchar    scan_resolution_reg;                 /* Scan -> Area -> Scan resolution*/
+
+        guchar    index_start_reg;                      /* Scan -> Area -> index_start*/
+        guchar    index_end_reg;                            /* Scan -> Area -> index_end*/
+        guchar    index_resolution_reg;                     /* Scan -> Area -> index_resolution*/
 
         guchar    bright_reg;                          /*preferences -> pref. -> bright*/
 
@@ -287,6 +310,11 @@ typedef struct Draw_interface {
 	GtkWidget		*vscalebox;
 	GtkWidget		*vscale;
 
+	GtkWidget		*menu3;
+	GtkWidget		*menu_bar3;
+	GtkWidget		*root_menu3;
+	GtkWidget		*menu_item3[30];
+
 	gint			xx;
 	GtkWidget		*window;
 	GtkWidget		*spinbutton;
@@ -317,5 +345,11 @@ typedef struct Draw_interface {
 #define UNIT_NONE	3
 #define UNIT_M_S	4
 #define UNIT_IN_US	5
+#define UNIT_DB 	6
+#define UNIT_TO 	7
+#define UNIT_BFH 	8
+#define UNIT_MS 	9
+#define UNIT_MM_S 	10
+#define UNIT_TO1 	11
 
 #endif

@@ -15,4 +15,5 @@ extern const gchar **content1_en[];
 extern const gchar ***content2_en[];
 
 extern const gchar *units_en[];
+extern const gchar *tx_rx_mode_en[];
 #endif

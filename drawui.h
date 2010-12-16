@@ -37,6 +37,54 @@ extern void data_132 (GtkSpinButton *spinbutton, gpointer data);	/*132*/
 extern void data_134 (GtkSpinButton *spinbutton, gpointer data);	/*134*/
 extern void data_135 (GtkSpinButton *spinbutton, gpointer data);	/*135*/
 
+extern void data_202 (GtkSpinButton *spinbutton, gpointer data);	/*202*/
+extern void data_203 (GtkSpinButton *spinbutton, gpointer data);	/*203*/
+extern void data_204 (GtkSpinButton *spinbutton, gpointer data);	/*204*/
+
+extern void data_222 (GtkSpinButton *spinbutton, gpointer data);	/*222*/
+extern void data_224 (GtkSpinButton *spinbutton, gpointer data);	/*224*/
+extern void data_225 (GtkSpinButton *spinbutton, gpointer data);	/*225*/
+
+extern void data_311 (GtkSpinButton *spinbutton, gpointer data);	/*311*/
+extern void data_313 (GtkSpinButton *spinbutton, gpointer data);	/*313*/
+
+extern void data_331 (GtkSpinButton *spinbutton, gpointer data);	/*331*/
+extern void data_332 (GtkSpinButton *spinbutton, gpointer data);	/*332*/
+extern void data_333 (GtkSpinButton *spinbutton, gpointer data);	/*333*/
+
+extern void data_431 (GtkSpinButton *spinbutton, gpointer data);	/*431*/
+extern void data_432 (GtkSpinButton *spinbutton, gpointer data);	/*432*/
+
+extern void data_510 (GtkSpinButton *spinbutton, gpointer data);	/*510*/
+extern void data_511 (GtkSpinButton *spinbutton, gpointer data);	/*511*/
+
+extern void data_521 (GtkSpinButton *spinbutton, gpointer data);	/*521*/
+extern void data_522 (GtkSpinButton *spinbutton, gpointer data);	/*522*/
+extern void data_523 (GtkSpinButton *spinbutton, gpointer data);	/*523*/
+
+extern void data_531 (GtkSpinButton *spinbutton, gpointer data);	/*531*/
+
+extern void data_601 (GtkSpinButton *spinbutton, gpointer data);	/*601*/
+
+extern void data_610 (GtkSpinButton *spinbutton, gpointer data);	/*610*/
+extern void data_611 (GtkSpinButton *spinbutton, gpointer data);	/*611*/
+extern void data_612 (GtkSpinButton *spinbutton, gpointer data);	/*612*/
+extern void data_613 (GtkSpinButton *spinbutton, gpointer data);	/*613*/
+
+extern void data_620 (GtkSpinButton *spinbutton, gpointer data);	/*620*/
+extern void data_623 (GtkSpinButton *spinbutton, gpointer data);	/*623*/
+
+extern void data_713 (GtkSpinButton *spinbutton, gpointer data);	/*713*/
+
+extern void data_720 (GtkSpinButton *spinbutton, gpointer data);	/*720*/
+extern void data_721 (GtkSpinButton *spinbutton, gpointer data);	/*721*/
+extern void data_722 (GtkSpinButton *spinbutton, gpointer data);	/*722*/
+extern void data_723 (GtkSpinButton *spinbutton, gpointer data);	/*723*/
+extern void data_724 (GtkSpinButton *spinbutton, gpointer data);	/*724*/
+extern void data_725 (GtkSpinButton *spinbutton, gpointer data);	/*725*/
+
+extern void data_901 (GtkSpinButton *spinbutton, gpointer data);	/*901*/
+
 extern gboolean foo (GtkAccelGroup *accel_group, GObject *acceleratable,
 		guint keyval, GdkModifierType modifier, gpointer data);
 

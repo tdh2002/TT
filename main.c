@@ -35,6 +35,8 @@ int main (int argc, char *argv[])
 	GtkWidget		*window;
 	GtkAccelGroup	*accel;
 	GClosure		*closure;
+	GtkAccelGroup	*accel1;
+	GClosure		*closure1;
 
 	g_thread_init(NULL);
 	gdk_threads_init();
@@ -44,6 +46,7 @@ int main (int argc, char *argv[])
 	g_object_set (gtk_settings_get_default (), "gtk-menu-bar-accel", NULL, NULL); 
 
 	accel = gtk_accel_group_new();
+	accel1 = gtk_accel_group_new();
 
 	p_ui		= (DRAW_UI_P)g_malloc0(sizeof(DRAW_UI));
 	p_config	= (CONFIG_P)g_malloc0(sizeof(CONFIG));
@@ -115,6 +118,11 @@ int main (int argc, char *argv[])
 	gtk_accel_group_connect(accel, GDK_Escape, 0, GTK_ACCEL_VISIBLE, closure);
 
 	gtk_window_add_accel_group(GTK_WINDOW(window), accel);
+
+	closure1 = g_cclosure_new(G_CALLBACK(foo), (gpointer) NULL, NULL);
+	gtk_accel_group_connect(accel1, GDK_Escape, 0, GTK_ACCEL_VISIBLE, closure1);
+
+	gtk_menu_set_accel_group(GTK_MENU (pp->menu), accel);
 
 	gdk_threads_enter();
 	gtk_main();
