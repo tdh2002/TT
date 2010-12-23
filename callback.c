@@ -258,6 +258,18 @@ void b3_fun0(gpointer p)
 					   default:break;
 				   }
 				   break;
+
+			case 8:
+				   switch (pp->pos1[8])
+				   {
+					   case 0: break; 
+					   case 1: break;
+					   case 2: pp->p_config->format_userfield = !pp->p_config->format_userfield;break;   /*820  */
+					   case 3: break; 
+					   default:break;
+				   }
+				   break;
+
 			default:break;
 		}
 
@@ -348,6 +360,16 @@ void b3_fun1(gpointer p)
 					   default:break;
 				   }
 				   break;
+			case 8:
+				   switch (pp->pos1[8])
+				   {
+					   case 0: break; 
+					   case 1: break;
+					   case 2: pp->p_config->format_probe = !pp->p_config->format_probe;break;   /*821  */
+					   case 3: break; 
+					   default:break;
+				   }
+				   break;
 			case 9:
 				   switch (pp->pos1[9])
 				   {
@@ -388,7 +410,7 @@ void b3_fun2(gpointer p)
 					   case 1: /* 弹出一个选择菜单,选择 */ break; /* 112 频率 Freq.  */
 					   case 2: /* 弹出一个选择菜单,选择 */ break; /* 122 检波 Recitify  */
 					   case 3: /* Angle. (deg) */ break; /* 132 角度 不能更改 */
-					   case 4: /* dB Ref. 开关 */ break; /* 142 dB Ref, on or off  */
+					   case 4: pp->p_config->db_ref = !pp->p_config->db_ref;break;/* dB Ref. 开关 */
 					   default:break;
 				   }
                                    break;
@@ -418,7 +440,7 @@ void b3_fun2(gpointer p)
 				   switch (pp->pos1[4])
 				   {
 					   case 0: break; 
-					   case 1: break; 
+					   case 1: pp->p_config->sizing_curves = !pp->p_config->sizing_curves;break;  /*412*/
 					   case 2: break; 
 					   case 3: data_process(&(pp->p_tmp_config->color_end_reg), 1); break; /*432 */
 					   case 4: break;
@@ -457,6 +479,17 @@ void b3_fun2(gpointer p)
 					   default:break;
 				   }
 				   break;
+			case 8:
+				   switch (pp->pos1[8])
+				   {
+					   case 0: break; 
+					   case 1: break;
+					   case 2: pp->p_config->format_setup = !pp->p_config->format_setup;break;   /*822  */
+					   case 3: break; 
+					   default:break;
+				   }
+				   break;
+
 
 			default:break;
 		}
@@ -485,7 +518,7 @@ void b3_fun3(gpointer p)
 				   {
 					   case 0:data_process(&(pp->p_tmp_config->wedge_delay_reg), 2); break; /* 103wedge delay 楔款延时 3种步进 */
 					   case 1: /* 弹出一个选择菜单,选择 */ break; /* 113 电压功率 Voltage  */
-					   case 2: /* 视频滤波 */ break; /* 123 视频滤波 on or off  */
+					   case 2: pp->p_config->video_filter = !pp->p_config->video_filter;break; /* 123 视频滤波 on or off  */
 					   case 3: /* Skew  */ break; /* 133 Skew (deg)  */
 					   case 4: /* 弹出一个选择菜单,选择 */ break; /* 143 Points Qty. */
 					   default:break;
@@ -513,7 +546,18 @@ void b3_fun3(gpointer p)
 					   default:break;
 				   }
                                    break;
-			case 4:break;
+			case 4:
+				   switch (pp->pos1[4])
+				   {
+					   case 0: break;
+					   case 1: pp->p_config->overlay_gate = !pp->p_config->overlay_gate;break; /*413*/
+					   case 2: break; 
+					   case 3: break;  
+					   case 4: break; 
+					   default:break;
+				   }
+                                   break;
+
 			case 5:
 				   switch (pp->pos1[5])
 				   {
@@ -548,6 +592,16 @@ void b3_fun3(gpointer p)
 					   default:break;
 				   }
                                    break;
+			case 8:
+				   switch (pp->pos1[8])
+				   {
+					   case 0: break; 
+					   case 1: break;
+					   case 2: pp->p_config->format_note = !pp->p_config->format_note;break;   /*823  */
+					   case 3: break; 
+					   default:break;
+				   }
+				   break;
 
 			default:break;
 		}
@@ -593,6 +647,17 @@ void b3_fun4(gpointer p)
 				   }
 			case 3:
                               break;
+			case 4:
+				   switch (pp->pos1[4])
+				   {
+					   case 0:break; 
+					   case 1:pp->p_config->overlay_cursor = !pp->p_config->overlay_cursor;break; /*414*/
+					   case 2:break;
+					   case 3:break; 
+					   case 4:break; 
+					   default:break;
+				   }
+
 			case 7:
 				   switch (pp->pos1[7])
 				   {
@@ -650,6 +715,28 @@ void b3_fun5(gpointer p)
                                break;
 			case 3:
                                break;
+
+			case 4:
+				   switch (pp->pos1[4])
+				   {
+					   case 0:break; 
+					   case 1:pp->p_config->overlay_overlay = !pp->p_config->overlay_overlay;break; /*415*/
+					   case 2:break;
+					   case 3:break; 
+					   case 4:break; 
+					   default:break;
+				   }
+			case 5:
+				   switch (pp->pos1[5])
+				   {
+					   case 0:pp->p_config->auto_detect = !pp->p_config->auto_detect;break;  /*505*/
+					   case 1:break; /*515*/
+					   case 2:break;
+					   case 3:break; 
+					   case 4:break; 
+					   default:break;
+				   }
+
 			case 7:
 				   switch (pp->pos1[7])
 				   {
@@ -873,7 +960,7 @@ void data_103 (GtkSpinButton *spinbutton, gpointer data) /*楔块延时  Wedge D
 void data_104 (GtkSpinButton *spinbutton, gpointer data) /*声速 Velocity */
 {
 	DRAW_UI_P p = (DRAW_UI_P)(data);
-	if (pp->p_config->unit == 0)	/* 0mm1 1inch */
+	if (pp->p_config->unit == 0)	/* 0 mm   1 inch */
 		p->p_config->part.Velocity =  gtk_spin_button_get_value (spinbutton);
 	else
 		p->p_config->part.Velocity =  gtk_spin_button_get_value (spinbutton) * 25380.7;

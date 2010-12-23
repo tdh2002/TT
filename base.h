@@ -8,6 +8,13 @@
  *
  * 谭登华
  * 2010-11-4
+ * 
+ *
+ *
+ *
+ *
+ * 85 X6 + 90 = 600
+ * 114 X 6 + 116 = 800
  *
  */
 
@@ -20,6 +27,7 @@
 
 extern GdkColor	color_black;
 extern GdkColor	color_white;
+extern GdkColor	color_yellow;
 extern GdkColor	color_button0;
 extern GdkColor	color_button1;
 extern GdkColor	color_button2;
@@ -141,38 +149,50 @@ typedef	struct Config {
 	guint	date;			/*  */
 	guint	time;			/*  */
 
-	guint	count;               /*Gate/Alarm->Output->count*/
-	guint	active_delay;        /*Gate/Alarm->Output->delay*/
-	guint	holdtime;            /*Gate/Alarm->Output->holdtime*/
+	guint	count;                          /*Gate/Alarm->Output->count*/
+	guint	active_delay;                   /*Gate/Alarm->Output->delay*/
+	guint	holdtime;                       /*Gate/Alarm->Output->holdtime*/
 
-	guint	VPA;                 /*Measurements->Cursors->VPA*/
-	guint	cursors_scan;                 /*Measurements->Cursors->Scan*/
-	guint	cursors_index;                 /*Measurements->Cursors->index*/
-	guint	min_thickness;                 /*Measurements->Thickness->min*/
-	guint	max_thickness;                 /*Measurements->Thickness->max*/
-	guint	echo_qty;                      /*Measurements->Thickness->echo_qty*/
+	guint	VPA;                            /*Measurements->Cursors->VPA*/
+	guint	cursors_scan;                   /*Measurements->Cursors->Scan*/
+	guint	cursors_index;                  /*Measurements->Cursors->index*/
+	guint	min_thickness;                  /*Measurements->Thickness->min*/
+	guint	max_thickness;                  /*Measurements->Thickness->max*/
+	guint	echo_qty;                       /*Measurements->Thickness->echo_qty*/
 
-        guint   color_start;                   /*Display -> Color -> Start*/
-        guint   color_end;                     /*Display -> Color -> end*/
+        guint   color_start;                    /*Display -> Color -> Start*/
+        guint   color_end;                      /*Display -> Color -> end*/
+        guint   sizing_curves;                  /*Display -> overlay -> sizing curves*/
+        guint   overlay_gate;                   /*Display -> overlay -> gate*/
+        guint   overlay_cursor;                 /*Display -> overlay -> cursor*/
+        guint   overlay_overlay;                /*Display -> overlay -> overlay*/
 
-        guint   part_thickness;                  /*Probe/Part -> Parts -> thickness*/
+        guint   part_thickness;                 /*Probe/Part -> Parts -> thickness*/
+        guint   auto_detect;                    /*Probe/Part -> select -> auto_detect*/
 
-        guint   connection_P;                    /*Focal_Law -> configuration -> connection P*/
-        guint   element_qty;                     /*Focal_Law -> aperture -> element qty*/
+        guint   connection_P;                   /*Focal_Law -> configuration -> connection P*/
+        guint   element_qty;                    /*Focal_Law -> aperture -> element qty*/
         guint   first_element;                  /*Focal_Law -> aperture -> first element*/
-        guint   last_element;                  /*Focal_Law -> aperture -> last element*/
-        guint   element_step;                  /*Focal_Law -> aperture -> element step*/
-        guint   min_angle;                       /*Focal Law -> Beam -> Min_angle*/
-        guint   focus_depth;                     /*Focal Law -> Beam -> focus_depth*/
-        guint   scan_speed;                      /* Scan -> Inspection -> Scan speed*/
+        guint   last_element;                   /*Focal_Law -> aperture -> last element*/
+        guint   element_step;                   /*Focal_Law -> aperture -> element step*/
+        guint   min_angle;                      /*Focal Law -> Beam -> Min_angle*/
+        guint   focus_depth;                    /*Focal Law -> Beam -> focus_depth*/
+        guint   scan_speed;                     /* Scan -> Inspection -> Scan speed*/
 
-        guint    scan_start;                      /* Scan -> Area -> Scan start*/
-        guint    scan_end;                        /* Scan -> Area -> Scan end*/
-        guint    scan_resolution;                 /* Scan -> Area -> Scan resolution*/
+        guint    scan_start;                    /* Scan -> Area -> Scan start*/
+        guint    scan_end;                      /* Scan -> Area -> Scan end*/
+        guint    scan_resolution;               /* Scan -> Area -> Scan resolution*/
+        guint    index_start;                   /* Scan -> Area -> index_start*/
+        guint    index_end;                     /* Scan -> Area -> index_end*/
+        guint    index_resolution;              /* Scan -> Area -> index_resolution*/
 
-        guint    index_start;                      /* Scan -> Area -> index_start*/
-        guint    index_end;                        /* Scan -> Area -> index_end*/
-        guint    index_resolution;                 /* Scan -> Area -> index_resolution*/
+        guint    format_userfield;              /* File -> Format -> UserField*/
+        guint    format_probe;                  /* File -> Format -> probe*/
+        guint    format_setup;                  /* File -> Format -> setup*/
+        guint    format_note;                   /* File -> Format -> note*/
+
+
+
 
 
 } CONFIG, *CONFIG_P;
@@ -308,6 +328,7 @@ typedef struct Draw_interface {
 	GtkWidget		*sbutton[6];
 	GtkWidget		*button;
 	GtkWidget		*vscalebox;
+	GtkWidget		*bigscalebox;
 	GtkWidget		*vscale;
 
 	GtkWidget		*menu3;
@@ -324,6 +345,11 @@ typedef struct Draw_interface {
 	TMP_CONFIG_P	p_tmp_config;		/**/
 
 	guint			mark3;
+
+
+        GtkWidget                *label4[2];       /*   + - 标签   */
+        GtkWidget                *labelbox[2];     /*   + - 标签box   */
+
 
 } DRAW_UI, *DRAW_UI_P;
 

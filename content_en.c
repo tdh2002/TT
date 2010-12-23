@@ -353,7 +353,8 @@ static const gchar *content_en293[] = {
 
 static const gchar *content_en294[] = {
 	/* 二级菜单第9页下的第4页三级菜单 */
-	"  DHCP  ","  IP Address  ", "  Subnet Mask ","  Apply  ", "  Remote Pc  ", "  Connect  "
+	/*"  DHCP  ","  IP Address  ", "  Subnet Mask ","  Apply  ", "  Remote Pc  ", "  Connect  "*/
+        "  IP Address  ", "  Subnet Mask "
 };
 
 const gchar **content1_en[] = 
@@ -382,4 +383,121 @@ const gchar ***content2_en[] =
 /* 0mm 1英寸 2微秒  */
 const gchar *units_en[] = {"mm", "in", "μs", " ", "m/s", "in/μs", "dB", "1 to 97", "%", "ms", "mm/s", "1 to 113"};
 
+
+/*  0  */
+const gchar *type_en[] = {"Encoder", "Ultrasound", "Code"};
+const gchar *calibration_mode_en[] = {"Velocity", "Wedge Delay", "Sensitivity", "TCG"};
+
+
+/*  1  */
 const gchar *tx_rx_mode_en[] = {"PC Pitch-and-Catch", "PE Pulse-Echo", "TT Through-Transmission"};
+const gchar *freq_en[] = {"1","1.5","2","2.25","3.5","4","5","7.5","10","12","15","20"};
+const gchar *voltage_en[] = {"45 Low", "90 High"};
+const gchar *PW_en[] = {"Auto", "100.0", "Userdefine"};
+const gchar *PRF_en[] = {"Auto Max", "Max/2", "Optimum","60", "Userdefine"};
+const gchar *filter_en[] = {"None  0.5-21.0 MHz", "Auto", "1 MHz", "1.5MHz", "2MHz", "2.25MHz", "4MHz", "5MHz", "7.5MHz", "10MHz", "12MHz", "15MHz", "20MHz", "HR", "HR 10 MHz"};
+const gchar *rectifier_en[] = {"RF", "HW+", "HW-", "FW", "FW"};
+const gchar *averaging_en[] = {"1","2","4","8","16"};
+const gchar *points_qty_en[] = {"Auto", "160", "320", "640", "Userdefine"};
+const gchar *sum_gain_en[] = {"Auto", "28.0", "Userdefine"};
+
+
+/*  2  */
+const gchar *gate_en[] = {"A", "B", "I"};
+const gchar *parameters_en[] = {"Position", "Mode"};
+const gchar *gate_alarm_en[] = {"1 [On]", "2","3","4","5","6","7","8","9","10","11","12","13","14","15","16"};
+const gchar *groupA_en[] = {"1","2","3"};
+const gchar *conditionA_en[] = {"None","Gate A","Gate B","Gate I","Not Gate A","Not Gate B","Not Gate I",">Max.Thickness","<Min.Thickness"};
+const gchar *operator_en[] = {"AND","OR"};
+const gchar *groupB_en[] = {"1","2","3"};
+const gchar *conditionB_en[] = {"None","Gate A","Gate B","Gate I","Not Gate A","Not Gate B","Not Gate I",">Max.Thickness","<Min.Thickness"};
+const gchar *output_en[] = {"Output 1 [On]", "Output 2","Output 3", "Analog 1", "Analog 2"};
+const gchar *output_alarm_en[] = {"None", "All", "1 [On]", "2", "3", "4", "5", "6", "7", "8", "9","10","11","12","13","14","15","16 [On]","Multi"};
+const gchar *sound_en[] = {"Off  No Sound", "300Hz  Audio output at 300 Hz","600Hz  Audio output at 600 Hz","1000Hz  Audio output at 1000 Hz","5000Hz  Audio output at 5000 Hz"};
+const gchar *curves_mode_en[] = {"Setup", "Edit"};
+const gchar *curve_en[] = {"None","DAC","Linear DAC","TCG"};
+
+
+/*  3  */
+const gchar *list_en[] = {"1 Manual Weld 1: A%. DA^. PA^. SA^", "2 Auto. Weld 1: A%. DA^. ViA^. VsA^"};
+const gchar *field1_en[] = {"A%  Peak amplitude in gate A", "AdBA  Signal in gate minus gate level for gate A", "AdBr  Diff.between signal and reference in gate A","B%  Peak amplitude in gate B"};
+const gchar *selection_en[] = {"A-scan", "B-scan", "C-scan", "Strip Chart", "S-scan", "R and M", "Reference", "Measure", "Data"};
+const gchar *source_en[] = {"A^", "A^-I^", "A^-I/", "B^", "B^-I^", "B^-I/", "B^-A^", "I^", "I/"};
+
+
+/*  4  */
+const gchar *display_en[] = {"A  A-Scan", "B  B-Scan", "C  C-Scan", "S  S-Scan", "A-B  A-Scan B-Scan", "A-B-C  A-Scan B-Scan C-Scan", "A-B-S  A-Scan B-Scan S-Scan", "A-C-[C] A-Scan C-Scan [C-Scan]", "A-S-[C]  A-Scan S-Scan [C-Scan]", "PA-TOFD  PA-TOFD", "Strip Chart-[A]  Strip Chart[A-Scan]"};
+const gchar *group_en[] = {"All", "Current"};
+const gchar *utunit_en[] = {"Sound Path", "Time", "True Depth"};
+const gchar *grid_en[] = {"Blue", "Green", "Red", "Yellow", "Black", "Off"};
+const gchar *zoom_display_en[] = {"A-Scan", "B-Scan", "S-Scan", "Strip Chart", "Uncorrected C-Scan", "Off"};
+const gchar *select_en[] = {"Amplitude", "Rectification-TOFD", "Depth"};
+const gchar *scan_en[] = {"A-Scan", "B-Scan", "C-Scan", "S-Scan", "FFT", "Strip Chart"};
+const gchar *color_en[] = {"Blue", "Green", "Yellow", "Black", "White", "Red"};
+const gchar *envelope_en[] = {"None", "Infinite"};
+const gchar *properties_source_en[] = {"Normal", "Highest(%)", "Thinnest", "All Laws"};
+const gchar *appearance_en[] = {"Hollow", "Fill", "Hollow 2 Colors", "Fill 2 Colors"};
+const gchar *overlay_en[] = {"None", "Peak", "Reference"};
+
+
+/*  5  */
+const gchar *group_mode_en[] = {"UT  Conventional Ultrasound", "PA  Phassed Array"};
+const gchar *probe_select_en[] = {"Select Tx/Rx", "Defines"};
+const gchar *probe_skew_en[] = {"0.0", "90.0", "180.0", "270.0", "Userdefine"};
+const gchar *geometry_en[] = {"Plate", "OD", "ID"};
+const gchar *material_en[] = {"AL OXIDE", "ALUMINUM", "BERYLIUM", "BRASS", "CADMIUM", "COPPER", "STEEL.MILD"};
+
+
+/*  6  */
+const gchar *law_config_en[] = {"Sectorial  Angular sector", "Linear  Linear sector", "Linear at 0  Linear sector with overlap", "Custom  Law file"};
+const gchar *wave_type_en[] = {"LW  5890.0m/s", "SW  3240.0m/s"};
+
+
+
+/*  7  */
+const gchar *inspection_type_en[] = {"One-Line Scan", "Raster Scan", "Helicoidal Scan"};
+const gchar *inspection_scan_en[] = {"Time", "Encoder 1", "Encoder 2"};
+const gchar *start_mode_en[] = {"Reset All", "Reset Encoder", "Reset Data"};
+const gchar *storage_en[] = {"Last", "A%", "Max.Thickness", "Min.Thickness"};
+const gchar *inspec_data_en[] = {"All A & C scans", "All C scans"};
+
+
+/*  8  */
+const gchar *file_storage_en[] = {"Storage Card   (Storage Card)", "Internal Memory  (User)" };
+const gchar *save_mode_en[] = {"Inspection Data", "Indication Table", "Screen", "Report"};
+const gchar *template_en[] = {"Complete  (Standard)"};
+const gchar *paper_size_en[] = {"Letter", "Legal", "A4", "B4"};
+const gchar *view_en[] = {"Table", "Current Layout", "Off"};
+const gchar *file_select_en[] = {"1", "2","3", "4", "5", "6", "7", "8", "9", "10"};
+
+
+
+/*  9  */
+const gchar *pref_units_en[] = {"Millimeters", "Inches"};
+const gchar *scheme_en[] = {"Indoor", "Outdoor"};
+const gchar *gate_mode_en[] = {"By Group", "By Context"};
+const gchar *select_key_en[] = {"F2", "F3", "F4", "F5", "F6", "DIN1", "DIN2", "DIN3", "DIN4"};
+const gchar *assign_key_en[] = {"Gain", "Range", "Start", "Start/Stop", "Pause/Resume", "Calibrate", "Report", "Save Setup As", "Zoom", "Add Entry", "Display", "Context Select", "Gate", "User Field", "Buzzer", "Notes"};
+const gchar *startup_mode_en[] = {"Automatic", "Manual"};
+const gchar *mouse_en[] = {"Off", "Mouse", "Control Area"};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
