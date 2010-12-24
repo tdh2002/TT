@@ -28,6 +28,7 @@
 extern GdkColor	color_black;
 extern GdkColor	color_white;
 extern GdkColor	color_yellow;
+extern GdkColor	color_text_base;
 extern GdkColor	color_button0;
 extern GdkColor	color_button1;
 extern GdkColor	color_button2;
@@ -339,18 +340,14 @@ typedef struct Draw_interface {
 	gint			xx;
 	GtkWidget		*window;
 	GtkWidget		*spinbutton;
-	GtkWidget		*window1;
+	GtkWidget		*dialog;
+	GtkWidget		*button_add;
+	GtkWidget		*button_sub;
 	GtkWidget		*window2;
 	CONFIG_P		p_config;			/**/
 	TMP_CONFIG_P	p_tmp_config;		/**/
 
 	guint			mark3;
-
-
-        GtkWidget                *label4[2];       /*   + - 标签   */
-        GtkWidget                *labelbox[2];     /*   + - 标签box   */
-
-
 } DRAW_UI, *DRAW_UI_P;
 
 
