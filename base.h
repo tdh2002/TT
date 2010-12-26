@@ -52,17 +52,17 @@ typedef struct Wedge {
 
 /*工件 (Part)*/
 typedef struct Part {
-	guint	Geometry;		/*集合形状 FLAT/ID/OD*/
-	guint	Thickness;		/*厚度*/
-	guint	Diameter;		/*直径*/
-	gfloat	Velocity;		/*声速 m/s */
-	guint	Material;		/*材料*/
+	guint	Geometry;		/* 集合形状 FLAT/ID/OD/BALL */
+	guint	Thickness;		/* 厚度 */
+	guint	Diameter;		/* 直径 */
+	gfloat	Velocity;		/* 声速 m/s */
+	guint	Material;		/* 材料 */
 } PART, *PART_P;
 
 /*材料 (Material)*/
 typedef struct Material {
-	guint	Velocity;		/*声速 */
-	guint	Name[20];		/*材料名字*/
+	guint	Velocity;		/* 声速 */
+	guint	Name[20];		/* 材料名字 */
 } MATERIAL, *MATERIAL_P;
 
 /*配置信息 (CONFIG)*/
@@ -347,7 +347,9 @@ typedef struct Draw_interface {
 	CONFIG_P		p_config;			/**/
 	TMP_CONFIG_P	p_tmp_config;		/**/
 
-	guint			mark3;
+	guchar			mark3;
+	guchar			markreturn;
+//	guchar			mark3;
 } DRAW_UI, *DRAW_UI_P;
 
 

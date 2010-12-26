@@ -599,7 +599,7 @@ static void draw3_pressed(void (*fun)(GtkSpinButton*, gpointer),const gchar *uni
 	gtk_widget_set_size_request (GTK_WIDGET(pp->vscale), 30, 365);
 	gtk_range_set_inverted (GTK_RANGE (pp->vscale), TRUE);
 	gtk_scale_set_draw_value (GTK_SCALE (pp->vscale), FALSE);
-	gtk_box_pack_start (GTK_BOX (pp->vscalebox), pp->vscale, TRUE, TRUE, 0);
+//	gtk_box_pack_start (GTK_BOX (pp->vscalebox), pp->vscale, TRUE, TRUE, 0);
 
 	gtk_widget_show (pp->vscalebox);
 
@@ -3313,7 +3313,7 @@ void draw3_data3(DRAW_UI_P p)
 		case 1:
 			switch (pp->pos1[1])
 			{
-				case 0:/* wedge delay */
+				case 0:/* wedge delay 103 */
 					/* 当前步进 */
 					switch (pp->p_tmp_config->wedge_delay_reg)
 					{
@@ -3988,8 +3988,6 @@ void draw3_data3(DRAW_UI_P p)
 			break;
 		default:break;
 	}
-
-
 }
 
 void draw3_data4(DRAW_UI_P p) 
@@ -4018,7 +4016,7 @@ void draw3_data4(DRAW_UI_P p)
 		case 1:
 			switch (pp->pos1[1])
 			{
-				case 0:/* wedge delay */
+				case 0:/* velocity 声速 104 */
 					/* 当前步进 */
 					switch (pp->p_tmp_config->velocity_reg)
 					{
@@ -4037,7 +4035,7 @@ void draw3_data4(DRAW_UI_P p)
 							lower = 635.0;
 							upper = 15240.0;
 							step = tmpf;
-							digit = 2;
+							digit = 1;
 							unit = UNIT_M_S;
 						}
 						else
@@ -5395,7 +5393,7 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 	gtk_widget_show_all (pp->hbox1);   /* 上方显示信息  */
 
 	drawing_area = gtk_drawing_area_new();
-	gtk_widget_set_size_request (GTK_WIDGET(drawing_area), 660, 425);
+	gtk_widget_set_size_request (GTK_WIDGET(drawing_area), 658, 425);
 	gtk_box_pack_start (GTK_BOX (p->hbox211), drawing_area, FALSE, FALSE, 0);
 	p->col.red = 0x0, p->col.green = 0x0, p->col.blue = 0x0;
 	gtk_widget_modify_bg(drawing_area, GTK_STATE_NORMAL, &(p->col));
@@ -5413,7 +5411,7 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 
 	widget_window_class1 = GTK_WIDGET_GET_CLASS (((GtkObject*)(pp->dialog))); 
 	// 取代原來的處理函式
-//	widget_window_class1->key_press_event =	my_keypress_event;
+	widget_window_class1->key_press_event =	my_keypress_event;
 
 	gtk_window_set_decorated (GTK_WINDOW (pp->dialog), FALSE);			/*不可以装饰*/
 	gtk_container_set_border_width( GTK_CONTAINER (GTK_DIALOG(pp->dialog)->vbox), 0);     /*设置边框大小，这个地方使用图片*/

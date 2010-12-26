@@ -799,16 +799,11 @@ static void handler_key(guint keyval)
 					pp->pos_pos = MENU3_STOP;
 					break;
 				default:break;
-
 			}
 			break;
 		case GDK_F12:
 			if (pp->pos_pos == MENU3_PRESSED)
-			{
-				if (pp->mark3 )
-					b3_fun0(GUINT_TO_POINTER (0x01));
-				pp->mark3 = !pp->mark3 ;
-			}
+				b3_fun0(GUINT_TO_POINTER (0x01));
 			else 
 				pp->pos_pos = MENU3_PRESSED;
 			break;
