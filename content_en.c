@@ -391,6 +391,7 @@ const gchar *calibration_mode_en[] = {"Velocity", "Wedge Delay", "Sensitivity", 
 
 /*  1  */
 const gchar *tx_rx_mode_en[] = {"PC Pitch-and-Catch", "PE Pulse-Echo", "TT Through-Transmission"};
+const gchar *tx_rx_mode_en1[] = {"PC", "PE", "TT"};
 const gchar *freq_en[] = {"1","1.5","2","2.25","3.5","4","5","7.5","10","12","15","20"};
 const gchar *voltage_en[] = {"45 Low", "90 High"};
 const gchar *PW_en[] = {"Auto", "100.0", "Userdefine"};

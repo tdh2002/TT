@@ -28,6 +28,8 @@ void data_103 (GtkSpinButton *spinbutton, gpointer data);
 void data_104 (GtkSpinButton *spinbutton, gpointer data);
 
 void data_110 (GtkSpinButton *spinbutton, gpointer data);
+void data_111 (GtkButton *button, gpointer data);            /* 111 Tx/Rx Mode 收发模式 */
+
 void data_125 (GtkSpinButton *spinbutton, gpointer data);
 
 void data_130 (GtkSpinButton *spinbutton, gpointer data);
@@ -192,6 +194,7 @@ void b3_fun0(gpointer p)
 	/* 之前的位置 */
 	pp->pos_last2 = pp->pos2[pp->pos][pp->pos1[pp->pos]];
 	pp->pos2[pp->pos][pp->pos1[pp->pos]] = 0;
+	g_print("%d\n", temp);
 /*	pp->pos_pos = MENU3_PRESSED;*/
 	/*处理微调*/
 	if ((pp->pos_last2 == pp->pos2[pp->pos][pp->pos1[pp->pos]]) && 
@@ -966,9 +969,18 @@ void data_104 (GtkSpinButton *spinbutton, gpointer data) /*声速 Velocity */
 void data_110 (GtkSpinButton *spinbutton, gpointer data) /*声速 Velocity */
 {
 	DRAW_UI_P p = (DRAW_UI_P)(data);
+	g_print("%f\n", gtk_spin_button_get_value (spinbutton));
 	p->p_config->pulser =  (guchar) (gtk_spin_button_get_value (spinbutton));
 
 	/*发送增益给硬件*/
+}
+
+void data_111 (GtkButton *button, gpointer data) /* 收发模式 Tx/Rx Mode */
+{
+	pp->p_config->tx_rxmode = (gchar) (GPOINTER_TO_UINT (data));
+	pp->pos_pos = MENU3_STOP;
+	draw_3_menu(0, NULL);
+	/* 发送增益给硬件 */
 }
 
 void data_125 (GtkSpinButton *spinbutton, gpointer data) /*抑制 Reject */
@@ -1280,3 +1292,7 @@ void data_901 (GtkSpinButton *spinbutton, gpointer data) /*scan_resolution*/
 	DRAW_UI_P p = (DRAW_UI_P)(data);
 	p->p_config->bright =  (guint) (gtk_spin_button_get_value (spinbutton));
 }
+
+
+
+

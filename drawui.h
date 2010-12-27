@@ -14,6 +14,8 @@ extern GtkWidgetClass *widget_window_class;
 
 extern DRAW_UI_P pp;					
 
+extern guint address[];
+
 extern void change_language();										/* 选择语言 */
 extern void draw_2_menu(gint pa);									/* 更新二级菜单 */
 extern void draw_3_menu(gint pa, gpointer p);									/* 更新三级菜单 */
@@ -22,14 +24,16 @@ extern void init_ui(DRAW_UI_P p);									/* 初始化界面, */
 extern gboolean (*data_fun[6])(GtkWidget *widget, GdkEventButton *event, gpointer user_data);
 extern gboolean (*eventbox2_fun[5])(GtkWidget *widget, GdkEventButton *event, gpointer data);
 
-extern void data_100 (GtkSpinButton *spinbutton, gpointer data);	/*100*/
-extern void data_101 (GtkSpinButton *spinbutton, gpointer data);	/*101*/
-extern void data_102 (GtkSpinButton *spinbutton, gpointer data);	/*102*/
-extern void data_103 (GtkSpinButton *spinbutton, gpointer data);	/*103*/
-extern void data_104 (GtkSpinButton *spinbutton, gpointer data);	/*104*/
+extern void data_100 (GtkSpinButton *spinbutton, gpointer data);	/* 100 gain增益 */
+extern void data_101 (GtkSpinButton *spinbutton, gpointer data);	/* 101 start 扫描延时 */
+extern void data_102 (GtkSpinButton *spinbutton, gpointer data);	/* 102 range 范围 */
+extern void data_103 (GtkSpinButton *spinbutton, gpointer data);	/* 103 wedget delay 楔款延时 */
+extern void data_104 (GtkSpinButton *spinbutton, gpointer data);	/* 104 velocity 声速 */
 
-extern void data_110 (GtkSpinButton *spinbutton, gpointer data);	/*110*/
-extern void data_125 (GtkSpinButton *spinbutton, gpointer data);	/*125*/
+extern void data_110 (GtkSpinButton *spinbutton, gpointer data);	/* 110 pulser 脉冲发射器 */
+extern void data_111 (GtkButton *button, gpointer data);            /* 111 Tx/Rx Mode 收发模式 */
+
+extern void data_125 (GtkSpinButton *spinbutton, gpointer data);	/*125 */
 
 extern void data_130 (GtkSpinButton *spinbutton, gpointer data);	/*130*/
 extern void data_131 (GtkSpinButton *spinbutton, gpointer data);	/*131*/

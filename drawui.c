@@ -41,6 +41,7 @@ const gchar **type       = type_en;
 const gchar **calibration_mode       = calibration_mode_en;
 
 const gchar **tx_rx_mode = tx_rx_mode_en;
+const gchar **tx_rx_mode1 = tx_rx_mode_en1;
 const gchar **freq	 = freq_en;
 const gchar **voltage    =voltage_en;
 const gchar **PW         =PW_en;
@@ -66,7 +67,7 @@ const gchar **curves_mode= curves_mode_en;
 const gchar **curve      = curve_en;
 
 const gchar **list       =list_en;
-const gchar *field1      =field1_en;
+const gchar **field1      =field1_en;
 const gchar **selection  =selection_en;
 const gchar **source     =source_en;
 
@@ -238,6 +239,22 @@ void update_widget_bg(GtkWidget *widget, const gchar *img_file)
 **/
 	gtk_widget_set_style(GTK_WIDGET (widget), style);
 	g_object_unref(style);
+}
+
+void add_click (GtkButton *button, gpointer data)
+{
+	gtk_adjustment_set_value (pp->adj, gtk_adjustment_get_value (pp->adj) + gtk_adjustment_get_step_increment (pp->adj));
+
+	gtk_adjustment_value_changed (pp->adj);
+	return ;
+}
+
+void sub_click (GtkButton *button, gpointer data)
+{
+	gtk_adjustment_set_value (pp->adj, gtk_adjustment_get_value (pp->adj) - gtk_adjustment_get_step_increment (pp->adj));
+
+	gtk_adjustment_value_changed (pp->adj);
+	return ;
 }
 
 void (*menu_fun[10])(GtkMenuItem *menuitem, gpointer data) = 
@@ -451,11 +468,66 @@ void draw_2_menu(gint pa)
 }
 
 /*
- * 处理 三级菜单弹出菜单的画图
+ * 处理 三级菜单弹出菜单的画图 好多啊-_-
  * 
  *
  *
  */
+
+static void draw3_pop_111 (guint pos)  /* p111 收发模式 */
+{
+	guint i;
+	gchar *str = NULL;
+
+	if (pp->popbox) 
+	{
+		gtk_widget_destroy (pp->popbox);
+		pp->popbox = NULL;
+	}
+	pp->popbox = gtk_vbox_new (FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (GTK_DIALOG (pp->dialog)->vbox), pp->popbox, FALSE, FALSE, 0);
+	
+	for (i = 0; i < 3; i++)
+	{
+		pp->popbutton[i] = gtk_button_new_with_label (tx_rx_mode[i]);
+		gtk_box_pack_start (GTK_BOX (pp->popbox), pp->popbutton[i], FALSE, FALSE, 0);
+		g_signal_connect (pp->popbutton[i], "clicked", G_CALLBACK(data_111), (GUINT_TO_POINTER (i)));
+		if (i != pp->p_config->tx_rxmode)
+		{
+			gtk_widget_modify_bg(pp->popbutton[i], GTK_STATE_NORMAL, &color_button1);
+			gtk_widget_modify_bg(pp->popbutton[i], GTK_STATE_PRELIGHT, &color_button2);
+			gtk_widget_modify_bg(pp->popbutton[i], GTK_STATE_ACTIVE, &color_button0);
+		}
+		else
+		{
+			gtk_widget_modify_bg(pp->popbutton[i], GTK_STATE_NORMAL, &color_button0);
+			gtk_widget_modify_bg(pp->popbutton[i], GTK_STATE_PRELIGHT, &color_button0);
+			gtk_widget_modify_bg(pp->popbutton[i], GTK_STATE_ACTIVE, &color_button0);
+		}
+		gtk_widget_modify_fg( gtk_bin_get_child( GTK_BIN (pp->popbutton[i])), GTK_STATE_NORMAL, &color_white);
+/*		gtk_button_set_relief (GTK_BUTTON (pp->popbutton[i]), GTK_RELIEF_NORMAL);*/ /* 设置边框 */
+		/*按钮的突出显示是在 GTK+ 中通过捕捉 enter_notify_event
+		 * 信号来实现的。如果想使其失效，可以在自己的程序中建立一个按钮的 enter_notify_event
+		 * 信号的处理函数并使其返回值为 TRUE 即可。
+		 * */
+	}
+
+	str = g_strdup_printf ("%s", con2_p[1][1][1]);
+
+	gtk_label_set_text (GTK_LABEL (pp->label3[pos]), str);
+	update_widget_bg (pp->eventbox30[pos], backpic[6]);
+	gtk_widget_show (pp->eventbox31[pos]);
+	gtk_label_set_text (GTK_LABEL (pp->data3[pos]), tx_rx_mode_en1[pp->p_config->tx_rxmode]);
+	gtk_widget_show (pp->data3[pos]);
+
+	gtk_widget_show (pp->dialog);
+	gtk_window_move (GTK_WINDOW (pp->dialog), 520, 240);
+	gtk_widget_show_all (pp->popbox);
+
+	if (str)
+		g_free (str);
+	return ;
+}
 
 static void draw3_pop (void (*fun)(GtkMenuItem*, gpointer),
 		void (* set_menu_position)(GtkMenu *, gint *, gint *, gboolean *, gpointer ),
@@ -512,7 +584,7 @@ static void draw3_pop (void (*fun)(GtkMenuItem*, gpointer),
 	return ;
 }
 
-draw3_popdwon (gchar *cur_value, guint pos)
+static void draw3_popdwon (gchar *cur_value, guint pos)
 {
 	gint  x, y, z;       /* xyz 分别为123级菜单位置 */
 	gchar *str = NULL;
@@ -521,13 +593,22 @@ draw3_popdwon (gchar *cur_value, guint pos)
 	y = pp->pos1[x];
 	z = pos;
 
+	if (pp->popbox)
+	{
+		gtk_widget_destroy (pp->popbox);
+		pp->popbox = NULL;
+	}
 	str = g_strdup_printf ("%s", con2_p[x][y][z]);	
 	gtk_label_set_text (GTK_LABEL (pp->label3[z]), str);
 	if ((CUR_POS == z) && (pp->pos_pos == MENU3_STOP))
 	{
+		update_widget_bg(pp->eventbox30[z], backpic[8]);
+		update_widget_bg(pp->eventbox31[z], backpic[11]);
 	}
 	else
 	{
+		update_widget_bg(pp->eventbox30[z], backpic[7]);
+		update_widget_bg(pp->eventbox31[z], backpic[10]);
 	}
 	gtk_label_set_text (GTK_LABEL (pp->data3[z]), cur_value);
 	if (str)
@@ -537,6 +618,7 @@ draw3_popdwon (gchar *cur_value, guint pos)
 	gtk_widget_show (pp->eventbox31[z]);
 	gtk_widget_show (pp->data3[z]);
 	gtk_widget_hide (pp->sbutton[z]);
+	gtk_widget_hide (pp->dialog);
 	/*						gtk_widget_grab_focus (pp->button);*/
 }
 
@@ -551,12 +633,12 @@ draw3_popdwon (gchar *cur_value, guint pos)
  * pos 为第几个3级菜单
  */
 
-static void draw3_pressed(void (*fun)(GtkSpinButton*, gpointer),const gchar *unit, 
+static void draw3_pressed (void (*fun)(GtkSpinButton*, gpointer),const gchar *unit, 
 		gfloat cur_value, gfloat lower, gfloat upper, gfloat step, guint digit, gpointer p, guint pos)
 {
 	gint  x, y, z;       /* xyz 分别为123级菜单位置 */
 	gchar *str = NULL;
-	GtkAdjustment *adj;		/*  */
+//	GtkAdjustment *adj;		/*  */
 
 	x = pp->pos;
 	y = pp->pos1[x];
@@ -581,11 +663,14 @@ static void draw3_pressed(void (*fun)(GtkSpinButton*, gpointer),const gchar *uni
 	//	gtk_widget_modify_bg (pp->eventbox30[z], GTK_STATE_NORMAL, &color_button0);
 	update_widget_bg(pp->eventbox30[z], backpic[6]);
 	widget_window_class->key_press_event = window_keypress_event_orig;
-	g_signal_connect (G_OBJECT(pp->sbutton[z]), "value-changed", G_CALLBACK(fun), (gpointer) (pp));
+	/* 一个信号能对应多个回调函数，所以先把对应的回调函数取消 */
+	if (g_signal_handler_is_connected (G_OBJECT (pp->sbutton[z]), pp->signal_id))
+		g_signal_handler_disconnect (G_OBJECT (pp->sbutton[z]), pp->signal_id);
+	pp->signal_id = g_signal_connect (G_OBJECT(pp->sbutton[z]), "value-changed", G_CALLBACK(fun), (gpointer) (pp));
 
 	/* 设置值的范围 */
-	adj = gtk_spin_button_get_adjustment (GTK_SPIN_BUTTON (pp->sbutton[z]));
-	gtk_adjustment_configure (adj, cur_value, lower, upper, step , 10.0, 0.0);
+	pp->adj = gtk_spin_button_get_adjustment (GTK_SPIN_BUTTON (pp->sbutton[z]));
+	gtk_adjustment_configure (pp->adj, cur_value, lower, upper, step , 10.0, 0.0);
 	gtk_spin_button_set_digits (GTK_SPIN_BUTTON (pp->sbutton[z]), digit);
 
 	/* 显示和隐藏控件 */
@@ -595,40 +680,13 @@ static void draw3_pressed(void (*fun)(GtkSpinButton*, gpointer),const gchar *uni
 	gtk_widget_grab_focus (pp->sbutton[z]);
 
 	/* 设置scale */
-	gtk_range_set_adjustment (GTK_RANGE (pp->vscale), adj);
+	gtk_range_set_adjustment (GTK_RANGE (pp->vscale), pp->adj);
 	gtk_widget_set_size_request (GTK_WIDGET(pp->vscale), 30, 365);
 	gtk_range_set_inverted (GTK_RANGE (pp->vscale), TRUE);
 	gtk_scale_set_draw_value (GTK_SCALE (pp->vscale), FALSE);
 //	gtk_box_pack_start (GTK_BOX (pp->vscalebox), pp->vscale, TRUE, TRUE, 0);
 
 	gtk_widget_show (pp->vscalebox);
-
-	if (str)
-		g_free(str);
-}
-
-void draw3_pressed1(gfloat step, guint digit)
-{
-	gint  x, y, z;       /* xyz 分别为123级菜单位置 */
-	gchar *str = NULL;
-
-	x = pp->pos;
-	y = pp->pos1[x];
-	z = pp->pos2[x][y];
-
-	switch (digit)
-	{
-		case 0:
-			str = g_strdup_printf ("%s\n(dB) Δ%0.0f", con2_p[x][y][z], step);			break;
-		case 1:
-			str = g_strdup_printf ("%s\n(dB) Δ%0.1f", con2_p[x][y][z], step);			break;
-		case 2:
-			str = g_strdup_printf ("%s\n(dB) Δ%0.2f", con2_p[x][y][z], step);			break;
-		case 3:
-			str = g_strdup_printf ("%s\n(dB) Δ%0.3f", con2_p[x][y][z], step);			break;
-		default:break;
-	}
-	gtk_label_set_text (GTK_LABEL (pp->label3[z]), str);
 
 	if (str)
 		g_free(str);
@@ -674,7 +732,7 @@ static void draw3_stop(gfloat cur_value, const gchar *unit,  guint digit, guint 
 	/*	gtk_label_set_text (GTK_LABEL (pp->label[1]), str);*/
 	if (str)
 		g_free(str);
-//	widget_window_class->key_press_event = my_keypress_event;
+	widget_window_class->key_press_event = my_keypress_event;
 	/* 显示和隐藏控件 */
 	gtk_widget_show (pp->eventbox30[z]);
 	gtk_widget_show (pp->eventbox31[z]);
@@ -805,7 +863,7 @@ void draw3_data0(gpointer p)
 		case 1:
 			switch (pp->pos1[1])
 			{
-				case 0: /* 增益 Gain 100 */
+				case 0: /* 增益 Gain P100 */
 
 					/* 当前步进 */
 					switch (pp->p_tmp_config->db_reg)
@@ -839,7 +897,7 @@ void draw3_data0(gpointer p)
 					}
 					break;
 
-				case 1: /*发射 Pulser 110 */
+				case 1: /* 发射 Pulser P110 */
 					/* 当前步进 */
 					switch (pp->p_tmp_config->pulser_reg)
 					{
@@ -850,18 +908,18 @@ void draw3_data0(gpointer p)
 					}
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 					{
-						cur_value = pp->p_config->pulser;
+						cur_value = (gfloat) (pp->p_config->pulser);
 						lower = 1.0;
 						upper = 97.0;
 						step = tmpf;
 						digit = 0;
 						pos = 0;
-						unit = UNIT_TO;
+						unit = UNIT_TO;    /* 1 to n 这个范围需要计算出来 waiting */
 						draw3_pressed (data_110, units[unit], cur_value , lower, upper, step, digit, p, pos);
 					}
 					else 
 					{
-						cur_value = pp->p_config->pulser;
+						cur_value = (gfloat) (pp->p_config->pulser);
 						digit = 0;
 						pos = 0;
 						unit = UNIT_TO;
@@ -1522,7 +1580,6 @@ void draw3_data1(gpointer p)
 	gfloat tmpf;
 	gchar *str;
 	gint x, y;
-	GtkAdjustment *adj;
 
 	gfloat cur_value, lower, upper, step;
 	guint digit, pos, unit;
@@ -1579,7 +1636,7 @@ void draw3_data1(gpointer p)
 		case 1:
 			switch (pp->pos1[1])
 			{
-				case 0: /* start 扫描延时 101 */
+				case 0: /* start 扫描延时 P101 */
 					/* 当前步进 */
 					switch (pp->p_tmp_config->start_reg)
 					{
@@ -1655,14 +1712,12 @@ void draw3_data1(gpointer p)
 						draw3_stop (cur_value , units[unit], digit, pos);
 					}
 					break;
-				case 1: /* 收发模式 Tx/Rx Mode 111 */
+				case 1: /* 收发模式 Tx/Rx Mode P111 */
 
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
-					{
-						draw3_pop (NULL, set_menu_position1, "PE", tx_rx_mode, 3, 1);
-					}
+						draw3_pop_111 (1);
 					else 
-						draw3_popdwon ("PE", 1);
+						draw3_popdwon (tx_rx_mode_en1[pp->p_config->tx_rxmode], 1);
 
 					break;
 				case 2: /* UT Settings -> Receiver -> Filter  121 */
@@ -2479,7 +2534,7 @@ void draw3_data2(DRAW_UI_P p)
 		case 1:
 			switch (pp->pos1[1])
 			{
-				case 0: /* range范围 101 */
+				case 0: /* range范围 P102 */
 					/*当前步进*/
 					switch (p->p_tmp_config->range_reg)
 					{
@@ -3313,7 +3368,7 @@ void draw3_data3(DRAW_UI_P p)
 		case 1:
 			switch (pp->pos1[1])
 			{
-				case 0:/* wedge delay 103 */
+				case 0:/* wedge delay P103 */
 					/* 当前步进 */
 					switch (pp->p_tmp_config->wedge_delay_reg)
 					{
@@ -4016,7 +4071,7 @@ void draw3_data4(DRAW_UI_P p)
 		case 1:
 			switch (pp->pos1[1])
 			{
-				case 0:/* velocity 声速 104 */
+				case 0:/* velocity 声速 P104 */
 					/* 当前步进 */
 					switch (pp->p_tmp_config->velocity_reg)
 					{
@@ -4541,7 +4596,7 @@ void draw3_data5(DRAW_UI_P p)
 		case 1:
 			switch (pp->pos1[1])
 			{
-				case 0: /* NULL 空 */
+				case 0: /* NULL 空 P105*/
 					break;
 				case 1: /* 重复频率 PRF  115  */
 
@@ -5118,7 +5173,6 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 	gint i;
 	gchar buf[128];
 	GtkWidget *drawing_area;
-	GtkWidget *drawing_area1;
 	GtkWidget *window = p->window;
 	pp->pos_pos = MENU3_STOP;
 	pp->menu2_qty = 5;
@@ -5165,8 +5219,6 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 		gtk_container_set_border_width( GTK_CONTAINER(pp->event[i]), 0);     /*设置边框大小，这个地方使用图片*/
 		gtk_widget_modify_bg (pp->event[i], GTK_STATE_NORMAL, &color_button1);
 	}
-
-	p->view			= gtk_text_view_new ();
 
 	widget_window_class = GTK_WIDGET_GET_CLASS (((GtkObject*)(pp->window))); 
 	// 取代原來的處理函式
@@ -5402,7 +5454,7 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 
 
 
-
+	/* 弹出菜单 是否透明 waiting */
 	pp->dialog = gtk_dialog_new_with_buttons("TanDenghua", GTK_WINDOW (pp->window),
 			/*			GTK_DIALOG_MODAL| */  /* 独占窗口 */
 			// GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT |
@@ -5410,23 +5462,34 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 			GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
 
 	widget_window_class1 = GTK_WIDGET_GET_CLASS (((GtkObject*)(pp->dialog))); 
-	// 取代原來的處理函式
 	widget_window_class1->key_press_event =	my_keypress_event;
 
 	gtk_window_set_decorated (GTK_WINDOW (pp->dialog), FALSE);			/*不可以装饰*/
-	gtk_container_set_border_width( GTK_CONTAINER (GTK_DIALOG(pp->dialog)->vbox), 0);     /*设置边框大小，这个地方使用图片*/
+	gtk_container_set_border_width( GTK_CONTAINER (GTK_DIALOG(pp->dialog)->vbox), 0);     /* */
 	gtk_widget_show (GTK_DIALOG(pp->dialog)->vbox);
 
+//	gtk_widget_show (pp->dialog);
+	gtk_widget_hide (GTK_DIALOG(pp->dialog)->action_area);
+
+
+
+
+
+
+
+	/* scale 快速调节数值 */
 	pp->button_add = gtk_button_new_with_label ("+");    /* 加减数值 */
+	g_signal_connect (pp->button_add, "clicked", 
+			G_CALLBACK(add_click), NULL);
 	pp->button_sub = gtk_button_new_with_label ("-");    /*  */
+	g_signal_connect (pp->button_sub, "clicked", 
+			G_CALLBACK(sub_click), NULL);
+
 	pp->vscale = gtk_vscale_new_with_range(1.0, 100.0, 1.0);
 
 	/* vscalebox */
 	pp->vscalebox = gtk_vbox_new (FALSE, 0);
-	//	gtk_widget_set_size_request (GTK_WIDGET(pp->vscalebox), 30, 400);
-	gtk_widget_set_size_request (GTK_WIDGET(pp->dialog), 30, 425);
 	gtk_widget_set_size_request (GTK_WIDGET(pp->vscalebox), 30, 425);
-//	gtk_box_pack_start (GTK_BOX (GTK_DIiLOG(pp->dialog)->vbox), pp->vscalebox, FALSE, FALSE, 0);
 	gtk_widget_show (pp->vscalebox);
 	gtk_box_pack_start (GTK_BOX (pp->vscalebox), pp->button_add, FALSE, FALSE, 0);
 	gtk_box_pack_start (GTK_BOX (pp->vscalebox), pp->vscale, FALSE, FALSE, 0);
@@ -5438,25 +5501,9 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 	gtk_widget_set_can_focus (pp->button_add, FALSE);
 	gtk_widget_set_can_focus (pp->vscale, FALSE);
 	gtk_widget_set_can_focus (pp->button_sub, FALSE);
-	gtk_widget_set_can_focus (pp->dialog, FALSE);
-
-	gtk_widget_modify_base (GTK_WIDGET (pp->dialog), GTK_STATE_NORMAL, &color_button0);
-	gtk_widget_modify_bg (GTK_WIDGET (pp->dialog), GTK_STATE_NORMAL, &color_button0);
-
-	gtk_window_move (GTK_WINDOW (pp->dialog), 650, 90);
-//	gtk_widget_show (pp->dialog);
-	gtk_widget_hide (GTK_DIALOG(pp->dialog)->action_area);
 
 	gtk_box_pack_start (GTK_BOX (p->hbox211), pp->vscalebox, FALSE, FALSE, 0);
-	/*
-	   drawing_area1 = gtk_drawing_area_new();
-	   gtk_widget_set_size_request(GTK_WIDGET(drawing_area1), 20, 460);
-	   gtk_box_pack_start (GTK_BOX (pp->vscalebox), drawing_area1, FALSE, FALSE, 0);
-	   p->col.red = 0x1111, p->col.green = 0x1111, p->col.blue = 0x1111;
-	   gtk_widget_modify_bg(drawing_area1, GTK_STATE_NORMAL, &(p->col));
-	   gtk_widget_show(drawing_area1);
 
-*/
 	for (i = 0; i < 6; i++)
 	{
 		gtk_box_pack_start (GTK_BOX (p->vbox22), p->vbox221[i], FALSE, FALSE, 0);

@@ -76,7 +76,7 @@ typedef	struct Config {
 	gfloat	start;			/* 扫描延时 以 μs 为单位 */
 	gfloat	range;			/* 显示范围 以 μs 为单位 */
 	gfloat	wedge_delay;	/* 楔款延时 以 μs 为单位 */
-	
+
 	/*发射*/
 	guchar	pulser;			/*  */
 	guchar	tx_rxmode;		/*  */
@@ -141,7 +141,7 @@ typedef	struct Config {
 
 	guchar	ut_unit;		/*检测单位 时间2 声程1  实际深度0 .*/
 	guint	color;			/**/
-	
+
 
 	/*选项*/
 	guchar	unit;			/* 0 mm 1 inch */
@@ -161,36 +161,36 @@ typedef	struct Config {
 	guint	max_thickness;                  /*Measurements->Thickness->max*/
 	guint	echo_qty;                       /*Measurements->Thickness->echo_qty*/
 
-        guint   color_start;                    /*Display -> Color -> Start*/
-        guint   color_end;                      /*Display -> Color -> end*/
-        guint   sizing_curves;                  /*Display -> overlay -> sizing curves*/
-        guint   overlay_gate;                   /*Display -> overlay -> gate*/
-        guint   overlay_cursor;                 /*Display -> overlay -> cursor*/
-        guint   overlay_overlay;                /*Display -> overlay -> overlay*/
+	guint   color_start;                    /*Display -> Color -> Start*/
+	guint   color_end;                      /*Display -> Color -> end*/
+	guint   sizing_curves;                  /*Display -> overlay -> sizing curves*/
+	guint   overlay_gate;                   /*Display -> overlay -> gate*/
+	guint   overlay_cursor;                 /*Display -> overlay -> cursor*/
+	guint   overlay_overlay;                /*Display -> overlay -> overlay*/
 
-        guint   part_thickness;                 /*Probe/Part -> Parts -> thickness*/
-        guint   auto_detect;                    /*Probe/Part -> select -> auto_detect*/
+	guint   part_thickness;                 /*Probe/Part -> Parts -> thickness*/
+	guint   auto_detect;                    /*Probe/Part -> select -> auto_detect*/
 
-        guint   connection_P;                   /*Focal_Law -> configuration -> connection P*/
-        guint   element_qty;                    /*Focal_Law -> aperture -> element qty*/
-        guint   first_element;                  /*Focal_Law -> aperture -> first element*/
-        guint   last_element;                   /*Focal_Law -> aperture -> last element*/
-        guint   element_step;                   /*Focal_Law -> aperture -> element step*/
-        guint   min_angle;                      /*Focal Law -> Beam -> Min_angle*/
-        guint   focus_depth;                    /*Focal Law -> Beam -> focus_depth*/
-        guint   scan_speed;                     /* Scan -> Inspection -> Scan speed*/
+	guint   connection_P;                   /*Focal_Law -> configuration -> connection P*/
+	guint   element_qty;                    /*Focal_Law -> aperture -> element qty*/
+	guint   first_element;                  /*Focal_Law -> aperture -> first element*/
+	guint   last_element;                   /*Focal_Law -> aperture -> last element*/
+	guint   element_step;                   /*Focal_Law -> aperture -> element step*/
+	guint   min_angle;                      /*Focal Law -> Beam -> Min_angle*/
+	guint   focus_depth;                    /*Focal Law -> Beam -> focus_depth*/
+	guint   scan_speed;                     /* Scan -> Inspection -> Scan speed*/
 
-        guint    scan_start;                    /* Scan -> Area -> Scan start*/
-        guint    scan_end;                      /* Scan -> Area -> Scan end*/
-        guint    scan_resolution;               /* Scan -> Area -> Scan resolution*/
-        guint    index_start;                   /* Scan -> Area -> index_start*/
-        guint    index_end;                     /* Scan -> Area -> index_end*/
-        guint    index_resolution;              /* Scan -> Area -> index_resolution*/
+	guint    scan_start;                    /* Scan -> Area -> Scan start*/
+	guint    scan_end;                      /* Scan -> Area -> Scan end*/
+	guint    scan_resolution;               /* Scan -> Area -> Scan resolution*/
+	guint    index_start;                   /* Scan -> Area -> index_start*/
+	guint    index_end;                     /* Scan -> Area -> index_end*/
+	guint    index_resolution;              /* Scan -> Area -> index_resolution*/
 
-        guint    format_userfield;              /* File -> Format -> UserField*/
-        guint    format_probe;                  /* File -> Format -> probe*/
-        guint    format_setup;                  /* File -> Format -> setup*/
-        guint    format_note;                   /* File -> Format -> note*/
+	guint    format_userfield;              /* File -> Format -> UserField*/
+	guint    format_probe;                  /* File -> Format -> probe*/
+	guint    format_setup;                  /* File -> Format -> setup*/
+	guint    format_note;                   /* File -> Format -> note*/
 
 
 
@@ -227,35 +227,35 @@ typedef struct tmp_config {
 	guchar  max_thickness_reg;           /*max_thickness步进*/
 	guchar  echo_qty_reg;                /*echo_qty步进*/
 
-        guchar   color_start_reg;                   /*Display -> Color -> Start步进*/
-        guchar   color_end_reg;                   /*Display -> Color -> end步进*/
-        guchar   part_thickness_reg;                   /*Probe/Part -> parts -> thickness步进*/
-        guchar   diameter_reg;                   /*Probe/Part -> parts -> diameter步进*/
+	guchar   color_start_reg;                   /*Display -> Color -> Start步进*/
+	guchar   color_end_reg;                   /*Display -> Color -> end步进*/
+	guchar   part_thickness_reg;                   /*Probe/Part -> parts -> thickness步进*/
+	guchar   diameter_reg;                   /*Probe/Part -> parts -> diameter步进*/
 
-        guchar   connection_P_reg;                  /*Focal_Law -> configuration -> connection P*/
+	guchar   connection_P_reg;                  /*Focal_Law -> configuration -> connection P*/
 
-        guchar   element_qty_reg;                  /*Focal_Law -> aperture -> element qty*/
-        guchar   first_element_reg;                  /*Focal_Law -> aperture -> first element*/
-        guchar   last_element_reg;                  /*Focal_Law -> aperture -> last_element*/
-        guchar   element_step_reg;                  /*Focal_Law -> aperture -> element_step*/
+	guchar   element_qty_reg;                  /*Focal_Law -> aperture -> element qty*/
+	guchar   first_element_reg;                  /*Focal_Law -> aperture -> first element*/
+	guchar   last_element_reg;                  /*Focal_Law -> aperture -> last_element*/
+	guchar   element_step_reg;                  /*Focal_Law -> aperture -> element_step*/
 
 
-        guchar   min_angle_reg;                      /*Focal Law -> Beam -> Min_angle*/
-        guchar   max_angle_reg;                      /*Focal Law -> Beam -> Max_angle*/
-        guchar   focus_depth_reg;                    /*Focal Law -> Beam -> focus_depth*/
-        guchar   angle_step_reg;                     /*Focal_Law -> Beam -> angle_step*/
+	guchar   min_angle_reg;                      /*Focal Law -> Beam -> Min_angle*/
+	guchar   max_angle_reg;                      /*Focal Law -> Beam -> Max_angle*/
+	guchar   focus_depth_reg;                    /*Focal Law -> Beam -> focus_depth*/
+	guchar   angle_step_reg;                     /*Focal_Law -> Beam -> angle_step*/
 
-        guchar    scan_speed_reg;                      /* Scan -> Inspection -> Scan speed*/
+	guchar    scan_speed_reg;                      /* Scan -> Inspection -> Scan speed*/
 
-        guchar    scan_start_reg;                      /* Scan -> Area -> Scan start*/
-        guchar    scan_end_reg;                        /* Scan -> Area -> Scan end*/
-        guchar    scan_resolution_reg;                 /* Scan -> Area -> Scan resolution*/
+	guchar    scan_start_reg;                      /* Scan -> Area -> Scan start*/
+	guchar    scan_end_reg;                        /* Scan -> Area -> Scan end*/
+	guchar    scan_resolution_reg;                 /* Scan -> Area -> Scan resolution*/
 
-        guchar    index_start_reg;                      /* Scan -> Area -> index_start*/
-        guchar    index_end_reg;                            /* Scan -> Area -> index_end*/
-        guchar    index_resolution_reg;                     /* Scan -> Area -> index_resolution*/
+	guchar    index_start_reg;                      /* Scan -> Area -> index_start*/
+	guchar    index_end_reg;                            /* Scan -> Area -> index_end*/
+	guchar    index_resolution_reg;                     /* Scan -> Area -> index_resolution*/
 
-        guchar    bright_reg;                          /*preferences -> pref. -> bright*/
+	guchar    bright_reg;                          /*preferences -> pref. -> bright*/
 
 
 	gint	fd_config;
@@ -293,7 +293,7 @@ typedef struct Draw_interface {
 	GtkWidget		*vbox1111[3];
 	GtkWidget		*hbox112;
 
-	
+
 	GtkWidget		*hbox2;
 	GtkWidget		*vbox21;		
 	GtkWidget		*hbox211;		/*扫描数据显示*/
@@ -309,7 +309,6 @@ typedef struct Draw_interface {
 	/*menubar menu menuitem_main 可以不用放在这里*/
 	GtkWidget	*event[20];	/*测量信息等的显示*/
 	GtkWidget	*label[20];	/*测量信息等的显示*/
-	GtkWidget		*view;			/*把buffer放在这个里面*/
 
 	GtkWidget		*menubar;			/* 一级菜单 */
 	GtkWidget		*menu;				/* 一级菜单 */
@@ -325,13 +324,10 @@ typedef struct Draw_interface {
 	GtkWidget		*label3[6];         /* data 是lable   */
 	GtkWidget		*data3[6];			/* */
 	GtkWidget		*eventbox32[6];     /* */
-//	GtkWidget		*entry3[6];
+	//	GtkWidget		*entry3[6];
 	GtkWidget		*sbutton[6];
 	GtkWidget		*button;
-	GtkWidget		*vscalebox;
-	GtkWidget		*bigscalebox;
-	GtkWidget		*vscale;
-
+		/* waiting for delete*/
 	GtkWidget		*menu3;
 	GtkWidget		*menu_bar3;
 	GtkWidget		*root_menu3;
@@ -340,16 +336,25 @@ typedef struct Draw_interface {
 	gint			xx;
 	GtkWidget		*window;
 	GtkWidget		*spinbutton;
+
 	GtkWidget		*dialog;
+	GtkWidget		*popbox;
+	GtkWidget		*popbutton[30];
+	/* scale 快速调节数值 */
 	GtkWidget		*button_add;
 	GtkWidget		*button_sub;
+	GtkWidget		*vscalebox;
+	GtkWidget		*vscale;
+
 	GtkWidget		*window2;
 	CONFIG_P		p_config;			/**/
 	TMP_CONFIG_P	p_tmp_config;		/**/
+	gulong			signal_id;
 
+	
 	guchar			mark3;
 	guchar			markreturn;
-//	guchar			mark3;
+	//	guchar			mark3;
 } DRAW_UI, *DRAW_UI_P;
 
 
@@ -376,5 +381,6 @@ typedef struct Draw_interface {
 #define UNIT_MS 	9
 #define UNIT_MM_S 	10
 #define UNIT_TO1 	11
+
 
 #endif
