@@ -214,32 +214,42 @@ void set_menu_position5_445(GtkMenu *menu, gint *x, gint *y, gboolean *push_in, 
 
 /* 设置控件的背景图片 */
 void update_widget_bg(GtkWidget *widget, const gchar *img_file)
-{      
-	GtkStyle *style;    
-	GdkPixbuf *pixbuf;      
-	GdkPixmap *pixmap;    
-	gint width, height;   
+{    
+    GtkStyle *style;   
+    GdkPixmap *pixmap; 
+    cairo_surface_t *image;
+    cairo_t *cr;
 
-	pixbuf = gdk_pixbuf_new_from_file(img_file, NULL);   
-	width = gdk_pixbuf_get_width(pixbuf);  
-	height = gdk_pixbuf_get_height(pixbuf);   
-	pixmap = gdk_pixmap_new(NULL, width, height, 24);  
-	gdk_pixbuf_render_pixmap_and_mask(pixbuf, &pixmap, NULL, 0);
-	style = gtk_style_copy(GTK_WIDGET (widget)->style);   
+    gint width, height;  
 
-	if (style->bg_pixmap[GTK_STATE_NORMAL])       
-		g_object_unref(style->bg_pixmap[GTK_STATE_NORMAL]);   
+    image = cairo_image_surface_create_from_png(img_file);
+    width = cairo_image_surface_get_width(image);
+    height = cairo_image_surface_get_height(image);
+    pixmap = gdk_pixmap_new(NULL, width, height, 24); 
 
-	style->bg_pixmap[GTK_STATE_NORMAL] = g_object_ref(pixmap);   
+    cr = gdk_cairo_create (pixmap);
+    cairo_set_source_surface(cr, image, 0, 0);
+    cairo_paint(cr);
+
+    style = gtk_style_copy( widget->style);  
+
+    if (style->bg_pixmap[GTK_STATE_NORMAL])      
+        g_object_unref(style->bg_pixmap[GTK_STATE_NORMAL]);  
+
+    style->bg_pixmap[GTK_STATE_NORMAL] = (pixmap);  
 /**
-	style->bg_pixmap[GTK_STATE_ACTIVE] = g_object_ref(pixmap);
-	style->bg_pixmap[GTK_STATE_PRELIGHT] = g_object_ref(pixmap);
-	style->bg_pixmap[GTK_STATE_SELECTED] = g_object_ref(pixmap);
-	style->bg_pixmap[GTK_STATE_INSENSITIVE] = g_object_ref(pixmap);
+    style->bg_pixmap[GTK_STATE_ACTIVE] = g_object_ref(pixmap);
+    style->bg_pixmap[GTK_STATE_PRELIGHT] = g_object_ref(pixmap);
+    style->bg_pixmap[GTK_STATE_SELECTED] = g_object_ref(pixmap);
+    style->bg_pixmap[GTK_STATE_INSENSITIVE] = g_object_ref(pixmap);
 **/
-	gtk_widget_set_style(GTK_WIDGET (widget), style);
-	g_object_unref(style);
+    gtk_widget_set_style( widget, style);
+
+    g_object_unref(style);
+    cairo_destroy(cr);
+    cairo_surface_destroy(image);
 }
+
 
 void add_click (GtkButton *button, gpointer data)
 {
