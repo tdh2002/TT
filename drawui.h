@@ -15,6 +15,7 @@ extern GtkWidgetClass *widget_window_class;
 extern DRAW_UI_P pp;					
 
 extern guint address[];
+extern gfloat get_freq ();
 
 extern void change_language();										/* 选择语言 */
 extern void draw_2_menu(gint pa);									/* 更新二级菜单 */
@@ -31,7 +32,9 @@ extern void data_103 (GtkSpinButton *spinbutton, gpointer data);	/* 103 wedget d
 extern void data_104 (GtkSpinButton *spinbutton, gpointer data);	/* 104 velocity 声速 */
 
 extern void data_110 (GtkSpinButton *spinbutton, gpointer data);	/* 110 pulser 脉冲发射器 */
-extern void data_111 (GtkButton *button, gpointer data);            /* 111 Tx/Rx Mode 收发模式 */
+extern void data_111 (GtkMenuItem *menuitem, gpointer data);            /* 111 Tx/Rx Mode 收发模式 */
+extern void data_1121 (GtkSpinButton *spinbutton, gpointer data);       /* 112 freq 频率 */
+extern void data_112 (GtkMenuItem *menuitem, gpointer data);            /* 112 Freq 频率 */
 
 extern void data_125 (GtkSpinButton *spinbutton, gpointer data);	/*125 */
 

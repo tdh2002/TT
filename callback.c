@@ -14,6 +14,8 @@ gboolean foo (GtkAccelGroup *accel_group, GObject *acceleratable,
 gboolean key_press_handler (GtkWidget* pWidget,
 		GdkEventKey* pEvent, gpointer data);
 
+gfloat get_freq ();
+
 gboolean data_function0 (GtkWidget *widget,	GdkEventButton *event,	gpointer       data);
 gboolean data_function1 (GtkWidget *widget,	GdkEventButton *event,	gpointer       data);
 gboolean data_function2 (GtkWidget *widget,	GdkEventButton *event,	gpointer       data);
@@ -28,7 +30,9 @@ void data_103 (GtkSpinButton *spinbutton, gpointer data);
 void data_104 (GtkSpinButton *spinbutton, gpointer data);
 
 void data_110 (GtkSpinButton *spinbutton, gpointer data);
-void data_111 (GtkButton *button, gpointer data);            /* 111 Tx/Rx Mode 收发模式 */
+void data_111 (GtkMenuItem *menuitem, gpointer data);            /* 111 Tx/Rx Mode 收发模式 */
+void data_1121 (GtkSpinButton *spinbutton, gpointer data);       /* 112 freq 频率 */
+void data_112 (GtkMenuItem *menuitem, gpointer data);            /* 112 Freq 频率 */
 
 void data_125 (GtkSpinButton *spinbutton, gpointer data);
 
@@ -113,6 +117,30 @@ gboolean (*eventbox2_fun[5])(GtkWidget *widget, GdkEventButton *event, gpointer 
 	eventbox2_function3,	eventbox2_function4
 };
 
+gfloat get_freq ()
+{
+	if (CFG(frequence) <99)
+	{
+		switch (CFG(frequence))
+		{
+			case 0:return 1000.0;break;
+			case 1:return 1500.0;break;
+			case 2:return 2000.0;break;
+			case 3:return 2250.0;break;
+			case 4:return 3500.0;break;
+			case 5:return 4000.0;break;
+			case 6:return 5000.0;break;
+			case 7:return 7500.0;break;
+			case 8:return 10000.0;break;
+			case 9:return 12000.0;break;
+			case 10:return 15000.0;break;
+			case 11:return 20000.0;break;
+			default:break;
+		}
+	}
+	return CFG(frequence);
+}
+
 gint cal_menu3_qty()
 {
 	switch (pp->pos)
@@ -189,12 +217,9 @@ static inline void data_process(guchar* data, guint pa)
 /* 第一个数值按键 快捷键是F12  */
 void b3_fun0(gpointer p)
 {
-	gfloat tmpf;
-	guint temp = GPOINTER_TO_UINT (p);
 	/* 之前的位置 */
 	pp->pos_last2 = pp->pos2[pp->pos][pp->pos1[pp->pos]];
 	pp->pos2[pp->pos][pp->pos1[pp->pos]] = 0;
-	g_print("%d\n", temp);
 /*	pp->pos_pos = MENU3_PRESSED;*/
 	/*处理微调*/
 	if ((pp->pos_last2 == pp->pos2[pp->pos][pp->pos1[pp->pos]]) && 
@@ -208,7 +233,6 @@ void b3_fun0(gpointer p)
 				   switch (pp->pos1[1])
 				   {
 					   case 0: data_process (&(pp->p_tmp_config->db_reg), 4);	
-							   g_print("db comes%d\n", temp);
 							   break; /* 100增益 5种步进 */
 					   case 1: data_process (&(pp->p_tmp_config->pulser_reg), 2);		break; /* 110pulser发射 3种步进 */
 					   case 2: data_process (&(pp->p_tmp_config->receiver_reg), 2);		break; /* 120receiver接收 3种步进 */
@@ -410,7 +434,10 @@ void b3_fun2(gpointer p)
 				   switch (pp->pos1[1])
 				   {
 					   case 0:data_process(&(pp->p_tmp_config->range_reg), 2); break; /* 102range范围 3种步进 */
-					   case 1: /* 弹出一个选择菜单,选择 */ break; /* 112 频率 Freq.  */
+					   case 1:
+							  if (pp->mark_pop_change)
+								  data_process(&(pp->p_tmp_config->frequence_reg), 2); /* 112 频率范围 3种步进 */
+							   break; /* 112 频率 Freq.  */
 					   case 2: /* 弹出一个选择菜单,选择 */ break; /* 122 检波 Recitify  */
 					   case 3: /* Angle. (deg) */ break; /* 132 角度 不能更改 */
 					   case 4: pp->p_config->db_ref = !pp->p_config->db_ref;break;/* dB Ref. 开关 */
@@ -763,26 +790,21 @@ void b3_fun5(gpointer p)
 static void handler_key(guint keyval)
 {
 	guchar tmp = pp->pos_pos;
-	g_print("%x  \n", keyval);
 	switch (keyval) 
 	{
 		case GDK_Escape:
 			switch (pp->pos_pos)
 			{
 				case MENU2_STOP:
-					g_print("menu2stop\n");
 					break;
 				case MENU2_PRESSED:
 					pp->pos_pos = MENU2_STOP;
-					g_print("menu2pressed\n");
 					break;
 				case MENU3_STOP:
 					pp->pos_pos = MENU2_STOP;
-					g_print("menu3stop\n");
 					break;
 				case MENU3_PRESSED:
 					pp->pos_pos = MENU3_STOP;
-					g_print("menu3pressed\n");
 					break;
 				default:break;
 			}
@@ -916,12 +938,13 @@ gboolean data_function5 (GtkWidget *widget,	GdkEventButton *event,	gpointer     
 void data_100 (GtkSpinButton *spinbutton, gpointer data) /*增益Gain*/
 {
 	DRAW_UI_P p = (DRAW_UI_P)(data);
-	gchar *str;
+	gchar *markup;
 	p->p_config->gain = gtk_spin_button_get_value (spinbutton);
 
-	str = g_strdup_printf ("%0.1f", pp->p_config->gain) ;
-	gtk_label_set_text (GTK_LABEL (pp->label[1]), str);
-	g_free(str);
+        markup=g_markup_printf_escaped("<span foreground='white' font_desc='24'>%0.1f</span>",p->p_config->gain);
+        gtk_label_set_markup (GTK_LABEL(pp->label[1]),markup);
+
+	g_free(markup);
 	/*发送增益给硬件*/
 }
 
@@ -969,19 +992,46 @@ void data_104 (GtkSpinButton *spinbutton, gpointer data) /*声速 Velocity */
 void data_110 (GtkSpinButton *spinbutton, gpointer data) /*声速 Velocity */
 {
 	DRAW_UI_P p = (DRAW_UI_P)(data);
-	g_print("%f\n", gtk_spin_button_get_value (spinbutton));
 	p->p_config->pulser =  (guchar) (gtk_spin_button_get_value (spinbutton));
 
 	/*发送增益给硬件*/
 }
 
-void data_111 (GtkButton *button, gpointer data) /* 收发模式 Tx/Rx Mode */
+void data_111 (GtkMenuItem *menuitem, gpointer data) /* 收发模式 Tx/Rx Mode */
 {
 	pp->p_config->tx_rxmode = (gchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
 	/* 发送增益给硬件 */
 }
+
+void data_1121 (GtkSpinButton *spinbutton, gpointer data) /* 频率 Freq 数值改变 */
+{
+	DRAW_UI_P p = (DRAW_UI_P)(data);
+	p->p_config->frequence =  (gushort) ((gtk_spin_button_get_value (spinbutton)) * 1000.0);
+
+	/* 发送给硬件 */
+}
+
+
+void data_112 (GtkMenuItem *menuitem, gpointer data) /* 频率 Freq */
+{
+	guint temp = GPOINTER_TO_UINT (data);
+	if (temp != 12)
+	{
+		CFG(frequence) = (gushort) (GPOINTER_TO_UINT (data));
+		pp->pos_pos = MENU3_STOP;
+		draw_3_menu(0, NULL);
+	}
+	else
+	{
+		pp->mark_pop_change = 1;
+		pp->pos_pos = MENU3_PRESSED;
+		draw_3_menu(0, NULL);
+	}
+	/* 发送增益给硬件 */
+}
+
 
 void data_125 (GtkSpinButton *spinbutton, gpointer data) /*抑制 Reject */
 {

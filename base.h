@@ -25,6 +25,15 @@
 
 #define EVENT_METHOD(i, x) GTK_WIDGET_GET_CLASS(i)->x
 
+#define X86_DEPTH	24
+#define ARM_DEPTH	16
+
+#if X86
+#define TRUE_DEPTH	X86_DEPTH
+#elif ARM
+#define TRUE_DEPTH	ARM_DEPTH
+#endif
+
 extern GdkColor	color_black;
 extern GdkColor	color_white;
 extern GdkColor	color_yellow;
@@ -206,6 +215,7 @@ typedef struct tmp_config {
 	guchar	velocity_reg;		/* 声速(velocity) 步进 */
 
 	guchar	pulser_reg;			/* 脉冲发射pulser  步进 */
+	guchar	frequence_reg;		/* 频率 frequence 步进 */
 	guchar	receiver_reg;		/* 接收器receiver 步进 */
 	guchar	reject_reg;			/* 抑制reject  步进 */
 	guchar	scanoffset_reg;		/* scan offset  步进 */
@@ -352,9 +362,9 @@ typedef struct Draw_interface {
 	gulong			signal_id;
 
 	
-	guchar			mark3;
+	guchar			mark_pop_change;    /**/
 	guchar			markreturn;
-	//	guchar			mark3;
+	guchar			mark3;
 } DRAW_UI, *DRAW_UI_P;
 
 
@@ -382,5 +392,6 @@ typedef struct Draw_interface {
 #define UNIT_MM_S 	10
 #define UNIT_TO1 	11
 
+#define CFG(a)  (pp->p_config->a)
 
 #endif

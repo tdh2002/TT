@@ -28,6 +28,15 @@ GdkColor	color_button1= {0x0, 0x7100, 0x8200, 0xde00}; /*未选中*/
 GdkColor	color_button2= {0x0, 0x4c00, 0x5a00, 0xa100}; /*停留*/
 DRAW_UI_P	pp;					
 
+static void set_config ()
+{
+	CFG(part.Velocity) = 5920.0; 
+	CFG(gain)          = 10.0;
+	CFG(start)         = 0.0;
+	CFG(range)         = 10.0;
+	CFG(wedge_delay)  = 0;
+}
+
 /* You have to start somewhere */
 int main (int argc, char *argv[])
 {
@@ -78,6 +87,7 @@ int main (int argc, char *argv[])
 /*	write(p_ui->p_tmp_config->fd_config, (void*)(p_ui->p_config), sizeof(CONFIG));*/
 
 	pp = p_ui;
+	set_config();
 	init_ui(p_ui);
 	
 	gtk_widget_show (window);

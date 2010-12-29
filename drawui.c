@@ -131,7 +131,7 @@ void menuitem9_function(GtkMenuItem *menuitem, gpointer data);
 
 gint my_keypress_event(GtkWidget *widget, GdkEventKey *event)
 {
-	gpointer data;
+	gpointer data = NULL;
 	key_press_handler (widget, event, data);
 	return 0;
 }
@@ -222,12 +222,14 @@ void update_widget_bg(GtkWidget *widget, const gchar *img_file)
 
     gint width, height;  
 
+//	colormap = gdk_colormap_new (gdk_visual_get_system(), TRUE);
     image = cairo_image_surface_create_from_png(img_file);
     width = cairo_image_surface_get_width(image);
     height = cairo_image_surface_get_height(image);
-    pixmap = gdk_pixmap_new(NULL, width, height, 24); 
+    pixmap = gdk_pixmap_new(NULL, width, height, TRUE_DEPTH); 
+//	gdk_drawable_set_colormap (pixmap, colormap);
 
-    cr = gdk_cairo_create (pixmap);
+    cr = gdk_cairo_create (GDK_DRAWABLE (pixmap));
     cairo_set_source_surface(cr, image, 0, 0);
     cairo_paint(cr);
 
@@ -248,6 +250,7 @@ void update_widget_bg(GtkWidget *widget, const gchar *img_file)
     g_object_unref(style);
     cairo_destroy(cr);
     cairo_surface_destroy(image);
+//    g_object_unref(colormap);
 }
 
 
@@ -286,7 +289,6 @@ void menuitem0_function(GtkMenuItem *menuitem, gpointer data)
 	p->pos = 0;
 	pp->menu2_qty = 3;
 	// p->pos1 = 0, p->pos2 = 0;
-	g_print("pos = %d\n", p->pos);
 	draw_2_menu(1);
 	draw_3_menu(1, NULL);
 }
@@ -300,7 +302,6 @@ void menuitem1_function(GtkMenuItem *menuitem, gpointer data)
 	p->pos = 1;
 	pp->menu2_qty = 5;
 	//p->pos1 = 0, p->pos2 = 0;
-	g_print("pos = %d\n", p->pos);
 	draw_2_menu(1);
 	draw_3_menu(1, NULL);
 }
@@ -314,7 +315,6 @@ void menuitem2_function(GtkMenuItem *menuitem, gpointer data)
 	p->pos = 2;
 	pp->menu2_qty = 4;
 	//p->pos1 = 0, p->pos2 = 0;
-	g_print("pos = %d\n", p->pos);
 	draw_2_menu(1);
 	draw_3_menu(1, NULL);
 }
@@ -328,7 +328,6 @@ void menuitem3_function(GtkMenuItem *menuitem, gpointer data)
 	p->pos = 3;
 	pp->menu2_qty = 5;
 	//p->pos1 = 0, p->pos2 = 0;
-	g_print("pos = %d\n", p->pos);
 	draw_2_menu(1);
 	draw_3_menu(1, NULL);
 }
@@ -342,7 +341,6 @@ void menuitem4_function(GtkMenuItem *menuitem, gpointer data)
 	p->pos = 4;
 	pp->menu2_qty = 5;
 	//p->pos1 = 0, p->pos2 = 0;
-	g_print("pos = %d\n", p->pos);
 	draw_2_menu(1);
 	draw_3_menu(1, NULL);
 }
@@ -356,7 +354,6 @@ void menuitem5_function(GtkMenuItem *menuitem, gpointer data)
 	p->pos = 5;
 	pp->menu2_qty = 4;
 	//p->pos1 = 0, p->pos2 = 0;
-	g_print("pos = %d\n", p->pos);
 	draw_2_menu(1);
 	draw_3_menu(1, NULL);
 }
@@ -370,7 +367,6 @@ void menuitem6_function(GtkMenuItem *menuitem, gpointer data)
 	p->pos = 6;
 	pp->menu2_qty = 4;
 	// p->pos1 = 0, p->pos2 = 0;
-	g_print("pos = %d \n", p->pos);
 	draw_2_menu(1);
 	draw_3_menu(1, NULL);
 }
@@ -384,7 +380,6 @@ void menuitem7_function(GtkMenuItem *menuitem, gpointer data)
 	p->pos = 7;
 	pp->menu2_qty = 5;
 	// p->pos1 = 0, p->pos2 = 0;
-	g_print("pos = %d\n", p->pos);
 	draw_2_menu(1);
 	draw_3_menu(1, NULL);
 }
@@ -398,7 +393,6 @@ void menuitem8_function(GtkMenuItem *menuitem, gpointer data)
 	p->pos = 8;
 	pp->menu2_qty = 5;
 	// p->pos1 = 0, p->pos2 = 0;
-	g_print("pos = %d\n", p->pos);
 	draw_2_menu(1);
 	draw_3_menu(1, NULL);
 }
@@ -412,7 +406,6 @@ void menuitem9_function(GtkMenuItem *menuitem, gpointer data)
 	p->pos = 9;
 	pp->menu2_qty = 5;
 	// p->pos1 = 0, p->pos2 = 0;
-	g_print("pos = %d\n", p->pos);
 	draw_2_menu(1);
 	draw_3_menu(1, NULL);
 }
@@ -438,6 +431,8 @@ void draw_2_menu(gint pa)
 {
 	gint i;
 
+	if (pp->pos_pos != MENU3_PRESSED)
+		pp->mark_pop_change = 0;
 	for ( i = 0 ; i < 5 ; i++ )   /* 6个二级菜单 */
 	{
 		/* 
@@ -478,64 +473,70 @@ void draw_2_menu(gint pa)
 }
 
 /*
- * 处理 三级菜单弹出菜单的画图 好多啊-_-
- * 
- *
- *
+ * 处理 三级菜单弹出菜单的画图
+ * fun   为回调函数 
+ * set_menu_position 用来指定弹出菜单的位置
+ * cur_value 为菜单当前数值
+ * content 弹出菜单的字符串数组
+ * qty 多少个弹出菜单
+ * pos 这个菜单的位置
+ * pos_pos 弹出菜单选中的位置
  */
 
-static void draw3_pop_111 (guint pos)  /* p111 收发模式 */
+static void draw3_pop_tt (void (*fun)(GtkMenuItem*, gpointer),
+		void (* set_menu_position)(GtkMenu *, gint *, gint *, gboolean *, gpointer ),
+		const gchar *cur_value,
+		const gchar *content[], guint qty, gint pos, guint pop_pos)
 {
-	guint i;
+	gint i, x, y, z;
+	GtkMenu *menu;
 	gchar *str = NULL;
 
-	if (pp->popbox) 
+	x = pp->pos;
+	y = pp->pos1[x];
+	z = pos;
+
+	update_widget_bg(pp->eventbox30[z], backpic[6]);
+	for (i = 0; i < 30; i++) 
 	{
-		gtk_widget_destroy (pp->popbox);
-		pp->popbox = NULL;
-	}
-	pp->popbox = gtk_vbox_new (FALSE, 0);
-	gtk_box_pack_start (GTK_BOX (GTK_DIALOG (pp->dialog)->vbox), pp->popbox, FALSE, FALSE, 0);
-	
-	for (i = 0; i < 3; i++)
-	{
-		pp->popbutton[i] = gtk_button_new_with_label (tx_rx_mode[i]);
-		gtk_box_pack_start (GTK_BOX (pp->popbox), pp->popbutton[i], FALSE, FALSE, 0);
-		g_signal_connect (pp->popbutton[i], "clicked", G_CALLBACK(data_111), (GUINT_TO_POINTER (i)));
-		if (i != pp->p_config->tx_rxmode)
+		if (pp->menu_item3[i]) 
 		{
-			gtk_widget_modify_bg(pp->popbutton[i], GTK_STATE_NORMAL, &color_button1);
-			gtk_widget_modify_bg(pp->popbutton[i], GTK_STATE_PRELIGHT, &color_button2);
-			gtk_widget_modify_bg(pp->popbutton[i], GTK_STATE_ACTIVE, &color_button0);
+			gtk_widget_destroy(pp->menu_item3[i]);
+			pp->menu_item3[i] = NULL;
 		}
-		else
-		{
-			gtk_widget_modify_bg(pp->popbutton[i], GTK_STATE_NORMAL, &color_button0);
-			gtk_widget_modify_bg(pp->popbutton[i], GTK_STATE_PRELIGHT, &color_button0);
-			gtk_widget_modify_bg(pp->popbutton[i], GTK_STATE_ACTIVE, &color_button0);
-		}
-		gtk_widget_modify_fg( gtk_bin_get_child( GTK_BIN (pp->popbutton[i])), GTK_STATE_NORMAL, &color_white);
-/*		gtk_button_set_relief (GTK_BUTTON (pp->popbutton[i]), GTK_RELIEF_NORMAL);*/ /* 设置边框 */
-		/*按钮的突出显示是在 GTK+ 中通过捕捉 enter_notify_event
-		 * 信号来实现的。如果想使其失效，可以在自己的程序中建立一个按钮的 enter_notify_event
-		 * 信号的处理函数并使其返回值为 TRUE 即可。
-		 * */
+		else 
+			break;;
 	}
 
-	str = g_strdup_printf ("%s", con2_p[1][1][1]);
+	for (i = 0; i < qty; i++ )
+	{
+		pp->menu_item3[i] = gtk_menu_item_new_with_label(content[i]);
+		gtk_menu_shell_append (GTK_MENU_SHELL (pp->menu3), pp->menu_item3[i]);
+		g_signal_connect (pp->menu_item3[i], "activate",
+				G_CALLBACK(fun), (GUINT_TO_POINTER (i)));
+		gtk_widget_show(pp->menu_item3[i]);
+	}
+	gtk_menu_item_select (GTK_MENU_ITEM (pp->menu_item3[pop_pos]));
 
+	menu = GTK_MENU (pp->menu3);
+
+	gtk_menu_popup (menu, NULL, NULL, 
+			(GtkMenuPositionFunc)set_menu_position,
+			NULL,
+			0,
+			gtk_get_current_event_time());
+
+	str = g_strdup_printf ("%s", con2_p[x][y][z]);	
+	gtk_label_set_text (GTK_LABEL (pp->data3[pos]), cur_value);
 	gtk_label_set_text (GTK_LABEL (pp->label3[pos]), str);
-	update_widget_bg (pp->eventbox30[pos], backpic[6]);
-	gtk_widget_show (pp->eventbox31[pos]);
-	gtk_label_set_text (GTK_LABEL (pp->data3[pos]), tx_rx_mode_en1[pp->p_config->tx_rxmode]);
-	gtk_widget_show (pp->data3[pos]);
-
-	gtk_widget_show (pp->dialog);
-	gtk_window_move (GTK_WINDOW (pp->dialog), 520, 240);
-	gtk_widget_show_all (pp->popbox);
-
 	if (str)
 		g_free (str);
+	/* 显示和隐藏控件 */
+	gtk_widget_show (pp->eventbox30[pos]);
+	gtk_widget_show (pp->eventbox31[pos]);
+	gtk_widget_show (pp->data3[pos]);
+	gtk_widget_hide (pp->sbutton[pos]);
+
 	return ;
 }
 
@@ -553,6 +554,7 @@ static void draw3_pop (void (*fun)(GtkMenuItem*, gpointer),
 	y = pp->pos1[x];
 	z = pos;
 
+	update_widget_bg(pp->eventbox30[z], backpic[6]);
 	for (i = 0; i < 30; i++) 
 	{
 		if (pp->menu_item3[i]) 
@@ -594,7 +596,7 @@ static void draw3_pop (void (*fun)(GtkMenuItem*, gpointer),
 	return ;
 }
 
-static void draw3_popdwon (gchar *cur_value, guint pos)
+static void draw3_popdwon (const gchar *cur_value, guint pos)
 {
 	gint  x, y, z;       /* xyz 分别为123级菜单位置 */
 	gchar *str = NULL;
@@ -658,15 +660,15 @@ static void draw3_pressed (void (*fun)(GtkSpinButton*, gpointer),const gchar *un
 	switch (digit)
 	{
 		case 0:
-			str = g_strdup_printf ("%s\n(%s) Δ%0.0f", con2_p[x][y][z], unit, step);			break;
+			str = g_strdup_printf ("%s\n%s Δ%0.0f", con2_p[x][y][z], unit, step);			break;
 		case 1:
-			str = g_strdup_printf ("%s\n(%s) Δ%0.1f", con2_p[x][y][z], unit, step);			break;
+			str = g_strdup_printf ("%s\n%s Δ%0.1f", con2_p[x][y][z], unit, step);			break;
 		case 2:
-			str = g_strdup_printf ("%s\n(%s) Δ%0.2f", con2_p[x][y][z], unit, step);			break;
+			str = g_strdup_printf ("%s\n%s Δ%0.2f", con2_p[x][y][z], unit, step);			break;
 		case 3:
-			str = g_strdup_printf ("%s\n(%s) Δ%0.3f", con2_p[x][y][z], unit, step);			break;
+			str = g_strdup_printf ("%s\n%s Δ%0.3f", con2_p[x][y][z], unit, step);			break;
 		case 4:
-			str = g_strdup_printf ("%s\n(%s) Δ%0.4f", con2_p[x][y][z], unit, step);			break;
+			str = g_strdup_printf ("%s\n%s Δ%0.4f", con2_p[x][y][z], unit, step);			break;
 		default:break;
 	}
 	gtk_label_set_text (GTK_LABEL (pp->label3[z]), str);
@@ -711,7 +713,9 @@ static void draw3_stop(gfloat cur_value, const gchar *unit,  guint digit, guint 
 	y = pp->pos1[x];
 	z = pos;
 
-	str = g_strdup_printf ("%s\n(%s)", con2_p[x][y][z], unit);	
+	if (g_signal_handler_is_connected (G_OBJECT (pp->sbutton[z]), pp->signal_id))
+		g_signal_handler_disconnect (G_OBJECT (pp->sbutton[z]), pp->signal_id);
+	str = g_strdup_printf ("%s\n%s", con2_p[x][y][z], unit);	
 	gtk_label_set_text (GTK_LABEL (pp->label3[z]), str);
 	if ((CUR_POS == z) && (pp->pos_pos == MENU3_STOP))
 	{
@@ -1589,7 +1593,6 @@ void draw3_data1(gpointer p)
 	gchar temp[52];
 	gfloat tmpf;
 	gchar *str;
-	gint x, y;
 
 	gfloat cur_value, lower, upper, step;
 	guint digit, pos, unit;
@@ -1725,12 +1728,14 @@ void draw3_data1(gpointer p)
 				case 1: /* 收发模式 Tx/Rx Mode P111 */
 
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
-						draw3_pop_111 (1);
+						draw3_pop_tt (data_111, set_menu_position1, 
+								tx_rx_mode1[CFG(tx_rxmode)],
+								tx_rx_mode, 3, 1, CFG(tx_rxmode));
 					else 
-						draw3_popdwon (tx_rx_mode_en1[pp->p_config->tx_rxmode], 1);
+						draw3_popdwon (tx_rx_mode_en1[CFG(tx_rxmode)], 1);
 
 					break;
-				case 2: /* UT Settings -> Receiver -> Filter  121 */
+				case 2: /* UT Settings -> Receiver -> Filter  P121 */
 
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 					{
@@ -2514,7 +2519,6 @@ void draw3_data2(DRAW_UI_P p)
 	gchar temp[52];
 	gfloat tmpf;/**/
 	gchar *str;
-	gint x, y;
 
 	gfloat cur_value, lower, upper, step;
 	guint digit, pos, unit;
@@ -2622,14 +2626,58 @@ void draw3_data2(DRAW_UI_P p)
 						draw3_stop (cur_value , units[unit], digit, pos);
 					}
 					break;
-				case 1: /* Freq频带(Mhz)  112 */
+				case 1: /* Freq频带(Mhz)  P112 */
+					/*当前步进*/
+					switch (p->p_tmp_config->frequence_reg)
+					{
+						case 0:	tmpf = 0.01; break;
+						case 1:	tmpf = 0.1; break;
+						case 2:	tmpf = 1.0; break;
+						default:break;
+					}
 
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 					{
-						draw3_pop (NULL, set_menu_position2, "5", freq, 12, 2);
+						if (pp->mark_pop_change)
+						{
+							cur_value = CFG(frequence) / 1000.0;
+							lower =	1.0;
+							upper =	20.0;
+							step = tmpf;
+							digit = 2;
+							pos = 2;
+							unit = UNIT_NONE;
+							draw3_pressed (data_1121, units[unit], cur_value , lower, upper, step, digit, p, pos);
+						}
+//						draw3_pop (NULL, set_menu_position2, "5", freq, 12, 2);
+						else
+						{
+							if (CFG(frequence >99))
+							{
+								/* 更新当前增益值显示 */
+								str = g_strdup_printf ("%0.2f", pp->p_config->frequence / 1000.0);
+								draw3_pop_tt (data_112, set_menu_position2, 
+										str, freq, 13, 2, 12);
+								g_free(str);
+							}
+							else
+								draw3_pop_tt (data_112, set_menu_position2, 
+										freq[12], freq, 13, 2, CFG(frequence));
+						}
 					}
 					else 
-						draw3_popdwon ("5", 2);
+					{
+						if (CFG(frequence) < 99)
+							draw3_popdwon (freq[CFG(frequence)], 2);
+						else 
+						{
+							cur_value = CFG(frequence) / 1000.0;
+							unit = UNIT_NONE;
+							pos = 2;
+							digit = 2;
+							draw3_stop (cur_value , units[unit], digit, pos);
+						}
+					}
 					break;
 
 				case 2:/*Rectifier 122 */
@@ -3348,7 +3396,6 @@ void draw3_data3(DRAW_UI_P p)
 	gchar temp[52];
 	gfloat tmpf;/**/
 	gchar *str;
-	gint x, y;
 
 	gfloat cur_value, lower, upper, step;
 	guint digit, pos, unit;
@@ -4060,7 +4107,6 @@ void draw3_data4(DRAW_UI_P p)
 	gchar temp[52];
 	gfloat tmpf;/**/
 	gchar *str;
-	gint x, y;
 
 	gfloat cur_value, lower, upper, step;
 	guint digit, pos, unit;
@@ -5080,46 +5126,7 @@ void draw_3_menu(gint pa, gpointer p)
 		case 5:	draw3_data5(pp);break;
 		default:break;
 	}
-#if 0
-	/* 停留或者按下 颜色不一样 按下时候获取焦点*/
-	if (pp->pos_pos == MENU3_PRESSED)
-	{
-		gtk_widget_modify_bg (pp->eventbox30[pp->pos2[pp->pos][pp->pos1[pp->pos]]],
-				GTK_STATE_NORMAL, &color_button0);
-		gtk_widget_modify_bg (pp->eventbox31[pp->pos2[pp->pos][pp->pos1[pp->pos]]],
-				GTK_STATE_NORMAL, &color_button0);
-	}
-	else if (pp->pos_pos == MENU3_STOP) 
-	{
-		gtk_widget_modify_bg (pp->eventbox30[pp->pos2[pp->pos][pp->pos1[pp->pos]]],
-				GTK_STATE_NORMAL, &color_button2);
-		gtk_widget_modify_bg (pp->eventbox31[pp->pos2[pp->pos][pp->pos1[pp->pos]]],
-				GTK_STATE_NORMAL, &color_button2);
-		/*		gtk_widget_grab_focus (pp->button);*/
-		if (gtk_widget_get_visible(pp->window1) && 0)
-		{
-			gtk_widget_set_visible  (  (pp->window1), FALSE);
-		}
-		widget_window_class->key_press_event = my_keypress_event;
-	}
-	else
-	{
-		/*		gtk_widget_grab_focus (pp->button);*/
-		if (gtk_widget_get_visible(pp->window1) && 0)
-		{
-			gtk_widget_set_visible  (  (pp->window1), FALSE);
-		}
-		widget_window_class->key_press_event = my_keypress_event;
-	}
-
-#endif
 	return ;
-#if 0
-	g_object_set ( p->data[p->pos2[p->pos][p->pos1[p->pos]]],
-			0, "is-focus", TRUE,	NULL); 
-	g_object_set ( p->data[p->pos2[p->pos][p->pos1[p->pos]]],
-			0, "editable", FALSE, NULL); 
-#endif
 }
 
 
@@ -5187,6 +5194,7 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 	pp->pos_pos = MENU3_STOP;
 	pp->menu2_qty = 5;
 	GtkWidgetClass *widget_window_class1;
+	gchar *markup;
 
 	for (i = 0; i < 512; i++) 
 	{
@@ -5345,6 +5353,8 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 	pp->root_menu3 = gtk_menu_item_new_with_label ("TAN");
 
 	gtk_menu_item_set_submenu (GTK_MENU_ITEM (pp->root_menu3), pp->menu3);
+				g_signal_connect (pp->menu3, "key-press-event", 
+						G_CALLBACK(key_press_handler), NULL);
 
 	pp->menu_bar3 = gtk_menu_bar_new ();
 	gtk_menu_shell_append (GTK_MENU_SHELL (pp->menu_bar3) , pp->root_menu3);
@@ -5376,11 +5386,14 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 	gtk_box_pack_start (GTK_BOX (p->hbox111), pp->event[0], FALSE, FALSE, 0);
 	gtk_widget_set_size_request (GTK_WIDGET(pp->event[0]), 60, 45);
 	update_widget_bg(pp->event[0], backpic[3]);
-	gtk_label_set_text (GTK_LABEL (pp->label[0]), "Gain\n(dB)");      /* 增益单位以及标识 */
+	//gtk_label_set_text (GTK_LABEL (pp->label[0]), "Gain\n(dB)");      /* 增益单位以及标识 */
+        markup=g_markup_printf_escaped("<span foreground='white' font_desc='10'>Gain\n(dB)</span>");
+        gtk_label_set_markup (GTK_LABEL(pp->label[0]),markup);
 	gtk_box_pack_start (GTK_BOX (p->hbox111), pp->event[1], FALSE, FALSE, 0);
 	gtk_widget_set_size_request (GTK_WIDGET(pp->event[1]), 112, 45);  
 	update_widget_bg(pp->event[1], backpic[4]);
-	gtk_label_set_text (GTK_LABEL (pp->label[1]), " ");      /* 增益数值 */
+	markup = g_markup_printf_escaped ("<span foreground='white' font_desc='24'>%0.1f</span>",pp->p_config->gain);
+	gtk_label_set_markup (GTK_LABEL (pp->label[1]), markup);      /* 增益数值 */
 
 	/* 小状态栏  */
 	gtk_box_pack_start (GTK_BOX (p->hbox111), pp->vbox1111[0], FALSE, FALSE, 0);
@@ -5410,34 +5423,50 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 
 	/* 4个测量值显示 */
 	gtk_box_pack_start (GTK_BOX (p->hbox112), pp->event[8], FALSE, FALSE, 0);
-	gtk_label_set_text (GTK_LABEL (pp->label[8]), "%A\n(%)");
+	//gtk_label_set_text (GTK_LABEL (pp->label[8]), "%A\n(%)");
+        markup=g_markup_printf_escaped("<span foreground='white' font_desc='10'>%%A\n(%%)</span>");
+        gtk_label_set_markup (GTK_LABEL(pp->label[8]),markup);
 	gtk_widget_set_size_request (GTK_WIDGET(pp->event[8]), 60, 45);
 	update_widget_bg(pp->event[8], backpic[3]);
 	gtk_box_pack_start (GTK_BOX (p->hbox112), pp->event[9], FALSE, FALSE, 0);
+        markup=g_markup_printf_escaped("<span foreground='white' font_desc='24'>ND</span>");
+        gtk_label_set_markup (GTK_LABEL(pp->label[9]),markup);
 	gtk_widget_set_size_request (GTK_WIDGET(pp->event[9]), 112, 45);
 	update_widget_bg(pp->event[9], backpic[4]);
 
 	gtk_box_pack_start (GTK_BOX (p->hbox112), pp->event[10], FALSE, FALSE, 0);
-	gtk_label_set_text (GTK_LABEL (pp->label[10]), "%A\n(%)");
+	//gtk_label_set_text (GTK_LABEL (pp->label[10]), "%A\n(%)");
+        markup=g_markup_printf_escaped("<span foreground='white' font_desc='10'>DA^\n(mm)</span>");
+        gtk_label_set_markup (GTK_LABEL(pp->label[10]),markup);
 	gtk_widget_set_size_request (GTK_WIDGET(pp->event[10]), 60, 34);
 	update_widget_bg(pp->event[10], backpic[3]);
 	gtk_box_pack_start (GTK_BOX (p->hbox112), pp->event[11], FALSE, FALSE, 0);
+        markup=g_markup_printf_escaped("<span foreground='white' font_desc='24'>ND</span>");
+        gtk_label_set_markup (GTK_LABEL(pp->label[11]),markup);
 	gtk_widget_set_size_request (GTK_WIDGET(pp->event[11]), 112, 34);
 	update_widget_bg(pp->event[11], backpic[4]);
 
 	gtk_box_pack_start (GTK_BOX (p->hbox112), pp->event[12], FALSE, FALSE, 0);
-	gtk_label_set_text (GTK_LABEL (pp->label[12]), "%A\n(%)");
+	//gtk_label_set_text (GTK_LABEL (pp->label[12]), "%A\n(%)");
+        markup=g_markup_printf_escaped("<span foreground='white' font_desc='10'>PA^\n(mm)</span>");
+        gtk_label_set_markup (GTK_LABEL(pp->label[12]),markup);
 	gtk_widget_set_size_request (GTK_WIDGET(pp->event[12]), 60, 34);
 	update_widget_bg(pp->event[12], backpic[3]);
 	gtk_box_pack_start (GTK_BOX (p->hbox112), pp->event[13], FALSE, FALSE, 0);
+        markup=g_markup_printf_escaped("<span foreground='white' font_desc='24'>ND</span>");
+        gtk_label_set_markup (GTK_LABEL(pp->label[13]),markup);
 	gtk_widget_set_size_request (GTK_WIDGET(pp->event[13]), 112, 34);
 	update_widget_bg(pp->event[13], backpic[4]);
 
 	gtk_box_pack_start (GTK_BOX (p->hbox112), pp->event[14], FALSE, FALSE, 0);
-	gtk_label_set_text (GTK_LABEL (pp->label[14]), "%A\n(%)");
+	//gtk_label_set_text (GTK_LABEL (pp->label[14]), "%A\n(%)");
+        markup=g_markup_printf_escaped("<span foreground='white' font_desc='10'>SA^\n(mm)</span>");
+        gtk_label_set_markup (GTK_LABEL(pp->label[14]),markup);
 	gtk_widget_set_size_request (GTK_WIDGET(pp->event[14]), 60, 34);
 	update_widget_bg(pp->event[14], backpic[3]);
 	gtk_box_pack_start (GTK_BOX (p->hbox112), pp->event[15], FALSE, FALSE, 0);
+        markup=g_markup_printf_escaped("<span foreground='white' font_desc='24'>ND</span>");
+        gtk_label_set_markup (GTK_LABEL(pp->label[15]),markup);
 	gtk_widget_set_size_request (GTK_WIDGET(pp->event[15]), 112, 34);
 	update_widget_bg(pp->event[15], backpic[4]);
 
