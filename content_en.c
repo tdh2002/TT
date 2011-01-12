@@ -10,11 +10,11 @@ const gchar *content_en10[] = {
 	/* 一级菜单名称 */
 	" Wizard  ",	" UT Settings",		" Gate/Alarm  ",	" Measurements  ",
 	" Display  ",	" Probe/Part  ",	" Focal Law  ",		" Scan  ",
-	" File  "	,	" Prefenrences  "
+	" File  "	,	" Preferences  "
 		/**
 	"1 Wizard  ",	"2 UT Settings",	"3 Gate/Alarm  ",	"4 Measurements  ",
 	"5 Display  ",	"6 Probe/Part  ",	"7 Focal Law  ",	"8 Scan  ",
-	"9 File  "	,	"10 Prefenrences  "
+	"9 File  "	,	"10 Preferences  "
 	**/
 };
 
@@ -75,6 +75,7 @@ static const gchar *content_en29[] = {
 
 
 
+
 static const gchar *content_en200[] = {
 	/* 二级菜单第0页下的第0页三级菜单 */
 	"Back", "Start", NULL, NULL, NULL, NULL
@@ -87,7 +88,7 @@ static const gchar *content_en201[] = {
 
 static const gchar *content_en202[] = {
 	/* 二级菜单第0页下的第2页三级菜单 */
-	"Back", "Start", "Type", "Mode", "Clear Calib", NULL
+	"Back", "Start", "Type", "Mode", NULL, NULL
 };
 
 static const gchar *content_en203[] = {
@@ -109,7 +110,7 @@ static const gchar *content_en210[] = {
 
 static const gchar *content_en211[] = {
 	/* 二级菜单第1页下的第1页三级菜单 */
-	"Pulser" , "Tx/Rx mode", "Freq.(MHz)", "Voltage(V)", "PW(ns)" , "Max PRF"
+	"Pulser" , "Tx/Rx mode", "Freq.(MHz)", "Voltage(V)", "PW(ns)" , "PRF"
 };
 
 static const gchar *content_en212[] = {
@@ -203,12 +204,12 @@ static const gchar *content_en242[] = {
 
 static const gchar *content_en243[] = {
 	/* 二级菜单第4页下的第3页三级菜单 */
-	"  Select  ","  Start  ", "  End  ","  Load  ", NULL, NULL
+	"  Select  ","  Start  ", "  End  ","  Load  ", "Mode", NULL, "Contrast", "Brightness", "Min", "Max", "Mode"
 };
 
 static const gchar *content_en244[] = {
 	/* 二级菜单第4页下的第4页三级菜单 */
-	"  Scan  ","  Color  ", "  Envelope  ","  Source  ", "  Appearance  ", "  Overlay  "
+	"  Scan  ","  Color  ", "  Envelope  ","  Source  ", "  Appearance  ", "  Overlay  ", "Compression", "Optimum","Ratio 1:1","Imterpolation","Color","Orientation"
 };
 
 
@@ -354,8 +355,9 @@ static const gchar *content_en293[] = {
 static const gchar *content_en294[] = {
 	/* 二级菜单第9页下的第4页三级菜单 */
 	/*"  DHCP  ","  IP Address  ", "  Subnet Mask ","  Apply  ", "  Remote Pc  ", "  Connect  "*/
-        "  IP Address  ", "  Subnet Mask "
+        "  IP Address  ", "  Subnet Mask ",NULL,NULL,NULL,NULL
 };
+
 
 const gchar **content1_en[] = 
 {
@@ -373,6 +375,7 @@ static const gchar **content2_en6[] = {	content_en260,	content_en261,	content_en
 static const gchar **content2_en7[] = {	content_en270,	content_en271,	content_en272,	content_en273,	content_en274 };
 static const gchar **content2_en8[] = {	content_en280,	content_en281,	content_en282,	content_en283,	content_en284 };
 static const gchar **content2_en9[] = {	content_en290,	content_en291,	content_en292,	content_en293,	content_en294 };
+
 
 const gchar ***content2_en[] = 
 {
@@ -393,65 +396,82 @@ const gchar *calibration_mode_en[] = {"Velocity", "Wedge Delay", "Sensitivity", 
 const gchar *tx_rx_mode_en[] = {"PC Pitch-and-Catch", "PE Pulse-Echo", "TT Through-Transmission"};
 const gchar *tx_rx_mode_en1[] = {"PC", "PE", "TT"};
 const gchar *freq_en[] = {"1","1.5","2","2.25","3.5","4","5","7.5","10","12","15","20","UserDef"};
-const gchar *voltage_en[] = {"45 Low", "90 High"};
-const gchar *PW_en[] = {"Auto", "100.0", "Userdefine"};
-const gchar *PRF_en[] = {"Auto Max", "Max/2", "Optimum","60", "Userdefine"};
+const gchar *voltage_en[] = {"50 Low", "100 High"};
+const gchar *voltage_en1[] = {"50", "100"};
+const gchar *PW_en[] = {"Auto",  "UserDef"};
+const gchar *PRF_en[] = {"Auto Max", "Max/2", "Optimum","UserDef"};
 const gchar *filter_en[] = {"None  0.5-21.0 MHz", "Auto", "1 MHz", "1.5MHz", "2MHz", "2.25MHz", "4MHz", "5MHz", "7.5MHz", "10MHz", "12MHz", "15MHz", "20MHz", "HR", "HR 10 MHz"};
+const gchar *filter_en1[] = {"None", "Auto", "1 MHz", "1.5MHz", "2MHz", "2.25MHz", "4MHz", "5MHz", "7.5MHz", "10MHz", "12MHz", "15MHz", "20MHz", "HR", "HR 10 MHz"};
 const gchar *rectifier_en[] = {"RF", "HW+", "HW-", "FW", "FW"};
 const gchar *averaging_en[] = {"1","2","4","8","16"};
-const gchar *points_qty_en[] = {"Auto", "160", "320", "640", "Userdefine"};
-const gchar *sum_gain_en[] = {"Auto", "28.0", "Userdefine"};
+const gchar *points_qty_en[] = {"Auto", "160", "320", "640", "UserDef"};
+const gchar *sum_gain_en[] = {"Auto", "UserDef"};
 
 
 /*  2  */
 const gchar *gate_en[] = {"A", "B", "I"};
 const gchar *parameters_en[] = {"Position", "Mode"};
-const gchar *gate_alarm_en[] = {"1 [On]", "2","3","4","5","6","7","8","9","10","11","12","13","14","15","16"};
+      const gchar *synchro_en[] = {"Pulse", "I/"};
+      const gchar *measure_en[] = {"Peak(^)", "Edge(/)"};
+      const gchar *RF_en[] = {"Absolute", "Positive","Negative"};
+
+
+const gchar *gate_alarm_en[] = {"1", "2","3","4","5","6","7","8","9","10","11","12","13","14","15","16"};
 const gchar *groupA_en[] = {"1","2","3"};
 const gchar *conditionA_en[] = {"None","Gate A","Gate B","Gate I","Not Gate A","Not Gate B","Not Gate I",">Max.Thickness","<Min.Thickness"};
 const gchar *operator_en[] = {"AND","OR"};
 const gchar *groupB_en[] = {"1","2","3"};
 const gchar *conditionB_en[] = {"None","Gate A","Gate B","Gate I","Not Gate A","Not Gate B","Not Gate I",">Max.Thickness","<Min.Thickness"};
-const gchar *output_en[] = {"Output 1 [On]", "Output 2","Output 3", "Analog 1", "Analog 2"};
-const gchar *output_alarm_en[] = {"None", "All", "1 [On]", "2", "3", "4", "5", "6", "7", "8", "9","10","11","12","13","14","15","16 [On]","Multi"};
+const gchar *output_en[] = {"Output 1", "Output 2","Output 3", "Analog 1", "Analog 2"};
+const gchar *output_alarm_en[] = {"None", "All", "1", "2", "3", "4", "5", "6", "7", "8", "9","10","11","12","13","14","15","16"};
 const gchar *sound_en[] = {"Off  No Sound", "300Hz  Audio output at 300 Hz","600Hz  Audio output at 600 Hz","1000Hz  Audio output at 1000 Hz","5000Hz  Audio output at 5000 Hz"};
+const gchar *sound1_en[] = {"Off", "300Hz","600Hz","1000Hz","5000Hz"};
 const gchar *curves_mode_en[] = {"Setup", "Edit"};
 const gchar *curve_en[] = {"None","DAC","Linear DAC","TCG"};
 
 
 /*  3  */
 const gchar *list_en[] = {"1 Manual Weld 1: A%. DA^. PA^. SA^", "2 Auto. Weld 1: A%. DA^. ViA^. VsA^"};
+const gchar *list1_en[] = {"1", "2"};
 const gchar *field1_en[] = {"A%  Peak amplitude in gate A", "AdBA  Signal in gate minus gate level for gate A", "AdBr  Diff.between signal and reference in gate A","B%  Peak amplitude in gate B"};
+const gchar *field_en[] = {"A%", "AdBA", "AdBr","B%"};
 const gchar *selection_en[] = {"A-scan", "B-scan", "C-scan", "Strip Chart", "S-scan", "R and M", "Reference", "Measure", "Data"};
 const gchar *source_en[] = {"A^", "A^-I^", "A^-I/", "B^", "B^-I^", "B^-I/", "B^-A^", "I^", "I/"};
 
 
 /*  4  */
 const gchar *display_en[] = {"A  A-Scan", "B  B-Scan", "C  C-Scan", "S  S-Scan", "A-B  A-Scan B-Scan", "A-B-C  A-Scan B-Scan C-Scan", "A-B-S  A-Scan B-Scan S-Scan", "A-C-[C] A-Scan C-Scan [C-Scan]", "A-S-[C]  A-Scan S-Scan [C-Scan]", "PA-TOFD  PA-TOFD", "Strip Chart-[A]  Strip Chart[A-Scan]"};
+const gchar *displ_en[] = {"A", "B", "C", "S", "A-B", "A-B-C", "A-B-S", "A-C-[C]", "A-S-[C]", "PA-TOFD", "Strip Chart-[A]"};
 const gchar *group_en[] = {"All", "Current"};
 const gchar *utunit_en[] = {"Sound Path", "Time", "True Depth"};
 const gchar *grid_en[] = {"Blue", "Green", "Red", "Yellow", "Black", "Off"};
 const gchar *zoom_display_en[] = {"A-Scan", "B-Scan", "S-Scan", "Strip Chart", "Uncorrected C-Scan", "Off"};
 const gchar *select_en[] = {"Amplitude", "Rectification-TOFD", "Depth"};
+const gchar *color_mode_en[] = {"Exclusion", "Compression"};
 const gchar *scan_en[] = {"A-Scan", "B-Scan", "C-Scan", "S-Scan", "FFT", "Strip Chart"};
 const gchar *color_en[] = {"Blue", "Green", "Yellow", "Black", "White", "Red"};
 const gchar *envelope_en[] = {"None", "Infinite"};
 const gchar *properties_source_en[] = {"Normal", "Highest(%)", "Thinnest", "All Laws"};
 const gchar *appearance_en[] = {"Hollow", "Fill", "Hollow 2 Colors", "Fill 2 Colors"};
 const gchar *overlay_en[] = {"None", "Peak", "Reference"};
+const gchar *fft_color_en[] = {"Yellow", "Blue", "White","Black"};
+const gchar *orientation_en[] = {"Vertical", "Horizontal"};
 
 
 /*  5  */
 const gchar *group_mode_en[] = {"UT  Conventional Ultrasound", "PA  Phassed Array"};
+const gchar *group_mode1_en[] = {"UT", "PA"};
 const gchar *probe_select_en[] = {"Select Tx/Rx", "Defines"};
-const gchar *probe_skew_en[] = {"0.0", "90.0", "180.0", "270.0", "Userdefine"};
+const gchar *probe_skew_en[] = {"0.0", "90.0", "180.0", "270.0", "UserDef"};
 const gchar *geometry_en[] = {"Plate", "OD", "ID"};
 const gchar *material_en[] = {"AL OXIDE", "ALUMINUM", "BERYLIUM", "BRASS", "CADMIUM", "COPPER", "STEEL.MILD"};
 
 
 /*  6  */
 const gchar *law_config_en[] = {"Sectorial  Angular sector", "Linear  Linear sector", "Linear at 0  Linear sector with overlap", "Custom  Law file"};
+const gchar *law_config1_en[] = {"Sectorial", "Linear", "Linear at 0", "Custom"};
 const gchar *wave_type_en[] = {"LW  5890.0m/s", "SW  3240.0m/s"};
+const gchar *wave_type1_en[] = {"LW", "SW"};
 
 
 
@@ -464,7 +484,8 @@ const gchar *inspec_data_en[] = {"All A & C scans", "All C scans"};
 
 
 /*  8  */
-const gchar *file_storage_en[] = {"Storage Card   (Storage Card)", "Internal Memory  (User)" };
+const gchar *file_storage_en[] = {"Storage Card   \"\\Storage Card\"", "Internal Memory  \"\\User\"" };
+const gchar *file_storage1_en[] = {"Storage Card", "Internal Memory" };
 const gchar *save_mode_en[] = {"Inspection Data", "Indication Table", "Screen", "Report"};
 const gchar *template_en[] = {"Complete  (Standard)"};
 const gchar *paper_size_en[] = {"Letter", "Legal", "A4", "B4"};
