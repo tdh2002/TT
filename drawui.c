@@ -34,7 +34,6 @@ void draw_3_menu(gint pa, gpointer p);
 void init_ui(DRAW_UI_P p);				/* 初始化界面 */
 void draw_area_all();
 
-void draw3_pressed1(gfloat step, guint digit);
 /**/
 const gchar **con0_p	 = content_en10;
 const gchar ***con1_p	 = content1_en;
@@ -564,11 +563,11 @@ static void draw3_pop_tt (void (*fun)(GtkMenuItem*, gpointer),
 	gtk_widget_show (pp->eventbox31[pos]);
 	gtk_widget_show (pp->data3[pos]);
 	gtk_widget_hide (pp->sbutton[pos]);
-	gtk_widget_show (pp->vscalebox);
+	//	gtk_widget_show (pp->vscalebox);
 	gtk_widget_show (pp->scale_drawarea);
-	gtk_widget_hide (pp->button_add);
-	gtk_widget_hide (pp->button_sub);
-	gtk_widget_hide (pp->vscale);
+	//	gtk_widget_hide (pp->button_add);
+	//	gtk_widget_hide (pp->button_sub);
+	//	gtk_widget_hide (pp->vscale);
 
 
 	return ;
@@ -629,11 +628,11 @@ static void draw3_pop (void (*fun)(GtkMenuItem*, gpointer),
 	gtk_widget_show (pp->data3[pos]);
 	gtk_widget_hide (pp->sbutton[pos]);
 	//gtk_widget_hide (pp->vscalebox);
-	gtk_widget_show (pp->vscalebox);
+	//	gtk_widget_show (pp->vscalebox);
 	gtk_widget_show (pp->scale_drawarea);
-	gtk_widget_hide (pp->button_add);
-	gtk_widget_hide (pp->button_sub);
-	gtk_widget_hide (pp->vscale);
+	//	gtk_widget_hide (pp->button_add);
+	//	gtk_widget_hide (pp->button_sub);
+	//	gtk_widget_hide (pp->vscale);
 
 	return ;
 }
@@ -661,7 +660,11 @@ static void draw3_popdown (const gchar *cur_value, guint pos, guint big_menu)
 		gtk_widget_destroy (pp->popbox);
 		pp->popbox = NULL;
 	}
-	str = g_strdup_printf ("%s", con2_p[x][y][z]);	
+	if (big_menu)
+		str = g_strdup_printf ("\n\n%s", con2_p[x][y][z]);	
+	else
+		str = g_strdup_printf ("%s", con2_p[x][y][z]);	
+
 	gtk_label_set_text (GTK_LABEL (pp->label3[z]), str);
 	if ((CUR_POS == z) && (pp->pos_pos == MENU3_PRESSED))
 	{
@@ -699,16 +702,17 @@ static void draw3_popdown (const gchar *cur_value, guint pos, guint big_menu)
 	gtk_widget_show (pp->data3[z]);
 	gtk_widget_hide (pp->sbutton[z]);
 	gtk_widget_hide (pp->dialog);
-	gtk_widget_show (pp->vscalebox);
+	//	gtk_widget_show (pp->vscalebox);
 	gtk_widget_show (pp->scale_drawarea);
-	gtk_widget_hide (pp->button_add);
-	gtk_widget_hide (pp->button_sub);
-	gtk_widget_hide (pp->vscale);
+	//	gtk_widget_hide (pp->button_add);
+	//	gtk_widget_hide (pp->button_sub);
+	//	gtk_widget_hide (pp->vscale);
 }
 
 /*
+ * 
  * 弹出scale触摸条的函数
- * 处理 三级菜单按下状态的画图  
+ * 处理 三级菜单按下状态的画图，这个处理数值按键的部分
  * fun   为回调函数 
  * cur_value 为菜单当前数值
  * lower 为菜单最小值
@@ -716,83 +720,59 @@ static void draw3_popdown (const gchar *cur_value, guint pos, guint big_menu)
  * step  为菜单步进
  * digit 为保留小数点数
  * pos 为第几个3级菜单
+ * content_pos 表示一个菜单有多种名字的情况 与 pos不是一个值 为零时候不起作用
  * p 预留
  * 
  */
 
-static void draw3_pressed (void (*fun)(GtkSpinButton*, gpointer),const gchar *unit, 
-		gfloat cur_value, gfloat lower, gfloat upper, gfloat step, guint digit, gpointer p, guint pos)
+static void draw3_digit_pressed (void (*fun)(GtkSpinButton*, gpointer), const gchar *unit, 
+		gfloat cur_value, gfloat lower, gfloat upper, gfloat step, 
+		guint digit, gpointer p, guint pos, guint content_pos)
 {
-	gint  x, y, z;       /* xyz 分别为123级菜单位置 */
+	guint  x, y, z;       /* xyz 分别为123级菜单位置 */
 	gchar *str = NULL;
-	guint temp;
-	//	GtkAdjustment *adj;		/*  */
-	//
 
 	x = pp->pos;
 	y = pp->pos1[x];
 	z = pos;
-	/*	gtk_widget_destroy (pp->vscale);*/
 
-	if (p)
-		temp = GPOINTER_TO_UINT (p);
-	else 
-		temp = pos;
+	str = g_strdup_printf ("%s\n%s Δ%0.*f", 
+			con2_p[x][y][content_pos ? content_pos : pos], unit, digit, step);	/* %*.*f 可以指点位数 */		
 
-	switch (digit)
-	{
-		case 0:
-			str = g_strdup_printf ("%s\n%s Δ%0.0f", con2_p[x][y][temp], unit, step);			break;
-		case 1:
-			str = g_strdup_printf ("%s\n%s Δ%0.1f", con2_p[x][y][temp], unit, step);			break;
-		case 2:
-			str = g_strdup_printf ("%s\n%s Δ%0.2f", con2_p[x][y][temp], unit, step);			break;
-		case 3:
-			str = g_strdup_printf ("%s\n%s Δ%0.3f", con2_p[x][y][temp], unit, step);			break;
-		case 4:
-			str = g_strdup_printf ("%s\n%s Δ%0.4f", con2_p[x][y][temp], unit, step);			break;
-		default:break;
-	}
 	gtk_label_set_text (GTK_LABEL (pp->label3[z]), str);
-	//	gtk_widget_modify_bg (pp->eventbox30[z], GTK_STATE_NORMAL, &color_button0);
 	update_widget_bg(pp->eventbox30[z], backpic[6]);
 	widget_window_class->key_press_event = window_keypress_event_orig;
 	/* 一个信号能对应多个回调函数，所以先把对应的回调函数取消 */
 	if (g_signal_handler_is_connected (G_OBJECT (pp->sbutton[z]), pp->signal_id))
 		g_signal_handler_disconnect (G_OBJECT (pp->sbutton[z]), pp->signal_id);
 	pp->signal_id = g_signal_connect (G_OBJECT(pp->sbutton[z]), "value-changed", G_CALLBACK(fun), (gpointer) (pp));
-
 	/* 设置值的范围 */
 	pp->adj = gtk_spin_button_get_adjustment (GTK_SPIN_BUTTON (pp->sbutton[z]));
 	gtk_adjustment_configure (pp->adj, cur_value, lower, upper, step , 10.0, 0.0);
 	gtk_spin_button_set_digits (GTK_SPIN_BUTTON (pp->sbutton[z]), digit);
-
 	/* 显示和隐藏控件 */
 	gtk_widget_show (pp->eventbox30[z]);
 	gtk_widget_hide (pp->eventbox31[z]);
 	gtk_widget_show (pp->sbutton[z]);
 	gtk_widget_grab_focus (pp->sbutton[z]);
-
 	/* 设置scale */
 	gtk_range_set_adjustment (GTK_RANGE (pp->vscale), pp->adj);
-	gtk_widget_set_size_request (GTK_WIDGET(pp->vscale), 30, 370);
 	gtk_range_set_inverted (GTK_RANGE (pp->vscale), TRUE);
 	gtk_scale_set_draw_value (GTK_SCALE (pp->vscale), FALSE);
-	//	gtk_box_pack_start (GTK_BOX (pp->vscalebox), pp->vscale, TRUE, TRUE, 0);
 
-	//gtk_widget_set_size_request (GTK_WIDGET(pp->drawing_area), 628, 390);
-	//gtk_widget_show (pp->vscalebox);
-	gtk_widget_show (pp->vscalebox);
 	gtk_widget_hide (pp->scale_drawarea);
-	gtk_widget_show (pp->button_add);
-	gtk_widget_show (pp->button_sub);
-	gtk_widget_show (pp->vscale);
 
 	if (str)
 		g_free(str);
 }
 
-static void draw3_stop(gfloat cur_value, const gchar *unit,  guint digit, guint pos)
+/* 
+ *
+ *
+ *
+ */
+static void draw3_digit_stop(gfloat cur_value, const gchar *unit, 
+		guint digit, guint pos, guint content_pos)
 {
 	gint  x, y, z;       /* xyz 分别为123级菜单位置 */
 	gchar *str = NULL;
@@ -803,7 +783,7 @@ static void draw3_stop(gfloat cur_value, const gchar *unit,  guint digit, guint 
 
 	if (g_signal_handler_is_connected (G_OBJECT (pp->sbutton[z]), pp->signal_id))
 		g_signal_handler_disconnect (G_OBJECT (pp->sbutton[z]), pp->signal_id);
-	str = g_strdup_printf ("%s\n%s", con2_p[x][y][z], unit);	
+	str = g_strdup_printf ("%s\n%s", con2_p[x][y][content_pos ? content_pos : pos], unit);	
 	gtk_label_set_text (GTK_LABEL (pp->label3[z]), str);
 	if ((CUR_POS == z) && (pp->pos_pos == MENU3_STOP))
 	{
@@ -816,20 +796,8 @@ static void draw3_stop(gfloat cur_value, const gchar *unit,  guint digit, guint 
 		update_widget_bg(pp->eventbox31[z], backpic[10]);
 	}
 	/* 更新当前增益值显示 */
-	switch (digit)
-	{
-		case 0:
-			str = g_strdup_printf ("%0.0f", cur_value);			break;
-		case 1:
-			str = g_strdup_printf ("%0.1f", cur_value);			break;
-		case 2:
-			str = g_strdup_printf ("%0.2f", cur_value);			break;
-		case 3:
-			str = g_strdup_printf ("%0.3f", cur_value);			break;
-		case 4:
-			str = g_strdup_printf ("%0.4f", cur_value);			break;
-		default:break;
-	}
+	str = g_strdup_printf ("%0.*f", digit, cur_value);
+
 	gtk_label_set_text (GTK_LABEL (pp->data3[z]), str);
 	/*	gtk_label_set_text (GTK_LABEL (pp->label[1]), str);*/
 	if (str)
@@ -843,19 +811,15 @@ static void draw3_stop(gfloat cur_value, const gchar *unit,  guint digit, guint 
 	//	gtk_widget_hide (pp->dialog);
 	//gtk_widget_set_size_request (GTK_WIDGET(pp->drawing_area), 658, 390);
 	//gtk_widget_hide (pp->vscalebox);
-	gtk_widget_show (pp->vscalebox);
+	//	gtk_widget_show (pp->vscalebox);
 	gtk_widget_show (pp->scale_drawarea);
-	gtk_widget_hide (pp->button_add);
-	gtk_widget_hide (pp->button_sub);
-	gtk_widget_hide (pp->vscale);
+	//	gtk_widget_hide (pp->button_add);
+	//	gtk_widget_hide (pp->button_sub);
+	//	gtk_widget_hide (pp->vscale);
 
 	/*						gtk_widget_grab_focus (pp->button);*/
 }
 
-static void draw3_stop_str()
-{
-
-}
 
 static void draw3_onoffstop(guint pos)               /* button 为 on/off 时的颜色变化*/
 {
@@ -891,11 +855,11 @@ static void draw3_onoffstop(guint pos)               /* button 为 on/off 时的
 	gtk_widget_show (pp->data3[z]);
 	gtk_widget_hide (pp->sbutton[z]);
 	//gtk_widget_hide (pp->vscalebox);
-	gtk_widget_show (pp->vscalebox);
+	//	gtk_widget_show (pp->vscalebox);
 	gtk_widget_show (pp->scale_drawarea);
-	gtk_widget_hide (pp->button_add);
-	gtk_widget_hide (pp->button_sub);
-	gtk_widget_hide (pp->vscale);
+	//	gtk_widget_hide (pp->button_add);
+	//	gtk_widget_hide (pp->button_sub);
+	//	gtk_widget_hide (pp->vscale);
 }
 
 static void draw3_onoffpressed(guint pos)
@@ -931,11 +895,11 @@ static void draw3_onoffpressed(guint pos)
 	gtk_widget_show (pp->data3[z]);
 	gtk_widget_hide (pp->sbutton[z]);
 	//gtk_widget_hide (pp->vscalebox);
-	gtk_widget_show (pp->vscalebox);
+	//	gtk_widget_show (pp->vscalebox);
 	gtk_widget_show (pp->scale_drawarea);
-	gtk_widget_hide (pp->button_add);
-	gtk_widget_hide (pp->button_sub);
-	gtk_widget_hide (pp->vscale);
+	//	gtk_widget_hide (pp->button_add);
+	//	gtk_widget_hide (pp->button_sub);
+	//	gtk_widget_hide (pp->vscale);
 }
 
 /*改变各图形显示区域的尺寸大小*/
@@ -1122,43 +1086,43 @@ void draw_area_all()
 		{
 			case A_SCAN:
 				gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
-				draw_area(pp->vbox_area[0], &(pp->draw_area[0]), 658, 425, "A-scan", 0.0, 100.0,
+				draw_area(pp->vbox_area[0], &(pp->draw_area[0]), 655, 425, "A-scan", 0.0, 100.0,
 						0.0, 100.0, 0.0, 100.0, NULL);
 				gtk_widget_show (pp->vbox_area[0]);
 				break;
 			case B_SCAN:
 				gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
-				draw_area(pp->vbox_area[0], &(pp->draw_area[0]), 658, 425, "B-scan", 0.0, 100.0,
+				draw_area(pp->vbox_area[0], &(pp->draw_area[0]), 655, 425, "B-scan", 0.0, 100.0,
 						0.0, 100.0, 0.0, 100.0, NULL);
 				gtk_widget_show (pp->vbox_area[0]);
 				break;
 			case C_SCAN:
 				gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
-				draw_area(pp->vbox_area[0], &(pp->draw_area[0]), 658, 425, "C-scan", 0.0, 100.0,
+				draw_area(pp->vbox_area[0], &(pp->draw_area[0]), 655, 425, "C-scan", 0.0, 100.0,
 						0.0, 100.0, 0.0, 100.0, NULL);
 				gtk_widget_show (pp->vbox_area[0]);
 				break;
 			case S_SCAN:
 				gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
-				draw_area(pp->vbox_area[0], &(pp->draw_area[0]), 658, 425, "S-scan", 0.0, 100.0,
+				draw_area(pp->vbox_area[0], &(pp->draw_area[0]), 655, 425, "S-scan", 0.0, 100.0,
 						0.0, 100.0, 0.0, 100.0, NULL);
 				gtk_widget_show (pp->vbox_area[0]);
 				break;
 			case A_B_SCAN:
 				gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
-				draw_area(pp->vbox_area[0], &(pp->draw_area[0]), 658, 150, "A-scan", 0.0, 100.0,
+				draw_area(pp->vbox_area[0], &(pp->draw_area[0]), 655, 150, "A-scan", 0.0, 100.0,
 						0.0, 100.0, 0.0, 100.0, NULL);
-				draw_area(pp->vbox_area[0], &(pp->draw_area[1]), 658, 275, "B-scan", 0.0, 100.0,
+				draw_area(pp->vbox_area[0], &(pp->draw_area[1]), 655, 275, "B-scan", 0.0, 100.0,
 						0.0, 100.0, 0.0, 100.0, NULL);
 				gtk_widget_show (pp->vbox_area[0]);
 				break;
 			case A_B_C_SCAN:
 				gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
-				draw_area(pp->vbox_area[0], &(pp->draw_area[0]), 658, 125, "A-scan", 0.0, 100.0,
+				draw_area(pp->vbox_area[0], &(pp->draw_area[0]), 655, 125, "A-scan", 0.0, 100.0,
 						0.0, 100.0, 0.0, 100.0, NULL);
-				draw_area(pp->vbox_area[0], &(pp->draw_area[1]), 658, 150, "B-scan", 0.0, 100.0,
+				draw_area(pp->vbox_area[0], &(pp->draw_area[1]), 655, 150, "B-scan", 0.0, 100.0,
 						0.0, 100.0, 0.0, 100.0, NULL);
-				draw_area(pp->vbox_area[0], &(pp->draw_area[2]), 658, 150, "C-scan", 0.0, 100.0,
+				draw_area(pp->vbox_area[0], &(pp->draw_area[2]), 655, 150, "C-scan", 0.0, 100.0,
 						0.0, 100.0, 0.0, 100.0, NULL);
 				gtk_widget_show (pp->vbox_area[0]);
 				break;
@@ -1170,9 +1134,9 @@ void draw_area_all()
 					gtk_box_pack_start (GTK_BOX (pp->hbox_area[0]), pp->vbox_area[1], FALSE, FALSE, 0);
 					draw_area(pp->vbox_area[0], &(pp->draw_area[0]), 300, 425, "S-scan", 0.0, 100.0,
 							0.0, 100.0, 0.0, 100.0, NULL);
-					draw_area(pp->vbox_area[1], &(pp->draw_area[1]), 358, 210, "A-scan", 0.0, 100.0,
+					draw_area(pp->vbox_area[1], &(pp->draw_area[1]), 355, 210, "A-scan", 0.0, 100.0,
 							0.0, 100.0, 0.0, 100.0, NULL);
-					draw_area(pp->vbox_area[1], &(pp->draw_area[2]), 358, 215, "B-scan", 0.0, 100.0,
+					draw_area(pp->vbox_area[1], &(pp->draw_area[2]), 355, 215, "B-scan", 0.0, 100.0,
 							0.0, 100.0, 0.0, 100.0, NULL);
 					gtk_widget_show (pp->hbox_area[0]);
 					gtk_widget_show (pp->vbox_area[0]);
@@ -1181,11 +1145,11 @@ void draw_area_all()
 				else
 				{
 					gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
-					draw_area(pp->vbox_area[0], &(pp->draw_area[0]), 658, 125, "A-scan", 0.0, 100.0,
+					draw_area(pp->vbox_area[0], &(pp->draw_area[0]), 655, 125, "A-scan", 0.0, 100.0,
 							0.0, 100.0, 0.0, 100.0, NULL);
-					draw_area(pp->vbox_area[0], &(pp->draw_area[1]), 658, 150, "B-scan", 0.0, 100.0,
+					draw_area(pp->vbox_area[0], &(pp->draw_area[1]), 655, 150, "B-scan", 0.0, 100.0,
 							0.0, 100.0, 0.0, 100.0, NULL);
-					draw_area(pp->vbox_area[0], &(pp->draw_area[2]), 658, 150, "S-scan", 0.0, 100.0,
+					draw_area(pp->vbox_area[0], &(pp->draw_area[2]), 655, 150, "S-scan", 0.0, 100.0,
 							0.0, 100.0, 0.0, 100.0, NULL);
 					gtk_widget_show (pp->vbox_area[0]);
 
@@ -1194,27 +1158,27 @@ void draw_area_all()
 
 			case A_C_CC_SCAN:
 				gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
-				draw_area(pp->vbox_area[0], &(pp->draw_area[0]), 658, 150, "A-scan", 0.0, 100.0,
+				draw_area(pp->vbox_area[0], &(pp->draw_area[0]), 655, 150, "A-scan", 0.0, 100.0,
 						0.0, 100.0, 0.0, 100.0, NULL);
-				draw_area(pp->vbox_area[0], &(pp->draw_area[1]), 658, 275, "C-scan", 0.0, 100.0,
+				draw_area(pp->vbox_area[0], &(pp->draw_area[1]), 655, 275, "C-scan", 0.0, 100.0,
 						0.0, 100.0, 0.0, 100.0, NULL);
 				gtk_widget_show (pp->vbox_area[0]);
 				break;
 
 			case A_S_CC_SCAN:
 				gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
-				draw_area(pp->vbox_area[0], &(pp->draw_area[0]), 658, 150, "A-scan", 0.0, 100.0,
+				draw_area(pp->vbox_area[0], &(pp->draw_area[0]), 655, 150, "A-scan", 0.0, 100.0,
 						0.0, 100.0, 0.0, 100.0, NULL);
-				draw_area(pp->vbox_area[0], &(pp->draw_area[1]), 658, 275, "S-scan", 0.0, 100.0,
+				draw_area(pp->vbox_area[0], &(pp->draw_area[1]), 655, 275, "S-scan", 0.0, 100.0,
 						0.0, 100.0, 0.0, 100.0, NULL);
 				gtk_widget_show (pp->vbox_area[0]);
 				break;
 
 			case Strip_Chart_AA:
 				gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
-				draw_area(pp->vbox_area[0], &(pp->draw_area[0]), 658, 150, "A-scan", 0.0, 100.0,
+				draw_area(pp->vbox_area[0], &(pp->draw_area[0]), 655, 150, "A-scan", 0.0, 100.0,
 						0.0, 100.0, 0.0, 100.0, NULL);
-				draw_area(pp->vbox_area[0], &(pp->draw_area[1]), 658, 275, "Strip Chart", 0.0, 100.0,
+				draw_area(pp->vbox_area[0], &(pp->draw_area[1]), 655, 275, "Strip Chart", 0.0, 100.0,
 						0.0, 100.0, 0.0, 100.0, NULL);
 				gtk_widget_show (pp->vbox_area[0]);
 				break;
@@ -1244,7 +1208,7 @@ void draw3_data0(DRAW_UI_P p)
 	gfloat tmpf;/**/
 
 	gfloat cur_value, lower, upper, step;
-	guint digit, pos, unit;
+	guint digit, pos, unit, content_pos;
 
 	p = NULL;
 
@@ -1312,26 +1276,29 @@ void draw3_data0(DRAW_UI_P p)
 						default:break;
 					}
 					if (CFG(db_ref))
-						p = GUINT_TO_POINTER (6); 
+						content_pos = 6;
+					else
+						content_pos = 0;
 
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 					{
-						cur_value = pp->p_config->gain / 100.0; 
-						lower = 0.0;
-						upper = 74.0;
+						cur_value = (CFG(gain) - CFG(gainr) * CFG(db_ref)) / 100.0; 
+						lower = 0.0 - CFG(gainr) * CFG(db_ref) / 100.0 ;
+						upper = 74.0 - CFG(gainr) * CFG(db_ref) / 100.0 ;
 						step = tmpf;
 						digit = 1;
 						pos = 0;
 						unit = UNIT_DB;
-						draw3_pressed (data_100, units[unit], cur_value , lower, upper, step, digit, p, pos);
+						draw3_digit_pressed (data_100, units[unit], cur_value ,
+								lower, upper, step, digit, p, pos, content_pos);
 					}
 					else 
 					{
-						cur_value = pp->p_config->gain / 100.0;
+						cur_value = (CFG(gain) - CFG(gainr) * CFG(db_ref)) / 100.0; 
 						digit = 1;
 						pos = 0;
 						unit = UNIT_DB;
-						draw3_stop (cur_value, units[unit], digit, pos);
+						draw3_digit_stop (cur_value, units[unit], digit, pos, content_pos);
 					}
 					break;
 
@@ -1353,7 +1320,7 @@ void draw3_data0(DRAW_UI_P p)
 						digit = 0;
 						pos = 0;
 						unit = UNIT_TO;    /* 1 to n 这个范围需要计算出来 waiting */
-						draw3_pressed (data_110, units[unit], cur_value , lower, upper, step, digit, p, pos);
+						draw3_digit_pressed (data_110, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 					}
 					else 
 					{
@@ -1361,7 +1328,7 @@ void draw3_data0(DRAW_UI_P p)
 						digit = 0;
 						pos = 0;
 						unit = UNIT_TO;
-						draw3_stop (cur_value, units[unit], digit, pos);
+						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					}
 					break;
 
@@ -1377,7 +1344,7 @@ void draw3_data0(DRAW_UI_P p)
 						digit = 0;
 						pos = 0;
 						unit = UNIT_TO;
-						draw3_stop (cur_value, units[unit], digit, pos);
+						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					}
 					break;
 
@@ -1644,7 +1611,7 @@ void draw3_data0(DRAW_UI_P p)
 						digit = 1;
 						pos = 0;
 						unit = UNIT_MM;
-						draw3_pressed (data_510, units[unit], cur_value , lower, upper, step, digit, p, pos);
+						draw3_digit_pressed (data_510, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 					}
 					else 
 					{
@@ -1652,7 +1619,7 @@ void draw3_data0(DRAW_UI_P p)
 						digit = 1;
 						pos = 0;
 						unit = UNIT_MM;
-						draw3_stop (cur_value, units[unit], digit, pos);
+						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					}
 					break;
 
@@ -1729,7 +1696,7 @@ void draw3_data0(DRAW_UI_P p)
 						digit = 0;
 						pos = 0;
 						unit = UNIT_NONE;
-						draw3_pressed (data_610, units[unit], cur_value , lower, upper, step, digit, p, pos);
+						draw3_digit_pressed (data_610, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 					}
 					else 
 					{
@@ -1737,7 +1704,7 @@ void draw3_data0(DRAW_UI_P p)
 						digit = 0;
 						pos = 0;
 						unit = UNIT_NONE;
-						draw3_stop (cur_value, units[unit], digit, pos);
+						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					}
 					break;
 
@@ -1760,7 +1727,7 @@ void draw3_data0(DRAW_UI_P p)
 						digit = 1;
 						pos = 0;
 						unit = UNIT_MM;
-						draw3_pressed (data_620, units[unit], cur_value , lower, upper, step, digit, p, pos);
+						draw3_digit_pressed (data_620, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 					}
 					else 
 					{
@@ -1768,7 +1735,7 @@ void draw3_data0(DRAW_UI_P p)
 						digit = 1;
 						pos = 0;
 						unit = UNIT_MM;
-						draw3_stop (cur_value, units[unit], digit, pos);
+						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					}
 					gtk_widget_set_sensitive(pp->eventbox30[0],FALSE);
 					gtk_widget_set_sensitive(pp->eventbox31[0],FALSE);
@@ -1851,7 +1818,7 @@ void draw3_data0(DRAW_UI_P p)
 						digit = 0;
 						pos = 0;
 						unit = UNIT_MM;
-						draw3_pressed (data_720, units[unit], cur_value , lower, upper, step, digit, p, pos);
+						draw3_digit_pressed (data_720, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 					}
 					else 
 					{
@@ -1859,7 +1826,7 @@ void draw3_data0(DRAW_UI_P p)
 						digit = 0;
 						pos = 0;
 						unit = UNIT_MM;
-						draw3_stop (cur_value, units[unit], digit, pos);
+						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					}
 					break;
 
@@ -2152,7 +2119,7 @@ void draw3_data1(DRAW_UI_P p)
 							pos = 1;
 							unit = UNIT_US;
 						}
-						draw3_pressed (data_101, units[unit], cur_value , lower, upper, step, digit, p, pos);
+						draw3_digit_pressed (data_101, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 					}
 					else
 					{
@@ -2180,7 +2147,7 @@ void draw3_data1(DRAW_UI_P p)
 							pos = 1;
 							digit = 2;
 						}
-						draw3_stop (cur_value , units[unit], digit, pos);
+						draw3_digit_stop (cur_value , units[unit], digit, pos, 0);
 					}
 					break;
 				case 1: /* 收发模式 Tx/Rx Mode P111 */
@@ -2328,7 +2295,7 @@ void draw3_data1(DRAW_UI_P p)
 						digit = 0;
 						pos = 1;
 						unit = UNIT_NONE;
-						draw3_pressed (data_311, units[unit], cur_value , lower, upper, step, digit, p, pos);
+						draw3_digit_pressed (data_311, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 					}
 					else 
 					{
@@ -2336,7 +2303,7 @@ void draw3_data1(DRAW_UI_P p)
 						digit = 0;
 						pos = 1;
 						unit = UNIT_NONE;
-						draw3_stop (cur_value, units[unit], digit, pos);
+						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					}
 					break;
 
@@ -2399,7 +2366,7 @@ void draw3_data1(DRAW_UI_P p)
 						digit = 2;
 						pos = 1;
 						unit = UNIT_MM;
-						draw3_pressed (data_331, units[unit], cur_value , lower, upper, step, digit, p, pos);
+						draw3_digit_pressed (data_331, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 					}
 					else 
 					{
@@ -2407,7 +2374,7 @@ void draw3_data1(DRAW_UI_P p)
 						digit = 2;
 						pos = 1;
 						unit = UNIT_MM;
-						draw3_stop (cur_value, units[unit], digit, pos);
+						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					}
 					break;
 
@@ -2474,7 +2441,7 @@ void draw3_data1(DRAW_UI_P p)
 							digit = 0;
 							pos = 1;
 							unit = UNIT_BFH;
-							draw3_pressed (data_431, units[unit], cur_value , lower, upper, step, digit, p, pos);
+							draw3_digit_pressed (data_431, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 						}
 						else 
 						{
@@ -2482,7 +2449,7 @@ void draw3_data1(DRAW_UI_P p)
 							digit = 0;
 							pos = 1;
 							unit = UNIT_BFH;
-							draw3_stop (cur_value, units[unit], digit, pos);
+							draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 						}
 					}
 
@@ -2505,7 +2472,7 @@ void draw3_data1(DRAW_UI_P p)
 							digit = 0;
 							pos = 1;
 							unit = UNIT_BFH;
-							draw3_pressed (data_4311, units[unit], cur_value , lower, upper, step, digit, p, pos);
+							draw3_digit_pressed (data_4311, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 							str = g_strdup_printf ("%s\n (%%) Δ%0.0f", con2_p[4][3][6],tmpf);	
 							gtk_label_set_text (GTK_LABEL (pp->label3[1]), str);
 						}
@@ -2515,7 +2482,7 @@ void draw3_data1(DRAW_UI_P p)
 							digit = 0;
 							pos = 1;
 							unit = UNIT_BFH;
-							draw3_stop (cur_value, units[unit], digit, pos);
+							draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 							str = g_strdup_printf ("%s\n    (%%)", con2_p[4][3][6]);	
 							gtk_label_set_text (GTK_LABEL (pp->label3[1]), str);
 
@@ -2542,7 +2509,7 @@ void draw3_data1(DRAW_UI_P p)
 							digit = 2;
 							pos = 1;
 							unit = UNIT_BFH;
-							draw3_pressed (data_4312, units[unit], cur_value , lower, upper, step, digit, p, pos);
+							draw3_digit_pressed (data_4312, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 							str = g_strdup_printf ("   %s\n(mm) Δ%0.2f", con2_p[4][3][8],tmpf);	
 							gtk_label_set_text (GTK_LABEL (pp->label3[1]), str);
 						}
@@ -2552,7 +2519,7 @@ void draw3_data1(DRAW_UI_P p)
 							digit = 2;
 							pos = 1;
 							unit = UNIT_BFH;
-							draw3_stop (cur_value, units[unit], digit, pos);
+							draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 							str = g_strdup_printf ("%s\n(mm)", con2_p[4][3][8]);	
 							gtk_label_set_text (GTK_LABEL (pp->label3[1]), str);
 
@@ -2592,7 +2559,7 @@ void draw3_data1(DRAW_UI_P p)
 								digit = 2;
 								pos = 1;
 								unit = UNIT_NONE;
-								draw3_pressed (data_4411, units[unit], cur_value , lower, upper, step, digit, p, pos);
+								draw3_digit_pressed (data_4411, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 								str = g_strdup_printf ("%s\n      Δ%0.2f", con2_p[4][4][6],tmpf);	
 								gtk_label_set_text (GTK_LABEL (pp->label3[1]), str);
 							}
@@ -2602,7 +2569,7 @@ void draw3_data1(DRAW_UI_P p)
 								digit = 2;
 								pos = 1;
 								unit = UNIT_NONE;
-								draw3_stop (cur_value, units[unit], digit, pos);
+								draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 								str = g_strdup_printf ("%s", con2_p[4][4][6]);	
 								gtk_label_set_text (GTK_LABEL (pp->label3[1]), str);
 
@@ -2709,7 +2676,7 @@ void draw3_data1(DRAW_UI_P p)
 						digit = 1;
 						pos = 1;
 						unit = UNIT_MM;
-						draw3_pressed (data_511, units[unit], cur_value , lower, upper, step, digit, p, pos);
+						draw3_digit_pressed (data_511, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 					}
 					else 
 					{
@@ -2717,7 +2684,7 @@ void draw3_data1(DRAW_UI_P p)
 						digit = 1;
 						pos = 1;
 						unit = UNIT_MM;
-						draw3_stop (cur_value, units[unit], digit, pos);
+						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					}
 					break;
 
@@ -2741,7 +2708,7 @@ void draw3_data1(DRAW_UI_P p)
 						digit = 1;
 						pos = 1;
 						unit = UNIT_DB;
-						draw3_pressed (data_521, units[unit], cur_value , lower, upper, step, digit, p, pos);
+						draw3_digit_pressed (data_521, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 					}
 					else 
 					{
@@ -2749,7 +2716,7 @@ void draw3_data1(DRAW_UI_P p)
 						digit = 1;
 						pos = 1;
 						unit = UNIT_DB;
-						draw3_stop (cur_value, units[unit], digit, pos);
+						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					}
 					break;
 
@@ -2772,7 +2739,7 @@ void draw3_data1(DRAW_UI_P p)
 						digit = 2;
 						pos = 1;
 						unit = UNIT_MM;
-						draw3_pressed (data_531, units[unit], cur_value , lower, upper, step, digit, p, pos);
+						draw3_digit_pressed (data_531, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 					}
 					else 
 					{
@@ -2780,7 +2747,7 @@ void draw3_data1(DRAW_UI_P p)
 						digit = 2;
 						pos = 1;
 						unit = UNIT_MM;
-						draw3_stop (cur_value, units[unit], digit, pos);
+						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					}
 					break;
 
@@ -2811,7 +2778,7 @@ void draw3_data1(DRAW_UI_P p)
 						digit = 0;
 						pos = 1;
 						unit = UNIT_TO1;
-						draw3_pressed (data_601, units[unit], cur_value , lower, upper, step, digit, p, pos);
+						draw3_digit_pressed (data_601, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 					}
 					else 
 					{
@@ -2819,7 +2786,7 @@ void draw3_data1(DRAW_UI_P p)
 						digit = 0;
 						pos = 1;
 						unit = UNIT_TO1;
-						draw3_stop (cur_value, units[unit], digit, pos);
+						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					}
 					gtk_widget_set_sensitive(pp->eventbox30[1],FALSE);
 					gtk_widget_set_sensitive(pp->eventbox31[1],FALSE);
@@ -2845,7 +2812,7 @@ void draw3_data1(DRAW_UI_P p)
 						digit = 0;
 						pos = 1;
 						unit = UNIT_NONE;
-						draw3_pressed (data_611, units[unit], cur_value , lower, upper, step, digit, p, pos);
+						draw3_digit_pressed (data_611, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 					}
 					else 
 					{
@@ -2853,7 +2820,7 @@ void draw3_data1(DRAW_UI_P p)
 						digit = 0;
 						pos = 1;
 						unit = UNIT_NONE;
-						draw3_stop (cur_value, units[unit], digit, pos);
+						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					}
 					break;
 
@@ -2962,7 +2929,7 @@ void draw3_data1(DRAW_UI_P p)
 						digit = 0;
 						pos = 1;
 						unit = UNIT_MM;
-						draw3_pressed (data_721, units[unit], cur_value , lower, upper, step, digit, p, pos);
+						draw3_digit_pressed (data_721, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 					}
 					else 
 					{
@@ -2970,7 +2937,7 @@ void draw3_data1(DRAW_UI_P p)
 						digit = 0;
 						pos = 1;
 						unit = UNIT_MM;
-						draw3_stop (cur_value, units[unit], digit, pos);
+						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					}
 					break;
 
@@ -3136,7 +3103,7 @@ void draw3_data1(DRAW_UI_P p)
 						digit = 0;
 						pos = 1;
 						unit = UNIT_BFH;
-						draw3_pressed (data_901, units[unit], cur_value , lower, upper, step, digit, p, pos);
+						draw3_digit_pressed (data_901, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 					}
 					else 
 					{
@@ -3144,7 +3111,7 @@ void draw3_data1(DRAW_UI_P p)
 						digit = 0;
 						pos = 1;
 						unit = UNIT_BFH;
-						draw3_stop (cur_value, units[unit], digit, pos);
+						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					}
 					break;
 
@@ -3236,7 +3203,7 @@ void draw3_data2(DRAW_UI_P p)
 	gfloat cur_value, lower, upper, step;
 	guint digit, pos, unit;
 
-//	p = NULL;
+	//	p = NULL;
 
 	switch (pp->pos) 
 	{
@@ -3311,7 +3278,7 @@ void draw3_data2(DRAW_UI_P p)
 							pos = 2;
 							unit = UNIT_US;
 						}
-						draw3_pressed (data_102, units[unit], cur_value , lower, upper, step, digit, p, pos);
+						draw3_digit_pressed (data_102, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 					}
 					else
 					{
@@ -3339,7 +3306,7 @@ void draw3_data2(DRAW_UI_P p)
 							pos = 2;
 							digit = 2;
 						}
-						draw3_stop (cur_value , units[unit], digit, pos);
+						draw3_digit_stop (cur_value , units[unit], digit, pos, 0);
 					}
 					break;
 				case 1: /* Freq频带(Mhz)  P112 */
@@ -3363,7 +3330,7 @@ void draw3_data2(DRAW_UI_P p)
 							digit = 2;
 							pos = 2;
 							unit = UNIT_NONE;
-							draw3_pressed (data_1121, units[unit], cur_value , lower, upper, step, digit, p, pos);
+							draw3_digit_pressed (data_1121, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 						}
 						else
 						{
@@ -3390,7 +3357,7 @@ void draw3_data2(DRAW_UI_P p)
 							unit = UNIT_NONE;
 							pos = 2;
 							digit = 2;
-							draw3_stop (cur_value , units[unit], digit, pos);
+							draw3_digit_stop (cur_value , units[unit], digit, pos, 0);
 						}
 					}
 					break;
@@ -3456,7 +3423,7 @@ void draw3_data2(DRAW_UI_P p)
 							digit = 2;
 							pos = 2;
 							unit = UNIT_MM;
-							draw3_pressed (data_202, units[unit], cur_value , lower, upper, step, digit, p, pos);
+							draw3_digit_pressed (data_202, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 						}
 						else 
 						{
@@ -3464,7 +3431,7 @@ void draw3_data2(DRAW_UI_P p)
 							digit = 2;
 							pos = 2;
 							unit = UNIT_MM;
-							draw3_stop (cur_value, units[unit], digit, pos);
+							draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 						}
 					}
 					else
@@ -3516,7 +3483,7 @@ void draw3_data2(DRAW_UI_P p)
 						digit = 0;
 						pos = 2;
 						unit = UNIT_NONE;
-						draw3_pressed (data_222, units[unit], cur_value , lower, upper, step, digit, p, pos);
+						draw3_digit_pressed (data_222, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 					}
 					else 
 					{
@@ -3524,7 +3491,7 @@ void draw3_data2(DRAW_UI_P p)
 						digit = 0;
 						pos = 2;
 						unit = UNIT_NONE;
-						draw3_stop (cur_value, units[unit], digit, pos);
+						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					}
 					break;
 
@@ -3567,7 +3534,7 @@ void draw3_data2(DRAW_UI_P p)
 						digit = 2;
 						pos = 2;
 						unit = UNIT_MM;
-						draw3_pressed (data_222, units[unit], cur_value , lower, upper, step, digit, p, pos);
+						draw3_digit_pressed (data_222, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 					}
 					else 
 					{
@@ -3575,7 +3542,7 @@ void draw3_data2(DRAW_UI_P p)
 						digit = 2;
 						pos = 2;
 						unit = UNIT_MM;
-						draw3_stop (cur_value, units[unit], digit, pos);
+						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					}
 					break;
 
@@ -3614,7 +3581,7 @@ void draw3_data2(DRAW_UI_P p)
 						digit = 2;
 						pos = 2;
 						unit = UNIT_MM;
-						draw3_pressed (data_332, units[unit], cur_value , lower, upper, step, digit, p, pos);
+						draw3_digit_pressed (data_332, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 					}
 					else 
 					{
@@ -3622,7 +3589,7 @@ void draw3_data2(DRAW_UI_P p)
 						digit = 2;
 						pos = 2;
 						unit = UNIT_MM;
-						draw3_stop (cur_value, units[unit], digit, pos);
+						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					}
 					break;
 
@@ -3681,7 +3648,7 @@ void draw3_data2(DRAW_UI_P p)
 							   digit = 0;
 							   pos = 2;
 							   unit = UNIT_BFH;
-							   draw3_pressed (data_432, units[unit], cur_value , lower, upper, step, digit, p, pos);
+							   draw3_digit_pressed (data_432, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 						   }
 						   else 
 						   {
@@ -3689,7 +3656,7 @@ void draw3_data2(DRAW_UI_P p)
 							   digit = 0;
 							   pos = 2;
 							   unit = UNIT_BFH;
-							   draw3_stop (cur_value, units[unit], digit, pos);
+							   draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 						   }
 					   }
 					   else if(CFG(color_select == 1))
@@ -3713,7 +3680,7 @@ void draw3_data2(DRAW_UI_P p)
 							   digit = 0;
 							   pos = 2;
 							   unit = UNIT_BFH;
-							   draw3_pressed (data_4321, units[unit], cur_value , lower, upper, step, digit, p, pos);
+							   draw3_digit_pressed (data_4321, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 							   str = g_strdup_printf ("%s\n    (%%)", con2_p[4][3][7]);	
 							   gtk_label_set_text (GTK_LABEL (pp->label3[2]), str);
 						   }
@@ -3723,7 +3690,7 @@ void draw3_data2(DRAW_UI_P p)
 							   digit = 0;
 							   pos = 2;
 							   unit = UNIT_BFH;
-							   draw3_stop (cur_value, units[unit], digit, pos);
+							   draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 							   str = g_strdup_printf ("%s\n    (%%)", con2_p[4][3][7]);	
 							   gtk_label_set_text (GTK_LABEL (pp->label3[2]), str);
 
@@ -3749,7 +3716,7 @@ void draw3_data2(DRAW_UI_P p)
 							   digit = 2;
 							   pos = 2;
 							   unit = UNIT_NONE;
-							   draw3_pressed (data_4322, units[unit], cur_value , lower, upper, step, digit, p, pos);
+							   draw3_digit_pressed (data_4322, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 							   str = g_strdup_printf ("   %s\n(mm) Δ%0.2f", con2_p[4][3][9],tmpf);	
 							   gtk_label_set_text (GTK_LABEL (pp->label3[2]), str);
 						   }
@@ -3759,7 +3726,7 @@ void draw3_data2(DRAW_UI_P p)
 							   digit = 2;
 							   pos = 2;
 							   unit = UNIT_NONE;
-							   draw3_stop (cur_value, units[unit], digit, pos);
+							   draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 							   str = g_strdup_printf ("%s\n(mm)", con2_p[4][3][9]);	
 							   gtk_label_set_text (GTK_LABEL (pp->label3[2]), str);
 
@@ -3861,7 +3828,7 @@ void draw3_data2(DRAW_UI_P p)
 							digit = 1;
 							pos = 2;
 							unit = UNIT_NONE;
-							draw3_pressed (data_5121, units[unit], cur_value , lower, upper, step, digit, p, pos);
+							draw3_digit_pressed (data_5121, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 						}
 						else
 						{
@@ -3888,7 +3855,7 @@ void draw3_data2(DRAW_UI_P p)
 							unit = UNIT_NONE;
 							pos = 2;
 							digit = 1;
-							draw3_stop (cur_value , units[unit], digit, pos);
+							draw3_digit_stop (cur_value , units[unit], digit, pos, 0);
 						}
 					}
 					break;
@@ -3912,7 +3879,7 @@ void draw3_data2(DRAW_UI_P p)
 						digit = 2;
 						pos = 2;
 						unit = UNIT_MM;
-						draw3_pressed (data_522, units[unit], cur_value , lower, upper, step, digit, p, pos);
+						draw3_digit_pressed (data_522, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 					}
 					else 
 					{
@@ -3920,7 +3887,7 @@ void draw3_data2(DRAW_UI_P p)
 						digit = 2;
 						pos = 2;
 						unit = UNIT_MM;
-						draw3_stop (cur_value, units[unit], digit, pos);
+						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					}
 					break;
 
@@ -3945,7 +3912,7 @@ void draw3_data2(DRAW_UI_P p)
 								digit = 2;
 								pos = 2;
 								unit = UNIT_MM;
-								draw3_pressed (data_532, units[unit], cur_value , lower, upper, step, digit, p, pos);
+								draw3_digit_pressed (data_532, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 							}
 							else 
 							{
@@ -3953,7 +3920,7 @@ void draw3_data2(DRAW_UI_P p)
 								digit = 2;
 								pos = 2;
 								unit = UNIT_MM;
-								draw3_stop (cur_value, units[unit], digit, pos);
+								draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 							}
 							gtk_widget_set_sensitive(pp->eventbox30[2],FALSE);
 							gtk_widget_set_sensitive(pp->eventbox31[2],FALSE);
@@ -3978,7 +3945,7 @@ void draw3_data2(DRAW_UI_P p)
 								digit = 2;
 								pos = 2;
 								unit = UNIT_MM;
-								draw3_pressed (data_532, units[unit], cur_value , lower, upper, step, digit, p, pos);
+								draw3_digit_pressed (data_532, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 							}
 							else 
 							{
@@ -3986,7 +3953,7 @@ void draw3_data2(DRAW_UI_P p)
 								digit = 2;
 								pos = 2;
 								unit = UNIT_MM;
-								draw3_stop (cur_value, units[unit], digit, pos);
+								draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 							}
 							break;
 						default:break;
@@ -4020,7 +3987,7 @@ void draw3_data2(DRAW_UI_P p)
 						digit = 0;
 						pos = 2;
 						unit = UNIT_TO1;
-						draw3_pressed (data_601, units[unit], cur_value , lower, upper, step, digit, p, pos);
+						draw3_digit_pressed (data_601, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 					}
 					else 
 					{
@@ -4028,7 +3995,7 @@ void draw3_data2(DRAW_UI_P p)
 						digit = 0;
 						pos = 2;
 						unit = UNIT_TO1;
-						draw3_stop (cur_value, units[unit], digit, pos);
+						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					}
 					gtk_widget_set_sensitive(pp->eventbox30[2],FALSE);
 					gtk_widget_set_sensitive(pp->eventbox31[2],FALSE);
@@ -4051,7 +4018,7 @@ void draw3_data2(DRAW_UI_P p)
 						digit = 0;
 						pos = 2;
 						unit = UNIT_NONE;
-						draw3_pressed (data_612, units[unit], cur_value , lower, upper, step, digit, p, pos);
+						draw3_digit_pressed (data_612, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 					}
 					else 
 					{
@@ -4059,7 +4026,7 @@ void draw3_data2(DRAW_UI_P p)
 						digit = 0;
 						pos = 2;
 						unit = UNIT_NONE;
-						draw3_stop (cur_value, units[unit], digit, pos);
+						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					}
 					break;
 
@@ -4165,7 +4132,7 @@ void draw3_data2(DRAW_UI_P p)
 						digit = 2;
 						pos = 2;
 						unit = UNIT_MM;
-						draw3_pressed (data_722, units[unit], cur_value , lower, upper, step, digit, p, pos);
+						draw3_digit_pressed (data_722, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 					}
 					else 
 					{
@@ -4173,7 +4140,7 @@ void draw3_data2(DRAW_UI_P p)
 						digit = 2;
 						pos = 2;
 						unit = UNIT_MM;
-						draw3_stop (cur_value, units[unit], digit, pos);
+						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					}
 					break;
 
@@ -4393,7 +4360,7 @@ void draw3_data3(DRAW_UI_P p)
 						digit = 2;
 						pos = 3;
 						unit = UNIT_US;
-						draw3_pressed (data_103, units[unit], cur_value , lower, upper, step, digit, p, pos);
+						draw3_digit_pressed (data_103, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 					}
 					else 
 					{
@@ -4401,7 +4368,7 @@ void draw3_data3(DRAW_UI_P p)
 						digit = 2;
 						pos = 3;
 						unit = UNIT_US;
-						draw3_stop (cur_value, units[unit], digit, pos);
+						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					}
 					break;
 				case 1: /* 电压高低 功率?  113 */
@@ -4480,7 +4447,7 @@ void draw3_data3(DRAW_UI_P p)
 							pos = 3;
 							unit = UNIT_NONE;
 
-							draw3_pressed (data_1431, units[unit], cur_value , lower, upper, step, digit, p, pos);
+							draw3_digit_pressed (data_1431, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 						}
 						//						draw3_pop (NULL, set_menu_position2, "5", freq, 12, 2);
 						else
@@ -4508,7 +4475,7 @@ void draw3_data3(DRAW_UI_P p)
 							unit = UNIT_NONE;
 							pos = 3;
 							digit = 0;
-							draw3_stop (cur_value , units[unit], digit, pos);
+							draw3_digit_stop (cur_value , units[unit], digit, pos, 0);
 						}
 					}
 					break;
@@ -4542,7 +4509,7 @@ void draw3_data3(DRAW_UI_P p)
 							digit = 2;
 							pos = 3;
 							unit = UNIT_MM;
-							draw3_pressed (data_203, units[unit], cur_value , lower, upper, step, digit, p, pos);
+							draw3_digit_pressed (data_203, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 						}
 						else 
 						{
@@ -4550,7 +4517,7 @@ void draw3_data3(DRAW_UI_P p)
 							digit = 2;
 							pos = 3;
 							unit = UNIT_MM;
-							draw3_stop (cur_value, units[unit], digit, pos);
+							draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 						}
 					}
 					else
@@ -4635,7 +4602,7 @@ void draw3_data3(DRAW_UI_P p)
 						digit = 1;
 						pos = 3;
 						unit = UNIT_MM;
-						draw3_pressed (data_313, units[unit], cur_value , lower, upper, step, digit, p, pos);
+						draw3_digit_pressed (data_313, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 					}
 					else 
 					{
@@ -4643,7 +4610,7 @@ void draw3_data3(DRAW_UI_P p)
 						digit = 1;
 						pos = 3;
 						unit = UNIT_MM;
-						draw3_stop (cur_value, units[unit], digit, pos);
+						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					}
 					break;
 
@@ -4679,7 +4646,7 @@ void draw3_data3(DRAW_UI_P p)
 						digit = 0;
 						pos = 3;
 						unit = UNIT_NONE;
-						draw3_pressed (data_333, units[unit], cur_value , lower, upper, step, digit, p, pos);
+						draw3_digit_pressed (data_333, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 					}
 					else 
 					{
@@ -4687,7 +4654,7 @@ void draw3_data3(DRAW_UI_P p)
 						digit = 0;
 						pos = 3;
 						unit = UNIT_NONE;
-						draw3_stop (cur_value, units[unit], digit, pos);
+						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					}
 
 					break;
@@ -4820,7 +4787,7 @@ void draw3_data3(DRAW_UI_P p)
 						   digit = 2;
 						   pos = 3;
 						   unit = UNIT_MM;
-						   draw3_pressed (data_522, units[unit], cur_value , lower, upper, step, digit, p, pos);
+						   draw3_digit_pressed (data_522, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 					   }
 					   else 
 					   {
@@ -4828,7 +4795,7 @@ void draw3_data3(DRAW_UI_P p)
 						   digit = 2;
 						   pos = 3;
 						   unit = UNIT_MM;
-						   draw3_stop (cur_value, units[unit], digit, pos);
+						   draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					   }
 					   break;
 
@@ -4870,7 +4837,7 @@ void draw3_data3(DRAW_UI_P p)
 						   digit = 1;
 						   pos = 3;
 						   unit = UNIT_NONE;
-						   draw3_pressed (data_613, units[unit], cur_value , lower, upper, step, digit, p, pos);
+						   draw3_digit_pressed (data_613, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 					   }
 					   else 
 					   {
@@ -4878,7 +4845,7 @@ void draw3_data3(DRAW_UI_P p)
 						   digit = 1;
 						   pos = 3;
 						   unit = UNIT_NONE;
-						   draw3_stop (cur_value, units[unit], digit, pos);
+						   draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					   }
 					   break;
 
@@ -4901,7 +4868,7 @@ void draw3_data3(DRAW_UI_P p)
 						   digit = 1;
 						   pos = 3;
 						   unit = UNIT_MM;
-						   draw3_pressed (data_623, units[unit], cur_value , lower, upper, step, digit, p, pos);
+						   draw3_digit_pressed (data_623, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 					   }
 					   else 
 					   {
@@ -4909,7 +4876,7 @@ void draw3_data3(DRAW_UI_P p)
 						   digit = 1;
 						   pos = 3;
 						   unit = UNIT_MM;
-						   draw3_stop (cur_value, units[unit], digit, pos);
+						   draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					   }
 					   break;
 
@@ -4956,7 +4923,7 @@ void draw3_data3(DRAW_UI_P p)
 						digit = 1;
 						pos = 3;
 						unit = UNIT_MM_S;
-						draw3_pressed (data_713, units[unit], cur_value , lower, upper, step, digit, p, pos);
+						draw3_digit_pressed (data_713, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 					}
 					else 
 					{
@@ -4964,7 +4931,7 @@ void draw3_data3(DRAW_UI_P p)
 						digit = 1;
 						pos = 3;
 						unit = UNIT_MM_S;
-						draw3_stop (cur_value, units[unit], digit, pos);
+						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					}
 					break;
 
@@ -4988,7 +4955,7 @@ void draw3_data3(DRAW_UI_P p)
 						digit = 0;
 						pos = 3;
 						unit = UNIT_MM;
-						draw3_pressed (data_723, units[unit], cur_value , lower, upper, step, digit, p, pos);
+						draw3_digit_pressed (data_723, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 					}
 					else 
 					{
@@ -4996,7 +4963,7 @@ void draw3_data3(DRAW_UI_P p)
 						digit = 0;
 						pos = 3;
 						unit = UNIT_MM;
-						draw3_stop (cur_value, units[unit], digit, pos);
+						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					}
 					break;
 
@@ -5226,7 +5193,7 @@ void draw3_data4(DRAW_UI_P p)
 							unit = UNIT_IN_US;
 						}
 						pos = 4;
-						draw3_pressed (data_104, units[unit], cur_value , lower, upper, step, digit, p, pos);
+						draw3_digit_pressed (data_104, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 					}
 					else 
 					{
@@ -5243,7 +5210,7 @@ void draw3_data4(DRAW_UI_P p)
 							unit = UNIT_IN_US;
 						}
 						pos = 4;
-						draw3_stop (cur_value, units[unit], digit, pos);
+						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					}
 					break;
 				case 1: /* 脉冲宽度 pulser width  P114 */
@@ -5269,7 +5236,7 @@ void draw3_data4(DRAW_UI_P p)
 							pos = 4;
 							unit = UNIT_NONE;
 
-							draw3_pressed (data_1141, units[unit], cur_value , lower, upper, step, digit, p, pos);
+							draw3_digit_pressed (data_1141, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 						}
 						//						draw3_pop (NULL, set_menu_position2, "5", freq, 12, 2);
 						else
@@ -5297,7 +5264,7 @@ void draw3_data4(DRAW_UI_P p)
 							unit = UNIT_NONE;
 							pos = 4;
 							digit = 1;
-							draw3_stop (cur_value , units[unit], digit, pos);
+							draw3_digit_stop (cur_value , units[unit], digit, pos, 0);
 						}
 					}
 					break;
@@ -5333,7 +5300,7 @@ void draw3_data4(DRAW_UI_P p)
 						digit = 2;
 						pos = 4;
 						unit = UNIT_US;
-						draw3_pressed (data_134, units[unit], cur_value , lower, upper, step, digit, p, pos);
+						draw3_digit_pressed (data_134, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 					}
 					else 
 					{
@@ -5341,7 +5308,7 @@ void draw3_data4(DRAW_UI_P p)
 						digit = 2;
 						pos = 4;
 						unit = UNIT_US;
-						draw3_stop (cur_value, units[unit], digit, pos);
+						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					}
 					break;
 
@@ -5386,7 +5353,7 @@ void draw3_data4(DRAW_UI_P p)
 							digit = 0;
 							pos = 4;
 							unit = UNIT_BFH;
-							draw3_pressed (data_204, units[unit], cur_value , lower, upper, step, digit, p, pos);
+							draw3_digit_pressed (data_204, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 						}
 						else 
 						{
@@ -5394,7 +5361,7 @@ void draw3_data4(DRAW_UI_P p)
 							digit = 0;
 							pos = 4;
 							unit = UNIT_BFH;
-							draw3_stop (cur_value, units[unit], digit, pos);
+							draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 						}
 					}
 					else
@@ -5446,7 +5413,7 @@ void draw3_data4(DRAW_UI_P p)
 						digit = 2;
 						pos = 4;
 						unit = UNIT_MS;
-						draw3_pressed (data_224, units[unit], cur_value , lower, upper, step, digit, p, pos);
+						draw3_digit_pressed (data_224, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 					}
 					else 
 					{
@@ -5454,7 +5421,7 @@ void draw3_data4(DRAW_UI_P p)
 						digit = 2;
 						pos = 4;
 						unit = UNIT_MS;
-						draw3_stop (cur_value, units[unit], digit, pos);
+						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					}
 					break;
 
@@ -5513,7 +5480,7 @@ void draw3_data4(DRAW_UI_P p)
 						digit = 0;
 						pos = 4;
 						unit = UNIT_NONE;
-						draw3_pressed (data_324, units[unit], cur_value , lower, upper, step, digit, p, pos);
+						draw3_digit_pressed (data_324, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 					}
 					else 
 					{
@@ -5521,7 +5488,7 @@ void draw3_data4(DRAW_UI_P p)
 						digit = 0;
 						pos = 4;
 						unit = UNIT_NONE;
-						draw3_stop (cur_value, units[unit], digit, pos);
+						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					}
 
 					break;
@@ -5733,7 +5700,7 @@ void draw3_data4(DRAW_UI_P p)
 						   digit = 0;
 						   pos = 4;
 						   unit = UNIT_MM;
-						   draw3_pressed (data_724, units[unit], cur_value , lower, upper, step, digit, p, pos);
+						   draw3_digit_pressed (data_724, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 					   }
 					   else 
 					   {
@@ -5741,7 +5708,7 @@ void draw3_data4(DRAW_UI_P p)
 						   digit = 0;
 						   pos = 4;
 						   unit = UNIT_MM;
-						   draw3_stop (cur_value, units[unit], digit, pos);
+						   draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					   }
 					   break;
 
@@ -5895,7 +5862,7 @@ void draw3_data5(DRAW_UI_P p)
 							pos = 5;
 							unit = UNIT_NONE;
 
-							draw3_pressed (data_1151, units[unit], cur_value , lower, upper, step, digit, p, pos);
+							draw3_digit_pressed (data_1151, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 						}
 
 						else
@@ -5923,7 +5890,7 @@ void draw3_data5(DRAW_UI_P p)
 							unit = UNIT_NONE;
 							pos = 5;
 							digit = 0;
-							draw3_stop (cur_value , units[unit], digit, pos);
+							draw3_digit_stop (cur_value , units[unit], digit, pos, 0);
 						}
 					}
 					break;
@@ -5946,7 +5913,7 @@ void draw3_data5(DRAW_UI_P p)
 						digit = 0;
 						pos = 5;
 						unit = UNIT_BFH;
-						draw3_pressed (data_125, units[unit], cur_value , lower, upper, step, digit, p, pos);
+						draw3_digit_pressed (data_125, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 					}
 					else 
 					{
@@ -5954,7 +5921,7 @@ void draw3_data5(DRAW_UI_P p)
 						digit = 0;
 						pos = 5;
 						unit = UNIT_BFH;
-						draw3_stop (cur_value, units[unit], digit, pos);
+						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					}
 					break;
 
@@ -5978,7 +5945,7 @@ void draw3_data5(DRAW_UI_P p)
 						digit = 1;
 						pos = 5;
 						unit = UNIT_DB;
-						draw3_pressed (data_135, units[unit], cur_value , lower, upper, step, digit, p, pos);
+						draw3_digit_pressed (data_135, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 					}
 					else 
 					{
@@ -5986,7 +5953,7 @@ void draw3_data5(DRAW_UI_P p)
 						digit = 1;
 						pos = 5;
 						unit = UNIT_DB;
-						draw3_stop (cur_value, units[unit], digit, pos);
+						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					}
 					break;
 
@@ -6014,7 +5981,7 @@ void draw3_data5(DRAW_UI_P p)
 							digit = 1;
 							pos = 5;
 							unit = UNIT_NONE;
-							draw3_pressed (data_1451, units[unit], cur_value , lower, upper, step, digit, p, pos);
+							draw3_digit_pressed (data_1451, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 						}
 						else
 						{
@@ -6041,7 +6008,7 @@ void draw3_data5(DRAW_UI_P p)
 							unit = UNIT_NONE;
 							pos = 5;
 							digit = 1;
-							draw3_stop (cur_value , units[unit], digit, pos);
+							draw3_digit_stop (cur_value , units[unit], digit, pos, 0);
 						}
 					}
 					break;
@@ -6084,7 +6051,7 @@ void draw3_data5(DRAW_UI_P p)
 						digit = 2;
 						pos = 5;
 						unit = UNIT_MS;
-						draw3_pressed (data_225, units[unit], cur_value , lower, upper, step, digit, p, pos);
+						draw3_digit_pressed (data_225, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 					}
 					else 
 					{
@@ -6092,7 +6059,7 @@ void draw3_data5(DRAW_UI_P p)
 						digit = 2;
 						pos = 5;
 						unit = UNIT_MS;
-						draw3_stop (cur_value, units[unit], digit, pos);
+						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					}
 					break;
 
@@ -6322,7 +6289,7 @@ void draw3_data5(DRAW_UI_P p)
 						   digit = 2;
 						   pos = 5;
 						   unit = UNIT_MM;
-						   draw3_pressed (data_722, units[unit], cur_value , lower, upper, step, digit, p, pos);
+						   draw3_digit_pressed (data_722, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 					   }
 					   else 
 					   {
@@ -6330,7 +6297,7 @@ void draw3_data5(DRAW_UI_P p)
 						   digit = 2;
 						   pos = 5;
 						   unit = UNIT_MM;
-						   draw3_stop (cur_value, units[unit], digit, pos);
+						   draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					   }
 					   break;
 
@@ -6451,11 +6418,11 @@ void draw_3_menu(gint pa, gpointer p)
 		}
 		gtk_widget_hide (pp->sbutton[i]);
 		//gtk_widget_hide (pp->vscalebox);
-		gtk_widget_show (pp->vscalebox);
+		//		gtk_widget_show (pp->vscalebox);
 		gtk_widget_show (pp->scale_drawarea);
-		gtk_widget_hide (pp->button_add);
-		gtk_widget_hide (pp->button_sub);
-		gtk_widget_hide (pp->vscale);
+		//		gtk_widget_hide (pp->button_add);
+		//		gtk_widget_hide (pp->button_sub);
+		//		gtk_widget_hide (pp->vscale);
 		//gtk_widget_set_size_request (GTK_WIDGET(pp->drawing_area), 658, 390);
 	}
 	switch (CUR_POS)
@@ -6764,9 +6731,10 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 	gtk_box_pack_start (GTK_BOX (p->hbox111), pp->event[0], FALSE, FALSE, 0);
 	gtk_widget_set_size_request (GTK_WIDGET(pp->event[0]), 60, 45);
 	update_widget_bg(pp->event[0], backpic[3]);
-	//gtk_label_set_text (GTK_LABEL (pp->label[0]), "Gain\n(dB)");      /* 增益单位以及标识 */
-	markup=g_markup_printf_escaped("<span foreground='white' font_desc='10'>Gain\n(dB)</span>");
-	gtk_label_set_markup (GTK_LABEL(pp->label[0]),markup);
+	if (CFG(db_ref))
+		tt_label_show_string (pp->label[0], con2_p[1][0][6], "\n", "(dB)", "white", 10);
+	else
+		tt_label_show_string (pp->label[0], con2_p[1][0][0], "\n", "(dB)", "white", 10);
 	gtk_box_pack_start (GTK_BOX (p->hbox111), pp->event[1], FALSE, FALSE, 0);
 	gtk_widget_set_size_request (GTK_WIDGET(pp->event[1]), 112, 45);  
 	update_widget_bg(pp->event[1], backpic[4]);
@@ -6969,7 +6937,7 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 
 	/* scale 上面的透明条 */
 	pp->scale_drawarea = gtk_drawing_area_new();
-	gtk_widget_set_size_request (GTK_WIDGET(pp->scale_drawarea), 30, 30);
+	gtk_widget_set_size_request (GTK_WIDGET(pp->scale_drawarea), 30, 425);
 	gtk_widget_modify_bg(pp->scale_drawarea, GTK_STATE_NORMAL, &color_black);
 	//gtk_widget_modify_fg(pp->scale_drawarea, GTK_STATE_NORMAL, &color_black);
 
@@ -6982,6 +6950,7 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 			G_CALLBACK(sub_click), NULL);
 
 	pp->vscale = gtk_vscale_new_with_range(1.0, 100.0, 1.0);
+	gtk_widget_set_size_request (GTK_WIDGET(pp->vscale), 30, 370);
 
 	/* vscalebox */
 	pp->vscalebox = gtk_vbox_new (FALSE, 0);
@@ -6992,9 +6961,10 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 	gtk_box_pack_start (GTK_BOX (pp->vscalebox), pp->vscale, FALSE, FALSE, 0);
 	gtk_box_pack_start (GTK_BOX (pp->vscalebox), pp->button_sub, FALSE, FALSE, 0);
 	gtk_widget_show (pp->scale_drawarea); 
-	gtk_widget_hide (pp->button_add);
-	gtk_widget_hide (pp->button_sub);
-	gtk_widget_hide (pp->vscale);
+	gtk_widget_show (pp->button_add);
+	gtk_widget_show (pp->button_sub);
+	gtk_widget_show (pp->vscale);
+	gtk_widget_show (pp->vscalebox);
 
 	gtk_widget_set_can_focus (pp->button_add, FALSE);
 	gtk_widget_set_can_focus (pp->vscale, FALSE);

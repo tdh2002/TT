@@ -8,6 +8,8 @@
 
 static void handler_key(guint keyval);
 
+extern const gchar ****con2_p;
+
 gboolean foo (GtkAccelGroup *accel_group, GObject *acceleratable,
 		guint keyval, GdkModifierType modifier, gpointer data);
 
@@ -250,6 +252,32 @@ gint cal_menu3_qty()
 	return 0;
 }
 
+/* 设置LABEL特别显示的函数 字符串 */
+void tt_label_show_string (GtkWidget *label, const gchar *s1, const gchar *s2, 
+		const gchar *s3, const gchar *color,  guint font_size)
+{
+	gchar *markup;
+
+	markup = g_markup_printf_escaped(
+			"<span foreground=\'%s\' font_desc=\'%d\'>%s%s%s</span>", color, font_size, s1, s2, s3);
+	gtk_label_set_markup (GTK_LABEL (label), markup);
+
+	g_free (markup);
+}
+
+/* 设置LABEL特别显示的函数 字符串与数值 */
+void tt_label_show_float (GtkWidget *label, const gchar *s1, gfloat value, guint digit, 
+		const gchar *s3, const gchar *color,  guint font_size)
+{
+	gchar *markup;
+
+	markup = g_markup_printf_escaped(
+			"<span foreground=\'%s\' font_desc=\'%d\'>%s%0.*f%s</span>", color, font_size, s1, digit,  value, s3);
+	gtk_label_set_markup (GTK_LABEL (label), markup);
+
+	g_free (markup);
+}
+
 /*5个二级菜单按钮的回调函数*/
 void b2_fun0(DRAW_UI_P p, gint pos)
 {
@@ -406,6 +434,7 @@ void b3_fun0(gpointer p)
 
 void b3_fun1(gpointer p)
 {
+	gchar *markup;
 	/* 之前的位置 */
 	pp->pos_last2 = pp->pos2[pp->pos][pp->pos1[pp->pos]];
 	pp->pos2[pp->pos][pp->pos1[pp->pos]] = 1;
@@ -420,10 +449,19 @@ void b3_fun1(gpointer p)
 				   case 4: 
 					   CFG(gainr) = CFG(gain);
 					   pp->pos_pos = MENU3_STOP;
+					   if (CFG(db_ref))
+						   markup = g_markup_printf_escaped ("<span foreground='white' font_desc='24'>%0.1f</span>",
+								   (CFG(gain) - CFG(gainr)) / 100.0 );
+					   else
+						   markup = g_markup_printf_escaped ("<span foreground='white' font_desc='24'>%0.1f</span>",
+								   CFG(gain) / 100.0 );
+					   gtk_label_set_markup (GTK_LABEL(pp->label[GAIN_INFO]),markup);
+
+					   g_free(markup);
 					   break; /* Set Ref P141 开关 */
 				   default:break;
 			   }
-				   break;
+			   break;
 		default:break;
 	}
 
@@ -549,6 +587,7 @@ void b3_fun1(gpointer p)
 
 void b3_fun2(gpointer p)
 {
+	gchar *markup;
 	/* 之前的位置 */
 	pp->pos_last2 = pp->pos2[pp->pos][pp->pos1[pp->pos]];
 	pp->pos2[pp->pos][pp->pos1[pp->pos]] = 2;
@@ -562,6 +601,20 @@ void b3_fun2(gpointer p)
 				   case 4: 
 					   CFG(db_ref) = !CFG(db_ref);
 					   pp->pos_pos = MENU3_STOP;
+					   if (CFG(db_ref))
+					   {
+						   tt_label_show_string (pp->label[0], con2_p[1][0][6], "\n", "(dB)", "white", 10);
+						   markup = g_markup_printf_escaped ("<span foreground='white' font_desc='24'>%0.1f</span>",
+								   (CFG(gain) - CFG(gainr)) / 100.0 );
+					   }
+					   else
+					   {
+						   tt_label_show_string (pp->label[0], con2_p[1][0][0], "\n", "(dB)", "white", 10);
+						   markup = g_markup_printf_escaped ("<span foreground='white' font_desc='24'>%0.1f</span>",
+								   CFG(gain) / 100.0 );
+					   }
+					   gtk_label_set_markup (GTK_LABEL(pp->label[GAIN_INFO]),markup);
+					   g_free(markup);
 					   break; /* dB Ref P142 开关 */
 				   default:break;
 			   }
@@ -1148,7 +1201,10 @@ void data_100 (GtkSpinButton *spinbutton, gpointer data) /* 增益Gain */
 {
 	DRAW_UI_P p = (DRAW_UI_P)(data);
 	gchar *markup;
-	p->p_config->gain = (gushort) (gtk_spin_button_get_value (spinbutton) * 100);
+	if (CFG(db_ref))
+		p->p_config->gain = (gushort) (gtk_spin_button_get_value (spinbutton) * 100 + CFG(gainr));
+	else
+		p->p_config->gain = (gushort) (gtk_spin_button_get_value (spinbutton) * 100);
 
 	markup = g_markup_printf_escaped ("<span foreground='white' font_desc='24'>%0.1f</span>",
 			gtk_spin_button_get_value (spinbutton));
