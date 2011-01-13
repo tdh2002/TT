@@ -409,6 +409,25 @@ void b3_fun1(gpointer p)
 	/* 之前的位置 */
 	pp->pos_last2 = pp->pos2[pp->pos][pp->pos1[pp->pos]];
 	pp->pos2[pp->pos][pp->pos1[pp->pos]] = 1;
+	pp->pos_pos = MENU3_PRESSED;
+
+	/* 一次点击处理 */
+	switch (pp->pos)
+	{
+		case 1:
+			   switch (pp->pos1[1])
+			   {
+				   case 4: 
+					   CFG(gainr) = CFG(gain);
+					   pp->pos_pos = MENU3_STOP;
+					   break; /* Set Ref P141 开关 */
+				   default:break;
+			   }
+				   break;
+		default:break;
+	}
+
+
 	/*处理微调*/
 	if (pp->pos_last2 == pp->pos2[pp->pos][pp->pos1[pp->pos]])
 	{
@@ -522,7 +541,6 @@ void b3_fun1(gpointer p)
 		}
 	}
 
-	pp->pos_pos = MENU3_PRESSED;
 	draw_2_menu(0);
 	draw_3_menu(0, NULL);                          /**/
 
@@ -536,6 +554,21 @@ void b3_fun2(gpointer p)
 	pp->pos2[pp->pos][pp->pos1[pp->pos]] = 2;
 	pp->pos_pos = MENU3_PRESSED;
 	/*处理微调*/
+	switch (pp->pos)
+	{
+		case 1:
+			   switch (pp->pos1[1])
+			   {
+				   case 4: 
+					   CFG(db_ref) = !CFG(db_ref);
+					   pp->pos_pos = MENU3_STOP;
+					   break; /* dB Ref P142 开关 */
+				   default:break;
+			   }
+				   break;
+		default:break;
+	}
+
 	if (pp->pos_last2 == pp->pos2[pp->pos][pp->pos1[pp->pos]])
 	{
 		switch (pp->pos) 
@@ -551,7 +584,7 @@ void b3_fun2(gpointer p)
 							  break; /* 112 频率 Freq.  */
 					   case 2: /* 弹出一个选择菜单,选择 */ break; /* 122 检波 Recitify  */
 					   case 3: /* Angle. (deg) */ break; /* 132 角度 不能更改 */
-					   case 4: pp->p_config->db_ref = !pp->p_config->db_ref;break;/* dB Ref. 开关 */
+					   case 4: break;/* dB Ref P142 开关 */
 					   default:break;
 				   }
 				   break;
@@ -1111,17 +1144,18 @@ void data_023 (GtkMenuItem *menuitem, gpointer data) /* Wizard -> Calibration ->
 	/* 发送增益给硬件 */
 }
 
-void data_100 (GtkSpinButton *spinbutton, gpointer data) /*增益Gain*/
+void data_100 (GtkSpinButton *spinbutton, gpointer data) /* 增益Gain */
 {
 	DRAW_UI_P p = (DRAW_UI_P)(data);
 	gchar *markup;
-	p->p_config->gain = gtk_spin_button_get_value (spinbutton);
+	p->p_config->gain = (gushort) (gtk_spin_button_get_value (spinbutton) * 100);
 
-	markup=g_markup_printf_escaped("<span foreground='white' font_desc='24'>%0.1f</span>",p->p_config->gain);
-	gtk_label_set_markup (GTK_LABEL(pp->label[1]),markup);
+	markup = g_markup_printf_escaped ("<span foreground='white' font_desc='24'>%0.1f</span>",
+			gtk_spin_button_get_value (spinbutton));
+	gtk_label_set_markup (GTK_LABEL(pp->label[GAIN_INFO]),markup);
 
 	g_free(markup);
-	/*发送增益给硬件*/
+		/* 发送增益给硬件 */
 }
 
 void data_101 (GtkSpinButton *spinbutton, gpointer data) /*Start 扫描延时 */

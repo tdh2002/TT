@@ -35,7 +35,9 @@ DRAW_UI_P	pp;
 static void set_config ()
 {
 	CFG(part.Velocity) = 592000; 
-	CFG(gain)          = 10.0;
+	CFG(gain)          = 0;
+	CFG(gainr)         = 0;
+	CFG(db_ref)		   = GAINR_OFF;
 	CFG(start)         = 0.0;
 	CFG(range)         = 10.0;
 	CFG(wedge_delay)   = 0;

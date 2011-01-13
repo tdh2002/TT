@@ -105,7 +105,7 @@ static const gchar *content_en204[] = {
 
 static const gchar *content_en210[] = {
 	/* 二级菜单第1页下的第0页三级菜单 */
-	"Gain", "Start", "Range", "Wedge Delay" , "Velocity",  NULL
+	"Gain", "Start", "Range", "Wedge Delay" , "Velocity",  NULL, "gain-r"
 };
 
 static const gchar *content_en211[] = {
@@ -391,7 +391,6 @@ const gchar *units_en[] = {"(mm)", "(in)", "(μs)", " ", "(m/s)", "(in/μs)", "(
 const gchar *type_en[] = {"Encoder", "Ultrasound", "Code"};
 const gchar *calibration_mode_en[] = {"Velocity", "Wedge Delay", "Sensitivity", "TCG"};
 
-
 /*  1  */
 const gchar *tx_rx_mode_en[] = {"PC Pitch-and-Catch", "PE Pulse-Echo", "TT Through-Transmission"};
 const gchar *tx_rx_mode_en1[] = {"PC", "PE", "TT"};
@@ -404,6 +403,7 @@ const gchar *filter_en[] = {"None  0.5-21.0 MHz", "Auto", "1 MHz", "1.5MHz", "2M
 const gchar *filter_en1[] = {"None", "Auto", "1 MHz", "1.5MHz", "2MHz", "2.25MHz", "4MHz", "5MHz", "7.5MHz", "10MHz", "12MHz", "15MHz", "20MHz", "HR", "HR 10 MHz"};
 const gchar *rectifier_en[] = {"RF", "HW+", "HW-", "FW", "FW"};
 const gchar *averaging_en[] = {"1","2","4","8","16"};
+const gchar *db_ref_en[] = {"Off", "On"};
 const gchar *points_qty_en[] = {"Auto", "160", "320", "640", "UserDef"};
 const gchar *sum_gain_en[] = {"Auto", "UserDef"};
 
@@ -502,23 +502,6 @@ const gchar *select_key_en[] = {"F2", "F3", "F4", "F5", "F6", "DIN1", "DIN2", "D
 const gchar *assign_key_en[] = {"Gain", "Range", "Start", "Start/Stop", "Pause/Resume", "Calibrate", "Report", "Save Setup As", "Zoom", "Add Entry", "Display", "Context Select", "Gate", "User Field", "Buzzer", "Notes"};
 const gchar *startup_mode_en[] = {"Automatic", "Manual"};
 const gchar *mouse_en[] = {"Off", "Mouse", "Control Area"};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

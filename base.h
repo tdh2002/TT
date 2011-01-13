@@ -63,10 +63,10 @@ typedef struct Wedge {
 
 /*工件 (Part)*/
 typedef struct Part {
-	guint	Geometry;		/* 集合形状 FLAT/ID/OD/BALL */
+	guint	Geometry;		/* 几何形状 FLAT/ID/OD/BALL */
 	guint	Thickness;		/* 厚度 */
 	guint	Diameter;		/* 直径 */
-	guint	Velocity;		/* 声速 单位 100 * m/s  */
+	guint	Velocity;		/* 声速 单位 0.01m/s  */
 	guint	Material;		/* 材料 */
 } PART, *PART_P;
 
@@ -88,14 +88,14 @@ typedef	struct Config {
 	PROBE	probe;
 	WEDGE	wedge;
 	PART	part;
-	gushort	gain;			/* 实际增益 单位 0.01dB */
+	gushort	gain;			/* 实际增益   单位 0.01dB */
 	gushort	gainr;			/* 参考增益值 单位 0.01dB */
 	gfloat	start;			/* 扫描延时 以 μs 为单位 */
 	gfloat	range;			/* 显示范围 以 μs 为单位 */
 	gfloat	wedge_delay;	/* 楔款延时 以 μs 为单位 */
 
 	/*发射*/
-	guchar	gainr_on_off;	/* 参考增益开关 0 off 1 on */
+	guchar	db_ref;			/* 参考增益开关 0 off 1 on */
 	guchar	pulser;			/*  */
 	guchar	tx_rxmode;		/*  */
 	gushort	frequence;		/*  */
@@ -121,7 +121,6 @@ typedef	struct Config {
 
 	/*高级*/
 	guint	auto_height;	/**/
-	gint	db_ref;			/**/
 	gushort	point_qty;		/**/
 	gushort	sum_gain;		/**/
 
@@ -524,17 +523,13 @@ typedef struct Draw_interface {
 
 
 
-#define VOL_LOW		0
-#define VOL_HIGH	1
-
 #define MENU1_STOP    4
 #define MENU2_STOP    0 
 #define MENU2_PRESSED 1
 #define MENU3_STOP    2
 #define MENU3_PRESSED 3
 
-#define CUR_POS (pp->pos2[pp->pos][pp->pos1[pp->pos]])      /*0,1,2,3,4,5*/
-
+/* 单位*/
 #define UNIT_MM		0
 #define UNIT_INCH	1
 #define UNIT_US		2
@@ -548,15 +543,18 @@ typedef struct Draw_interface {
 #define UNIT_MM_S 	10
 #define UNIT_TO1 	11
 
-#define CFG(a)  (pp->p_config->a)
+#define CUR_POS (pp->pos2[pp->pos][pp->pos1[pp->pos]])      /*0,1,2,3,4,5*/
+#define CFG(a)	(pp->p_config->a)
+#define TMP(a)  (pp->p_tmp_config->a)
 
 #define VERSION "DP1.0.0.0"
 
-#define A_SCAN	         0
-#define B_SCAN	         1
-#define C_SCAN	         2
-#define S_SCAN	         3
-#define A_B_SCAN         4
+/* 各种数值定义 */
+#define A_SCAN	     0
+#define B_SCAN	     1
+#define C_SCAN	     2
+#define S_SCAN	     3
+#define A_B_SCAN     4
 #define A_B_C_SCAN	 5
 #define A_B_S_SCAN	 6
 #define A_C_CC_SCAN	 7
@@ -564,7 +562,14 @@ typedef struct Draw_interface {
 #define PA_TOFD	         9
 #define Strip_Chart_AA	 10
 
-#define GAINR_ON	0
-#define GAINR_OFF	1
+#define GAINR_OFF	0
+#define GAINR_ON	1
+
+#define VOL_LOW		0
+#define VOL_HIGH	1
+
+
+/*上方数值显示信息定义 */
+#define GAIN_INFO	1
 
 #endif

@@ -28,6 +28,7 @@ extern const gchar *PW_en[];
 extern const gchar *PRF_en[];
 extern const gchar *filter_en[];
 extern const gchar *filter_en1[];
+extern const gchar *db_ref_en[];
 extern const gchar *rectifier_en[];
 extern const gchar *averaging_en[];
 extern const gchar *points_qty_en[];
