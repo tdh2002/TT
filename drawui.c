@@ -565,9 +565,9 @@ static void draw3_pop_tt (void (*fun)(GtkMenuItem*, gpointer),
 	gtk_widget_hide (pp->sbutton[pos]);
 	//	gtk_widget_show (pp->vscalebox);
 	gtk_widget_show (pp->scale_drawarea);
-	//	gtk_widget_hide (pp->button_add);
-	//	gtk_widget_hide (pp->button_sub);
-	//	gtk_widget_hide (pp->vscale);
+	gtk_widget_hide (pp->button_add);
+	gtk_widget_hide (pp->button_sub);
+	gtk_widget_hide (pp->vscale);
 
 
 	return ;
@@ -630,9 +630,9 @@ static void draw3_pop (void (*fun)(GtkMenuItem*, gpointer),
 	//gtk_widget_hide (pp->vscalebox);
 	//	gtk_widget_show (pp->vscalebox);
 	gtk_widget_show (pp->scale_drawarea);
-	//	gtk_widget_hide (pp->button_add);
-	//	gtk_widget_hide (pp->button_sub);
-	//	gtk_widget_hide (pp->vscale);
+	gtk_widget_hide (pp->button_add);
+	gtk_widget_hide (pp->button_sub);
+	gtk_widget_hide (pp->vscale);
 
 	return ;
 }
@@ -704,9 +704,9 @@ static void draw3_popdown (const gchar *cur_value, guint pos, guint big_menu)
 	gtk_widget_hide (pp->dialog);
 	//	gtk_widget_show (pp->vscalebox);
 	gtk_widget_show (pp->scale_drawarea);
-	//	gtk_widget_hide (pp->button_add);
-	//	gtk_widget_hide (pp->button_sub);
-	//	gtk_widget_hide (pp->vscale);
+	gtk_widget_hide (pp->button_add);
+	gtk_widget_hide (pp->button_sub);
+	gtk_widget_hide (pp->vscale);
 }
 
 /*
@@ -761,6 +761,9 @@ static void draw3_digit_pressed (void (*fun)(GtkSpinButton*, gpointer), const gc
 	gtk_scale_set_draw_value (GTK_SCALE (pp->vscale), FALSE);
 
 	gtk_widget_hide (pp->scale_drawarea);
+	gtk_widget_show (pp->button_add);
+	gtk_widget_show (pp->button_sub);
+	gtk_widget_show (pp->vscale);
 
 	if (str)
 		g_free(str);
@@ -813,9 +816,9 @@ static void draw3_digit_stop(gfloat cur_value, const gchar *unit,
 	//gtk_widget_hide (pp->vscalebox);
 	//	gtk_widget_show (pp->vscalebox);
 	gtk_widget_show (pp->scale_drawarea);
-	//	gtk_widget_hide (pp->button_add);
-	//	gtk_widget_hide (pp->button_sub);
-	//	gtk_widget_hide (pp->vscale);
+	gtk_widget_hide (pp->button_add);
+	gtk_widget_hide (pp->button_sub);
+	gtk_widget_hide (pp->vscale);
 
 	/*						gtk_widget_grab_focus (pp->button);*/
 }
@@ -857,9 +860,9 @@ static void draw3_onoffstop(guint pos)               /* button 为 on/off 时的
 	//gtk_widget_hide (pp->vscalebox);
 	//	gtk_widget_show (pp->vscalebox);
 	gtk_widget_show (pp->scale_drawarea);
-	//	gtk_widget_hide (pp->button_add);
-	//	gtk_widget_hide (pp->button_sub);
-	//	gtk_widget_hide (pp->vscale);
+	gtk_widget_hide (pp->button_add);
+	gtk_widget_hide (pp->button_sub);
+	gtk_widget_hide (pp->vscale);
 }
 
 static void draw3_onoffpressed(guint pos)
@@ -897,9 +900,9 @@ static void draw3_onoffpressed(guint pos)
 	//gtk_widget_hide (pp->vscalebox);
 	//	gtk_widget_show (pp->vscalebox);
 	gtk_widget_show (pp->scale_drawarea);
-	//	gtk_widget_hide (pp->button_add);
-	//	gtk_widget_hide (pp->button_sub);
-	//	gtk_widget_hide (pp->vscale);
+	gtk_widget_hide (pp->button_add);
+	gtk_widget_hide (pp->button_sub);
+	gtk_widget_hide (pp->vscale);
 }
 
 /*改变各图形显示区域的尺寸大小*/
@@ -1127,7 +1130,7 @@ void draw_area_all()
 				gtk_widget_show (pp->vbox_area[0]);
 				break;
 			case A_B_S_SCAN:
-				if (CFG(utunit)==2)
+				if (CFG(ut_unit)==2)
 				{
 					gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->hbox_area[0], FALSE, FALSE, 0);
 					gtk_box_pack_start (GTK_BOX (pp->hbox_area[0]), pp->vbox_area[0], FALSE, FALSE, 0);
@@ -1528,14 +1531,14 @@ void draw3_data0(DRAW_UI_P p)
 						draw3_popdown (displ[CFG(display)], 0, 0);
 					break;
 
-				case 1:/*Display -> Overlay -> UT Unit  p410 */
+				case 1:/*Display -> Overlay -> UT Unit  P410 */
 
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 						draw3_pop_tt (data_410, set_menu_position0_410, 
-								utunit[CFG(utunit)],
-								utunit, 3, 0, CFG(utunit));
+								utunit[CFG(ut_unit)],
+								utunit, 3, 0, CFG(ut_unit));
 					else 
-						draw3_popdown (utunit[CFG(utunit)], 0, 0);
+						draw3_popdown (utunit[CFG(ut_unit)], 0, 0);
 
 					break;
 
@@ -1677,7 +1680,7 @@ void draw3_data0(DRAW_UI_P p)
 
 					break;
 
-				case 1:/*Focal Law -> aperture -> element qty.  610 */
+				case 1:/* 聚焦 阵元数量 P610 */
 					/* 当前步进 */
 					switch (pp->p_tmp_config->element_qty_reg)
 					{
@@ -2076,76 +2079,76 @@ void draw3_data1(DRAW_UI_P p)
 			{
 				case 0: /* start 扫描延时 P101 */
 					/* 当前步进 */
-					switch (pp->p_tmp_config->start_reg)
+					switch (TMP(start_reg))
 					{
-						case 0:	tmpf = pp->p_config->range / 320.0; break;
-						case 1:	tmpf = pp->p_config->range / 20.0 ; break;
-						case 2:	tmpf = pp->p_config->range / 10.0 ; break;
+						case 0:	tmpf = (CFG(range) / 1000.0) / 320.0; break;
+						case 1:	tmpf = (CFG(range) / 1000.0) / 20.0 ; break;
+						case 2:	tmpf = (CFG(range) / 1000.0) / 10.0 ; break;
 						default:break;
 					}
 
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 					{
-						if (pp->p_config->ut_unit == 0)
+						if ((UT_UNIT_TRUE_DEPTH == CFG(ut_unit)) || (UT_UNIT_SOUNDPATH == CFG(ut_unit)))
 						{
-							if (pp->p_config->unit == 0)
+							if (UNIT_MM == CFG(unit))
 							{
-								cur_value = pp->p_config->start * (pp->p_config->part.Velocity / 2000.0);
-								lower = 0.0 * (pp->p_config->part.Velocity / 2000.0);
-								upper =	(9900.8 - pp->p_config->range) * (pp->p_config->part.Velocity / 2000.0);
-								step = tmpf * (pp->p_config->part.Velocity / 2000.0);
+								cur_value = (CFG(start) / 1000.0) * (CFG(part.Velocity_LW) / 200000.0);   /* 当前显示的范围数值mm */
+								lower = (CFG(beam_delay) /1000.0) * CFG(part.Velocity_LW) / 200000.0;
+								upper =	(MAX_RANGE_US - CFG(range) / 1000.0) * (CFG(part.Velocity_LW) / 200000.0);
+								step = tmpf * (CFG(part.Velocity_LW) / 200000.0);
 								digit = 2;
 								pos = 1;
 								unit = UNIT_MM;
 							}
 							else
 							{
-								cur_value = pp->p_config->start * 0.03937 * pp->p_config->part.Velocity / 2000.0;
-								lower =	0.0 * 0.03937 * pp->p_config->part.Velocity / 2000.0;
-								upper =	(9900.8 - pp->p_config->range) * 0.03937 * pp->p_config->part.Velocity / 2000.0;
-								step = tmpf * 0.03937 * pp->p_config->part.Velocity / 2000.0;
-								digit = 2;
+								cur_value = (CFG(start) / 1000.0) * 0.03937 * (CFG(part.Velocity_LW) / 200000.0); /* 当前显示的范围inch */
+								lower = (CFG(beam_delay) / 1000.0) * 0.03937 * CFG(part.Velocity_LW) / 200000.0;
+								upper =	(MAX_RANGE_US - CFG(range) / 1000.0 ) * 0.03937 * CFG(part.Velocity_LW) / 200000.0;
+								step = tmpf * 0.03937 * CFG(part.Velocity_LW) / 200000.0;
+								digit = 3;
 								pos = 1;
 								unit = UNIT_INCH;
 							}
 						}
 						else 
 						{
-							cur_value = pp->p_config->start;
-							lower =	0.0;
-							upper =	(9900.8 - pp->p_config->range);
+							cur_value = CFG(start) / 1000.0 ;
+							lower =	CFG(beam_delay) / 1000.0;
+							upper =	(MAX_RANGE_US - CFG(range) / 1000.0);
 							step = tmpf;
-							digit = 2;
 							pos = 1;
+							digit = 2;
 							unit = UNIT_US;
 						}
 						draw3_digit_pressed (data_101, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 					}
 					else
 					{
-						if (pp->p_config->ut_unit == 0)
+						if ((UT_UNIT_TRUE_DEPTH == CFG(ut_unit)) || (UT_UNIT_SOUNDPATH == CFG(ut_unit)))
 						{
-							if (pp->p_config->unit == 0)
+							if (UNIT_MM == CFG(unit))
 							{
-								cur_value = pp->p_config->start * pp->p_config->part.Velocity / 2000.0;
+								cur_value = (CFG(start) / 1000.0) * (CFG(part.Velocity_LW) / 200000.0);   /* 当前显示的范围数值mm */
 								unit = UNIT_MM;
-								pos = 1;
 								digit = 2;
+								pos = 1;
 							}
 							else
 							{
-								cur_value = pp->p_config->start * 0.03937 * pp->p_config->part.Velocity / 2000.0;
+								cur_value = (CFG(start) / 1000.0) * 0.03937 * (CFG(part.Velocity_LW) / 200000.0); /* 当前显示的范围inch */
 								unit = UNIT_INCH;
+								digit = 3;
 								pos = 1;
-								digit = 2;
 							}
 						}
 						else
 						{
-							cur_value = pp->p_config->start;
+							cur_value = CFG(start) / 1000.0 ;
 							unit = UNIT_US;
-							pos = 1;
 							digit = 2;
+							pos = 1;
 						}
 						draw3_digit_stop (cur_value , units[unit], digit, pos, 0);
 					}
@@ -3243,36 +3246,36 @@ void draw3_data2(DRAW_UI_P p)
 
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 					{
-						if (pp->p_config->ut_unit == 0)
+						if ((UT_UNIT_TRUE_DEPTH == CFG(ut_unit)) || (UT_UNIT_SOUNDPATH == CFG(ut_unit)))
 						{
-							if (pp->p_config->unit == 0)
+							if (UNIT_MM == CFG(unit))
 							{
-								cur_value = pp->p_config->range * (pp->p_config->part.Velocity / 2000.0);
-								lower = 3.2 * (pp->p_config->part.Velocity / 2000.0);
-								upper = ((9900.8 - pp->p_config->start) > 6400.0 ? 6400.0 : (9900.8 - pp->p_config->start)) *
-									(pp->p_config->part.Velocity / 2000.0);
-								step = tmpf * (pp->p_config->part.Velocity / 2000.0);
+								cur_value = (CFG(range) / 1000.0) * (CFG(part.Velocity_LW) / 200000.0);   /* 当前显示的范围数值mm */
+								lower = 3.2 * CFG(part.Velocity_LW) / 200000.0;
+								upper = ((MAX_RANGE_US - CFG(start) / 1000.0) > 6400.0 ? 6400.0 : 
+										(MAX_RANGE_US - CFG(start) / 1000.0)) * (CFG(part.Velocity_LW) / 200000.0);
+								step = tmpf * (CFG(part.Velocity_LW) / 200000.0);
 								digit = 2;
 								pos = 2;
 								unit = UNIT_MM;
 							}
 							else
 							{
-								cur_value = pp->p_config->range * 0.03937 * pp->p_config->part.Velocity / 2000.0;
-								lower =	3.2 * 0.03937 * pp->p_config->part.Velocity / 2000.0;
-								upper =	((9900.8 - pp->p_config->start) > 6400.0 ? 6400.0 : (9900.8 - pp->p_config->start)) *
-									0.03937 * pp->p_config->part.Velocity / 2000.0;
-								step = tmpf * 0.03937 * pp->p_config->part.Velocity / 2000.0;
-								digit = 2;
+								cur_value = (CFG(range) / 1000.0) * 0.03937 * (CFG(part.Velocity_LW) / 200000.0); /* 当前显示的范围inch */
+								lower =	3.2 * 0.03937 * CFG(part.Velocity_LW) / 200000.0;
+								upper =	((MAX_RANGE_US - CFG(start) / 1000.0) > 6400.0 ? 6400.0 :
+											(MAX_RANGE_US - CFG(start) / 1000.0)) * 0.03937 * (CFG(part.Velocity_LW) / 200000.0);
+								step = tmpf * 0.03937 * CFG(part.Velocity_LW) / 200000.0;
+								digit = 3;
 								pos = 2;
 								unit = UNIT_INCH;
 							}
 						}
 						else 
 						{
-							cur_value = pp->p_config->range;
+							cur_value = CFG(range) / 1000.0 ;
 							lower =	3.2;
-							upper =	((9900.8 - pp->p_config->start) > 6400.0 ? 6400.0 : (9900.8 - pp->p_config->start));
+							upper =	((MAX_RANGE_US - CFG(start) /1000.0 ) > 6400.0 ? 6400.0 : (MAX_RANGE_US - CFG(start) / 1000.0));
 							step = tmpf;
 							digit = 2;
 							pos = 2;
@@ -3282,26 +3285,26 @@ void draw3_data2(DRAW_UI_P p)
 					}
 					else
 					{
-						if (pp->p_config->ut_unit == 0)
+						if ((UT_UNIT_TRUE_DEPTH == CFG(ut_unit)) || (UT_UNIT_SOUNDPATH == CFG(ut_unit)))
 						{
-							if (pp->p_config->unit == 0)
+							if (UNIT_MM == CFG(unit))
 							{
-								cur_value = pp->p_config->range * (pp->p_config->part.Velocity / 2000.0);
+								cur_value = (CFG(range) / 1000.0) * (CFG(part.Velocity_LW) / 200000.0);   /* 当前显示的范围数值mm */
 								unit = UNIT_MM;
-								pos = 2;
 								digit = 2;
+								pos = 2;
 							}
 							else
 							{
-								cur_value = pp->p_config->range * 0.03937 * (pp->p_config->part.Velocity / 2000.0);
+								cur_value = (CFG(range) / 1000.0) * 0.03937 * (CFG(part.Velocity_LW) / 200000.0); /* 当前显示的范围inch */
 								unit = UNIT_INCH;
+								digit = 3;
 								pos = 2;
-								digit = 2;
 							}
 						}
 						else
 						{
-							cur_value = pp->p_config->range;
+							cur_value = CFG(range) / 1000.0 ;
 							unit = UNIT_US;
 							pos = 2;
 							digit = 2;
@@ -4353,7 +4356,7 @@ void draw3_data3(DRAW_UI_P p)
 					}
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 					{
-						cur_value = pp->p_config->wedge_delay;
+						cur_value = CFG(wedge_delay) / 1000.0;
 						lower = 0.0;
 						upper = 1000.0;
 						step = tmpf;
@@ -4364,7 +4367,7 @@ void draw3_data3(DRAW_UI_P p)
 					}
 					else 
 					{
-						cur_value = pp->p_config->wedge_delay;
+						cur_value = CFG(wedge_delay) / 1000.0;
 						digit = 2;
 						pos = 3;
 						unit = UNIT_US;
@@ -5176,7 +5179,7 @@ void draw3_data4(DRAW_UI_P p)
 					{
 						if (pp->p_config->unit == 0)
 						{
-							cur_value = pp->p_config->part.Velocity / 100.0;
+							cur_value = pp->p_config->part.Velocity_LW / 100.0;
 							lower = 635.0;
 							upper = 15240.0;
 							step = tmpf;
@@ -5185,10 +5188,10 @@ void draw3_data4(DRAW_UI_P p)
 						}
 						else
 						{
-							cur_value = pp->p_config->part.Velocity / (100.0 * 25400 );
+							cur_value = pp->p_config->part.Velocity_LW / (100.0 * 25400 );
 							lower = 0.025;
 							upper = 0.6;
-							step = tmpf / 10000.0;
+							step = tmpf / 1000.0;
 							digit = 4;
 							unit = UNIT_IN_US;
 						}
@@ -5199,13 +5202,13 @@ void draw3_data4(DRAW_UI_P p)
 					{
 						if (pp->p_config->unit == 0)
 						{
-							cur_value = pp->p_config->part.Velocity / 100.0;
+							cur_value = pp->p_config->part.Velocity_LW / 100.0;
 							digit = 1;
 							unit = UNIT_M_S;
 						}
 						else
 						{
-							cur_value = pp->p_config->part.Velocity * 0.000000394;
+							cur_value = pp->p_config->part.Velocity_LW * 0.000000394;
 							digit = 4;
 							unit = UNIT_IN_US;
 						}
@@ -6420,9 +6423,9 @@ void draw_3_menu(gint pa, gpointer p)
 		//gtk_widget_hide (pp->vscalebox);
 		//		gtk_widget_show (pp->vscalebox);
 		gtk_widget_show (pp->scale_drawarea);
-		//		gtk_widget_hide (pp->button_add);
-		//		gtk_widget_hide (pp->button_sub);
-		//		gtk_widget_hide (pp->vscale);
+		gtk_widget_hide (pp->button_add);
+		gtk_widget_hide (pp->button_sub);
+		gtk_widget_hide (pp->vscale);
 		//gtk_widget_set_size_request (GTK_WIDGET(pp->drawing_area), 658, 390);
 	}
 	switch (CUR_POS)

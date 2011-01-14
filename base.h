@@ -44,6 +44,18 @@ extern GdkColor	color_button1;
 extern GdkColor	color_button2;
 extern GdkColor color_rule;
 
+typedef struct focal_law 
+{
+	guchar	active_elem;
+	guchar	t;	
+}FOCAL_LAW, *FOCAL_LAW_P;;
+
+typedef struct element_law
+{
+	guchar	e_number;
+
+}ELEMENT_LAW, *ELEMENT_LAW_P;
+
 /*探头(Probe)*/
 typedef struct Probe {
 	guint	Elem_qty;		/*阵元数*/
@@ -66,7 +78,8 @@ typedef struct Part {
 	guint	Geometry;		/* 几何形状 FLAT/ID/OD/BALL */
 	guint	Thickness;		/* 厚度 */
 	guint	Diameter;		/* 直径 */
-	guint	Velocity;		/* 声速 单位 0.01m/s  */
+	guint	Velocity_LW;		/* 声速 单位 0.01m/s  */
+	guint	Velocity_SW;		/* 声速 单位 0.01m/s  */
 	guint	Material;		/* 材料 */
 } PART, *PART_P;
 
@@ -76,23 +89,18 @@ typedef struct Material {
 	guint	Name[20];		/* 材料名字 */
 } MATERIAL, *MATERIAL_P;
 
-
-
-
-
-
 /*配置信息 (CONFIG)*/
 typedef	struct Config {
 	guint	group;			/**/
 	/*基本参数*/
-	PROBE	probe;
-	WEDGE	wedge;
+	PROBE	probe[2];
+	WEDGE	wedge[2];
 	PART	part;
-	gushort	gain;			/* 实际增益   单位 0.01dB */
-	gushort	gainr;			/* 参考增益值 单位 0.01dB */
-	gfloat	start;			/* 扫描延时 以 μs 为单位 */
-	gfloat	range;			/* 显示范围 以 μs 为单位 */
-	gfloat	wedge_delay;	/* 楔款延时 以 μs 为单位 */
+	gushort	gain;			/* 实际增益 单位 0.01dB */
+	gushort	gainr;			/* 参考增益 单位 0.01dB */
+	gint	start;			/* 扫描延时 单位 0.001μs */
+	guint	range;			/* 显示范围 单位 0.001μs */
+	guint	wedge_delay;	/* 楔款延时 单位 0.001μs */
 
 	/*发射*/
 	guchar	db_ref;			/* 参考增益开关 0 off 1 on */
@@ -206,7 +214,6 @@ typedef	struct Config {
 	guint	echo_qty;                       /*Measurements->Thickness->echo_qty*/
 
 	//	guchar  display;                        /* Display -> Selection -> display*/
-	guchar  utunit;                         /* Display -> Overlay -> utunit */
 	guchar  grid;                           /* Display -> Overlay -> grid */
 	guchar  zoom_display;                   /* Display -> zoom -> display */
 	guchar  color_select;                   /* Display -> Color -> select*/
@@ -239,14 +246,15 @@ typedef	struct Config {
 	guchar  probe_select;                   /*Probe/Part -> select -> select*/
 	guchar  fft;                            /*Probe/Part -> characterize -> FFT*/
 
-	guchar  law_config;                     /*Focal_Law -> configuration -> Law Config*/
-	guint   connection_P;                   /*Focal_Law -> configuration -> connection P*/
-	guint   connection_R;                   /*Focal_Law -> configuration -> connection R*/
-	guint   element_qty;                    /*Focal_Law -> aperture -> element qty*/
-	guint   first_element;                  /*Focal_Law -> aperture -> first element*/
-	guint   last_element;                   /*Focal_Law -> aperture -> last element*/
-	guint   element_step;                   /*Focal_Law -> aperture -> element step*/
-	guchar  wave_type;                      /*Focal_Law -> aperture -> wave type*/
+	/* 聚焦法则 */
+	guchar  law_config;                     /* 聚焦模式 扇扫 线扫etc */
+	guchar  element_qty;					/* */
+	guchar	connection_P;                   /* 设置收的接口 1-128 */
+	guchar  connection_R;                   /* 设置发的接口 1-128 */
+	guchar  first_element;                  /* 第一个阵元 */
+	guchar  last_element;                   /* 最后一个阵元 (线扫时候可以设置) */
+	guchar  element_step;                   /* 阵元间隔 (线扫时候可以设置) */
+	guchar  wave_type;                      /* 0纵波 与 1横波 */
 	guint   min_angle;                      /*Focal Law -> Beam -> Min_angle*/
 	guchar  auto_program;                   /*Focal Law -> Laws -> Auto Program*/
 	guint   focus_depth;                    /*Focal Law -> Beam -> focus_depth*/
@@ -522,54 +530,10 @@ typedef struct Draw_interface {
 /* 710 所选菜单项不同，后面跟着弹出的菜单便不同 */
 
 
-
-#define MENU1_STOP    4
-#define MENU2_STOP    0 
-#define MENU2_PRESSED 1
-#define MENU3_STOP    2
-#define MENU3_PRESSED 3
-
-/* 单位*/
-#define UNIT_MM		0
-#define UNIT_INCH	1
-#define UNIT_US		2
-#define UNIT_NONE	3
-#define UNIT_M_S	4
-#define UNIT_IN_US	5
-#define UNIT_DB 	6
-#define UNIT_TO 	7
-#define UNIT_BFH 	8
-#define UNIT_MS 	9
-#define UNIT_MM_S 	10
-#define UNIT_TO1 	11
-
 #define CUR_POS (pp->pos2[pp->pos][pp->pos1[pp->pos]])      /*0,1,2,3,4,5*/
 #define CFG(a)	(pp->p_config->a)
 #define TMP(a)  (pp->p_tmp_config->a)
 
 #define VERSION "DP1.0.0.0"
-
-/* 各种数值定义 */
-#define A_SCAN	     0
-#define B_SCAN	     1
-#define C_SCAN	     2
-#define S_SCAN	     3
-#define A_B_SCAN     4
-#define A_B_C_SCAN	 5
-#define A_B_S_SCAN	 6
-#define A_C_CC_SCAN	 7
-#define A_S_CC_SCAN	 8
-#define PA_TOFD	         9
-#define Strip_Chart_AA	 10
-
-#define GAINR_OFF	0
-#define GAINR_ON	1
-
-#define VOL_LOW		0
-#define VOL_HIGH	1
-
-
-/*上方数值显示信息定义 */
-#define GAIN_INFO	1
 
 #endif

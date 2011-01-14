@@ -8,6 +8,64 @@
 #include "base.h"
 #include "language.h"
 
+#define MENU1_STOP    4
+#define MENU2_STOP    0 
+#define MENU2_PRESSED 1
+#define MENU3_STOP    2
+#define MENU3_PRESSED 3
+/* 单位 */
+#define UNIT_MM		0
+#define UNIT_INCH	1
+#define UNIT_US		2
+#define UNIT_NONE	3
+#define UNIT_M_S	4
+#define UNIT_IN_US	5
+#define UNIT_DB 	6
+#define UNIT_TO 	7
+#define UNIT_BFH 	8
+#define UNIT_MS 	9
+#define UNIT_MM_S 	10
+#define UNIT_TO1 	11
+
+/* UT_UNIT */
+#define UT_UNIT_TRUE_DEPTH	0
+#define UT_UNIT_SOUNDPATH	1
+#define UT_UNIT_TIME		2
+
+/* 各种数值定义 */
+#define A_SCAN	     0
+#define B_SCAN	     1
+#define C_SCAN	     2
+#define S_SCAN	     3
+#define A_B_SCAN     4
+#define A_B_C_SCAN	 5
+#define A_B_S_SCAN	 6
+#define A_C_CC_SCAN	 7
+#define A_S_CC_SCAN	 8
+#define PA_TOFD	         9
+#define Strip_Chart_AA	 10
+#define GAINR_OFF	0
+#define GAINR_ON	1
+
+#define VOL_LOW		0
+#define VOL_HIGH	1
+
+/*上方数值显示信息定义 */
+#define GAIN_LABEL	0
+#define GAIN_VALUE	1
+
+
+/* 最大测量范围  扫描延时+上扫描范围 */
+#define MAX_RANGE_US	9899.89
+
+/* 发送给硬件数据类型 */
+#define BEAM_DELAY_DSP	0x1000	/* 0x1000~0x10ff 最多256个聚焦法则 */
+#define	RANGE_DSP		0x2000	/*  */	
+
+#define GATEA_DSP		0x3000
+#define GATEB_DSP		0x3001
+#define GATEI_DSP		0x3002
+
 extern gint (*window_keypress_event_orig)(GtkWidget *widget, GdkEventKey *event);
 extern gint my_keypress_event(GtkWidget *widget, GdkEventKey *event);
 extern GtkWidgetClass *widget_window_class;

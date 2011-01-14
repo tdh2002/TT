@@ -105,7 +105,7 @@ static const gchar *content_en204[] = {
 
 static const gchar *content_en210[] = {
 	/* 二级菜单第1页下的第0页三级菜单 */
-	"Gain", "Start", "Range", "Wedge Delay" , "Velocity",  NULL, "gain-r"
+	"Gain", "Start", "Range", "Wedge Delay" , "Velocity",  NULL, "Gain-r", "Gain(Ref.)"
 };
 
 static const gchar *content_en211[] = {
@@ -443,7 +443,7 @@ const gchar *source_en[] = {"A^", "A^-I^", "A^-I/", "B^", "B^-I^", "B^-I/", "B^-
 const gchar *display_en[] = {"A  A-Scan", "B  B-Scan", "C  C-Scan", "S  S-Scan", "A-B  A-Scan B-Scan", "A-B-C  A-Scan B-Scan C-Scan", "A-B-S  A-Scan B-Scan S-Scan", "A-C-[C] A-Scan C-Scan [C-Scan]", "A-S-[C]  A-Scan S-Scan [C-Scan]", "PA-TOFD  PA-TOFD", "Strip Chart-[A]  Strip Chart[A-Scan]"};
 const gchar *displ_en[] = {"A", "B", "C", "S", "A-B", "A-B-C", "A-B-S", "A-C-[C]", "A-S-[C]", "PA-TOFD", "Strip Chart-[A]"};
 const gchar *group_en[] = {"All", "Current"};
-const gchar *utunit_en[] = {"Sound Path", "Time", "True Depth"};
+const gchar *utunit_en[] = {"True Depth","Sound Path", "Time"};
 const gchar *grid_en[] = {"Blue", "Green", "Red", "Yellow", "Black", "Off"};
 const gchar *zoom_display_en[] = {"A-Scan", "B-Scan", "S-Scan", "Strip Chart", "Uncorrected C-Scan", "Off"};
 const gchar *select_en[] = {"Amplitude", "Rectification-TOFD", "Depth"};
