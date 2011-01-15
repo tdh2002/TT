@@ -1083,7 +1083,7 @@ void draw_area_all()
 
 	//	CFG(display) = A_B_SCAN;
 
-	if (CFG(group) == 0) 
+	if (1) 
 	{
 		switch (CFG(display))
 		{
@@ -1285,9 +1285,9 @@ void draw3_data0(DRAW_UI_P p)
 
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 					{
-						cur_value = (CFG(gain) - CFG(gainr) * CFG(db_ref)) / 100.0; 
-						lower = 0.0 - CFG(gainr) * CFG(db_ref) / 100.0 ;
-						upper = 74.0 - CFG(gainr) * CFG(db_ref) / 100.0 ;
+						cur_value = (GROUP_VAL(gain) - GROUP_VAL(gainr) * CFG(db_ref)) / 100.0; 
+						lower = 0.0 - GROUP_VAL(gainr) * CFG(db_ref) / 100.0 ;
+						upper = 74.0 - GROUP_VAL(gainr) * CFG(db_ref) / 100.0 ;
 						step = tmpf;
 						digit = 1;
 						pos = 0;
@@ -1297,7 +1297,7 @@ void draw3_data0(DRAW_UI_P p)
 					}
 					else 
 					{
-						cur_value = (CFG(gain) - CFG(gainr) * CFG(db_ref)) / 100.0; 
+						cur_value = (GROUP_VAL(gain) - GROUP_VAL(gainr) * CFG(db_ref)) / 100.0; 
 						digit = 1;
 						pos = 0;
 						unit = UNIT_DB;
@@ -2081,9 +2081,9 @@ void draw3_data1(DRAW_UI_P p)
 					/* 当前步进 */
 					switch (TMP(start_reg))
 					{
-						case 0:	tmpf = (CFG(range) / 1000.0) / 320.0; break;
-						case 1:	tmpf = (CFG(range) / 1000.0) / 20.0 ; break;
-						case 2:	tmpf = (CFG(range) / 1000.0) / 10.0 ; break;
+						case 0:	tmpf = (GROUP_VAL(range) / 1000.0) / 320.0; break;
+						case 1:	tmpf = (GROUP_VAL(range) / 1000.0) / 20.0 ; break;
+						case 2:	tmpf = (GROUP_VAL(range) / 1000.0) / 10.0 ; break;
 						default:break;
 					}
 
@@ -2093,9 +2093,9 @@ void draw3_data1(DRAW_UI_P p)
 						{
 							if (UNIT_MM == CFG(unit))
 							{
-								cur_value = (CFG(start) / 1000.0) * (CFG(part.Velocity_LW) / 200000.0);   /* 当前显示的范围数值mm */
+								cur_value = (GROUP_VAL(start) / 1000.0) * (CFG(part.Velocity_LW) / 200000.0);   /* 当前显示的范围数值mm */
 								lower = (CFG(beam_delay) /1000.0) * CFG(part.Velocity_LW) / 200000.0;
-								upper =	(MAX_RANGE_US - CFG(range) / 1000.0) * (CFG(part.Velocity_LW) / 200000.0);
+								upper =	(MAX_RANGE_US - GROUP_VAL(range) / 1000.0) * (CFG(part.Velocity_LW) / 200000.0);
 								step = tmpf * (CFG(part.Velocity_LW) / 200000.0);
 								digit = 2;
 								pos = 1;
@@ -2103,9 +2103,9 @@ void draw3_data1(DRAW_UI_P p)
 							}
 							else
 							{
-								cur_value = (CFG(start) / 1000.0) * 0.03937 * (CFG(part.Velocity_LW) / 200000.0); /* 当前显示的范围inch */
+								cur_value = (GROUP_VAL(start) / 1000.0) * 0.03937 * (CFG(part.Velocity_LW) / 200000.0); /* 当前显示的范围inch */
 								lower = (CFG(beam_delay) / 1000.0) * 0.03937 * CFG(part.Velocity_LW) / 200000.0;
-								upper =	(MAX_RANGE_US - CFG(range) / 1000.0 ) * 0.03937 * CFG(part.Velocity_LW) / 200000.0;
+								upper =	(MAX_RANGE_US - GROUP_VAL(range) / 1000.0 ) * 0.03937 * CFG(part.Velocity_LW) / 200000.0;
 								step = tmpf * 0.03937 * CFG(part.Velocity_LW) / 200000.0;
 								digit = 3;
 								pos = 1;
@@ -2114,9 +2114,9 @@ void draw3_data1(DRAW_UI_P p)
 						}
 						else 
 						{
-							cur_value = CFG(start) / 1000.0 ;
+							cur_value = GROUP_VAL(start) / 1000.0 ;
 							lower =	CFG(beam_delay) / 1000.0;
-							upper =	(MAX_RANGE_US - CFG(range) / 1000.0);
+							upper =	(MAX_RANGE_US - GROUP_VAL(range) / 1000.0);
 							step = tmpf;
 							pos = 1;
 							digit = 2;
@@ -2130,14 +2130,14 @@ void draw3_data1(DRAW_UI_P p)
 						{
 							if (UNIT_MM == CFG(unit))
 							{
-								cur_value = (CFG(start) / 1000.0) * (CFG(part.Velocity_LW) / 200000.0);   /* 当前显示的范围数值mm */
+								cur_value = (GROUP_VAL(start) / 1000.0) * (CFG(part.Velocity_LW) / 200000.0);   /* 当前显示的范围数值mm */
 								unit = UNIT_MM;
 								digit = 2;
 								pos = 1;
 							}
 							else
 							{
-								cur_value = (CFG(start) / 1000.0) * 0.03937 * (CFG(part.Velocity_LW) / 200000.0); /* 当前显示的范围inch */
+								cur_value = (GROUP_VAL(start) / 1000.0) * 0.03937 * (CFG(part.Velocity_LW) / 200000.0); /* 当前显示的范围inch */
 								unit = UNIT_INCH;
 								digit = 3;
 								pos = 1;
@@ -2145,7 +2145,7 @@ void draw3_data1(DRAW_UI_P p)
 						}
 						else
 						{
-							cur_value = CFG(start) / 1000.0 ;
+							cur_value = GROUP_VAL(start) / 1000.0 ;
 							unit = UNIT_US;
 							digit = 2;
 							pos = 1;
@@ -3250,10 +3250,10 @@ void draw3_data2(DRAW_UI_P p)
 						{
 							if (UNIT_MM == CFG(unit))
 							{
-								cur_value = (CFG(range) / 1000.0) * (CFG(part.Velocity_LW) / 200000.0);   /* 当前显示的范围数值mm */
+								cur_value = (GROUP_VAL(range) / 1000.0) * (CFG(part.Velocity_LW) / 200000.0);   /* 当前显示的范围数值mm */
 								lower = 3.2 * CFG(part.Velocity_LW) / 200000.0;
-								upper = ((MAX_RANGE_US - CFG(start) / 1000.0) > 6400.0 ? 6400.0 : 
-										(MAX_RANGE_US - CFG(start) / 1000.0)) * (CFG(part.Velocity_LW) / 200000.0);
+								upper = ((MAX_RANGE_US - GROUP_VAL(start) / 1000.0) > 6400.0 ? 6400.0 : 
+										(MAX_RANGE_US - GROUP_VAL(start) / 1000.0)) * (CFG(part.Velocity_LW) / 200000.0);
 								step = tmpf * (CFG(part.Velocity_LW) / 200000.0);
 								digit = 2;
 								pos = 2;
@@ -3261,10 +3261,10 @@ void draw3_data2(DRAW_UI_P p)
 							}
 							else
 							{
-								cur_value = (CFG(range) / 1000.0) * 0.03937 * (CFG(part.Velocity_LW) / 200000.0); /* 当前显示的范围inch */
+								cur_value = (GROUP_VAL(range) / 1000.0) * 0.03937 * (CFG(part.Velocity_LW) / 200000.0); /* 当前显示的范围inch */
 								lower =	3.2 * 0.03937 * CFG(part.Velocity_LW) / 200000.0;
-								upper =	((MAX_RANGE_US - CFG(start) / 1000.0) > 6400.0 ? 6400.0 :
-											(MAX_RANGE_US - CFG(start) / 1000.0)) * 0.03937 * (CFG(part.Velocity_LW) / 200000.0);
+								upper =	((MAX_RANGE_US - GROUP_VAL(start) / 1000.0) > 6400.0 ? 6400.0 :
+											(MAX_RANGE_US - GROUP_VAL(start) / 1000.0)) * 0.03937 * (CFG(part.Velocity_LW) / 200000.0);
 								step = tmpf * 0.03937 * CFG(part.Velocity_LW) / 200000.0;
 								digit = 3;
 								pos = 2;
@@ -3273,9 +3273,9 @@ void draw3_data2(DRAW_UI_P p)
 						}
 						else 
 						{
-							cur_value = CFG(range) / 1000.0 ;
+							cur_value = GROUP_VAL(range) / 1000.0 ;
 							lower =	3.2;
-							upper =	((MAX_RANGE_US - CFG(start) /1000.0 ) > 6400.0 ? 6400.0 : (MAX_RANGE_US - CFG(start) / 1000.0));
+							upper =	((MAX_RANGE_US - GROUP_VAL(start) /1000.0 ) > 6400.0 ? 6400.0 : (MAX_RANGE_US - GROUP_VAL(start) / 1000.0));
 							step = tmpf;
 							digit = 2;
 							pos = 2;
@@ -3289,14 +3289,14 @@ void draw3_data2(DRAW_UI_P p)
 						{
 							if (UNIT_MM == CFG(unit))
 							{
-								cur_value = (CFG(range) / 1000.0) * (CFG(part.Velocity_LW) / 200000.0);   /* 当前显示的范围数值mm */
+								cur_value = (GROUP_VAL(range) / 1000.0) * (CFG(part.Velocity_LW) / 200000.0);   /* 当前显示的范围数值mm */
 								unit = UNIT_MM;
 								digit = 2;
 								pos = 2;
 							}
 							else
 							{
-								cur_value = (CFG(range) / 1000.0) * 0.03937 * (CFG(part.Velocity_LW) / 200000.0); /* 当前显示的范围inch */
+								cur_value = (GROUP_VAL(range) / 1000.0) * 0.03937 * (CFG(part.Velocity_LW) / 200000.0); /* 当前显示的范围inch */
 								unit = UNIT_INCH;
 								digit = 3;
 								pos = 2;
@@ -3304,7 +3304,7 @@ void draw3_data2(DRAW_UI_P p)
 						}
 						else
 						{
-							cur_value = CFG(range) / 1000.0 ;
+							cur_value = GROUP_VAL(range) / 1000.0 ;
 							unit = UNIT_US;
 							pos = 2;
 							digit = 2;
@@ -4356,7 +4356,7 @@ void draw3_data3(DRAW_UI_P p)
 					}
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 					{
-						cur_value = CFG(wedge_delay) / 1000.0;
+						cur_value = GROUP_VAL(wedge_delay) / 1000.0;
 						lower = 0.0;
 						upper = 1000.0;
 						step = tmpf;
@@ -4367,7 +4367,7 @@ void draw3_data3(DRAW_UI_P p)
 					}
 					else 
 					{
-						cur_value = CFG(wedge_delay) / 1000.0;
+						cur_value = GROUP_VAL(wedge_delay) / 1000.0;
 						digit = 2;
 						pos = 3;
 						unit = UNIT_US;

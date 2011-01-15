@@ -447,15 +447,15 @@ void b3_fun1(gpointer p)
 			   switch (pp->pos1[1])
 			   {
 				   case 4: 
-					   CFG(gainr) = CFG(gain);
+					   GROUP_VAL(gainr) = GROUP_VAL(gain);
 					   pp->pos_pos = MENU3_STOP;
 					   if (CFG(db_ref))
 						   markup = g_markup_printf_escaped (
 								   "<span foreground='white' font_desc='16'>%0.1f(%0.1f)</span>",
-								   (CFG(gain) - CFG(gainr)) / 100.0, CFG(gainr) / 100.0);
+								   (GROUP_VAL(gain) - GROUP_VAL(gainr)) / 100.0, GROUP_VAL(gainr) / 100.0);
 					   else
 						   markup = g_markup_printf_escaped ("<span foreground='white' font_desc='24'>%0.1f</span>",
-								   CFG(gain) / 100.0 );
+								   GROUP_VAL(gain) / 100.0 );
 					   gtk_label_set_markup (GTK_LABEL(pp->label[GAIN_VALUE]),markup);
 
 					   g_free(markup);
@@ -607,13 +607,13 @@ void b3_fun2(gpointer p)
 						   tt_label_show_string (pp->label[GAIN_LABEL], con2_p[1][0][7], "\n", "(dB)", "white", 10);
 						   markup = g_markup_printf_escaped (
 								   "<span foreground='white' font_desc='16'>%0.1f(%0.1f)</span>",
-								   (CFG(gain) - CFG(gainr)) / 100.0, CFG(gainr) / 100.0);
+								   (GROUP_VAL(gain) - GROUP_VAL(gainr)) / 100.0, GROUP_VAL(gainr) / 100.0);
 					   }
 					   else
 					   {
 						   tt_label_show_string (pp->label[GAIN_LABEL], con2_p[1][0][0], "\n", "(dB)", "white", 10);
 						   markup = g_markup_printf_escaped ("<span foreground='white' font_desc='24'>%0.1f</span>",
-								   CFG(gain) / 100.0 );
+								   GROUP_VAL(gain) / 100.0 );
 					   }
 					   gtk_label_set_markup (GTK_LABEL(pp->label[GAIN_VALUE]),markup);
 					   g_free(markup);
@@ -1204,17 +1204,17 @@ void data_100 (GtkSpinButton *spinbutton, gpointer data) /* 增益Gain P100 */
 	DRAW_UI_P p = (DRAW_UI_P)(data);
 	gchar *markup;
 	if (CFG(db_ref))
-		p->p_config->gain = (gushort) (gtk_spin_button_get_value (spinbutton) * 100 + CFG(gainr));
+		p->p_config->gain = (gushort) (gtk_spin_button_get_value (spinbutton) * 100 + GROUP_VAL(gainr));
 	else
 		p->p_config->gain = (gushort) (gtk_spin_button_get_value (spinbutton) * 100);
 
 	if (CFG(db_ref))
 		markup = g_markup_printf_escaped (
 				"<span foreground='white' font_desc='16'>%0.1f(%0.1f)</span>",
-				(CFG(gain) - CFG(gainr)) / 100.0, CFG(gainr) / 100.0);
+				(GROUP_VAL(gain) - GROUP_VAL(gainr)) / 100.0, GROUP_VAL(gainr) / 100.0);
 	else
 		markup = g_markup_printf_escaped ("<span foreground='white' font_desc='24'>%0.1f</span>",
-				CFG(gain) / 100.0 );
+				GROUP_VAL(gain) / 100.0 );
 	gtk_label_set_markup (GTK_LABEL(pp->label[GAIN_VALUE]),markup);
 
 	g_free(markup);
@@ -1227,12 +1227,12 @@ void data_101 (GtkSpinButton *spinbutton, gpointer data) /*Start 扫描延时 P1
 	if ((UT_UNIT_TRUE_DEPTH == CFG(ut_unit)) || (UT_UNIT_SOUNDPATH == CFG(ut_unit)))
 	{
 		if (UNIT_MM == CFG(unit))
-			CFG(start) = (guint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / (CFG(part.Velocity_LW) / 100000.0));
+			GROUP_VAL(start) = (guint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / (CFG(part.Velocity_LW) / 100000.0));
 		else  /* 英寸 */
-			CFG(start) = (guint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / ( 0.03937 * CFG(part.Velocity_LW) / 100000.0));
+			GROUP_VAL(start) = (guint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / ( 0.03937 * CFG(part.Velocity_LW) / 100000.0));
 	}
 	else /* 显示方式为时间 */
-		CFG(start) = gtk_spin_button_get_value (spinbutton) * 1000.0 ; 
+		GROUP_VAL(start) = gtk_spin_button_get_value (spinbutton) * 1000.0 ; 
 
 	/*发送增益给硬件*/
 }
@@ -1243,12 +1243,12 @@ void data_102 (GtkSpinButton *spinbutton, gpointer data) /*Range 范围 P102 */
 	if ((UT_UNIT_TRUE_DEPTH == CFG(ut_unit)) || (UT_UNIT_SOUNDPATH == CFG(ut_unit)))
 	{
 		if (UNIT_MM == CFG(unit))
-			CFG(range) = (guint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / (CFG(part.Velocity_LW) / 100000.0));
+			GROUP_VAL(range) = (guint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / (CFG(part.Velocity_LW) / 100000.0));
 		else  /* 英寸 */
-			CFG(range) = (guint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / ( 0.03937 * CFG(part.Velocity_LW) / 100000.0));
+			GROUP_VAL(range) = (guint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / ( 0.03937 * CFG(part.Velocity_LW) / 100000.0));
 	}
 	else /* 显示方式为时间 */
-		CFG(range) = gtk_spin_button_get_value (spinbutton) * 1000.0 ; 
+		GROUP_VAL(range) = gtk_spin_button_get_value (spinbutton) * 1000.0 ; 
 
 	/*发送增益给硬件*/
 }
@@ -1256,7 +1256,7 @@ void data_102 (GtkSpinButton *spinbutton, gpointer data) /*Range 范围 P102 */
 void data_103 (GtkSpinButton *spinbutton, gpointer data) /*楔块延时  P103 */
 {
 	DRAW_UI_P p = (DRAW_UI_P)(data);
-	p->p_config->wedge_delay = (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0) ;
+	GROUP_VAL(wedge_delay) = (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0) ;
 
 	/*发送增益给硬件*/
 }

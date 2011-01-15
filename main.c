@@ -34,15 +34,16 @@ DRAW_UI_P	pp;
 /* 测试用的初始值 */
 static void set_config ()
 {
-	CFG(probe[0].Elem_qty)	 = 128;
+	CFG(groupQty)	= 0;
+	CFG(groupId)	= 0;
 	/* UT settings */
 	CFG(part.Velocity_LW) = 592000;	/* 5920m/s */ 
-	CFG(gain)          = 0;
-	CFG(gainr)         = 0;
+	GROUP_VAL(gain)          = 0;
+	GROUP_VAL(gainr)         = 0;
 	CFG(db_ref)		   = GAINR_OFF;
-	CFG(start)         = 0.0;
-	CFG(range)         = 10000;		/* 10μs */
-	CFG(wedge_delay)   = 0;
+	GROUP_VAL(wedge_delay)   = 0;	/*  */
+	GROUP_VAL(range)         = 10000;		/* 10μs */
+	GROUP_VAL(start)         = 0.0;
 
 
 	/*  */
