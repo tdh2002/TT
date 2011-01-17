@@ -446,76 +446,107 @@ typedef struct setup_stAll {
    Doppler_stLaw       astLaw[setup_MAX_LAW_QTY];
 } Doppler_stAll, *Doppler_stAll_P;
 
-
-typedef struct focal_law 
+/* 一个阵元的聚焦信息*/
+typedef struct law_elem
 {
-	guchar	active_elem;
-	guchar	t;	
-}FOCAL_LAW, *FOCAL_LAW_P;;
+
+} LAW_ELEM, *LAW_ELEM_P;
+
+/* 一条beam的聚焦信息 */
+typedef struct law_beam
+{
+
+} LAW_BEAM, *LAW_BEAM_P;
+
+
+/*聚焦法则信息(law_info)*/
+typedef struct law_info
+{
+	guchar	Focal_type;			/* 聚焦类型 */
+	guchar	ELem_qty;			/* 聚焦阵元数 */
+	guchar	Elem_tx_start;		/* 该法则阵元发射开始的编号 */
+	guchar	Elem_tx_end;		/* 该法则阵元发射开始的编号 线扫时候需要设置 扇扫直接算好 */
+	guchar	Elem_rx_start;		/* 该法则阵元接收开始的编号 */
+	guchar	Elem_rx_end;		/* 该法则阵元接收开始的编号 线扫时候需要设置 扇扫直接算好 */
+	guchar	ELem_step;			/* 线扫时候可以设置阵元间隔 */
+	guchar	Velocity_type;		/* 从波 或者 横波 */
+	gshort	Angle_start;
+	gshort	Angle_end;			/* 扇扫时候可以设置的角度 */
+	guint	focus_depth;		/* 扇扫时候为声程 线扫是深度 */
+	gushort	law_index_start;	/* 聚焦法则索引 计算出来的 */
+	gushort law_index_end;		/*  */
+} LAW_INFO, *LAW_INFO_P;;
 
 typedef struct element_law
 {
 	guchar	e_number;
 
-}ELEMENT_LAW, *ELEMENT_LAW_P;
+} ELEMENT_LAW, *ELEMENT_LAW_P;
 
 /*探头(Probe)*/
 typedef struct Probe {
-	guint	Elem_qty;		/*阵元数*/
-	guint	Frequency;		/*频率 0.1Mhz 为单位*/
-	guint	Pitch;			/*阵元中心间距 0.1mm 为单位*/
-	gchar	Name[20];		/*探头名字*/
+	guint	Elem_qty;		/* 阵元数 */
+	guint	Frequency;		/* 频率 0.1Mhz 为单位 */
+	guint	Pitch;			/* 阵元中心间距 0.1mm 为单位 */
+	gchar	Name[20];		/* 探头名字 */
 } PROBE, *PROBE_P;
 
 /*楔块 (Wedge)*/
 typedef struct Wedge {
-	guint	Angle;			/*角度*/
-	guint	Height;			/*第一阵元高度*/
-	gint	Primary_offset;	/*前沿 */
-	guint	Volecity;		/*声速*/
-	gchar	Name[20];		/*楔块名字*/
+	guint	Angle;			/* 角度 */
+	guint	Height;			/* 第一阵元高度 */
+	gint	Primary_offset;	/* 前沿 */
+	guint	Vel0city;		/* 声速 */
+	gchar	Name[20];		/* 楔块名字 */
 } WEDGE, *WEDGE_P;
+
+/*材料 (Material)*/
+typedef struct Material {
+	guint	Velocity_LW;	/* 声速 单位 0.01m/s 纵波 快点 */
+	guint	Velocity_SW;	/* 声速 单位 0.01m/s 横波 慢点 */
+	guchar	Name[20];		/* 材料名字 */
+} MATERIAL, *MATERIAL_P;
 
 /*工件 (Part)*/
 typedef struct Part {
 	guint	Geometry;		/* 几何形状 FLAT/ID/OD/BALL */
 	guint	Thickness;		/* 厚度 */
 	guint	Diameter;		/* 直径 */
-	guint	Velocity_LW;	/* 声速 单位 0.01m/s  */
-	guint	Velocity_SW;	/* 声速 单位 0.01m/s  */
 	guint	Material;		/* 材料 */
 } PART, *PART_P;
 
-/*材料 (Material)*/
-typedef struct Material {
-	guint	Velocity;		/* 声速 */
-	guint	Name[20];		/* 材料名字 */
-} MATERIAL, *MATERIAL_P;
-
+/* 组信息 */
 typedef struct Group {
 	guint	wedge_delay;	/* 楔款延时 单位 ns */
 	guint	range;			/* 显示范围 单位 ns */
 	gint	start;			/* 扫描延时 单位 ns */
 	gushort	gain;			/* 实际增益 单位 0.01dB */
 	gushort	gainr;			/* 参考增益 单位 0.01dB */
+	guint	velocity;		/* 实际声速 单位 0.01m/s  */
+	guchar	db_ref;			/* 参考增益开关 0 off 1 on */
+	/*发射*/
+	guchar	pulser;			/* 1~ 128 - elem_qty(聚焦阵元数最大为32) + 1 
+							   指定发射阵元 与机器配置相关我们是128阵元最大,
+							   Probe 的Auto Program 选择On 以后不可以调节 */
+	LAW_INFO	law_info;	/* 聚焦法则的信息  */
+	PROBE	probe;
+	WEDGE	wedge;
+
 
 } GROUP, *GROUP_P;
 
 /*配置信息 (CONFIG)*/
 typedef	struct Config {
 	guchar	groupId;			/* 当前group */
-	guchar	groupQty;			/* 共有几个group  0 1 2 3 4 5 6 7 8 */
+	guchar	groupQty;			/* 共有几个group  0 1 2 3 4 5 6 7 */
 	GROUP	group[4];
-	/*基本参数*/
-	PROBE	probe[2];
-	WEDGE	wedge[2];
-	PART	part;
-	gushort	gain;			/* 实际增益 单位 0.01dB */
-	gushort	gainr;			/* 参考增益 单位 0.01dB */
+	/* 基本参数 */
+	PART	part;				/* 被检测工件... */
+	
+	/* 所有聚焦法则的信息在这里 */
+	LAW_BEAM	focal_law_all[setup_MAX_LAW_QTY][setup_MAX_ELEM_RX_ACTIVE];	
 
 	/*发射*/
-	guchar	db_ref;			/* 参考增益开关 0 off 1 on */
-	guchar	pulser;			/* 1~ 128 - elem_qty + 1 */
 	guchar	tx_rxmode;		/*  */
 	gushort	frequence;		/*  */
 	guchar	voltage_cfg;		/*  */
@@ -943,7 +974,10 @@ typedef struct Draw_interface {
 
 #define CUR_POS (pp->pos2[pp->pos][pp->pos1[pp->pos]])      /*0,1,2,3,4,5*/
 #define CFG(a)	(pp->p_config->a)
-#define GROUP_VAL(a)  (pp->p_config->group[CFG(groupId)].a)
+/*#define GROUP_VAL(a)  (pp->p_config->group[pp->p_config->groupId].a)*/	/* 原型 */
+#define GROUP_VAL(a)  (CFG(group[CFG(groupId)].a))
+#define LAW_VAL(a)  (GROUP_VAL(law_info).a)
+
 #define TMP(a)  (pp->p_tmp_config->a)
 
 #define VERSION "DP1.0.0.0"
