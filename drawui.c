@@ -40,13 +40,11 @@ const gchar ***con1_p	 = content1_en;
 const gchar ****con2_p	 = content2_en;
 
 const gchar **units	 = units_en;
+const gchar **menu_content = all_menu_content_en;
 
 const gchar **type       = type_en;
 const gchar **calibration_mode       = calibration_mode_en;
 
-const gchar **tx_rx_mode = tx_rx_mode_en;
-const gchar **tx_rx_mode1 = tx_rx_mode_en1;
-const gchar **freq	 = freq_en;
 const gchar **voltage    =voltage_en;
 const gchar **voltage1    =voltage_en1;
 const gchar **PW         =PW_en;
@@ -59,7 +57,7 @@ const gchar **db_ref	 = db_ref_en;
 const gchar **points_qty =points_qty_en;
 const gchar **sum_gain   =sum_gain_en;
 
-const gchar **gate       = gate_en;
+const gchar **gate_       = gate_en;
 const gchar **synchro =synchro_en;
 const gchar **measure =measure_en;
 const gchar **RF      =RF_en;
@@ -508,12 +506,13 @@ void draw_2_menu(gint pa)
  * qty 多少个弹出菜单
  * pos 这个菜单的位置
  * pop_pos 弹出菜单选中的位置
+ * menu_status 标志当前menu_item是否可以选择 0-31 位 0是第一个 1是第二个....
  */
 
 static void draw3_pop_tt (void (*fun)(GtkMenuItem*, gpointer),
 		void (* set_menu_position)(GtkMenu *, gint *, gint *, gboolean *, gpointer ),
 		const gchar *cur_value,
-		const gchar *content[], guint qty, gint pos, guint pop_pos)
+		const gchar *content[], guint qty, gint pos, guint pop_pos, guint menu_status)
 {
 	gint i, x, y, z;
 	GtkMenu *menu;
@@ -537,11 +536,13 @@ static void draw3_pop_tt (void (*fun)(GtkMenuItem*, gpointer),
 
 	for (i = 0; i < qty; i++ )
 	{
-		pp->menu_item3[i] = gtk_menu_item_new_with_label(content[i]);
+		pp->menu_item3[i] = gtk_menu_item_new_with_label (content[i]);
 		gtk_menu_shell_append (GTK_MENU_SHELL (pp->menu3), pp->menu_item3[i]);
 		g_signal_connect (pp->menu_item3[i], "activate",
 				G_CALLBACK(fun), (GUINT_TO_POINTER (i)));
-		gtk_widget_show(pp->menu_item3[i]);
+		if (0x01 & (menu_status >> i))
+			gtk_widget_set_sensitive (pp->menu_item3[i], FALSE);
+		gtk_widget_show (pp->menu_item3[i]);
 	}
 	gtk_menu_item_select (GTK_MENU_ITEM (pp->menu_item3[pop_pos]));
 
@@ -655,11 +656,8 @@ static void draw3_popdown (const gchar *cur_value, guint pos, guint big_menu)
 	y = pp->pos1[x];
 	z = pos;
 
-	if (pp->popbox)
-	{
-		gtk_widget_destroy (pp->popbox);
-		pp->popbox = NULL;
-	}
+	gtk_menu_popdown( GTK_MENU (pp->menu3));
+
 	if (big_menu)
 		str = g_strdup_printf ("\n\n%s", con2_p[x][y][z]);	
 	else
@@ -906,66 +904,9 @@ static void draw3_onoffpressed(guint pos)
 }
 
 /*改变各图形显示区域的尺寸大小*/
-static void change_area_size(GtkWidget *vbox, const gchar *title, guint width, guint
-		height)
-{}
-#if 0
-{
-	gtk_widget_hide_all(vbox);
-	pp->title = gtk_event_box_new();
-	gtk_widget_modify_bg(pp->title, GTK_STATE_NORMAL, &color_text_base);
-	pp->drawlabel = gtk_label_new_with_mnemonic(title);
-	gtk_widget_modify_fg(pp->drawlabel, GTK_STATE_NORMAL, &color_white);
-	gtk_container_add(GTK_CONTAINER(pp->title), pp->drawlabel);
-	gtk_box_pack_start (GTK_BOX (vbox), pp->title, FALSE, FALSE, 0);
-	gtk_widget_set_size_request (GTK_WIDGET(pp->title), width, 20);
-	gtk_widget_show(pp->drawlabel);
-
-	pp->table = gtk_table_new (2, 3, FALSE);
-	gtk_box_pack_start (GTK_BOX (vbox), pp->table, FALSE, FALSE, 0);
-	pp->drawing_area = gtk_drawing_area_new();
-	gtk_widget_set_size_request (GTK_WIDGET(pp->drawing_area), width, height);
-	gtk_table_attach (GTK_TABLE (pp->table), pp->drawing_area, 1, 2, 0, 1,
-			GTK_EXPAND|GTK_FILL, GTK_FILL, 0, 0);
-
-	pp->vrule1 = gtk_vruler_new ();
-	gtk_ruler_set_metric (GTK_RULER (pp->vrule1), GTK_PIXELS);
-	gtk_ruler_set_range (GTK_RULER (pp->vrule1), 100, -100, 0, 1);
-	gtk_widget_modify_bg(pp->vrule1, GTK_STATE_NORMAL, &color_rule);
-	g_signal_connect_swapped (G_OBJECT (pp->drawing_area), "motion_notify_event",
-			G_CALLBACK (EVENT_METHOD (pp->vrule1, motion_notify_event)),
-			pp->vrule1);
-	gtk_table_attach (GTK_TABLE (pp->table), pp->vrule1, 0, 1, 0, 1,
-			GTK_FILL, GTK_EXPAND|GTK_SHRINK|GTK_FILL, 0, 0);
-
-	pp->vrule2 = gtk_vruler_new ();
-	gtk_ruler_set_metric (GTK_RULER (pp->vrule2), GTK_PIXELS);
-	gtk_ruler_set_range (GTK_RULER (pp->vrule2), -100, 100, 0, 1);
-	gtk_widget_modify_bg(pp->vrule2, GTK_STATE_NORMAL, &color_rule);
-	g_signal_connect_swapped (G_OBJECT (pp->drawing_area), "motion_notify_event",
-			G_CALLBACK (EVENT_METHOD (pp->vrule2, motion_notify_event)),
-			pp->vrule2);			
-	gtk_table_attach (GTK_TABLE (pp->table), pp->vrule2, 2, 3, 0, 1,
-			GTK_FILL, GTK_EXPAND|GTK_SHRINK|GTK_FILL, 0, 0);
-
-	pp->hrule = gtk_hruler_new ();
-	gtk_ruler_set_metric (GTK_RULER (pp->hrule), GTK_PIXELS);
-	gtk_ruler_set_range (GTK_RULER (pp->hrule), 0, 60, 0, 60);
-	gtk_widget_modify_bg(pp->hrule, GTK_STATE_NORMAL, &color_rule);
-	g_signal_connect_swapped (G_OBJECT (pp->drawing_area), "motion_notify_event",
-			G_CALLBACK (EVENT_METHOD (pp->hrule, motion_notify_event)),
-			pp->hrule);
-	gtk_table_attach (GTK_TABLE (pp->table), pp->hrule, 1, 2, 1, 2,
-			GTK_EXPAND|GTK_SHRINK|GTK_FILL, GTK_FILL, 0, 0);
-	gtk_widget_show_all(vbox);
-}
-
-#endif
-
 
 static gboolean draw_colorbar(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
-	GdkColor color;
 	gint i;
 	gdouble tmp;
 	guint high ;
@@ -985,7 +926,7 @@ static gboolean draw_colorbar(GtkWidget *widget, GdkEventExpose *event, gpointer
 
 	cairo_rectangle(cr,0,0,8,390);//画一个方块，位置从坐标(10,10)开始，宽200，高200
 	cairo_fill(cr);//填充，使用的颜色当然是上面设置的颜色。
-	for ( i = 1; i < high; i ++ ) {
+	for ( i = 1; i < high; i++ ) {
 		tmp = 1.0 - i / (gfloat)(high);
 		cairo_set_source_rgba(cr, tmp, tmp, tmp, 1.0);
 		cairo_move_to(cr,1,i);
@@ -1070,7 +1011,7 @@ static void draw_area(GtkWidget *parent_box, DRAW_AREA *draw_area, guint width, 
 /* 画波形数据显示区 */
 void draw_area_all()
 {
-	gint i, j;
+	gint i;
 
 	/* 把之前的区域释放 */
 	for (i = 0; i < 4; i ++)
@@ -1207,7 +1148,6 @@ void draw_area_all()
 void draw3_data0(DRAW_UI_P p) 
 {
 	gchar temp[52];
-	gchar *str;
 	gfloat tmpf;/**/
 
 	gfloat cur_value, lower, upper, step;
@@ -1307,23 +1247,24 @@ void draw3_data0(DRAW_UI_P p)
 
 				case 1: /* 发射 Pulser P110 */
 					/* 当前步进 */
-					switch (pp->p_tmp_config->pulser_reg)
+					switch (TMP(pulser_reg))
 					{
 						case 0:	tmpf = 1.0; break;
 						case 1:	tmpf = 10.0; break;
 						case 2:	tmpf = 100.0; break;
 						default:break;
 					}
+					upper = (gfloat) (128 + 1 - LAW_VAL(Last_tx_elem));
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 					{
 						cur_value = (gfloat) (GROUP_VAL(pulser));
 						lower = 1.0;
-						upper = 97.0;
 						step = tmpf;
 						digit = 0;
 						pos = 0;
 						unit = UNIT_TO;    /* 1 to n 这个范围需要计算出来 waiting */
-						draw3_digit_pressed (data_110, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
+						g_sprintf (temp,"(1 to %d)", (guint)(upper));
+						draw3_digit_pressed (data_110, temp, cur_value , lower, upper, step, digit, p, pos, 0);
 					}
 					else 
 					{
@@ -1331,7 +1272,8 @@ void draw3_data0(DRAW_UI_P p)
 						digit = 0;
 						pos = 0;
 						unit = UNIT_TO;
-						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
+						g_sprintf (temp,"(1 to %d)", (guint)(upper));
+						draw3_digit_stop (cur_value, temp, digit, pos, 0);
 					}
 					break;
 
@@ -1393,10 +1335,10 @@ void draw3_data0(DRAW_UI_P p)
 
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 						draw3_pop_tt (data_200, set_menu_position0_200, 
-								gate[CFG(gate)],
-								gate, 3, 0, CFG(gate));
+								gate_[CFG(gate)],
+								gate_, 3, 0, CFG(gate), 0);
 					else 
-						draw3_popdown (gate[CFG(gate)], 0, 0);
+						draw3_popdown (gate_[CFG(gate)], 0, 0);
 
 					break;
 
@@ -1405,7 +1347,8 @@ void draw3_data0(DRAW_UI_P p)
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 						draw3_pop_tt (data_210, set_menu_position0_210, 
 								gate_alarm[CFG(alarm)],
-								gate_alarm, 16, 0, CFG(alarm));
+								gate_alarm, 16, 0, CFG(alarm), 0);
+
 					else 
 						draw3_popdown (gate_alarm[CFG(alarm)], 0, 0);
 
@@ -1417,7 +1360,7 @@ void draw3_data0(DRAW_UI_P p)
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 						draw3_pop_tt (data_220, set_menu_position0_220, 
 								output[CFG(output)],
-								output, 5, 0, CFG(output));
+								output, 5, 0, CFG(output), 0);
 					else 
 						draw3_popdown (output[CFG(output)], 0, 0);
 
@@ -1428,7 +1371,7 @@ void draw3_data0(DRAW_UI_P p)
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 						draw3_pop_tt (data_230, set_menu_position0_230, 
 								curves_mode[CFG(mode)],
-								curves_mode, 2, 0, CFG(mode));
+								curves_mode, 2, 0, CFG(mode), 0);
 					else 
 						draw3_popdown (curves_mode[CFG(mode)], 0, 0);
 
@@ -1446,7 +1389,7 @@ void draw3_data0(DRAW_UI_P p)
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 						draw3_pop_tt (data_300, set_menu_position0_300, 
 								list1[CFG(list)],
-								list, 2, 0, CFG(list));
+								list, 2, 0, CFG(list), 0);
 					else 
 						draw3_popdown (list1[CFG(list)], 0, 0);
 
@@ -1458,7 +1401,7 @@ void draw3_data0(DRAW_UI_P p)
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 						draw3_pop_tt (data_310, set_menu_position0_310, 
 								selection[CFG(select)],
-								selection, 9, 0, CFG(select));
+								selection, 9, 0, CFG(select), 0);
 					else 
 						draw3_popdown (selection[CFG(select)], 0, 0);
 
@@ -1494,7 +1437,7 @@ void draw3_data0(DRAW_UI_P p)
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 						draw3_pop_tt (data_330, set_menu_position0_330, 
 								source[CFG(source)],
-								source, 9, 0, CFG(source));
+								source, 9, 0, CFG(source), 0);
 					else 
 						draw3_popdown (source[CFG(source)], 0, 0);
 
@@ -1526,7 +1469,7 @@ void draw3_data0(DRAW_UI_P p)
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 						draw3_pop_tt (data_400, set_menu_position0_400, 
 								displ[CFG(display)],
-								display, 11, 0, CFG(display));
+								display, 11, 0, CFG(display), 0);
 					else 
 						draw3_popdown (displ[CFG(display)], 0, 0);
 					break;
@@ -1536,7 +1479,7 @@ void draw3_data0(DRAW_UI_P p)
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 						draw3_pop_tt (data_410, set_menu_position0_410, 
 								utunit[CFG(ut_unit)],
-								utunit, 3, 0, CFG(ut_unit));
+								utunit, 3, 0, CFG(ut_unit), 0);
 					else 
 						draw3_popdown (utunit[CFG(ut_unit)], 0, 0);
 
@@ -1547,7 +1490,7 @@ void draw3_data0(DRAW_UI_P p)
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 						draw3_pop_tt (data_420, set_menu_position0_420, 
 								zoom_display[CFG(zoom_display)],
-								zoom_display, 6, 0, CFG(zoom_display));
+								zoom_display, 6, 0, CFG(zoom_display), 0);
 					else 
 						draw3_popdown (zoom_display[CFG(zoom_display)], 0, 0);
 
@@ -1558,7 +1501,7 @@ void draw3_data0(DRAW_UI_P p)
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 						draw3_pop_tt (data_430, set_menu_position0_430, 
 								select1[CFG(color_select)],
-								select1, 3, 0, CFG(color_select));
+								select1, 3, 0, CFG(color_select), 0);
 					else 
 						draw3_popdown (select1[CFG(color_select)], 0, 0);
 
@@ -1569,7 +1512,7 @@ void draw3_data0(DRAW_UI_P p)
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 						draw3_pop_tt (data_440, set_menu_position0_440, 
 								scan[CFG(prop_scan)],
-								scan, 6, 0, CFG(prop_scan));
+								scan, 6, 0, CFG(prop_scan), 0);
 					else 
 						draw3_popdown (scan[CFG(prop_scan)], 0, 0);
 
@@ -1629,6 +1572,7 @@ void draw3_data0(DRAW_UI_P p)
 
 				case 2:/*Probe/Part -> characterize -> FFT p520 */
 					/* 格式化字符串 */
+#if 0
 					g_sprintf (temp,"%s", con2_p[5][2][0]);
 
 					/* 设置label */
@@ -1649,6 +1593,7 @@ void draw3_data0(DRAW_UI_P p)
 					}
 					else 
 						draw3_onoffstop (0);
+#endif
 					break;
 
 				case 3:/*Probe/Part -> Parts -> Geometry  530 */
@@ -1656,7 +1601,7 @@ void draw3_data0(DRAW_UI_P p)
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 						draw3_pop_tt (data_530, set_menu_position0_530, 
 								geometry[pp->p_config->part.Geometry],
-								geometry, 3, 0, pp->p_config->part.Geometry);
+								geometry, 3, 0, pp->p_config->part.Geometry, 0);
 					else 
 						draw3_popdown (geometry[pp->p_config->part.Geometry], 0, 0);
 
@@ -1674,7 +1619,7 @@ void draw3_data0(DRAW_UI_P p)
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 						draw3_pop_tt (data_600, set_menu_position0_600, 
 								law_config1[CFG(law_config)],
-								law_config, 4, 0,CFG(law_config));
+								law_config, 4, 0,CFG(law_config), 0);
 					else 
 						draw3_popdown (law_config1[CFG(law_config)], 0, 0);
 
@@ -1796,7 +1741,7 @@ void draw3_data0(DRAW_UI_P p)
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 						draw3_pop_tt (data_710, set_menu_position0_710, 
 								inspection_type[CFG(scan_type)],
-								inspection_type, 3, 0, CFG(scan_type));
+								inspection_type, 3, 0, CFG(scan_type), 0);
 					else 
 						draw3_popdown (inspection_type[CFG(scan_type)], 0, 0);
 
@@ -1839,7 +1784,7 @@ void draw3_data0(DRAW_UI_P p)
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 						draw3_pop_tt (data_730, set_menu_position0_730, 
 								start_mode[CFG(start_mode)],
-								start_mode, 3, 0, CFG(start_mode));
+								start_mode, 3, 0, CFG(start_mode), 0);
 					else 
 						draw3_popdown (start_mode[CFG(start_mode)], 0, 0);
 
@@ -1850,7 +1795,7 @@ void draw3_data0(DRAW_UI_P p)
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 						draw3_pop_tt (data_740, set_menu_position0_740, 
 								storage[CFG(storage)],
-								storage, 4, 0, CFG(storage));
+								storage, 4, 0, CFG(storage), 0);
 					else 
 						draw3_popdown (storage[CFG(storage)], 0, 0);
 
@@ -1867,7 +1812,7 @@ void draw3_data0(DRAW_UI_P p)
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 						draw3_pop_tt (data_800, set_menu_position0_800, 
 								file_storage1[CFG(file_storage)],
-								file_storage, 2, 0, CFG(file_storage));
+								file_storage, 2, 0, CFG(file_storage), 0);
 					else 
 						draw3_popdown (file_storage1[CFG(file_storage)], 0, 0);
 
@@ -1912,7 +1857,7 @@ void draw3_data0(DRAW_UI_P p)
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 						draw3_pop_tt (data_830, set_menu_position0_830, 
 								file_select[CFG(file_select)],
-								file_select, 10, 0, CFG(file_select));
+								file_select, 10, 0, CFG(file_select), 0);
 					else 
 						draw3_popdown (file_select[CFG(file_select)], 0, 0);
 
@@ -1945,7 +1890,7 @@ void draw3_data0(DRAW_UI_P p)
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 						draw3_pop_tt (data_900, set_menu_position0_900, 
 								pref_units[CFG(unit)],
-								pref_units, 2, 0, CFG(unit));
+								pref_units, 2, 0, CFG(unit), 0);
 					else 
 						draw3_popdown (pref_units[CFG(unit)], 0, 0);
 
@@ -1986,7 +1931,7 @@ void draw3_data0(DRAW_UI_P p)
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 						draw3_pop_tt (data_930, set_menu_position0_930, 
 								mouse[CFG(mouse)],
-								mouse, 3, 0, CFG(mouse));
+								mouse, 3, 0, CFG(mouse), 0);
 					else 
 						draw3_popdown (mouse[CFG(mouse)], 0, 0);
 
@@ -2154,13 +2099,14 @@ void draw3_data1(DRAW_UI_P p)
 					}
 					break;
 				case 1: /* 收发模式 Tx/Rx Mode P111 */
-
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 						draw3_pop_tt (data_111, set_menu_position1, 
-								tx_rx_mode1[CFG(tx_rxmode)],
-								tx_rx_mode, 3, 1, CFG(tx_rxmode));
+//								tx_rx_mode1[GROUP_VAL(tx_rxmode)],
+//								tx_rx_mode, 3, 1, GROUP_VAL(tx_rxmode), 0x05);
+								menu_content[TX_RX_MODE + 4 + GROUP_VAL(tx_rxmode)],
+								menu_content + TX_RX_MODE, 3, 1, GROUP_VAL(tx_rxmode), 0x05);
 					else 
-						draw3_popdown (tx_rx_mode_en1[CFG(tx_rxmode)], 1, 0);
+						draw3_popdown (menu_content[TX_RX_MODE + 4 +GROUP_VAL(tx_rxmode)], 1, 0);
 
 					break;
 				case 2: /* UT Settings -> Receiver -> Filter  P121 */
@@ -2168,7 +2114,7 @@ void draw3_data1(DRAW_UI_P p)
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 						draw3_pop_tt (data_121, set_menu_position1_121, 
 								filter1[CFG(filter)],
-								filter, 15, 1, CFG(filter));
+								filter, 15, 1, CFG(filter), 0);
 					else 
 						draw3_popdown (filter1[CFG(filter)], 1, 0);
 
@@ -2201,29 +2147,23 @@ void draw3_data1(DRAW_UI_P p)
 			switch (pp->pos1[2])
 			{
 				case 0:/*Gate->Parameters  P201 */
-
-
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 						draw3_pop_tt (data_201, set_menu_position1_201, 
 								parameters[CFG(parameter)],
-								parameters, 2, 1, CFG(parameter));
+								parameters, 2, 1, CFG(parameter), 0);
 					else 
 						draw3_popdown (parameters[CFG(parameter)], 1, 0);
 
 					break;
-
-
-				case 1:/* Gate -> Alarm -> Group A 211 */
-
+				case 1:/* Gate -> Alarm -> Group A P211 */
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 						draw3_pop_tt (data_211, set_menu_position1_211, 
 								groupA[CFG(groupA)],
-								groupA, 3, 1, CFG(groupA));
+								groupA, 3, 1, CFG(groupA), 0);
 					else 
 						draw3_popdown (groupA[CFG(groupA)], 1, 0);
 
 					break;
-
 				case 2:/*  Gate -> Output -> Alarm #  P221 */
 					/*  Gate -> Output -> Group    P221 */
 					if (CFG(output)==0 || CFG(output)==1 || CFG(output)==2)
@@ -2232,7 +2172,7 @@ void draw3_data1(DRAW_UI_P p)
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 							draw3_pop_tt (data_221, set_menu_position1_221, 
 									output_alarm[CFG(alarm1)],
-									output_alarm, 18, 1, CFG(alarm1));
+									output_alarm, 18, 1, CFG(alarm1), 0);
 						else 
 							draw3_popdown (output_alarm[CFG(alarm1)], 1, 0);
 					}
@@ -2249,7 +2189,7 @@ void draw3_data1(DRAW_UI_P p)
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 						draw3_pop_tt (data_231, set_menu_position1_231, 
 								curve[CFG(curve)],
-								curve, 4, 1, CFG(curve));
+								curve, 4, 1, CFG(curve), 0);
 					else 
 						draw3_popdown (curve[CFG(curve)], 1, 0);
 
@@ -2404,7 +2344,7 @@ void draw3_data1(DRAW_UI_P p)
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 						draw3_pop_tt (data_411, set_menu_position1_411, 
 								grid[CFG(grid)],
-								grid, 6, 1, CFG(grid));
+								grid, 6, 1, CFG(grid), 0);
 					else 
 						draw3_popdown (grid[CFG(grid)], 1, 0);
 
@@ -2540,7 +2480,7 @@ void draw3_data1(DRAW_UI_P p)
 							if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 								draw3_pop_tt (data_441, set_menu_position1_441, 
 										color[CFG(color)],
-										color, 6, 1, CFG(color));
+										color, 6, 1, CFG(color), 0);
 							else 
 								draw3_popdown (color[CFG(color)], 1, 0);
 							break;
@@ -2622,7 +2562,7 @@ void draw3_data1(DRAW_UI_P p)
 							if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 								draw3_pop_tt (data_4414, set_menu_position1_4414, 
 										fft_color[CFG(fft_color)],
-										fft_color, 4, 1, CFG(fft_color));
+										fft_color, 4, 1, CFG(fft_color), 0);
 							else 
 								draw3_popdown (fft_color[CFG(fft_color)], 1, 0);
 							g_sprintf (temp,"%s", con2_p[4][4][10]);
@@ -2632,7 +2572,7 @@ void draw3_data1(DRAW_UI_P p)
 							if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 								draw3_pop_tt (data_4415, set_menu_position1_4415, 
 										orientation[CFG(orientation)],
-										orientation, 2, 1, CFG(orientation));
+										orientation, 2, 1, CFG(orientation), 0);
 							else 
 								draw3_popdown (orientation[CFG(orientation)], 1, 0);
 							g_sprintf (temp,"%s", con2_p[4][4][11]);
@@ -2654,7 +2594,7 @@ void draw3_data1(DRAW_UI_P p)
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 						draw3_pop_tt (data_501, set_menu_position1_501, 
 								group_mode1[CFG(group_mode)],
-								group_mode, 2, 1, CFG(group_mode));
+								group_mode, 2, 1, CFG(group_mode), 0);
 					else 
 						draw3_popdown (group_mode1[CFG(group_mode)], 1, 0);
 
@@ -2691,8 +2631,9 @@ void draw3_data1(DRAW_UI_P p)
 					}
 					break;
 
-				case 2:/*probe/part -> characterize -> gain 521 */
+				case 2:/*probe/part -> characterize -> gain P521 */
 					/* 当前步进 */
+#if 0
 					switch (pp->p_tmp_config->db_reg)
 					{
 						case 0:	tmpf = 0.1; break;
@@ -2721,6 +2662,7 @@ void draw3_data1(DRAW_UI_P p)
 						unit = UNIT_DB;
 						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					}
+#endif
 					break;
 
 				case 3:/*probe/part -> parts -> thickness 531 */
@@ -2908,7 +2850,7 @@ void draw3_data1(DRAW_UI_P p)
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 						draw3_pop_tt (data_711, set_menu_position1_711, 
 								inspection_scan[CFG(inspec_scan)],
-								inspection_scan, 3, 1, CFG(inspec_scan));
+								inspection_scan, 3, 1, CFG(inspec_scan), 0);
 					else 
 						draw3_popdown (inspection_scan[CFG(inspec_scan)], 1, 0);
 
@@ -2975,7 +2917,7 @@ void draw3_data1(DRAW_UI_P p)
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 						draw3_pop_tt (data_741, set_menu_position1_741, 
 								inspec_data[CFG(inspec_data)],
-								inspec_data, 2, 1, CFG(inspec_data));
+								inspec_data, 2, 1, CFG(inspec_data), 0);
 					else 
 						draw3_popdown (inspec_data[CFG(inspec_data)], 1, 0);
 
@@ -3220,7 +3162,7 @@ void draw3_data2(DRAW_UI_P p)
 					   if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 						   draw3_pop_tt (data_022, set_menu_position2_022, 
 								   type[CFG(type)],
-								   type, 3, 2, CFG(type));
+								   type, 3, 2, CFG(type), 0);
 					   else 
 						   draw3_popdown (type[CFG(type)], 2, 0);
 
@@ -3236,7 +3178,7 @@ void draw3_data2(DRAW_UI_P p)
 			{
 				case 0: /* range范围 P102 */
 					/*当前步进*/
-					switch (p->p_tmp_config->range_reg)
+					switch (TMP(range_reg))
 					{
 						case 0:	tmpf = 3.2; break;
 						case 1:	tmpf = 16.0; break;
@@ -3314,7 +3256,7 @@ void draw3_data2(DRAW_UI_P p)
 					break;
 				case 1: /* Freq频带(Mhz)  P112 */
 					/*当前步进*/
-					switch (p->p_tmp_config->frequence_reg)
+					switch (TMP(frequence_reg))
 					{
 						case 0:	tmpf = 0.01; break;
 						case 1:	tmpf = 0.1; break;
@@ -3326,7 +3268,7 @@ void draw3_data2(DRAW_UI_P p)
 					{
 						if (pp->mark_pop_change)
 						{
-							cur_value = CFG(frequence) / 1000.0;
+							cur_value = GROUP_VAL(frequence) / 1000.0;
 							lower =	1.0;
 							upper =	20.0;
 							step = tmpf;
@@ -3337,26 +3279,26 @@ void draw3_data2(DRAW_UI_P p)
 						}
 						else
 						{
-							if (CFG(frequence >99))
+							if (GROUP_VAL(frequence >99))
 							{
 								/* 更新当前增益值显示 */
-								str = g_strdup_printf ("%0.2f", CFG(frequence) / 1000.0);
+								str = g_strdup_printf ("%0.2f", GROUP_VAL(frequence) / 1000.0);
 								draw3_pop_tt (data_112, set_menu_position2, 
-										str, freq, 13, 2, 12);
+										str, menu_content + FREQUENCE, 13, 2, 12, 0);
 								g_free(str);
 							}
 							else
 								draw3_pop_tt (data_112, set_menu_position2, 
-										freq[CFG(frequence)], freq, 13, 2, CFG(frequence));
+										menu_content[FREQUENCE + GROUP_VAL(frequence)], menu_content + FREQUENCE, 13, 2, GROUP_VAL(frequence), 0);
 						}
 					}
 					else 
 					{
-						if (CFG(frequence) < 99)
-							draw3_popdown (freq[CFG(frequence)], 2, 0);
+						if (GROUP_VAL(frequence) < 99)
+							draw3_popdown (menu_content[FREQUENCE + GROUP_VAL(frequence)], 2, 0);
 						else 
 						{
-							cur_value = CFG(frequence) / 1000.0;
+							cur_value = GROUP_VAL(frequence) / 1000.0;
 							unit = UNIT_NONE;
 							pos = 2;
 							digit = 2;
@@ -3370,7 +3312,7 @@ void draw3_data2(DRAW_UI_P p)
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 						draw3_pop_tt (data_122, set_menu_position2_122, 
 								rectifier[CFG(rectifier)],
-								rectifier, 4, 2, CFG(rectifier));
+								rectifier, 4, 2, CFG(rectifier), 0);
 					else 
 						draw3_popdown (rectifier[CFG(rectifier)], 2, 0);
 
@@ -3444,7 +3386,7 @@ void draw3_data2(DRAW_UI_P p)
 						{
 							draw3_pop_tt (data_2021, set_menu_position2_2021, 
 									synchro[CFG(synchro)],
-									synchro, 2, 2, CFG(synchro));
+									synchro, 2, 2, CFG(synchro), 0);
 							str = g_strdup_printf ("%s", con2_p[2][0][7]);	
 							gtk_label_set_text (GTK_LABEL (pp->label3[2]), str);
 						}
@@ -3462,7 +3404,7 @@ void draw3_data2(DRAW_UI_P p)
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 						draw3_pop_tt (data_212, set_menu_position2_212, 
 								conditionA[CFG(conditionA)],
-								conditionA, 9, 2, CFG(conditionA));
+								conditionA, 9, 2, CFG(conditionA), 0);
 					else 
 						draw3_popdown (conditionA[CFG(conditionA)], 2, 0);
 
@@ -3512,7 +3454,7 @@ void draw3_data2(DRAW_UI_P p)
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 						draw3_pop_tt (data_302, set_menu_position2_302, 
 								field[CFG(field1)],
-								field1, 4, 2, CFG(field1));
+								field1, 4, 2, CFG(field1), 0);
 					else 
 						draw3_popdown (field[CFG(field1)], 2, 0);
 
@@ -3747,7 +3689,7 @@ void draw3_data2(DRAW_UI_P p)
 							   if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 								   draw3_pop_tt (data_442, set_menu_position2_442, 
 										   envelope[CFG(envelope)],
-										   envelope, 2, 2, CFG(envelope));
+										   envelope, 2, 2, CFG(envelope), 0);
 							   else 
 								   draw3_popdown (envelope[CFG(envelope)], 2, 0);
 							   break;
@@ -3803,7 +3745,7 @@ void draw3_data2(DRAW_UI_P p)
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 						draw3_pop_tt (data_502, set_menu_position2_502, 
 								probe_select[CFG(probe_select)],
-								probe_select, 2, 2, CFG(probe_select));
+								probe_select, 2, 2, CFG(probe_select), 0);
 					else 
 						draw3_popdown (probe_select[CFG(probe_select)], 2, 0);
 
@@ -3840,12 +3782,12 @@ void draw3_data2(DRAW_UI_P p)
 								/* 更新当前增益值显示 */
 								str = g_strdup_printf ("%.1f", CFG(skew)/100.0);
 								draw3_pop_tt (data_512, set_menu_position2_512, 
-										str, probe_skew, 5, 2, 4);
+										str, probe_skew, 5, 2, 4, 0);
 								g_free(str);
 							}
 							else
 								draw3_pop_tt (data_512, set_menu_position2_512, 
-										probe_skew[CFG(skew)], probe_skew, 5, 2, CFG(skew));
+										probe_skew[CFG(skew)], probe_skew, 5, 2, CFG(skew), 0);
 						}
 					}
 					else 
@@ -4190,7 +4132,7 @@ void draw3_data2(DRAW_UI_P p)
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 						draw3_pop_tt (data_812, set_menu_position2_812, 
 								paper_size[CFG(paper_size)],
-								paper_size, 4, 2, CFG(paper_size));
+								paper_size, 4, 2, CFG(paper_size), 0);
 					else 
 						draw3_popdown (paper_size[CFG(paper_size)], 2, 0);
 
@@ -4262,7 +4204,7 @@ void draw3_data2(DRAW_UI_P p)
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 						draw3_pop_tt (data_912, set_menu_position2_912, 
 								select_key[CFG(select_key)],
-								select_key, 9, 2, CFG(select_key));
+								select_key, 9, 2, CFG(select_key), 0);
 					else 
 						draw3_popdown (select_key[CFG(select_key)], 2, 0);
 
@@ -4330,7 +4272,7 @@ void draw3_data3(DRAW_UI_P p)
 					   if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 						   draw3_pop_tt (data_023, set_menu_position3_023, 
 								   calibration_mode[CFG(calibration_mode)],
-								   calibration_mode, 4, 3, CFG(calibration_mode));
+								   calibration_mode, 4, 3, CFG(calibration_mode), 0);
 					   else 
 						   draw3_popdown (calibration_mode[CFG(calibration_mode)], 3, 0);
 
@@ -4380,7 +4322,7 @@ void draw3_data3(DRAW_UI_P p)
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 						draw3_pop_tt (data_113, set_menu_position3, 
 								voltage1[CFG(voltage_cfg)],
-								voltage, 2, 3, CFG(voltage_cfg));
+								voltage, 2, 3, CFG(voltage_cfg), 0);
 					else 
 						draw3_popdown (voltage1[CFG(voltage_cfg)], 3, 0);
 
@@ -4460,12 +4402,12 @@ void draw3_data3(DRAW_UI_P p)
 								/* 更新当前增益值显示 */
 								str = g_strdup_printf ("%d", pp->p_config->point_qty);
 								draw3_pop_tt (data_143, set_menu_position3_143, 
-										str, points_qty, 5, 3, 4);
+										str, points_qty, 5, 3, 4, 0);
 								g_free(str);
 							}
 							else
 								draw3_pop_tt (data_143, set_menu_position3_143, 
-										points_qty[CFG(point_qty)], points_qty, 5, 3, CFG(point_qty));
+										points_qty[CFG(point_qty)], points_qty, 5, 3, CFG(point_qty), 0);
 						}
 					}
 					else 
@@ -4529,7 +4471,7 @@ void draw3_data3(DRAW_UI_P p)
 						{
 							draw3_pop_tt (data_2031, set_menu_position3_2031, 
 									measure[CFG(measure)],
-									measure, 2, 3, CFG(measure));
+									measure, 2, 3, CFG(measure), 0);
 							str = g_strdup_printf ("%s", con2_p[2][0][7]);	
 							gtk_label_set_text (GTK_LABEL (pp->label3[3]), str);
 						}
@@ -4550,7 +4492,7 @@ void draw3_data3(DRAW_UI_P p)
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 						draw3_pop_tt (data_213, set_menu_position3_213, 
 								operator[CFG(oprt)],
-								operator, 2, 3, CFG(oprt));
+								operator, 2, 3, CFG(oprt), 0);
 					else 
 						draw3_popdown (operator[CFG(oprt)], 3, 0);
 
@@ -4560,7 +4502,7 @@ void draw3_data3(DRAW_UI_P p)
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 						draw3_pop_tt (data_223, set_menu_position3_223, 
 								sound1[CFG(sound)],
-								sound, 5, 3, CFG(sound));
+								sound, 5, 3, CFG(sound), 0);
 					else 
 						draw3_popdown (sound1[CFG(sound)], 3, 0);
 
@@ -4580,7 +4522,7 @@ void draw3_data3(DRAW_UI_P p)
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 						draw3_pop_tt (data_303, set_menu_position3_303, 
 								field[CFG(field2)],
-								field1, 4, 3, CFG(field2));
+								field1, 4, 3, CFG(field2), 0);
 					else 
 						draw3_popdown (field[CFG(field2)], 3, 0);
 
@@ -4721,7 +4663,7 @@ void draw3_data3(DRAW_UI_P p)
 							   if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 								   draw3_pop_tt (data_443, set_menu_position3_443, 
 										   properties_source[CFG(prop_source)],
-										   properties_source, 4, 3, CFG(prop_source));
+										   properties_source, 4, 3, CFG(prop_source), 0);
 							   else 
 								   draw3_popdown (properties_source[CFG(prop_source)], 3, 0);
 							   break;
@@ -4773,6 +4715,7 @@ void draw3_data3(DRAW_UI_P p)
 				case 1:break;
 				case 2:/*Probe/Part -> Characterize -> width 522 */
 					   /* 当前步进 */
+#if 0
 					   switch (pp->p_tmp_config->agate_width_reg)
 					   {
 						   case 0:	tmpf = 0.01; break;
@@ -4800,6 +4743,7 @@ void draw3_data3(DRAW_UI_P p)
 						   unit = UNIT_MM;
 						   draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					   }
+#endif
 					   break;
 
 
@@ -4808,7 +4752,7 @@ void draw3_data3(DRAW_UI_P p)
 					   if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 						   draw3_pop_tt (data_533, set_menu_position3_533, 
 								   material[pp->p_config->part.Material],
-								   material, 7, 3, pp->p_config->part.Material);
+								   material, 7, 3, pp->p_config->part.Material, 0);
 					   else 
 						   draw3_popdown (material[pp->p_config->part.Material], 3, 0);
 
@@ -5058,7 +5002,7 @@ void draw3_data3(DRAW_UI_P p)
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 						draw3_pop_tt (data_903, set_menu_position3_903, 
 								scheme[CFG(scheme)],
-								scheme, 2, 3, CFG(scheme));
+								scheme, 2, 3, CFG(scheme), 0);
 					else 
 						draw3_popdown (scheme[CFG(scheme)], 3, 0);
 
@@ -5069,7 +5013,7 @@ void draw3_data3(DRAW_UI_P p)
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 						draw3_pop_tt (data_913, set_menu_position3_913, 
 								assign_key[CFG(assign_key)],
-								assign_key, 16, 3, CFG(assign_key));
+								assign_key, 16, 3, CFG(assign_key), 0);
 					else 
 						draw3_popdown (assign_key[CFG(assign_key)], 3, 0);
 
@@ -5249,12 +5193,12 @@ void draw3_data4(DRAW_UI_P p)
 								/* 更新当前增益值显示 */
 								str = g_strdup_printf ("%0.1f", pp->p_config->pulser_width / 100.0);
 								draw3_pop_tt (data_114, set_menu_position4, 
-										str, PW, 2, 4, 1);
+										str, PW, 2, 4, 1, 0);
 								g_free(str);
 							}
 							else
 								draw3_pop_tt (data_114, set_menu_position4, 
-										PW[CFG(pulser_width)], PW, 2, 4, CFG(pulser_width));
+										PW[CFG(pulser_width)], PW, 2, 4, CFG(pulser_width), 0);
 						}
 					}
 					else 
@@ -5278,7 +5222,7 @@ void draw3_data4(DRAW_UI_P p)
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
 						draw3_pop_tt (data_124, set_menu_position4_124, 
 								averaging[CFG(averaging)],
-								averaging, 5, 4, CFG(averaging));
+								averaging, 5, 4, CFG(averaging), 0);
 					else 
 						draw3_popdown (averaging[CFG(averaging)], 4, 0);
 
@@ -5373,7 +5317,7 @@ void draw3_data4(DRAW_UI_P p)
 						{
 							draw3_pop_tt (data_2041, set_menu_position4_2041, 
 									RF[CFG(rf)],
-									RF, 3, 4, CFG(rf));
+									RF, 3, 4, CFG(rf), 0);
 							str = g_strdup_printf ("%s", con2_p[2][0][8]);	
 							gtk_label_set_text (GTK_LABEL (pp->label3[4]), str);
 						}
@@ -5391,7 +5335,7 @@ void draw3_data4(DRAW_UI_P p)
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
 						draw3_pop_tt (data_214, set_menu_position4_214, 
 								groupB[CFG(groupB)],
-								groupB, 3, 4, CFG(groupB));
+								groupB, 3, 4, CFG(groupB), 0);
 					else 
 						draw3_popdown (groupB[CFG(groupB)], 4, 0);
 
@@ -5443,7 +5387,7 @@ void draw3_data4(DRAW_UI_P p)
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
 						draw3_pop_tt (data_304, set_menu_position4_304, 
 								field[CFG(field3)],
-								field1, 4, 4, CFG(field3));
+								field1, 4, 4, CFG(field3), 0);
 					else 
 						draw3_popdown (field[CFG(field3)], 4, 0);
 
@@ -5551,7 +5495,7 @@ void draw3_data4(DRAW_UI_P p)
 						   if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
 							   draw3_pop_tt (data_434, set_menu_position4_434, 
 									   color_mode[CFG(color_mode)],
-									   color_mode, 2, 4, CFG(color_mode));
+									   color_mode, 2, 4, CFG(color_mode), 0);
 						   else 
 							   draw3_popdown (color_mode[CFG(color_mode)], 4, 0);
 
@@ -5573,7 +5517,7 @@ void draw3_data4(DRAW_UI_P p)
 							   if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
 								   draw3_pop_tt (data_444, set_menu_position4_444, 
 										   appearance[CFG(prop_app)],
-										   appearance, 4, 4, CFG(prop_app));
+										   appearance, 4, 4, CFG(prop_app), 0);
 							   else 
 								   draw3_popdown (appearance[CFG(prop_app)], 4, 0);
 
@@ -5653,7 +5597,7 @@ void draw3_data4(DRAW_UI_P p)
 					   if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
 						   draw3_pop_tt (data_614, set_menu_position4_614, 
 								   wave_type1[CFG(wave_type)],
-								   wave_type, 2, 4, CFG(wave_type));
+								   wave_type, 2, 4, CFG(wave_type), 0);
 					   else 
 						   draw3_popdown (wave_type1[CFG(wave_type)], 4, 0);
 
@@ -5728,7 +5672,7 @@ void draw3_data4(DRAW_UI_P p)
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
 						draw3_pop_tt (data_804, set_menu_position4_804, 
 								save_mode[CFG(save_mode)],
-								save_mode, 4, 4, CFG(save_mode));
+								save_mode, 4, 4, CFG(save_mode), 0);
 					else 
 						draw3_popdown (save_mode[CFG(save_mode)], 4, 0);
 
@@ -5740,7 +5684,7 @@ void draw3_data4(DRAW_UI_P p)
 					   if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
 						   draw3_pop_tt (data_824, set_menu_position4_824, 
 								   view[CFG(view)],
-								   view, 3, 4, CFG(view));
+								   view, 3, 4, CFG(view), 0);
 					   else 
 						   draw3_popdown (view[CFG(view)], 4, 0);
 
@@ -5759,7 +5703,7 @@ void draw3_data4(DRAW_UI_P p)
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
 						draw3_pop_tt (data_904, set_menu_position4_904, 
 								gate_mode[CFG(gate_mode)],
-								gate_mode, 2, 4, CFG(gate_mode));
+								gate_mode, 2, 4, CFG(gate_mode), 0);
 					else 
 						draw3_popdown (gate_mode[CFG(gate_mode)], 4, 0);
 
@@ -5771,7 +5715,7 @@ void draw3_data4(DRAW_UI_P p)
 					   if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
 						   draw3_pop_tt (data_924, set_menu_position4_924, 
 								   startup_mode[CFG(startup_mode)],
-								   startup_mode, 2, 4, CFG(startup_mode));
+								   startup_mode, 2, 4, CFG(startup_mode), 0);
 					   else 
 						   draw3_popdown (startup_mode[CFG(startup_mode)], 4, 0);
 
@@ -5875,12 +5819,12 @@ void draw3_data5(DRAW_UI_P p)
 								/* 更新当前增益值显示 */
 								str = g_strdup_printf ("%d", pp->p_config->prf);
 								draw3_pop_tt (data_115, set_menu_position5, 
-										str, PRF, 4, 5, 3);
+										str, PRF, 4, 5, 3, 0);
 								g_free(str);
 							}
 							else
 								draw3_pop_tt (data_115, set_menu_position5, 
-										PRF[CFG(prf)], PRF, 4, 5, CFG(prf));
+										PRF[CFG(prf)], PRF, 4, 5, CFG(prf), 0);
 						}
 					}
 					else 
@@ -5993,12 +5937,12 @@ void draw3_data5(DRAW_UI_P p)
 								/* 更新当前增益值显示 */
 								str = g_strdup_printf ("%.1f", CFG(sum_gain)/100.0);
 								draw3_pop_tt (data_145, set_menu_position5_145, 
-										str, sum_gain, 2, 5, 1);
+										str, sum_gain, 2, 5, 1, 0);
 								g_free(str);
 							}
 							else
 								draw3_pop_tt (data_145, set_menu_position5_145, 
-										sum_gain[CFG(sum_gain)], sum_gain, 2, 5, CFG(sum_gain));
+										sum_gain[CFG(sum_gain)], sum_gain, 2, 5, CFG(sum_gain), 0);
 						}
 					}
 					else 
@@ -6029,7 +5973,7 @@ void draw3_data5(DRAW_UI_P p)
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 5))
 						draw3_pop_tt (data_215, set_menu_position5_215, 
 								conditionB[CFG(conditionB)],
-								conditionB, 9, 5, CFG(conditionB));
+								conditionB, 9, 5, CFG(conditionB), 0);
 					else 
 						draw3_popdown (conditionB[CFG(conditionB)], 5, 0);
 
@@ -6098,7 +6042,7 @@ void draw3_data5(DRAW_UI_P p)
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 5))
 						draw3_pop_tt (data_305, set_menu_position5_305, 
 								field[CFG(field4)],
-								field1, 4, 5, CFG(field4));
+								field1, 4, 5, CFG(field4), 0);
 					else 
 						draw3_popdown (field[CFG(field4)], 5, 0);
 
@@ -6163,7 +6107,7 @@ void draw3_data5(DRAW_UI_P p)
 							   if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 5))
 								   draw3_pop_tt (data_445, set_menu_position5_445, 
 										   overlay[CFG(prop_overlay)],
-										   overlay, 3, 5, CFG(prop_overlay));
+										   overlay, 3, 5, CFG(prop_overlay), 0);
 							   else 
 								   draw3_popdown (overlay[CFG(prop_overlay)], 5, 0);
 
@@ -6442,7 +6386,7 @@ void draw_3_menu(gint pa, gpointer p)
 	return ;
 }
 
-
+#if 0
 static void travel_path (cairo_t *cr)
 {
 	gint i;
@@ -6471,7 +6415,9 @@ static void travel_path (cairo_t *cr)
 
 	cairo_stroke(cr);
 }
+#endif
 
+#if 0
 static void draw_gtk (GtkWidget      *widget, GdkEventExpose *eev, gpointer        data)
 {
 	cairo_t *cr;
@@ -6479,7 +6425,9 @@ static void draw_gtk (GtkWidget      *widget, GdkEventExpose *eev, gpointer     
 	travel_path (cr);
 	cairo_destroy (cr);
 }
+#endif
 
+#if 0
 static gboolean time_handler(GtkWidget *widget)
 {
 	gint32 i;
@@ -6497,6 +6445,7 @@ static gboolean time_handler(GtkWidget *widget)
 	g_thread_exit(NULL);
 	return TRUE;
 }
+#endif
 
 /*  */
 static gboolean time_handler1(GtkWidget *widget)
@@ -6741,7 +6690,7 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 	gtk_box_pack_start (GTK_BOX (p->hbox111), pp->event[1], FALSE, FALSE, 0);
 	gtk_widget_set_size_request (GTK_WIDGET(pp->event[1]), 112, 45);  
 	update_widget_bg(pp->event[1], backpic[4]);
-	markup = g_markup_printf_escaped ("<span foreground='white' font_desc='24'>%0.1f</span>", GROUP_VAL(gain));
+	markup = g_markup_printf_escaped ("<span foreground='white' font_desc='24'>%0.1f</span>", GROUP_VAL(gain) / 100.0);
 	gtk_label_set_markup (GTK_LABEL (pp->label[1]), markup);      /* 增益数值 */
 
 	/* 小状态栏  */

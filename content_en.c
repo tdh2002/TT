@@ -383,18 +383,25 @@ const gchar ***content2_en[] =
 	content2_en5,	content2_en6,	content2_en7,	content2_en8,	content2_en9
 };
 
+
 /* 0mm 1英寸 2微秒  */
 const gchar *units_en[] = {"(mm)", "(in)", "(μs)", " ", "(m/s)", "(in/μs)", "(dB)", "(1 to 97)", "(%)", "(ms)", "(mm/s)", "(1 to 113)"};
 
+
+const gchar *all_menu_content_en[] = 
+{
+	"PC Pitch-and-Catch", "PE Pulse-Echo", "TT Through-Transmission", "",		/* 0 */
+	"PC", "PE", "TT", "",														/* 4 */
+	"1","1.5","2","2.25","3.5","4","5","7.5","10","12","15","20","UserDef",""	/* 8 */
+	""																			/* 22 */
+
+};
 
 /*  0  */
 const gchar *type_en[] = {"Encoder", "Ultrasound", "Code"};
 const gchar *calibration_mode_en[] = {"Velocity", "Wedge Delay", "Sensitivity", "TCG"};
 
 /*  1  */
-const gchar *tx_rx_mode_en[] = {"PC Pitch-and-Catch", "PE Pulse-Echo", "TT Through-Transmission"};
-const gchar *tx_rx_mode_en1[] = {"PC", "PE", "TT"};
-const gchar *freq_en[] = {"1","1.5","2","2.25","3.5","4","5","7.5","10","12","15","20","UserDef"};
 const gchar *voltage_en[] = {"50 Low", "100 High"};
 const gchar *voltage_en1[] = {"50", "100"};
 const gchar *PW_en[] = {"Auto",  "UserDef"};
@@ -409,11 +416,11 @@ const gchar *sum_gain_en[] = {"Auto", "UserDef"};
 
 
 /*  2  */
-const gchar *gate_en[] = {"A", "B", "I"};
+const gchar *gate_en[] = {"A ", "B ", "I "};
 const gchar *parameters_en[] = {"Position", "Mode"};
-      const gchar *synchro_en[] = {"Pulse", "I/"};
-      const gchar *measure_en[] = {"Peak(^)", "Edge(/)"};
-      const gchar *RF_en[] = {"Absolute", "Positive","Negative"};
+const gchar *synchro_en[] = {"Pulse", "I/"};
+const gchar *measure_en[] = {"Peak(^)", "Edge(/)"};
+const gchar *RF_en[] = {"Absolute", "Positive","Negative"};
 
 
 const gchar *gate_alarm_en[] = {"1", "2","3","4","5","6","7","8","9","10","11","12","13","14","15","16"};

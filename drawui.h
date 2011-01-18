@@ -32,6 +32,15 @@
 #define UT_UNIT_SOUNDPATH	1
 #define UT_UNIT_TIME		2
 
+/* 发射模式 */
+#define PITCH_CATCH	0
+#define	PULSE_ECHO	1
+#define	THROUGH_TRAN	2
+
+/* focal law 类型 定义*/
+#define LINEAR_SCAN	0
+#define	ANGLE_SCAN	1
+
 /* 各种数值定义 */
 #define A_SCAN	     0
 #define B_SCAN	     1
@@ -57,6 +66,12 @@
 
 /* 最大测量范围  扫描延时+扫描范围 */
 #define MAX_RANGE_US	9899.89
+
+/* 各个menu 弹出菜单的偏移量 */
+#define TX_RX_MODE	0
+#define FREQUENCE	(TX_RX_MODE + 8)
+
+
 
 /* 发送给硬件数据类型 */
 #define BEAM_DELAY_DSP	0x1000	/* 0x1000~0x10ff 最多256个聚焦法则 */

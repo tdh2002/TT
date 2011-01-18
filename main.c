@@ -38,14 +38,33 @@ static void set_config ()
 	CFG(groupId)	= 0;
 	/* UT settings */
 	GROUP_VAL(velocity) = 592000;	/* 5920m/s */ 
-	GROUP_VAL(gain)          = 0;
-	GROUP_VAL(gainr)         = 0;
-	GROUP_VAL(db_ref)		 = GAINR_OFF;
-	GROUP_VAL(wedge_delay)   = 0;	/*  */
-	GROUP_VAL(range)         = 10000;		/* 10μs */
-	GROUP_VAL(start)         = 0.0;
+	GROUP_VAL(gain)         = 0;
+	GROUP_VAL(gainr)        = 0;
+	GROUP_VAL(db_ref)		= GAINR_OFF;
+	GROUP_VAL(wedge_delay)  = 0;	/*  */
+	GROUP_VAL(range)        = 10000;		/* 10μs */
+	GROUP_VAL(start)        = 0.0;
+	GROUP_VAL(pulser)       = 1;			/* 1表示第一个探头接口 1-128 */
+	GROUP_VAL(tx_rxmode)	= PULSE_ECHO;	/* 收发模式 */
+
 	/* 探头信息 */
-	GROUP_VAL(probe.Elem_qty) = 32;
+	GROUP_VAL(probe.Elem_qty)	= 32; /*  */
+	/* 聚焦法则信息 */
+	LAW_VAL(Focal_type)	= LINEAR_SCAN;
+	LAW_VAL(Tx_connect)	= 1;
+	LAW_VAL(Rx_connect)	= 1;
+	LAW_VAL(Elem_qty)	= 16;
+	LAW_VAL(First_tx_elem)	= 1;
+	LAW_VAL(First_rx_elem)	= 1;
+	LAW_VAL(Last_tx_elem)	= 17;
+	LAW_VAL(Last_rx_elem)	= 17;
+	LAW_VAL(Elem_step)		= 1;
+	LAW_VAL(Angle_start)	= 0;
+	LAW_VAL(Angle_end)		= 0;
+	LAW_VAL(Angle_step)		= 100;
+	LAW_VAL(Focus_depth)	= 50000;
+	LAW_VAL(law_index_start)= 0;
+	LAW_VAL(law_index_end)	= 1;
 
 	/*  */
 	CFG(color_end)     = 100.0;

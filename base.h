@@ -463,16 +463,19 @@ typedef struct law_beam
 typedef struct law_info
 {
 	guchar	Focal_type;			/* 聚焦类型 */
-	guchar	ELem_qty;			/* 聚焦阵元数 */
-	guchar	Elem_tx_start;		/* 该法则阵元发射开始的编号 */
-	guchar	Elem_tx_end;		/* 该法则阵元发射开始的编号 线扫时候需要设置 扇扫直接算好 */
-	guchar	Elem_rx_start;		/* 该法则阵元接收开始的编号 */
-	guchar	Elem_rx_end;		/* 该法则阵元接收开始的编号 线扫时候需要设置 扇扫直接算好 */
-	guchar	ELem_step;			/* 线扫时候可以设置阵元间隔 */
-	guchar	Velocity_type;		/* 从波 或者 横波 */
+	guchar	Tx_connect;			/* 该法则的探头发射第一个阵元其连接口的编号 */
+	guchar	Rx_connect;			/* 该法则 */
+	guchar	Elem_qty;			/* 聚焦阵元数 */
+	guchar	First_tx_elem;		/* 法则使用的第一个发射阵元 收发分离时候 tx rx 不一样 */
+	guchar	First_rx_elem;		/* 法则使用的第一个接收阵元 */
+	guchar	Last_tx_elem;		/* 法则使用的最后一个发射阵元 */
+	guchar	Last_rx_elem;		/* 法则使用的最后一个接收阵元 */
+	guchar	Elem_step;			/* 线扫时候可以设置阵元间隔 */
+	guchar	Velocity_type;		/* 纵波 或者 横波 */
 	gshort	Angle_start;
-	gshort	Angle_end;			/* 扇扫时候可以设置的角度 */
-	guint	focus_depth;		/* 扇扫时候为声程 线扫是深度 */
+	gshort	Angle_end;			/* 扇扫时候可以设置的角度 0.01度为单位 */
+	gushort	Angle_step;			/* 扇扫时候可以设置的角度步进 */
+	guint	Focus_depth;		/* 扇扫时候为声程 线扫是深度 0.001mm为单位 */
 	gushort	law_index_start;	/* 聚焦法则索引 计算出来的 */
 	gushort law_index_end;		/*  */
 } LAW_INFO, *LAW_INFO_P;;
@@ -517,6 +520,7 @@ typedef struct Part {
 
 /* 组信息 */
 typedef struct Group {
+	/* 基本设置 */
 	guint	wedge_delay;	/* 楔款延时 单位 ns */
 	guint	range;			/* 显示范围 单位 ns */
 	gint	start;			/* 扫描延时 单位 ns */
@@ -527,11 +531,15 @@ typedef struct Group {
 	/*发射*/
 	guchar	pulser;			/* 1~ 128 - elem_qty(聚焦阵元数最大为32) + 1 
 							   指定发射阵元 与机器配置相关我们是128阵元最大,
-							   Probe 的Auto Program 选择On 以后不可以调节 */
+							   Probe 的Auto Program 选择On 以后不可以调节 值与connect P 一样 */
+	guchar receiver;
+	guchar tx_rxmode;		/* 收发模式 */
+	gushort	frequence;		/* 以0.001Mhz 也就是Khz 为单位 当探头学选unknown 时候才可以调节 */
+
+
 	LAW_INFO	law_info;	/* 聚焦法则的信息  */
 	PROBE	probe;
 	WEDGE	wedge;
-
 
 } GROUP, *GROUP_P;
 
@@ -544,11 +552,10 @@ typedef	struct Config {
 	PART	part;				/* 被检测工件... */
 	
 	/* 所有聚焦法则的信息在这里 */
-	LAW_BEAM	focal_law_all[setup_MAX_LAW_QTY][setup_MAX_ELEM_RX_ACTIVE];	
+	LAW_BEAM	focal_law_all_beam[setup_MAX_LAW_QTY];
+	LAW_ELEM	focal_law_all_elem[setup_MAX_LAW_QTY][setup_MAX_ELEM_RX_ACTIVE];	
 
 	/*发射*/
-	guchar	tx_rxmode;		/*  */
-	gushort	frequence;		/*  */
 	guchar	voltage_cfg;		/*  */
 	guint	pulser_width;	        /*  */
 	gushort	prf;			/*  */
@@ -575,11 +582,11 @@ typedef	struct Config {
 	gushort	sum_gain;		/**/
 
 	/*闸门报警 */
-	gchar   gate;
-	gchar   parameter;
-	gchar   synchro;
-	gchar   measure;
-	gchar   rf;
+	guchar   gate;
+	guchar   parameter;
+	guchar   synchro;
+	guchar   measure;
+	guchar   rf;
 	guint	agate_mode;		
 	gint	agate_start;	
 	guint	agate_width;	
@@ -975,7 +982,9 @@ typedef struct Draw_interface {
 #define CUR_POS (pp->pos2[pp->pos][pp->pos1[pp->pos]])      /*0,1,2,3,4,5*/
 #define CFG(a)	(pp->p_config->a)
 /*#define GROUP_VAL(a)  (pp->p_config->group[pp->p_config->groupId].a)*/	/* 原型 */
+#define GROUP_VAL_POS(a, b)	(CFG(group[a].b))		/* a表示哪个group b是返回哪个值 */
 #define GROUP_VAL(a)  (CFG(group[CFG(groupId)].a))
+#define LAW_VAL_POS(a, b)  (GROUP_VAL_POS(a,law_info).b)
 #define LAW_VAL(a)  (GROUP_VAL(law_info).a)
 
 #define TMP(a)  (pp->p_tmp_config->a)

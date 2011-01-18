@@ -15,13 +15,11 @@ extern const gchar **content1_en[];
 extern const gchar ***content2_en[];
 
 extern const gchar *units_en[];
+extern const gchar *all_menu_content_en[];
 
 extern const gchar *type_en[];
 extern const gchar *calibration_mode_en[];
 
-extern const gchar *tx_rx_mode_en[];
-extern const gchar *tx_rx_mode_en1[];
-extern const gchar *freq_en[];
 extern const gchar *voltage_en[];
 extern const gchar *voltage_en1[];
 extern const gchar *PW_en[];
