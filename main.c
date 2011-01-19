@@ -36,6 +36,7 @@ static void set_config ()
 {
 	CFG(groupQty)	= 0;
 	CFG(groupId)	= 0;
+	CFG(voltage_cfg) = 0;
 	/* UT settings */
 	GROUP_VAL(velocity) = 592000;	/* 5920m/s */ 
 	GROUP_VAL(gain)         = 0;

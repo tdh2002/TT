@@ -71,6 +71,7 @@
 /* 各个menu 弹出菜单的偏移量 */
 #define TX_RX_MODE	0
 #define FREQUENCE	(TX_RX_MODE + 8)
+#define VOLTAGE		(FREQUENCE + 14)
 
 
 
