@@ -46,9 +46,11 @@ static void set_config ()
 	GROUP_VAL(start)        = 0.0;
 	GROUP_VAL(pulser)       = 1;			/* 1表示第一个探头接口 1-128 */
 	GROUP_VAL(tx_rxmode)	= PULSE_ECHO;	/* 收发模式 */
+	GROUP_VAL(frequence)	= 10000;	/* 收发模式 */
 
 	/* 探头信息 */
 	GROUP_VAL(probe.Elem_qty)	= 32; /*  */
+/*	memcpy (GROUP_VAL(probe.Name), "5L64-A2", 8);*/ /* 探头名字 */
 	/* 聚焦法则信息 */
 	LAW_VAL(Focal_type)	= LINEAR_SCAN;
 	LAW_VAL(Tx_connect)	= 1;
@@ -71,6 +73,7 @@ static void set_config ()
 	CFG(brightness)    = 50.0;
 	CFG(min)           = 50.0;
 	CFG(max)           = 50000.0;
+
 }
 
 /* You have to start somewhere */
@@ -102,7 +105,9 @@ int main (int argc, char *argv[])
 	window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_decorated (GTK_WINDOW (window), FALSE);			/*不可以装饰*/
 	gtk_window_set_default_size (GTK_WINDOW(window), 800, 600);		/*设置窗口大小*/
-	//	gtk_window_fullscreen (GTK_WINDOW(window));						/*全屏幕*/
+#if ARM
+	gtk_window_fullscreen (GTK_WINDOW(window));						/*全屏幕*/
+#endif
 	gtk_widget_modify_bg (window, GTK_STATE_NORMAL, &color_black);	/*黑色背景*/
 	g_signal_connect (G_OBJECT(window), "delete_event",
 			G_CALLBACK(gtk_main_quit), NULL);			/**/

@@ -459,7 +459,7 @@ typedef struct law_beam
 } LAW_BEAM, *LAW_BEAM_P;
 
 
-/*聚焦法则信息(law_info)*/
+/*聚焦法则信息(law_info) 28byte*/
 typedef struct law_info
 {
 	guchar	Focal_type;			/* 聚焦类型 */
@@ -486,12 +486,12 @@ typedef struct element_law
 
 } ELEMENT_LAW, *ELEMENT_LAW_P;
 
-/*探头(Probe)*/
+/*探头(Probe)  24 byte*/
 typedef struct Probe {
-	guint	Elem_qty;		/* 阵元数 */
-	guint	Frequency;		/* 频率 0.1Mhz 为单位 */
-	guint	Pitch;			/* 阵元中心间距 0.1mm 为单位 */
-	gchar	Name[20];		/* 探头名字 */
+	guchar	Elem_qty;		/* 阵元数 */
+	gchar	Name[19];		/* 探头名字 */
+	gushort	Frequency;		/* 频率 KHz 为单位 */
+	gushort	Pitch;			/* 阵元中心间距 0.001mm 为单位 范围是0.01~65.00mm */
 } PROBE, *PROBE_P;
 
 /*楔块 (Wedge)*/
@@ -503,7 +503,7 @@ typedef struct Wedge {
 	gchar	Name[20];		/* 楔块名字 */
 } WEDGE, *WEDGE_P;
 
-/*材料 (Material)*/
+/*材料 (Material) 28byte */
 typedef struct Material {
 	guint	Velocity_LW;	/* 声速 单位 0.01m/s 纵波 快点 */
 	guint	Velocity_SW;	/* 声速 单位 0.01m/s 横波 慢点 */
@@ -957,6 +957,9 @@ typedef struct Draw_interface {
 	guchar			mark_pop_change;    /**/
 	guchar			markreturn;
 	guchar			mark3;
+
+	gint x_pos;
+	gint y_pos;  /* 弹出窗口的xy坐标 */
 } DRAW_UI, *DRAW_UI_P;
 
 
@@ -988,6 +991,7 @@ typedef struct Draw_interface {
 #define LAW_VAL(a)  (GROUP_VAL(law_info).a)
 
 #define TMP(a)  (pp->p_tmp_config->a)
+#define	MENU_STATUS	(pp->pos_pos) 
 
 #define VERSION "DP1.0.0.0"
 

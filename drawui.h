@@ -67,6 +67,7 @@
 /* 最大测量范围  扫描延时+扫描范围 */
 #define MAX_RANGE_US	9899.89
 
+
 /* 各个menu 弹出菜单的偏移量 */
 #define TX_RX_MODE	0
 #define FREQUENCE	(TX_RX_MODE + 8)
