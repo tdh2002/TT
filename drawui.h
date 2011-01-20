@@ -37,6 +37,11 @@
 #define	PULSE_ECHO	1
 #define	THROUGH_TRAN	2
 
+/*  */
+#define VOLTAGE_HIGH
+#define VOLTAGE_MID
+#define VOLTAGE_LOW
+
 /* focal law 类型 定义*/
 #define LINEAR_SCAN	0
 #define	ANGLE_SCAN	1
@@ -72,6 +77,9 @@
 #define TX_RX_MODE	0
 #define FREQUENCE	(TX_RX_MODE + 8)
 #define VOLTAGE		(FREQUENCE + 14)
+#define PULSER_WIDTH	 (VOLTAGE + 8)
+#define PRF			(PULSER_WIDTH + 2)
+
 
 
 
@@ -85,6 +93,12 @@
 #define GATEA_DSP		0x3000
 #define GATEB_DSP		0x3001
 #define GATEI_DSP		0x3002
+#define TX_RX_MODE_DSP	0x3003
+#define FREQUENCE_DSP	0x3004
+#define	VOLTAGE_DSP		0x3005
+#define PW_DSP			0x3006
+#define PRF_DSP			0x3007
+
 
 extern gint (*window_keypress_event_orig)(GtkWidget *widget, GdkEventKey *event);
 extern gint my_keypress_event(GtkWidget *widget, GdkEventKey *event);
@@ -92,8 +106,11 @@ extern GtkWidgetClass *widget_window_class;
 
 extern DRAW_UI_P pp;					
 
-extern guint address[];
-extern gfloat get_freq ();
+//extern guint address[];
+extern guint get_freq ();
+extern guint get_pulser_width ();
+extern guint get_prf ();
+
 extern void tt_label_show_string (GtkWidget *label, const gchar *s1, const gchar *s2,
 		const gchar *s3, const gchar *color,  guint font_size);
 extern void tt_label_show_float (GtkWidget *label, const gchar *s1, gfloat value, guint digit, 
@@ -105,6 +122,7 @@ extern void draw_3_menu(gint pa, gpointer p);					    /* 更新三级菜单 */
 extern void init_ui(DRAW_UI_P p);									/* 初始化界面, */
 extern void draw_area_all();
 
+extern void send_dsp_data (guint data_type, guint value);
 extern gboolean (*data_fun[6])(GtkWidget *widget, GdkEventButton *event, gpointer user_data);
 extern gboolean (*eventbox2_fun[5])(GtkWidget *widget, GdkEventButton *event, gpointer data);
 

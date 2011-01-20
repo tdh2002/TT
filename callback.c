@@ -16,7 +16,10 @@ gboolean foo (GtkAccelGroup *accel_group, GObject *acceleratable,
 gboolean key_press_handler (GtkWidget* pWidget,
 		GdkEventKey* pEvent, gpointer data);
 
-gfloat get_freq ();
+void send_dsp_data (guint data_type, guint value);
+guint get_freq ();
+guint get_pulser_width ();
+guint get_prf ();
 
 gboolean data_function0 (GtkWidget *widget,	GdkEventButton *event,	gpointer       data);
 gboolean data_function1 (GtkWidget *widget,	GdkEventButton *event,	gpointer       data);
@@ -207,26 +210,54 @@ gboolean (*eventbox2_fun[5])(GtkWidget *widget, GdkEventButton *event, gpointer 
 	eventbox2_function3,	eventbox2_function4
 };
 
-gfloat get_freq ()
+guint get_prf ()
 {
-	if (GROUP_VAL(frequence) <99)
+	if (GROUP_VAL(prf) > 9)
+		return GROUP_VAL(prf);
+	else 
 	{
-		switch (GROUP_VAL(frequence))
+		switch (GROUP_VAL(prf))
 		{
-			case 0:return 1000.0;break;
-			case 1:return 1500.0;break;
-			case 2:return 2000.0;break;
-			case 3:return 2250.0;break;
-			case 4:return 3500.0;break;
-			case 5:return 4000.0;break;
-			case 6:return 5000.0;break;
-			case 7:return 7500.0;break;
-			case 8:return 10000.0;break;
-			case 9:return 12000.0;break;
-			case 10:return 15000.0;break;
-			case 11:return 20000.0;break;
+			case 0:
+				return 10000;
+				break;
+			case 1:
+				return 5000;
+				break;
+			case 2:
+				return 500;
+				break;
 			default:break;
 		}
+	}
+	return 0;
+}
+
+guint get_pulser_width ()
+{
+	if (GROUP_VAL(pulser_width))
+		return GROUP_VAL(pulser_width);
+	else
+		return 3000; /* 计算 */
+}
+
+guint get_freq ()
+{
+	switch (GROUP_VAL(freq_pos))
+	{
+		case 0:return 1000;break;
+		case 1:return 1500;break;
+		case 2:return 2000;break;
+		case 3:return 2250;break;
+		case 4:return 3500;break;
+		case 5:return 4000;break;
+		case 6:return 5000;break;
+		case 7:return 7500;break;
+		case 8:return 10000;break;
+		case 9:return 12000;break;
+		case 10:return 15000;break;
+		case 11:return 20000;break;
+		default:break;
 	}
 	return GROUP_VAL(frequence);
 }
@@ -1270,17 +1301,18 @@ void data_104 (GtkSpinButton *spinbutton, gpointer data) /*声速 P104 */
 	/*发送增益给硬件*/
 }
 
-void data_110 (GtkSpinButton *spinbutton, gpointer data) /* Pulser 发射 */
+void data_110 (GtkSpinButton *spinbutton, gpointer data) /* Pulser 发射 P110 */
 {
 	GROUP_VAL(pulser) =  (guchar) (gtk_spin_button_get_value (spinbutton));
 
 	/*发送增益给硬件*/
 }
 
-void data_111 (GtkMenuItem *menuitem, gpointer data) /* 收发模式 Tx/Rx Mode */
+void data_111 (GtkMenuItem *menuitem, gpointer data) /* 收发模式 Tx/Rx Mode P111 */
 {
 	GROUP_VAL(tx_rxmode) = (gchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
+	send_dsp_data (TX_RX_MODE_DSP, GROUP_VAL(tx_rxmode));
 	draw_3_menu(0, NULL);
 	/* 发送增益给硬件 */
 }
@@ -1289,16 +1321,18 @@ void data_1121 (GtkSpinButton *spinbutton, gpointer data) /* 频率 Freq 数值�
 {
 	GROUP_VAL(frequence) =  (gushort) ((gtk_spin_button_get_value (spinbutton)) * 1000.0);
 
+	send_dsp_data (FREQUENCE_DSP, (guint) (GROUP_VAL(frequence)));
 	/* 发送给硬件 */
 }
 
 
-void data_112 (GtkMenuItem *menuitem, gpointer data) /* 频率 Freq */
+void data_112 (GtkMenuItem *menuitem, gpointer data) /* 频率 Freq P112 */
 {
 	guint temp = GPOINTER_TO_UINT (data);
+	GROUP_VAL(freq_pos) = (gushort) (GPOINTER_TO_UINT (data));
+	GROUP_VAL(frequence) = get_freq();
 	if (temp != 12)
 	{
-		GROUP_VAL(frequence) = (gushort) (GPOINTER_TO_UINT (data));
 		pp->pos_pos = MENU3_STOP;
 		draw_3_menu(0, NULL);
 	}
@@ -1309,23 +1343,36 @@ void data_112 (GtkMenuItem *menuitem, gpointer data) /* 频率 Freq */
 		draw_3_menu(0, NULL);
 	}
 	/* 发送增益给硬件 */
+	send_dsp_data (FREQUENCE_DSP, (guint) (GROUP_VAL(frequence)));
 }
 
 
-void data_113 (GtkMenuItem *menuitem, gpointer data)  /* Voltage */
+void data_113 (GtkMenuItem *menuitem, gpointer data)  /* Voltage  P113 */
 {
-	pp->p_config->voltage_cfg = (gchar) (GPOINTER_TO_UINT (data));
+	if (CFG(groupId) != 3)
+	{
+		CFG(voltage_pa) = (gchar) (GPOINTER_TO_UINT (data));
+		send_dsp_data (VOLTAGE_DSP, CFG(voltage_pa));
+	}
+	else
+	{
+		CFG(voltage_ut) = (gchar) (GPOINTER_TO_UINT (data));
+		send_dsp_data (VOLTAGE_DSP, CFG(voltage_ut));
+	}
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
 	/* 发送增益给硬件 */
 }
 
 
-void data_1141 (GtkSpinButton *spinbutton, gpointer data) /* PW */
+void data_1141 (GtkSpinButton *spinbutton, gpointer data) /* PW  P114 */
 {
-	DRAW_UI_P p = (DRAW_UI_P)(data);
-	p->p_config->pulser_width =  (guint) ((gtk_spin_button_get_value (spinbutton)) * 100.0);
+	guint temp;
+	temp =  (guint) ((gtk_spin_button_get_value (spinbutton)) * 100.0);
+	temp = (temp / 250) * 250;
+	GROUP_VAL(pulser_width) = temp;
 
+	send_dsp_data (PW_DSP, get_pulser_width());
 	/* 发送给硬件 */
 }
 
@@ -1333,9 +1380,9 @@ void data_1141 (GtkSpinButton *spinbutton, gpointer data) /* PW */
 void data_114 (GtkMenuItem *menuitem, gpointer data) /* PW */
 {
 	guint temp = GPOINTER_TO_UINT (data);
-	if (temp != 1)
+	if (!temp)
 	{
-		CFG(pulser_width) = (gushort) (GPOINTER_TO_UINT (data));
+		GROUP_VAL(pulser_width) = (gushort) (GPOINTER_TO_UINT (data));
 		pp->pos_pos = MENU3_STOP;
 		draw_3_menu(0, NULL);
 	}
@@ -1345,22 +1392,26 @@ void data_114 (GtkMenuItem *menuitem, gpointer data) /* PW */
 		pp->pos_pos = MENU3_PRESSED;
 		draw_3_menu(0, NULL);
 	}
+	send_dsp_data (PW_DSP, get_pulser_width());
 	/* 发送增益给硬件 */
 }
 
-void data_1151 (GtkSpinButton *spinbutton, gpointer data) /* PRF */
+void data_1151 (GtkSpinButton *spinbutton, gpointer data) /* PRF P115 */
 {
 	gchar *markup;
 	//	DRAW_UI_P p = (DRAW_UI_P)(data);
-	CFG(prf) =  (guint) (gtk_spin_button_get_value (spinbutton));
-	markup=g_markup_printf_escaped("<span foreground='white' font_desc='10'>PRF: %d(%d)                        </span>",CFG(prf),CFG(prf));
+	GROUP_VAL(prf) =  (guint) (gtk_spin_button_get_value (spinbutton) * 10);
+	markup=g_markup_printf_escaped(
+			"<span foreground='white' font_desc='10'>PRF: %d(%d)</span>",GROUP_VAL(prf) / 10, (GROUP_VAL(prf) / 10) * 1);
 	gtk_label_set_markup (GTK_LABEL(pp->label[3]),markup);
+	g_free(markup);
 
-	markup = g_markup_printf_escaped ("<span foreground='white' font_desc='10'>V: %.2f mm/s                    </span>",(gfloat)CFG(prf));
+	markup = g_markup_printf_escaped (
+			"<span foreground='white' font_desc='10'>V: %.2f mm/s</span>",(gfloat)(GROUP_VAL(prf) / 10.0));
 	gtk_label_set_markup (GTK_LABEL (pp->label[5]), markup); ;
 
 	g_free(markup);
-
+	send_dsp_data (PRF_DSP, get_prf());
 	/* 发送给硬件 */
 }
 
@@ -1371,7 +1422,7 @@ void data_115 (GtkMenuItem *menuitem, gpointer data) /* PRF */
 	guint temp = GPOINTER_TO_UINT (data);
 	if (temp != 3)
 	{
-		CFG(prf) = temp;
+		GROUP_VAL(prf) = temp;
 		pp->pos_pos = MENU3_STOP;
 		draw_3_menu(0, NULL);
 	}
@@ -1381,7 +1432,7 @@ void data_115 (GtkMenuItem *menuitem, gpointer data) /* PRF */
 		pp->pos_pos = MENU3_PRESSED;
 		draw_3_menu(0, NULL);
 	}
-
+	send_dsp_data (PRF_DSP, get_prf());
 }
 
 
@@ -2171,12 +2222,44 @@ void data_901 (GtkSpinButton *spinbutton, gpointer data) /*scan_resolution*/
 }
 
 
-
+/*  */
 void send_dsp_data (guint data_type, guint value)
 {
 	switch (data_type)	
 	{
 		case BEAM_DELAY_DSP:break;
+		case GATEA_DSP:break;
+		case GATEB_DSP:break;
+		case GATEI_DSP:break;
+		case TX_RX_MODE_DSP:
+					   g_print("%d\n", value);
+					   break;
+		case FREQUENCE_DSP:
+					   g_print("%d\n", value);
+					   break;
+		case VOLTAGE_DSP:
+					   if (CFG(groupId) != 3)
+						   switch (value)
+						   {
+							   case 0:g_print("%x\n", setup_VOLTAGE_MIN_PA);break;
+							   case 1:g_print("%x\n", setup_VOLTAGE_MAX_PA);break;
+							   default:break;
+						   }
+					   else 
+						   switch (value)
+						   {
+							   case 0:g_print("%x\n", setup_VOLTAGE_MIN_UT);break;
+							   case 1:g_print("%x\n", setup_VOLTAGE_MED_UT);break;
+							   case 2:g_print("%x\n", setup_VOLTAGE_MAX_UT);break;
+							   default:break;
+						   }
+					   break;
+		case PW_DSP:
+					   g_print("%d\n", value);
+					   break;
+		case PRF_DSP:
+					   g_print("%d\n", value);
+					   break;
 		default:break;
 	}
 }

@@ -45,10 +45,6 @@ const gchar **menu_content = all_menu_content_en;
 const gchar **type       = type_en;
 const gchar **calibration_mode       = calibration_mode_en;
 
-const gchar **voltage    =voltage_en;
-const gchar **voltage1    =voltage_en1;
-const gchar **PW         =PW_en;
-const gchar **PRF        =PRF_en;
 const gchar **filter     =filter_en;
 const gchar **filter1     =filter_en1;
 const gchar **rectifier  =rectifier_en;
@@ -3229,7 +3225,7 @@ void draw3_data2(DRAW_UI_P p)
 						}
 						else
 						{
-							if (GROUP_VAL(frequence >99))
+							if (GROUP_VAL(freq_pos) == 12)
 							{
 								/* 更新当前增益值显示 */
 								str = g_strdup_printf ("%0.2f", GROUP_VAL(frequence) / 1000.0);
@@ -3239,21 +3235,21 @@ void draw3_data2(DRAW_UI_P p)
 							}
 							else
 								draw3_pop_tt (data_112, NULL, 
-										menu_content[FREQUENCE + GROUP_VAL(frequence)], menu_content + FREQUENCE, 13, 2, GROUP_VAL(frequence), 0);
+										menu_content[FREQUENCE + GROUP_VAL(frequence)], menu_content + FREQUENCE, 13, 2, GROUP_VAL(freq_pos), 0);
 						}
 					}
 					else 
 					{
-						if (GROUP_VAL(frequence) < 99)
-							draw3_popdown (menu_content[FREQUENCE + GROUP_VAL(frequence)], 2, 0);
-						else 
-						{
+//						if (GROUP_VAL(freq_pos) == 12 )
+//						{
 							cur_value = GROUP_VAL(frequence) / 1000.0;
 							unit = UNIT_NONE;
 							pos = 2;
 							digit = 2;
 							draw3_digit_stop (cur_value , units[unit], digit, pos, 0);
-						}
+//						}
+//						else 
+//							draw3_popdown (menu_content[FREQUENCE + GROUP_VAL(freq_pos)], 2, 0);
 					}
 					break;
 				case 2:/*Rectifier P122 */
@@ -4272,13 +4268,26 @@ void draw3_data3(DRAW_UI_P p)
 					}
 					break;
 				case 1: /* 发射电压高低  P113 */
+					/* PA 与 UT 的电压不一样 100 50 200 100 50 */
 					pp->x_pos = 592, pp->y_pos = 400;
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
+					{
+						if (CFG(groupId) != 3)
 						draw3_pop_tt (data_113, NULL, 
-								menu_content[VOLTAGE + 3 + CFG(voltage_cfg)],
-								menu_content + VOLTAGE, 2, 3, CFG(voltage_cfg), 0);
+								menu_content[VOLTAGE + 3 + CFG(voltage_pa)],
+								menu_content + VOLTAGE + 6, 2, 3, CFG(voltage_pa), 0);
+						else
+						draw3_pop_tt (data_113, NULL, 
+								menu_content[VOLTAGE + 3 + CFG(voltage_ut)],
+								menu_content + VOLTAGE, 3, 3, CFG(voltage_ut), 0);
+					}
 					else 
-						draw3_popdown (menu_content[VOLTAGE + 3 + CFG(voltage_cfg)], 3, 0);
+					{
+						if (CFG(groupId) != 3)
+						draw3_popdown (menu_content[VOLTAGE + 3 + CFG(voltage_pa)], 3, 0);
+						else
+						draw3_popdown (menu_content[VOLTAGE + 3 + CFG(voltage_ut)], 3, 0);
+					}
 					break;
 				case 2:/*Video Filter  123 */
 					/* 格式化字符串 */
@@ -5119,7 +5128,7 @@ void draw3_data4(DRAW_UI_P p)
 				case 1: /* 脉冲宽度 pulser width  P114 */
 					pp->x_pos = 570, pp->y_pos = 470;
 					/*当前步进*/
-					switch (p->p_tmp_config->pulser_width_reg)
+					switch (TMP(pulser_width_reg))
 					{
 						case 0:	tmpf = 2.5; break;
 						case 1:	tmpf = 10.0; break;
@@ -5131,9 +5140,9 @@ void draw3_data4(DRAW_UI_P p)
 					{
 						if (pp->mark_pop_change)
 						{
-							cur_value = CFG(pulser_width) / 100.0;
+							cur_value = GROUP_VAL(pulser_width) / 100.0;
 							lower =	30.0;
-							upper =	1000.0;
+							upper =	500.0;
 							step = tmpf;
 							digit = 1;
 							pos = 4;
@@ -5141,29 +5150,34 @@ void draw3_data4(DRAW_UI_P p)
 
 							draw3_digit_pressed (data_1141, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 						}
-						//						draw3_pop (NULL, set_menu_position2, "5", freq, 12, 2);
 						else
 						{
-							if (CFG(pulser_width >99))
+							if (GROUP_VAL(pulser_width >99))
 							{
 								/* 更新当前增益值显示 */
-								str = g_strdup_printf ("%0.1f", pp->p_config->pulser_width / 100.0);
+								str = g_strdup_printf ("%0.1f", GROUP_VAL(pulser_width) / 100.0);
 								draw3_pop_tt (data_114, NULL, 
-										str, PW, 2, 4, 1, 0);
+										str, menu_content + PULSER_WIDTH, 2, 4, 1, 0);
 								g_free(str);
 							}
 							else
 								draw3_pop_tt (data_114, NULL, 
-										PW[CFG(pulser_width)], PW, 2, 4, CFG(pulser_width), 0);
+										menu_content[PULSER_WIDTH + GROUP_VAL(pulser_width)], menu_content + PULSER_WIDTH, 2, 4, GROUP_VAL(pulser_width), 0);
 						}
 					}
 					else 
 					{
-						if (CFG(pulser_width) < 99)
-							draw3_popdown (PW[CFG(pulser_width)], 4, 0);
+						if (GROUP_VAL(pulser_width) < 99)
+						{
+							/* Auto 时候计算脉冲宽度 */
+							str = g_strdup_printf ("%s %0.1f", 
+									menu_content[PULSER_WIDTH + GROUP_VAL(pulser_width)], (gfloat)(get_pulser_width()) / 100.0);
+							draw3_popdown (str, 4, 0);
+							g_free(str);
+						}
 						else 
 						{
-							cur_value = CFG(pulser_width) / 100.0;
+							cur_value = GROUP_VAL(pulser_width) / 100.0;
 							unit = UNIT_NONE;
 							pos = 4;
 							digit = 1;
@@ -5750,7 +5764,7 @@ void draw3_data5(DRAW_UI_P p)
 				case 1: /* 重复频率 PRF  P115  */
 					pp->x_pos = 570, pp->y_pos = 500;
 					/*当前步进*/
-					switch (p->p_tmp_config->prf_reg)
+					switch (TMP(prf_reg))
 					{
 						case 0:	tmpf = 1.0; break;
 						case 1:	tmpf = 10.0; break;
@@ -5762,7 +5776,7 @@ void draw3_data5(DRAW_UI_P p)
 					{
 						if (pp->mark_pop_change)
 						{
-							cur_value = CFG(prf);
+							cur_value = get_prf() / 10.0;
 							lower =	1.0;
 							upper =	20000.0;
 							step = tmpf;
@@ -5775,26 +5789,31 @@ void draw3_data5(DRAW_UI_P p)
 
 						else
 						{
-							if (CFG(prf >99))
+							if (GROUP_VAL(prf) > 9)
 							{
 								/* 更新当前增益值显示 */
-								str = g_strdup_printf ("%d", pp->p_config->prf);
+								str = g_strdup_printf ("%d", GROUP_VAL(prf) / 10);
 								draw3_pop_tt (data_115, NULL, 
-										str, PRF, 4, 5, 3, 0);
+										str, menu_content + PRF, 4, 5, 3, 0);
 								g_free(str);
 							}
 							else
-								draw3_pop_tt (data_115, NULL, 
-										PRF[CFG(prf)], PRF, 4, 5, CFG(prf), 0);
+								draw3_pop_tt (data_115, NULL, menu_content[PRF + GROUP_VAL(prf)],
+										menu_content + PRF, 4, 5, GROUP_VAL(prf), 0);
 						}
 					}
 					else 
 					{
-						if (CFG(prf) < 99)
-							draw3_popdown (PRF[CFG(prf)], 5, 0);
+						if (GROUP_VAL(prf) < 9)
+						{
+							str = g_strdup_printf ("%s %d",
+									menu_content[PRF + GROUP_VAL(prf)], get_prf() / 10);
+							draw3_popdown (str, 5, 0);
+							g_free(str);
+						}
 						else 
 						{
-							cur_value = CFG(prf);
+							cur_value = GROUP_VAL(prf) / 10.0;
 							unit = UNIT_NONE;
 							pos = 5;
 							digit = 0;
@@ -5802,7 +5821,6 @@ void draw3_data5(DRAW_UI_P p)
 						}
 					}
 					break;
-
 				case 2:/*Reject  P125 */
 					/* 当前步进 */
 					switch (pp->p_tmp_config->reject_reg)

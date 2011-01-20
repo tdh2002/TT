@@ -534,7 +534,12 @@ typedef struct Group {
 							   Probe 的Auto Program 选择On 以后不可以调节 值与connect P 一样 */
 	guchar receiver;
 	guchar tx_rxmode;		/* 收发模式 */
-	gushort	frequence;		/* 以0.001Mhz 也就是Khz 为单位 当探头学选unknown 时候才可以调节 */
+	guchar	freq_pos;		/* 频率选择模式是指定还是自己输入 */
+	guchar	pw_pos;			/* 脉冲宽度选择模式 */
+	gushort	frequence;		/* 以0.001Mhz 也就是Khz 1MHz~20MHz 为单位 当探头学选unknown 时候才可以调节 */
+	gushort	pulser_width;	/* 30~500ns 2.5ns为步进*/
+
+	guint	prf;			/* 重复频率 1-20000Hz 取值为10~200000 */
 
 
 	LAW_INFO	law_info;	/* 聚焦法则的信息  */
@@ -547,7 +552,7 @@ typedef struct Group {
 typedef	struct Config {
 	guchar	groupId;			/* 当前group */
 	guchar	groupQty;			/* 共有几个group  0 1 2 3 4 5 6 7 */
-	GROUP	group[4];
+	GROUP	group[4];			/* 前3个都接前面的128的接口 第四个是常规通道结单独的UT接口 */
 	/* 基本参数 */
 	PART	part;				/* 被检测工件... */
 	
@@ -556,8 +561,8 @@ typedef	struct Config {
 	LAW_ELEM	focal_law_all_elem[setup_MAX_LAW_QTY][setup_MAX_ELEM_RX_ACTIVE];	
 
 	/*发射*/
-	guchar	voltage_cfg;		/*  */
-	guint	pulser_width;	        /*  */
+	guchar	voltage_pa;		/*  */
+	guchar	voltage_ut;		/*  */
 	gushort	prf;			/*  */
 
 	/*接收*/

@@ -32,11 +32,12 @@ GdkColor	color_button2= {0x0, 0x4c00, 0x5a00, 0xa100}; /*停留*/
 DRAW_UI_P	pp;					
 
 /* 测试用的初始值 */
-static void set_config ()
+static void set_config (guint groupid)
 {
 	CFG(groupQty)	= 0;
-	CFG(groupId)	= 0;
-	CFG(voltage_cfg) = 0;
+	CFG(groupId)	= groupid;
+	CFG(voltage_pa) = 0;
+	CFG(voltage_ut) = 0;
 	/* UT settings */
 	GROUP_VAL(velocity) = 592000;	/* 5920m/s */ 
 	GROUP_VAL(gain)         = 0;
@@ -47,7 +48,11 @@ static void set_config ()
 	GROUP_VAL(start)        = 0.0;
 	GROUP_VAL(pulser)       = 1;			/* 1表示第一个探头接口 1-128 */
 	GROUP_VAL(tx_rxmode)	= PULSE_ECHO;	/* 收发模式 */
-	GROUP_VAL(frequence)	= 10000;	/* 收发模式 */
+	GROUP_VAL(freq_pos)		= 0;			/* 0是1Mhz	*/
+	GROUP_VAL(frequence)	= 1000;			/* 频率 */
+	GROUP_VAL(pw_pos)		= 0;			/* 0是Atuo	*/
+	GROUP_VAL(pulser_width)	= 3000;			/* 脉冲宽度 */
+	GROUP_VAL(prf)			= 600;			/* 重复频率 60*/
 
 	/* 探头信息 */
 	GROUP_VAL(probe.Elem_qty)	= 32; /*  */
@@ -126,7 +131,7 @@ int main (int argc, char *argv[])
 	/*	write(p_ui->p_tmp_config->fd_config, (void*)(p_ui->p_config), sizeof(CONFIG));*/
 
 	pp = p_ui;
-	set_config();
+	set_config(0);
 	init_ui(p_ui);
 
 	gtk_widget_show (window);

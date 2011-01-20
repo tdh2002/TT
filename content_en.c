@@ -393,9 +393,12 @@ const gchar *all_menu_content_en[] =
 	"PC Pitch-and-Catch", "PE Pulse-Echo", "TT Through-Transmission", "",		/* 0 */
 	"PC", "PE", "TT", "",														/* 4 */
 	"1","1.5","2","2.25","3.5","4","5","7.5","10","12","15","20","UserDef","",	/* 8 */
-	"50 Low", "100 High", "",													/* 22*/
-	"50", "100", ""																/* 25 */
-	""																			/* 28 */
+	"50 Low", "100 Middle", "200 High",											/* 22*/
+	"50", "100", "200",															/* 25 */
+	"50 Low", "100 High",														/* 28*/
+	"Auto",  "UserDef",															/* 30 */		
+	"Auto Max", "Max/2", "Optimum","UserDef",									/* 32*/
+	""																			/* 36 */
 
 };
 
@@ -404,10 +407,6 @@ const gchar *type_en[] = {"Encoder", "Ultrasound", "Code"};
 const gchar *calibration_mode_en[] = {"Velocity", "Wedge Delay", "Sensitivity", "TCG"};
 
 /*  1  */
-const gchar *voltage_en[] = {"50 Low", "100 High"};
-const gchar *voltage_en1[] = {"50", "100"};
-const gchar *PW_en[] = {"Auto",  "UserDef"};
-const gchar *PRF_en[] = {"Auto Max", "Max/2", "Optimum","UserDef"};
 const gchar *filter_en[] = {"None  0.5-21.0 MHz", "Auto", "1 MHz", "1.5MHz", "2MHz", "2.25MHz", "4MHz", "5MHz", "7.5MHz", "10MHz", "12MHz", "15MHz", "20MHz", "HR", "HR 10 MHz"};
 const gchar *filter_en1[] = {"None", "Auto", "1 MHz", "1.5MHz", "2MHz", "2.25MHz", "4MHz", "5MHz", "7.5MHz", "10MHz", "12MHz", "15MHz", "20MHz", "HR", "HR 10 MHz"};
 const gchar *rectifier_en[] = {"RF", "HW+", "HW-", "FW", "FW"};
