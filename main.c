@@ -47,12 +47,15 @@ static void set_config (guint groupid)
 	GROUP_VAL(range)        = 10000;		/* 10μs */
 	GROUP_VAL(start)        = 0.0;
 	GROUP_VAL(pulser)       = 1;			/* 1表示第一个探头接口 1-128 */
+	GROUP_VAL(receiver)     = 1;			/* 1表示第一个探头接口 1-128 */
 	GROUP_VAL(tx_rxmode)	= PULSE_ECHO;	/* 收发模式 */
 	GROUP_VAL(freq_pos)		= 0;			/* 0是1Mhz	*/
 	GROUP_VAL(frequence)	= 1000;			/* 频率 */
 	GROUP_VAL(pw_pos)		= 0;			/* 0是Atuo	*/
-	GROUP_VAL(pulser_width)	= 3000;			/* 脉冲宽度 */
+	GROUP_VAL(prf_pos)		= 0;			/* 0是Atuo Max*/
+	GROUP_VAL(pulser_width)	= 3000;			/* 脉冲宽度 30ns */
 	GROUP_VAL(prf)			= 600;			/* 重复频率 60*/
+	GROUP_VAL(filter)		= 0;			/* 重复频率 60*/
 
 	/* 探头信息 */
 	GROUP_VAL(probe.Elem_qty)	= 32; /*  */

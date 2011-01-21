@@ -385,7 +385,7 @@ const gchar ***content2_en[] =
 
 
 /* 0mm 1英寸 2微秒  */
-const gchar *units_en[] = {"(mm)", "(in)", "(μs)", " ", "(m/s)", "(in/μs)", "(dB)", "(1 to 97)", "(%)", "(ms)", "(mm/s)", "(1 to 113)"};
+const gchar *units_en[] = {"(mm)", "(in)", "(μs)", NULL, "(m/s)", "(in/μs)", "(dB)", "(1 to 97)", "(%)", "(ms)", "(mm/s)", "(1 to 113)", " "};
 
 
 const gchar *all_menu_content_en[] = 
@@ -398,7 +398,10 @@ const gchar *all_menu_content_en[] =
 	"50 Low", "100 High",														/* 28*/
 	"Auto",  "UserDef",															/* 30 */		
 	"Auto Max", "Max/2", "Optimum","UserDef",									/* 32*/
-	""																			/* 36 */
+	"None  0.5-21.0 MHz", "Auto", "1 MHz", "1.5MHz", "2MHz", 
+	"2.25MHz", "4MHz", "5MHz", "7.5MHz", "10MHz", "12MHz", 
+	"15MHz", "20MHz", "HR", "HR 10 MHz", "None",								/* 36 */
+	""																			/* 42 */
 
 };
 
@@ -407,8 +410,6 @@ const gchar *type_en[] = {"Encoder", "Ultrasound", "Code"};
 const gchar *calibration_mode_en[] = {"Velocity", "Wedge Delay", "Sensitivity", "TCG"};
 
 /*  1  */
-const gchar *filter_en[] = {"None  0.5-21.0 MHz", "Auto", "1 MHz", "1.5MHz", "2MHz", "2.25MHz", "4MHz", "5MHz", "7.5MHz", "10MHz", "12MHz", "15MHz", "20MHz", "HR", "HR 10 MHz"};
-const gchar *filter_en1[] = {"None", "Auto", "1 MHz", "1.5MHz", "2MHz", "2.25MHz", "4MHz", "5MHz", "7.5MHz", "10MHz", "12MHz", "15MHz", "20MHz", "HR", "HR 10 MHz"};
 const gchar *rectifier_en[] = {"RF", "HW+", "HW-", "FW", "FW"};
 const gchar *averaging_en[] = {"1","2","4","8","16"};
 const gchar *db_ref_en[] = {"Off", "On"};

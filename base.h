@@ -528,18 +528,21 @@ typedef struct Group {
 	gushort	gainr;			/* 参考增益 单位 0.01dB */
 	guint	velocity;		/* 实际声速 单位 0.01m/s  */
 	guchar	db_ref;			/* 参考增益开关 0 off 1 on */
-	/*发射*/
+	/* 发射接收 */
 	guchar	pulser;			/* 1~ 128 - elem_qty(聚焦阵元数最大为32) + 1 
 							   指定发射阵元 与机器配置相关我们是128阵元最大,
 							   Probe 的Auto Program 选择On 以后不可以调节 值与connect P 一样 */
-	guchar receiver;
+	guchar receiver;		/* 接收阵元 必须是 PR 模式才能调节 */
+	guchar	filter;			/* 滤波 */
 	guchar tx_rxmode;		/* 收发模式 */
 	guchar	freq_pos;		/* 频率选择模式是指定还是自己输入 */
 	guchar	pw_pos;			/* 脉冲宽度选择模式 */
+	guchar	prf_pos;		/* 脉冲宽度选择模式 */
 	gushort	frequence;		/* 以0.001Mhz 也就是Khz 1MHz~20MHz 为单位 当探头学选unknown 时候才可以调节 */
 	gushort	pulser_width;	/* 30~500ns 2.5ns为步进*/
 
 	guint	prf;			/* 重复频率 1-20000Hz 取值为10~200000 */
+	/*接收*/
 
 
 	LAW_INFO	law_info;	/* 聚焦法则的信息  */
@@ -555,19 +558,12 @@ typedef	struct Config {
 	GROUP	group[4];			/* 前3个都接前面的128的接口 第四个是常规通道结单独的UT接口 */
 	/* 基本参数 */
 	PART	part;				/* 被检测工件... */
-	
 	/* 所有聚焦法则的信息在这里 */
 	LAW_BEAM	focal_law_all_beam[setup_MAX_LAW_QTY];
 	LAW_ELEM	focal_law_all_elem[setup_MAX_LAW_QTY][setup_MAX_ELEM_RX_ACTIVE];	
-
-	/*发射*/
 	guchar	voltage_pa;		/*  */
 	guchar	voltage_ut;		/*  */
-	gushort	prf;			/*  */
-
 	/*接收*/
-	guchar	receiver;		/*  */
-	guchar	filter;			/* 滤波 */
 	guchar	rectifier;		/*  */
 	guchar	video_filter;	        /*  */
 	guchar	averaging;		/*  */

@@ -20,8 +20,6 @@ extern const gchar *all_menu_content_en[];
 extern const gchar *type_en[];
 extern const gchar *calibration_mode_en[];
 
-extern const gchar *filter_en[];
-extern const gchar *filter_en1[];
 extern const gchar *db_ref_en[];
 extern const gchar *rectifier_en[];
 extern const gchar *averaging_en[];

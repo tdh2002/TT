@@ -45,8 +45,6 @@ const gchar **menu_content = all_menu_content_en;
 const gchar **type       = type_en;
 const gchar **calibration_mode       = calibration_mode_en;
 
-const gchar **filter     =filter_en;
-const gchar **filter1     =filter_en1;
 const gchar **rectifier  =rectifier_en;
 const gchar **averaging  =averaging_en;
 const gchar **db_ref	 = db_ref_en;
@@ -169,12 +167,10 @@ void update_widget_bg(GtkWidget *widget, const gchar *img_file)
 
 	gint width, height;  
 
-	//	colormap = gdk_colormap_new (gdk_visual_get_system(), TRUE);
 	image = cairo_image_surface_create_from_png(img_file);
 	width = cairo_image_surface_get_width(image);
 	height = cairo_image_surface_get_height(image);
 	pixmap = gdk_pixmap_new(NULL, width, height, TRUE_DEPTH); 
-	//	gdk_drawable_set_colormap (pixmap, colormap);
 
 	cr = gdk_cairo_create (GDK_DRAWABLE (pixmap));
 	cairo_set_source_surface(cr, image, 0, 0);
@@ -197,7 +193,6 @@ void update_widget_bg(GtkWidget *widget, const gchar *img_file)
 	g_object_unref(style);
 	cairo_destroy(cr);
 	cairo_surface_destroy(image);
-	//    g_object_unref(colormap);
 }
 
 
@@ -655,8 +650,11 @@ static void draw3_digit_pressed (void (*fun)(GtkSpinButton*, gpointer), const gc
 	y = pp->pos1[x];
 	z = pos;
 
-	str = g_strdup_printf ("%s\n%s Δ%0.*f", 
-			con2_p[x][y][content_pos ? content_pos : pos], unit, digit, step);	/* %*.*f 可以指点位数 */		
+	if (!unit )
+		str = g_strdup_printf ("%s", con2_p[x][y][content_pos ? content_pos : pos] );	
+	else
+		str = g_strdup_printf ("%s\n%s Δ%0.*f", 
+				con2_p[x][y][content_pos ? content_pos : pos], unit, digit, step);	/* %*.*f 可以指点位数 */		
 
 	gtk_label_set_text (GTK_LABEL (pp->label3[z]), str);
 	update_widget_bg(pp->eventbox30[z], backpic[6]);
@@ -705,7 +703,10 @@ static void draw3_digit_stop(gfloat cur_value, const gchar *unit,
 
 	if (g_signal_handler_is_connected (G_OBJECT (pp->sbutton[z]), pp->signal_id))
 		g_signal_handler_disconnect (G_OBJECT (pp->sbutton[z]), pp->signal_id);
-	str = g_strdup_printf ("%s\n%s", con2_p[x][y][content_pos ? content_pos : pos], unit);	
+	if (!unit )
+		str = g_strdup_printf ("%s", con2_p[x][y][content_pos ? content_pos : pos]);	
+	else
+		str = g_strdup_printf ("%s\n%s", con2_p[x][y][content_pos ? content_pos : pos], unit);	
 	gtk_label_set_text (GTK_LABEL (pp->label3[z]), str);
 	if ((CUR_POS == z) && (pp->pos_pos == MENU3_STOP))
 	{
@@ -1176,7 +1177,7 @@ void draw3_data0(DRAW_UI_P p)
 						default:break;
 					}
 					upper = (gfloat) (128 + 1 - LAW_VAL(Last_tx_elem));
-					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
+					if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 0))
 					{
 						cur_value = (gfloat) (GROUP_VAL(pulser));
 						lower = 1.0;
@@ -1198,22 +1199,44 @@ void draw3_data0(DRAW_UI_P p)
 					}
 					break;
 
-				case 2: /* Reveiver 接收器  p120 */
-					g_sprintf (temp,"%s\n(1 to 97)", con2_p[1][2][0]);
-					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
+				case 2: /* Reveiver 接收器  P120 */
+					/* 当前步进 */
+					switch (TMP(receiver_reg))
 					{
+						case 0:	tmpf = 1.0; break;
+						case 1:	tmpf = 10.0; break;
+						case 2:	tmpf = 100.0; break;
+						default:break;
+					}
 
+					if (GROUP_VAL(tx_rxmode) == PULSE_ECHO)
+					{
+						gtk_widget_set_sensitive (pp->eventbox30[0], FALSE);
+						gtk_widget_set_sensitive (pp->eventbox31[0], FALSE);
+					}
+
+					upper = (gfloat) (128 + 1 - LAW_VAL(Last_rx_elem));
+					if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 0))
+					{
+						cur_value = (gfloat) (GROUP_VAL(receiver));
+						lower = 1.0;
+						step = tmpf;
+						digit = 0;
+						pos = 0;
+						unit = UNIT_TO;    /* 1 to n 这个范围需要计算出来 waiting */
+						g_sprintf (temp,"(1 to %d)", (guint)(upper));
+						draw3_digit_pressed (data_120, temp, cur_value , lower, upper, step, digit, p, pos, 0);
 					}
 					else 
 					{
-						cur_value = (gfloat) (GROUP_VAL(pulser));
+						cur_value = (gfloat) (GROUP_VAL(receiver));
 						digit = 0;
 						pos = 0;
 						unit = UNIT_TO;
-						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
+						g_sprintf (temp,"(1 to %d)", (guint)(upper));
+						draw3_digit_stop (cur_value, temp, digit, pos, 0);
 					}
 					break;
-
 
 				case 3:/*Scan Offset p130 */
 					g_sprintf (temp,"%s", con2_p[1][3][0]);
@@ -2031,19 +2054,28 @@ void draw3_data1(DRAW_UI_P p)
 								menu_content[TX_RX_MODE + 4 + GROUP_VAL(tx_rxmode)],
 								menu_content + TX_RX_MODE, 3, 1, GROUP_VAL(tx_rxmode), 0x05);
 					else 
-						draw3_popdown (menu_content[TX_RX_MODE + 4 +GROUP_VAL(tx_rxmode)], 1, 0);
+						draw3_popdown (menu_content[TX_RX_MODE + 4 + GROUP_VAL(tx_rxmode)], 1, 0);
 					break;
-				case 2: /* UT Settings -> Receiver -> Filter  P121 */
+				case 2: /* 接收滤波 P121 */
 					pp->x_pos = 511, pp->y_pos = 168;
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
-						draw3_pop_tt (data_121, NULL, 
-								filter1[CFG(filter)],
-								filter, 15, 1, CFG(filter), 0);
+					{
+						if (GROUP_VAL(filter))
+							draw3_pop_tt (data_121, NULL, 
+									menu_content[FILTER + GROUP_VAL(filter)],
+									menu_content + FILTER , 15, 1, GROUP_VAL(filter), 0);
+						else
+							draw3_pop_tt (data_121, NULL, "None",
+									menu_content + FILTER , 15, 1, GROUP_VAL(filter), 0);
+					}
 					else 
-						draw3_popdown (filter1[CFG(filter)], 1, 0);
-
+					{
+						if (GROUP_VAL(filter))
+							draw3_popdown (menu_content[FILTER + GROUP_VAL(filter)], 1, 0);
+						else
+							draw3_popdown ("None", 1, 0);
+					}
 					break;
-
 
 				case 3:/*index Offset P131*/
 					g_sprintf (temp,"%s", con2_p[1][3][1]);
@@ -3220,39 +3252,28 @@ void draw3_data2(DRAW_UI_P p)
 							step = tmpf;
 							digit = 2;
 							pos = 2;
-							unit = UNIT_NONE;
+							unit = UNIT_NULL;
 							draw3_digit_pressed (data_1121, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 						}
 						else
 						{
-							if (GROUP_VAL(freq_pos) == 12)
-							{
-								/* 更新当前增益值显示 */
-								str = g_strdup_printf ("%0.2f", GROUP_VAL(frequence) / 1000.0);
-								draw3_pop_tt (data_112, NULL, 
-										str, menu_content + FREQUENCE, 13, 2, 12, 0);
-								g_free(str);
-							}
-							else
-								draw3_pop_tt (data_112, NULL, 
-										menu_content[FREQUENCE + GROUP_VAL(frequence)], menu_content + FREQUENCE, 13, 2, GROUP_VAL(freq_pos), 0);
+							/* 更新当前增益值显示 */
+							str = g_strdup_printf ("%0.2f", GROUP_VAL(frequence) / 1000.0);
+							draw3_pop_tt (data_112, NULL, 
+									str, menu_content + FREQUENCE, 13, 2, GROUP_VAL(freq_pos), 0);
+							g_free(str);
 						}
 					}
 					else 
 					{
-//						if (GROUP_VAL(freq_pos) == 12 )
-//						{
-							cur_value = GROUP_VAL(frequence) / 1000.0;
-							unit = UNIT_NONE;
-							pos = 2;
-							digit = 2;
-							draw3_digit_stop (cur_value , units[unit], digit, pos, 0);
-//						}
-//						else 
-//							draw3_popdown (menu_content[FREQUENCE + GROUP_VAL(freq_pos)], 2, 0);
+						cur_value = GROUP_VAL(frequence) / 1000.0;
+						unit = UNIT_NULL;
+						pos = 2;
+						digit = 2;
+						draw3_digit_stop (cur_value , units[unit], digit, pos, 0);
 					}
 					break;
-				case 2:/*Rectifier P122 */
+				case 2:/* Rectifier 检波 P122 */
 					pp->x_pos = 608, pp->y_pos = 265;
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 						draw3_pop_tt (data_122, NULL, 
@@ -4272,7 +4293,7 @@ void draw3_data3(DRAW_UI_P p)
 					pp->x_pos = 592, pp->y_pos = 400;
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 					{
-						if (CFG(groupId) != 3)
+						if (CFG(groupId) != UT_CHANNEL)
 						draw3_pop_tt (data_113, NULL, 
 								menu_content[VOLTAGE + 3 + CFG(voltage_pa)],
 								menu_content + VOLTAGE + 6, 2, 3, CFG(voltage_pa), 0);
@@ -4283,7 +4304,7 @@ void draw3_data3(DRAW_UI_P p)
 					}
 					else 
 					{
-						if (CFG(groupId) != 3)
+						if (CFG(groupId) != UT_CHANNEL)
 						draw3_popdown (menu_content[VOLTAGE + 3 + CFG(voltage_pa)], 3, 0);
 						else
 						draw3_popdown (menu_content[VOLTAGE + 3 + CFG(voltage_ut)], 3, 0);
@@ -5136,7 +5157,7 @@ void draw3_data4(DRAW_UI_P p)
 						default:break;
 					}
 
-					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
+					if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 4))
 					{
 						if (pp->mark_pop_change)
 						{
@@ -5152,33 +5173,40 @@ void draw3_data4(DRAW_UI_P p)
 						}
 						else
 						{
-							if (GROUP_VAL(pulser_width >99))
+							g_print("pw_pos=%d\n", GROUP_VAL(pw_pos));
+							if (!GROUP_VAL(pw_pos))
 							{
 								/* 更新当前增益值显示 */
-								str = g_strdup_printf ("%0.1f", GROUP_VAL(pulser_width) / 100.0);
+								str = g_strdup_printf ("%s %0.1f", 
+										menu_content[PULSER_WIDTH + GROUP_VAL(pw_pos)], GROUP_VAL(pulser_width) / 100.0);
 								draw3_pop_tt (data_114, NULL, 
-										str, menu_content + PULSER_WIDTH, 2, 4, 1, 0);
+										str, menu_content + PULSER_WIDTH, 2, 4, GROUP_VAL(pw_pos), 0);
 								g_free(str);
 							}
 							else
+							{
+								str = g_strdup_printf ("%0.1f", GROUP_VAL(pulser_width) / 100.0);
 								draw3_pop_tt (data_114, NULL, 
-										menu_content[PULSER_WIDTH + GROUP_VAL(pulser_width)], menu_content + PULSER_WIDTH, 2, 4, GROUP_VAL(pulser_width), 0);
+										str, menu_content + PULSER_WIDTH, 2, 4, GROUP_VAL(pw_pos), 0);
+								g_free(str);
+							}
 						}
 					}
 					else 
 					{
-						if (GROUP_VAL(pulser_width) < 99)
+						/* 这个选中Auto 时候显示 Auto + 数值 */
+						if (!GROUP_VAL(pw_pos))
 						{
 							/* Auto 时候计算脉冲宽度 */
 							str = g_strdup_printf ("%s %0.1f", 
-									menu_content[PULSER_WIDTH + GROUP_VAL(pulser_width)], (gfloat)(get_pulser_width()) / 100.0);
+									menu_content[PULSER_WIDTH + GROUP_VAL(pw_pos)], GROUP_VAL(pulser_width) / 100.0);
 							draw3_popdown (str, 4, 0);
 							g_free(str);
 						}
 						else 
 						{
 							cur_value = GROUP_VAL(pulser_width) / 100.0;
-							unit = UNIT_NONE;
+							unit = UNIT_NULL;
 							pos = 4;
 							digit = 1;
 							draw3_digit_stop (cur_value , units[unit], digit, pos, 0);
@@ -5761,7 +5789,7 @@ void draw3_data5(DRAW_UI_P p)
 			{
 				case 0: /* NULL 空 P105*/
 					break;
-				case 1: /* 重复频率 PRF  P115  */
+				case 1: /* 重复频率 PRF P115  Tandenghua 选择auto max max/2 optimum 时候需要更改界面上的PRF 等的显示 */
 					pp->x_pos = 570, pp->y_pos = 500;
 					/*当前步进*/
 					switch (TMP(prf_reg))
@@ -5772,49 +5800,46 @@ void draw3_data5(DRAW_UI_P p)
 						default:break;
 					}
 
-					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 5))
+					if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 5))
 					{
 						if (pp->mark_pop_change)
 						{
-							cur_value = get_prf() / 10.0;
+							cur_value = GROUP_VAL(prf) / 10.0;
 							lower =	1.0;
-							upper =	20000.0;
+							upper =	20000.0;	/* 最大值需要计算出来 */
 							step = tmpf;
 							digit = 0;
 							pos = 5;
 							unit = UNIT_NONE;
-
 							draw3_digit_pressed (data_1151, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 						}
-
 						else
 						{
-							if (GROUP_VAL(prf) > 9)
+							if (GROUP_VAL(prf_pos) == 3)	/* 自定义数值时候按下显示数值 */
 							{
 								/* 更新当前增益值显示 */
 								str = g_strdup_printf ("%d", GROUP_VAL(prf) / 10);
 								draw3_pop_tt (data_115, NULL, 
-										str, menu_content + PRF, 4, 5, 3, 0);
+										str, menu_content + PRF, 4, 5, GROUP_VAL(prf_pos), 0);
 								g_free(str);
 							}
-							else
-								draw3_pop_tt (data_115, NULL, menu_content[PRF + GROUP_VAL(prf)],
-										menu_content + PRF, 4, 5, GROUP_VAL(prf), 0);
+							else							/* Auto ==时候 显示当前选项 */
+								draw3_pop_tt (data_115, NULL, menu_content[PRF + GROUP_VAL(prf_pos)],
+										menu_content + PRF, 4, 5, GROUP_VAL(prf_pos), 0);
 						}
 					}
 					else 
 					{
-						if (GROUP_VAL(prf) < 9)
+						if (GROUP_VAL(prf))
 						{
-							str = g_strdup_printf ("%s %d",
-									menu_content[PRF + GROUP_VAL(prf)], get_prf() / 10);
+							str = g_strdup_printf ("%d", GROUP_VAL(prf) / 10);
 							draw3_popdown (str, 5, 0);
 							g_free(str);
 						}
 						else 
 						{
 							cur_value = GROUP_VAL(prf) / 10.0;
-							unit = UNIT_NONE;
+							unit = UNIT_NULL;
 							pos = 5;
 							digit = 0;
 							draw3_digit_stop (cur_value , units[unit], digit, pos, 0);
@@ -6689,7 +6714,8 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 	gtk_box_pack_start (GTK_BOX (p->vbox1111[0]), pp->event[3], FALSE, FALSE, 0);
 	gtk_widget_set_size_request (GTK_WIDGET(pp->event[3]), 172, 22);
 	gtk_label_set_justify (GTK_LABEL (pp->label[3]), PANGO_ELLIPSIZE_START);
-	markup = g_markup_printf_escaped ("<span foreground='white' font_desc='10'>PRF: %d(%d)                        </span>",pp->p_config->prf,pp->p_config->prf);
+	markup = g_markup_printf_escaped ("<span foreground='white' font_desc='10'>PRF: %d(%d)</span>",
+			GROUP_VAL(prf), GROUP_VAL(prf));
 	gtk_label_set_markup (GTK_LABEL (pp->label[3]), markup); 
 	update_widget_bg(pp->event[3], backpic[5]);
 
@@ -6706,12 +6732,14 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 	markup = g_markup_printf_escaped ("<span foreground='red' font_desc='10'>%s</span>", VERSION);
 	gtk_label_set_markup (GTK_LABEL (pp->label[6]), markup); 
 	update_widget_bg(pp->event[6], backpic[5]);
-	markup = g_markup_printf_escaped ("<span foreground='white' font_desc='10'>V: %.2f mm/s                    </span>",(gfloat)(pp->p_config->prf));
+	markup = g_markup_printf_escaped ("<span foreground='white' font_desc='10'>V: %.2f mm/s</span>",
+			(gfloat)(GROUP_VAL(prf)));
 	gtk_label_set_markup (GTK_LABEL (pp->label[5]), markup); ;
 	gtk_box_pack_start (GTK_BOX (p->vbox1111[2]), pp->event[7], FALSE, FALSE, 0);
 	gtk_widget_set_size_request (GTK_WIDGET(pp->event[7]), 172, 22);
 	update_widget_bg(pp->event[7], backpic[5]);
-	markup = g_markup_printf_escaped ("<span foreground='white' font_desc='10'>X: %.1f s                         </span>",(gfloat)(pp->p_config->prf));
+	markup = g_markup_printf_escaped ("<span foreground='white' font_desc='10'>X: %.1f s</span>",
+			(gfloat)(GROUP_VAL(prf)));
 	gtk_label_set_markup (GTK_LABEL (pp->label[7]), markup); 
 
 	/* 4个测量值显示 */

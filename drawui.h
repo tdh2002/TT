@@ -17,7 +17,7 @@
 #define UNIT_MM		0
 #define UNIT_INCH	1
 #define UNIT_US		2
-#define UNIT_NONE	3
+#define UNIT_NULL	3
 #define UNIT_M_S	4
 #define UNIT_IN_US	5
 #define UNIT_DB 	6
@@ -26,6 +26,7 @@
 #define UNIT_MS 	9
 #define UNIT_MM_S 	10
 #define UNIT_TO1 	11
+#define UNIT_NONE	12
 
 /* UT_UNIT */
 #define UT_UNIT_TRUE_DEPTH	0
@@ -64,6 +65,9 @@
 #define VOL_LOW		0
 #define VOL_HIGH	1
 
+#define AUTO_SET	0
+
+
 /*上方数值显示信息定义 */
 #define GAIN_LABEL	0
 #define GAIN_VALUE	1
@@ -79,7 +83,10 @@
 #define VOLTAGE		(FREQUENCE + 14)
 #define PULSER_WIDTH	 (VOLTAGE + 8)
 #define PRF			(PULSER_WIDTH + 2)
+#define FILTER		(PRF + 4)
 
+/*  */
+#define UT_CHANNEL	3
 
 
 
@@ -98,6 +105,7 @@
 #define	VOLTAGE_DSP		0x3005
 #define PW_DSP			0x3006
 #define PRF_DSP			0x3007
+#define FILTER_DSP		0x3008
 
 
 extern gint (*window_keypress_event_orig)(GtkWidget *widget, GdkEventKey *event);
@@ -108,8 +116,9 @@ extern DRAW_UI_P pp;
 
 //extern guint address[];
 extern guint get_freq ();
-extern guint get_pulser_width ();
+extern guint get_pw ();
 extern guint get_prf ();
+extern guint get_filter ();
 
 extern void tt_label_show_string (GtkWidget *label, const gchar *s1, const gchar *s2,
 		const gchar *s3, const gchar *color,  guint font_size);
@@ -135,6 +144,7 @@ extern void data_103 (GtkSpinButton *spinbutton, gpointer data);	/* 103 wedget d
 extern void data_104 (GtkSpinButton *spinbutton, gpointer data);	/* 104 velocity 声速 */
 
 extern void data_110 (GtkSpinButton *spinbutton, gpointer data);	/* 110 pulser 脉冲发射器 */
+extern void data_120 (GtkSpinButton *spinbutton, gpointer data);	/* 120 receiver 脉冲接收器 */
 extern void data_111 (GtkMenuItem *menuitem, gpointer data);            /* 111 Tx/Rx Mode 收发模式 */
 extern void data_1121 (GtkSpinButton *spinbutton, gpointer data);       /* 112 freq 频率 */
 extern void data_112 (GtkMenuItem *menuitem, gpointer data);            /* 112 Freq 频率 */

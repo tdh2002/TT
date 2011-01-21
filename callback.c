@@ -18,8 +18,9 @@ gboolean key_press_handler (GtkWidget* pWidget,
 
 void send_dsp_data (guint data_type, guint value);
 guint get_freq ();
-guint get_pulser_width ();
+guint get_pw ();
 guint get_prf ();
+guint get_filter ();
 
 gboolean data_function0 (GtkWidget *widget,	GdkEventButton *event,	gpointer       data);
 gboolean data_function1 (GtkWidget *widget,	GdkEventButton *event,	gpointer       data);
@@ -38,6 +39,7 @@ void data_103 (GtkSpinButton *spinbutton, gpointer data);
 void data_104 (GtkSpinButton *spinbutton, gpointer data);
 
 void data_110 (GtkSpinButton *spinbutton, gpointer data);
+void data_120 (GtkSpinButton *spinbutton, gpointer data);
 void data_111 (GtkMenuItem *menuitem, gpointer data);            /* 111 Tx/Rx Mode 收发模式 */
 void data_1121(GtkSpinButton *spinbutton, gpointer data);        /* 112 freq 频率 */
 void data_112 (GtkMenuItem *menuitem, gpointer data);            /* 112 Freq 频率 */
@@ -212,11 +214,11 @@ gboolean (*eventbox2_fun[5])(GtkWidget *widget, GdkEventButton *event, gpointer 
 
 guint get_prf ()
 {
-	if (GROUP_VAL(prf) > 9)
+	if (GROUP_VAL(prf_pos) == 3)
 		return GROUP_VAL(prf);
 	else 
 	{
-		switch (GROUP_VAL(prf))
+		switch (GROUP_VAL(prf_pos))
 		{
 			case 0:
 				return 10000;
@@ -233,12 +235,23 @@ guint get_prf ()
 	return 0;
 }
 
-guint get_pulser_width ()
+guint get_pw ()
 {
-	if (GROUP_VAL(pulser_width))
+	if (GROUP_VAL(pw_pos))
 		return GROUP_VAL(pulser_width);
 	else
 		return 3000; /* 计算 */
+}
+
+guint get_filter ()
+{
+	switch (GROUP_VAL(filter))
+	{
+		case 0:break;
+		case 1:break;
+		default:break;
+	}
+	return GROUP_VAL(filter);
 }
 
 guint get_freq ()
@@ -666,7 +679,7 @@ void b3_fun2(gpointer p)
 					   case 0:data_process(&(pp->p_tmp_config->range_reg), 2); break; /* 102range范围 3种步进 */
 					   case 1:
 							  if (pp->mark_pop_change)
-								  data_process(&(pp->p_tmp_config->frequence_reg), 2); /* 112 频率范围 3种步进 */
+								  data_process(&(TMP(frequence_reg)), 2); /* 112 频率范围 3种步进 */
 							  break; /* 112 频率 Freq.  */
 					   case 2: /* 弹出一个选择菜单,选择 */ break; /* 122 检波 Recitify  */
 					   case 3: /* Angle. (deg) */ break; /* 132 角度 不能更改 */
@@ -1304,6 +1317,15 @@ void data_104 (GtkSpinButton *spinbutton, gpointer data) /*声速 P104 */
 void data_110 (GtkSpinButton *spinbutton, gpointer data) /* Pulser 发射 P110 */
 {
 	GROUP_VAL(pulser) =  (guchar) (gtk_spin_button_get_value (spinbutton));
+	if (GROUP_VAL(tx_rxmode) == PULSE_ECHO)
+		GROUP_VAL(receiver) =  (guchar) (gtk_spin_button_get_value (spinbutton));
+
+	/*发送增益给硬件*/
+}
+
+void data_120 (GtkSpinButton *spinbutton, gpointer data) /* Pulser 发射 P120 */
+{
+	GROUP_VAL(receiver) =  (guchar) (gtk_spin_button_get_value (spinbutton));
 
 	/*发送增益给硬件*/
 }
@@ -1335,6 +1357,7 @@ void data_112 (GtkMenuItem *menuitem, gpointer data) /* 频率 Freq P112 */
 	{
 		pp->pos_pos = MENU3_STOP;
 		draw_3_menu(0, NULL);
+		send_dsp_data (FREQUENCE_DSP, (guint) (GROUP_VAL(frequence)));
 	}
 	else
 	{
@@ -1343,13 +1366,12 @@ void data_112 (GtkMenuItem *menuitem, gpointer data) /* 频率 Freq P112 */
 		draw_3_menu(0, NULL);
 	}
 	/* 发送增益给硬件 */
-	send_dsp_data (FREQUENCE_DSP, (guint) (GROUP_VAL(frequence)));
 }
 
 
 void data_113 (GtkMenuItem *menuitem, gpointer data)  /* Voltage  P113 */
 {
-	if (CFG(groupId) != 3)
+	if (CFG(groupId) != UT_CHANNEL)
 	{
 		CFG(voltage_pa) = (gchar) (GPOINTER_TO_UINT (data));
 		send_dsp_data (VOLTAGE_DSP, CFG(voltage_pa));
@@ -1372,7 +1394,7 @@ void data_1141 (GtkSpinButton *spinbutton, gpointer data) /* PW  P114 */
 	temp = (temp / 250) * 250;
 	GROUP_VAL(pulser_width) = temp;
 
-	send_dsp_data (PW_DSP, get_pulser_width());
+	send_dsp_data (PW_DSP, GROUP_VAL(pulser_width) / 250) ;  /* 以2.5ns 为单位发出信息 */
 	/* 发送给硬件 */
 }
 
@@ -1380,11 +1402,13 @@ void data_1141 (GtkSpinButton *spinbutton, gpointer data) /* PW  P114 */
 void data_114 (GtkMenuItem *menuitem, gpointer data) /* PW */
 {
 	guint temp = GPOINTER_TO_UINT (data);
+	GROUP_VAL(pw_pos) = temp;
+	GROUP_VAL(pulser_width) = get_pw();
 	if (!temp)
 	{
-		GROUP_VAL(pulser_width) = (gushort) (GPOINTER_TO_UINT (data));
 		pp->pos_pos = MENU3_STOP;
 		draw_3_menu(0, NULL);
+		send_dsp_data (PW_DSP, GROUP_VAL(pulser_width) / 250) ;  /* 以2.5ns 为单位发出信息 */
 	}
 	else
 	{
@@ -1392,7 +1416,6 @@ void data_114 (GtkMenuItem *menuitem, gpointer data) /* PW */
 		pp->pos_pos = MENU3_PRESSED;
 		draw_3_menu(0, NULL);
 	}
-	send_dsp_data (PW_DSP, get_pulser_width());
 	/* 发送增益给硬件 */
 }
 
@@ -1418,13 +1441,14 @@ void data_1151 (GtkSpinButton *spinbutton, gpointer data) /* PRF P115 */
 
 void data_115 (GtkMenuItem *menuitem, gpointer data) /* PRF */
 {
-
 	guint temp = GPOINTER_TO_UINT (data);
+	GROUP_VAL(prf_pos) = temp;
+	GROUP_VAL(prf) = get_prf();
 	if (temp != 3)
 	{
-		GROUP_VAL(prf) = temp;
 		pp->pos_pos = MENU3_STOP;
 		draw_3_menu(0, NULL);
+		send_dsp_data (PRF_DSP, get_prf());
 	}
 	else
 	{
@@ -1432,15 +1456,15 @@ void data_115 (GtkMenuItem *menuitem, gpointer data) /* PRF */
 		pp->pos_pos = MENU3_PRESSED;
 		draw_3_menu(0, NULL);
 	}
-	send_dsp_data (PRF_DSP, get_prf());
 }
 
 
 void data_121 (GtkMenuItem *menuitem, gpointer data)  /* filter */
 {
-	pp->p_config->filter = (gchar) (GPOINTER_TO_UINT (data));
+    GROUP_VAL(filter) = (guchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
+	send_dsp_data (FILTER_DSP, get_filter());
 	/* 发送增益给硬件 */
 }
 
@@ -2258,6 +2282,9 @@ void send_dsp_data (guint data_type, guint value)
 					   g_print("%d\n", value);
 					   break;
 		case PRF_DSP:
+					   g_print("%d\n", value);
+					   break;
+		case FILTER_DSP:
 					   g_print("%d\n", value);
 					   break;
 		default:break;
