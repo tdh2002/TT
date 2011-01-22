@@ -534,6 +534,7 @@ typedef struct Group {
 							   Probe 的Auto Program 选择On 以后不可以调节 值与connect P 一样 */
 	guchar receiver;		/* 接收阵元 必须是 PR 模式才能调节 */
 	guchar	filter;			/* 滤波 */
+	guchar	rectifier;		/* 检波  */
 	guchar tx_rxmode;		/* 收发模式 */
 	guchar	freq_pos;		/* 频率选择模式是指定还是自己输入 */
 	guchar	pw_pos;			/* 脉冲宽度选择模式 */
@@ -564,7 +565,7 @@ typedef	struct Config {
 	guchar	voltage_pa;		/*  */
 	guchar	voltage_ut;		/*  */
 	/*接收*/
-	guchar	rectifier;		/*  */
+//	guchar	rectifier;		/*  */
 	guchar	video_filter;	        /*  */
 	guchar	averaging;		/*  */
 	guchar	reject;		        /*  */

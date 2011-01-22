@@ -55,7 +55,8 @@ static void set_config (guint groupid)
 	GROUP_VAL(prf_pos)		= 0;			/* 0是Atuo Max*/
 	GROUP_VAL(pulser_width)	= 3000;			/* 脉冲宽度 30ns */
 	GROUP_VAL(prf)			= 600;			/* 重复频率 60*/
-	GROUP_VAL(filter)		= 0;			/* 重复频率 60*/
+	GROUP_VAL(filter)		= 0;			/* 接收滤波器 0是None */
+	GROUP_VAL(rectifier)	= FULL_WAVE;	/* 检波 */
 
 	/* 探头信息 */
 	GROUP_VAL(probe.Elem_qty)	= 32; /*  */

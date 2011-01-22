@@ -38,6 +38,12 @@
 #define	PULSE_ECHO	1
 #define	THROUGH_TRAN	2
 
+/* 检波 */
+#define RF_WAVE	0
+#define POSITIVE	1
+#define NAGATIVE	2
+#define FULL_WAVE	3
+
 /*  */
 #define VOLTAGE_HIGH
 #define VOLTAGE_MID
@@ -84,6 +90,7 @@
 #define PULSER_WIDTH	 (VOLTAGE + 8)
 #define PRF			(PULSER_WIDTH + 2)
 #define FILTER		(PRF + 4)
+#define RECTIFIER	(FILTER + 16)
 
 /*  */
 #define UT_CHANNEL	3
@@ -106,6 +113,7 @@
 #define PW_DSP			0x3006
 #define PRF_DSP			0x3007
 #define FILTER_DSP		0x3008
+#define RECTIFIER_DSP	0x3009
 
 
 extern gint (*window_keypress_event_orig)(GtkWidget *widget, GdkEventKey *event);

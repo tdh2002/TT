@@ -45,7 +45,6 @@ const gchar **menu_content = all_menu_content_en;
 const gchar **type       = type_en;
 const gchar **calibration_mode       = calibration_mode_en;
 
-const gchar **rectifier  =rectifier_en;
 const gchar **averaging  =averaging_en;
 const gchar **db_ref	 = db_ref_en;
 const gchar **points_qty =points_qty_en;
@@ -3277,13 +3276,11 @@ void draw3_data2(DRAW_UI_P p)
 					pp->x_pos = 608, pp->y_pos = 265;
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 						draw3_pop_tt (data_122, NULL, 
-								rectifier[CFG(rectifier)],
-								rectifier, 4, 2, CFG(rectifier), 0);
+								menu_content[RECTIFIER + GROUP_VAL(rectifier)],
+								menu_content + RECTIFIER, 4, 2, GROUP_VAL(rectifier), 0);
 					else 
-						draw3_popdown (rectifier[CFG(rectifier)], 2, 0);
-
+						draw3_popdown (menu_content[RECTIFIER + GROUP_VAL(rectifier)], 2, 0);
 					break;
-
 				case 3:/*Angle (deg.)*/
 					/* 格式化字符串 */
 					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2) )

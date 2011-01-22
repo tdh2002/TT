@@ -1468,11 +1468,13 @@ void data_121 (GtkMenuItem *menuitem, gpointer data)  /* filter */
 	/* 发送增益给硬件 */
 }
 
-void data_122 (GtkMenuItem *menuitem, gpointer data)  /* Rectifier */
+void data_122 (GtkMenuItem *menuitem, gpointer data)  /* Rectifier 检波 P122 */
 {
-	pp->p_config->rectifier = (gchar) (GPOINTER_TO_UINT (data));
+	GROUP_VAL(rectifier) = (gchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
+
+	send_dsp_data (RECTIFIER_DSP, GROUP_VAL(rectifier));
 	/* 发送增益给硬件 */
 }
 
@@ -2285,6 +2287,9 @@ void send_dsp_data (guint data_type, guint value)
 					   g_print("%d\n", value);
 					   break;
 		case FILTER_DSP:
+					   g_print("%d\n", value);
+					   break;
+		case RECTIFIER_DSP:
 					   g_print("%d\n", value);
 					   break;
 		default:break;
