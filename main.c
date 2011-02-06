@@ -34,7 +34,7 @@ DRAW_UI_P	pp;
 /* 测试用的初始值 */
 static void set_config (guint groupid)
 {
-	CFG(groupQty)	= 0;
+	CFG(groupQty)	= 1;
 	CFG(groupId)	= groupid;
 	CFG(voltage_pa) = 0;
 	CFG(voltage_ut) = 0;
@@ -42,7 +42,7 @@ static void set_config (guint groupid)
 	GROUP_VAL(velocity) = 592000;	/* 5920m/s */ 
 	GROUP_VAL(gain)         = 0;
 	GROUP_VAL(gainr)        = 0;
-	GROUP_VAL(db_ref)		= GAINR_OFF;
+	GROUP_VAL(db_ref)	= GAINR_OFF;
 	GROUP_VAL(wedge_delay)  = 0;	/*  */
 	GROUP_VAL(range)        = 10000;		/* 10μs */
 	GROUP_VAL(start)        = 0.0;
@@ -57,6 +57,36 @@ static void set_config (guint groupid)
 	GROUP_VAL(prf)			= 600;			/* 重复频率 60*/
 	GROUP_VAL(filter)		= 0;			/* 接收滤波器 0是None */
 	GROUP_VAL(rectifier)	= FULL_WAVE;	/* 检波 */
+	GROUP_VAL(averaging)	= 1;	        /* 位置1 值为2*/
+	GROUP_VAL(video_filter)	= VIDEO_FILTER_OFF;
+	GROUP_VAL(point_qty)	= 100;			/* 0是Auto */
+	GROUP_VAL(sum_gain)	= 10;			/* 0是Auto */
+	GROUP_VAL(gate_pos)	= GATE_A;		/* 0是A */  
+	GROUP_VAL(gate[GROUP_VAL(gate_pos)].parameters) = 0;
+	GROUP_VAL(gate[GROUP_VAL(gate_pos)].synchro) = 0;  
+	CFG(alarm_pos)	= 0;                             /* alarm的值，1～16 */
+	CFG(alarm[CFG(alarm_pos)].groupa) = 0;           /* alarm中Group A 的值，1～4 */
+	CFG(alarm[CFG(alarm_pos)].conditiona) = 0;       /* alarm中Condition A 的值，0是 NONE */
+	CFG(alarm[CFG(alarm_pos)].operat) = 0;		 /* alarm中Operator 的值，AND OR */
+	CFG(alarm[CFG(alarm_pos)].groupb) = 0;		 /* alarm中Group B 的值，1～4 */
+	CFG(alarm[CFG(alarm_pos)].conditionb) = 0;	 /* alarm中Condition B 的值，0是 NONE */
+	CFG(output_pos) = 0;				 /* output 的值，1～5 */
+	CFG(output[CFG(output_pos)].alarm1) = 0;
+	CFG(output[CFG(output_pos)].alarm1_value[CFG_OUTPUT_POS(alarm1)])=0;
+	CFG(output[CFG(output_pos)].group) = 0;          /* output中group 的值，0是 1*/
+	CFG(output[CFG(output_pos)].data) = 0;           /* output中data 的值，0是 Off*/
+	GROUP_VAL(mode_pos)= 0;				 /* 0是Setup */
+	GROUP_VAL(curve_pos)= 0;			/* 0是NOne */
+	GROUP_VAL(ref_ampl)=10; 
+	GROUP_VAL(ref_ampl_offset)=10; 
+	GROUP_VAL(curve_step)=10; 
+	GROUP_VAL(ref_gain)=10;
+	GROUP_VAL(point_pos)=0;
+	GROUP_VAL(amplitude)=1000;
+	GROUP_VAL(position)=1000; 
+	GROUP_VAL(mat_atten)=1000; 
+	GROUP_VAL(delay)=1000; 
+	GROUP_VAL(tcg_gain)=500;
 
 	/* 探头信息 */
 	GROUP_VAL(probe.Elem_qty)	= 32; /*  */

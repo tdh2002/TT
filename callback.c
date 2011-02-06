@@ -83,12 +83,24 @@ void data_215 (GtkMenuItem *menuitem, gpointer data);         /*  215 condition 
 
 void data_220 (GtkMenuItem *menuitem, gpointer data);          /* 220 Output */
 void data_221 (GtkMenuItem *menuitem, gpointer data);         /* Output -> alarm # */
-void data_222 (GtkSpinButton *spinbutton, gpointer data);
+void data_2211 (GtkMenuItem *menuitem, gpointer data);         /* Output -> group */
+void data_222 (GtkSpinButton *spinbutton, gpointer data);	/* Output -> count */
+void data_2221 (GtkMenuItem *menuitem, gpointer data);		/* Output -> data */
 void data_223 (GtkMenuItem *menuitem, gpointer data);          /* 223 sound */
 void data_224 (GtkSpinButton *spinbutton, gpointer data);
 void data_225 (GtkSpinButton *spinbutton, gpointer data);
 void data_230 (GtkMenuItem *menuitem, gpointer data); /* Gate/Alarm -> Sizing Curves -> Mode 230 */
 void data_231 (GtkMenuItem *menuitem, gpointer data); /* Gate/Alarm -> Sizing Curves -> Curve 231 */
+void data_2311 (GtkMenuItem *menuitem, gpointer data);
+void data_2312 (GtkSpinButton *spinbutton, gpointer data);
+void data_232 (GtkSpinButton *spinbutton, gpointer data);
+void data_2321 (GtkSpinButton *spinbutton, gpointer data);
+void data_2322 (GtkSpinButton *spinbutton, gpointer data);
+void data_233 (GtkSpinButton *spinbutton, gpointer data);
+void data_2331 (GtkSpinButton *spinbutton, gpointer data);
+void data_2332 (GtkSpinButton *spinbutton, gpointer data);
+void data_234 (GtkSpinButton *spinbutton, gpointer data);
+void data_235 (GtkSpinButton *spinbutton, gpointer data);
 
 void data_300 (GtkMenuItem *menuitem, gpointer data); /* Measurements -> Reading -> list 300 */
 void data_302 (GtkMenuItem *menuitem, gpointer data); /* Measurements -> Reading -> Field1 302 */
@@ -211,6 +223,45 @@ gboolean (*eventbox2_fun[5])(GtkWidget *widget, GdkEventButton *event, gpointer 
 	eventbox2_function0,	eventbox2_function1,	eventbox2_function2,	
 	eventbox2_function3,	eventbox2_function4
 };
+
+guint get_sum_gain ()
+{
+	if (GROUP_VAL(sum_gain_pos))
+		return GROUP_VAL(sum_gain);
+	else 
+	{
+               return 10;
+	}
+	return 0;
+}
+
+
+guint get_point_qty ()
+{
+	if (GROUP_VAL(point_qty_pos) == 4)
+		return GROUP_VAL(point_qty);
+	else 
+	{
+		switch (GROUP_VAL(point_qty_pos))
+		{
+			case 0:
+				return 500;
+				break;
+			case 1:
+				return 160;
+				break;
+			case 2:
+				return 320;
+				break;
+			case 3:
+				return 640;
+				break;
+			default:break;
+		}
+	}
+	return 0;
+}
+
 
 guint get_prf ()
 {
@@ -528,7 +579,17 @@ void b3_fun1(gpointer p)
 					   default:break;
 				   }
 				   break;
-			case 2: break;
+			case 2: 
+					switch (pp->pos1[2])
+					{
+						case 0: break; 
+						case 1: break;
+						case 2: break;/* 221 Alarm#*/ 
+						case 3: data_process(&(pp->p_tmp_config->mat_atten_reg), 3);break;  /*231 Mat.Attenuatior*/
+						case 4: break; 
+						default:break;
+					}
+					break;
 			case 3:
 					switch (pp->pos1[3])
 					{
@@ -637,7 +698,7 @@ void b3_fun2(gpointer p)
 	pp->pos_last2 = pp->pos2[pp->pos][pp->pos1[pp->pos]];
 	pp->pos2[pp->pos][pp->pos1[pp->pos]] = 2;
 	pp->pos_pos = MENU3_PRESSED;
-	/*处理微调*/
+
 	switch (pp->pos)
 	{
 		case 1:
@@ -667,7 +728,7 @@ void b3_fun2(gpointer p)
 				   break;
 		default:break;
 	}
-
+	/*处理微调*/
 	if (pp->pos_last2 == pp->pos2[pp->pos][pp->pos1[pp->pos]])
 	{
 		switch (pp->pos) 
@@ -691,9 +752,28 @@ void b3_fun2(gpointer p)
 				   switch (pp->pos1[2])
 				   {
 					   case 0:data_process(&(pp->p_tmp_config->agate_start_reg), 3); break; /* 202 agate start*/
-					   case 1: /* 弹出一个选择菜单,选择 */ break; 
+					   case 1:
+						//if (CFG(alarm[CFG(alarm_pos)].conditiona)== 0)
+						//	CFG(alarm[CFG(alarm_pos)].conditionb) = 0;
+ /* 弹出一个选择菜单,选择 */                         break; 
 					   case 2:data_process(&(pp->p_tmp_config->count_reg), 1); break; /* 222 output count*/
-					   case 3: /* Angle. (deg) */ break; 
+					   case 3:
+						if( GROUP_VAL(curve_pos)==1 || GROUP_VAL(curve_pos)==2 || GROUP_VAL(curve_pos)==3 )
+						{
+							if( GROUP_VAL(mode_pos)==0 )
+							data_process(&(pp->p_tmp_config->ref_ampl_reg), 2);
+							else
+							{
+								if(GROUP_VAL(curve_pos)==1 || GROUP_VAL(curve_pos)==3)
+								data_process(&(pp->p_tmp_config->position_reg), 3);
+								else
+								data_process(&(pp->p_tmp_config->delay_reg), 3);
+							}
+							
+						}
+
+  							break; /*232 Ref.Amplitude*/
+
 					   case 4: break;
 					   default:break;
 				   }
@@ -787,6 +867,23 @@ void b3_fun3(gpointer p)
 	pp->pos_last2 = pp->pos2[pp->pos][pp->pos1[pp->pos]];
 	pp->pos2[pp->pos][pp->pos1[pp->pos]] = 3;
 	pp->pos_pos = MENU3_PRESSED;
+
+	switch (pp->pos)
+	{
+		case 1:
+			   switch (pp->pos1[1])
+			   {
+				   case 2: 
+					   GROUP_VAL(video_filter) = !GROUP_VAL(video_filter);
+						send_dsp_data (VIDEO_FILTER_DSP, GROUP_VAL(video_filter)); /* P123 */
+					   break; 
+
+				   default:break;
+			   }
+				   break;
+		default:break;
+	}
+
 	/*处理微调*/
 	if (pp->pos_last2 == pp->pos2[pp->pos][pp->pos1[pp->pos]])
 	{
@@ -798,12 +895,13 @@ void b3_fun3(gpointer p)
 				   {
 					   case 0:data_process(&(pp->p_tmp_config->wedge_delay_reg), 2); break;   /* 103wedge delay 楔款延时 3种步进 */
 					   case 1: /* 弹出一个选择菜单,选择 */ break; 
-					   case 2: pp->p_config->video_filter = !pp->p_config->video_filter;break; /* 123 视频滤波 on or off  */
-					   case 3: /* Skew  */ break; /* 133 Skew (deg)  */
-					   case 4: 
-										   if (pp->mark_pop_change)
-											   data_process(&(pp->p_tmp_config->point_qty_reg), 2); /* 143 Points Qty. 3种步进 */
-										   break; /* 143 Points Qty.  */
+					   case 2: 
+						  break;   /* 123 视频滤波 on or off  */
+					   case 3:break; /* 133 Skew (deg)  */
+					   case 4:
+						if (pp->mark_pop_change)
+							data_process(&(pp->p_tmp_config->point_qty_reg), 2); /* 143 Points Qty. 3种步进 */
+						  break; /* 143 Points Qty.  */
 
 					   default:break;
 				   }
@@ -814,7 +912,18 @@ void b3_fun3(gpointer p)
 					   case 0:data_process(&(pp->p_tmp_config->agate_width_reg), 3); break; /* 203 agate width 3种步进 */
 					   case 1: /* 弹出一个选择菜单,选择 */ break;
 					   case 2: /* 视频滤波 */ break; /* 123 视频滤波 on or off  */
-					   case 3: /* Skew  */ break; /* 133 Skew (deg)  */
+					   case 3: 
+						if( GROUP_VAL(curve_pos)==1 || GROUP_VAL(curve_pos)==2|| GROUP_VAL(curve_pos)==3 )
+						{
+							if((GROUP_VAL(mode_pos)==0 )&&(GROUP_VAL(curve_pos)==1 || GROUP_VAL(curve_pos)==2))
+							data_process(&(pp->p_tmp_config->ref_ampl_offset_reg), 3); /* 233 ref.ampl.offset  */
+							else if((GROUP_VAL(mode_pos)==1 )&&(GROUP_VAL(curve_pos)==1 || GROUP_VAL(curve_pos)==2))
+							data_process(&(pp->p_tmp_config->amplitude_reg), 3);
+							else if((GROUP_VAL(mode_pos)==1 )&&(GROUP_VAL(curve_pos)==3))
+							data_process(&(pp->p_tmp_config->tcg_gain_reg), 4);
+						}
+  							break; /*233 Ref.Amplitude*/
+
 					   case 4: /* 弹出一个选择菜单,选择 */ break;
 					   default:break;
 				   }
@@ -939,8 +1048,8 @@ void b3_fun4(gpointer p)
 					   case 0:data_process(&(pp->p_tmp_config->agate_height_reg), 1); break; /* 204 threshold  2种步进 */
 					   case 1: /* 弹出一个选择菜单,选择 */ break;
 					   case 2: data_process(&(pp->p_tmp_config->active_delay_reg), 3); break; /*224 Delay*/
-					   case 3:  break; /* 134 beamdelay 波束延时 */
-					   case 4: /*  */ break; /* 144 Scale Factor 多少点压缩一点 只能看  */
+					   case 3: data_process(&(pp->p_tmp_config->curve_step_reg), 4);  break; /* 234  */
+					   case 4: /*  */ break; /* 244 Scale Factor 多少点压缩一点 只能看  */
 					   default:break;
 				   }
 				   break;
@@ -1012,7 +1121,7 @@ void b3_fun5(gpointer p)
 							   break; /* 115 PRF重复频率  */
 
 					   case 2:data_process(&(pp->p_tmp_config->reject_reg), 2); break; /* 125 Reject 抑制  */
-					   case 3:data_process(&(pp->p_tmp_config->gainoffset_reg), 4); break; /* 135 Gain Offset  */
+					   case 3:data_process(&(pp->p_tmp_config->gain_offset_reg), 4); break; /* 135 Gain Offset  */
 					   case 4: 
 							  if (pp->mark_pop_change)
 								  data_process(&(pp->p_tmp_config->sum_gain_reg), 4); /* 145 Sum Gain  5种步进 */
@@ -1027,7 +1136,7 @@ void b3_fun5(gpointer p)
 					   case 0: break; 
 					   case 1: break;
 					   case 2: data_process(&(pp->p_tmp_config->holdtime_reg), 3); break; 
-					   case 3: break; 
+					   case 3: data_process(&(pp->p_tmp_config->ref_gain_reg), 4); break; 
 					   case 4: break; 
 					   default:break;
 				   }
@@ -1480,9 +1589,11 @@ void data_122 (GtkMenuItem *menuitem, gpointer data)  /* Rectifier 检波 P122 *
 
 void data_124 (GtkMenuItem *menuitem, gpointer data)  /* averaging */
 {
-	pp->p_config->averaging = (gchar) (GPOINTER_TO_UINT (data));
+	GROUP_VAL(averaging) = (gchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
+
+	send_dsp_data (AVERAGING_DSP, GROUP_VAL(averaging));
 	/* 发送增益给硬件 */
 }
 
@@ -1522,7 +1633,8 @@ void data_132 (GtkSpinButton *spinbutton, gpointer data) /*scan offset */
 void data_134 (GtkSpinButton *spinbutton, gpointer data) /*scan offset */
 {
 	//DRAW_UI_P p = (DRAW_UI_P)(data);
-	pp->p_config->beam_delay =  (guint) (gtk_spin_button_get_value (spinbutton) * 100.0);
+	//pp->p_config->beam_delay =  (guint) (gtk_spin_button_get_value (spinbutton) * 100.0);
+	BEAM_INFO(0,beam_delay) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
 
 	/*发送增益给硬件*/
 }
@@ -1530,7 +1642,7 @@ void data_134 (GtkSpinButton *spinbutton, gpointer data) /*scan offset */
 void data_135 (GtkSpinButton *spinbutton, gpointer data) /*gain offset */
 {
 	//DRAW_UI_P p = (DRAW_UI_P)(data);
-	pp->p_config->gain_offset =  (guint) (gtk_spin_button_get_value (spinbutton) * 10.0);
+	GROUP_VAL(gain_offset) =  (guint) (gtk_spin_button_get_value (spinbutton) * 10.0);
 
 	/*发送增益给硬件*/
 }
@@ -1539,34 +1651,36 @@ void data_135 (GtkSpinButton *spinbutton, gpointer data) /*gain offset */
 void data_1431 (GtkSpinButton *spinbutton, gpointer data) /* point qty */
 {
 	//DRAW_UI_P p = (DRAW_UI_P)(data);
-	pp->p_config->point_qty =  (guint) (gtk_spin_button_get_value (spinbutton));
+	//pp->p_config->point_qty =  (guint) (gtk_spin_button_get_value (spinbutton));
+	GROUP_VAL(point_qty) =  (guint) (gtk_spin_button_get_value (spinbutton));
 
-	/* 发送给硬件 */
 }
 
 
 void data_143 (GtkMenuItem *menuitem, gpointer data) /* point qty */
 {
 	guint temp = GPOINTER_TO_UINT (data);
+	GROUP_VAL(point_qty_pos) = temp;
+	GROUP_VAL(point_qty) = get_point_qty();
 	if (temp != 4)
 	{
-		CFG(point_qty) = (gushort) (GPOINTER_TO_UINT (data));
-		pp->pos_pos = MENU3_STOP;
+		//CFG(point_qty) = (gushort) (GPOINTER_TO_UINT (data));
+		MENU_STATUS = MENU3_STOP;
 		draw_3_menu(0, NULL);
+		send_dsp_data (POINT_QTY_DSP, get_point_qty());
 	}
 	else
 	{
 		pp->mark_pop_change = 1;
-		pp->pos_pos = MENU3_PRESSED;
+		MENU_STATUS = MENU3_PRESSED;
 		draw_3_menu(0, NULL);
 	}
-	/* 发送增益给硬件 */
 }
 
 void data_1451 (GtkSpinButton *spinbutton, gpointer data) /* Sum Gain */
 {
 	//DRAW_UI_P p = (DRAW_UI_P)(data);
-	pp->p_config->sum_gain =  (gushort) ((gtk_spin_button_get_value (spinbutton)) * 100.0);
+	GROUP_VAL(sum_gain) =  (gushort) ((gtk_spin_button_get_value (spinbutton)) * 100.0);
 
 	/* 发送给硬件 */
 }
@@ -1575,169 +1689,287 @@ void data_1451 (GtkSpinButton *spinbutton, gpointer data) /* Sum Gain */
 void data_145 (GtkMenuItem *menuitem, gpointer data) /* Sum Gain */
 {
 	guint temp = GPOINTER_TO_UINT (data);
+	GROUP_VAL(sum_gain_pos) = temp;
+	GROUP_VAL(sum_gain) = get_sum_gain();
 	if (temp != 1)
 	{
-		CFG(sum_gain) = (gushort) temp;
-		pp->pos_pos = MENU3_STOP;
+		//CFG(sum_gain) = (gushort) temp;
+		MENU_STATUS = MENU3_STOP;
 		draw_3_menu(0, NULL);
+		send_dsp_data (SUM_GAIN_DSP, get_sum_gain());
 	}
 	else
 	{
 		pp->mark_pop_change = 1;
-		pp->pos_pos = MENU3_PRESSED;
+		MENU_STATUS = MENU3_PRESSED;
 		draw_3_menu(0, NULL);
 	}
 	/* 发送增益给硬件 */
 }
 
-void data_200 (GtkMenuItem *menuitem, gpointer data) /* Gate */
+void data_200 (GtkMenuItem *menuitem, gpointer data) /* Gate P200 */
 {
-	pp->p_config->gate = (gchar) (GPOINTER_TO_UINT (data));
+	GROUP_VAL(gate_pos) = (gchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
-	/* 发送增益给硬件 */
+
+	send_dsp_data (GATE_POS_DSP, GROUP_VAL(gate_pos));
 }
 
 void data_201 (GtkMenuItem *menuitem, gpointer data) /* parameter */
 {
-	pp->p_config->parameter = (gchar) (GPOINTER_TO_UINT (data));
+	//pp->p_config->parameter = (gchar) (GPOINTER_TO_UINT (data));
+	GROUP_VAL(gate[GROUP_VAL(gate_pos)].parameters) = (gchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
-	/* 发送增益给硬件 */
+
+	send_dsp_data (PARAMETERS_DSP, GROUP_VAL(gate[GROUP_VAL(gate_pos)].parameters));
 }
 
 void data_202 (GtkSpinButton *spinbutton, gpointer data) /*agate start */
 {
 	//DRAW_UI_P p = (DRAW_UI_P)(data);
-	pp->p_config->agate_start =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
-
-	/*发送增益给硬件*/
+	//pp->p_config->agate_start =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
+	GROUP_VAL(gate[GROUP_VAL(gate_pos)].start) =  (gushort) ((gtk_spin_button_get_value (spinbutton)) * 1000.0);
+	send_dsp_data (START_DSP, GROUP_VAL(gate[GROUP_VAL(gate_pos)].start));
 }
 void data_2021 (GtkMenuItem *menuitem, gpointer data) /* agate synchro */
 {
-	pp->p_config->synchro = (gchar) (GPOINTER_TO_UINT (data));
+	//pp->p_config->synchro = (gchar) (GPOINTER_TO_UINT (data));
+	GROUP_VAL(gate[GROUP_VAL(gate_pos)].synchro) = (gchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
-	/* 发送增益给硬件 */
+	send_dsp_data (SYNCHRO_DSP, GROUP_VAL(gate[GROUP_VAL(gate_pos)].synchro));
+
 }
 
 void data_203 (GtkSpinButton *spinbutton, gpointer data) /*agate width */
 {
 	//DRAW_UI_P p = (DRAW_UI_P)(data);
-	pp->p_config->agate_width =  (guint) (gtk_spin_button_get_value (spinbutton) * 100.0);
+	GROUP_VAL(gate[GROUP_VAL(gate_pos)].width) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
+	send_dsp_data (WIDTH_DSP, GROUP_VAL(gate[GROUP_VAL(gate_pos)].width));
 
-	/*发送增益给硬件*/
+
 }
 void data_2031 (GtkMenuItem *menuitem, gpointer data) /* agate measure */
 {
-	pp->p_config->measure = (gchar) (GPOINTER_TO_UINT (data));
+	//pp->p_config->measure = (gchar) (GPOINTER_TO_UINT (data));
+	GROUP_VAL(gate[GROUP_VAL(gate_pos)].measure) = (gchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
-	/* 发送增益给硬件 */
+	send_dsp_data (MEASURE_DSP, GROUP_VAL(gate[GROUP_VAL(gate_pos)].measure));
+
 }
 
 void data_204 (GtkSpinButton *spinbutton, gpointer data) /*agate height */
 {
 	//DRAW_UI_P p = (DRAW_UI_P)(data);
-	pp->p_config->agate_height =  (guint) (gtk_spin_button_get_value (spinbutton));
+	//pp->p_config->agate_height =  (guint) (gtk_spin_button_get_value (spinbutton));
+	GROUP_VAL(gate[GROUP_VAL(gate_pos)].height) =  (guint) (gtk_spin_button_get_value (spinbutton) );
+	send_dsp_data (HEIGHT_DSP, GROUP_VAL(gate[GROUP_VAL(gate_pos)].height));
 
 	/*发送增益给硬件*/
 }
 void data_2041 (GtkMenuItem *menuitem, gpointer data) /* agate rf */
 {
-	pp->p_config->rf = (gchar) (GPOINTER_TO_UINT (data));
+	//pp->p_config->rf = (gchar) (GPOINTER_TO_UINT (data));
+	GROUP_VAL(gate[GROUP_VAL(gate_pos)].rectifier_freq) = (gchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
+	send_dsp_data (RECTIFIER_FREQ_DSP, GROUP_VAL(gate[GROUP_VAL(gate_pos)].rectifier_freq));
 	/* 发送增益给硬件 */
 }
 
 void data_210 (GtkMenuItem *menuitem, gpointer data) /* Alarm */
 {
-	pp->p_config->alarm = (gchar) (GPOINTER_TO_UINT (data));
+	//pp->p_config->alarm = (gchar) (GPOINTER_TO_UINT (data));
+	CFG(alarm_pos) = (gchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
+	send_dsp_data (ALARM_POS_DSP, CFG(alarm_pos));
 	/* 发送增益给硬件 */
 }
 
 void data_211 (GtkMenuItem *menuitem, gpointer data) /* Group A */
 {
-	pp->p_config->groupA = (gchar) (GPOINTER_TO_UINT (data));
+	CFG(alarm[CFG(alarm_pos)].groupa) = (gchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
+	send_dsp_data (GROUPA_DSP, CFG(alarm[CFG(alarm_pos)].groupa));
 	/* 发送增益给硬件 */
 }
 void data_212 (GtkMenuItem *menuitem, gpointer data) /* Condition A */
 {
-	pp->p_config->conditionA = (gchar) (GPOINTER_TO_UINT (data));
+	CFG(alarm[CFG(alarm_pos)].conditiona) = (gchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
+	send_dsp_data (CONDITIONA_DSP, CFG(alarm[CFG(alarm_pos)].conditiona));
 	/* 发送增益给硬件 */
 }
 void data_213 (GtkMenuItem *menuitem, gpointer data) /* operator */
 {
-	pp->p_config->oprt = (gchar) (GPOINTER_TO_UINT (data));
+	CFG(alarm[CFG(alarm_pos)].operat) = (gchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
+	send_dsp_data (OPERAT_DSP, CFG(alarm[CFG(alarm_pos)].operat));
 }
 void data_214 (GtkMenuItem *menuitem, gpointer data) /* Group B */
 {
-	pp->p_config->groupB = (gchar) (GPOINTER_TO_UINT (data));
+	CFG(alarm[CFG(alarm_pos)].groupb) = (gchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
+	send_dsp_data (GROUPB_DSP, CFG(alarm[CFG(alarm_pos)].groupb));
 }
 void data_215 (GtkMenuItem *menuitem, gpointer data) /* condition B */
 {
-	pp->p_config->conditionB = (gchar) (GPOINTER_TO_UINT (data));
+	CFG(alarm[CFG(alarm_pos)].conditionb) = (gchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
+	send_dsp_data (CONDITIONB_DSP, CFG(alarm[CFG(alarm_pos)].conditionb));
 }
 void data_220 (GtkMenuItem *menuitem, gpointer data) /* Output */
-{
-	pp->p_config->output = (gchar) (GPOINTER_TO_UINT (data));
+{	
+	CFG(output_pos) = (gchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
+	send_dsp_data (OUTPUT_POS_DSP, CFG(output_pos));
 }
 
 void data_221 (GtkMenuItem *menuitem, gpointer data) /* Output -> alarm # */
 {
-	pp->p_config->alarm1 = (gchar) (GPOINTER_TO_UINT (data));
+	CFG_OUTPUT_POS(alarm1) = (gchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
+	send_dsp_data (ALARM1_DSP, CFG_OUTPUT_POS(alarm1));
+}
+# if 0
+void data_2212 (GtkMenuItem *menuitem, gpointer data) /* Output -> alarm # */
+{
+	CFG_OUTPUT_POS(alarm1) = (gchar) (GPOINTER_TO_UINT (data));
+guint i;
+i=CFG_OUTPUT_POS(alarm1);
+/*
+if(CFG_OUTPUT_POS(alarm1)==CFG_OUTPUT_POS(alarm1))
+CFG(output[CFG(output_pos)].alarm1_value[CFG_OUTPUT_POS(alarm1)])=!CFG(output[CFG(output_pos)].alarm1_value[CFG_OUTPUT_POS(alarm1)]);
+else
+CFG(output[CFG(output_pos)].alarm1_value[CFG_OUTPUT_POS(alarm1)])=1;*/
+}
+#endif
+void data_2211 (GtkMenuItem *menuitem, gpointer data) /* Output -> group */
+{
+	CFG_OUTPUT_POS(group) = (gchar) (GPOINTER_TO_UINT (data));
+	pp->pos_pos = MENU3_STOP;
+	draw_3_menu(0, NULL);
+	send_dsp_data (GROUPA_DSP, CFG_OUTPUT_POS(group));
 }
 
 void data_222 (GtkSpinButton *spinbutton, gpointer data) /*count */
 {
-	pp->p_config->count =  (guint) (gtk_spin_button_get_value (spinbutton));
+	CFG_OUTPUT_POS(count) =  (guint) (gtk_spin_button_get_value (spinbutton));
+	send_dsp_data (COUNT_DSP, CFG_OUTPUT_POS(count));
 }
-void data_223 (GtkMenuItem *menuitem, gpointer data) /* sound */
+
+void data_2221 (GtkMenuItem *menuitem, gpointer data) /*count */
 {
-	pp->p_config->sound = (gchar) (GPOINTER_TO_UINT (data));
+	CFG_OUTPUT_POS(data) = (gchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
+	send_dsp_data (DATA_DSP, CFG_OUTPUT_POS(data));
+}
+
+void data_223 (GtkMenuItem *menuitem, gpointer data) /* sound */
+{
+	CFG_OUTPUT_POS(sound) = (gchar) (GPOINTER_TO_UINT (data));
+	pp->pos_pos = MENU3_STOP;
+	draw_3_menu(0, NULL);
+	send_dsp_data (SOUND_DSP, CFG_OUTPUT_POS(sound));
 }
 
 void data_224 (GtkSpinButton *spinbutton, gpointer data) /*active_delay */
 {
-	pp->p_config->active_delay =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
+	CFG_OUTPUT_POS(delay) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
+	send_dsp_data (DELAY_DSP, CFG_OUTPUT_POS(delay));
 }
 
 void data_225 (GtkSpinButton *spinbutton, gpointer data) /*holdtime */
 {
-	pp->p_config->holdtime =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
+	CFG_OUTPUT_POS(holdtime) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
+	send_dsp_data (HOLDTIME_DSP, CFG_OUTPUT_POS(holdtime));
 }
 
-void data_230 (GtkMenuItem *menuitem, gpointer data) /* Gate/Alarm -> Sizing Curves -> Mode 230 */
+void data_230 (GtkMenuItem *menuitem, gpointer data) /* Gate/Alarm -> Sizing Curves -> Mode P230 */
 {
-	pp->p_config->mode = (gchar) (GPOINTER_TO_UINT (data));
+	GROUP_VAL(mode_pos) = (gchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
+	send_dsp_data (MODE_POS_DSP, GROUP_VAL(mode_pos));
 }
 
-void data_231 (GtkMenuItem *menuitem, gpointer data) /* Gate/Alarm -> Sizing Curves -> Curve 231 */
+void data_231 (GtkMenuItem *menuitem, gpointer data) /* Gate/Alarm -> Sizing Curves -> Curve P231 */
 {
-	pp->p_config->curve = (gchar) (GPOINTER_TO_UINT (data));
+	GROUP_VAL(curve_pos) = (gchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
+	send_dsp_data (CURVE_POS_DSP, GROUP_VAL(curve_pos));
+}
+
+void data_2311 (GtkMenuItem *menuitem, gpointer data) /* Gate/Alarm -> Sizing Curves -> Point 231 */
+{
+	GROUP_VAL(point_pos) = (gchar) (GPOINTER_TO_UINT (data));
+	pp->pos_pos = MENU3_STOP;
+	draw_3_menu(0, NULL);
+	send_dsp_data (POINT_POS_DSP, GROUP_VAL(point_pos));
+}
+
+void data_2312 (GtkSpinButton *spinbutton, gpointer data) /* Mat.Attenuatior P2312 */
+{
+	GROUP_VAL(mat_atten) =  (gushort) (gtk_spin_button_get_value (spinbutton) * 1000.0);
+	//send_dsp_data (REF_AMPL_DSP, GROUP_VAL(ref_ampl));
+}
+
+void data_232 (GtkSpinButton *spinbutton, gpointer data) /* Ref.Amplitude P232 */
+{
+	GROUP_VAL(ref_ampl) =  (gushort) (gtk_spin_button_get_value (spinbutton) * 100.0);
+	//send_dsp_data (REF_AMPL_DSP, GROUP_VAL(ref_ampl));
+}
+void data_2321 (GtkSpinButton *spinbutton, gpointer data) /* Position P2321 */
+{
+	GROUP_VAL(position) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
+	//send_dsp_data (REF_AMPL_DSP, GROUP_VAL(ref_ampl));
+}
+void data_2322 (GtkSpinButton *spinbutton, gpointer data) /* Delay P2322 */
+{
+	GROUP_VAL(delay) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
+	//send_dsp_data (REF_AMPL_DSP, GROUP_VAL(ref_ampl));
+}
+
+void data_233 (GtkSpinButton *spinbutton, gpointer data) /*Ref.Amplitude.Offset */
+{
+	GROUP_VAL(ref_ampl_offset) =  (guint) (gtk_spin_button_get_value (spinbutton) * 100.0);
+	//send_dsp_data (REF_AMPL_DSP, GROUP_VAL(ref_ampl));
+}
+
+void data_2331 (GtkSpinButton *spinbutton, gpointer data) /*Ref.Amplitude.Offset */
+{
+	GROUP_VAL(amplitude) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
+	//send_dsp_data (REF_AMPL_DSP, GROUP_VAL(ref_ampl));
+}
+void data_2332 (GtkSpinButton *spinbutton, gpointer data) /*Ref.Amplitude.Offset */
+{
+	GROUP_VAL(tcg_gain) =  (guint) (gtk_spin_button_get_value (spinbutton) * 100.0);
+	//send_dsp_data (REF_AMPL_DSP, GROUP_VAL(ref_ampl));
+}
+
+void data_234 (GtkSpinButton *spinbutton, gpointer data) /*Ref.Amplitude.Offset */
+{
+	GROUP_VAL(curve_step) =  (guint) (gtk_spin_button_get_value (spinbutton) * 100.0);
+	//send_dsp_data (REF_AMPL_DSP, GROUP_VAL(ref_ampl));
+}
+
+void data_235 (GtkSpinButton *spinbutton, gpointer data) /*Ref.Amplitude.Offset */
+{
+	GROUP_VAL(ref_gain) =  (guint) (gtk_spin_button_get_value (spinbutton) * 100.0);
+	//send_dsp_data (REF_AMPL_DSP, GROUP_VAL(ref_ampl));
 }
 
 void data_300 (GtkMenuItem *menuitem, gpointer data) /* Measurements -> Reading -> list 300 */
@@ -2290,6 +2522,87 @@ void send_dsp_data (guint data_type, guint value)
 					   g_print("%d\n", value);
 					   break;
 		case RECTIFIER_DSP:
+					   g_print("%d\n", value);
+					   break;
+		case AVERAGING_DSP:
+					   g_print("%d\n", value);
+					   break;
+		case VIDEO_FILTER_DSP:
+					   g_print("%d\n", value);
+					   break;
+		case POINT_QTY_DSP:
+					   g_print("%d\n", value);
+					   break;
+		case SUM_GAIN_DSP:
+					   g_print("%d\n", value);
+					   break;
+		case GATE_POS_DSP:
+					   g_print("%d\n", value);
+					   break;
+		case PARAMETERS_DSP:
+					   g_print("%d\n", value);
+					   break;
+		case START_DSP:
+					   g_print("%d\n", value);
+					   break;
+		case SYNCHRO_DSP:
+					   g_print("%d\n", value);
+					   break;
+		case WIDTH_DSP:
+					   g_print("%d\n", value);
+					   break;
+		case MEASURE_DSP:
+					   g_print("%d\n", value);
+					   break;
+		case HEIGHT_DSP:
+					   g_print("%d\n", value);
+					   break;
+		case RECTIFIER_FREQ_DSP:
+					   g_print("%d\n", value);
+					   break;
+		case ALARM_POS_DSP:
+					   g_print("%d\n", value);
+					   break;
+		case GROUPA_DSP:
+					   g_print("%d\n", value);
+					   break;
+		case CONDITIONA_DSP:
+					   g_print("%d\n", value);
+					   break;
+		case OPERAT_DSP:
+					   g_print("%d\n", value);
+					   break;
+		case GROUPB_DSP:
+					   g_print("%d\n", value);
+					   break;
+		case CONDITIONB_DSP:
+					   g_print("%d\n", value);
+					   break;
+		case OUTPUT_POS_DSP:
+					   g_print("%d\n", value);
+					   break;
+		case ALARM1_DSP:
+					   g_print("%d\n", value);
+					   break;
+		case COUNT_DSP:
+					   g_print("%d\n", value);
+					   break;
+		case DATA_DSP:
+					   g_print("%d\n", value);
+					   break;
+		case SOUND_DSP:
+					   g_print("%d\n", value);
+					   break;
+		case DELAY_DSP:
+					   g_print("%d\n", value);
+					   break;
+		case HOLDTIME_DSP:
+					   g_print("%d\n", value);
+					   break;
+		case MODE_POS_DSP:
+					   g_print("%d\n", value);
+					   break;
+		case CURVE_POS_DSP:
 					   g_print("%d\n", value);
 					   break;
 		default:break;

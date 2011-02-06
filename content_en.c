@@ -12,10 +12,10 @@ const gchar *content_en10[] = {
 	" Display  ",	" Probe/Part  ",	" Focal Law  ",		" Scan  ",
 	" File  "	,	" Preferences  "
 		/**
-	"1 Wizard  ",	"2 UT Settings",	"3 Gate/Alarm  ",	"4 Measurements  ",
-	"5 Display  ",	"6 Probe/Part  ",	"7 Focal Law  ",	"8 Scan  ",
-	"9 File  "	,	"10 Preferences  "
-	**/
+		  "1 Wizard  ",	"2 UT Settings",	"3 Gate/Alarm  ",	"4 Measurements  ",
+		  "5 Display  ",	"6 Probe/Part  ",	"7 Focal Law  ",	"8 Scan  ",
+		  "9 File  "	,	"10 Preferences  "
+		 **/
 };
 
 static const gchar *content_en20[] = {
@@ -88,7 +88,7 @@ static const gchar *content_en201[] = {
 
 static const gchar *content_en202[] = {
 	/* 二级菜单第0页下的第2页三级菜单 */
-	"Back", "Start", "Type", "Mode", NULL, NULL
+	"Back", "Start", "Type", "Mode", NULL, "Clear Calib"
 };
 
 static const gchar *content_en203[] = {
@@ -143,12 +143,12 @@ static const gchar *content_en221[] = {
 
 static const gchar *content_en222[] = {
 	/* 二级菜单第2页下的第2页三级菜单 */
-	"Output", "Alarm #", "Count", "Sound", "Delay", "Hold Time"
+	"Output", "Alarm #", "Count", "Sound", "Delay", "Hold Time","Group", "Data"
 };
 
 static const gchar *content_en223[] = {
 	/* 二级菜单第2页下的第3页三级菜单 */
-	"Mode", "Curve", NULL, NULL, NULL, NULL
+	"Mode", "Curve",NULL, NULL, NULL, NULL, "Ref.Amplitude", "Ref.Ampl.Offset", "Curve Step", "Reference Gain", "Point", "Position", "Amplitude", "Add", "Delete", "Mat.Attenuatior", "Delay", "Gain"
 };
 
 static const gchar *content_en224[] = {
@@ -355,7 +355,7 @@ static const gchar *content_en293[] = {
 static const gchar *content_en294[] = {
 	/* 二级菜单第9页下的第4页三级菜单 */
 	/*"  DHCP  ","  IP Address  ", "  Subnet Mask ","  Apply  ", "  Remote Pc  ", "  Connect  "*/
-        "  IP Address  ", "  Subnet Mask ",NULL,NULL,NULL,NULL
+	"  IP Address  ", "  Subnet Mask ",NULL,NULL,NULL,NULL
 };
 
 
@@ -385,59 +385,82 @@ const gchar ***content2_en[] =
 
 
 /* 0mm 1英寸 2微秒  */
-const gchar *units_en[] = {"(mm)", "(in)", "(μs)", NULL, "(m/s)", "(in/μs)", "(dB)", "(1 to 97)", "(%)", "(ms)", "(mm/s)", "(1 to 113)", " "};
+const gchar *units_en[] = {"(mm)", "(in)", "(μs)", NULL, "(m/s)", "(in/μs)", "(dB)", "(1 to 97)", "(%)", "(ms)", "(mm/s)", "(1 to 113)", "(dB/mm)", " "};
 
 
 const gchar *all_menu_content_en[] = 
 {
-	"PC Pitch-and-Catch", "PE Pulse-Echo", "TT Through-Transmission", "",		/* 0 */
-	"PC", "PE", "TT", "",														/* 4 */
-	"1","1.5","2","2.25","3.5","4","5","7.5","10","12","15","20","UserDef","",	/* 8 */
-	"50 Low", "100 Middle", "200 High",											/* 22 */
-	"50", "100", "200",															/* 25 */
-	"50 Low", "100 High",														/* 28 */
-	"Auto",  "UserDef",															/* 30 */	
-	"Auto Max", "Max/2", "Optimum","UserDef",									/* 32 */
+	"PC Pitch-and-Catch", "PE Pulse-Echo", "TT Through-Transmission", "",		/* 0 TX_RX_MODE*/
+	"PC", "PE", "TT", "",								/* 4 tx_rxmode */
+	"1","1.5","2","2.25","3.5","4","5","7.5","10","12","15","20","UserDef","",	/* 8 frequence */
+	"50 Low", "100 Middle", "200 High",						/* 22 */
+	"50","100","200",								/* 25 */
+	"50 Low", "100 High",								/* 28 Voltage  */
+	"Auto","UserDef",								/* 30 PW       */	
+	"Auto Max", "Max/2", "Optimum","UserDef",					/* 32 PRF      */
 	"None  0.5-21.0 MHz", "Auto", "1 MHz", "1.5MHz", "2MHz", 
 	"2.25MHz", "4MHz", "5MHz", "7.5MHz", "10MHz", "12MHz", 
-	"15MHz", "20MHz", "HR", "HR 10 MHz", "None",								/* 36 */
-	"RF", "HW+", "HW-", "FW",													/* 42 */
-	""																			/* 46 */
+	"15MHz", "20MHz", "HR", "HR 10 MHz", "None",					/* 36 filter   */
+	"RF", "HW+", "HW-", "FW",							/* 52 rectifier*/
+	"1","2","4","8","16",								/* 56 averaging*/
+	"Off", "On",									/* 61 db_ref   */
+	"Auto", "160", "320", "640", "UserDef",						/* 63 points_qty*/
+	"Auto", "UserDef",								/* 68 sum_gain  */
+	"A", "B","I",									/* 70 gate_pos  */
+	"Position", "Mode",								/* 73 parameters*/
+	"Pulse", "I/","A/",								/* 75 synchro */
+	"Peak(^)", "Edge(/)",								/* 78 measure */
+	"Absolute", "Positive", "Negative",						/* 80 rectifier_freq*/
+	"1", "2","3","4","5","6","7","8","9","10","11","12","13","14","15","16",	/* 83 Alarm_pos*/
+	"1 [On]", "2 [On]","3 [On]","4 [On]","5 [On]","6 [On]","7 [On]","8 [On]","9 [On]","10 [On]","11 [On]","12 [On]","13 [On]","14 [On]","15 [On]","16 [On]",	/* 99 Alarm [On] */
+	"1", "2","3","4","5","6","7","8",						/* 115 groupA */
+	"None","Gate A","Gate B","Gate I","Not Gate A","Not Gate B","Not Gate I",">Max.Thickness","<Min.Thickness",/*123 conditiona*/
+	"AND","OR",									/* 132 operator */
+	"Output 1", "Output 2","Output 3", "Analog 1", "Analog 2",			/* 134 Output_pos */
+	"Output 1  [On]","Output 2  [On]","Output 3  [On]","Analog 1  [On]","Analog 2  [On]", 		/*139 Output_pos+5 */
+	"None", "All", "1", "2", "3", "4", "5", "6", "7", "8", "9","10","11","12","13","14","15","16",	/*144 alarm1*/
+	"None", "All", "1  [On]", "2  [On]", "3  [On]", "4  [On]", "5  [On]", "6  [On]", "7  [On]", "8  [On]", "9  [On]","10  [On]","11  [On]","12  [On]","13  [On]","14  [On]","15  [On]","16  [On]","Multi",						/*162 alarm1*/
+	"Off", "A%", "B%", "Thickness",									/* 181 data */ 
+	"Off  No Sound", "300Hz  Audio output at 300 Hz","600Hz  Audio output at 600 Hz","1000Hz  Audio output at 1000 Hz","5000Hz  Audio output at 5000 Hz",											/* 185 sound*/
+	"Off", "300Hz","600Hz","1000Hz","5000Hz",							/* 190 sound */
+	"Setup", "Edit",										/* 195 mode  */
+	"None","DAC","Linear DAC","TCG",								/* 197 curve */
 
+	""																			
 };
+
 
 /*  0  */
 const gchar *type_en[] = {"Encoder", "Ultrasound", "Code"};
 const gchar *calibration_mode_en[] = {"Velocity", "Wedge Delay", "Sensitivity", "TCG"};
 
 /*  1  */
-const gchar *rectifier_en[] = {"RF", "HW+", "HW-", "FW", "FW"};
-const gchar *averaging_en[] = {"1","2","4","8","16"};
-const gchar *db_ref_en[] = {"Off", "On"};
-const gchar *points_qty_en[] = {"Auto", "160", "320", "640", "UserDef"};
-const gchar *sum_gain_en[] = {"Auto", "UserDef"};
-
+//const gchar *rectifier_en[] = {"RF", "HW+", "HW-", "FW", "FW"};
+//const gchar *averaging_en[] = {"1","2","4","8","16"};
+//const gchar *db_ref_en[] = {"Off", "On"};
+//const gchar *points_qty_en[] = {"Auto", "160", "320", "640", "UserDef"};
+//const gchar *sum_gain_en[] = {"Auto", "UserDef"};
 
 /*  2  */
-const gchar *gate_en[] = {"A ", "B ", "I "};
-const gchar *parameters_en[] = {"Position", "Mode"};
-const gchar *synchro_en[] = {"Pulse", "I/"};
-const gchar *measure_en[] = {"Peak(^)", "Edge(/)"};
-const gchar *RF_en[] = {"Absolute", "Positive","Negative"};
+//const gchar *gate_en[] = {"A ", "B ", "I "};
+//const gchar *parameters_en[] = {"Position", "Mode"};
+//const gchar *synchro_en[] = {"Pulse", "I/"};
+//const gchar *measure_en[] = {"Peak(^)", "Edge(/)"};
+//const gchar *RF_en[] = {"Absolute", "Positive","Negative"};
 
 
-const gchar *gate_alarm_en[] = {"1", "2","3","4","5","6","7","8","9","10","11","12","13","14","15","16"};
-const gchar *groupA_en[] = {"1","2","3"};
-const gchar *conditionA_en[] = {"None","Gate A","Gate B","Gate I","Not Gate A","Not Gate B","Not Gate I",">Max.Thickness","<Min.Thickness"};
-const gchar *operator_en[] = {"AND","OR"};
-const gchar *groupB_en[] = {"1","2","3"};
-const gchar *conditionB_en[] = {"None","Gate A","Gate B","Gate I","Not Gate A","Not Gate B","Not Gate I",">Max.Thickness","<Min.Thickness"};
-const gchar *output_en[] = {"Output 1", "Output 2","Output 3", "Analog 1", "Analog 2"};
-const gchar *output_alarm_en[] = {"None", "All", "1", "2", "3", "4", "5", "6", "7", "8", "9","10","11","12","13","14","15","16"};
-const gchar *sound_en[] = {"Off  No Sound", "300Hz  Audio output at 300 Hz","600Hz  Audio output at 600 Hz","1000Hz  Audio output at 1000 Hz","5000Hz  Audio output at 5000 Hz"};
-const gchar *sound1_en[] = {"Off", "300Hz","600Hz","1000Hz","5000Hz"};
-const gchar *curves_mode_en[] = {"Setup", "Edit"};
-const gchar *curve_en[] = {"None","DAC","Linear DAC","TCG"};
+//const gchar *gate_alarm_en[] = {"1", "2","3","4","5","6","7","8","9","10","11","12","13","14","15","16"};
+//const gchar *groupA_en[] = {"1","2","3"};
+//const gchar *conditionA_en[] = {"None","Gate A","Gate B","Gate I","Not Gate A","Not Gate B","Not Gate I",">Max.Thickness","<Min.Thickness"};
+//const gchar *operator_en[] = {"AND","OR"};
+//const gchar *groupB_en[] = {"1","2","3"};
+//const gchar *conditionB_en[] = {"None","Gate A","Gate B","Gate I","Not Gate A","Not Gate B","Not Gate I",">Max.Thickness","<Min.Thickness"};
+//const gchar *output_en[] = {"Output 1", "Output 2","Output 3", "Analog 1", "Analog 2"};
+//const gchar *output_alarm_en[] = {"None", "All", "1", "2", "3", "4", "5", "6", "7", "8", "9","10","11","12","13","14","15","16"};
+//const gchar *sound_en[] = {"Off  No Sound", "300Hz  Audio output at 300 Hz","600Hz  Audio output at 600 Hz","1000Hz  Audio output at 1000 Hz","5000Hz  Audio output at 5000 Hz"};
+//const gchar *sound1_en[] = {"Off", "300Hz","600Hz","1000Hz","5000Hz"};
+//const gchar *curves_mode_en[] = {"Setup", "Edit"};
+//const gchar *curve_en[] = {"None","DAC","Linear DAC","TCG"};
 
 
 /*  3  */

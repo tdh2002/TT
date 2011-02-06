@@ -26,7 +26,8 @@
 #define UNIT_MS 	9
 #define UNIT_MM_S 	10
 #define UNIT_TO1 	11
-#define UNIT_NONE	12
+#define UNIT_DB_MM      12
+#define UNIT_NONE	13
 
 /* UT_UNIT */
 #define UT_UNIT_TRUE_DEPTH	0
@@ -44,10 +45,25 @@
 #define NAGATIVE	2
 #define FULL_WAVE	3
 
-/*  */
+/* 电压 */
 #define VOLTAGE_HIGH
 #define VOLTAGE_MID
 #define VOLTAGE_LOW
+
+/* 闸门 */
+#define GATE_A	0
+#define GATE_B  1
+#define GATE_I  2
+
+#define GATE_POSITION 0
+#define GATE_MODE     1
+
+#define GATE_PULSER   0
+#define GATE_II       1
+#define GATE_AA	      2
+
+
+
 
 /* focal law 类型 定义*/
 #define LINEAR_SCAN	0
@@ -65,8 +81,14 @@
 #define A_S_CC_SCAN	 8
 #define PA_TOFD	         9
 #define Strip_Chart_AA	 10
+
+
 #define GAINR_OFF	0
 #define GAINR_ON	1
+#define VIDEO_FILTER_OFF 0
+#define VIDEO_FILTER_ON	 1
+
+//#define gate_A		0
 
 #define VOL_LOW		0
 #define VOL_HIGH	1
@@ -87,10 +109,31 @@
 #define TX_RX_MODE	0
 #define FREQUENCE	(TX_RX_MODE + 8)
 #define VOLTAGE		(FREQUENCE + 14)
-#define PULSER_WIDTH	 (VOLTAGE + 8)
-#define PRF			(PULSER_WIDTH + 2)
+#define PULSER_WIDTH	(VOLTAGE + 8)
+#define PRF		(PULSER_WIDTH + 2)
 #define FILTER		(PRF + 4)
 #define RECTIFIER	(FILTER + 16)
+#define AVERAGING	(RECTIFIER + 4)
+#define OFF_ON		(AVERAGING + 5)
+#define POINT_QTY	(OFF_ON + 2)
+#define SUM_GAIN	(POINT_QTY + 5)
+#define GATE_POS	(SUM_GAIN + 2)
+#define PARAMETERS	(GATE_POS + 3)
+#define SYNCHRO 	(PARAMETERS + 2)
+#define MEASURE 	(SYNCHRO + 3)
+#define RECTIFIER_FREQ 	(MEASURE + 2)
+#define ALARM_POS 	(RECTIFIER_FREQ + 3)
+#define ALARM_ON_POS 	(ALARM_POS + 16)
+#define GROUPA	 	(ALARM_ON_POS + 16)
+#define CONDITIONA 	(GROUPA + 8)
+#define OPERAT 		(CONDITIONA + 9)
+#define OUTPUT_POS	(OPERAT + 2)
+#define ALARM1		(OUTPUT_POS+10)
+#define DATA		(ALARM1+37)
+#define SOUND		(DATA+4)
+#define MODE_POS	(SOUND+10)
+#define CURVE_POS	(MODE_POS + 2)
+
 
 /*  */
 #define UT_CHANNEL	3
@@ -107,13 +150,42 @@
 #define GATEA_DSP		0x3000
 #define GATEB_DSP		0x3001
 #define GATEI_DSP		0x3002
-#define TX_RX_MODE_DSP	0x3003
-#define FREQUENCE_DSP	0x3004
+#define TX_RX_MODE_DSP		0x3003
+#define FREQUENCE_DSP		0x3004
 #define	VOLTAGE_DSP		0x3005
 #define PW_DSP			0x3006
 #define PRF_DSP			0x3007
 #define FILTER_DSP		0x3008
-#define RECTIFIER_DSP	0x3009
+#define RECTIFIER_DSP		0x3009
+#define AVERAGING_DSP		0x300a
+#define VIDEO_FILTER_DSP	0x300b
+#define POINT_QTY_DSP		0x300c
+#define SUM_GAIN_DSP		0x300d
+#define GATE_POS_DSP		0x300e
+#define PARAMETERS_DSP		0x300f
+#define START_DSP		0x3010
+#define SYNCHRO_DSP		0x3011
+#define WIDTH_DSP		0x3012
+#define MEASURE_DSP		0x3013
+#define HEIGHT_DSP		0x3014
+#define RECTIFIER_FREQ_DSP	0x3015
+#define ALARM_POS_DSP		0x3016
+#define GROUPA_DSP		0x3017
+#define CONDITIONA_DSP		0x3018
+#define OPERAT_DSP		0x3019
+#define GROUPB_DSP		0x301a
+#define CONDITIONB_DSP		0x301b
+#define OUTPUT_POS_DSP		0x301c
+#define ALARM1_DSP		0x301d
+#define COUNT_DSP		0x301e
+#define DATA_DSP		0x301f
+#define SOUND_DSP		0x3020
+#define DELAY_DSP		0x3021
+#define HOLDTIME_DSP		0x3022
+#define MODE_POS_DSP		0x3023
+#define CURVE_POS_DSP		0x3024
+#define POINT_POS_DSP		0x3025
+
 
 
 extern gint (*window_keypress_event_orig)(GtkWidget *widget, GdkEventKey *event);
@@ -196,12 +268,24 @@ extern void data_215 (GtkMenuItem *menuitem, gpointer data);         /*  215 con
 
 extern void data_220 (GtkMenuItem *menuitem, gpointer data);          /* 220 Output */
 extern void data_221 (GtkMenuItem *menuitem, gpointer data);         /* Output -> alarm # */
-extern void data_222 (GtkSpinButton *spinbutton, gpointer data);	/*222*/
+extern void data_2211 (GtkMenuItem *menuitem, gpointer data);         /* Output -> group */
+extern void data_222 (GtkSpinButton *spinbutton, gpointer data);	/*222 Output -> count */
+extern void data_2221 (GtkMenuItem *menuitem, gpointer data);         /* Output -> data */
 extern void data_223 (GtkMenuItem *menuitem, gpointer data);          /* 223 sound */
 extern void data_224 (GtkSpinButton *spinbutton, gpointer data);	/*224*/
 extern void data_225 (GtkSpinButton *spinbutton, gpointer data);	/*225*/
 extern void data_230 (GtkMenuItem *menuitem, gpointer data);         /* Gate/Alarm -> Sizing Curves -> Mode 230 */
 extern void data_231 (GtkMenuItem *menuitem, gpointer data);         /* Gate/Alarm -> Sizing Curves -> Curve 231 */
+extern void data_2311 (GtkMenuItem *menuitem, gpointer data);
+extern void data_2312 (GtkSpinButton *spinbutton, gpointer data);
+extern void data_232 (GtkSpinButton *spinbutton, gpointer data);
+extern void data_2321 (GtkSpinButton *spinbutton, gpointer data);
+extern void data_2322 (GtkSpinButton *spinbutton, gpointer data);
+extern void data_233 (GtkSpinButton *spinbutton, gpointer data);
+extern void data_2331 (GtkSpinButton *spinbutton, gpointer data);
+extern void data_2332 (GtkSpinButton *spinbutton, gpointer data);
+extern void data_234 (GtkSpinButton *spinbutton, gpointer data);
+extern void data_235 (GtkSpinButton *spinbutton, gpointer data);
 
 extern void data_300 (GtkMenuItem *menuitem, gpointer data);         /* Measurements -> Reading -> list 300 */
 extern void data_302 (GtkMenuItem *menuitem, gpointer data);         /* Measurements -> Reading -> Field 302 */

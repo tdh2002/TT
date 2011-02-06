@@ -88,345 +88,345 @@ typedef struct setup_stElemRx {
 
 /*
 usCondition:         Indicate how to compute the detection status given by the
-                     gates for the alarm activation. Those alarms status
-                     generated merge the C-scan data channel. The alarm
-                     condition is formed by a mask of bits:
+gates for the alarm activation. Those alarms status
+generated merge the C-scan data channel. The alarm
+condition is formed by a mask of bits:
 
-                     usCondition =
-                       !(!GATE0 AND !GATE1 AND !GATE2 AND !GATE3 AND !GATE4)
-                       | |  |       |  |       |  |       |  |       |  |
-                       | |  |       |  |       |  |       |  |       |  setup_ALARM_USE_GATE4
-                       | |  |       |  |       |  |       |  |       setup_ALARM_INVERT_GATE4
-                       | |  |       |  |       |  |       |  setup_ALARM_USE_GATE3
-                       | |  |       |  |       |  |       setup_ALARM_INVERT_GATE3
-                       | |  |       |  |       |  setup_ALARM_USE_GATE2
-                       | |  |       |  |       setup_ALARM_INVERT_GATE2
-                       | |  |       |  +--- setup_ALARM_USE_GATE1
-                       | |  |       +------ setup_ALARM_INVERT_GATE1
-                       | |  +-------------- setup_ALARM_USE_GATE0
-                       | +----------------- setup_ALARM_INVERT_GATE0
-                       +------------------- setup_ALARM_INVERT_RESULT
+usCondition =
+!(!GATE0 AND !GATE1 AND !GATE2 AND !GATE3 AND !GATE4)
+| |  |       |  |       |  |       |  |       |  |
+| |  |       |  |       |  |       |  |       |  setup_ALARM_USE_GATE4
+| |  |       |  |       |  |       |  |       setup_ALARM_INVERT_GATE4
+| |  |       |  |       |  |       |  setup_ALARM_USE_GATE3
+| |  |       |  |       |  |       setup_ALARM_INVERT_GATE3
+| |  |       |  |       |  setup_ALARM_USE_GATE2
+| |  |       |  |       setup_ALARM_INVERT_GATE2
+| |  |       |  +--- setup_ALARM_USE_GATE1
+| |  |       +------ setup_ALARM_INVERT_GATE1
+| |  +-------------- setup_ALARM_USE_GATE0
+| +----------------- setup_ALARM_INVERT_GATE0
++------------------- setup_ALARM_INVERT_RESULT
 
-                     setup_ALARM_INVERT_RESULT:
-                        Indicate if the reults must be invert.
+setup_ALARM_INVERT_RESULT:
+Indicate if the reults must be invert.
 
-                     setup_ALARM_INVERT_GATEX:
-                        Indicate if the state provide by the gate X must be
-                        invert.
+setup_ALARM_INVERT_GATEX:
+Indicate if the state provide by the gate X must be
+invert.
 
-                     setup_ALARM_USE_GATEX:
-                        Indicate if the state of gate X plays a part in the
-                        alarm generation.
+setup_ALARM_USE_GATEX:
+Indicate if the state of gate X plays a part in the
+alarm generation.
 
 cCount:              Indicates the quantity of internal alarm occurrence before
-                     an external alarm is generated. The possible range for
-                     this value is from 1 to setup_ALARM_MAX_STAT occurences.
+an external alarm is generated. The possible range for
+this value is from 1 to setup_ALARM_MAX_STAT occurences.
 */
 typedef struct setup_stAlarm{
-   gushort    usCondition;
-   gchar      cCount;
+	gushort    usCondition;
+	gchar      cCount;
 } Doppler_stAlarm, *Doppler_Alarm_P;
 
 
 /*
 lPosition:           The position of the gate from a the reference time
-                     (beginning of the A-scan). This value may be from 0
-                     to the A-scan length (in steps of 10 ns).
+(beginning of the A-scan). This value may be from 0
+to the A-scan length (in steps of 10 ns).
 
 lLength:             The length of the gate. This value may be from
-                     setup_ASCAN_LEN_MIN to setup_ASCAN_LEN_MAX (the
-                     A-scan length; in steps of 10 ns).
+setup_ASCAN_LEN_MIN to setup_ASCAN_LEN_MAX (the
+A-scan length; in steps of 10 ns).
 
-                     When drawing a gate, the left most side will be at
-                     "lPosition" and the point right under that line is
-                     INCLUDED in the gate. The right most side will be
-                     at "lPosition+lLength" and the point under that line
-                     is EXCLUDED from the gate. The reasoning is as follow
-                     points in the hardware all represent 10nS while on
-                     display it is rather the distance between the points
-                     that represent time. The first point although it seem
-                     to be a time 0, also represents 10nS so if we were to
-                     include the right most point we would actually get
-                     one too much time division (10nS at 100MHz).
+When drawing a gate, the left most side will be at
+"lPosition" and the point right under that line is
+INCLUDED in the gate. The right most side will be
+at "lPosition+lLength" and the point under that line
+is EXCLUDED from the gate. The reasoning is as follow
+points in the hardware all represent 10nS while on
+display it is rather the distance between the points
+that represent time. The first point although it seem
+to be a time 0, also represents 10nS so if we were to
+include the right most point we would actually get
+one too much time division (10nS at 100MHz).
 
 sLevel:              The level.
 
 cTrigModeGate:       The mode of detection; this value may be
-                     setup_GATEMODE_PEAK or setup_GATEMODE_CROSSING.
+setup_GATEMODE_PEAK or setup_GATEMODE_CROSSING.
 
 cCscanDataEnabled:   Usage of gate. This value may be TRUE (used) or FALSE (not
-                     used). When used, those gates will produce data
-                     transmitted on socket.
+used). When used, those gates will produce data
+transmitted on socket.
 
 cPolarity:           Polarity of the gate. This value may be
-                     setup_POLARITY_POS, setup_POLARITY_NEG or
-                     setup_POLARITY_BOTH.
+setup_POLARITY_POS, setup_POLARITY_NEG or
+setup_POLARITY_BOTH.
 */
 typedef struct setup_stGate {
-   gint             lPosition;
-   gint             lLength;
-   gshort           sLevel;
-   gchar            cTrigModeGate;
-   gchar            cCscanDataEnabled;
-   gchar            cPolarity;
+	gint             lPosition;
+	gint             lLength;
+	gshort           sLevel;
+	gchar            cTrigModeGate;
+	gchar            cCscanDataEnabled;
+	gchar            cPolarity;
 } Doppler_stGate, *Doppler_Gate_P;
 
 /*
-The instrument starts the detection (A-scan measurement) when the signal
-crosses the detection threshold inside the synchronization gate (when
-synchronization mode is 'echo'). In 'pulser' mode, instrument starts
-measurement immediately at the gate position (lPosition). The maximal delay
-before the firing at the measurement is the sum of the position and the length.
-This sum should be shorter than 2.62 ms (setup_SYNC_DELAY_MAX). The
-measurement, the A-scan, should be short than setup_ASCAN_LEN_MAX (in sample).
+   The instrument starts the detection (A-scan measurement) when the signal
+   crosses the detection threshold inside the synchronization gate (when
+   synchronization mode is 'echo'). In 'pulser' mode, instrument starts
+   measurement immediately at the gate position (lPosition). The maximal delay
+   before the firing at the measurement is the sum of the position and the length.
+   This sum should be shorter than 2.62 ms (setup_SYNC_DELAY_MAX). The
+   measurement, the A-scan, should be short than setup_ASCAN_LEN_MAX (in sample).
 
 lPosition:           The position (in time, steps of 10 ns) of the gate from
-                     the beginning of the law (reference time).
+the beginning of the law (reference time).
 
 lLength:             The length of the synchronization gate. This value may be
-                     ajusted with the position to match the limit of
-                     setup_SYNC_DELAY_MAX.
+ajusted with the position to match the limit of
+setup_SYNC_DELAY_MAX.
 
 sLevel:              Level in samples. This value may be from 0 to 32767.
 
 cTrigModeSynchro:    The mode of detection. This value may be
-                     setup_SYNCMODE_PULSER or setup_SYNCMODE_ECHO.
+setup_SYNCMODE_PULSER or setup_SYNCMODE_ECHO.
 
 cPolarity:           Polarity of the synchronization gate. This value may be
-                     setup_POLARITY_POS, setup_POLARITY_NEG or
-                     setup_POLARITY_BOTH.
+setup_POLARITY_POS, setup_POLARITY_NEG or
+setup_POLARITY_BOTH.
 
 lDelaySync:          Negative or positive delay between the detection in the
-                     gate and the A-scan reading, in steps of 10 ns.
+gate and the A-scan reading, in steps of 10 ns.
 
 cCscanDataEnabled:   Usage of gate. This value may be TRUE (used) or FALSE (not
-                     used). When used, those gates will produce data
-                     transmitted on socket.
+used). When used, those gates will produce data
+transmitted on socket.
 */
 typedef struct setup_stSynchro {
-   gint              lPosition;
-   gint              lLength;
-   gshort             sLevel;
-   gchar              cTrigModeSynchro;
-   gchar              cPolarity;
-   gint              lDelaySync;
-   gchar              cCscanDataEnabled;
+	gint              lPosition;
+	gint              lLength;
+	gshort             sLevel;
+	gchar              cTrigModeSynchro;
+	gchar              cPolarity;
+	gint              lDelaySync;
+	gchar              cCscanDataEnabled;
 } Doppler_stSynchro, *Doppler_stSynchro_P;
 
 /*
 cType:               Type of encoder. There are 4 types: clock direction
-                     counter (setup_ENC_CLK_DIR), Phase A-Phase B counter 
-                     (setup_ENC_QUADRATURE), Counter UP (setup_ENC_UP) and
-                     Counter DOWN (setup_ENC_DOWN).
+counter (setup_ENC_CLK_DIR), Phase A-Phase B counter 
+(setup_ENC_QUADRATURE), Counter UP (setup_ENC_UP) and
+Counter DOWN (setup_ENC_DOWN).
 
 cPresetSource:       The preset action; determine how the preset will act. 
-                     This action may be comamnd from the associated preset line
-                     (setup_PRESET_EXTERNAL_LINE), the common external preset
-                     line (setup_PRESET_EXT_COMMON_LINE), a CPU action
-                     (setup_PRESET_INTERNAL) or not use (setup_PRESET_NOT_USE).
+This action may be comamnd from the associated preset line
+(setup_PRESET_EXTERNAL_LINE), the common external preset
+line (setup_PRESET_EXT_COMMON_LINE), a CPU action
+(setup_PRESET_INTERNAL) or not use (setup_PRESET_NOT_USE).
 
 lPreset:             A 32 bits signed value to preset to the encoder.
 
 cEnable:             Encoder usage. This value may be TRUE (used) or FALSE (not
-                     used). When used, this encoder will produce data
-                     transmitted on socket.
+used). When used, this encoder will produce data
+transmitted on socket.
 */
 typedef struct setup_stEnc {
-   gchar              cType;
-   gchar              cPresetSource;
-   gint              lPreset;
-   gchar              cEnable;
+	gchar              cType;
+	gchar              cPresetSource;
+	gint              lPreset;
+	gchar              cEnable;
 } Doppler_stEnc, *Doppler_stEnc_P;
 
 /*
-This structure defines the usage of all encoder (setup_MAX_QTY_ENCODER or
-setup_MAX_QTY_ENCODER_DIFF when differential usage is asked).
+   This structure defines the usage of all encoder (setup_MAX_QTY_ENCODER or
+   setup_MAX_QTY_ENCODER_DIFF when differential usage is asked).
 
 sAcqDivider:         When the acquisition clock source come from an encoder,
-                     this value divides the encoder to produce the sampling
-                     clock.
+this value divides the encoder to produce the sampling
+clock.
 
 cAcqDividerMode:     The preceding divider can act on a particular direction
-                     (ascending, downward or both). Value may be
-                     setup_DIVIDER_MODE_UP, setup_DIVIDER_MODE_DOWN or
-                     setup_DIVIDER_MODE_BOTH.
+(ascending, downward or both). Value may be
+setup_DIVIDER_MODE_UP, setup_DIVIDER_MODE_DOWN or
+setup_DIVIDER_MODE_BOTH.
 astEncoders[]:       Definition for all encoders.
 */
 typedef struct setup_stEncAll {
-   gshort             sAcqDivider; 
-   gchar              cAcqDividerMode; 
-   Doppler_stEnc      astEncoder[setup_MAX_QTY_ENCODER];
+	gshort             sAcqDivider; 
+	gchar              cAcqDividerMode; 
+	Doppler_stEnc      astEncoder[setup_MAX_QTY_ENCODER];
 } Doppler_stEncAll, *Doppler_stEncAll_P;
 
 
 /*
-This structure gives information of a focal law. The field order follow the
-natural sequence order (pulser, receiver, numerization, process, etc.).
+   This structure gives information of a focal law. The field order follow the
+   natural sequence order (pulser, receiver, numerization, process, etc.).
 
 sLawNumber:          the number of the law, this value may be from 0 to
-                     setup_MAX_LAW_QTY.
-					 
+setup_MAX_LAW_QTY.
+
 sLawFiringOrder:     Firing ordering of the law.
 
 cEnable:             TRUE: the law is enable. FALSE, the law is disable.
 
 cPATech:             TRUE: the law is PA technology (use the first HV power
-                     supply); FALSE: the law is UT technology (use the second 
-                     HV poser supply).
+supply); FALSE: the law is UT technology (use the second 
+HV poser supply).
 
 lDuration:           Complete duration of the law. This time (in step of 10 ns)
-                     includes the synchronization gate, the delay time, the
-                     A-scan digitalization, the measurement time and electronic
-                     update time. This value controls the recurrence firing of
-                     the law. When averaging is in use, this time is multiply
-                     by the average value. The instrument will round and adjust
-                     this value. Put an equal or greater value to the acoustic
-                     attenuation to void strange echo.
+includes the synchronization gate, the delay time, the
+A-scan digitalization, the measurement time and electronic
+update time. This value controls the recurrence firing of
+the law. When averaging is in use, this time is multiply
+by the average value. The instrument will round and adjust
+this value. Put an equal or greater value to the acoustic
+attenuation to void strange echo.
 
 sPulserWidth:        The duration of the US generator pulse width. This value
-                     may be from setup_PULSE_WIDTH_MIN to setup_PULSE_WIDTH_MAX
-                     (in ns and the precision is of 5 ns).
+may be from setup_PULSE_WIDTH_MIN to setup_PULSE_WIDTH_MAX
+(in ns and the precision is of 5 ns).
 
 cReceiverArray:      Defines the kind of pulser. This value may be
-                     setup_PULSER_PP or setup_PULSER_PR.
+setup_PULSER_PP or setup_PULSER_PR.
 
 astTransmitter<>:    Structure that gives the details about the usage (usage
-                     and phase) of every pulser. For UT technology, this field
-                     allows selection of the unique transmitter. The maximum of
-                     active element in a law is setup_MAX_ELEM_TX_ACTIVE.
+and phase) of every pulser. For UT technology, this field
+allows selection of the unique transmitter. The maximum of
+active element in a law is setup_MAX_ELEM_TX_ACTIVE.
 
 lAcqDelay:           This delay (number of 24 bits in front of the law) holds
-                     the initial sequencing before acquisition (law formation).
-                     This value is embedded in lDuration and expressed in step
-                     of 10 ns.
+the initial sequencing before acquisition (law formation).
+This value is embedded in lDuration and expressed in step
+of 10 ns.
 
 usMaxDelayRx:        This returned delay (ignored as input) gives the maximum
-                     relative delay to form the focal law (based on all active
-                     element anabled). This value may be from 0 to
-                     setup_ELEM_DELAY_MAX_RX / 10 (in step of 10 ns).
+relative delay to form the focal law (based on all active
+element anabled). This value may be from 0 to
+setup_ELEM_DELAY_MAX_RX / 10 (in step of 10 ns).
 
 cInputFilter:        Select the input filter (or not) to apply on the receiving
-                     signal (RF). The effective input filter is a automatic
-                     combination of many kind of filter (analog and digital).
-                     See constants setup_IN_FILTER_* for more details.
+signal (RF). The effective input filter is a automatic
+combination of many kind of filter (analog and digital).
+See constants setup_IN_FILTER_* for more details.
 
 astReceiver<>:       Structure that gives the details about the usage (usage
-                     and phase) of every receiver. For UT technology, this field
-                     allows selection of the unique receiver.
+and phase) of every receiver. For UT technology, this field
+allows selection of the unique receiver.
 
 cTGCEnabled:         TRUE: the Time Gain Compensation is
-                     enabled. The TGC, which is the same for every element,
-                     starts after the element specific delay.
+enabled. The TGC, which is the same for every element,
+starts after the element specific delay.
 
 stTGC:               Structure that gives the arbitrary Time Gain Compensation
-                     (TGC) level for the signal incoming from every active RX
-                     elements. This arbitrary level may be from 0 to 800 tenth
-                     of DB.	Important: the first point must be 0dB, 0ns (0,0).
+(TGC) level for the signal incoming from every active RX
+elements. This arbitrary level may be from 0 to 800 tenth
+of DB.	Important: the first point must be 0dB, 0ns (0,0).
 
 stSynchro:           Defines the position and length of the synchronization
-                     gate (to take the A-scan).
+gate (to take the A-scan).
 
 lAscanDuration:      A-scan mesurement time. This value may be from
-                     setup_ASCAN_LEN_MIN to setup_ASCAN_LEN_MAX steps of 10ns.
+setup_ASCAN_LEN_MIN to setup_ASCAN_LEN_MAX steps of 10ns.
 
 cSamplingRate:       The sampling rate of the signal. See list of #define
-                     setup_SAMP_RATE_*.
+setup_SAMP_RATE_*.
 
 cAveragingType:      The kind of averaging. This value may be setup_AVER_NONE
-                     or setup_AVER_NORMAL.
+or setup_AVER_NORMAL.
 
 sAveraging:          The number on average to compute. This value may from 2,
-                     4, 8 or 16.
+	4, 8 or 16.
 
-cInputRectification: The kind of input signal rectification. See constant
-                     setup_RECT_* for available kind.
+	cInputRectification: The kind of input signal rectification. See constant
+	setup_RECT_* for available kind.
 
-cSmoothingFilter:    Select the low pass filter (or not) to apply on the
-                     receiving signal (after rectification) to smooth the
-                     signal. See defines setup_FILTER_SM for more details.
+	cSmoothingFilter:    Select the low pass filter (or not) to apply on the
+	receiving signal (after rectification) to smooth the
+	signal. See defines setup_FILTER_SM for more details.
 
-cCompressionType:    The compression type to use on the A-scan. Valid values
-                     are: setup_COMPRESSION_NONE, setup_COMPRESSION_POS,
-                     setup_COMPRESSION_NEG, setup_COMPRESSION_BOTH.
+	cCompressionType:    The compression type to use on the A-scan. Valid values
+	are: setup_COMPRESSION_NONE, setup_COMPRESSION_POS,
+	setup_COMPRESSION_NEG, setup_COMPRESSION_BOTH.
 
-ucCompressionRatio:  The compression ratio to use on the A-scan. This value
-                     may be between 0 and 255 (meaning 1 to 256). The ratio
-                     this information: for example, with a ratio of 3, we
-                     transmit over Ethernet only one sample (the maximum) per
-                     3 samples from the A-scan. When the compression is
-                     setup_COMPRESSION_BOTH we transmit the positive and
-                     negative maximum. For the same example of 3, we transmit
-                     two samples (positive and negative max) per 3 samples from
-                     A-scan.
+	ucCompressionRatio:  The compression ratio to use on the A-scan. This value
+	may be between 0 and 255 (meaning 1 to 256). The ratio
+	this information: for example, with a ratio of 3, we
+	transmit over Ethernet only one sample (the maximum) per
+	3 samples from the A-scan. When the compression is
+	setup_COMPRESSION_BOTH we transmit the positive and
+	negative maximum. For the same example of 3, we transmit
+	two samples (positive and negative max) per 3 samples from
+	A-scan.
 
-cSampleSize:         TRUE: the A-scan in the data have a full scale 16 bits.
-                     FALSE: full scale 8 bits.
+	cSampleSize:         TRUE: the A-scan in the data have a full scale 16 bits.
+	FALSE: full scale 8 bits.
 
-cAscanDataEnabled:   TRUE: transfer the A-scan to the data queue for
-                     transmission over Ethernet.
+	cAscanDataEnabled:   TRUE: transfer the A-scan to the data queue for
+	transmission over Ethernet.
 
-astGate[]:           Defines the position and length of the
-                     setup_MAX_GATE_MEASURE measurement gates.
+	astGate[]:           Defines the position and length of the
+	setup_MAX_GATE_MEASURE measurement gates.
 
-stAlarm:             Structure that defines the conditional alarm based on
-                     C-scan.
-*/
-typedef struct setup_stLaw {
-   gshort             sLawNumber;
-   gshort             sLawFiringOrder;
-   gchar              cEnable;
-   gchar              cPATech;
-   gint              lDuration;
-   gshort             sPulserWidth;
-   gchar              cReceiverArray;
-   Doppler_stElemTx    astTransmitter[setup_MAX_ELEM_TX_ACTIVE];
-   gint              lAcqDelay;
-   gushort    usMaxDelayRx;
-   gchar              cInputFilter;
-   Doppler_stElemRx    astReceiver[setup_MAX_ELEM_RX_ACTIVE];
-   gchar              cTGCEnabled;
-   gshort     sTGC;
-   Doppler_stSynchro   stSynchro;
-   gint              lAscanDuration;
-   gchar              cSamplingRate;
-   gchar              cAveragingType;
-   gshort             sAveraging;
-   gchar              cInputRectification;
-   gchar              cSmoothingFilter;
-   gchar              cCompressionType;
-   guchar     ucCompressionRatio;
-   gchar              cSampleSize;
-   gchar              cAscanDataEnabled;
-   Doppler_stGate      astGate[setup_MAX_GATE_MEASURE];
-   Doppler_stAlarm     stAlarm;
-} Doppler_stLaw, *Doppler_stLaw_P;
+	stAlarm:             Structure that defines the conditional alarm based on
+	C-scan.
+	*/
+	typedef struct setup_stLaw {
+		gshort             sLawNumber;
+		gshort             sLawFiringOrder;
+		gchar              cEnable;
+		gchar              cPATech;
+		gint              lDuration;
+		gshort             sPulserWidth;
+		gchar              cReceiverArray;
+		Doppler_stElemTx    astTransmitter[setup_MAX_ELEM_TX_ACTIVE];
+		gint              lAcqDelay;
+		gushort    usMaxDelayRx;
+		gchar              cInputFilter;
+		Doppler_stElemRx    astReceiver[setup_MAX_ELEM_RX_ACTIVE];
+		gchar              cTGCEnabled;
+		gshort     sTGC;
+		Doppler_stSynchro   stSynchro;
+		gint              lAscanDuration;
+		gchar              cSamplingRate;
+		gchar              cAveragingType;
+		gshort             sAveraging;
+		gchar              cInputRectification;
+		gchar              cSmoothingFilter;
+		gchar              cCompressionType;
+		guchar     ucCompressionRatio;
+		gchar              cSampleSize;
+		gchar              cAscanDataEnabled;
+		Doppler_stGate      astGate[setup_MAX_GATE_MEASURE];
+		Doppler_stAlarm     stAlarm;
+	} Doppler_stLaw, *Doppler_stLaw_P;
 
 /*
 sPulseVoltagePA:     Voltage for the instrument. Gives the high voltage for PA
-                     technology power supply. This value may be 
-                     setup_VOLTAGE_MIN_PA, setup_VOLTAGE_MED_PA or 
-                     setup_VOLTAGE_MAX_PA.
+technology power supply. This value may be 
+setup_VOLTAGE_MIN_PA, setup_VOLTAGE_MED_PA or 
+setup_VOLTAGE_MAX_PA.
 
 sPulseVoltageUT:     Voltage for the instrument. Gives the high voltage for UT
-                     technology power supply. This value may be 
-                     setup_VOLTAGE_MIN_UT, setup_VOLTAGE_MED_UT or 
-                     setup_VOLTAGE_MAX_UT.
+technology power supply. This value may be 
+setup_VOLTAGE_MIN_UT, setup_VOLTAGE_MED_UT or 
+setup_VOLTAGE_MAX_UT.
 
 cAcqClockSource:     The synchronization (acquisition) source type. Choices
-                     are: setup_SYNC_INTERNAL, setup_SYNC_EXTERNAL,
-                     setup_SYNC_COUNTER1 and setup_SYNC_COUNTER2,
-                     setup_SYNC_APS_TCPIP, setup_SYNC_APS_UDP_LITTLE_ENDIAN
-                     and setup_SYNC_APS_UDP_BIG_ENDIAN.                        
-                                             
+are: setup_SYNC_INTERNAL, setup_SYNC_EXTERNAL,
+setup_SYNC_COUNTER1 and setup_SYNC_COUNTER2,
+setup_SYNC_APS_TCPIP, setup_SYNC_APS_UDP_LITTLE_ENDIAN
+and setup_SYNC_APS_UDP_BIG_ENDIAN.                        
+
 bClockEnabled:       Specifies if the input line ENA is used to control
-                     (enable or disable) the acquisition clock. This value may
-                     be TRUE (controlled) or FALSE (not controlled).
+(enable or disable) the acquisition clock. This value may
+be TRUE (controlled) or FALSE (not controlled).
 */
 typedef struct setup_stGeneral {
-   gshort             sPulseVoltagePA;
-   gshort             sPulseVoltageUT;
-   gchar              cAcqClockSource;
-   gchar              bClockEnabled;
+	gshort             sPulseVoltagePA;
+	gshort             sPulseVoltageUT;
+	gchar              cAcqClockSource;
+	gchar              bClockEnabled;
 } Doppler_stGeneral, *Doppler_stGeneral_P;
 
 
@@ -440,11 +440,49 @@ stEnc:               Encoder definition.
 astLaw<>:            Dynamic array of laws.
 */
 typedef struct setup_stAll {
-   Doppler_stGeneral   stGeneral;
-//   Doppler_stMisc      stMiscellaneous;
-   Doppler_stEncAll    stEnc;
-   Doppler_stLaw       astLaw[setup_MAX_LAW_QTY];
+	Doppler_stGeneral   stGeneral;
+	//   Doppler_stMisc      stMiscellaneous;
+	Doppler_stEncAll    stEnc;
+	Doppler_stLaw       astLaw[setup_MAX_LAW_QTY];
 } Doppler_stAll, *Doppler_stAll_P;
+
+
+/* 闸门信息 */
+typedef struct gate_info {
+	guchar           parameters;     /* 调节模式 0 Positions 1 Mode */
+	guchar           synchro;        /* 同步 */
+	guchar           measure;        /*  */
+	guchar           rectifier_freq; /* 射频 */
+	guchar           height;
+	gint             start;
+	guint            width;
+} GATE_INFO, *GATE_INFO_P;
+
+
+/* 报警信息 */
+typedef struct alarm_info {
+	guchar           groupa;   	    /* GROUP A     */
+	guchar           conditiona;     /* Condition A */
+	guchar           operat;         /* Operator    */
+	guchar           groupb;	    /* GROUP B 	   */
+	guchar           conditionb;     /* Condition B */
+
+} ALARM_INFO, *ALARM_INFO_P;
+
+
+/* 输出信息 */
+typedef struct output_info {
+	guchar           alarm1;   	    /* Alarm #  */
+	guchar           alarm1_value[16];   /* Alarm #的选项是否选中，0否，1是*/
+	guchar	    group;          /* group    */
+	guchar           count;    	    /* count    */
+	guchar 	    data;	    /* data     */
+	guchar           sound;          /* sound    */
+	guint            delay;	    /* delay 	*/
+	guint            holdtime;       /* holdtime */
+
+} OUTPUT_INFO, *OUTPUT_INFO_P;
+
 
 /* 一个阵元的聚焦信息*/
 typedef struct law_elem
@@ -455,6 +493,7 @@ typedef struct law_elem
 /* 一条beam的聚焦信息 */
 typedef struct law_beam
 {
+	guint	beam_delay;
 
 } LAW_BEAM, *LAW_BEAM_P;
 
@@ -462,23 +501,23 @@ typedef struct law_beam
 /*聚焦法则信息(law_info) 28byte*/
 typedef struct law_info
 {
-	guchar	Focal_type;			/* 聚焦类型 */
-	guchar	Tx_connect;			/* 该法则的探头发射第一个阵元其连接口的编号 */
-	guchar	Rx_connect;			/* 该法则 */
-	guchar	Elem_qty;			/* 聚焦阵元数 */
+	guchar	Focal_type;		/* 聚焦类型 */
+	guchar	Tx_connect;		/* 该法则的探头发射第一个阵元其连接口的编号 */
+	guchar	Rx_connect;		/* 该法则 */
+	guchar	Elem_qty;		/* 聚焦阵元数 */
 	guchar	First_tx_elem;		/* 法则使用的第一个发射阵元 收发分离时候 tx rx 不一样 */
 	guchar	First_rx_elem;		/* 法则使用的第一个接收阵元 */
 	guchar	Last_tx_elem;		/* 法则使用的最后一个发射阵元 */
 	guchar	Last_rx_elem;		/* 法则使用的最后一个接收阵元 */
-	guchar	Elem_step;			/* 线扫时候可以设置阵元间隔 */
+	guchar	Elem_step;		/* 线扫时候可以设置阵元间隔 */
 	guchar	Velocity_type;		/* 纵波 或者 横波 */
 	gshort	Angle_start;
-	gshort	Angle_end;			/* 扇扫时候可以设置的角度 0.01度为单位 */
-	gushort	Angle_step;			/* 扇扫时候可以设置的角度步进 */
+	gshort	Angle_end;		/* 扇扫时候可以设置的角度 0.01度为单位 */
+	gushort	Angle_step;		/* 扇扫时候可以设置的角度步进 */
 	guint	Focus_depth;		/* 扇扫时候为声程 线扫是深度 0.001mm为单位 */
 	gushort	law_index_start;	/* 聚焦法则索引 计算出来的 */
 	gushort law_index_end;		/*  */
-} LAW_INFO, *LAW_INFO_P;;
+} LAW_INFO, *LAW_INFO_P;
 
 typedef struct element_law
 {
@@ -498,15 +537,15 @@ typedef struct Probe {
 typedef struct Wedge {
 	guint	Angle;			/* 角度 */
 	guint	Height;			/* 第一阵元高度 */
-	gint	Primary_offset;	/* 前沿 */
+	gint	Primary_offset;		/* 前沿 */
 	guint	Vel0city;		/* 声速 */
 	gchar	Name[20];		/* 楔块名字 */
 } WEDGE, *WEDGE_P;
 
 /*材料 (Material) 28byte */
 typedef struct Material {
-	guint	Velocity_LW;	/* 声速 单位 0.01m/s 纵波 快点 */
-	guint	Velocity_SW;	/* 声速 单位 0.01m/s 横波 慢点 */
+	guint	Velocity_LW;		/* 声速 单位 0.01m/s 纵波 快点 */
+	guint	Velocity_SW;		/* 声速 单位 0.01m/s 横波 慢点 */
 	guchar	Name[20];		/* 材料名字 */
 } MATERIAL, *MATERIAL_P;
 
@@ -521,7 +560,7 @@ typedef struct Part {
 /* 组信息 */
 typedef struct Group {
 	/* 基本设置 */
-	guint	wedge_delay;	/* 楔款延时 单位 ns */
+	guint	wedge_delay;		/* 楔款延时 单位 ns */
 	guint	range;			/* 显示范围 单位 ns */
 	gint	start;			/* 扫描延时 单位 ns */
 	gushort	gain;			/* 实际增益 单位 0.01dB */
@@ -532,23 +571,50 @@ typedef struct Group {
 	guchar	pulser;			/* 1~ 128 - elem_qty(聚焦阵元数最大为32) + 1 
 							   指定发射阵元 与机器配置相关我们是128阵元最大,
 							   Probe 的Auto Program 选择On 以后不可以调节 值与connect P 一样 */
-	guchar receiver;		/* 接收阵元 必须是 PR 模式才能调节 */
+	guchar  receiver;		/* 接收阵元 必须是 PR 模式才能调节 */
 	guchar	filter;			/* 滤波 */
 	guchar	rectifier;		/* 检波  */
-	guchar tx_rxmode;		/* 收发模式 */
+	guchar	averaging;		/* 平均 */
+	guchar	video_filter;           /* 视频滤波*/
+
+	guchar  tx_rxmode;		/* 收发模式 */
 	guchar	freq_pos;		/* 频率选择模式是指定还是自己输入 */
 	guchar	pw_pos;			/* 脉冲宽度选择模式 */
 	guchar	prf_pos;		/* 脉冲宽度选择模式 */
 	gushort	frequence;		/* 以0.001Mhz 也就是Khz 1MHz~20MHz 为单位 当探头学选unknown 时候才可以调节 */
-	gushort	pulser_width;	/* 30~500ns 2.5ns为步进*/
+	gushort	pulser_width;	        /* 30~500ns 2.5ns为步进*/
 
 	guint	prf;			/* 重复频率 1-20000Hz 取值为10~200000 */
 	/*接收*/
 
 
+	guchar	point_qty_pos;		/* 点个数 位置 */
+	gushort	point_qty;		/* 点个数 */
+	guchar	sum_gain_pos;
+	gushort	sum_gain;
+	gushort	gain_offset;
+	guchar  gate_pos;               /* A , B , I*/
+	GATE_INFO       gate[3];        /* gate[0] A , gate[1] B , gate[2] I */
+
+	guchar	mode_pos;                            /*Gate/Alarm->Sizing Curves->Mode*/
+	guchar	curve_pos;                           /*Gate/Alarm->Sizing Curves->Curve*/
+	gushort ref_ampl;
+	gushort ref_ampl_offset;
+	gushort curve_step;
+	gushort ref_gain;
+	guint   position;
+	guchar  point_pos;
+	guint   amplitude;
+	gushort mat_atten;
+	guint   delay;
+	gushort tcg_gain;
+
+
 	LAW_INFO	law_info;	/* 聚焦法则的信息  */
-	PROBE	probe;
-	WEDGE	wedge;
+	PROBE	        probe;
+	WEDGE	        wedge;
+
+
 
 } GROUP, *GROUP_P;
 
@@ -556,18 +622,19 @@ typedef struct Group {
 typedef	struct Config {
 	guchar	groupId;			/* 当前group */
 	guchar	groupQty;			/* 共有几个group  0 1 2 3 4 5 6 7 */
+	guchar	voltage_pa;			/*  */
+	guchar	voltage_ut;	
 	GROUP	group[4];			/* 前3个都接前面的128的接口 第四个是常规通道结单独的UT接口 */
 	/* 基本参数 */
 	PART	part;				/* 被检测工件... */
 	/* 所有聚焦法则的信息在这里 */
 	LAW_BEAM	focal_law_all_beam[setup_MAX_LAW_QTY];
 	LAW_ELEM	focal_law_all_elem[setup_MAX_LAW_QTY][setup_MAX_ELEM_RX_ACTIVE];	
-	guchar	voltage_pa;		/*  */
-	guchar	voltage_ut;		/*  */
+	/*  */
 	/*接收*/
-//	guchar	rectifier;		/*  */
-	guchar	video_filter;	        /*  */
-	guchar	averaging;		/*  */
+	//	guchar	rectifier;		/*  */
+	//	guchar	video_filter;	        /*  */
+	//	guchar	averaging;		/*  */
 	guchar	reject;		        /*  */
 
 	/*波束 beam*/
@@ -575,53 +642,71 @@ typedef	struct Config {
 	gint	index_offset;		/**/
 	gint	angle;				/**/
 	gint	skew;				/**/
-	guint	beam_delay;			/**/
-	gint	gain_offset;
 
 	/*高级*/
 	guint	auto_height;	/**/
-	gushort	point_qty;		/**/
-	gushort	sum_gain;		/**/
+	//	gushort	point_qty;		/**/
+	//	gushort	sum_gain;		/**/
 
 	/*闸门报警 */
-	guchar   gate;
-	guchar   parameter;
-	guchar   synchro;
-	guchar   measure;
-	guchar   rf;
-	guint	agate_mode;		
-	gint	agate_start;	
-	guint	agate_width;	
-	guint	agate_height;	
+	//	guchar   gate;
+	//	guchar   parameter;
+	//	guchar   synchro;
+	//	guchar   measure;
+	//	guchar   rf;
+	/*	guint	agate_mode;		
+		gint	agate_start;	
+		guint	agate_width;	
+		guint	agate_height;	
 
-	guint	bgate_mode;	
-	gint	bgate_start;	
-	guint	bgate_width;	
-	guint	bgate_height;	
+		guint	bgate_mode;	
+		gint	bgate_start;	
+		guint	bgate_width;	
+		guint	bgate_height;	
 
-	guint	cgate_mode;		
-	gint	cgate_start;	
-	guint	cgate_width;	
-	guint	cgate_height;	
+		guint	cgate_mode;		
+		gint	cgate_start;	
+		guint	cgate_width;	
+		guint	cgate_height;	*/
+	gint	agate_start;
+	guint	agate_width;
 
-	guchar	groupA;
-	guchar	conditionA;
-	guchar	oprt;
-	guchar	groupB;
-	guchar	conditionB;
+	/*	guchar	groupA;
+		guchar	conditionA;
+		guchar	oprt;
+		guchar	groupB;
+		guchar	conditionB;*/
 
-	guint	alarm_sound;
+	guchar	alarm_pos;                 /* 报警信息 0  1  2 ... 15 */
+	//guchar	alarm_on_pos;              /* 报警信息 0  1  2 ... 15 */
+	ALARM_INFO	alarm[16];         /* alarm[0], alarm[1], ..., alarm[15] */
+
+	guchar  output_pos;                /* 0  1  2 */
+	OUTPUT_INFO  output[3];           /* 输出信息 output[0],output[1],output[2] */
+	//guchar alarm_on[16];  		  /*alarm#中的选项后面是否加[On] 0否 1是*/
+
+
+	//guchar	output;                          /*Gate/Alarm->Output->Output*/
+	//guchar	alarm1;                          /*Gate/Alarm->Output->Alarm #*/
+	//guint	count;                           /*Gate/Alarm->Output->count*/
+	//	guchar	sound;                           /*Gate/Alarm->Output->sound*/
+	//	guint	active_delay;                    /*Gate/Alarm->Output->delay*/
+	//	guint	holdtime;                        /*Gate/Alarm->Output->holdtime*/
+
+	//	guchar	mode;                            /*Gate/Alarm->Sizing Curves->Mode*/
+	//	guchar	curve;                           /*Gate/Alarm->Sizing Curves->Curve*/
+
+	//	guint	alarm_sound;
 
 	/*测量*/
-	guint	measure1;	
-	guint	measure2;	
-	guint	measure3;	
-	guint	measure4;	
+	/*	guint	measure1;	
+		guint	measure2;	
+		guint	measure3;	
+		guint	measure4;*/	
 
 	/*显示*/
 	guchar	display;		/*显示模式 A B C A+B A+B+C A+S ...*/
 	guint	c_scan;			/*c扫描参考*/
-
 	guchar	ut_unit;		/*检测单位 时间2 声程1  实际深度0 .*/
 	guchar	color;			/**/
 
@@ -636,15 +721,8 @@ typedef	struct Config {
 	guchar	type;                            /*Wizard -> calibration -> type */
 	guchar	calibration_mode;                /*Wizard -> calibration -> Mode */
 
-	guchar	alarm;                           /*Gate/Alarm->Alarm->Alarm*/
-	guchar	output;                          /*Gate/Alarm->Output->Output*/
-	guchar	alarm1;                          /*Gate/Alarm->Output->Alarm #*/
-	guint	count;                           /*Gate/Alarm->Output->count*/
-	guchar	sound;                           /*Gate/Alarm->Output->sound*/
-	guint	active_delay;                    /*Gate/Alarm->Output->delay*/
-	guint	holdtime;                        /*Gate/Alarm->Output->holdtime*/
-	guchar	mode;                            /*Gate/Alarm->Sizing Curves->Mode*/
-	guchar	curve;                           /*Gate/Alarm->Sizing Curves->Curve*/
+	//guchar	alarm;                           /*Gate/Alarm->Alarm->Alarm*/
+
 
 	guchar	list;                            /*Measurements->Reading->list*/
 	guchar	field1;                            /*Measurements->Reading->Field1*/
@@ -767,7 +845,7 @@ typedef struct tmp_config {
 	guchar	reject_reg;			/* 抑制reject  步进 */
 	guchar	scanoffset_reg;		/* scan offset  步进 */
 	guchar	indexoffset_reg;	/* index offset  步进 */
-	guchar	gainoffset_reg;		/* gain offset  步进 */
+	guchar	gain_offset_reg;		/* gain offset  步进 */
 
 	guchar beam_delay_reg;		/*beam delay 步进*/
 
@@ -788,6 +866,16 @@ typedef struct tmp_config {
 	guchar  max_thickness_reg;           /*max_thickness步进*/
 	guchar  entry_reg;                   /*entry步进*/
 	guchar  echo_qty_reg;                /*echo_qty步进*/
+
+	guchar  ref_ampl_reg;                /*232 Gate/Alarm->Sizing Curves */
+	guchar  ref_ampl_offset_reg;
+	guchar  curve_step_reg;
+	guchar  ref_gain_reg;
+	guchar  position_reg;
+	guchar  amplitude_reg;
+	guchar  mat_atten_reg;
+	guchar  delay_reg;
+	guchar  tcg_gain_reg;
 
 	guchar   color_contrast_reg;                 /* Display -> Color -> contrast  */
 	guchar   brightness_reg;                     /* Display -> Color -> brightness*/
@@ -966,6 +1054,7 @@ typedef struct Draw_interface {
 
 
 /* guchar 0~256   gushort 0~65536  guint 0~2^32 */
+/* 13*。。。。  */
 
 /* Wizard 中各Start , Next。。。等的实现 */
 /* UT Settings -> Beam 下几个菜单unsensitive */
@@ -991,6 +1080,11 @@ typedef struct Draw_interface {
 #define GROUP_VAL(a)  (CFG(group[CFG(groupId)].a))
 #define LAW_VAL_POS(a, b)  (GROUP_VAL_POS(a,law_info).b)
 #define LAW_VAL(a)  (GROUP_VAL(law_info).a)
+#define BEAM_INFO(a,b)  (CFG(focal_law_all_beam[a].b))         /* a表示第几个波束， b表示当前波束下的某一个特性的值 */
+
+#define GROUP_GATE_POS(a)   GROUP_VAL(gate[GROUP_VAL(gate_pos)].a)
+#define CFG_ALARM_POS(a)  CFG(alarm[CFG(alarm_pos)].a)
+#define CFG_OUTPUT_POS(a) CFG(output[CFG(output_pos)].a)
 
 #define TMP(a)  (pp->p_tmp_config->a)
 #define	MENU_STATUS	(pp->pos_pos) 
