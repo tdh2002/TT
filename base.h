@@ -585,16 +585,14 @@ typedef struct Group {
 	gushort	pulser_width;	        /* 30~500ns 2.5ns为步进*/
 
 	guint	prf;			/* 重复频率 1-20000Hz 取值为10~200000 */
-	/*接收*/
-
 
 	guchar	point_qty_pos;		/* 点个数 位置 */
-	gushort	point_qty;		/* 点个数 */
 	guchar	sum_gain_pos;
+	guchar  gate_pos;               /* A , B , I*/
+	gushort	point_qty;			/* 点个数 */
 	gushort	sum_gain;
 	gushort	gain_offset;
-	guchar  gate_pos;               /* A , B , I*/
-	GATE_INFO       gate[3];        /* gate[0] A , gate[1] B , gate[2] I */
+	GATE_INFO    gate[setup_MAX_GATE];        /* gate[0] A , gate[1] B , gate[2] I */
 
 	guchar	mode_pos;                            /*Gate/Alarm->Sizing Curves->Mode*/
 	guchar	curve_pos;                           /*Gate/Alarm->Sizing Curves->Curve*/

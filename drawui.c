@@ -45,29 +45,6 @@ const gchar **menu_content = all_menu_content_en;
 const gchar **type       = type_en;
 const gchar **calibration_mode       = calibration_mode_en;
 
-//const gchar **averaging  =averaging_en;
-//const gchar **db_ref	 = db_ref_en;
-//const gchar **points_qty =points_qty_en;
-//const gchar **sum_gain   =sum_gain_en;
-
-//const gchar **gate_       = gate_en;
-//const gchar **synchro =synchro_en;
-//const gchar **measure =measure_en;
-//const gchar **RF      =RF_en;
-//const gchar **parameters = parameters_en;
-//const gchar **gate_alarm = gate_alarm_en;
-//const gchar **groupA     = groupA_en;
-//const gchar **conditionA = conditionA_en;
-//const gchar **operator   = operator_en;
-//const gchar **groupB     = groupB_en;
-//const gchar **conditionB = conditionB_en;
-//const gchar **output     = output_en;
-//const gchar **output_alarm= output_alarm_en;
-//const gchar **sound      = sound_en;
-//const gchar **sound1     =sound1_en;
-//const gchar **curves_mode= curves_mode_en;
-//sconst gchar **curve      = curve_en;
-
 const gchar **list       =list_en;
 const gchar **list1      =list1_en;
 const gchar **field1     =field1_en;
@@ -1368,7 +1345,7 @@ void draw3_data0(DRAW_UI_P p)
 		case 2:
 			switch (pp->pos1[2])
 			{
-				case 0:/*Gate P200 */
+				case 0:/* Gate 选择调节哪个闸门 P200 */
 					pp->x_pos = 630, pp->y_pos = 120;
 					if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 0))
 						draw3_pop_tt (data_200, NULL, 
@@ -2238,7 +2215,7 @@ void draw3_data1(DRAW_UI_P p)
 		case 2:
 			switch (pp->pos1[2])
 			{
-				case 0:/* Gate->Parameters  P201 */
+				case 0:/* Gate->Parameters 选择 Mode还是Position  P201 */
 					pp->x_pos = 590, pp->y_pos = 218;
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 						draw3_pop_tt (data_201, NULL, 

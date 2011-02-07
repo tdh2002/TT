@@ -1707,7 +1707,7 @@ void data_145 (GtkMenuItem *menuitem, gpointer data) /* Sum Gain */
 	/* 发送增益给硬件 */
 }
 
-void data_200 (GtkMenuItem *menuitem, gpointer data) /* Gate P200 */
+void data_200 (GtkMenuItem *menuitem, gpointer data) /* Gate 闸门选择 P200 */
 {
 	GROUP_VAL(gate_pos) = (gchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
@@ -1716,7 +1716,7 @@ void data_200 (GtkMenuItem *menuitem, gpointer data) /* Gate P200 */
 	send_dsp_data (GATE_POS_DSP, GROUP_VAL(gate_pos));
 }
 
-void data_201 (GtkMenuItem *menuitem, gpointer data) /* parameter */
+void data_201 (GtkMenuItem *menuitem, gpointer data) /* parameter 闸门参数选择 位置或者模式 P201 */
 {
 	//pp->p_config->parameter = (gchar) (GPOINTER_TO_UINT (data));
 	GROUP_VAL(gate[GROUP_VAL(gate_pos)].parameters) = (gchar) (GPOINTER_TO_UINT (data));
