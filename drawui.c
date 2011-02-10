@@ -2223,7 +2223,6 @@ void draw3_data1(DRAW_UI_P p)
 								menu_content + PARAMETERS, 2, 1, GROUP_GATE_POS(parameters), 0);
 					else 
 						draw3_popdown (menu_content[PARAMETERS + GROUP_GATE_POS(parameters)], 1, 0);
-
 					break;
 
 				case 1:/* Gate -> Alarm -> Group A P211 */
@@ -3564,68 +3563,108 @@ void draw3_data2(DRAW_UI_P p)
 		case 2:
 			switch (pp->pos1[2])
 			{
-				case 0:/*Gate->Start P202 */
+				case 0:/* 闸门起点 或者 同步模式 P202 */
 					pp->x_pos = 608, pp->y_pos = 295;
-					//if(CFG(parameter)==0)
-					if(GROUP_GATE_POS(parameters)==0)
+					if (GROUP_GATE_POS(parameters) == 0) /* 闸门起点 */
 					{
 						/* 当前步进 */
 						switch (pp->p_tmp_config->agate_start_reg)
 						{
-							case 0:	tmpf = 0.01; break;
-							case 1:	tmpf = 0.10; break;
-							case 2:	tmpf = 1.00; break;
-							case 3:	tmpf = 10.00; break;						
+							case 0:	tmpf = (GROUP_VAL(range) / 1000.0) / 320.0; break;
+							case 1:	tmpf = (GROUP_VAL(range) / 1000.0) / 20.0 ; break;
+							case 2:	tmpf = (GROUP_VAL(range) / 1000.0) / 10.0 ; break;
+							case 3:	tmpf = (GROUP_VAL(range) / 1000.0) / 1.0  ; break;
 							default:break;
 						}
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 						{
-							cur_value = GROUP_GATE_POS(start)/1000.0;
-							lower = -3000.0;
-							upper = 27000.0;
-							step = tmpf;
-							digit = 2;
-							pos = 2;
-							unit = UNIT_MM;
+							if ((UT_UNIT_TRUE_DEPTH == CFG(ut_unit)) || (UT_UNIT_SOUNDPATH == CFG(ut_unit)))
+							{
+								if (UNIT_MM == CFG(unit)) 
+								{
+									cur_value = (GROUP_GATE_POS(start) / 1000.0) * (GROUP_VAL(velocity) / 200000.0);   /* 当前显示的起位数值mm */
+									lower = (BEAM_INFO(0,beam_delay) /1000.0) * GROUP_VAL(velocity) / 200000.0;
+									upper =	(MAX_RANGE_US - GROUP_GATE_POS(width) / 1000.0) * (GROUP_VAL(velocity) / 200000.0);
+									step = tmpf * (GROUP_VAL(velocity) / 200000.0);
+									digit = 2;
+									pos = 2;
+									unit = UNIT_MM;
+								}
+								else 
+								{
+									cur_value = (GROUP_GATE_POS(start) / 1000.0) * 0.03937 * (GROUP_VAL(velocity) / 200000.0); /* 当前显示的范围inch */
+									lower = (BEAM_INFO(0,beam_delay) / 1000.0) * 0.03937 * GROUP_VAL(velocity) / 200000.0;
+									upper =	(MAX_RANGE_US - GROUP_GATE_POS(width) / 1000.0 ) * 0.03937 * GROUP_VAL(velocity) / 200000.0;
+									step = tmpf * 0.03937 * GROUP_VAL(velocity) / 200000.0;
+									digit = 3;
+									pos = 2;
+									unit = UNIT_INCH;
+								}
+							}
+							else 
+							{
+								cur_value = GROUP_GATE_POS(start) / 1000.0 ;
+								//lower =	CFG(beam_delay) / 1000.0;
+								lower =	BEAM_INFO(0,beam_delay) / 1000.0;
+								upper =	(MAX_RANGE_US - GROUP_GATE_POS(width) / 1000.0);
+								step = tmpf;
+								digit = 2;
+								pos = 2;
+								unit = UNIT_US;
+							}
+
 							draw3_digit_pressed (data_202, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 						}
 						else 
 						{
-							cur_value = GROUP_GATE_POS(start)/1000.0;
-							digit = 2;
-							pos = 2;
-							unit = UNIT_MM;
-							draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
+							if ((UT_UNIT_TRUE_DEPTH == CFG(ut_unit)) || (UT_UNIT_SOUNDPATH == CFG(ut_unit)))
+							{
+								if (UNIT_MM == CFG(unit))
+								{
+									cur_value = (GROUP_GATE_POS(start) / 1000.0) * (GROUP_VAL(velocity) / 200000.0);   /* 当前显示的范围数值mm */
+									unit = UNIT_MM;
+									digit = 2;
+									pos = 2;
+								}
+								else
+								{
+									cur_value = (GROUP_GATE_POS(start) / 1000.0) * 0.03937 * (GROUP_VAL(velocity) / 200000.0); /* 当前显示的范围inch */
+									unit = UNIT_INCH;
+									digit = 3;
+									pos = 2;
+								}
+							}
+							else
+							{
+								cur_value = GROUP_GATE_POS(start)/1000.0;
+								unit = UNIT_US;
+								digit = 2;
+								pos = 2;
+							}
+							draw3_digit_stop (cur_value , units[unit], digit, pos, 0);
 						}
 					}
-					else
+					else  /* 同步模式 */
 					{
 
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 						{
-							if(GROUP_VAL(gate_pos)!=1)
+							if (GROUP_VAL(gate_pos) != GATE_B) /* 闸门选择B时候 有3个同步选项 */
 							{
 								draw3_pop_tt (data_2021, NULL, menu_content[SYNCHRO + GROUP_GATE_POS(synchro)],menu_content + SYNCHRO, 2, 2, GROUP_GATE_POS(synchro), 0);
-								// str = g_strdup_printf ("%s", con2_p[2][0][6]);	
-								// gtk_label_set_text (GTK_LABEL (pp->label3[2]), str);
 							}
 							else
 							{
 								draw3_pop_tt (data_2021, NULL, menu_content[SYNCHRO + GROUP_GATE_POS(synchro)],menu_content + SYNCHRO, 3, 2, GROUP_GATE_POS(synchro), 0);
-								// str = g_strdup_printf ("%s", con2_p[2][0][6]);	
-								//gtk_label_set_text (GTK_LABEL (pp->label3[2]), str);
 							}
 						}
 						else 
 						{
 							draw3_popdown (menu_content[SYNCHRO +GROUP_GATE_POS(synchro)], 2, 0);
-							//str = g_strdup_printf ("%s", con2_p[2][0][6]);	
-							//gtk_label_set_text (GTK_LABEL (pp->label3[2]), str);
 						}
 						str = g_strdup_printf ("%s", con2_p[2][0][6]);	
 						gtk_label_set_text (GTK_LABEL (pp->label3[2]), str);
 					}
-
 					break;
 
 				case 1:/*Condition  P212 */
@@ -4892,9 +4931,8 @@ void draw3_data3(DRAW_UI_P p)
 		case 2:
 			switch (p->pos1[2])
 			{
-				case 0:/*Gate->Width P203 */
+				case 0:/* 闸门宽度 P203 */
 					pp->x_pos = 580, pp->y_pos = 380;
-					//if(CFG(parameter)==0)
 					if(GROUP_GATE_POS(parameters)==0)
 					{
 						/* 当前步进 */

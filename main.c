@@ -61,7 +61,9 @@ static void set_config (guint groupid)
 	GROUP_VAL(video_filter)	= VIDEO_FILTER_OFF;
 	GROUP_VAL(point_qty)	= 100;			/* 0是Auto */
 	GROUP_VAL(sum_gain)	= 10;			/* 0是Auto */
-	GROUP_VAL(gate_pos)	= GATE_A;		/* 0是A */  
+	GROUP_VAL(gate_pos)	= GATE_A;		  
+	GROUP_VAL(gate[GROUP_VAL(gate_pos)].start) = 0;  
+	GROUP_VAL(gate[GROUP_VAL(gate_pos)].width) = 10000;  
 	GROUP_VAL(gate[GROUP_VAL(gate_pos)].parameters) = 0;
 	GROUP_VAL(gate[GROUP_VAL(gate_pos)].synchro) = 0;  
 	CFG(alarm_pos)	= 0;                             /* alarm的值，1～16 */

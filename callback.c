@@ -533,7 +533,7 @@ void b3_fun1(gpointer p)
 	/* 之前的位置 */
 	pp->pos_last2 = pp->pos2[pp->pos][pp->pos1[pp->pos]];
 	pp->pos2[pp->pos][pp->pos1[pp->pos]] = 1;
-	pp->pos_pos = MENU3_PRESSED;
+/*	pp->pos_pos = MENU3_PRESSED;*/
 
 	/* 一次点击处理 */
 	switch (pp->pos)
@@ -563,7 +563,8 @@ void b3_fun1(gpointer p)
 
 
 	/*处理微调*/
-	if (pp->pos_last2 == pp->pos2[pp->pos][pp->pos1[pp->pos]])
+	if ((pp->pos_last2 == pp->pos2[pp->pos][pp->pos1[pp->pos]]) &&
+			(pp->pos_pos == MENU3_PRESSED))
 	{
 		switch (pp->pos) 
 		{
@@ -685,6 +686,7 @@ void b3_fun1(gpointer p)
 		}
 	}
 
+	pp->pos_pos = MENU3_PRESSED;
 	draw_2_menu(0);
 	draw_3_menu(0, NULL);                          /**/
 
@@ -697,7 +699,6 @@ void b3_fun2(gpointer p)
 	/* 之前的位置 */
 	pp->pos_last2 = pp->pos2[pp->pos][pp->pos1[pp->pos]];
 	pp->pos2[pp->pos][pp->pos1[pp->pos]] = 2;
-	pp->pos_pos = MENU3_PRESSED;
 
 	switch (pp->pos)
 	{
@@ -729,7 +730,8 @@ void b3_fun2(gpointer p)
 		default:break;
 	}
 	/*处理微调*/
-	if (pp->pos_last2 == pp->pos2[pp->pos][pp->pos1[pp->pos]])
+	if ((pp->pos_last2 == pp->pos2[pp->pos][pp->pos1[pp->pos]]) &&
+			(pp->pos_pos == MENU3_PRESSED)) 
 	{
 		switch (pp->pos) 
 		{
@@ -855,6 +857,7 @@ void b3_fun2(gpointer p)
 		}
 	}
 
+	pp->pos_pos = MENU3_PRESSED;
 	draw_2_menu(0);
 	draw_3_menu(0, NULL);                          /**/
 
@@ -866,7 +869,6 @@ void b3_fun3(gpointer p)
 	/* 之前的位置 */
 	pp->pos_last2 = pp->pos2[pp->pos][pp->pos1[pp->pos]];
 	pp->pos2[pp->pos][pp->pos1[pp->pos]] = 3;
-	pp->pos_pos = MENU3_PRESSED;
 
 	switch (pp->pos)
 	{
@@ -885,7 +887,8 @@ void b3_fun3(gpointer p)
 	}
 
 	/*处理微调*/
-	if (pp->pos_last2 == pp->pos2[pp->pos][pp->pos1[pp->pos]])
+	if ((pp->pos_last2 == pp->pos2[pp->pos][pp->pos1[pp->pos]]) &&
+			(pp->pos_pos == MENU3_PRESSED))
 	{
 		switch (pp->pos) 
 		{
@@ -1010,6 +1013,7 @@ void b3_fun3(gpointer p)
 		}
 	}
 
+	pp->pos_pos = MENU3_PRESSED;
 	draw_2_menu(0);
 	draw_3_menu(0, NULL);                          /**/
 
@@ -1021,9 +1025,9 @@ void b3_fun4(gpointer p)
 	/* 之前的位置 */
 	pp->pos_last2 = pp->pos2[pp->pos][pp->pos1[pp->pos]];
 	pp->pos2[pp->pos][pp->pos1[pp->pos]] = 4;
-	pp->pos_pos = MENU3_PRESSED;
 	/*处理微调*/
-	if (pp->pos_last2 == pp->pos2[pp->pos][pp->pos1[pp->pos]])
+	if ((pp->pos_last2 == pp->pos2[pp->pos][pp->pos1[pp->pos]]) &&
+			(pp->pos_pos == MENU3_PRESSED))
 	{
 		switch (pp->pos) 
 		{
@@ -1093,6 +1097,7 @@ void b3_fun4(gpointer p)
 		}
 	}
 
+	pp->pos_pos = MENU3_PRESSED;
 	draw_2_menu(0);
 	draw_3_menu(0, NULL);                          /**/
 
@@ -1104,9 +1109,9 @@ void b3_fun5(gpointer p)
 	/* 之前的位置 */
 	pp->pos_last2 = pp->pos2[pp->pos][pp->pos1[pp->pos]];
 	pp->pos2[pp->pos][pp->pos1[pp->pos]] = 5;
-	pp->pos_pos = MENU3_PRESSED;
 	/*处理微调*/
-	if (pp->pos_last2 == pp->pos2[pp->pos][pp->pos1[pp->pos]])
+	if ((pp->pos_last2 == pp->pos2[pp->pos][pp->pos1[pp->pos]]) &&
+			(pp->pos_pos == MENU3_PRESSED))
 	{
 		switch (pp->pos) 
 		{
@@ -1182,6 +1187,7 @@ void b3_fun5(gpointer p)
 		}
 	}
 
+	pp->pos_pos = MENU3_PRESSED;
 	draw_2_menu(0);
 	draw_3_menu(0, NULL);                          /**/
 
@@ -1381,12 +1387,12 @@ void data_101 (GtkSpinButton *spinbutton, gpointer data) /*Start 扫描延时 P1
 	if ((UT_UNIT_TRUE_DEPTH == CFG(ut_unit)) || (UT_UNIT_SOUNDPATH == CFG(ut_unit)))
 	{
 		if (UNIT_MM == CFG(unit))
-			GROUP_VAL(start) = (guint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / (GROUP_VAL(velocity) / 100000.0));
+			GROUP_VAL(start) = (gint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / (GROUP_VAL(velocity) / 100000.0));
 		else  /* 英寸 */
-			GROUP_VAL(start) = (guint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / ( 0.03937 * GROUP_VAL(velocity) / 100000.0));
+			GROUP_VAL(start) = (gint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / ( 0.03937 * GROUP_VAL(velocity) / 100000.0));
 	}
 	else /* 显示方式为时间 */
-		GROUP_VAL(start) = gtk_spin_button_get_value (spinbutton) * 1000.0 ; 
+		GROUP_VAL(start) = (gint) (gtk_spin_button_get_value (spinbutton) * 1000.0) ; 
 
 	/*发送增益给硬件*/
 }
@@ -1718,7 +1724,6 @@ void data_200 (GtkMenuItem *menuitem, gpointer data) /* Gate 闸门选择 P200 *
 
 void data_201 (GtkMenuItem *menuitem, gpointer data) /* parameter 闸门参数选择 位置或者模式 P201 */
 {
-	//pp->p_config->parameter = (gchar) (GPOINTER_TO_UINT (data));
 	GROUP_VAL(gate[GROUP_VAL(gate_pos)].parameters) = (gchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
@@ -1726,58 +1731,55 @@ void data_201 (GtkMenuItem *menuitem, gpointer data) /* parameter 闸门参数�
 	send_dsp_data (PARAMETERS_DSP, GROUP_VAL(gate[GROUP_VAL(gate_pos)].parameters));
 }
 
-void data_202 (GtkSpinButton *spinbutton, gpointer data) /*agate start */
+void data_202 (GtkSpinButton *spinbutton, gpointer data)	/* 闸门开始位置 P202 */
 {
-	//DRAW_UI_P p = (DRAW_UI_P)(data);
-	//pp->p_config->agate_start =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
-	GROUP_VAL(gate[GROUP_VAL(gate_pos)].start) =  (gushort) ((gtk_spin_button_get_value (spinbutton)) * 1000.0);
+	if ((UT_UNIT_TRUE_DEPTH == CFG(ut_unit)) || (UT_UNIT_SOUNDPATH == CFG(ut_unit)))
+	{
+		if (UNIT_MM == CFG(unit))
+			GROUP_GATE_POS(start) = (gint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / (GROUP_VAL(velocity) / 100000.0));
+		else  /* 英寸 */
+			GROUP_GATE_POS(start) = (gint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / ( 0.03937 * GROUP_VAL(velocity) / 100000.0));
+	}
+	else /* 显示方式为时间 */
+		GROUP_GATE_POS(start) = (gint) (gtk_spin_button_get_value (spinbutton) * 1000.0) ; 
+
 	send_dsp_data (START_DSP, GROUP_VAL(gate[GROUP_VAL(gate_pos)].start));
 }
-void data_2021 (GtkMenuItem *menuitem, gpointer data) /* agate synchro */
+
+void data_2021 (GtkMenuItem *menuitem, gpointer data)	/* 闸门同步 */
 {
-	//pp->p_config->synchro = (gchar) (GPOINTER_TO_UINT (data));
-	GROUP_VAL(gate[GROUP_VAL(gate_pos)].synchro) = (gchar) (GPOINTER_TO_UINT (data));
+	GROUP_VAL(gate[GROUP_VAL(gate_pos)].synchro) = (guchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
 	send_dsp_data (SYNCHRO_DSP, GROUP_VAL(gate[GROUP_VAL(gate_pos)].synchro));
-
 }
 
-void data_203 (GtkSpinButton *spinbutton, gpointer data) /*agate width */
+void data_203 (GtkSpinButton *spinbutton, gpointer data) /* 闸门宽度 P203 */
 {
-	//DRAW_UI_P p = (DRAW_UI_P)(data);
 	GROUP_VAL(gate[GROUP_VAL(gate_pos)].width) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
 	send_dsp_data (WIDTH_DSP, GROUP_VAL(gate[GROUP_VAL(gate_pos)].width));
-
-
 }
-void data_2031 (GtkMenuItem *menuitem, gpointer data) /* agate measure */
+
+void data_2031 (GtkMenuItem *menuitem, gpointer data)	/* 波峰或者前沿 测量选项 */
 {
-	//pp->p_config->measure = (gchar) (GPOINTER_TO_UINT (data));
-	GROUP_VAL(gate[GROUP_VAL(gate_pos)].measure) = (gchar) (GPOINTER_TO_UINT (data));
+	GROUP_VAL(gate[GROUP_VAL(gate_pos)].measure) = (guchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
 	send_dsp_data (MEASURE_DSP, GROUP_VAL(gate[GROUP_VAL(gate_pos)].measure));
-
 }
 
-void data_204 (GtkSpinButton *spinbutton, gpointer data) /*agate height */
+void data_204 (GtkSpinButton *spinbutton, gpointer data) /* 闸门高度 P204 */
 {
-	//DRAW_UI_P p = (DRAW_UI_P)(data);
-	//pp->p_config->agate_height =  (guint) (gtk_spin_button_get_value (spinbutton));
-	GROUP_VAL(gate[GROUP_VAL(gate_pos)].height) =  (guint) (gtk_spin_button_get_value (spinbutton) );
+	GROUP_VAL(gate[GROUP_VAL(gate_pos)].height) =  (guchar) (gtk_spin_button_get_value (spinbutton) );
 	send_dsp_data (HEIGHT_DSP, GROUP_VAL(gate[GROUP_VAL(gate_pos)].height));
-
-	/*发送增益给硬件*/
 }
-void data_2041 (GtkMenuItem *menuitem, gpointer data) /* agate rf */
+
+void data_2041 (GtkMenuItem *menuitem, gpointer data) /* 闸门RF 选择 射频时候才可以调节 */
 {
-	//pp->p_config->rf = (gchar) (GPOINTER_TO_UINT (data));
 	GROUP_VAL(gate[GROUP_VAL(gate_pos)].rectifier_freq) = (gchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
 	send_dsp_data (RECTIFIER_FREQ_DSP, GROUP_VAL(gate[GROUP_VAL(gate_pos)].rectifier_freq));
-	/* 发送增益给硬件 */
 }
 
 void data_210 (GtkMenuItem *menuitem, gpointer data) /* Alarm */

@@ -387,7 +387,6 @@ const gchar ***content2_en[] =
 /* 0mm 1英寸 2微秒  */
 const gchar *units_en[] = {"(mm)", "(in)", "(μs)", NULL, "(m/s)", "(in/μs)", "(dB)", "(1 to 97)", "(%)", "(ms)", "(mm/s)", "(1 to 113)", "(dB/mm)", " "};
 
-
 const gchar *all_menu_content_en[] = 
 {
 	"PC Pitch-and-Catch", "PE Pulse-Echo", "TT Through-Transmission", "",		/* 0 TX_RX_MODE*/
@@ -428,7 +427,6 @@ const gchar *all_menu_content_en[] =
 
 	""																			
 };
-
 
 /*  0  */
 const gchar *type_en[] = {"Encoder", "Ultrasound", "Code"};

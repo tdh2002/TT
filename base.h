@@ -647,33 +647,8 @@ typedef	struct Config {
 	//	gushort	sum_gain;		/**/
 
 	/*闸门报警 */
-	//	guchar   gate;
-	//	guchar   parameter;
-	//	guchar   synchro;
-	//	guchar   measure;
-	//	guchar   rf;
-	/*	guint	agate_mode;		
-		gint	agate_start;	
-		guint	agate_width;	
-		guint	agate_height;	
-
-		guint	bgate_mode;	
-		gint	bgate_start;	
-		guint	bgate_width;	
-		guint	bgate_height;	
-
-		guint	cgate_mode;		
-		gint	cgate_start;	
-		guint	cgate_width;	
-		guint	cgate_height;	*/
 	gint	agate_start;
 	guint	agate_width;
-
-	/*	guchar	groupA;
-		guchar	conditionA;
-		guchar	oprt;
-		guchar	groupB;
-		guchar	conditionB;*/
 
 	guchar	alarm_pos;                 /* 报警信息 0  1  2 ... 15 */
 	//guchar	alarm_on_pos;              /* 报警信息 0  1  2 ... 15 */
