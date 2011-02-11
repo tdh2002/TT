@@ -417,8 +417,8 @@ const gchar *all_menu_content_en[] =
 	"AND","OR",									/* 132 operator */
 	"Output 1", "Output 2","Output 3", "Analog 1", "Analog 2",			/* 134 Output_pos */
 	"Output 1  [On]","Output 2  [On]","Output 3  [On]","Analog 1  [On]","Analog 2  [On]", 		/*139 Output_pos+5 */
-	"None", "All", "1", "2", "3", "4", "5", "6", "7", "8", "9","10","11","12","13","14","15","16",	/*144 alarm1*/
-	"None", "All", "1  [On]", "2  [On]", "3  [On]", "4  [On]", "5  [On]", "6  [On]", "7  [On]", "8  [On]", "9  [On]","10  [On]","11  [On]","12  [On]","13  [On]","14  [On]","15  [On]","16  [On]","Multi",						/*162 alarm1*/
+	"None", "All", "1", "2", "3", "4", "5", "6", "7", "8", "9","10","11","12","13","14","15","16", "Multi",	/*144 alarm1*/
+	"None", "All", "1  [On]", "2  [On]", "3  [On]", "4  [On]", "5  [On]", "6  [On]", "7  [On]", "8  [On]", "9  [On]","10  [On]","11  [On]","12  [On]","13  [On]","14  [On]","15  [On]","16  [On]",						/*162 alarm1*/
 	"Off", "A%", "B%", "Thickness",									/* 181 data */ 
 	"Off  No Sound", "300Hz  Audio output at 300 Hz","600Hz  Audio output at 600 Hz","1000Hz  Audio output at 1000 Hz","5000Hz  Audio output at 5000 Hz",											/* 185 sound*/
 	"Off", "300Hz","600Hz","1000Hz","5000Hz",							/* 190 sound */

@@ -1756,7 +1756,16 @@ void data_2021 (GtkMenuItem *menuitem, gpointer data)	/* 闸门同步 */
 
 void data_203 (GtkSpinButton *spinbutton, gpointer data) /* 闸门宽度 P203 */
 {
-	GROUP_VAL(gate[GROUP_VAL(gate_pos)].width) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
+	if ((UT_UNIT_TRUE_DEPTH == CFG(ut_unit)) || (UT_UNIT_SOUNDPATH == CFG(ut_unit)))
+	{
+		if (UNIT_MM == CFG(unit))
+			GROUP_GATE_POS(width) = (guint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / (GROUP_VAL(velocity) / 100000.0));
+		else  /* 英寸 */
+			GROUP_GATE_POS(width) = (guint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / ( 0.03937 * GROUP_VAL(velocity) / 100000.0));
+	}
+	else /* 显示方式为时间 */
+		GROUP_GATE_POS(width) = (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0) ; 
+
 	send_dsp_data (WIDTH_DSP, GROUP_VAL(gate[GROUP_VAL(gate_pos)].width));
 }
 
@@ -1782,106 +1791,145 @@ void data_2041 (GtkMenuItem *menuitem, gpointer data) /* 闸门RF 选择 射频�
 	send_dsp_data (RECTIFIER_FREQ_DSP, GROUP_VAL(gate[GROUP_VAL(gate_pos)].rectifier_freq));
 }
 
-void data_210 (GtkMenuItem *menuitem, gpointer data) /* Alarm */
+void data_210 (GtkMenuItem *menuitem, gpointer data) /* Alarm  P210 */
 {
-	//pp->p_config->alarm = (gchar) (GPOINTER_TO_UINT (data));
-	CFG(alarm_pos) = (gchar) (GPOINTER_TO_UINT (data));
+	CFG(alarm_pos) = (guchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
 	send_dsp_data (ALARM_POS_DSP, CFG(alarm_pos));
 	/* 发送增益给硬件 */
 }
 
-void data_211 (GtkMenuItem *menuitem, gpointer data) /* Group A */
+void data_211 (GtkMenuItem *menuitem, gpointer data) /* Group A P211 */
 {
-	CFG(alarm[CFG(alarm_pos)].groupa) = (gchar) (GPOINTER_TO_UINT (data));
+	CFG(alarm[CFG(alarm_pos)].groupa) = (guchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
 	send_dsp_data (GROUPA_DSP, CFG(alarm[CFG(alarm_pos)].groupa));
 	/* 发送增益给硬件 */
 }
-void data_212 (GtkMenuItem *menuitem, gpointer data) /* Condition A */
+void data_212 (GtkMenuItem *menuitem, gpointer data) /* Condition A P212 */
 {
-	CFG(alarm[CFG(alarm_pos)].conditiona) = (gchar) (GPOINTER_TO_UINT (data));
+	CFG(alarm[CFG(alarm_pos)].conditiona) = (guchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
 	send_dsp_data (CONDITIONA_DSP, CFG(alarm[CFG(alarm_pos)].conditiona));
 	/* 发送增益给硬件 */
 }
-void data_213 (GtkMenuItem *menuitem, gpointer data) /* operator */
+
+void data_213 (GtkMenuItem *menuitem, gpointer data) /* operator P213 */
 {
-	CFG(alarm[CFG(alarm_pos)].operat) = (gchar) (GPOINTER_TO_UINT (data));
+	CFG(alarm[CFG(alarm_pos)].operat) = (guchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
 	send_dsp_data (OPERAT_DSP, CFG(alarm[CFG(alarm_pos)].operat));
 }
-void data_214 (GtkMenuItem *menuitem, gpointer data) /* Group B */
+
+void data_214 (GtkMenuItem *menuitem, gpointer data) /* Group B P214 */
 {
-	CFG(alarm[CFG(alarm_pos)].groupb) = (gchar) (GPOINTER_TO_UINT (data));
+	CFG(alarm[CFG(alarm_pos)].groupb) = (guchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
 	send_dsp_data (GROUPB_DSP, CFG(alarm[CFG(alarm_pos)].groupb));
 }
-void data_215 (GtkMenuItem *menuitem, gpointer data) /* condition B */
+
+void data_215 (GtkMenuItem *menuitem, gpointer data) /* condition B P215 */
 {
-	CFG(alarm[CFG(alarm_pos)].conditionb) = (gchar) (GPOINTER_TO_UINT (data));
+	CFG(alarm[CFG(alarm_pos)].conditionb) = (guchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
 	send_dsp_data (CONDITIONB_DSP, CFG(alarm[CFG(alarm_pos)].conditionb));
 }
-void data_220 (GtkMenuItem *menuitem, gpointer data) /* Output */
+
+void data_220 (GtkMenuItem *menuitem, gpointer data) /* Output P220 */
 {	
-	CFG(output_pos) = (gchar) (GPOINTER_TO_UINT (data));
+	CFG(output_pos) = (guchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
 	send_dsp_data (OUTPUT_POS_DSP, CFG(output_pos));
 }
 
-void data_221 (GtkMenuItem *menuitem, gpointer data) /* Output -> alarm # */
+void data_221 (GtkMenuItem *menuitem, gpointer data) /* Output -> alarm # P221 */
 {
-	CFG_OUTPUT_POS(alarm1) = (gchar) (GPOINTER_TO_UINT (data));
-	pp->pos_pos = MENU3_STOP;
+	guchar temp = (guchar) (GPOINTER_TO_UINT (data));
+	gushort tmp1 = 0;
+	gint i;
+	if (temp != 18)
+		CFG_OUTPUT_POS(alarm1) = (guchar) (GPOINTER_TO_UINT (data));
+	if (temp == 0)
+	{
+		CFG_OUTPUT_POS(alarm1_status) = 0x0;
+		CFG_OUTPUT_POS(alarm1_qty) = 0;
+	}
+	else if (temp == 1)
+	{
+		CFG_OUTPUT_POS(alarm1_status) = 0xffff;
+		CFG_OUTPUT_POS(alarm1_qty) = 16;
+	}
+	else if (temp == 18)
+	{
+	}
+	else 
+	{
+		tmp1 = ((0x1 << (temp - 2)) & CFG_OUTPUT_POS(alarm1_status));
+		if (tmp1) 
+		{
+			CFG_OUTPUT_POS(alarm1_status) &= (~(0x01 << (temp - 2)));
+			CFG_OUTPUT_POS(alarm1_qty) -= 1;
+		}
+		else
+		{
+			CFG_OUTPUT_POS(alarm1_status) |= ((0x01 << (temp - 2)));
+			CFG_OUTPUT_POS(alarm1_qty) += 1;
+		}
+	}
+	if ((CFG_OUTPUT_POS(alarm1_qty) == 0) ||
+			(CFG_OUTPUT_POS(alarm1_qty) == 16))
+	{
+	}
+	else if (CFG_OUTPUT_POS(alarm1_qty) == 1)
+	{
+		for ( i = 0 ; i < 16; i++) 
+		{
+			if (( 0x01 << i) & CFG_OUTPUT_POS(alarm1_status)) {
+				CFG_OUTPUT_POS(alarm1) = i + 2;
+				break;
+			}
+		}
+	}
+	else 
+		CFG_OUTPUT_POS(alarm1) = 18;
+
+		pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
 	send_dsp_data (ALARM1_DSP, CFG_OUTPUT_POS(alarm1));
 }
-# if 0
-void data_2212 (GtkMenuItem *menuitem, gpointer data) /* Output -> alarm # */
-{
-	CFG_OUTPUT_POS(alarm1) = (gchar) (GPOINTER_TO_UINT (data));
-guint i;
-i=CFG_OUTPUT_POS(alarm1);
-/*
-if(CFG_OUTPUT_POS(alarm1)==CFG_OUTPUT_POS(alarm1))
-CFG(output[CFG(output_pos)].alarm1_value[CFG_OUTPUT_POS(alarm1)])=!CFG(output[CFG(output_pos)].alarm1_value[CFG_OUTPUT_POS(alarm1)]);
-else
-CFG(output[CFG(output_pos)].alarm1_value[CFG_OUTPUT_POS(alarm1)])=1;*/
-}
-#endif
+
 void data_2211 (GtkMenuItem *menuitem, gpointer data) /* Output -> group */
 {
-	CFG_OUTPUT_POS(group) = (gchar) (GPOINTER_TO_UINT (data));
+	CFG_ANALOG_POS(group) = (guchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
-	send_dsp_data (GROUPA_DSP, CFG_OUTPUT_POS(group));
+	send_dsp_data (GROUPA_DSP, CFG_ANALOG_POS(group));
 }
 
-void data_222 (GtkSpinButton *spinbutton, gpointer data) /*count */
+void data_222 (GtkSpinButton *spinbutton, gpointer data) /* count P222 */
 {
-	CFG_OUTPUT_POS(count) =  (guint) (gtk_spin_button_get_value (spinbutton));
+	CFG_OUTPUT_POS(count) =  (guchar) (gtk_spin_button_get_value (spinbutton));
 	send_dsp_data (COUNT_DSP, CFG_OUTPUT_POS(count));
 }
 
-void data_2221 (GtkMenuItem *menuitem, gpointer data) /*count */
+void data_2221 (GtkMenuItem *menuitem, gpointer data) /* count */
 {
-	CFG_OUTPUT_POS(data) = (gchar) (GPOINTER_TO_UINT (data));
+	CFG_ANALOG_POS(data) = (guchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
-	send_dsp_data (DATA_DSP, CFG_OUTPUT_POS(data));
+	send_dsp_data (DATA_DSP, CFG_ANALOG_POS(data));
 }
 
-void data_223 (GtkMenuItem *menuitem, gpointer data) /* sound */
+void data_223 (GtkMenuItem *menuitem, gpointer data) /* sound P223 */
 {
-	CFG_OUTPUT_POS(sound) = (gchar) (GPOINTER_TO_UINT (data));
+	CFG_OUTPUT_POS(sound) = (guchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
 	send_dsp_data (SOUND_DSP, CFG_OUTPUT_POS(sound));
@@ -1893,7 +1941,7 @@ void data_224 (GtkSpinButton *spinbutton, gpointer data) /*active_delay */
 	send_dsp_data (DELAY_DSP, CFG_OUTPUT_POS(delay));
 }
 
-void data_225 (GtkSpinButton *spinbutton, gpointer data) /*holdtime */
+void data_225 (GtkSpinButton *spinbutton, gpointer data) /* holdtime P225*/
 {
 	CFG_OUTPUT_POS(holdtime) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
 	send_dsp_data (HOLDTIME_DSP, CFG_OUTPUT_POS(holdtime));
@@ -1901,7 +1949,7 @@ void data_225 (GtkSpinButton *spinbutton, gpointer data) /*holdtime */
 
 void data_230 (GtkMenuItem *menuitem, gpointer data) /* Gate/Alarm -> Sizing Curves -> Mode P230 */
 {
-	GROUP_VAL(mode_pos) = (gchar) (GPOINTER_TO_UINT (data));
+	GROUP_VAL(mode_pos) = (guchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
 	send_dsp_data (MODE_POS_DSP, GROUP_VAL(mode_pos));
@@ -1909,7 +1957,7 @@ void data_230 (GtkMenuItem *menuitem, gpointer data) /* Gate/Alarm -> Sizing Cur
 
 void data_231 (GtkMenuItem *menuitem, gpointer data) /* Gate/Alarm -> Sizing Curves -> Curve P231 */
 {
-	GROUP_VAL(curve_pos) = (gchar) (GPOINTER_TO_UINT (data));
+	GROUP_VAL(curve_pos) = (guchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
 	send_dsp_data (CURVE_POS_DSP, GROUP_VAL(curve_pos));
@@ -1917,7 +1965,7 @@ void data_231 (GtkMenuItem *menuitem, gpointer data) /* Gate/Alarm -> Sizing Cur
 
 void data_2311 (GtkMenuItem *menuitem, gpointer data) /* Gate/Alarm -> Sizing Curves -> Point 231 */
 {
-	GROUP_VAL(point_pos) = (gchar) (GPOINTER_TO_UINT (data));
+	GROUP_VAL(point_pos) = (guchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
 	send_dsp_data (POINT_POS_DSP, GROUP_VAL(point_pos));

@@ -458,31 +458,32 @@ typedef struct gate_info {
 	guint            width;
 } GATE_INFO, *GATE_INFO_P;
 
-
 /* 报警信息 */
 typedef struct alarm_info {
-	guchar           groupa;   	    /* GROUP A     */
-	guchar           conditiona;     /* Condition A */
-	guchar           operat;         /* Operator    */
-	guchar           groupb;	    /* GROUP B 	   */
-	guchar           conditionb;     /* Condition B */
-
+	guchar	groupa;   	    /* GROUP A     */
+	guchar	conditiona;     /* Condition A */
+	guchar	operat;         /* Operator    */
+	guchar	groupb;	    /* GROUP B 	   */
+	guchar	conditionb;     /* Condition B */
 } ALARM_INFO, *ALARM_INFO_P;
-
 
 /* 输出信息 */
 typedef struct output_info {
-	guchar           alarm1;   	    /* Alarm #  */
-	guchar           alarm1_value[16];   /* Alarm #的选项是否选中，0否，1是*/
-	guchar	    group;          /* group    */
-	guchar           count;    	    /* count    */
-	guchar 	    data;	    /* data     */
-	guchar           sound;          /* sound    */
-	guint            delay;	    /* delay 	*/
-	guint            holdtime;       /* holdtime */
-
+	guchar	alarm1;   	    /* Alarm #  */
+//	guchar	alarm1_value[16];   /* Alarm #的选项是否选中，0否，1是*/
+	guchar	alarm1_qty;		/* 开启alarm的个数*/
+	gushort alarm1_status;	/* */
+	guchar	count;    	    /* count    */
+	guchar	sound;          /* sound    */
+	guint	delay;			/* delay 	*/
+	guint	holdtime;       /* holdtime */
 } OUTPUT_INFO, *OUTPUT_INFO_P;
 
+/* 输出信息 */
+typedef struct analog_info {
+	guchar group;			
+	guchar data;
+} ANALOG_INFO, *ANALOG_INFO_P;
 
 /* 一个阵元的聚焦信息*/
 typedef struct law_elem
@@ -650,26 +651,14 @@ typedef	struct Config {
 	gint	agate_start;
 	guint	agate_width;
 
-	guchar	alarm_pos;                 /* 报警信息 0  1  2 ... 15 */
-	//guchar	alarm_on_pos;              /* 报警信息 0  1  2 ... 15 */
+	guchar	alarm_pos;                 /* 报警信息 0~15 */
+	//guchar	alarm_on_pos;              /* 报警信息 0~15 */
 	ALARM_INFO	alarm[16];         /* alarm[0], alarm[1], ..., alarm[15] */
 
-	guchar  output_pos;                /* 0  1  2 */
+	guchar  output_pos;                /* 0~5 */
 	OUTPUT_INFO  output[3];           /* 输出信息 output[0],output[1],output[2] */
+	ANALOG_INFO  analog[2];           /* Analog 2 个 */
 	//guchar alarm_on[16];  		  /*alarm#中的选项后面是否加[On] 0否 1是*/
-
-
-	//guchar	output;                          /*Gate/Alarm->Output->Output*/
-	//guchar	alarm1;                          /*Gate/Alarm->Output->Alarm #*/
-	//guint	count;                           /*Gate/Alarm->Output->count*/
-	//	guchar	sound;                           /*Gate/Alarm->Output->sound*/
-	//	guint	active_delay;                    /*Gate/Alarm->Output->delay*/
-	//	guint	holdtime;                        /*Gate/Alarm->Output->holdtime*/
-
-	//	guchar	mode;                            /*Gate/Alarm->Sizing Curves->Mode*/
-	//	guchar	curve;                           /*Gate/Alarm->Sizing Curves->Curve*/
-
-	//	guint	alarm_sound;
 
 	/*测量*/
 	/*	guint	measure1;	
@@ -1058,6 +1047,7 @@ typedef struct Draw_interface {
 #define GROUP_GATE_POS(a)   GROUP_VAL(gate[GROUP_VAL(gate_pos)].a)
 #define CFG_ALARM_POS(a)  CFG(alarm[CFG(alarm_pos)].a)
 #define CFG_OUTPUT_POS(a) CFG(output[CFG(output_pos)].a)
+#define CFG_ANALOG_POS(a) CFG(analog[CFG(output_pos - 3)].a)
 
 #define TMP(a)  (pp->p_tmp_config->a)
 #define	MENU_STATUS	(pp->pos_pos) 

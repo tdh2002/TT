@@ -74,9 +74,10 @@ static void set_config (guint groupid)
 	CFG(alarm[CFG(alarm_pos)].conditionb) = 0;	 /* alarm中Condition B 的值，0是 NONE */
 	CFG(output_pos) = 0;				 /* output 的值，1～5 */
 	CFG(output[CFG(output_pos)].alarm1) = 0;
-	CFG(output[CFG(output_pos)].alarm1_value[CFG_OUTPUT_POS(alarm1)])=0;
-	CFG(output[CFG(output_pos)].group) = 0;          /* output中group 的值，0是 1*/
-	CFG(output[CFG(output_pos)].data) = 0;           /* output中data 的值，0是 Off*/
+	CFG(output[CFG(output_pos)].alarm1_status) = 0;
+	CFG(output[CFG(output_pos)].alarm1_qty) = 0;
+	CFG(analog[CFG(output_pos)].group) = 0;          /* output中group 的值，0是 1*/
+	CFG(analog[CFG(output_pos)].data) = 0;           /* output中data 的值，0是 Off*/
 	GROUP_VAL(mode_pos)= 0;				 /* 0是Setup */
 	GROUP_VAL(curve_pos)= 0;			/* 0是NOne */
 	GROUP_VAL(ref_ampl)=10; 

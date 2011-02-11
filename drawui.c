@@ -1355,53 +1355,46 @@ void draw3_data0(DRAW_UI_P p)
 						draw3_popdown (menu_content[GATE_POS + GROUP_VAL(gate_pos)], 0, 0);
 					break;
 
-				case 1:/*Alarm  P210 */
+				case 1:/* Alarm 选择那个报警项 P210 */
 					pp->x_pos = 603, pp->y_pos = 118;
 
 					if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 0))
 					{
 						menu_on = 0;
-						for ( i = 0 ; i < 16; i++)
+						for (i = 0 ; i < 16; i++)
 							menu_on |= (CFG(alarm[i].conditiona) !=0 ) << i;
-						draw3_pop_tt_on (data_210, NULL, menu_content[ALARM_POS + CFG(alarm_pos)],		menu_content + ALARM_POS, 16, 0, CFG(alarm_pos), 0, menu_on, 16);
+						draw3_pop_tt_on (data_210, NULL, menu_content[ALARM_POS + CFG(alarm_pos)],
+								menu_content + ALARM_POS, 16, 0, CFG(alarm_pos), 0, menu_on, 16);
 					}
 					else 
 						draw3_popdown (menu_content[ALARM_POS + CFG(alarm_pos)], 0, 0);
-
 					break;
 
-
-				case 2:/*Output  p220  */
+				case 2:/* Output  P220  */
 					pp->x_pos = 585, pp->y_pos = 148;
-
 					if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 0))
 					{
-						menu_on = 0;
-						for ( i = 0 ; i < 3; i++)/*alarm#的值决定前三项后面是否跟[On]*/
-							menu_on |= (CFG(output[i].alarm1) !=0 ) << i;
-						draw3_pop_tt_on (data_220, NULL, menu_content[OUTPUT_POS + CFG(output_pos)],		menu_content + OUTPUT_POS, 5, 0, CFG(output_pos), 0, menu_on, 5);
+						menu_on = 0x0;
+						for (i = 0 ; i < 3; i++) /*alarm#的值决定前三项后面是否跟[On]*/
+							menu_on |= (CFG(output[i].alarm1) != 0 ) << i;
 
-						for ( i = 3 ; i < 5; i++)/*data的值决定后两项后面是否跟[On]*/
-							menu_on |= (CFG(output[i].data) !=0 ) << i;
-						draw3_pop_tt_on (data_220, NULL, menu_content[OUTPUT_POS + CFG(output_pos)],		menu_content + OUTPUT_POS, 5, 0, CFG(output_pos), 0, menu_on, 5);
+						for (i = 3 ; i < 5; i++) /*data的值决定后两项后面是否跟[On]*/
+							menu_on |= (CFG(analog[i - 3].data) != 0 ) << i;
+						draw3_pop_tt_on (data_220, NULL, menu_content[OUTPUT_POS + CFG(output_pos)],
+								menu_content + OUTPUT_POS, 5, 0, CFG(output_pos), 0, menu_on, 5);
 					}
-
 					else 
 						draw3_popdown (menu_content[OUTPUT_POS + CFG(output_pos)], 0, 0);
-
 					break;
 
-				case 3:/*Sizing Curves -> Setup  p230 */
+				case 3:/* Sizing Curves -> Setup  p230 */
 					pp->x_pos = 605, pp->y_pos = 148;
-
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 					{
-						if (!GROUP_VAL(curve_pos))
-						{
-							menu_status = 0x02;
-						}
-						else
+						if (GROUP_VAL(curve_pos))
 							menu_status = 0;
+						else
+							menu_status = 0x02;
 
 						draw3_pop_tt (data_230, NULL, 
 								menu_content[MODE_POS+GROUP_VAL(mode_pos)],
@@ -2017,7 +2010,6 @@ void draw3_data1(DRAW_UI_P p)
 
 	gfloat cur_value, lower, upper, step;
 	guint digit, pos, unit;
-	guint menu_on,i;
 
 	p = NULL;
 
@@ -2228,91 +2220,56 @@ void draw3_data1(DRAW_UI_P p)
 				case 1:/* Gate -> Alarm -> Group A P211 */
 					pp->x_pos = 623, pp->y_pos = 210;
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
-						draw3_pop_tt (data_211, NULL,menu_content[GROUPA + CFG_ALARM_POS(groupa)], menu_content + GROUPA, 4, 1, CFG_ALARM_POS(groupa), 0);
+						draw3_pop_tt (data_211, NULL,menu_content[GROUPA + CFG_ALARM_POS(groupa)],
+								menu_content + GROUPA, 4, 1, CFG_ALARM_POS(groupa), 0);
 					else 
 						draw3_popdown (menu_content[GROUPA + CFG_ALARM_POS(groupa)], 1, 0);
-
 					break;
 
-				case 2:/*  Gate -> Output -> Alarm #  P221 */
-					/*  Gate -> Output -> Group    P221 */
+				case 2:/*  Gate -> Output -> Alarm or Group #  P221 */
 					pp->x_pos = 628, pp->y_pos = 203;
-					if (CFG(output_pos)==0 || CFG(output_pos)==1 || CFG(output_pos)==2)
+					if (CFG(output_pos) < 3)
 					{
-						/*	if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
-							draw3_pop_tt (data_221, NULL, 
-							menu_content[ALARM1+CFG_OUTPUT_POS(alarm1)],
-							menu_content + ALARM1, 18, 1, CFG_OUTPUT_POS(alarm1), 0);
-							else 
-							draw3_popdown (menu_content[ALARM1+CFG_OUTPUT_POS(alarm1)], 1, 0);*/
-
-						/*if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 0))
-						  {
-						  menu_on = 0;
-						  for ( i = 0 ; i < 3; i++)
-						  menu_on |= (CFG(output[i].alarm1) !=0 ) << i;
-						  draw3_pop_tt_on (data_220, NULL, menu_content[OUTPUT_POS + CFG(output_pos)],		menu_content + OUTPUT_POS, 5, 0, CFG(output_pos), 0, menu_on, 5);
-
-						  }*/
-
-
 						if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 1))
 						{
-							if(CFG_OUTPUT_POS(alarm1)==0)
-								draw3_pop_tt (data_221, NULL, 
-										menu_content[ALARM1+CFG_OUTPUT_POS(alarm1)],
-										menu_content + ALARM1, 18, 1, CFG_OUTPUT_POS(alarm1), 0);
-							else if(CFG_OUTPUT_POS(alarm1)==1)
-								draw3_pop_tt (data_221, NULL, 
-										menu_content[ALARM1+18+CFG_OUTPUT_POS(alarm1)],
-										menu_content + ALARM1+18, 19, 1, CFG_OUTPUT_POS(alarm1), 0);
+							if ((CFG_OUTPUT_POS(alarm1_qty) == 0) ||
+									(CFG_OUTPUT_POS(alarm1_qty) == 1))
+								draw3_pop_tt_on (data_221, NULL, menu_content[ALARM1+CFG_OUTPUT_POS(alarm1)],
+										menu_content + ALARM1, 18, 1, CFG_OUTPUT_POS(alarm1),
+										0, CFG_OUTPUT_POS(alarm1_status) << 2, 19);
 							else
-							{
-								if(CFG_OUTPUT_POS(alarm1)==CFG_OUTPUT_POS(alarm1))
-									CFG(output[CFG(output_pos)].alarm1_value[CFG_OUTPUT_POS(alarm1)])=!CFG(output[CFG(output_pos)].alarm1_value[CFG_OUTPUT_POS(alarm1)]);
-								else
-									CFG(output[CFG(output_pos)].alarm1_value[CFG_OUTPUT_POS(alarm1)])=1;
-
-								menu_on = 0;
-								for ( i = 0 ; i < 16; i++)
-									//menu_on = CFG(output[CFG(output_pos)].alarm1);
-									menu_on |= (CFG(output[CFG(output_pos)].alarm1_value[CFG_OUTPUT_POS(alarm1)]) !=0 ) << i;
-								draw3_pop_tt_on (data_221, NULL, menu_content[ALARM1+CFG_OUTPUT_POS(alarm1)],	menu_content + ALARM1, 18, 1, CFG_OUTPUT_POS(alarm1), 0, menu_on, 18);
-
-
-
-							}
-
-
+								draw3_pop_tt_on (data_221, NULL, menu_content[ALARM1+CFG_OUTPUT_POS(alarm1)],
+										menu_content + ALARM1, 19, 1, CFG_OUTPUT_POS(alarm1),
+										0, CFG_OUTPUT_POS(alarm1_status) << 2, 19);
 						}
 						else 
-							draw3_popdown (menu_content[ALARM1+CFG_OUTPUT_POS(alarm1)], 1, 0);
-
-
-
+							if ((CFG_OUTPUT_POS(alarm1_qty) == 0) ||
+									(CFG_OUTPUT_POS(alarm1_qty) == 1) ||
+									(CFG_OUTPUT_POS(alarm1_qty) == 16))
+								draw3_popdown (menu_content[ALARM1+CFG_OUTPUT_POS(alarm1)], 1, 0);
+							else
+								draw3_popdown (menu_content[ALARM1 + 18], 1, 0);
 					}
 					else
 					{
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 						{
 							draw3_pop_tt (data_2211, NULL, 
-									menu_content[GROUPA+CFG_OUTPUT_POS(group)],
-									menu_content + GROUPA, 4, 1, CFG_OUTPUT_POS(group), 0);
+									menu_content[GROUPA + CFG_ANALOG_POS(group)],
+									menu_content + GROUPA, 4, 1, CFG_ANALOG_POS(group), 0);
 						}
-
 						else 
 						{
-							draw3_popdown (menu_content[GROUPA+CFG_OUTPUT_POS(group)], 1, 0);
+							draw3_popdown (menu_content[GROUPA+CFG_ANALOG_POS(group)], 1, 0);
 						}
 						str = g_strdup_printf ("%s", con2_p[2][2][6]);	
 						gtk_label_set_text (GTK_LABEL (pp->label3[1]), str);
 					}
 					break;
 
-
 				case 3:/*Sizing Curves -> Curve  p231 */
 					pp->x_pos = 575, pp->y_pos = 213;
-					if (GROUP_VAL(mode_pos)==0 )
+					if (GROUP_VAL(mode_pos) == 0)  /* MODE 为Setup 时候 */
 					{
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 							draw3_pop_tt (data_231, NULL, 
@@ -2321,11 +2278,10 @@ void draw3_data1(DRAW_UI_P p)
 						else 
 							draw3_popdown (menu_content[CURVE_POS+GROUP_VAL(curve_pos)], 1, 0);
 					}
-
-					if (GROUP_VAL(mode_pos)==1 )
+					else if (GROUP_VAL(mode_pos) == 1)  /* MODE 为 Edit的时候 */
 					{
-
-						if (GROUP_VAL(curve_pos)==1 || GROUP_VAL(curve_pos)==3)
+						if (GROUP_VAL(curve_pos) == 1 || GROUP_VAL(curve_pos) == 3)
+							/* DAC 或者 TCG 时候 */
 						{
 							if((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 							{
@@ -2342,7 +2298,7 @@ void draw3_data1(DRAW_UI_P p)
 								gtk_label_set_text (GTK_LABEL (pp->label3[1]), str);
 							}
 						}
-						else if (GROUP_VAL(curve_pos)==2)
+						else if (GROUP_VAL(curve_pos) == 2) /* linear DAC */ 
 						{
 							/* 当前步进 */
 							switch (pp->p_tmp_config->mat_atten_reg)
@@ -2355,18 +2311,19 @@ void draw3_data1(DRAW_UI_P p)
 							}
 							if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 							{
-								cur_value = GROUP_VAL(mat_atten)/1000.0;
+								cur_value = GROUP_VAL(mat_atten) / 1000.0;
 								lower = 0.00;
 								upper = 6.76;
 								step = tmpf;
 								digit = 2;
 								pos = 1;
 								unit = UNIT_DB_MM;
-								draw3_digit_pressed (data_2312, units[unit], cur_value , lower, upper, step, digit, p, pos, 15);
+								draw3_digit_pressed (data_2312, units[unit], cur_value , lower, 
+										upper, step, digit, p, pos, 15);
 							}
 							else 
 							{
-								cur_value = GROUP_VAL(mat_atten)/1000.0;
+								cur_value = GROUP_VAL(mat_atten) / 1000.0;
 								digit = 2;
 								pos = 1;
 								unit = UNIT_DB_MM;
@@ -2375,6 +2332,7 @@ void draw3_data1(DRAW_UI_P p)
 						}
 					}
 					break;
+
 				case 4:
 					if ( !con2_p[2][4][1] )
 						gtk_widget_hide (pp->eventbox30[1]);
@@ -3351,7 +3309,7 @@ void draw3_data2(DRAW_UI_P p)
 	gchar temp[52];
 	gfloat tmpf;/**/
 	gchar *str = NULL;
-	guint menu_status=0;
+	guint menu_status = 0;
 
 	gfloat cur_value, lower, upper, step;
 	guint digit, pos, unit;
@@ -3667,36 +3625,26 @@ void draw3_data2(DRAW_UI_P p)
 					}
 					break;
 
-				case 1:/*Condition  P212 */
+				case 1:/* Condition GroupA P212 */
 					pp->x_pos = 530, pp->y_pos = 265;
-
-					/* groupa 与 groupb 的值相等时，conditiona 与 conditionb 不能相同*/
-					if ( CFG_ALARM_POS(groupa) == CFG_ALARM_POS(groupb) )
-					{
-						if (CFG_ALARM_POS(conditionb))
-						{
-							menu_status = 1<<(CFG_ALARM_POS(conditionb));
-						}
-
-					}
+					if ((CFG_ALARM_POS(groupa) == CFG_ALARM_POS(groupb)) &&
+							CFG_ALARM_POS(conditionb))
+						menu_status = 1<<(CFG_ALARM_POS(conditionb));
 
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 					{         
-						draw3_pop_tt (data_212, NULL,menu_content[CONDITIONA + CFG_ALARM_POS(conditiona)], menu_content + CONDITIONA, 9, 2, CFG_ALARM_POS(conditiona), menu_status);
+						draw3_pop_tt (data_212, NULL, menu_content[CONDITIONA +	CFG_ALARM_POS(conditiona)],
+								menu_content + CONDITIONA, 9, 2, CFG_ALARM_POS(conditiona), menu_status);
 					}
-
 					else 
 						draw3_popdown (menu_content[CONDITIONA + CFG_ALARM_POS(conditiona)], 2, 0);
-
 					break;
 
-				case 2:/*Output->Count p222 */
+				case 2:/* Output->Count or Data P222 */
 					pp->x_pos = 578, pp->y_pos = 300;
 					/* 当前步进 */
-
-					if (CFG(output_pos)==0 || CFG(output_pos)==1 || CFG(output_pos)==2)
+					if (CFG(output_pos) < 3)
 					{
-
 						switch (TMP(count_reg))
 						{
 							case 0:	tmpf = 1.00; break;
@@ -3722,34 +3670,28 @@ void draw3_data2(DRAW_UI_P p)
 							unit = UNIT_NONE;
 							draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 						}
-
 					}
-
 					else
 					{
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 						{
 							draw3_pop_tt (data_2221, NULL, 
-									menu_content[DATA+CFG_OUTPUT_POS(data)],
-									menu_content + DATA, 4, 2, CFG_OUTPUT_POS(data), 0);
+									menu_content[DATA + CFG_ANALOG_POS(data)],
+									menu_content + DATA, 4, 2, CFG_ANALOG_POS(data), 0);
 						}
-
 						else 
 						{
-							draw3_popdown (menu_content[DATA+CFG_OUTPUT_POS(data)], 2, 0);
+							draw3_popdown (menu_content[DATA + CFG_ANALOG_POS(data)], 2, 0);
 						}
 						str = g_strdup_printf ("%s", con2_p[2][2][7]);	
 						gtk_label_set_text (GTK_LABEL (pp->label3[2]), str);
-
 					}
-
 					break;
 
 				case 3:/* Gate/Alarm->Sizing Curves-> ref.amplitude  p232 */
-					if( GROUP_VAL(curve_pos)==1 || GROUP_VAL(curve_pos)==2 || GROUP_VAL(curve_pos)==3 )
-						/* Curve选项为 DAC 、 Linear DAC 或 TCG 时 */
+					if (GROUP_VAL(mode_pos) == 0)  /* MODE 为Setup 时候 */
 					{
-						if(( GROUP_VAL(mode_pos)==0 )&&(GROUP_VAL(curve_pos)==1 || GROUP_VAL(curve_pos)==2))
+						if ((GROUP_VAL(curve_pos) == 1) || (GROUP_VAL(curve_pos) == 2)) /* DAC or linear Dac*/
 						{
 							/* 当前步进 */
 							switch (pp->p_tmp_config->ref_ampl_reg)
@@ -3772,104 +3714,94 @@ void draw3_data2(DRAW_UI_P p)
 							}
 							else 
 							{
-
 								cur_value = GROUP_VAL(ref_ampl)/100.0;
 								digit = 1;
 								pos = 2;
 								unit = UNIT_BFH;
 								draw3_digit_stop (cur_value, units[unit], digit, pos, 6);
-
 							} 
 						}
-						else if(( GROUP_VAL(mode_pos)==1 )&&(GROUP_VAL(curve_pos)==1 || GROUP_VAL(curve_pos)==2|| GROUP_VAL(curve_pos)==3))
-						{
-							if( GROUP_VAL(curve_pos)==1|| GROUP_VAL(curve_pos)==3)
-								/* Curve选项为 DAC或TCG 时 */
-							{
-								/* 当前步进 */
-								switch (pp->p_tmp_config->position_reg)
-								{
-									case 0:	tmpf = 0.01; break;
-									case 1:	tmpf = 0.1; break;
-									case 2:	tmpf = 1.0; break;
-									case 3:tmpf=10.0;break;						
-									default:break;
-								}
-								if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
-								{
-									cur_value =GROUP_VAL(position)/1000.0;
-									lower = 0.0;
-									upper = 29306.37;
-									step = tmpf;
-									digit = 2;
-									pos = 2;
-									unit = UNIT_MM;
-									draw3_digit_pressed (data_2321, units[unit], cur_value , lower, upper, step, digit, p, pos, 11);
-								}
-								else 
-								{
-
-									cur_value = GROUP_VAL(position)/1000.0;
-									digit = 2;
-									pos = 2;
-									unit = UNIT_MM;
-									draw3_digit_stop (cur_value, units[unit], digit, pos, 11);
-
-								}
-
-							}
-							else  /* Curve选项为 Linear DAC 时 */
-							{
-								/* 当前步进 */
-								switch (pp->p_tmp_config->delay_reg)
-								{
-									case 0:	tmpf = 0.01; break;
-									case 1:	tmpf = 0.1; break;
-									case 2:	tmpf = 1.0; break;
-									case 3:tmpf=10.0;break;						
-									default:break;
-								}
-								if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
-								{
-									cur_value =GROUP_VAL(delay)/1000.0;
-									lower = 0.0;
-									upper = 296.0;
-									step = tmpf;
-									digit = 2;
-									pos = 2;
-									unit = UNIT_MM;
-									draw3_digit_pressed (data_2322, units[unit], cur_value , lower, upper, step, digit, p, pos, 16);
-								}
-								else 
-								{
-
-									cur_value = GROUP_VAL(delay)/1000.0;
-									digit = 2;
-									pos = 2;
-									unit = UNIT_MM;
-									draw3_digit_stop (cur_value, units[unit], digit, pos, 16);
-
-								}
-
-							}
-						}
-						else
+						else 
 						{
 							gtk_widget_hide (pp->eventbox30[2]);
 							gtk_widget_hide (pp->eventbox31[2]);
 							gtk_widget_hide (pp->sbutton[2]);
+						}
+					}
+					else if (GROUP_VAL(mode_pos) == 1)  /* MODE 为Edit 时候 */
+					{
+						if( GROUP_VAL(curve_pos) == 1|| GROUP_VAL(curve_pos)==3) 
+							/* Curve选项为 DAC或TCG 时 */
+						{
+							/* 当前步进 */
+							switch (pp->p_tmp_config->position_reg)
+							{
+								case 0:	tmpf = 0.01; break;
+								case 1:	tmpf = 0.1; break;
+								case 2:	tmpf = 1.0; break;
+								case 3:tmpf = 10.0;break;						
+								default:break;
+							}
+							if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
+							{
+								cur_value = GROUP_VAL(position) / 1000.0;
+								lower = 0.0;
+								upper = 29306.37;
+								step = tmpf;
+								digit = 2;
+								pos = 2;
+								unit = UNIT_MM;
+								draw3_digit_pressed (data_2321, units[unit], cur_value , lower, upper, step, digit, p, pos, 11);
+							}
+							else 
+							{
+								cur_value = GROUP_VAL(position)/1000.0;
+								digit = 2;
+								pos = 2;
+								unit = UNIT_MM;
+								draw3_digit_stop (cur_value, units[unit], digit, pos, 11);
+							}
+						}
+						else if (GROUP_VAL(curve_pos == 2)) /* Curve 为 linear DAC */
+						{
+							/* 当前步进 */
+							switch (pp->p_tmp_config->delay_reg)
+							{
+								case 0:	tmpf = 0.01; break;
+								case 1:	tmpf = 0.1; break;
+								case 2:	tmpf = 1.0; break;
+								case 3:tmpf=10.0;break;						
+								default:break;
+							}
+							if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
+							{
+								cur_value =GROUP_VAL(delay)/1000.0;
+								lower = 0.0;
+								upper = 296.0;
+								step = tmpf;
+								digit = 2;
+								pos = 2;
+								unit = UNIT_MM;
+								draw3_digit_pressed (data_2322, units[unit], cur_value , lower, upper, step, digit, p, pos, 16);
+							}
+							else 
+							{
+
+								cur_value = GROUP_VAL(delay)/1000.0;
+								digit = 2;
+								pos = 2;
+								unit = UNIT_MM;
+								draw3_digit_stop (cur_value, units[unit], digit, pos, 16);
+
+							}
 
 						}
-
-
-					}
-
-					else
-					{
-						gtk_widget_hide (pp->eventbox30[2]);
-						gtk_widget_hide (pp->eventbox31[2]);
-						gtk_widget_hide (pp->sbutton[2]);
-
+						else 
+						{
+							gtk_widget_hide (pp->eventbox30[2]);
+							gtk_widget_hide (pp->eventbox31[2]);
+							gtk_widget_hide (pp->sbutton[2]);
+						}
 					}
 					break;
 
@@ -3880,6 +3812,7 @@ void draw3_data2(DRAW_UI_P p)
 				default:break;
 			}
 			break;
+
 		case 3:
 			switch (pp->pos1[3])
 			{
@@ -4933,35 +4866,83 @@ void draw3_data3(DRAW_UI_P p)
 			{
 				case 0:/* 闸门宽度 P203 */
 					pp->x_pos = 580, pp->y_pos = 380;
-					if(GROUP_GATE_POS(parameters)==0)
+					if (GROUP_GATE_POS(parameters) == 0)
 					{
 						/* 当前步进 */
 						switch (pp->p_tmp_config->agate_width_reg)
 						{
-							case 0:	tmpf = 0.01; break;
-							case 1:	tmpf = 0.1; break;
-							case 2:	tmpf = 1.0; break;
-							case 3:	tmpf = 10.0; break;						
+							case 0:	tmpf = 3.2; break;
+							case 1:	tmpf = 16.0; break;
+							case 2:	tmpf = 32.0; break;
+							case 3:	tmpf = 64.0; break;
 							default:break;
 						}
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 						{
-							cur_value = GROUP_GATE_POS(width)/1000.0;
-							lower = 0.12;
-							upper = 29000.0;
-							step = tmpf;
-							digit = 2;
-							pos = 3;
-							unit = UNIT_MM;
+							if ((UT_UNIT_TRUE_DEPTH == CFG(ut_unit)) || (UT_UNIT_SOUNDPATH == CFG(ut_unit)))
+							{
+								if (UNIT_MM == CFG(unit))
+								{
+									cur_value = (GROUP_GATE_POS(width) / 1000.0) * (GROUP_VAL(velocity) / 200000.0);   /* 当前显示的范围数值mm */
+									lower = 3.2 * GROUP_VAL(velocity) / 200000.0;
+									upper = ((MAX_RANGE_US - GROUP_GATE_POS(start) / 1000.0) > 6400.0 ? 6400.0 : 
+											(MAX_RANGE_US - GROUP_GATE_POS(start) / 1000.0)) * (GROUP_VAL(velocity) / 200000.0);
+									step = tmpf * (GROUP_VAL(velocity) / 200000.0);
+									digit = 2;
+									pos = 3;
+									unit = UNIT_MM;
+								}
+								else
+								{
+									cur_value = (GROUP_GATE_POS(width) / 1000.0) * 0.03937 * (GROUP_VAL(velocity) / 200000.0); /* 当前显示的范围inch */
+									lower =	3.2 * 0.03937 * GROUP_VAL(velocity) / 200000.0;
+									upper =	((MAX_RANGE_US - GROUP_GATE_POS(start) / 1000.0) > 6400.0 ? 6400.0 :
+											(MAX_RANGE_US - GROUP_GATE_POS(start) / 1000.0)) * 0.03937 * (GROUP_VAL(velocity) / 200000.0);
+									step = tmpf * 0.03937 * GROUP_VAL(velocity) / 200000.0;
+									digit = 3;
+									pos = 3;
+									unit = UNIT_INCH;
+								}
+							}
+							else 
+							{
+								cur_value = GROUP_GATE_POS(width) / 1000.0 ;
+								lower =	3.2;
+								upper =	((MAX_RANGE_US - GROUP_GATE_POS(start) /1000.0 ) > 6400.0 ? 6400.0 : (MAX_RANGE_US - GROUP_VAL(start) / 1000.0));
+								step = tmpf;
+								digit = 2;
+								pos = 3;
+								unit = UNIT_US;
+							}
 							draw3_digit_pressed (data_203, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 						}
 						else 
 						{
-							cur_value = GROUP_GATE_POS(width)/1000.0;
-							digit = 2;
-							pos = 3;
-							unit = UNIT_MM;
-							draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
+							if ((UT_UNIT_TRUE_DEPTH == CFG(ut_unit)) || (UT_UNIT_SOUNDPATH == CFG(ut_unit)))
+							{
+								if (UNIT_MM == CFG(unit))
+								{
+									cur_value = (GROUP_GATE_POS(width) / 1000.0) * (GROUP_VAL(velocity) / 200000.0);   /* 当前显示的范围数值mm */
+									unit = UNIT_MM;
+									digit = 2;
+									pos = 3;
+								}
+								else
+								{
+									cur_value = (GROUP_GATE_POS(width) / 1000.0) * 0.03937 * (GROUP_VAL(velocity) / 200000.0); /* 当前显示的范围inch */
+									unit = UNIT_INCH;
+									digit = 3;
+									pos = 3;
+								}
+							}
+							else
+							{
+								cur_value = GROUP_GATE_POS(width) / 1000.0 ;
+								unit = UNIT_US;
+								pos = 3;
+								digit = 2;
+							}
+							draw3_digit_stop (cur_value , units[unit], digit, pos, 0);
 						}
 					}
 					else
@@ -4983,39 +4964,28 @@ void draw3_data3(DRAW_UI_P p)
 
 				case 1:/*Operator  P213*/
 					pp->x_pos = 615, pp->y_pos = 380;
-
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
-						draw3_pop_tt (data_213, NULL,menu_content[OPERAT + CFG_ALARM_POS(operat)], menu_content + OPERAT, 2, 3, CFG_ALARM_POS(operat), 0);
+						draw3_pop_tt (data_213, NULL,menu_content[OPERAT + CFG_ALARM_POS(operat)],
+								menu_content + OPERAT, 2, 3, CFG_ALARM_POS(operat), 0);
 					else 
 						draw3_popdown (menu_content[OPERAT + CFG_ALARM_POS(operat)], 3, 0);
-
 					break;
 
-
-				case 2:/*Sound  p223 */
+				case 2:/* Sound  p223 */
 					pp->x_pos = 430, pp->y_pos = 380;
-
-					if (CFG(output_pos)==0 || CFG(output_pos)==1 || CFG(output_pos)==2)
+					if (CFG(output_pos) < 3)
 					{
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
-							draw3_pop_tt (data_223, NULL,menu_content[SOUND + 5 + CFG_OUTPUT_POS(sound)],menu_content + SOUND, 5, 3, CFG_OUTPUT_POS(sound), 0);
+							draw3_pop_tt (data_223, NULL,menu_content[SOUND + 5 + CFG_OUTPUT_POS(sound)],
+									menu_content + SOUND, 5, 3, CFG_OUTPUT_POS(sound), 0);
 						else 
 							draw3_popdown (menu_content[SOUND + 5 + CFG_OUTPUT_POS(sound)], 3, 0);
 					}
-
-					/*	if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
-						draw3_pop_tt (data_111, NULL, 
-						menu_content[TX_RX_MODE + 4 + GROUP_VAL(tx_rxmode)],
-						menu_content + TX_RX_MODE, 3, 1, GROUP_VAL(tx_rxmode), 0x05);
-						else 
-						draw3_popdown (menu_content[TX_RX_MODE + 4 + GROUP_VAL(tx_rxmode)], 1, 0);*/
-
 					else
 					{
 						gtk_widget_hide (pp->eventbox30[3]);
 						gtk_widget_hide (pp->eventbox31[3]);
 					}
-
 					break;
 
 				case 3:/* Gate/Alarm->Sizing Curves->Ref.Ampl.Offset  p233*/
@@ -6016,9 +5986,8 @@ void draw3_data4(DRAW_UI_P p)
 		case 2:
 			switch (pp->pos1[2])
 			{
-				case 0:/*Gate->Threshold  P204 */
+				case 0:/* 闸门高度 P204 */
 					pp->x_pos = 590, pp->y_pos = 470;
-					//if(CFG(parameter)==0)
 					if(GROUP_GATE_POS(parameters)==0)
 					{
 						/* 当前步进 */
@@ -6030,7 +5999,6 @@ void draw3_data4(DRAW_UI_P p)
 						}
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
 						{
-							//cur_value = pp->p_config->agate_height;
 							cur_value = GROUP_GATE_POS(height);
 							lower = 0.0;
 							upper = 98.0;
@@ -6042,7 +6010,6 @@ void draw3_data4(DRAW_UI_P p)
 						}
 						else 
 						{
-							//cur_value = pp->p_config->agate_height;
 							cur_value = GROUP_GATE_POS(height);
 							digit = 0;
 							pos = 4;
@@ -6070,17 +6037,14 @@ void draw3_data4(DRAW_UI_P p)
 				case 1:/*Group B   p214 */
 					pp->x_pos = 633, pp->y_pos = 470;
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
-						draw3_pop_tt (data_214, NULL,menu_content[GROUPA + CFG_ALARM_POS(groupb)], menu_content + GROUPA, 4, 4, CFG_ALARM_POS(groupb), 0);
+						draw3_pop_tt (data_214, NULL,menu_content[GROUPA + CFG_ALARM_POS(groupb)],
+								menu_content + GROUPA, 4, 4, CFG_ALARM_POS(groupb), 0);
 					else 
 						draw3_popdown (menu_content[GROUPA + CFG_ALARM_POS(groupb)], 4, 0);
-
 					break;
 
-
-
-
-				case 2:/*Output->delay P224 */
-					if (CFG(output_pos)==0 || CFG(output_pos)==1 || CFG(output_pos)==2)
+				case 2:/* Output->delay P224 */
+					if (CFG(output_pos) < 3)
 					{
 						/* 当前步进 */
 						switch (TMP(active_delay_reg))
@@ -6093,7 +6057,7 @@ void draw3_data4(DRAW_UI_P p)
 						}
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
 						{
-							cur_value =CFG_OUTPUT_POS(delay)/1000.0;
+							cur_value = CFG_OUTPUT_POS(delay) / 1000.0;
 							lower = 0.0;
 							upper = 5000.0;
 							step = tmpf;
@@ -6111,14 +6075,12 @@ void draw3_data4(DRAW_UI_P p)
 							draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 						}
 					}
-
 					else
 					{
 						gtk_widget_hide (pp->eventbox30[4]);
 						gtk_widget_hide (pp->eventbox31[4]);
 					}
 					break;
-
 
 				case 3:/*Gate/Alarm -> Sizing Curves -> Curve Step  p234 */
 					if(GROUP_VAL(curve_pos)==1 || GROUP_VAL(curve_pos)==2 || GROUP_VAL(curve_pos)==3 )
@@ -6918,33 +6880,30 @@ void draw3_data5(DRAW_UI_P p)
 						}
 
 						/* 当groupa与groupb的值相同,且condition a 与 condition b 的值相同时 */
-						if ((CFG_ALARM_POS(conditiona)==CFG_ALARM_POS(conditionb)) && CFG_ALARM_POS(conditiona))
+						if ((CFG_ALARM_POS(conditiona)==CFG_ALARM_POS(conditionb)) &&
+								CFG_ALARM_POS(conditiona))
 						{
 							menu_status = 1<<(CFG_ALARM_POS(conditiona));
 							CFG_ALARM_POS(conditionb) = 0;  /* conditionb 变为 None */
-							gtk_label_set_text (GTK_LABEL (pp->data3[5]), menu_content[CONDITIONA + CFG_ALARM_POS(conditionb)]);
+							gtk_label_set_text (GTK_LABEL (pp->data3[5]), menu_content[CONDITIONA +
+									CFG_ALARM_POS(conditionb)]);
 						}
 					}
-
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 5))
-						draw3_pop_tt (data_215, NULL,menu_content[CONDITIONA + CFG_ALARM_POS(conditionb)], menu_content + CONDITIONA, 9, 5, CFG_ALARM_POS(conditionb), menu_status);
+						draw3_pop_tt (data_215, NULL,menu_content[CONDITIONA + CFG_ALARM_POS(conditionb)],
+								menu_content + CONDITIONA, 9, 5, CFG_ALARM_POS(conditionb), menu_status);
 					else 
 						draw3_popdown (menu_content[CONDITIONA + CFG_ALARM_POS(conditionb)], 5, 0);
 
-
-					if (CFG_ALARM_POS(conditiona)== 0)/*conditiona为None时，conditionb不可用*/
+					if (CFG_ALARM_POS(conditiona) == 0)/*conditiona为None时，conditionb不可用*/
 					{
 						gtk_widget_set_sensitive(pp->eventbox30[5],FALSE);
 						gtk_widget_set_sensitive(pp->eventbox31[5],FALSE);
 					}
-
-
 					break;
 
-
-
-				case 2:/*Hold Time P225 */
-					if (CFG(output_pos)==0 || CFG(output_pos)==1 || CFG(output_pos)==2)
+				case 2:/* Hold Time P225 */
+					if (CFG(output_pos) < 3)
 					{
 						/* 当前步进 */
 						switch (TMP(holdtime_reg))
@@ -6981,6 +6940,7 @@ void draw3_data5(DRAW_UI_P p)
 						gtk_widget_hide (pp->eventbox31[5]);
 					}
 					break;
+
 				case 3:/*NULL*/
 
 					if(GROUP_VAL(curve_pos)==1 || GROUP_VAL(curve_pos)==2 || GROUP_VAL(curve_pos)==3 )
