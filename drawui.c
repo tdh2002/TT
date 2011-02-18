@@ -12,9 +12,9 @@
 
 static char buffer[32];
 
-gint (*window_keypress_event_orig)(GtkWidget *widget, GdkEventKey *event);
-gint my_keypress_event(GtkWidget *widget, GdkEventKey *event);
-GtkWidgetClass *widget_window_class;
+gint (*window_keypress_event_orig)(GtkWidget *widget, GdkEventKey *event);/* window 原始的按键处理 */
+gint my_keypress_event(GtkWidget *widget, GdkEventKey *event);			/* 自己的按键处理*/
+GtkWidgetClass *widget_window_class;									/* 原始widnow class */
 
 GdkPoint a[512] = {{0,0}, {240,200}, {400,200}};
 
@@ -389,6 +389,116 @@ void draw_2_menu(gint pa)
 
 	return ;
 }
+
+static gint gtk_entry_digit_only_keypress_event(GtkWidget *widget, GdkEventKey *event)
+{
+	switch (event->keyval)
+	{
+		case GDK_0:
+		case GDK_1:
+		case GDK_2:
+		case GDK_3:
+		case GDK_4:
+		case GDK_5:
+		case GDK_6:
+		case GDK_7:
+		case GDK_8:
+		case GDK_9: 
+		case GDK_period:
+		case GDK_Delete:
+		case GDK_BackSpace:
+		case GDK_Up: 
+		case GDK_Down:
+		case GDK_Left:
+		case GDK_Right:
+			return window_keypress_event_orig(widget, event); 
+			break;
+		default:
+			break;
+	} 
+
+	return FALSE;
+}
+
+void da_call (GtkDialog *dialog, gint response_id, gpointer user_data)      
+{
+	if (GTK_RESPONSE_OK == response_id)
+		g_print("OK_Pressed");
+	else if (GTK_RESPONSE_CANCEL == response_id);
+		gtk_widget_destroy(GTK_WIDGET (dialog));
+}
+
+
+/*
+ * 弹出的dialog
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ */
+void draw_dialog_all (guint type)
+{
+	GtkWindow *win = GTK_WINDOW (pp->window);
+	GtkWidget *dialog;
+	GtkWidget *vbox1;
+
+	GtkWidget *sw;
+	GtkWidget *view;
+	GtkTextBuffer *TextBuffer;
+	GtkWidgetClass *widget_window_class1;
+	/*
+	g_signal_connect (pp->menu3, "key-press-event", 
+			G_CALLBACK(key_press_handler), NULL);
+			*/
+
+//	widget_window_class->key_press_event = window_keypress_event_orig;
+	switch (type)
+	{
+		case 0: /* 记事本 */
+			dialog = gtk_dialog_new_with_buttons("GtkDialog", win,
+					GTK_DIALOG_MODAL |	GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_NO_SEPARATOR,
+					GTK_STOCK_OK, GTK_RESPONSE_OK,
+					GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+					NULL);
+//			gtk_window_set_decorated (GTK_WINDOW (dialog), FALSE);			/*不可以装饰*/
+			widget_window_class1 = GTK_WIDGET_GET_CLASS (((GtkObject*)(dialog))); 
+			widget_window_class1->key_press_event = gtk_entry_digit_only_keypress_event;
+//			window_keypress_event_orig;
+//			g_signal_connect (dialog, "key-press-event", 
+//					G_CALLBACK(key_press_handler), NULL);
+
+			gtk_widget_set_size_request(GTK_WIDGET (dialog), 400, 300);
+
+			vbox1 = GTK_WIDGET (GTK_DIALOG(dialog)->vbox);
+			sw = gtk_scrolled_window_new(NULL, NULL);
+
+			gtk_widget_set_size_request(sw, 400, 300);
+			gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW(sw),
+					GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+			gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw),
+					GTK_SHADOW_ETCHED_IN);
+
+			gtk_box_pack_start(GTK_BOX(vbox1), sw, TRUE, TRUE, 5);
+			view = gtk_text_view_new ();
+			gtk_container_add (GTK_CONTAINER (sw), view);
+			TextBuffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
+			gtk_text_view_set_wrap_mode (GTK_TEXT_VIEW (view), GTK_WRAP_WORD_CHAR);
+
+			g_signal_connect(G_OBJECT(dialog), "response",
+					G_CALLBACK(da_call), NULL);
+
+			gtk_widget_show_all(dialog);
+			break;
+		case 1:
+			break;
+		default:break;
+	}
+
+}
+
 
 /*
  * 处理 三级菜单弹出菜单的画图
@@ -1455,6 +1565,7 @@ void draw3_data0(DRAW_UI_P p)
 
 				case 4:/*Measurements -> Export -> Export Table p340 */
 					draw3_popdown(NULL,0,1);
+					draw_dialog_all (0);
 					break;
 				default:break;
 			}
