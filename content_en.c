@@ -165,7 +165,7 @@ static const gchar *content_en230[] = {
 
 static const gchar *content_en231[] = {
 	/* 二级菜单第3页下的第1页三级菜单 */
-	"  Selection  ","  Angle  ", "  Scan  ","  Index  ", "  Add Entry  ", NULL
+	"  Selection  ","  %(r)  ", "  %(m)  ","  U(r)  ", "  U(m)  ", NULL , "S(r)", "S(m)", "Data Link", "I(r)", "I(m)", "S(r&m)", "Angle"
 };
 
 static const gchar *content_en232[] = {
@@ -189,7 +189,7 @@ static const gchar *content_en234[] = {
 
 static const gchar *content_en240[] = {
 	/* 二级菜单第4页下的第0页三级菜单 */
-	"  Display  ","  C-Scan 1  ", NULL, NULL, NULL, NULL 
+	"  Display  ","  Group  ", NULL, NULL, NULL, NULL,"C-Scan 1" , "C-Scan 2","Data 1", "Data 2", "Mode", "Display Range", "Avg.Scan Speed"
 };
 
 static const gchar *content_en241[] = {
@@ -334,7 +334,7 @@ static const gchar *content_en284[] = {
 
 static const gchar *content_en290[] = {
 	/* 二级菜单第9页下的第0页三级菜单 */
-	"  Units  ","  Bright  ", "  Admin Password ","  Scheme  ", "  Gate Mode  ", NULL
+	"  Units  ","  Bright  ","  Scheme  ", "  Gate Mode  ", NULL, NULL
 };
 
 static const gchar *content_en291[] = {
@@ -344,18 +344,18 @@ static const gchar *content_en291[] = {
 
 static const gchar *content_en292[] = {
 	/* 二级菜单第9页下的第2页三级菜单 */
-	"  System Info  ","  Win CE  ", "  File Manager ","  Import/Export  ", "  Startup Mode  ", NULL
+	"  System Info  ", "  File Manager ","  Import/Export  ", NULL, NULL, NULL
 };
 
 static const gchar *content_en293[] = {
 	/* 二级菜单第9页下的第3页三级菜单 */
-	"  Mouse  ","  EZView  ", "  Option Key ","  Remote Desktop  ", NULL, NULL
+	"  Mouse  ", "  Option Key ","  Remote Desktop  ", NULL, NULL,NULL
 };
 
 static const gchar *content_en294[] = {
 	/* 二级菜单第9页下的第4页三级菜单 */
 	/*"  DHCP  ","  IP Address  ", "  Subnet Mask ","  Apply  ", "  Remote Pc  ", "  Connect  "*/
-	"  IP Address  ", "  Subnet Mask ",NULL,NULL,NULL,NULL
+	"  IP Address  ", "  Subnet Mask ", "  Apply  ", NULL,NULL,NULL
 };
 
 
@@ -424,6 +424,48 @@ const gchar *all_menu_content_en[] =
 	"Off", "300Hz","600Hz","1000Hz","5000Hz",							/* 190 sound */
 	"Setup", "Edit",										/* 195 mode  */
 	"None","DAC","Linear DAC","TCG",								/* 197 curve */
+	"1 Manual Weld 1: A%. DA^. PA^. SA^", "2 Auto. Weld 1: A%. DA^. ViA^. VsA^",			/* 201 list */
+
+	"A%  Peak amplitude in gate A", "AdBA  Signal in gate minus gate level for gate A", 
+	"AdBr  Diff. between signal and reference in gate A", "B%  Peak amplitude in gate B",
+	"BdBB Signal in gate minus gate level for gate B", "BdBr  Diff. between signal and reference in gate B", 
+	"A^  Position in gate A", "B^  Position in gate B", "I/  Position in gate I", "I(w)/  Position in gate I in water", 
+	"T(A^)  Thickness", "ML  Percentage of material loss", "%(r)  Amplitude value for the reference cursor",
+	"%(m)  Amplitude value of the measurement cursor", "%(m-r)  Amplitude (measurement cursor - reference cursor)", 
+	"U(r)  Ultrasonic position of the reference cursor", "U(m)  Ultrasonic position of the measurement cursor", 
+	"U(m-r)  Ultrasonic axis (measurement cursor - reference cursor)", "P(r)  Probe position of the reference cursor", 
+	"P(m)  Probe position of the measurement cursor", "P(m-r)  Probe (measurement cursor - reference cursor)", 
+	"S(r)  Scan position of the reference cursor", "S(m)  Scan position of the measurement cursor", 
+	"S(m-r) Scan axis (measurement cursor - reference cursor)", "I(r)  Index position of the reference cursor",
+	"I(m)  Index position of the measurement cursor", "I(m-r)  Index axis (measurement cursor - reference cursor)", 
+	"RA^  Reference point to the indication in gate A", "RB^  Reference point to the indication in gate B",
+	"PA^  Probe front face to the indication in gate A", "PB^  Probe front face to the indication in gate B", 
+	"DA^  Depth of the indication in gate A", "DB^  Depth of the indication in gate B", 
+	"SA^  Sound path of the indication in gate A", "SB^  Sound path of the indication in gate B",
+	"ViA^  Volumetric position in gate A on the index axis", "ViB^  Volumetric position in gate B on the index axis",
+	"VsA^  Volumetric position in gate A on the scan axis", "VsB^  Volumetric position in gate B on the scan axis",
+	"LA^  Leg (skip) of the indication in gate A", "LB^  Leg (skip) of the indication in gate B", 
+	"E%  Peak amplitude of the envelope in gate A", "E^  Position of envelop in gate A", "E-3dB  Envelop signal at -3 dB in gate A",
+	"E-6dB  Envelop signal at -6 dB in gate A", "E-12dB  Envelop signal at -12 dB in gate A", 
+	"E-20dB  Envelop signal at -20 dB in gate A", "API-DL  Defect length extension according to API code", 
+	"API-HW  Half-wave width according to API code", "AWS-D A  Indication level for AWS-D1.5 A", 
+	"AWS-D B  Zero reference level for AWS-D1.5 B", "AWS-D C  Attenuation factor for AWS-D1.5 C", 
+	"AWS-D D  Indication rating for AWS-D1.5 D", "AWS-D 45  Discontinuity Severity Class for AWS-D1.5 45", 
+	"AWS-D 60  Discontinuity Severity Class for AWS-D1.5 60", "AWS-D 70  Discontinuity Severity Class for AWS-D1.5 70", 
+	"AWS-D CL  Discontinuity Severity Class for AWS-D1.5", "Scale  Scale factor", 
+	"%(U(r))  Signal amplitude at reference ultrasonic cursor position", 
+	"%(U(m))  Signal amplitude at measurement ultrasonic cursor position", "None  None",		  /* 203 Field */
+	"A-scan", "B-scan", "C-scan", "Strip Chart", "S-scan", "R and M", "Reference", "Measure", "Data", /* 263 Selection */
+	"None", "Reference", "Measurement", "Auto",							  /* 272 Data Link */
+	"A^", "A^-I^", "A^-I/", "B^", "B^-I^", "B^-I/", "B^-A^", "I^", "I/",				  /* 276 Source*/
+	"A  A-Scan", "B  B-Scan", "C  C-Scan", "S  S-Scan", "A-B  A-Scan B-Scan", "A-B-C  A-Scan B-Scan C-Scan", 
+	"A-B-S  A-Scan B-Scan S-Scan", "A-C-[C] A-Scan C-Scan [C-Scan]", "A-S-[C]  A-Scan S-Scan [C-Scan]", "PA-TOFD  PA-TOFD", 
+	"Strip Chart-[A]  Strip Chart[A-Scan]",								 /* 285 Display */
+	"A", "B", "C", "S", "A-B", "A-B-C", "A-B-S", "A-C-[C]", "A-S-[C]", "PA-TOFD", "Strip Chart-[A]", /* 296 Displ   */
+	"All","Current",										 /* 307 group   */
+	"A%", "B%", "Thickness","I/","Off",								 /* 309 C-Scan1  */
+
+
 
 	""																			
 };
@@ -466,14 +508,14 @@ const gchar *list_en[] = {"1 Manual Weld 1: A%. DA^. PA^. SA^", "2 Auto. Weld 1:
 const gchar *list1_en[] = {"1", "2"};
 const gchar *field1_en[] = {"A%  Peak amplitude in gate A", "AdBA  Signal in gate minus gate level for gate A", "AdBr  Diff.between signal and reference in gate A","B%  Peak amplitude in gate B"};
 const gchar *field_en[] = {"A%", "AdBA", "AdBr","B%"};
-const gchar *selection_en[] = {"A-scan", "B-scan", "C-scan", "Strip Chart", "S-scan", "R and M", "Reference", "Measure", "Data"};
-const gchar *source_en[] = {"A^", "A^-I^", "A^-I/", "B^", "B^-I^", "B^-I/", "B^-A^", "I^", "I/"};
+//const gchar *selection_en[] = {"A-scan", "B-scan", "C-scan", "Strip Chart", "S-scan", "R and M", "Reference", "Measure", "Data"};
+//const gchar *source_en[] = {"A^", "A^-I^", "A^-I/", "B^", "B^-I^", "B^-I/", "B^-A^", "I^", "I/"};
 
 
 /*  4  */
-const gchar *display_en[] = {"A  A-Scan", "B  B-Scan", "C  C-Scan", "S  S-Scan", "A-B  A-Scan B-Scan", "A-B-C  A-Scan B-Scan C-Scan", "A-B-S  A-Scan B-Scan S-Scan", "A-C-[C] A-Scan C-Scan [C-Scan]", "A-S-[C]  A-Scan S-Scan [C-Scan]", "PA-TOFD  PA-TOFD", "Strip Chart-[A]  Strip Chart[A-Scan]"};
-const gchar *displ_en[] = {"A", "B", "C", "S", "A-B", "A-B-C", "A-B-S", "A-C-[C]", "A-S-[C]", "PA-TOFD", "Strip Chart-[A]"};
-const gchar *group_en[] = {"All", "Current"};
+//const gchar *display_en[] = {"A  A-Scan", "B  B-Scan", "C  C-Scan", "S  S-Scan", "A-B  A-Scan B-Scan", "A-B-C  A-Scan B-Scan C-Scan", "A-B-S  A-Scan B-Scan S-Scan", "A-C-[C] A-Scan C-Scan [C-Scan]", "A-S-[C]  A-Scan S-Scan [C-Scan]", "PA-TOFD  PA-TOFD", "Strip Chart-[A]  Strip Chart[A-Scan]"};
+//const gchar *displ_en[] = {"A", "B", "C", "S", "A-B", "A-B-C", "A-B-S", "A-C-[C]", "A-S-[C]", "PA-TOFD", "Strip Chart-[A]"};
+//const gchar *group_en[] = {"All", "Current"};
 const gchar *utunit_en[] = {"True Depth","Sound Path", "Time"};
 const gchar *grid_en[] = {"Blue", "Green", "Red", "Yellow", "Black", "Off"};
 const gchar *zoom_display_en[] = {"A-Scan", "B-Scan", "S-Scan", "Strip Chart", "Uncorrected C-Scan", "Off"};
@@ -531,7 +573,7 @@ const gchar *scheme_en[] = {"Indoor", "Outdoor"};
 const gchar *gate_mode_en[] = {"By Group", "By Context"};
 const gchar *select_key_en[] = {"F2", "F3", "F4", "F5", "F6", "DIN1", "DIN2", "DIN3", "DIN4"};
 const gchar *assign_key_en[] = {"Gain", "Range", "Start", "Start/Stop", "Pause/Resume", "Calibrate", "Report", "Save Setup As", "Zoom", "Add Entry", "Display", "Context Select", "Gate", "User Field", "Buzzer", "Notes"};
-const gchar *startup_mode_en[] = {"Automatic", "Manual"};
+//const gchar *startup_mode_en[] = {"Automatic", "Manual"};
 const gchar *mouse_en[] = {"Off", "Mouse", "Control Area"};
 
 

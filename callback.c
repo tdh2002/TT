@@ -110,7 +110,16 @@ void data_305 (GtkMenuItem *menuitem, gpointer data); /* Measurements -> Reading
 
 void data_310 (GtkMenuItem *menuitem, gpointer data); /* Measurements -> cursors -> selection 310 */
 void data_311 (GtkSpinButton *spinbutton, gpointer data);
+void data_3111 (GtkSpinButton *spinbutton, gpointer data);
+void data_3112 (GtkSpinButton *spinbutton, gpointer data);
+void data_312 (GtkSpinButton *spinbutton, gpointer data);
+void data_3121 (GtkSpinButton *spinbutton, gpointer data);
 void data_313 (GtkSpinButton *spinbutton, gpointer data);
+void data_3131 (GtkSpinButton *spinbutton, gpointer data);
+void data_3132 (GtkSpinButton *spinbutton, gpointer data);
+void data_314 (GtkSpinButton *spinbutton, gpointer data);
+void data_3141 (GtkSpinButton *spinbutton, gpointer data);
+void data_315 (GtkMenuItem *menuitem, gpointer data); 
 void data_324 (GtkSpinButton *spinbutton, gpointer data);
 
 void data_330 (GtkMenuItem *menuitem, gpointer data); /* Measurements -> Thickness -> source 330 */
@@ -119,6 +128,12 @@ void data_332 (GtkSpinButton *spinbutton, gpointer data);
 void data_333 (GtkSpinButton *spinbutton, gpointer data);
 
 void data_400 (GtkMenuItem *menuitem, gpointer data);
+void data_401 (GtkMenuItem *menuitem, gpointer data);
+void data_4011 (GtkMenuItem *menuitem, gpointer data);
+void data_4012 (GtkMenuItem *menuitem, gpointer data);
+void data_4013 (GtkMenuItem *menuitem, gpointer data);
+void data_402 (GtkMenuItem *menuitem, gpointer data);
+//void data_403 (GtkMenuItem *menuitem, gpointer data);
 void data_410 (GtkMenuItem *menuitem, gpointer data);
 void data_411 (GtkMenuItem *menuitem, gpointer data);
 void data_420 (GtkMenuItem *menuitem, gpointer data);
@@ -190,11 +205,11 @@ void data_830 (GtkMenuItem *menuitem, gpointer data);
 
 void data_900 (GtkMenuItem *menuitem, gpointer data);
 void data_901 (GtkSpinButton *spinbutton, gpointer data);
+void data_902 (GtkMenuItem *menuitem, gpointer data);
 void data_903 (GtkMenuItem *menuitem, gpointer data);
-void data_904 (GtkMenuItem *menuitem, gpointer data);
 void data_912 (GtkMenuItem *menuitem, gpointer data);
 void data_913 (GtkMenuItem *menuitem, gpointer data);
-void data_924 (GtkMenuItem *menuitem, gpointer data);
+//void data_923 (GtkMenuItem *menuitem, gpointer data);
 void data_930 (GtkMenuItem *menuitem, gpointer data);
 
 
@@ -432,6 +447,23 @@ void b3_fun0(gpointer p)
 	pp->pos_last2 = pp->pos2[pp->pos][pp->pos1[pp->pos]];
 	pp->pos2[pp->pos][pp->pos1[pp->pos]] = 0;
 	/*	pp->pos_pos = MENU3_PRESSED;*/
+
+	switch (pp->pos)
+	{
+		case 3:
+			   switch (pp->pos1[3])
+			   {
+				   case 2: 
+					   CFG(display_table) = !CFG(display_table); /* P320 */
+					   break; 
+
+				   default:break;
+			   }
+			break;
+		default:break;
+	}
+
+
 	/*处理微调*/
 	if ((pp->pos_last2 == pp->pos2[pp->pos][pp->pos1[pp->pos]]) && 
 			(pp->pos_pos == MENU3_PRESSED))
@@ -466,7 +498,7 @@ void b3_fun0(gpointer p)
 				{
 					case 0: /* 弹出一个菜单选择  */			break; /* 300 */
 					case 1: /* 弹出一个菜单选择  */			break; /* 310  */
-					case 2: pp->p_config->display_table = !pp->p_config->display_table;break; /* 320 display table  */
+					case 2: break; /* 320 display table  */
 					case 3: break; /* 330 */
 					default:break;
 				}
@@ -558,6 +590,16 @@ void b3_fun1(gpointer p)
 				   default:break;
 			   }
 			   break;
+
+		case 3:
+			   switch (pp->pos1[3])
+			   {
+				   case 2: 
+					   CFG(entry_image)= !CFG(entry_image);/* P321 */
+					   break;
+				   default:break;
+			   }
+			break;
 		default:break;
 	}
 
@@ -595,8 +637,16 @@ void b3_fun1(gpointer p)
 					switch (pp->pos1[3])
 					{
 						case 0: break; 
-						case 1: data_process(&(pp->p_tmp_config->VPA_reg), 1); break;
-						case 2: pp->p_config->entry_image= !pp->p_config->entry_image; /* 321 entry image*/ 
+						case 1: /* 311 */
+							if(!GROUP_VAL(selection))
+								data_process(&(pp->p_tmp_config->per_reference_reg), 2); 
+							else if(GROUP_VAL(selection)==1||GROUP_VAL(selection)==2||GROUP_VAL(selection)==3)
+								data_process(&(pp->p_tmp_config->s_reference_reg), 3);
+							else if(GROUP_VAL(selection)==4 || GROUP_VAL(selection)==8 )
+								data_process(&(pp->p_tmp_config->cursors_angle_reg), 1);
+							break;
+
+						case 2: break; /* 321 entry image*/ 
 						case 3: data_process(&(pp->p_tmp_config->min_thickness_reg), 3); break;  /*331 */
 						case 4: /* Set Ref. */ break; 
 						default:break;
@@ -784,7 +834,11 @@ void b3_fun2(gpointer p)
 				   switch (pp->pos1[3])
 				   {
 					   case 0: break; 
-					   case 1: data_process(&(pp->p_tmp_config->cursors_scan_reg), 3); break; /*312*/
+					   case 1:/*312*/
+							if(!GROUP_VAL(selection))
+								data_process(&(pp->p_tmp_config->per_measure_reg), 2); 
+							else if(GROUP_VAL(selection)==1||GROUP_VAL(selection)==2||GROUP_VAL(selection)==3)
+								data_process(&(pp->p_tmp_config->s_measure_reg), 3); break;
 					   case 2: break;
 					   case 3: data_process(&(pp->p_tmp_config->max_thickness_reg), 3); break; /*332 */
 					   case 4: break;
@@ -935,7 +989,15 @@ void b3_fun3(gpointer p)
 				   switch (pp->pos1[3])
 				   {
 					   case 0: break;
-					   case 1: data_process(&(pp->p_tmp_config->cursors_index_reg), 2); break;/* 313  index */ 
+					   case 1: /* 313 */
+						if( GROUP_VAL(selection)==0 || GROUP_VAL(selection)==1 || GROUP_VAL(selection)==4) 
+							data_process(&(pp->p_tmp_config->u_reference_reg), 3);
+						else if( GROUP_VAL(selection)==2 )
+							data_process(&(pp->p_tmp_config->i_reference_reg), 3);
+						else if( GROUP_VAL(selection)==3 )
+							data_process(&(pp->p_tmp_config->s_refmeas_reg), 3);
+						break;
+
 					   case 2: /* 视频滤波 */ break; 
 					   case 3: data_process(&(pp->p_tmp_config->echo_qty_reg), 1); break;  /*333 */
 					   case 4: /* 弹出一个选择菜单,选择 */ break; 
@@ -1061,7 +1123,13 @@ void b3_fun4(gpointer p)
 				   switch (pp->pos1[3])
 				   {
 					   case 0: break;
-					   case 1: break;  /* 314 */ 
+					   case 1:  /* 314 */ 
+						if( GROUP_VAL(selection)==0 || GROUP_VAL(selection)==1 || GROUP_VAL(selection)==4) 
+							data_process(&(pp->p_tmp_config->u_measure_reg), 3);
+						else if( GROUP_VAL(selection)==2 )
+							data_process(&(pp->p_tmp_config->i_measure_reg), 3);
+						break;
+
 					   case 2: data_process(&(pp->p_tmp_config->entry_reg), 1); break;  /*324 */
 					   case 3: break;  /*334 */
 					   case 4: break; 
@@ -1111,7 +1179,7 @@ void b3_fun5(gpointer p)
 	pp->pos2[pp->pos][pp->pos1[pp->pos]] = 5;
 	/*处理微调*/
 	if ((pp->pos_last2 == pp->pos2[pp->pos][pp->pos1[pp->pos]]) &&
-			(pp->pos_pos == MENU3_PRESSED));
+			(pp->pos_pos == MENU3_PRESSED))
 	{
 		switch (pp->pos) 
 		{
@@ -1147,6 +1215,15 @@ void b3_fun5(gpointer p)
 				   }
 				   break;
 			case 3:
+				   switch (pp->pos1[3])
+				   {
+					   case 0: break; 
+					   case 1: break;/*p315*/
+					   case 2: break; 
+					   case 3: break; 
+					   case 4: break; 
+					   default:break;
+				   }
 				   break;
 
 			case 4:
@@ -1200,7 +1277,7 @@ static void handler_key(guint keyval)
 	guchar tmp1 = pp->mark_pop_change;
 	switch (keyval) 
 	{
-		case GDK_Escape:  /* 按下Escape键 */
+		case GDK_Escape:
 			if ( pp->mark_pop_change == 1)
 				pp->mark_pop_change = 0;
 			switch (pp->pos_pos)
@@ -1219,7 +1296,7 @@ static void handler_key(guint keyval)
 				default:break;
 			}
 			break;
-		case GDK_Return: /* 按下enter键 */
+		case GDK_Return:
 			switch (pp->pos_pos)
 			{
 				case MENU2_STOP:
@@ -1236,39 +1313,12 @@ static void handler_key(guint keyval)
 				default:break;
 			}
 			break;
-		case GDK_F7: /* 按下 F7 */
-			if (gtk_widget_get_visible(pp->menu3) && CUR_POS == 5) /* 处理弹出窗口 */
-			{
-				gtk_menu_item_deselect  (GTK_MENU_ITEM (pp->menu_item3[pp->pop_pos]));
-				if (pp->pop_pos < pp->pop_qty - 1)	
-					pp->pop_pos += 1;
-				else 
-					pp->pop_pos = 0;
-//				gtk_menu_set_active (GTK_MENU (pp->menu3), pp->pop_pos);
-				gtk_menu_item_select (GTK_MENU_ITEM (pp->menu_item3[pp->pop_pos]));
-//				gtk_menu_shell_select_item (GTK_MENU_SHELL(pp->menu3),
-//						GTK_WIDGET (pp->menu_item3[pp->pop_pos]));
-				g_print("%dddd", pp->pop_pos);
-			}
-			else 
-				b3_fun5(GUINT_TO_POINTER (0x01));
-			break;
-		case GDK_F8: /* 按下 F8 */
-				b3_fun4(GUINT_TO_POINTER (0x01));
-			break;
-		case GDK_F9: /* 按下 F9 */
-				b3_fun3(GUINT_TO_POINTER (0x01));
-			break;
-		case GDK_F10: /* 按下 F10 */
-				b3_fun2(GUINT_TO_POINTER (0x01));
-			break;
-		case GDK_F11: /* 按下 F11 */
-				b3_fun1(GUINT_TO_POINTER (0x01));
-			break;
-		case GDK_F12: /* 按下 F12 */
+		case GDK_F12:
+			if (pp->pos_pos == MENU3_PRESSED)
 				b3_fun0(GUINT_TO_POINTER (0x01));
+			else 
+				pp->pos_pos = MENU3_PRESSED;
 			break;
-			/* 上下左右 */
 		case GDK_Up:
 			switch (pp->pos_pos)
 			{
@@ -1309,8 +1359,14 @@ static void handler_key(guint keyval)
 			break;
 		default:break;
 	}
+	if ((tmp != pp->pos_pos) || (tmp1 != pp->mark_pop_change))
+	{
+		draw_2_menu(0);
+		draw_3_menu(0, NULL);
+	}
 
 	return ;
+
 }
 
 /* 快捷键处理函数 */
@@ -2077,32 +2133,67 @@ void data_305 (GtkMenuItem *menuitem, gpointer data) /* Measurements -> Reading 
 
 void data_310 (GtkMenuItem *menuitem, gpointer data) /* Measurements -> cursors -> selection 310 */
 {
-	pp->p_config->select = (gchar) (GPOINTER_TO_UINT (data));
+	GROUP_VAL(selection) = (guchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
 }
 
 
-void data_311 (GtkSpinButton *spinbutton, gpointer data) /*VPA */
+void data_311 (GtkSpinButton *spinbutton, gpointer data) 
 {
-	pp->p_config->VPA =  (guint) (gtk_spin_button_get_value (spinbutton));
+	//pp->p_config->VPA =  (guint) (gtk_spin_button_get_value (spinbutton));
+	GROUP_VAL(per_reference) =  (gushort) (gtk_spin_button_get_value (spinbutton)*100.0);
+}
+void data_3111 (GtkSpinButton *spinbutton, gpointer data) 
+{
+	GROUP_VAL(s_reference) =  (guint) (gtk_spin_button_get_value (spinbutton)*100.0);
+}
+void data_3112 (GtkSpinButton *spinbutton, gpointer data) 
+{
+	GROUP_VAL(cursors_angle) =  (guint) (gtk_spin_button_get_value (spinbutton)*100.0);
 }
 
-void data_312 (GtkSpinButton *spinbutton, gpointer data) /*VPA */
+void data_312 (GtkSpinButton *spinbutton, gpointer data) /* */
 {
-	pp->p_config->cursors_scan =  (guint) (gtk_spin_button_get_value (spinbutton));
+	//pp->p_config->cursors_scan =  (guint) (gtk_spin_button_get_value (spinbutton));
+	GROUP_VAL(per_measure) =  (gushort) (gtk_spin_button_get_value (spinbutton)*100.0);
 }
 
-void data_330 (GtkMenuItem *menuitem, gpointer data) /* Measurements -> Thickness -> source 330 */
+void data_3121 (GtkSpinButton *spinbutton, gpointer data) /* */
 {
-	pp->p_config->source = (gchar) (GPOINTER_TO_UINT (data));
+	GROUP_VAL(s_measure) =  (guint) (gtk_spin_button_get_value (spinbutton)*100.0);
+}
+
+void data_313 (GtkSpinButton *spinbutton, gpointer data) /* */
+{
+	GROUP_VAL(u_reference) =  (guint) (gtk_spin_button_get_value (spinbutton)*1000.0);
+}
+
+void data_3131 (GtkSpinButton *spinbutton, gpointer data) /* */
+{
+	GROUP_VAL(i_reference) =  (gint) (gtk_spin_button_get_value (spinbutton)*100.0);
+}
+
+void data_3132 (GtkSpinButton *spinbutton, gpointer data) /* */
+{
+	GROUP_VAL(s_refmeas) =  (gushort) (gtk_spin_button_get_value (spinbutton)*100.0);
+}
+
+void data_314 (GtkSpinButton *spinbutton, gpointer data) /* */
+{
+	GROUP_VAL(u_measure) =  (guint) (gtk_spin_button_get_value (spinbutton)*1000.0);
+}
+
+void data_3141 (GtkSpinButton *spinbutton, gpointer data) /* */
+{
+	GROUP_VAL(i_measure) =  (gint) (gtk_spin_button_get_value (spinbutton)*100.0);
+}
+
+void data_315 (GtkMenuItem *menuitem, gpointer data) /* Measurements -> DATA LINK */
+{
+	GROUP_VAL(data_link) = (guchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
-}
-
-void data_313 (GtkSpinButton *spinbutton, gpointer data) /*Index */
-{
-	pp->p_config->cursors_index =  (guint) (gtk_spin_button_get_value (spinbutton));
 }
 
 void data_324 (GtkSpinButton *spinbutton, gpointer data) /*entry_qty */
@@ -2110,30 +2201,70 @@ void data_324 (GtkSpinButton *spinbutton, gpointer data) /*entry_qty */
 	pp->p_config->entry_qty =  (guint) (gtk_spin_button_get_value (spinbutton));
 }
 
-void data_331 (GtkSpinButton *spinbutton, gpointer data) /*min_thickness */
+void data_330 (GtkMenuItem *menuitem, gpointer data) /* Measurements -> Thickness -> source p330 */
 {
-	pp->p_config->min_thickness =  (guint) (gtk_spin_button_get_value (spinbutton) * 100.0);
+	GROUP_VAL(source) = (guchar) (GPOINTER_TO_UINT (data));
+	pp->pos_pos = MENU3_STOP;
+	draw_3_menu(0, NULL);
 }
 
-void data_332 (GtkSpinButton *spinbutton, gpointer data) /*max_thickness */
+void data_331 (GtkSpinButton *spinbutton, gpointer data) /*min_thickness p331 */
 {
-	pp->p_config->max_thickness =  (guint) (gtk_spin_button_get_value (spinbutton) * 100.0);
+	CFG(min_thickness) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
 }
 
-void data_333 (GtkSpinButton *spinbutton, gpointer data) /*echo_qty */
+void data_332 (GtkSpinButton *spinbutton, gpointer data) /*max_thickness p332 */
 {
-	pp->p_config->echo_qty =  (guint) (gtk_spin_button_get_value (spinbutton));
+	CFG(max_thickness) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
 }
 
-void data_400 (GtkMenuItem *menuitem, gpointer data) /* Display -> Selection -> display 400 */
+void data_333 (GtkSpinButton *spinbutton, gpointer data) /*echo_qty p333 */
 {
-	pp->p_config->display = (gchar) (GPOINTER_TO_UINT (data));
+	CFG(echo_qty) =  (guchar) (gtk_spin_button_get_value (spinbutton));
+}
+
+void data_400 (GtkMenuItem *menuitem, gpointer data) /* Display -> Selection -> display p400 */
+{
+	CFG(display) = (gchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
 	draw_area_all();
 }
+void data_401 (GtkMenuItem *menuitem, gpointer data) /* Display -> Selection -> group p401 */
+{
+	CFG(dis_group) = (guchar) (GPOINTER_TO_UINT (data));
+	pp->pos_pos = MENU3_STOP;
+	draw_3_menu(0, NULL);
+}
+void data_4011 (GtkMenuItem *menuitem, gpointer data) /* Display -> Selection -> C-Scan1 p401 */
+{
+	CFG(c_scan1) = (guchar) (GPOINTER_TO_UINT (data));
+	pp->pos_pos = MENU3_STOP;
+	draw_3_menu(0, NULL);
+}
+void data_4012 (GtkMenuItem *menuitem, gpointer data) /* Display -> Selection -> C-Scan1 p401 */
+{
+	CFG(c_scan11) = (guchar) (GPOINTER_TO_UINT (data));
+	pp->pos_pos = MENU3_STOP;
+	draw_3_menu(0, NULL);
+}
+void data_4013 (GtkMenuItem *menuitem, gpointer data) /* Display -> Selection -> Data1 p401 */
+{
+	CFG(data1) = (guchar) (GPOINTER_TO_UINT (data));
+	pp->pos_pos = MENU3_STOP;
+	draw_3_menu(0, NULL);
+}
 
-void data_410 (GtkMenuItem *menuitem, gpointer data) /* Display -> Overlay -> UT Unit 410 */
+void data_402 (GtkMenuItem *menuitem, gpointer data) /* Display -> Selection -> C-Scan2 p402 */
+{
+	CFG(c_scan2) = (guchar) (GPOINTER_TO_UINT (data));
+	pp->pos_pos = MENU3_STOP;
+	draw_3_menu(0, NULL);
+}
+
+
+
+void data_410 (GtkMenuItem *menuitem, gpointer data) /* Display -> Overlay -> UT Unit p410 */
 {
 	CFG(ut_unit) = (gchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
@@ -2141,28 +2272,28 @@ void data_410 (GtkMenuItem *menuitem, gpointer data) /* Display -> Overlay -> UT
 	draw_area_all();
 }
 
-void data_411 (GtkMenuItem *menuitem, gpointer data) /* Display -> Overlay -> Grid 411 */
+void data_411 (GtkMenuItem *menuitem, gpointer data) /* Display -> Overlay -> Grid p411 */
 {
 	pp->p_config->grid = (gchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
 }
 
-void data_420 (GtkMenuItem *menuitem, gpointer data) /* Display -> Zoom -> Display 420 */
+void data_420 (GtkMenuItem *menuitem, gpointer data) /* Display -> Zoom -> Display p420 */
 {
 	pp->p_config->zoom_display = (gchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
 }
 
-void data_430 (GtkMenuItem *menuitem, gpointer data) /* Display -> Color -> select 430 */
+void data_430 (GtkMenuItem *menuitem, gpointer data) /* Display -> Color -> select p430 */
 {
 	pp->p_config->color_select = (gchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
 }
 
-void data_431 (GtkSpinButton *spinbutton, gpointer data) /*color_start */
+void data_431 (GtkSpinButton *spinbutton, gpointer data) /*color_start p431 */
 {
 	pp->p_config->color_start =  (guint) (gtk_spin_button_get_value (spinbutton));
 }
@@ -2501,14 +2632,14 @@ void data_900(GtkMenuItem *menuitem, gpointer data) /* Preferences -> Pref. -> U
 	draw_3_menu(0, NULL);
 }
 
-void data_903(GtkMenuItem *menuitem, gpointer data) /* Preferences -> Pref. -> scheme */
+void data_902(GtkMenuItem *menuitem, gpointer data) /* Preferences -> Pref. -> scheme */
 {
 	pp->p_config->scheme = (gchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
 }
 
-void data_904(GtkMenuItem *menuitem, gpointer data) /* Preferences -> Pref. -> gate mode */
+void data_903(GtkMenuItem *menuitem, gpointer data) /* Preferences -> Pref. -> gate mode */
 {
 	pp->p_config->gate_mode = (gchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
@@ -2529,12 +2660,14 @@ void data_913(GtkMenuItem *menuitem, gpointer data) /* Preferences -> system -> 
 	draw_3_menu(0, NULL);
 }
 
-void data_924(GtkMenuItem *menuitem, gpointer data) /* Preferences -> system -> assign key*/
+# if 0
+void data_923(GtkMenuItem *menuitem, gpointer data) /* Preferences -> system -> assign key*/
 {
 	pp->p_config->startup_mode = (gchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
 }
+#endif
 
 void data_930(GtkMenuItem *menuitem, gpointer data) /* Preferences -> system -> assign key*/
 {

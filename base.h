@@ -446,6 +446,20 @@ typedef struct setup_stAll {
 	Doppler_stLaw       astLaw[setup_MAX_LAW_QTY];
 } Doppler_stAll, *Doppler_stAll_P;
 
+# if 0
+/* Measurement->Cursors->Selection信息 */
+typedef struct selection_info {
+	gushort           per_reference;      /* 参考光标的高度 */
+	gushort           per_measure;        /* 测量光标的高度 */
+	gushort           u_reference;        /* 参考光标在超声轴的位置 */
+	gushort           u_measure;	     /* 测量光标在超声轴的位置 */
+	gushort           s_reference;	     /* 参考光标在扫描轴的位置 */	     
+	gushort           s_measure;	     /* 测量光标在扫描轴的位置 */
+	guint            data_link;
+
+} SELECTION_INFO, *SELECTION_INFO_P;
+#endif
+
 
 /* 闸门信息 */
 typedef struct gate_info {
@@ -463,7 +477,7 @@ typedef struct alarm_info {
 	guchar	groupa;   	    /* GROUP A     */
 	guchar	conditiona;     /* Condition A */
 	guchar	operat;         /* Operator    */
-	guchar	groupb;	    /* GROUP B 	   */
+	guchar	groupb;	        /* GROUP B 	   */
 	guchar	conditionb;     /* Condition B */
 } ALARM_INFO, *ALARM_INFO_P;
 
@@ -478,6 +492,19 @@ typedef struct output_info {
 	guint	delay;			/* delay 	*/
 	guint	holdtime;       /* holdtime */
 } OUTPUT_INFO, *OUTPUT_INFO_P;
+
+
+/* 光标信息 */
+typedef struct cursors_info {
+	gushort    angle;	     
+	gushort    amplitude;
+	guint	   UT;
+	guint      scan;
+	guint      index;
+
+} CURSORS_INFO, *CURSORS_INFO_P;
+
+
 
 /* 输出信息 */
 typedef struct analog_info {
@@ -609,9 +636,26 @@ typedef struct Group {
 	gushort tcg_gain;
 
 
-	LAW_INFO	law_info;	/* 聚焦法则的信息  */
-	PROBE	        probe;
-	WEDGE	        wedge;
+	LAW_INFO     law_info;	/* 聚焦法则的信息  */
+	PROBE	     probe;
+	WEDGE	     wedge;
+
+	guchar		selection;
+	gushort     	per_reference;       /* 参考光标的高度 */
+	gushort		per_measure;         /* 测量光标的高度 */
+	guint           u_reference;         /* 参考光标在超声轴的位置 */
+	guint           u_measure;	     /* 测量光标在超声轴的位置 */
+	gint            s_reference;	     /* 参考光标在扫描轴的位置 */	     
+	gint            s_measure;	     /* 测量光标在扫描轴的位置 */
+	guchar          data_link;
+	gint            i_reference;         /* 参考光标在指数轴的位置 */
+	gint            i_measure;	     /* 测量光标在指数轴的位置 */
+	gushort		s_refmeas;
+	gushort		cursors_angle;
+	CURSORS_INFO    cursors_info[4];
+	guchar	 source;
+
+
 
 } GROUP, *GROUP_P;
 
@@ -666,7 +710,12 @@ typedef	struct Config {
 
 	/*显示*/
 	guchar	display;		/*显示模式 A B C A+B A+B+C A+S ...*/
-	guint	c_scan;			/*c扫描参考*/
+	guchar	c_scan1;			/*c扫描参考*/
+	guchar	c_scan2;
+	guchar	c_scan11;
+	guchar	data1;
+	guchar	data2;
+
 	guchar	ut_unit;		/*检测单位 时间2 声程1  实际深度0 .*/
 	guchar	color;			/**/
 
@@ -682,14 +731,16 @@ typedef	struct Config {
 	guchar	calibration_mode;                /*Wizard -> calibration -> Mode */
 
 	//guchar	alarm;                           /*Gate/Alarm->Alarm->Alarm*/
-
-
 	guchar	list;                            /*Measurements->Reading->list*/
 	guchar	field1;                            /*Measurements->Reading->Field1*/
 	guchar	field2;                            /*Measurements->Reading->Field2*/
 	guchar	field3;                            /*Measurements->Reading->Field3*/
 	guchar	field4;                            /*Measurements->Reading->Field4*/
-	guchar	select;                            /*Measurements->Cursors->select*/
+
+
+
+//	guchar	selection;                            /*Measurements->Cursors->selection*/
+//	SELECTION_INFO   select;			
 	guint	VPA;                            /*Measurements->Cursors->VPA*/
 	guint	cursors_scan;                   /*Measurements->Cursors->Scan*/
 	guint	cursors_index;                  /*Measurements->Cursors->index*/
@@ -697,12 +748,14 @@ typedef	struct Config {
 	guchar	entry_image;                   /*Measurements->Table->entry image*/
 	guchar	entry_qty;                     /*Measurements->Table->Select Entry*/
 
-	guchar	source;                         /*Measurements->Thickness->source*/
+//	guchar	source;                         /*Measurements->Thickness->source*/
 	guint	min_thickness;                  /*Measurements->Thickness->min*/
 	guint	max_thickness;                  /*Measurements->Thickness->max*/
-	guint	echo_qty;                       /*Measurements->Thickness->echo_qty*/
+	guchar	echo_qty;                       /*Measurements->Thickness->echo_qty*/
 
 	//	guchar  display;                        /* Display -> Selection -> display*/
+	guchar  dis_group;
+
 	guchar  grid;                           /* Display -> Overlay -> grid */
 	guchar  zoom_display;                   /* Display -> zoom -> display */
 	guchar  color_select;                   /* Display -> Color -> select*/
@@ -836,6 +889,17 @@ typedef struct tmp_config {
 	guchar  mat_atten_reg;
 	guchar  delay_reg;
 	guchar  tcg_gain_reg;
+
+	guchar  per_reference_reg;		     /* 311 Measurements-> cursors -> %(r) */
+	guchar  per_measure_reg;
+	guchar  u_reference_reg;
+	guchar  u_measure_reg;
+	guchar  s_reference_reg;
+	guchar  s_measure_reg;
+	guchar  i_reference_reg;
+	guchar  i_measure_reg;
+	guchar  s_refmeas_reg;
+	guchar  cursors_angle_reg;
 
 	guchar   color_contrast_reg;                 /* Display -> Color -> contrast  */
 	guchar   brightness_reg;                     /* Display -> Color -> brightness*/
@@ -1005,9 +1069,6 @@ typedef struct Draw_interface {
 
 
 	guchar			mark_pop_change;    /**/
-	guchar			pop_status;			/* 时候 弹出菜单 0 是 没 1 是有哦 */
-	guchar			pop_qty;
-	guchar			pop_pos;
 	guchar			markreturn;
 	guchar			mark3;
 
@@ -1018,6 +1079,8 @@ typedef struct Draw_interface {
 
 /* guchar 0~256   gushort 0~65536  guint 0~2^32 */
 /* 13*。。。。  */
+
+/*315 Data Link 止 20110212*/
 
 /* Wizard 中各Start , Next。。。等的实现 */
 /* UT Settings -> Beam 下几个菜单unsensitive */
@@ -1049,6 +1112,7 @@ typedef struct Draw_interface {
 #define CFG_ALARM_POS(a)  CFG(alarm[CFG(alarm_pos)].a)
 #define CFG_OUTPUT_POS(a) CFG(output[CFG(output_pos)].a)
 #define CFG_ANALOG_POS(a) CFG(analog[CFG(output_pos - 3)].a)
+#define GROUP_CURSORS_POS(a) GROUP_VAL(cursors_info[GROUP_VAL(selection)-5].a)
 
 #define TMP(a)  (pp->p_tmp_config->a)
 #define	MENU_STATUS	(pp->pos_pos) 

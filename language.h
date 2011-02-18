@@ -48,13 +48,13 @@ extern const gchar *list_en[];
 extern const gchar *list1_en[];
 extern const gchar *field1_en[];
 extern const gchar *field_en[];
-extern const gchar *selection_en[];
+//extern const gchar *selection_en[];
 extern const gchar *source_en[];
 
 
-extern const gchar *display_en[];
-extern const gchar *displ_en[];
-extern const gchar *group_en[];
+//extern const gchar *display_en[];
+//extern const gchar *displ_en[];
+//extern const gchar *group_en[];
 extern const gchar *utunit_en[];
 extern const gchar *grid_en[];
 extern const gchar *zoom_display_en[];
@@ -105,7 +105,7 @@ extern const gchar *scheme_en[];
 extern const gchar *gate_mode_en[];
 extern const gchar *select_key_en[];
 extern const gchar *assign_key_en[];
-extern const gchar *startup_mode_en[];
+//extern const gchar *startup_mode_en[];
 extern const gchar *mouse_en[];
 
 

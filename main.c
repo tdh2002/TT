@@ -90,6 +90,27 @@ static void set_config (guint groupid)
 	GROUP_VAL(mat_atten)=1000; 
 	GROUP_VAL(delay)=1000; 
 	GROUP_VAL(tcg_gain)=500;
+	GROUP_VAL(selection)=0;   /*0 是 A-scan*/
+	GROUP_VAL(per_reference)=1000.0;
+	GROUP_VAL(per_measure)=1000.0;
+	GROUP_VAL(u_reference)=1000.0;
+	GROUP_VAL(u_measure)=1000.0;
+	GROUP_VAL(s_reference)=1000.0;
+	GROUP_VAL(s_measure)=100.0;
+	GROUP_VAL(data_link)=0;  /* 0是none */
+
+	CFG(display_table)=0;  /*0是OFF*/
+	CFG(entry_image)=0;    /*0是OFF*/
+	GROUP_VAL(source)=0;   /*0是A^ */
+	CFG(min_thickness)=50;
+	CFG(max_thickness)=99900;
+	CFG(echo_qty)=1;
+	CFG(dis_group)=0; /*0是All*/
+	CFG(c_scan1)=0; /*0是A%*/
+	CFG(c_scan2)=0; /*0是A%*/
+	CFG(c_scan11)=0; /*0是A%*/
+	CFG(data1)=0; /*0是A%*/
+	CFG(data2)=0; /*0是A%*/
 
 	/* 探头信息 */
 	GROUP_VAL(probe.Elem_qty)	= 32; /*  */

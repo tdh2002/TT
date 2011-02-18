@@ -133,6 +133,18 @@
 #define SOUND		(DATA+4)
 #define MODE_POS	(SOUND+10)
 #define CURVE_POS	(MODE_POS + 2)
+#define LIST		(CURVE_POS + 4 )
+#define FIELD		(LIST + 2)
+#define SELECTION	(FIELD + 61)
+#define DATA_LINK	(SELECTION+9)
+#define SOURCE		(DATA_LINK+4)
+#define DISPLAY		(SOURCE + 9)
+#define DISPL		(DISPLAY + 11)
+#define GROUP		(DISPL +11)
+#define C_SCAN1		(GROUP +2)
+
+
+
 
 
 /*  */
@@ -295,7 +307,16 @@ extern void data_305 (GtkMenuItem *menuitem, gpointer data);         /* Measurem
 
 extern void data_310 (GtkMenuItem *menuitem, gpointer data);         /* Measurements -> cursors -> selection 310 */
 extern void data_311 (GtkSpinButton *spinbutton, gpointer data);	/*311*/
+extern void data_3111 (GtkSpinButton *spinbutton, gpointer data);
+extern void data_3112 (GtkSpinButton *spinbutton, gpointer data);	
+extern void data_312 (GtkSpinButton *spinbutton, gpointer data);	/*312*/
+extern void data_3121 (GtkSpinButton *spinbutton, gpointer data);	/*312*/
 extern void data_313 (GtkSpinButton *spinbutton, gpointer data);	/*313*/
+extern void data_3131 (GtkSpinButton *spinbutton, gpointer data);
+extern void data_3132 (GtkSpinButton *spinbutton, gpointer data);
+extern void data_314 (GtkSpinButton *spinbutton, gpointer data);	/*314*/
+extern void data_3141 (GtkSpinButton *spinbutton, gpointer data);
+extern void data_315 (GtkMenuItem *menuitem, gpointer data);
 extern void data_324 (GtkSpinButton *spinbutton, gpointer data);        /*324*/
 extern void data_330 (GtkMenuItem *menuitem, gpointer data);          /* Measurements -> Thickness -> source 330 */
 extern void data_331 (GtkSpinButton *spinbutton, gpointer data);	/*331*/
@@ -303,6 +324,12 @@ extern void data_332 (GtkSpinButton *spinbutton, gpointer data);	/*332*/
 extern void data_333 (GtkSpinButton *spinbutton, gpointer data);	/*333*/
 
 extern void data_400 (GtkMenuItem *menuitem, gpointer data);            /*400*/
+extern void data_401 (GtkMenuItem *menuitem, gpointer data);            /*401*/
+extern void data_4011 (GtkMenuItem *menuitem, gpointer data);
+extern void data_4012 (GtkMenuItem *menuitem, gpointer data);
+extern void data_4013 (GtkMenuItem *menuitem, gpointer data);
+extern void data_402 (GtkMenuItem *menuitem, gpointer data);
+//extern void data_403 (GtkMenuItem *menuitem, gpointer data);
 extern void data_410 (GtkMenuItem *menuitem, gpointer data);            /*410*/
 extern void data_411 (GtkMenuItem *menuitem, gpointer data);            /*411*/
 extern void data_420 (GtkMenuItem *menuitem, gpointer data);            /*420*/
@@ -374,11 +401,11 @@ extern void data_830 (GtkMenuItem *menuitem, gpointer data);
 
 extern void data_900 (GtkMenuItem *menuitem, gpointer data);
 extern void data_901 (GtkSpinButton *spinbutton, gpointer data);	/*901*/
+extern void data_902 (GtkMenuItem *menuitem, gpointer data);
 extern void data_903 (GtkMenuItem *menuitem, gpointer data);
-extern void data_904 (GtkMenuItem *menuitem, gpointer data);
 extern void data_912 (GtkMenuItem *menuitem, gpointer data);
 extern void data_913 (GtkMenuItem *menuitem, gpointer data);
-extern void data_924 (GtkMenuItem *menuitem, gpointer data);
+//extern void data_923 (GtkMenuItem *menuitem, gpointer data);
 extern void data_930 (GtkMenuItem *menuitem, gpointer data);
 
 extern gboolean foo (GtkAccelGroup *accel_group, GObject *acceleratable,
