@@ -16,8 +16,6 @@ gint (*window_keypress_event_orig)(GtkWidget *widget, GdkEventKey *event);
 gint my_keypress_event(GtkWidget *widget, GdkEventKey *event);
 GtkWidgetClass *widget_window_class;
 
-GdkPoint a[512] = {{0,0}, {240,200}, {400,200}};
-
 const gchar *backpic[] = 
 {
 	"pic/10.png", "pic/11.png", "pic/12.png",		/* 二级菜单 0按下 1未选中 2 停留*/
@@ -125,12 +123,13 @@ gint my_keypress_event(GtkWidget *widget, GdkEventKey *event)
 	return 0;
 }
 
+/* 设置弹出目录的位置 */
 void set_menu_position_tdh (GtkMenu *menu, gint *x, gint *y,
 		gboolean *push_in, gpointer status_icon)
 {
 	*x = pp->x_pos;
 	*y = pp->y_pos;
-	return;
+	return ;
 }
 
 /* 设置控件的背景图片 */
@@ -328,7 +327,8 @@ void menuitem9_function(GtkMenuItem *menuitem, gpointer data)
 	draw_3_menu(1, NULL);
 }
 
-/* 切换语言 保留 */
+
+/* 切换语言 待实现 */
 void change_language()
 {
 	return;
@@ -809,91 +809,7 @@ static void draw3_digit_stop(gfloat cur_value, const gchar *unit,
 	/*						gtk_widget_grab_focus (pp->button);*/
 }
 
-# if 0
-static void draw3_onoffstop(guint pos)               /* button 为 on/off 时的颜色变化*/
-{
-	gint  x, y, z;       /* xyz 分别为123级菜单位置 */
-	gchar *str = NULL;
-
-	x = pp->pos;
-	y = pp->pos1[x];
-	z = pos;
-
-	//update_widget_bg(pp->eventbox30[z], backpic[6]);/*被按下时的状态*/
-	if ((CUR_POS == z) && (pp->pos_pos == MENU3_STOP))
-	{
-		update_widget_bg(pp->eventbox30[z], backpic[8]);
-		update_widget_bg(pp->eventbox31[z], backpic[11]);
-	}
-	else
-	{
-		update_widget_bg(pp->eventbox30[z], backpic[7]);
-		update_widget_bg(pp->eventbox31[z], backpic[10]);
-	}
-
-
-	str = g_strdup_printf ("%s", con2_p[x][y][z]);	
-	gtk_label_set_text (GTK_LABEL (pp->label3[z]), str);
-
-	if (str)
-		g_free(str);
-
-	/* 显示和隐藏控件 */
-	gtk_widget_show (pp->eventbox30[z]);
-	gtk_widget_show (pp->eventbox31[z]);
-	gtk_widget_show (pp->data3[z]);
-	gtk_widget_hide (pp->sbutton[z]);
-	//gtk_widget_hide (pp->vscalebox);
-	//	gtk_widget_show (pp->vscalebox);
-	gtk_widget_show (pp->scale_drawarea);
-	gtk_widget_hide (pp->button_add);
-	gtk_widget_hide (pp->button_sub);
-	gtk_widget_hide (pp->vscale);
-}
-
-
-static void draw3_onoffpressed(guint pos)
-{
-	gint  x, y, z;       /* xyz 分别为123级菜单位置 */
-	gchar *str = NULL;
-
-	x = pp->pos;
-	y = pp->pos1[x];
-	z = pos;
-	/*	gtk_widget_destroy (pp->vscale);*/
-	// update_widget_bg(pp->eventbox30[z], backpic[6]);/*被按下时的状态*/
-	if ((CUR_POS == z) && (pp->pos_pos == MENU3_PRESSED))
-	{
-		update_widget_bg(pp->eventbox30[z], backpic[6]);
-		update_widget_bg(pp->eventbox31[z], backpic[11]);
-	}
-	else
-	{
-		update_widget_bg(pp->eventbox30[z], backpic[7]);
-		update_widget_bg(pp->eventbox31[z], backpic[10]);
-	}
-
-	str = g_strdup_printf ("%s", con2_p[x][y][z]);	
-	gtk_label_set_text (GTK_LABEL (pp->label3[z]), str);
-
-	if (str)
-		g_free(str);
-
-	/* 显示和隐藏控件 */
-	gtk_widget_show (pp->eventbox30[z]);
-	gtk_widget_show (pp->eventbox31[z]);
-	gtk_widget_show (pp->data3[z]);
-	gtk_widget_hide (pp->sbutton[z]);
-	//gtk_widget_hide (pp->vscalebox);
-	//	gtk_widget_show (pp->vscalebox);
-	gtk_widget_show (pp->scale_drawarea);
-	gtk_widget_hide (pp->button_add);
-	gtk_widget_hide (pp->button_sub);
-	gtk_widget_hide (pp->vscale);
-}
-#endif
 /*改变各图形显示区域的尺寸大小*/
-
 static gboolean draw_colorbar(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
 	gint i;
@@ -927,7 +843,6 @@ static gboolean draw_colorbar(GtkWidget *widget, GdkEventExpose *event, gpointer
 
 	return TRUE;
 }
-
 
 static void draw_area(GtkWidget *parent_box, DRAW_AREA *draw_area, guint width, guint height, const gchar *title, 
 		gdouble v1s, gdouble v1e, gdouble v2s, gdouble v2e, gdouble h1s, gdouble h1e, guchar *other)
@@ -996,7 +911,6 @@ static void draw_area(GtkWidget *parent_box, DRAW_AREA *draw_area, guint width, 
 	return ;
 }
 
-
 /* 画波形数据显示区 */
 void draw_area_all()
 {
@@ -1012,7 +926,6 @@ void draw_area_all()
 	}
 
 	//	CFG(display) = A_B_SCAN;
-
 	if (1) 
 	{
 		switch (CFG(display))
@@ -1124,14 +1037,6 @@ void draw_area_all()
 
 	return ;
 }
-
-
-
-
-
-
-
-
 
 /* 三级菜单第一个 */
 void draw3_data0(DRAW_UI_P p) 
@@ -7480,48 +7385,7 @@ void draw_3_menu(gint pa, gpointer p)
 	return ;
 }
 
-#if 0
-static void travel_path (cairo_t *cr)
-{
-	gint i;
-
-	//   cairo_set_source_rgb (cr, 1, 1, 1);
-	//   cairo_paint (cr);
-
-	/* Use IBM Blue Pen Color with no ALPHA */
-	cairo_set_source_rgba (cr, 1, 1, 0, 1);
-	cairo_set_line_width (cr, 1);
-	//   cairo_move_to (cr, 10, 10);
-	//   cairo_line_to (cr, 11, 200);
-	//   cairo_set_line_width (cr, 1);
-	cairo_stroke (cr);
-
-	//   cairo_set_line_cap(cr, CAIRO_LINE_CAP_ROUND);
-
-	//	   cairo_move_to (cr, a3[i].x, a3[i].y);
-	//	   cairo_move_to (cr, a3[0].x, a3[0].y);
-	for (i = 0; i < 500; i++) {
-		cairo_move_to (cr, a[i].x + 0.5, a[i].y );
-		cairo_line_to (cr, a[i].x + 0.5, (a[i + 1].y + a[i].y)/2); 
-		cairo_move_to (cr, a[i + 1].x + 0.5, (a[i + 1].y + a[i].y)/2); 
-		cairo_line_to (cr, a[i + 1].x + 0.5, a[i + 1].y); 
-	}
-
-	cairo_stroke(cr);
-}
-#endif
-
-#if 0
-static void draw_gtk (GtkWidget      *widget, GdkEventExpose *eev, gpointer        data)
-{
-	cairo_t *cr;
-	cr = gdk_cairo_create (widget->window);
-	travel_path (cr);
-	cairo_destroy (cr);
-}
-#endif
-
-#if 0
+#if 0	
 static gboolean time_handler(GtkWidget *widget)
 {
 	gint32 i;
@@ -7566,15 +7430,7 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 	GtkWidget *window = p->window;
 	pp->pos_pos = MENU3_STOP;
 	pp->menu2_qty = 5;
-	GtkWidgetClass *widget_window_class1;
 	gchar *markup;
-
-	for (i = 0; i < 512; i++) 
-	{
-		a[i].x =  i;
-		a[i].y =  i;
-	}
-
 
 	/* New a window */
 	p->pos	= 1;
@@ -7879,7 +7735,6 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 
 	gtk_widget_show_all (pp->hbox1);   /* 上方显示信息  */
 
-
 	/* 画图区域及各button */
 
 	gtk_box_pack_start (GTK_BOX (p->hbox2), p->vbox21, FALSE, FALSE, 0);
@@ -7895,94 +7750,8 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 	gtk_box_pack_start (GTK_BOX (p->hbox211), p->vboxtable, FALSE, FALSE, 0);
 	gtk_widget_show(p->vboxtable);
 
-# if 0
-	pp->drawing_area = gtk_drawing_area_new();
-	gtk_widget_set_size_request (GTK_WIDGET(pp->drawing_area), 658, 425);
-	gtk_box_pack_start (GTK_BOX (p->hbox211), pp->drawing_area, FALSE, FALSE, 0);
-	p->col.red = 0x0, p->col.green = 0x0, p->col.blue = 0x0;
-	gtk_widget_modify_bg(pp->drawing_area, GTK_STATE_NORMAL, &(p->col));
-	gtk_widget_show (pp->drawing_area);
-	g_signal_connect (G_OBJECT (pp->drawing_area), "expose_event", G_CALLBACK(draw_gtk), NULL);
-# endif
-
-
-	/* 画图区域 */
-
-# if 0
-	pp->title = gtk_event_box_new();
-	gtk_widget_modify_bg(pp->title, GTK_STATE_NORMAL, &color_text_base);
-	pp->drawlabel = gtk_label_new_with_mnemonic("A-Scan");
-	gtk_widget_modify_fg(pp->drawlabel, GTK_STATE_NORMAL, &color_white);
-	gtk_container_add(GTK_CONTAINER(pp->title), pp->drawlabel);
-	gtk_box_pack_start (GTK_BOX (p->vboxtable1[0][0]), pp->title, FALSE, FALSE, 0);
-	gtk_widget_set_size_request (GTK_WIDGET(pp->title), 658, 20);
-	gtk_widget_show(pp->drawlabel);
-
-	pp->table = gtk_table_new (2, 3, FALSE);
-	gtk_box_pack_start (GTK_BOX (p->vboxtable1[0][0]), pp->table, FALSE, FALSE, 0);
-	pp->drawing_area = gtk_drawing_area_new();
-	gtk_widget_set_size_request (GTK_WIDGET(pp->drawing_area), 628, 390);
-	//gtk_widget_modify_bg(pp->drawing_area, GTK_STATE_NORMAL, &color_black);
-	gtk_table_attach (GTK_TABLE (pp->table), pp->drawing_area, 1, 2, 0, 1,
-			GTK_EXPAND|GTK_FILL, GTK_FILL, 0, 0);
-
-	pp->vrule1 = gtk_vruler_new ();
-	gtk_ruler_set_metric (GTK_RULER (pp->vrule1), GTK_PIXELS);
-	gtk_ruler_set_range (GTK_RULER (pp->vrule1), 100, -100, 0, 1);
-	//color_blue.red = 0x9999, color_blue.green = 0xeeee, color_blue.blue = 0x0;
-	gtk_widget_modify_bg(pp->vrule1, GTK_STATE_NORMAL, &color_rule);
-	g_signal_connect_swapped (G_OBJECT (pp->drawing_area), "motion_notify_event",
-			G_CALLBACK (EVENT_METHOD (pp->vrule1, motion_notify_event)),
-			pp->vrule1);
-	gtk_table_attach (GTK_TABLE (pp->table), pp->vrule1, 0, 1, 0, 1,
-			GTK_FILL, GTK_EXPAND|GTK_SHRINK|GTK_FILL, 0, 0);
-
-	pp->vrule2 = gtk_vruler_new ();
-	gtk_ruler_set_metric (GTK_RULER (pp->vrule2), GTK_PIXELS);
-	gtk_ruler_set_range (GTK_RULER (pp->vrule2), -100, 100, 0, 1);
-	//color_blue.red = 0x9999, color_blue.green = 0xeeee, color_blue.blue = 0x0;
-	gtk_widget_modify_bg(pp->vrule2, GTK_STATE_NORMAL, &color_rule);
-	g_signal_connect_swapped (G_OBJECT (pp->drawing_area), "motion_notify_event",
-			G_CALLBACK (EVENT_METHOD (pp->vrule2, motion_notify_event)),
-			pp->vrule2);			
-	gtk_table_attach (GTK_TABLE (pp->table), pp->vrule2, 2, 3, 0, 1,
-			GTK_FILL, GTK_EXPAND|GTK_SHRINK|GTK_FILL, 0, 0);
-
-	pp->hrule = gtk_hruler_new ();
-	gtk_ruler_set_metric (GTK_RULER (pp->hrule), GTK_PIXELS);
-	gtk_ruler_set_range (GTK_RULER (pp->hrule), 0, 60, 0, 60);
-	//color_blue.red = 0x9999, color_blue.green = 0x5555, color_blue.blue = 0x9999;
-	gtk_widget_modify_bg(pp->hrule, GTK_STATE_NORMAL, &color_rule);
-	g_signal_connect_swapped (G_OBJECT (pp->drawing_area), "motion_notify_event",
-			G_CALLBACK (EVENT_METHOD (pp->hrule, motion_notify_event)),
-			pp->hrule);
-	gtk_table_attach (GTK_TABLE (pp->table), pp->hrule, 1, 2, 1, 2,
-			GTK_EXPAND|GTK_SHRINK|GTK_FILL, GTK_FILL, 0, 0);
-# endif
-
-	//	change_area_size (p->vboxtable1[0][0],"A-Scan",628,390);
-
-
 	draw_area_all ();
 	gtk_widget_show_all (p->hbox2); /* 画图区域 及 button 的显示 */
-
-
-	/* 弹出菜单 是否透明 waiting */
-	pp->dialog = gtk_dialog_new_with_buttons("TanDenghua", GTK_WINDOW (pp->window),
-			/*			GTK_DIALOG_MODAL| */  /* 独占窗口 */
-			// GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT |
-			GTK_DIALOG_NO_SEPARATOR,
-			GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
-
-	widget_window_class1 = GTK_WIDGET_GET_CLASS (((GtkObject*)(pp->dialog))); 
-	widget_window_class1->key_press_event =	my_keypress_event;
-
-	gtk_window_set_decorated (GTK_WINDOW (pp->dialog), FALSE);			/*不可以装饰*/
-	gtk_container_set_border_width( GTK_CONTAINER (GTK_DIALOG(pp->dialog)->vbox), 0);     /* */
-	gtk_widget_show (GTK_DIALOG(pp->dialog)->vbox);
-	//	gtk_widget_show (pp->dialog);
-	gtk_widget_hide (GTK_DIALOG(pp->dialog)->action_area);
-
 
 	/* scale 上面的透明条 */
 	pp->scale_drawarea = gtk_drawing_area_new();
@@ -8030,13 +7799,6 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 	draw_1_menu(p);
 	draw_2_menu(1);
 	draw_3_menu(1, NULL);
-
-#if 0
-	pp->window1 = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_decorated (GTK_WINDOW (pp->window1), FALSE);			/*不可以装饰*/
-	pp->window2 = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_decorated (GTK_WINDOW (pp->window2), FALSE);			/*不可以装饰*/
-#endif
 
 	/*	pp->p_config->unit = 1;*/
 
