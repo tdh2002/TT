@@ -426,6 +426,8 @@ static void draw3_pop_tt (void (*fun)(GtkMenuItem*, gpointer),
 			break;
 	}
 
+	pp->pop_qty = qty;
+	pp->pop_pos = pop_pos;
 	for (i = 0; i < qty; i++ )
 	{
 		pp->menu_item3[i] = gtk_menu_item_new_with_label (content[i]);
@@ -439,12 +441,12 @@ static void draw3_pop_tt (void (*fun)(GtkMenuItem*, gpointer),
 	gtk_menu_item_select (GTK_MENU_ITEM (pp->menu_item3[pop_pos]));
 
 	menu = GTK_MENU (pp->menu3);
-
 	gtk_menu_popup (menu, NULL, NULL, 
 			(GtkMenuPositionFunc)set_menu_position_tdh,
 			NULL,
 			0,
 			gtk_get_current_event_time());
+	pp->pop_status = 1;
 
 	str = g_strdup_printf ("%s", con2_p[x][y][z]);	
 	gtk_label_set_text (GTK_LABEL (pp->data3[pos]), cur_value);
@@ -504,6 +506,8 @@ static void draw3_pop_tt_on (void (*fun)(GtkMenuItem*, gpointer),
 			break;
 	}
 
+	pp->pop_qty = qty;
+	pp->pop_pos = pop_pos;
 	for (i = 0; i < qty; i++ )
 	{
 		if (0x01 & (menu_on >> i))
@@ -522,11 +526,12 @@ static void draw3_pop_tt_on (void (*fun)(GtkMenuItem*, gpointer),
 
 	menu = GTK_MENU (pp->menu3);
 
-	gtk_menu_popup (menu, NULL, NULL, 
-			(GtkMenuPositionFunc)set_menu_position_tdh,
-			NULL,
-			0,
-			gtk_get_current_event_time());
+		gtk_menu_popup (menu, NULL, NULL, 
+				(GtkMenuPositionFunc)set_menu_position_tdh,
+				NULL,
+				0,
+				gtk_get_current_event_time());
+		pp->pop_status = 1;
 
 	str = g_strdup_printf ("%s", con2_p[x][y][z]);	
 	gtk_label_set_text (GTK_LABEL (pp->data3[pos]), cur_value);
@@ -576,6 +581,7 @@ static void draw3_pop (void (*fun)(GtkMenuItem*, gpointer),
 			break;;
 	}
 
+	pp->pop_qty = qty;
 	for (i = 0; i < qty; i++ )
 	{
 		pp->menu_item3[i] = gtk_menu_item_new_with_label(content[i]);
@@ -587,10 +593,11 @@ static void draw3_pop (void (*fun)(GtkMenuItem*, gpointer),
 
 	menu = GTK_MENU (pp->menu3);
 	gtk_menu_popup (menu, NULL, NULL, 
-			(GtkMenuPositionFunc)set_menu_position,
+			(GtkMenuPositionFunc)set_menu_position_tdh,
 			NULL,
 			0,
 			gtk_get_current_event_time());
+	pp->pop_status = 1;
 
 	str = g_strdup_printf ("%s", con2_p[x][y][z]);	
 	gtk_label_set_text (GTK_LABEL (pp->data3[pos]), cur_value);
@@ -631,6 +638,7 @@ static void draw3_popdown (const gchar *cur_value, guint pos, guint big_menu)
 	z = pos;
 
 	gtk_menu_popdown( GTK_MENU (pp->menu3));
+	pp->pop_status = 0;
 
 	if (big_menu)
 		str = g_strdup_printf ("\n\n%s", con2_p[x][y][z]);	
@@ -673,7 +681,6 @@ static void draw3_popdown (const gchar *cur_value, guint pos, guint big_menu)
 	gtk_widget_show (pp->eventbox31[z]);
 	gtk_widget_show (pp->data3[z]);
 	gtk_widget_hide (pp->sbutton[z]);
-	gtk_widget_hide (pp->dialog);
 	//	gtk_widget_show (pp->vscalebox);
 	gtk_widget_show (pp->scale_drawarea);
 	gtk_widget_hide (pp->button_add);
@@ -5874,7 +5881,6 @@ void draw3_data4(DRAW_UI_P p)
 						}
 						else
 						{
-							g_print("pw_pos=%d\n", GROUP_VAL(pw_pos));
 							if (!GROUP_VAL(pw_pos))
 							{
 								/* 更新当前增益值显示 */

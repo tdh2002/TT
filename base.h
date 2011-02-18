@@ -613,8 +613,6 @@ typedef struct Group {
 	PROBE	        probe;
 	WEDGE	        wedge;
 
-
-
 } GROUP, *GROUP_P;
 
 /*配置信息 (CONFIG)*/
@@ -1007,6 +1005,9 @@ typedef struct Draw_interface {
 
 
 	guchar			mark_pop_change;    /**/
+	guchar			pop_status;			/* 时候 弹出菜单 0 是 没 1 是有哦 */
+	guchar			pop_qty;
+	guchar			pop_pos;
 	guchar			markreturn;
 	guchar			mark3;
 

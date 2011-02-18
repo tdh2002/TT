@@ -1111,7 +1111,7 @@ void b3_fun5(gpointer p)
 	pp->pos2[pp->pos][pp->pos1[pp->pos]] = 5;
 	/*处理微调*/
 	if ((pp->pos_last2 == pp->pos2[pp->pos][pp->pos1[pp->pos]]) &&
-			(pp->pos_pos == MENU3_PRESSED))
+			(pp->pos_pos == MENU3_PRESSED));
 	{
 		switch (pp->pos) 
 		{
@@ -1200,7 +1200,7 @@ static void handler_key(guint keyval)
 	guchar tmp1 = pp->mark_pop_change;
 	switch (keyval) 
 	{
-		case GDK_Escape:
+		case GDK_Escape:  /* 按下Escape键 */
 			if ( pp->mark_pop_change == 1)
 				pp->mark_pop_change = 0;
 			switch (pp->pos_pos)
@@ -1219,7 +1219,7 @@ static void handler_key(guint keyval)
 				default:break;
 			}
 			break;
-		case GDK_Return:
+		case GDK_Return: /* 按下enter键 */
 			switch (pp->pos_pos)
 			{
 				case MENU2_STOP:
@@ -1236,12 +1236,39 @@ static void handler_key(guint keyval)
 				default:break;
 			}
 			break;
-		case GDK_F12:
-			if (pp->pos_pos == MENU3_PRESSED)
-				b3_fun0(GUINT_TO_POINTER (0x01));
+		case GDK_F7: /* 按下 F7 */
+			if (gtk_widget_get_visible(pp->menu3) && CUR_POS == 5) /* 处理弹出窗口 */
+			{
+				gtk_menu_item_deselect  (GTK_MENU_ITEM (pp->menu_item3[pp->pop_pos]));
+				if (pp->pop_pos < pp->pop_qty - 1)	
+					pp->pop_pos += 1;
+				else 
+					pp->pop_pos = 0;
+//				gtk_menu_set_active (GTK_MENU (pp->menu3), pp->pop_pos);
+				gtk_menu_item_select (GTK_MENU_ITEM (pp->menu_item3[pp->pop_pos]));
+//				gtk_menu_shell_select_item (GTK_MENU_SHELL(pp->menu3),
+//						GTK_WIDGET (pp->menu_item3[pp->pop_pos]));
+				g_print("%dddd", pp->pop_pos);
+			}
 			else 
-				pp->pos_pos = MENU3_PRESSED;
+				b3_fun5(GUINT_TO_POINTER (0x01));
 			break;
+		case GDK_F8: /* 按下 F8 */
+				b3_fun4(GUINT_TO_POINTER (0x01));
+			break;
+		case GDK_F9: /* 按下 F9 */
+				b3_fun3(GUINT_TO_POINTER (0x01));
+			break;
+		case GDK_F10: /* 按下 F10 */
+				b3_fun2(GUINT_TO_POINTER (0x01));
+			break;
+		case GDK_F11: /* 按下 F11 */
+				b3_fun1(GUINT_TO_POINTER (0x01));
+			break;
+		case GDK_F12: /* 按下 F12 */
+				b3_fun0(GUINT_TO_POINTER (0x01));
+			break;
+			/* 上下左右 */
 		case GDK_Up:
 			switch (pp->pos_pos)
 			{
@@ -1282,14 +1309,8 @@ static void handler_key(guint keyval)
 			break;
 		default:break;
 	}
-	if ((tmp != pp->pos_pos) || (tmp1 != pp->mark_pop_change))
-	{
-		draw_2_menu(0);
-		draw_3_menu(0, NULL);
-	}
 
 	return ;
-
 }
 
 /* 快捷键处理函数 */
