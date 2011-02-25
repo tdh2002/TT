@@ -49,62 +49,62 @@ extern const gchar *list1_en[];
 extern const gchar *field1_en[];
 extern const gchar *field_en[];
 //extern const gchar *selection_en[];
-//extern const gchar *source_en[];
+extern const gchar *source_en[];
 
 
 //extern const gchar *display_en[];
 //extern const gchar *displ_en[];
 //extern const gchar *group_en[];
-//extern const gchar *utunit_en[];
-//extern const gchar *grid_en[];
-//extern const gchar *zoom_display_en[];
-//extern const gchar *select_en[];
-//extern const gchar *color_mode_en[];
-//extern const gchar *scan_en[];
-//extern const gchar *color_en[];
-//extern const gchar *envelope_en[];
-//extern const gchar *properties_source_en[];
-//extern const gchar *appearance_en[];
-//extern const gchar *overlay_en[];
-//extern const gchar *fft_color_en[];
-//extern const gchar *orientation_en[];
+extern const gchar *utunit_en[];
+extern const gchar *grid_en[];
+extern const gchar *zoom_display_en[];
+extern const gchar *select_en[];
+extern const gchar *color_mode_en[];
+extern const gchar *scan_en[];
+extern const gchar *color_en[];
+extern const gchar *envelope_en[];
+extern const gchar *properties_source_en[];
+extern const gchar *appearance_en[];
+extern const gchar *overlay_en[];
+extern const gchar *fft_color_en[];
+extern const gchar *orientation_en[];
 
 
-//extern const gchar *group_mode_en[];
-//extern const gchar *group_mode1_en[];
-//extern const gchar *probe_select_en[];
-//extern const gchar *probe_skew_en[];
-//extern const gchar *geometry_en[];
-//extern const gchar *material_en[];
+extern const gchar *group_mode_en[];
+extern const gchar *group_mode1_en[];
+extern const gchar *probe_select_en[];
+extern const gchar *probe_skew_en[];
+extern const gchar *geometry_en[];
+extern const gchar *material_en[];
 
 
-//extern const gchar *law_config_en[];
-//extern const gchar *law_config1_en[];
-//extern const gchar *wave_type_en[];
-//extern const gchar *wave_type1_en[];
+extern const gchar *law_config_en[];
+extern const gchar *law_config1_en[];
+extern const gchar *wave_type_en[];
+extern const gchar *wave_type1_en[];
 
 
-//extern const gchar *inspection_type_en[];
-//extern const gchar *inspection_scan_en[];
-//extern const gchar *start_mode_en[];
-//extern const gchar *storage_en[];
-//extern const gchar *inspec_data_en[];
+extern const gchar *inspection_type_en[];
+extern const gchar *inspection_scan_en[];
+extern const gchar *start_mode_en[];
+extern const gchar *storage_en[];
+extern const gchar *inspec_data_en[];
 
 
-//extern const gchar *file_storage_en[];
-//extern const gchar *file_storage1_en[];
-//extern const gchar *save_mode_en[];
-//extern const gchar *template_en[];
-//extern const gchar *paper_size_en[];
-//extern const gchar *view_en[];
-//extern const gchar *file_select_en[];
+extern const gchar *file_storage_en[];
+extern const gchar *file_storage1_en[];
+extern const gchar *save_mode_en[];
+extern const gchar *template_en[];
+extern const gchar *paper_size_en[];
+extern const gchar *view_en[];
+extern const gchar *file_select_en[];
 
 
-//extern const gchar *pref_units_en[];
-//extern const gchar *scheme_en[];
-//extern const gchar *gate_mode_en[];
-//extern const gchar *select_key_en[];
-//extern const gchar *assign_key_en[];
+extern const gchar *pref_units_en[];
+extern const gchar *scheme_en[];
+extern const gchar *gate_mode_en[];
+extern const gchar *select_key_en[];
+extern const gchar *assign_key_en[];
 //extern const gchar *startup_mode_en[];
 extern const gchar *mouse_en[];
 

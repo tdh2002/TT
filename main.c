@@ -36,21 +36,6 @@ static void set_config (guint groupid)
 {
 	CFG(groupQty)	= 1;
 	CFG(groupId)	= groupid;
-	CFG(group_pos)	= 1;
-	CFG(group_mode_pos) =0;
-	CFG(probe_select)=0;
-	CFG(auto_detect)=0;
-	GROUP_VAL(scan_offset)=10;
-	GROUP_VAL(index_offset)=10;
-	GROUP_VAL(skew)=100;
-	GROUP_VAL(agate_start)=1000;
-	GROUP_VAL(agate_width)=1000;
-	CFG(part.Thickness)=100.0;
-	CFG(part.Diameter)=10000.0;
-
-
-	CFG(auto_program)=0;
-
 	CFG(voltage_pa) = 0;
 	CFG(voltage_ut) = 0;
 	/* UT settings */
@@ -121,84 +106,11 @@ static void set_config (guint groupid)
 	CFG(max_thickness)=99900;
 	CFG(echo_qty)=1;
 	CFG(dis_group)=0; /*0是All*/
-	CFG(c_scan1)=0;   /*0是A%*/
-	CFG(c_scan2)=0;   /*0是A%*/
-	CFG(c_scan11)=0;  /*0是A%*/
-	CFG(data1)=0;     /*0是A%*/
-	CFG(data2)=0;     /*0是A%*/
-	CFG(dis_mode)=0;  /* 0是 All & A-Scan */
-	CFG(dis_range)=100.0;
-	CFG(avg_scan_speed)=1000.0;
-	CFG(ut_unit)=0;  /* 0 是 Sound Path */
-	CFG(grid)=5;     /*5是 Off*/
-	CFG(sizing_curves)=0;
-	CFG(overlay_gate)=0;
-	CFG(overlay_cursor)=0;
-	CFG(overlay_overlay)=0;
-
-
-	CFG(zoom_display_pos)=0;
-	CFG_ZOOM_POS(zoom_type)=0;
-	CFG_ZOOM_POS(start_usound)=1000;
-	CFG_ZOOM_POS(end_usound)=1000;
-	CFG_ZOOM_POS(range_usound)=1000;
-	CFG_ZOOM_POS(center_usound)=1000;
-	CFG_ZOOM_POS(start_amplitude)=10;
-	CFG_ZOOM_POS(end_amplitude)=10;
-	CFG_ZOOM_POS(range_amplitude)=10;
-	CFG_ZOOM_POS(center_amplitude)=10;
-
-	/**/
-	GROUP_VAL(col_select_pos)=0;  /*0 Amplitude*/
-	GROUP_COL_SELECT(color_start)   = 0.0;
-	GROUP_COL_SELECT(color_end)     = 100.0;
-	GROUP_COL_SELECT(color_contrast)= 0.0;
-	GROUP_COL_SELECT(brightness)    = 50.0;
-	GROUP_COL_SELECT(min)           = 5000.0;
-	GROUP_COL_SELECT(max)           = 50000.0;
-	GROUP_COL_SELECT(color_mode)    = 0;  /*0 Exclusion*/
-
-	CFG(prop_scan)=0;/*0 A-Scan*/
-	CFG(envelope)=0; /*0 None*/
-	CFG(prop_app)=0; /*0 Hollow*/
-	CFG(prop_overlay)=0; /*0 None*/
-	CFG(optimum)=0; /*0 off*/
-	CFG(ratio)=0; /*0 off*/
-	CFG(interpolation)=0; /*0 off*/
-	CFG(fft_color)=0;/* 0 Yellow*/
-
-	/* focal law */
-	GROUP_VAL(law_config)=0;
-	GROUP_VAL(element_qty)=1;
-	GROUP_VAL(first_element)=1;
-	GROUP_VAL(last_element)=1;
-	GROUP_VAL(element_step)=1;
-	GROUP_VAL(wave_type)=0;	/* 0纵波 与 1横波 */
-	GROUP_VAL(min_angle)=0.0;
-	GROUP_VAL(max_angle)=100.0;
-	GROUP_VAL(angle_step)=100.0;
-	GROUP_VAL(focus_depth)=5000.0;
-
-	CFG(polarity)=0;  /* 0 Normal */
-	CFG(e_type)=0;  /* 0 Clock/Dir */
-	CFG(encoder_resolution)=1000;
-	CFG(origin)=0;
-	CFG(i_type)=0;  /* 0  One-Line Scan */
-	CFG(i_scan)=0;  /* 0 Time */
-	CFG(i_index)=1;  /* 1   Encoder 1 */
-	CFG(scanspeed)=10.0;
-	CFG(scanspeed_rpm)=10.0;
-	CFG(indexspeed)=10.0;
-	CFG(scan_start)=0.0;
-	CFG(scan_end)=346.0;
-	CFG(scan_resolution)=100.0;
-	CFG(index_start)=1.0;
-	CFG(index_end)=1.0;
-	CFG(index_resolution)=100.0;
-
-	CFG(start_mode)=0; /*0 Reset All*/
-	CFG(pause)=0; 		/*0 off*/
-	CFG(storage)=0;   /* 0 Last */
+	CFG(c_scan1)=0; /*0是A%*/
+	CFG(c_scan2)=0; /*0是A%*/
+	CFG(c_scan11)=0; /*0是A%*/
+	CFG(data1)=0; /*0是A%*/
+	CFG(data2)=0; /*0是A%*/
 
 	/* 探头信息 */
 	GROUP_VAL(probe.Elem_qty)	= 32; /*  */
@@ -212,15 +124,19 @@ static void set_config (guint groupid)
 	LAW_VAL(First_rx_elem)	= 1;
 	LAW_VAL(Last_tx_elem)	= 17;
 	LAW_VAL(Last_rx_elem)	= 17;
-	LAW_VAL(Elem_step)	= 1;
+	LAW_VAL(Elem_step)		= 1;
 	LAW_VAL(Angle_start)	= 0;
-	LAW_VAL(Angle_end)	= 0;
-	LAW_VAL(Angle_step)	= 100;
+	LAW_VAL(Angle_end)		= 0;
+	LAW_VAL(Angle_step)		= 100;
 	LAW_VAL(Focus_depth)	= 50000;
 	LAW_VAL(law_index_start)= 0;
 	LAW_VAL(law_index_end)	= 1;
 
-
+	/*  */
+	CFG(color_end)     = 100.0;
+	CFG(brightness)    = 50.0;
+	CFG(min)           = 50.0;
+	CFG(max)           = 50000.0;
 
 }
 
