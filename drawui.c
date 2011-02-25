@@ -6,9 +6,21 @@
  */
 
 #include "drawui.h"
+#include <dirent.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <glib/gprintf.h>
 #include <gdk/gdkkeysyms.h>
+#include <fcntl.h>
+#include <stdlib.h>
 #include <time.h>
+#include <string.h>
+
+enum
+{
+	LIST_ITEM = 0,
+	N_COLUMNS
+};
 
 static char buffer[32];
 
@@ -392,6 +404,7 @@ void draw_2_menu(gint pa)
 
 static gint gtk_entry_digit_only_keypress_event(GtkWidget *widget, GdkEventKey *event)
 {
+	gpointer data = NULL;
 	switch (event->keyval)
 	{
 		case GDK_0:
@@ -403,7 +416,8 @@ static gint gtk_entry_digit_only_keypress_event(GtkWidget *widget, GdkEventKey *
 		case GDK_6:
 		case GDK_7:
 		case GDK_8:
-		case GDK_9: 
+		case GDK_9:
+		case GDK_a:
 		case GDK_period:
 		case GDK_Delete:
 		case GDK_BackSpace:
@@ -413,6 +427,10 @@ static gint gtk_entry_digit_only_keypress_event(GtkWidget *widget, GdkEventKey *
 		case GDK_Right:
 			return window_keypress_event_orig(widget, event); 
 			break;
+			/* 其他按键的处理 */
+		case GDK_F12:
+			return key_press_handler (widget, event, data);
+			break;
 		default:
 			break;
 	} 
@@ -420,62 +438,309 @@ static gint gtk_entry_digit_only_keypress_event(GtkWidget *widget, GdkEventKey *
 	return FALSE;
 }
 
-void da_call (GtkDialog *dialog, gint response_id, gpointer user_data)      
+/* 选择探头2个按键的处理 一个是确认 一个是取消 */
+static void da_call_probe (GtkDialog *dialog, gint response_id, gpointer user_data)      
 {
-	if (GTK_RESPONSE_OK == response_id)
-		g_print("OK_Pressed");
-	else if (GTK_RESPONSE_CANCEL == response_id);
-		gtk_widget_destroy(GTK_WIDGET (dialog));
+
+	if (GTK_RESPONSE_OK == response_id)  /* 确认 */
+		g_print ("OK_Pressed");
+	else if (GTK_RESPONSE_CANCEL == response_id) /* 取消 */
+		g_print ("CANCEL_Pressed");
+	gtk_widget_destroy (GTK_WIDGET (dialog));
+
 }
 
-
 /*
- * 弹出的dialog
- *
- *
- *
- *
- *
+ * 警告信息 
+ * btn_qty: 表示几个按钮 1-2; 1就是 确认 2是确认和取消
+ * warn_info: 警告或者提示信息
+ * 1 
  *
  *
  */
-void draw_dialog_all (guint type)
+static void draw_warning(guint btn_qty, gchar *warn_info)
+{
+
+}
+
+/*  */
+static void add_to_list(GtkWidget *list, const gchar *str, guint count)
+{
+	GtkListStore *store;
+	GtkTreeModel *model;
+	GtkTreeIter iter;
+	gchar *str_data;
+	guint tt = count, pos;
+	store = GTK_LIST_STORE(gtk_tree_view_get_model
+			(GTK_TREE_VIEW(list)));
+	model = (gtk_tree_view_get_model
+			(GTK_TREE_VIEW(list)));
+
+	if (!count) 
+	{
+		gtk_list_store_append(store, &iter);
+		gtk_list_store_set(store, &iter, LIST_ITEM, str, -1);
+	}
+	else
+	{
+		gtk_tree_model_get_iter_first (model, &iter);
+		gtk_tree_model_get (model, &iter, LIST_ITEM, &str_data, -1);
+		
+		while ( count-- )
+		{
+			if (strcmp(str, str_data) < 0)	
+			{
+				pos = tt - count - 1;
+				break;
+			}
+			else 
+				pos = tt - count ;
+			if (count)
+			{
+				g_free (str_data);
+				gtk_tree_model_iter_next (model, &iter);
+				gtk_tree_model_get (model, &iter, LIST_ITEM, &str_data, -1);
+			}
+		}
+		g_free (str_data);
+
+		gtk_list_store_insert (store, &iter, pos);
+		gtk_list_store_set(store, &iter, LIST_ITEM, str, -1);
+	}
+}
+
+/*  */
+static void init_file_list (GtkWidget *list,
+		GtkTreeSelection *selection,
+		const gchar *path, guint file_type)
+{ 
+	DIR* dir = opendir(path);
+	GtkListStore *store;
+	struct dirent* enump = NULL;
+	size_t name_len;
+	GtkTreeIter iter;
+	GtkTreeModel *model;
+	guint i = 0;
+/*	gchar temp[128];*/
+
+	if (NULL == dir)
+	{
+		g_print("Open directory failed:%s \n", path);
+		return ;
+	}
+
+	store = GTK_LIST_STORE(gtk_tree_view_get_model
+			(GTK_TREE_VIEW(list)));
+	gtk_list_store_clear(store);
+
+	while ((enump = readdir(dir)))
+	{
+		name_len = strlen(enump->d_name);
+		if ((name_len == 1 && enump->d_name[0] == '.')
+				|| (name_len == 2 && !strncmp(enump->d_name, "..", 2)))
+			continue;
+
+		/* DT_DIR DT_REG */
+		if (file_type == enump->d_type)
+		{
+			/* 去掉文件按后面的名字 */
+			/* 
+			if (DT_REG == file_type)
+			{
+				memcpy(temp, enump->d_name, strlen(enump->d_name) - 4);
+				memset(temp + strlen(enump->d_name) -4, 0, 1);
+				add_to_list(list, temp, i);
+			}
+			else
+				*/
+				add_to_list(list, enump->d_name, i);
+		}
+		i++;
+	}
+	if (selection)
+	{
+		model = gtk_tree_view_get_model (GTK_TREE_VIEW (list));	
+		if (gtk_tree_model_get_iter_first (model, &iter))
+			gtk_tree_selection_select_iter(selection, &iter);
+	}
+
+	closedir(dir);
+}
+
+/* 大类选择的处理函数 */
+static void on_changed(GtkTreeSelection *selection, gpointer label) 
+{
+	GtkTreeIter iter;
+	GtkTreeModel *model;
+	guint tag;
+	gchar *value;
+	gchar *file_path;
+
+	if (gtk_tree_selection_get_selected(
+				GTK_TREE_SELECTION(selection), &model, &iter)) {
+		gtk_tree_model_get(model, &iter, LIST_ITEM, &value,  -1);
+		if (PA_PROBE_PATH_ == pp->file_path ) 
+		{
+			if (strcmp(value, " Unknown") == 0)
+				tag = 0;
+			else if (strcmp(value, "user") == 0)
+				tag =2;
+			else
+			{
+				tag =1;
+				strcpy(pp->p_type, value);
+			}
+		}
+		if (PA_PROBE_PATH_ == pp->file_path )
+			file_path = g_strdup_printf ("%s%s/", PA_PROBE_PATH , value);	
+		init_file_list (GTK_WIDGET (label), NULL, file_path, DT_REG);
+		printf("file_path = %s\n", file_path);
+		g_free(file_path);
+		g_free(value);
+	}
+	gtk_tree_model_unref_node (model, &iter);
+
+	switch (CFG(language))
+	{
+		case ENGLISH_:
+			if (PA_PROBE_PATH_ == pp->file_path ) 
+			{
+				if (tag == 0)
+					gtk_label_set_text (GTK_LABEL (pp->label_probe), "Selecting the \"Unknown\" probe will require you \n to manually configure aditional settings.");
+				else if (tag == 2)
+					gtk_label_set_text (GTK_LABEL (pp->label_probe), "This group contains all user-defined ultrasonic \n phased array probes.");
+				else 
+					gtk_label_set_text (GTK_LABEL (pp->label_probe), "Ultrasonic phased array probe family.");
+			}
+			else
+				;
+			break;
+		default:break;
+	}
+}
+
+/* 简单获取探头的信息 */
+static gchar* get_probe_info(const gchar *file_path)
+{
+	PROBE p1;
+	gchar *probe_info;
+	int fd;
+	if ((fd = open(file_path, O_RDONLY ))<0) {
+		perror("open:");
+		exit(1);
+	}
+	read (fd, &p1, sizeof(PROBE));
+	close(fd);
+	probe_info = g_strdup_printf ("%s %d %d %d -%d", p1.Name,
+	 p1.Elem_qty, p1.Pitch, p1.Frequency, p1.Reference_Point );
+
+	g_print("%s\n", probe_info);
+//	printf("%s %d %d %d -%d\n", p1.Name,
+//	 p1.Elem_qty, p1.Pitch, p1.Frequency, p1.Reference_Point );
+	return probe_info;
+}
+
+
+/* 具体型号选择的处理函数 */
+static void on_changed1(GtkTreeSelection *selection, gpointer label) 
+{
+	GtkTreeIter iter;
+	GtkTreeModel *model;
+	gchar *value;
+	gchar *file_path = NULL;
+	gchar *probe_info = NULL;
+
+	if (gtk_tree_selection_get_selected(
+				GTK_TREE_SELECTION(selection), &model, &iter)) 
+	{
+		gtk_tree_model_get(model, &iter, LIST_ITEM, &value,  -1);
+		if (PA_PROBE_PATH_ == pp->file_path )
+			file_path = g_strdup_printf ("%s%s/%s", PA_PROBE_PATH, pp->p_type, value);	
+		printf("file_path = %s\n", file_path);
+		g_free(value);
+		switch (CFG(language))
+		{
+			case ENGLISH_:
+				if (PA_PROBE_PATH_ == pp->file_path ) 
+				{
+					probe_info = get_probe_info(file_path);
+					g_print("%s\n", probe_info);
+					gtk_label_set_text (GTK_LABEL (pp->label_probe), probe_info);
+				}
+				else
+					;
+				break;
+			default:break;
+		}
+	}
+	gtk_tree_model_unref_node (model, &iter);
+
+	if (file_path)
+		g_free(file_path);
+	if (probe_info)
+		g_free(probe_info);
+}
+
+/*
+ * 弹出的dialog
+ * 0 记事本 备注等等
+ * 1 探头 
+ * 2 楔块 
+ * 3 自定义探头
+ * 4 自定义楔块
+ * 5 聚焦法则读入
+ * 6 配置 数据 报告 图像 的读入
+ * 7 保存 配置文件
+ * 8 系统信息的显示 
+ * 9 报告的显示
+ * 10  Export Table
+ *
+ */
+static void draw_dialog_all (guint type)
 {
 	GtkWindow *win = GTK_WINDOW (pp->window);
 	GtkWidget *dialog;
-	GtkWidget *vbox1;
+	GtkWidget *vbox1;	/* 指向dialog的vbox */
 
-	GtkWidget *sw;
+	GtkWidget *sw;		/* 第一个scroll 备注只要一个sw */
+	GtkWidget *sw1;		/* 第二个scroll 探头 楔块 聚焦法则 setup 等需要2个sw */
+
+	GtkWidget *list;	/* 2个treeview 用来放置 探头大类和名称 楔块也一样 */
+	GtkWidget *list1;
+	GtkTreeSelection *selection; 
+	GtkTreeSelection *selection1; 
+	GtkCellRenderer *renderer;
+	GtkTreeViewColumn *column;
+	GtkListStore *store;
+
+	GtkCellRenderer *renderer1;
+	GtkTreeViewColumn *column1;
+	GtkListStore *store1;
+
 	GtkWidget *view;
 	GtkTextBuffer *TextBuffer;
 	GtkWidgetClass *widget_window_class1;
-	/*
-	g_signal_connect (pp->menu3, "key-press-event", 
-			G_CALLBACK(key_press_handler), NULL);
-			*/
+	const gchar *buf = (const gchar *)(CFG(remark_info));
 
-//	widget_window_class->key_press_event = window_keypress_event_orig;
+	GtkWidget *hpaned;
+
 	switch (type)
 	{
-		case 0: /* 记事本 */
-			dialog = gtk_dialog_new_with_buttons("GtkDialog", win,
+		case DIALOG_REMARK: /* 记事本 */
+			dialog = gtk_dialog_new_with_buttons("Dialog_Remark", win,
 					GTK_DIALOG_MODAL |	GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_NO_SEPARATOR,
 					GTK_STOCK_OK, GTK_RESPONSE_OK,
 					GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 					NULL);
-//			gtk_window_set_decorated (GTK_WINDOW (dialog), FALSE);			/*不可以装饰*/
+			gtk_window_set_decorated (GTK_WINDOW (dialog), FALSE);			/*不可以装饰*/
 			widget_window_class1 = GTK_WIDGET_GET_CLASS (((GtkObject*)(dialog))); 
-			widget_window_class1->key_press_event = gtk_entry_digit_only_keypress_event;
-//			window_keypress_event_orig;
-//			g_signal_connect (dialog, "key-press-event", 
-//					G_CALLBACK(key_press_handler), NULL);
+			widget_window_class1->key_press_event = gtk_entry_digit_only_keypress_event; /* 指定哪些字符输入 */
 
-			gtk_widget_set_size_request(GTK_WIDGET (dialog), 400, 300);
-
+			gtk_widget_set_size_request(GTK_WIDGET (dialog), 300, 300);
 			vbox1 = GTK_WIDGET (GTK_DIALOG(dialog)->vbox);
 			sw = gtk_scrolled_window_new(NULL, NULL);
 
-			gtk_widget_set_size_request(sw, 400, 300);
+			gtk_widget_set_size_request(sw, 300, 300);
 			gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW(sw),
 					GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 			gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw),
@@ -486,17 +751,102 @@ void draw_dialog_all (guint type)
 			gtk_container_add (GTK_CONTAINER (sw), view);
 			TextBuffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
 			gtk_text_view_set_wrap_mode (GTK_TEXT_VIEW (view), GTK_WRAP_WORD_CHAR);
+			gtk_text_buffer_set_text (TextBuffer, buf, -1);
 
-			g_signal_connect(G_OBJECT(dialog), "response",
-					G_CALLBACK(da_call), NULL);
+			g_signal_connect (G_OBJECT(dialog), "response",
+					G_CALLBACK(da_call_remark), (gpointer) (TextBuffer));
 
 			gtk_widget_show_all(dialog);
 			break;
-		case 1:
+		case DIALOG_PROBE: /* 探头 */
+			dialog = gtk_dialog_new_with_buttons ("Dialog_Probe", win,
+					GTK_DIALOG_MODAL |	GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_NO_SEPARATOR,
+					GTK_STOCK_OK, GTK_RESPONSE_OK,
+					GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+					NULL);
+			gtk_window_set_decorated (GTK_WINDOW (dialog), FALSE);			/*不可以装饰*/
+			gtk_widget_set_size_request(GTK_WIDGET (dialog), 400, 370);
+
+			vbox1 = GTK_WIDGET (GTK_DIALOG(dialog)->vbox);
+
+			sw = gtk_scrolled_window_new (NULL, NULL);
+			sw1 = gtk_scrolled_window_new ( NULL, NULL);
+			/* 目录名字 探头大类 */
+			gtk_widget_set_size_request (sw, 200, 230);
+			gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW(sw),
+					GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+			gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw),
+					GTK_SHADOW_ETCHED_IN);
+
+			/* 探头名字 小类 */
+			gtk_widget_set_size_request (sw1, 200, 230);
+			gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW(sw1),
+					GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+			gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw1),
+					GTK_SHADOW_ETCHED_IN);
+
+			/* 2个treeview 放置探头大类和名字 */
+			list = gtk_tree_view_new();
+			gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(list), FALSE);
+			list1 = gtk_tree_view_new();
+			gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(list1), FALSE);
+
+			/* 初始化list */
+			renderer = gtk_cell_renderer_text_new();
+			column = gtk_tree_view_column_new_with_attributes("List Items",
+					renderer, "text", LIST_ITEM, NULL);
+			gtk_tree_view_append_column(GTK_TREE_VIEW(list), column);
+
+			store = gtk_list_store_new(N_COLUMNS, G_TYPE_STRING);
+
+			gtk_tree_view_set_model(GTK_TREE_VIEW(list), 
+					GTK_TREE_MODEL(store));
+
+			g_object_unref(store);
+			/* 初始化list1 */
+
+			renderer1 = gtk_cell_renderer_text_new();
+			column1 = gtk_tree_view_column_new_with_attributes("List Items",
+					renderer1, "text", LIST_ITEM, NULL);
+			gtk_tree_view_append_column(GTK_TREE_VIEW(list1), column1);
+
+			store1 = gtk_list_store_new(N_COLUMNS, G_TYPE_STRING);
+
+			gtk_tree_view_set_model(GTK_TREE_VIEW(list1), 
+					GTK_TREE_MODEL(store1));
+
+			g_object_unref(store1);
+
+			/* 放置名字和内容 */
+			hpaned = gtk_hpaned_new ();
+			gtk_paned_add1 (GTK_PANED (hpaned), sw);
+			gtk_paned_add2 (GTK_PANED (hpaned), sw1);
+			gtk_container_add(GTK_CONTAINER (sw), list);
+			gtk_container_add(GTK_CONTAINER (sw1), list1);
+
+			selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(list));
+			selection1 = gtk_tree_view_get_selection(GTK_TREE_VIEW(list1));
+
+			gtk_box_pack_start(GTK_BOX(vbox1), hpaned, FALSE, FALSE, 5);
+			pp->label_probe = gtk_label_new("\n");
+			gtk_box_pack_start(GTK_BOX(vbox1), pp->label_probe, TRUE, TRUE, 5);
+
+			init_file_list (list, selection, PA_PROBE_PATH ,DT_DIR);
+
+			g_signal_connect(G_OBJECT(dialog), "response",
+					G_CALLBACK(da_call_probe), NULL);
+
+			pp->file_path = PA_PROBE_PATH_;
+			g_signal_connect (G_OBJECT (selection), "changed", 
+					G_CALLBACK(on_changed), (gpointer) (list1));
+
+			g_signal_connect (G_OBJECT (selection1), "changed", 
+					G_CALLBACK(on_changed1), (gpointer) NULL);
+
+			gtk_widget_show_all(dialog);
 			break;
 		default:break;
 	}
-
 }
 
 
@@ -1552,7 +1902,7 @@ void draw3_data0(DRAW_UI_P p)
 					draw3_popdown (menu_content[OFF_ON + CFG(display_table)], 0, 0);
 					break;
 
-				case 3:/*Measurements -> Thickness -> Source  p330 */
+				case 3:/* Measurements -> Thickness -> Source  p330 */
 					pp->x_pos = 600, pp->y_pos = 138;
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 						draw3_pop_tt (data_330, NULL, 
@@ -1563,9 +1913,11 @@ void draw3_data0(DRAW_UI_P p)
 
 					break;
 
-				case 4:/*Measurements -> Export -> Export Table p340 */
-					draw3_popdown(NULL,0,1);
-					draw_dialog_all (0);
+				case 4:/* Measurements -> Export -> Export Table p340 */
+					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
+						draw_dialog_all (DIALOG_PROBE);
+					else
+						draw3_popdown(NULL,0,1);
 					break;
 				default:break;
 			}
@@ -7919,7 +8271,6 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 	GtkWidget *window = p->window;
 	pp->pos_pos = MENU3_STOP;
 	pp->menu2_qty = 5;
-	GtkWidgetClass *widget_window_class1;
 	gchar *markup;
 
 	for (i = 0; i < 512; i++) 
@@ -8232,7 +8583,6 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 
 	gtk_widget_show_all (pp->hbox1);   /* 上方显示信息  */
 
-
 	/* 画图区域及各button */
 
 	gtk_box_pack_start (GTK_BOX (p->hbox2), p->vbox21, FALSE, FALSE, 0);
@@ -8320,22 +8670,6 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 	gtk_widget_show_all (p->hbox2); /* 画图区域 及 button 的显示 */
 
 
-	/* 弹出菜单 是否透明 waiting */
-	pp->dialog = gtk_dialog_new_with_buttons("TanDenghua", GTK_WINDOW (pp->window),
-			/*			GTK_DIALOG_MODAL| */  /* 独占窗口 */
-			// GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT |
-			GTK_DIALOG_NO_SEPARATOR,
-			GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
-
-	widget_window_class1 = GTK_WIDGET_GET_CLASS (((GtkObject*)(pp->dialog))); 
-	widget_window_class1->key_press_event =	my_keypress_event;
-
-	gtk_window_set_decorated (GTK_WINDOW (pp->dialog), FALSE);			/*不可以装饰*/
-	gtk_container_set_border_width( GTK_CONTAINER (GTK_DIALOG(pp->dialog)->vbox), 0);     /* */
-	gtk_widget_show (GTK_DIALOG(pp->dialog)->vbox);
-	//	gtk_widget_show (pp->dialog);
-	gtk_widget_hide (GTK_DIALOG(pp->dialog)->action_area);
-
 
 	/* scale 上面的透明条 */
 	pp->scale_drawarea = gtk_drawing_area_new();
@@ -8384,20 +8718,6 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 	draw_2_menu(1);
 	draw_3_menu(1, NULL);
 
-#if 0
-	pp->window1 = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_decorated (GTK_WINDOW (pp->window1), FALSE);			/*不可以装饰*/
-	pp->window2 = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_decorated (GTK_WINDOW (pp->window2), FALSE);			/*不可以装饰*/
-#endif
-
-	/*	pp->p_config->unit = 1;*/
-
 	//	g_timeout_add(1000, (GSourceFunc) time_handler1, NULL);
 	//	g_thread_create((GThreadFunc)(time_handler), (gpointer) (pp->drawing_area), FALSE, NULL);
-	/*
-	   gtk_box_pack_start (GTK_BOX (p->vbox22), p->vbox221, FALSE, FALSE, 0);
-	   gtk_widget_show(p->vbox221);
-	   */
-
 }

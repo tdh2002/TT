@@ -555,10 +555,21 @@ typedef struct element_law
 
 /*探头(Probe)  24 byte*/
 typedef struct Probe {
+	guchar	A1[10];
+	gchar	Name[20];		/* 探头名字 */
+	gchar	Name1[20];		/* 探头名字 */
 	guchar	Elem_qty;		/* 阵元数 */
-	gchar	Name[19];		/* 探头名字 */
-	gushort	Frequency;		/* 频率 KHz 为单位 */
-	gushort	Pitch;			/* 阵元中心间距 0.001mm 为单位 范围是0.01~65.00mm */
+	guchar	A2;
+	guint	Pitch;			/* 阵元中心间距 0.001mm 为单位 范围是0.01~65.00mm */
+	guint	A3;
+	gushort A4;
+	gushort	Frequency;				/* 频率 */
+	guint	A5[75];
+	gushort A6;
+	gushort A7;
+	gushort A8;
+	gushort	Reference_Point; /*  */
+	guint	A9[36];
 } PROBE, *PROBE_P;
 
 /*楔块 (Wedge)*/
@@ -665,6 +676,7 @@ typedef	struct Config {
 	guchar	groupQty;			/* 共有几个group  0 1 2 3 4 5 6 7 */
 	guchar	voltage_pa;			/*  */
 	guchar	voltage_ut;	
+	guchar	language;			/* 语言 */
 	GROUP	group[4];			/* 前3个都接前面的128的接口 第四个是常规通道结单独的UT接口 */
 	/* 基本参数 */
 	PART	part;				/* 被检测工件... */
@@ -835,9 +847,8 @@ typedef	struct Config {
 	guchar    remote_desktop;                       /* Preferences -> Options -> mouse*/
 
 
-
-
-
+	gint	fd_fb;		/* fb设备 */
+	guchar remark_info[256];
 
 } CONFIG, *CONFIG_P;
 
@@ -1064,9 +1075,14 @@ typedef struct Draw_interface {
 
 	GtkWidget		*window2;
 	CONFIG_P		p_config;			/**/
-	TMP_CONFIG_P	        p_tmp_config;		/**/
+	TMP_CONFIG_P	p_tmp_config;		/**/
 	gulong			signal_id;
 
+	guint	file_path;	/* 0 1 2 3 4 5 6 7 8 9 0*/
+	GtkWidget	*label_probe;	/*  */
+	GtkTreeSelection *selection; 
+	GtkTreeSelection *selection1; 
+	gchar	p_type[8];
 
 	guchar			mark_pop_change;    /**/
 	guchar			markreturn;
@@ -1118,5 +1134,8 @@ typedef struct Draw_interface {
 #define	MENU_STATUS	(pp->pos_pos) 
 
 #define VERSION "DP1.0.0.0"
+
+#define ENGLISH_	0
+#define CHINESE_	1
 
 #endif

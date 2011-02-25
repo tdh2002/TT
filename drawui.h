@@ -104,6 +104,12 @@
 /* 最大测量范围  扫描延时+扫描范围 */
 #define MAX_RANGE_US	9899.89
 
+/* 警告框 */
+
+/* 弹出的对话框的类型 */
+#define DIALOG_REMARK	0
+#define DIALOG_PROBE	1
+#define DIALOG_WEDGE	1
 
 /* 各个menu 弹出菜单的偏移量 */
 #define TX_RX_MODE	0
@@ -197,6 +203,11 @@
 #define MODE_POS_DSP		0x3023
 #define CURVE_POS_DSP		0x3024
 #define POINT_POS_DSP		0x3025
+
+
+#define PA_PROBE_PATH	"source/system/Model/Probe/PA/"
+#define PA_PROBE_PATH_	0
+#define TEST_PATH	"source/test/"
 
 
 
@@ -413,7 +424,7 @@ extern gboolean foo (GtkAccelGroup *accel_group, GObject *acceleratable,
 
 extern gboolean key_press_handler (GtkWidget* pWidget, GdkEventKey* pEvent, gpointer data);
 
-
 extern void draw3_pressed1(gfloat step, guint digit);
 
+extern void da_call_remark (GtkDialog *dialog, gint response_id, gpointer user_data);
 #endif

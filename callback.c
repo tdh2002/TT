@@ -4,6 +4,7 @@
  */
 
 #include "drawui.h"
+#include <string.h>
 #include <gdk/gdkkeysyms.h>
 
 static void handler_key(guint keyval);
@@ -2812,3 +2813,29 @@ void send_dsp_data (guint data_type, guint value)
 		default:break;
 	}
 }
+
+
+/* 弹出备注信息2个按键的处理 一个是保存一个是取消 */
+void da_call_remark (GtkDialog *dialog, gint response_id, gpointer user_data)      
+{
+	GtkTextBuffer *TextBuffer = (GTK_TEXT_BUFFER (user_data));
+	if (GTK_RESPONSE_OK == response_id)  /* 保存信息 */
+	{
+		GtkTextIter start, end;
+		gchar *Data;
+
+		gtk_text_buffer_get_start_iter (TextBuffer, &start);
+		gtk_text_buffer_get_end_iter (TextBuffer, &end);
+
+		Data = gtk_text_buffer_get_text (TextBuffer, &start, &end, FALSE);
+		memcpy (CFG(remark_info), Data, sizeof(CFG(remark_info)));
+
+		g_free (Data);
+		g_print ("OK_Pressed");
+	}
+	else if (GTK_RESPONSE_CANCEL == response_id) /* 取消 */
+		g_print ("CANCEL_Pressed");
+	gtk_widget_destroy (GTK_WIDGET (dialog));
+}
+
+
