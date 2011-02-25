@@ -3,7 +3,6 @@
  *		10		  20		30		  40		50		  60		70		  80
  */
 
-
 #ifndef	__DRAW_UI_H_
 #define	__DRAW_UI_H_
 #include "base.h"
@@ -28,7 +27,12 @@
 #define UNIT_MM_S 	10
 #define UNIT_TO1 	11
 #define UNIT_DB_MM      12
-#define UNIT_NONE	13
+#define UNIT_S		13
+#define UNIT_DEG	14
+#define UNIT_STEP_MM	15
+#define UNIT_RPM	16
+#define UNIT_NONE	17
+
 
 /* UT_UNIT */
 #define UT_UNIT_TRUE_DEPTH	0
@@ -105,8 +109,6 @@
 /* 最大测量范围  扫描延时+扫描范围 */
 #define MAX_RANGE_US	9899.89
 
-/* 警告框 */
-
 /* 弹出的对话框的类型 */
 #define DIALOG_REMARK	0
 #define DIALOG_PROBE	1
@@ -149,6 +151,59 @@
 #define DISPL		(DISPLAY + 11)
 #define GROUP		(DISPL +11)
 #define C_SCAN1		(GROUP +2)
+#define DATA2		(C_SCAN1 + 5)
+#define DIS_MODE	(DATA2 + 4)
+#define UTUNIT		(DIS_MODE + 4)
+#define GRID		(UTUNIT + 3)
+#define ZOOM_DISPLAY	(GRID + 6)
+#define TYPE		(ZOOM_DISPLAY + 6)
+#define COL_SELECT	(TYPE + 6 )
+#define COL_MODE	(COL_SELECT + 3)
+#define PROP_SCAN	(COL_MODE + 2)
+#define PROP_COLOR	(PROP_SCAN + 6)
+#define ENVELOPE	(PROP_COLOR + 6)
+#define PROP_SOURCE	(ENVELOPE + 2)
+#define PROP_APP	(PROP_SOURCE + 4)
+#define PROP_OVERLAY	(PROP_APP + 4)
+#define FFT_COLOR	(PROP_OVERLAY + 3)
+#define ORIENTATION	(FFT_COLOR + 4)
+#define GROUP_P		(ORIENTATION + 2)
+#define GROUP_MODE	(GROUP_P + 6)
+#define GROUP_MODE_P	(GROUP_MODE + 2)
+#define PROB_SELECT	(GROUP_MODE_P + 2)
+#define PROB_SKEW	(PROB_SELECT + 2 )
+#define GEOMETRY	(PROB_SKEW + 5)
+#define MATERIAL	(GEOMETRY + 3)
+#define LAW_CONFIG	(MATERIAL + 7)
+#define L_CONFIG	(LAW_CONFIG + 4)
+#define WAVE_TYPE	(L_CONFIG + 4)
+#define W_TYPE		(WAVE_TYPE + 3)
+#define ENCODER		(W_TYPE + 3)
+#define POLARITY	(ENCODER + 2)
+#define E_TYPE		(POLARITY + 2)
+#define I_TYPE		(E_TYPE + 9)
+#define I_SCAN		(I_TYPE + 3)
+#define I_INDEX		(I_SCAN + 3)
+#define START_MODE	(I_INDEX + 5)
+#define STORAGE		(START_MODE + 3)
+#define INSPEC_DATA	(STORAGE + 4)
+#define F_STORAGE	(INSPEC_DATA + 2)
+#define F_STORAGE_P	(F_STORAGE + 2)
+#define SAVE_MODE	(F_STORAGE_P + 2)
+#define TEMPLA		(SAVE_MODE + 4)
+#define TEMPLA_P	(TEMPLA + 1)
+#define PAPER_SIZE	(TEMPLA_P + 1)
+#define VIEW		(PAPER_SIZE + 4)
+#define F_SELECT	(VIEW + 3)
+#define U_LABEL		(F_SELECT + 10)
+#define U_CONTENT	(U_LABEL + 10)
+#define P_UNITS		(U_CONTENT + 10)
+#define SCHEME		(P_UNITS + 2 )
+#define GATE_M		(SCHEME + 2)
+#define SELECT_K	(GATE_M + 2)
+#define ASSIGN_K	(SELECT_K + 9)
+#define ASSIGN_K_P	(ASSIGN_K + 16)
+#define MOUSE		(ASSIGN_K_P + 5)
 
 
 
@@ -205,11 +260,9 @@
 #define CURVE_POS_DSP		0x3024
 #define POINT_POS_DSP		0x3025
 
-
 #define PA_PROBE_PATH	"source/system/Model/Probe/PA/"
 #define PA_PROBE_PATH_	0
 #define TEST_PATH	"source/test/"
-
 
 
 extern gint (*window_keypress_event_orig)(GtkWidget *widget, GdkEventKey *event);
@@ -341,10 +394,22 @@ extern void data_4011 (GtkMenuItem *menuitem, gpointer data);
 extern void data_4012 (GtkMenuItem *menuitem, gpointer data);
 extern void data_4013 (GtkMenuItem *menuitem, gpointer data);
 extern void data_402 (GtkMenuItem *menuitem, gpointer data);
-//extern void data_403 (GtkMenuItem *menuitem, gpointer data);
+extern void data_4021 (GtkMenuItem *menuitem, gpointer data);
+extern void data_403 (GtkMenuItem *menuitem, gpointer data);
+extern void data_404 (GtkSpinButton *spinbutton, gpointer data);
+extern void data_405 (GtkSpinButton *spinbutton, gpointer data);
 extern void data_410 (GtkMenuItem *menuitem, gpointer data);            /*410*/
 extern void data_411 (GtkMenuItem *menuitem, gpointer data);            /*411*/
 extern void data_420 (GtkMenuItem *menuitem, gpointer data);            /*420*/
+extern void data_421 (GtkMenuItem *menuitem, gpointer data); 
+extern void data_422 (GtkSpinButton *spinbutton, gpointer data);
+extern void data_4221 (GtkSpinButton *spinbutton, gpointer data);
+extern void data_423 (GtkSpinButton *spinbutton, gpointer data);
+extern void data_4231 (GtkSpinButton *spinbutton, gpointer data);
+extern void data_424 (GtkSpinButton *spinbutton, gpointer data);
+extern void data_4241 (GtkSpinButton *spinbutton, gpointer data);
+extern void data_425 (GtkSpinButton *spinbutton, gpointer data);
+extern void data_4251 (GtkSpinButton *spinbutton, gpointer data);
 extern void data_430 (GtkMenuItem *menuitem, gpointer data);            /*430*/
 extern void data_431 (GtkSpinButton *spinbutton, gpointer data);	/*431*/
 extern void data_4311 (GtkSpinButton *spinbutton, gpointer data);       /*4311*/
@@ -363,6 +428,7 @@ extern void data_443 (GtkMenuItem *menuitem, gpointer data);            /*443*/
 extern void data_444 (GtkMenuItem *menuitem, gpointer data);            /*444*/
 extern void data_445 (GtkMenuItem *menuitem, gpointer data);            /*445*/
 
+extern void data_500 (GtkMenuItem *menuitem, gpointer data);
 extern void data_501 (GtkMenuItem *menuitem, gpointer data);
 extern void data_502 (GtkMenuItem *menuitem, gpointer data);
 extern void data_510 (GtkSpinButton *spinbutton, gpointer data);	/*510*/
@@ -389,11 +455,21 @@ extern void data_613 (GtkSpinButton *spinbutton, gpointer data);	/*613*/
 extern void data_614 (GtkMenuItem *menuitem, gpointer data);
 
 extern void data_620 (GtkSpinButton *spinbutton, gpointer data);	/*620*/
+extern void data_621 (GtkSpinButton *spinbutton, gpointer data);
+extern void data_622 (GtkSpinButton *spinbutton, gpointer data);
 extern void data_623 (GtkSpinButton *spinbutton, gpointer data);	/*623*/
 
+extern void data_700 (GtkMenuItem *menuitem, gpointer data);
+extern void data_701 (GtkMenuItem *menuitem, gpointer data);
+extern void data_702 (GtkMenuItem *menuitem, gpointer data);
+extern void data_703 (GtkSpinButton *spinbutton, gpointer data);
+extern void data_704 (GtkSpinButton *spinbutton, gpointer data);
 extern void data_710 (GtkMenuItem *menuitem, gpointer data);
 extern void data_711 (GtkMenuItem *menuitem, gpointer data);
+extern void data_712 (GtkMenuItem *menuitem, gpointer data);
 extern void data_713 (GtkSpinButton *spinbutton, gpointer data);	/*713*/
+extern void data_714 (GtkSpinButton *spinbutton, gpointer data);
+extern void data_715 (GtkSpinButton *spinbutton, gpointer data);
 
 extern void data_720 (GtkSpinButton *spinbutton, gpointer data);	/*720*/
 extern void data_721 (GtkSpinButton *spinbutton, gpointer data);	/*721*/
@@ -407,16 +483,18 @@ extern void data_741 (GtkMenuItem *menuitem, gpointer data);
 
 extern void data_800 (GtkMenuItem *menuitem, gpointer data);
 extern void data_804 (GtkMenuItem *menuitem, gpointer data);
+extern void data_810 (GtkMenuItem *menuitem, gpointer data);
 extern void data_812 (GtkMenuItem *menuitem, gpointer data);
 extern void data_824 (GtkMenuItem *menuitem, gpointer data);
 extern void data_830 (GtkMenuItem *menuitem, gpointer data);
 
 extern void data_900 (GtkMenuItem *menuitem, gpointer data);
 extern void data_901 (GtkSpinButton *spinbutton, gpointer data);	/*901*/
-extern void data_902 (GtkMenuItem *menuitem, gpointer data);
+extern void data_904 (GtkMenuItem *menuitem, gpointer data);
 extern void data_903 (GtkMenuItem *menuitem, gpointer data);
 extern void data_912 (GtkMenuItem *menuitem, gpointer data);
 extern void data_913 (GtkMenuItem *menuitem, gpointer data);
+extern void data_9131 (GtkMenuItem *menuitem, gpointer data);
 //extern void data_923 (GtkMenuItem *menuitem, gpointer data);
 extern void data_930 (GtkMenuItem *menuitem, gpointer data);
 
@@ -424,6 +502,7 @@ extern gboolean foo (GtkAccelGroup *accel_group, GObject *acceleratable,
 		guint keyval, GdkModifierType modifier, gpointer data);
 
 extern gboolean key_press_handler (GtkWidget* pWidget, GdkEventKey* pEvent, gpointer data);
+
 
 extern void draw3_pressed1(gfloat step, guint digit);
 
