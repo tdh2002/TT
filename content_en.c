@@ -6,6 +6,7 @@
 
 #include "language.h"
 
+
 const gchar *content_en10[] = {
 	/* 一级菜单名称 */
 	" Wizard  ",	" UT Settings",		" Gate/Alarm  ",	" Measurements  ",
