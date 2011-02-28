@@ -4,6 +4,7 @@
  */
 
 #include "drawui.h"
+#include "drawfb.h"
 
 #include <time.h>
 #include <stdio.h>
@@ -274,7 +275,10 @@ int main (int argc, char *argv[])
 
 	pp = p_ui;
 	set_config(0);
-	init_ui(p_ui);
+#if ARM
+	init_fb (); /* 初始化fb1 */
+#endif
+	init_ui (p_ui);
 
 	gtk_widget_show (window);
 

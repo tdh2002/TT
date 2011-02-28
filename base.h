@@ -1057,6 +1057,7 @@ typedef struct tmp_config {
 	guchar    bright_reg;                          /*preferences -> pref. -> bright*/
 
 
+	gushort	*fb1_addr;
 	gint	fd_config;
 
 

@@ -3,8 +3,8 @@ CC = arm-angstrom-linux-gnueabi-gcc
 
 CFLAGS=-D_REENTRANT -DARM -pthread -I/stuff/tmp/sysroots/armv7a-angstrom-linux-gnueabi/usr/include/gtk-2.0 -I/stuff/tmp/sysroots/armv7a-angstrom-linux-gnueabi/usr/lib/gtk-2.0/include -I/stuff/tmp/sysroots/armv7a-angstrom-linux-gnueabi/usr/include/atk-1.0 -I/stuff/tmp/sysroots/armv7a-angstrom-linux-gnueabi/usr/include/cairo -I/stuff/tmp/sysroots/armv7a-angstrom-linux-gnueabi/usr/include/pango-1.0 -I/stuff/tmp/sysroots/armv7a-angstrom-linux-gnueabi/usr/include/gio-unix-2.0/ -I/stuff/tmp/sysroots/armv7a-angstrom-linux-gnueabi/usr/include/pixman-1 -I/stuff/tmp/sysroots/armv7a-angstrom-linux-gnueabi/usr/include/freetype2 -I/stuff/tmp/sysroots/armv7a-angstrom-linux-gnueabi/usr/include/libpng12 -I/stuff/tmp/sysroots/armv7a-angstrom-linux-gnueabi/usr/include/glib-2.0 -I/stuff/tmp/sysroots/armv7a-angstrom-linux-gnueabi/usr/lib/glib-2.0/include  -pthread -lgtk-x11-2.0 -lgdk-x11-2.0 -latk-1.0 -lpangoft2-1.0 -lgdk_pixbuf-2.0 -lm -lpangocairo-1.0 -lcairo -lgio-2.0 -lpango-1.0 -lfreetype -lfontconfig -lgobject-2.0 -lgmodule-2.0 -lgthread-2.0 -lrt -lglib-2.0 
 
-main_arm: main.c drawui.c callback.c content_en.c drawui.h base.h language.h
-	$(CC) main.c drawui.c callback.c content_en.c -o main_arm $(CFLAGS) -Wall
+main_arm: main.c drawui.c callback.c content_en.c drawfb.c drawui.h base.h language.h drawfb.h
+	$(CC) main.c drawui.c callback.c content_en.c drawfb.c -o main_arm $(CFLAGS) -Wall
 
 .PHONY:clean
 clean: 
