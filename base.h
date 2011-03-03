@@ -177,6 +177,29 @@ typedef struct element_law
 
 /*探头(Probe)  516 byte*/
 typedef struct Probe {
+		/*PA 时候先读走4个字节*/
+	gchar	A1[2];
+	guchar	PA_probe_type;	/* 探头类型 1 是Custom 3 是angle beam 5 是 Contact 6是Immersion */
+	gchar	A10;
+	guchar	UT_probe_type;	/* 探头类型 1 n/a 0 converntional */
+	gchar	A11;
+	gchar	Model[20];		/* 探头名字 */
+	gchar	Serial[20];		/* 探头名字 */
+	guchar	Elem_qty;		/* 阵元数 */
+	guchar	Freq2;			/* UT 时候 频率是 freq2 << 8 + elem_qty */
+	guint	Pitch;			/* 阵元中心间距 0.001mm 为单位 范围是0.01~65.00mm UT 是Elemet_size */
+	guint	A3;
+	gushort A4;
+	gushort	Frequency;				/* 频率 */
+	guint	A5[75];
+	gushort A6;
+	gushort A7;
+	gushort A8;
+	gushort	Reference_Point; /*  */
+	guint	A9[36];
+} PROBE, *PROBE_P;
+#if 0
+typedef struct Probe {
 	guchar	A1[10];
 	gchar	Name[20];		/* 探头名字 */
 	gchar	Name1[20];		/* 探头名字 */
@@ -193,17 +216,20 @@ typedef struct Probe {
 	gushort	Reference_Point; /*  */
 	guint	A9[36];
 } PROBE, *PROBE_P;
+#endif
 
 /*楔块 (Wedge)*/
 typedef struct Wedge {
-	guchar A1[4]; /* 0x03000300 PA 0x01000100 UT*/
+	guchar A1[2]; /* 0x03000300 PA 0x01000100 UT*/
+	gchar	Wave_type;		/* 1 是L 2 是 S */
+	gchar	A11;
 	gchar Model[20]; /* 共用 楔块名字 */
 	gchar Serial[20]; /* 共用 楔块名字 */
 	gushort Angle; /* 共用 角度单位0.1度 */
 	gushort A7;
 	gushort Probe_delay; /* UT ns为单位 */
-	guchar A2;
-	guchar Wave_type; /* UT 1 SW 0 LW*/
+	gchar A2;
+	gchar A10; /* UT 1 SW 0 LW*/
 	gint Ref_point; /* UT 使用 */
 	/*这个地方 得 多读一个字节 */
 	guint Height; /* 单位微米 */
@@ -802,7 +828,7 @@ typedef struct Draw_interface {
 	GtkWidget	*label_probe;	/* dialog 最下面一排信息   无 probe wedge之分 */
 	GtkTreeSelection *selection; 
 	GtkTreeSelection *selection1; 
-	gchar	p_type[8];
+	gchar	p_type[12];
 	guchar	tag;		/* 大类选择状态 */
 
 	guchar			mark_pop_change;    /**/
