@@ -43,7 +43,6 @@ extern GdkColor	color_button1;
 extern GdkColor	color_button2;
 extern GdkColor color_rule;
 
-
 typedef struct col_select_info {
 	guchar   color_start;
 	guchar   color_end;                    
@@ -107,7 +106,7 @@ typedef struct alarm_info {
 /* 输出信息 */
 typedef struct output_info {
 	guchar	alarm1;   	    /* Alarm #  */
-//	guchar	alarm1_value[16];   /* Alarm #的选项是否选中，0否，1是*/
+	//	guchar	alarm1_value[16];   /* Alarm #的选项是否选中，0否，1是*/
 	guchar	alarm1_qty;		/* 开启alarm的个数*/
 	gushort alarm1_status;	/* */
 	guchar	count;    	    /* count    */
@@ -197,12 +196,27 @@ typedef struct Probe {
 
 /*楔块 (Wedge)*/
 typedef struct Wedge {
-	guint	Angle;			/* 角度 */
-	guint	Height;			/* 第一阵元高度 */
-	gint	Primary_offset;		/* 前沿 */
-	guint	Vel0city;		/* 声速 */
-	gchar	Name[20];		/* 楔块名字 */
+guchar A1[4]; /* 0x03000300 PA 0x01000100 UT*/
+gchar Model[20]; /* 共用 楔块名字 */
+gchar Serial[20]; /* 共用 楔块名字 */
+gushort Angle; /* 共用 角度单位0.1度 */
+gushort A7;
+gushort Probe_delay; /* UT ns为单位 */
+guchar A2;
+guchar Wave_type; /* UT 1 SW 0 LW*/
+gint Ref_point; /* UT 使用 */
+/*这个地方 得 多读一个字节 */
+guint Height; /* 单位微米 */
+guint Velocity_UT;
+guint A8;
+guint Velocity_PA; /* 速度 mm/s */
+gchar Orientation; /* 1 Normal 0 reversal*/
+gchar A4[3];
+gint Primary_offset; /* 微米 */
+guint Secondary_offset; /* 微米 */
+gint A6[107];
 } WEDGE, *WEDGE_P;
+
 
 /*材料 (Material) 28byte */
 typedef struct Material {
@@ -231,8 +245,8 @@ typedef struct Group {
 	guchar	db_ref;			/* 参考增益开关 0 off 1 on */
 	/* 发射接收 */
 	guchar	pulser;			/* 1~ 128 - elem_qty(聚焦阵元数最大为32) + 1 
-							   指定发射阵元 与机器配置相关我们是128阵元最大,
-							   Probe 的Auto Program 选择On 以后不可以调节 值与connect P 一样 */
+					   指定发射阵元 与机器配置相关我们是128阵元最大,
+					   Probe 的Auto Program 选择On 以后不可以调节 值与connect P 一样 */
 	guchar  receiver;		/* 接收阵元 必须是 PR 模式才能调节 */
 	guchar	filter;			/* 滤波 */
 	guchar	rectifier;		/* 检波  */
@@ -269,7 +283,7 @@ typedef struct Group {
 	guint   delay;
 	gushort tcg_gain;
 
-
+	guchar  group_mode;     /* 组工作模式  0 UT or 1 PA*/
 	LAW_INFO     law_info;	/* 聚焦法则的信息  */
 	PROBE	     probe;
 	WEDGE	     wedge;
@@ -324,7 +338,6 @@ typedef	struct Config {
 	guchar	groupId;			/* 当前group */
 	guchar	groupQty;			/* 共有几个group  0 1 2 3 4 5 6 7 */
 	guchar  group_pos;
-	guchar  group_mode_pos;
 	guchar	voltage_pa;			/*  */
 	guchar	voltage_ut;	
 	guchar	language;			/* 语言 */
@@ -383,7 +396,7 @@ typedef	struct Config {
 	guint   avg_scan_speed;
 
 	guchar	ut_unit;		/*检测单位 时间2 声程1  实际深度0 .*/
-//	guchar	color;			/**/
+	//	guchar	color;			/**/
 
 
 	/*选项*/
@@ -405,8 +418,8 @@ typedef	struct Config {
 
 
 
-//	guchar	selection;                            /*Measurements->Cursors->selection*/
-//	SELECTION_INFO   select;			
+	//	guchar	selection;                            /*Measurements->Cursors->selection*/
+	//	SELECTION_INFO   select;			
 	guint	VPA;                            /*Measurements->Cursors->VPA*/
 	guint	cursors_scan;                   /*Measurements->Cursors->Scan*/
 	guint	cursors_index;                  /*Measurements->Cursors->index*/
@@ -414,7 +427,7 @@ typedef	struct Config {
 	guchar	entry_image;                   /*Measurements->Table->entry image*/
 	guchar	entry_qty;                     /*Measurements->Table->Select Entry*/
 
-//	guchar	source;                         /*Measurements->Thickness->source*/
+	//	guchar	source;                         /*Measurements->Thickness->source*/
 	guint	min_thickness;                  /*Measurements->Thickness->min*/
 	guint	max_thickness;                  /*Measurements->Thickness->max*/
 	guchar	echo_qty;                       /*Measurements->Thickness->echo_qty*/
@@ -468,22 +481,22 @@ typedef	struct Config {
 
 	//guint   part_thickness;                 /*Probe/Part -> Parts -> thickness*/
 	guchar  auto_detect;                    /* 自动检测探头连接状态 开启时候不能调节 收发起止位置 */
-	guchar  group_mode;                     /*Probe/Part -> select -> Group Mode*/
+
 	guchar  probe_select;                   /*Probe/Part -> select -> select*/
 	guchar  fft;                            /*Probe/Part -> characterize -> FFT*/
 
 	/* 聚焦法则 */
-//	guchar  law_config;                     /* 聚焦模式 扇扫 线扫etc */
-//	guchar  element_qty;					/* */
+	//	guchar  law_config;                     /* 聚焦模式 扇扫 线扫etc */
+	//	guchar  element_qty;					/* */
 	guchar	connection_P;                   /* 设置收的接口 1-128 */
 	guchar  connection_R;                   /* 设置发的接口 1-128 */
-//	guchar  first_element;                  /* 第一个阵元 */
-//	guchar  last_element;                   /* 最后一个阵元 (线扫时候可以设置) */
-//	guchar  element_step;                   /* 阵元间隔 (线扫时候可以设置) */
-//	guchar  wave_type;                      /* 0纵波 与 1横波 */
-//	guint   min_angle;                      /*Focal Law -> Beam -> Min_angle*/
+	//	guchar  first_element;                  /* 第一个阵元 */
+	//	guchar  last_element;                   /* 最后一个阵元 (线扫时候可以设置) */
+	//	guchar  element_step;                   /* 阵元间隔 (线扫时候可以设置) */
+	//	guchar  wave_type;                      /* 0纵波 与 1横波 */
+	//	guint   min_angle;                      /*Focal Law -> Beam -> Min_angle*/
 	guchar  auto_program;                   /* Off   On*/
-//	guint   focus_depth;                    /*Focal Law -> Beam -> focus_depth*/
+	//	guint   focus_depth;                    /*Focal Law -> Beam -> focus_depth*/
 
 	guchar  encoder;
 	guchar  polarity;
@@ -527,7 +540,7 @@ typedef	struct Config {
 	guchar	  assign_key_p;
 	guchar    startup_mode;                    /* Preferences -> Service -> Startup Mode*/
 	guchar    mouse;                       /* Preferences -> Options -> mouse*/
-	guchar    ezview;                       /* Preferences -> Options -> mouse*/
+	//guchar    ezview;                       /* Preferences -> Options -> mouse*/
 	guchar    remote_desktop;                       /* Preferences -> Options -> mouse*/
 
 
@@ -638,7 +651,7 @@ typedef struct tmp_config {
 
 	guchar	  encoder_resolution_reg;		/* Scan -> Encoder -> resolution  */
 	guchar	  origin_reg;
-//	guchar    scan_speed_reg;                      /* Scan -> Inspection -> Scan speed*/
+	//	guchar    scan_speed_reg;                      /* Scan -> Inspection -> Scan speed*/
 	guchar   scanspeed_reg;
 	guchar   scanspeed_rpm_reg;
 	guchar   indexspeed_reg;
@@ -786,10 +799,11 @@ typedef struct Draw_interface {
 	gulong			signal_id;
 
 	guint	file_path;	/* 0 1 2 3 4 5 6 7 8 9 0*/
-	GtkWidget	*label_probe;	/*  */
+	GtkWidget	*label_probe;	/* dialog 最下面一排信息   无 probe wedge之分 */
 	GtkTreeSelection *selection; 
 	GtkTreeSelection *selection1; 
 	gchar	p_type[8];
+	guchar	tag;		/* 大类选择状态 */
 
 	guchar			mark_pop_change;    /**/
 	guchar			markreturn;

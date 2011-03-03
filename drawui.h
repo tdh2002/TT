@@ -8,6 +8,11 @@
 #include "base.h"
 #include "language.h"
 
+
+/* 扫查模式 */
+#define UT_SCAN		0
+#define PA_SCAN		1
+/*  */
 #define MENU1_STOP    4
 #define MENU2_STOP    0 
 #define MENU2_PRESSED 1
@@ -112,7 +117,7 @@
 /* 弹出的对话框的类型 */
 #define DIALOG_REMARK	0
 #define DIALOG_PROBE	1
-#define DIALOG_WEDGE	1
+#define DIALOG_WEDGE	2
 
 /* 各个menu 弹出菜单的偏移量 */
 #define TX_RX_MODE	0
@@ -262,7 +267,12 @@
 
 #define PA_PROBE_PATH	"source/system/Model/Probe/PA/"
 #define PA_PROBE_PATH_	0
-#define TEST_PATH	"source/test/"
+#define UT_PROBE_PATH	"source/system/Model/Probe/UT/"
+#define UT_PROBE_PATH_	1
+#define PA_WEDGE_PATH	"source/system/Model/Wedge/PA/"
+#define PA_WEDGE_PATH_	2
+#define UT_WEDGE_PATH	"source/system/Model/Wedge/UT/"
+#define UT_WEDGE_PATH_	3
 
 
 extern gint (*window_keypress_event_orig)(GtkWidget *widget, GdkEventKey *event);
