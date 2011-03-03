@@ -244,9 +244,12 @@ int main (int argc, char *argv[])
 
 	accel = gtk_accel_group_new();
 
-	p_ui		= (DRAW_UI_P)g_malloc0(sizeof(DRAW_UI));
-	p_config	= (CONFIG_P)g_malloc0(sizeof(CONFIG));
-	p_tmp_config	= (TMP_CONFIG_P)g_malloc0(sizeof(TMP_CONFIG));
+	p_ui		= (DRAW_UI_P)malloc(sizeof(DRAW_UI));
+	p_config	= (CONFIG_P)malloc(sizeof(CONFIG));
+	p_tmp_config	= (TMP_CONFIG_P)malloc(sizeof(TMP_CONFIG));
+	memset (p_ui, 0x0, sizeof(DRAW_UI));
+	memset (p_config, 0x0, sizeof(CONFIG));
+	memset (p_tmp_config, 0x0, sizeof(TMP_CONFIG));
 	g_print("DRAW_UI's size:%d xx = %d\n", sizeof(DRAW_UI), p_ui->xx);
 	g_print("CONFIG's size:%d xx = %d\n", sizeof(CONFIG), p_config->time);
 

@@ -6,6 +6,7 @@
  */
 
 #include "drawui.h"
+#include "drawfb.h"
 #include <dirent.h>
 #include <unistd.h>  
 #include <sys/types.h>
@@ -17,6 +18,8 @@
 #include <time.h>
 #include <string.h>
 
+#define EVENT_METHOD(i, x) GTK_WIDGET_GET_CLASS((GtkObject*)(i))->x
+
 enum
 {
 	LIST_ITEM = 0,
@@ -24,6 +27,8 @@ enum
 };
 
 static char buffer[32];
+static gushort dot_temp[800];
+static gushort dot_temp1[800*400*2];
 
 gint (*window_keypress_event_orig)(GtkWidget *widget, GdkEventKey *event);/* window 原始的按键处理 */
 gint my_keypress_event(GtkWidget *widget, GdkEventKey *event);			/* 自己的按键处理*/
@@ -351,7 +356,7 @@ void draw_1_menu(DRAW_UI_P p)
 {
 	gint i;
 
-	for (i = 0; i < 11; i++)
+	for (i = 0; i < 10; i++)
 		gtk_menu_item_set_label(GTK_MENU_ITEM (p->menuitem[i]),con0_p[i]);
 	gtk_menu_item_set_label(GTK_MENU_ITEM (p->menuitem_main), con0_p[p->pos]);
 }
@@ -625,18 +630,19 @@ static gchar* get_probe_info(const gchar *file_path)
 	PROBE p1;
 	gchar *probe_info;
 	int fd;
-	if ((fd = open(file_path, O_RDONLY ))<0) {
+	if ((fd = open(file_path, O_RDONLY )) < 0)
+	{
 		perror("open:");
 		exit(1);
 	}
 	read (fd, &p1, sizeof(PROBE));
 	close(fd);
 	probe_info = g_strdup_printf ("%s %d %d %d -%d", p1.Name,
-	 p1.Elem_qty, p1.Pitch, p1.Frequency, p1.Reference_Point );
+			p1.Elem_qty, p1.Pitch, p1.Frequency, p1.Reference_Point );
 
 	g_print("%s\n", probe_info);
-//	printf("%s %d %d %d -%d\n", p1.Name,
-//	 p1.Elem_qty, p1.Pitch, p1.Frequency, p1.Reference_Point );
+	//	printf("%s %d %d %d -%d\n", p1.Name,
+	//	 p1.Elem_qty, p1.Pitch, p1.Frequency, p1.Reference_Point );
 	return probe_info;
 }
 
@@ -1411,20 +1417,22 @@ static void draw_area(GtkWidget *parent_box, DRAW_AREA *draw_area, guint width, 
 	gtk_widget_modify_bg (draw_area->drawing_area, GTK_STATE_NORMAL, &color_black1);
 	gtk_table_attach (GTK_TABLE (draw_area->table), draw_area->drawing_area, 1, 2, 0, 1,
 			GTK_EXPAND|GTK_FILL, GTK_FILL, 0, 0);
+    gtk_widget_set_events (draw_area->drawing_area, GDK_POINTER_MOTION_MASK |
+                                 GDK_POINTER_MOTION_HINT_MASK);
 
 	draw_area->vruler1 = gtk_vruler_new ();
 	gtk_ruler_set_metric (GTK_RULER (draw_area->vruler1), GTK_PIXELS);
 	gtk_ruler_set_range (GTK_RULER (draw_area->vruler1), v1s, v1e, 0, 1);
 	gtk_widget_modify_bg (draw_area->vruler1, GTK_STATE_NORMAL, &color_rule);
-	g_signal_connect_swapped (G_OBJECT (draw_area->drawing_area), "motion_notify_event",
-			G_CALLBACK (EVENT_METHOD (draw_area->vruler1, motion_notify_event)),
+	g_signal_connect_swapped ((draw_area->drawing_area), "motion_notify_event",
+			G_CALLBACK (EVENT_METHOD ((draw_area->vruler1), motion_notify_event)),
 			draw_area->vruler1);
 	gtk_table_attach (GTK_TABLE (draw_area->table), draw_area->vruler1, 0, 1, 0, 1,
 			GTK_FILL, GTK_EXPAND|GTK_SHRINK|GTK_FILL, 0, 0);
 
 	draw_area->vruler2 = gtk_vruler_new ();
 	gtk_ruler_set_metric (GTK_RULER (draw_area->vruler2), GTK_PIXELS);
-	gtk_ruler_set_range (GTK_RULER (draw_area->vruler2), v2s, v2e, 0, 1);
+	gtk_ruler_set_range (GTK_RULER (draw_area->vruler2), v2e, v2s, 0, 1);
 	gtk_widget_modify_bg(draw_area->vruler2, GTK_STATE_NORMAL, &color_rule);
 	g_signal_connect_swapped (G_OBJECT (draw_area->drawing_area), "motion_notify_event",
 			G_CALLBACK (EVENT_METHOD (draw_area->vruler2, motion_notify_event)),
@@ -1463,8 +1471,10 @@ void draw_area_all()
 	/* 把之前的区域释放 */
 	for (i = 0; i < 4; i ++)
 	{
-		gtk_widget_destroy(pp->vbox_area[i]);
-		gtk_widget_destroy(pp->hbox_area[i]);
+		if (pp->vbox_area[i])
+			gtk_widget_destroy(pp->vbox_area[i]);
+		if (pp->hbox_area[i])
+			gtk_widget_destroy(pp->hbox_area[i]);
 		pp->vbox_area[i] = gtk_vbox_new(FALSE, 0);
 		pp->hbox_area[i] = gtk_hbox_new(FALSE, 0);
 	}
@@ -8610,6 +8620,7 @@ static gboolean time_handler(GtkWidget *widget)
 #endif
 
 /*  */
+#if 0
 static gboolean time_handler1(GtkWidget *widget)
 {
 	time_t curtime;
@@ -8623,6 +8634,23 @@ static gboolean time_handler1(GtkWidget *widget)
 	gtk_label_set_markup (GTK_LABEL(pp->label[4]),markup);
 
 	g_free (markup);
+	return TRUE;
+}
+#endif
+
+static gboolean time_handler1(GtkWidget *widget)
+{
+	gint i;
+
+	for (i = 0 ; i < 615; i++)
+		dot_temp[i] = i%390;
+//		dot_temp[i] = g_random_int_range(0, 390);
+		
+
+	draw_a_scan (dot_temp1, 615, 390, dot_temp, 0, 0, 0xf800);
+
+	memcpy (TMP(fb1_addr), dot_temp1, 800*400*2);	/* 如果用dma更快啊 */
+
 	return TRUE;
 }
 
@@ -9108,8 +9136,11 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 
 	/*	pp->p_config->unit = 1;*/
 
-	//	g_timeout_add(1000, (GSourceFunc) time_handler1, NULL);
+#if ARM
+		g_timeout_add(33, (GSourceFunc) time_handler1, NULL);
+#endif
 	//	g_thread_create((GThreadFunc)(time_handler), (gpointer) (pp->drawing_area), FALSE, NULL);
+		
 	/*
 	   gtk_box_pack_start (GTK_BOX (p->vbox22), p->vbox221, FALSE, FALSE, 0);
 	   gtk_widget_show(p->vbox221);
