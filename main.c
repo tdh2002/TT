@@ -203,7 +203,7 @@ static void set_config (guint groupid)
 
 	/* 探头信息 */
 	GROUP_VAL(probe.Elem_qty)	= 32; /*  */
-/*	memcpy (GROUP_VAL(probe.Name), "5L64-A2", 8);*/ /* 探头名字 */
+	/*	memcpy (GROUP_VAL(probe.Name), "5L64-A2", 8);*/ /* 探头名字 */
 	/* 聚焦法则信息 */
 	LAW_VAL(Focal_type)	= LINEAR_SCAN;
 	LAW_VAL(Tx_connect)	= 1;

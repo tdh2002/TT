@@ -272,7 +272,7 @@ guint get_sum_gain ()
 		return GROUP_VAL(sum_gain);
 	else 
 	{
-               return 10;
+		return 10;
 	}
 	return 0;
 }
@@ -491,44 +491,44 @@ void b3_fun0(gpointer p)
 	switch (pp->pos)
 	{
 		case 3:
-			   switch (pp->pos1[3])
-			   {
-				   case 2: 
-					   CFG(display_table) = !CFG(display_table); /* P320 */
-					   break; 
+			switch (pp->pos1[3])
+			{
+				case 2: 
+					CFG(display_table) = !CFG(display_table); /* P320 */
+					break; 
 
-				   default:break;
-			   }
+				default:break;
+			}
 			break;
 		case 5:
-			   switch (pp->pos1[5])
-			   {
-				   case 2: 
-					   CFG(fft) = !CFG(fft); /* P520 */
-					   break; 
+			switch (pp->pos1[5])
+			{
+				case 2: 
+					CFG(fft) = !CFG(fft); /* P520 */
+					break; 
 
-				   default:break;
-			   }
+				default:break;
+			}
 			break;
 		case 6:
-			   switch (pp->pos1[6])
-			   {
-				   case 3: 
-					   CFG(auto_program) = !CFG(auto_program); /* P630 */
-					   break; 
+			switch (pp->pos1[6])
+			{
+				case 3: 
+					CFG(auto_program) = !CFG(auto_program); /* P630 */
+					break; 
 
-				   default:break;
-			   }
+				default:break;
+			}
 			break;
 		case 8:
-			   switch (pp->pos1[8])
-			   {
-				   case 2: 
-					   CFG(format_userfield) = !CFG(format_userfield); /* P820 */
-					   break; 
+			switch (pp->pos1[8])
+			{
+				case 2: 
+					CFG(format_userfield) = !CFG(format_userfield); /* P820 */
+					break; 
 
-				   default:break;
-			   }
+				default:break;
+			}
 			break;
 		default:break;
 	}
@@ -635,45 +635,45 @@ void b3_fun1(gpointer p)
 	/* 之前的位置 */
 	pp->pos_last2 = pp->pos2[pp->pos][pp->pos1[pp->pos]];
 	pp->pos2[pp->pos][pp->pos1[pp->pos]] = 1;
-/*	pp->pos_pos = MENU3_PRESSED;*/
+	/*	pp->pos_pos = MENU3_PRESSED;*/
 
 	/* 一次点击处理 */
 	switch (pp->pos)
 	{
 		case 1:
-			   switch (pp->pos1[1])
-			   {
-				   case 4: 
-					   GROUP_VAL(gainr) = GROUP_VAL(gain);
-					   pp->pos_pos = MENU3_STOP;
-					   if (GROUP_VAL(db_ref))
-						   markup = g_markup_printf_escaped (
-								   "<span foreground='white' font_desc='16'>%0.1f(%0.1f)</span>",
-								   (GROUP_VAL(gain) - GROUP_VAL(gainr)) / 100.0, GROUP_VAL(gainr) / 100.0);
-					   else
-						   markup = g_markup_printf_escaped ("<span foreground='white' font_desc='24'>%0.1f</span>",
-								   GROUP_VAL(gain) / 100.0 );
-					   gtk_label_set_markup (GTK_LABEL(pp->label[GAIN_VALUE]),markup);
+			switch (pp->pos1[1])
+			{
+				case 4: 
+					GROUP_VAL(gainr) = GROUP_VAL(gain);
+					pp->pos_pos = MENU3_STOP;
+					if (GROUP_VAL(db_ref))
+						markup = g_markup_printf_escaped (
+								"<span foreground='white' font_desc='16'>%0.1f(%0.1f)</span>",
+								(GROUP_VAL(gain) - GROUP_VAL(gainr)) / 100.0, GROUP_VAL(gainr) / 100.0);
+					else
+						markup = g_markup_printf_escaped ("<span foreground='white' font_desc='24'>%0.1f</span>",
+								GROUP_VAL(gain) / 100.0 );
+					gtk_label_set_markup (GTK_LABEL(pp->label[GAIN_VALUE]),markup);
 
-					   g_free(markup);
-					   break; /* Set Ref P141 设置参考增益值*/
-				   default:break;
-			   }
-			   break;
+					g_free(markup);
+					break; /* Set Ref P141 设置参考增益值*/
+				default:break;
+			}
+			break;
 
 		case 3:
-			   switch (pp->pos1[3])
-			   {
-				   case 2: 
-					   CFG(entry_image)= !CFG(entry_image);/* P321 */
-					   break;
-				   default:break;
-			   }
+			switch (pp->pos1[3])
+			{
+				case 2: 
+					CFG(entry_image)= !CFG(entry_image);/* P321 */
+					break;
+				default:break;
+			}
 			break;
 		case 4:
-			   switch (pp->pos1[4])
-			   {
-				   case 4:
+			switch (pp->pos1[4])
+			{
+				case 4:
 					switch(CFG(prop_scan)) 
 					{
 						case 0:break;
@@ -683,29 +683,29 @@ void b3_fun1(gpointer p)
 					}
 					break;  
 					/* P441 */
-				   default:break;
-			   }
+				default:break;
+			}
 			break;
 		case 7:
-			   switch (pp->pos1[7])
-			   {
-				   case 3: 
-					   CFG(pause)= !CFG(pause);/* P731 */
-					   break;
-				   default:break;
-			   }
+			switch (pp->pos1[7])
+			{
+				case 3: 
+					CFG(pause)= !CFG(pause);/* P731 */
+					break;
+				default:break;
+			}
 			break;
 		case 8:
-			   switch (pp->pos1[8])
-			   {
-				   case 2: 
-					   CFG(format_probe)= !CFG(format_probe);/* P821 */
-					   break;
-				   case 3: 
-					   CFG(enable)= !CFG(enable);/* P831 */
-					   break;
-				   default:break;
-			   }
+			switch (pp->pos1[8])
+			{
+				case 2: 
+					CFG(format_probe)= !CFG(format_probe);/* P821 */
+					break;
+				case 3: 
+					CFG(enable)= !CFG(enable);/* P831 */
+					break;
+				default:break;
+			}
 			break;
 		default:break;
 	}
@@ -730,115 +730,115 @@ void b3_fun1(gpointer p)
 				   }
 				   break;
 			case 2: 
-					switch (pp->pos1[2])
-					{
-						case 0: break; 
-						case 1: break;
-						case 2: break;/* 221 Alarm#*/ 
-						case 3: data_process(&(pp->p_tmp_config->mat_atten_reg), 3);break;  /*231 Mat.Attenuatior*/
-						case 4: break; 
-						default:break;
-					}
-					break;
+				   switch (pp->pos1[2])
+				   {
+					   case 0: break; 
+					   case 1: break;
+					   case 2: break;/* 221 Alarm#*/ 
+					   case 3: data_process(&(pp->p_tmp_config->mat_atten_reg), 3);break;  /*231 Mat.Attenuatior*/
+					   case 4: break; 
+					   default:break;
+				   }
+				   break;
 			case 3:
-					switch (pp->pos1[3])
-					{
-						case 0: break; 
-						case 1: /* 311 */
-							if(!GROUP_VAL(selection))
-								data_process(&(pp->p_tmp_config->per_reference_reg), 2); 
-							else if(GROUP_VAL(selection)==1||GROUP_VAL(selection)==2||GROUP_VAL(selection)==3)
-								data_process(&(pp->p_tmp_config->s_reference_reg), 3);
-							else if(GROUP_VAL(selection)==4 || GROUP_VAL(selection)==8 )
-								data_process(&(pp->p_tmp_config->cursors_angle_reg), 1);
-							break;
+				   switch (pp->pos1[3])
+				   {
+					   case 0: break; 
+					   case 1: /* 311 */
+							   if(!GROUP_VAL(selection))
+								   data_process(&(pp->p_tmp_config->per_reference_reg), 2); 
+							   else if(GROUP_VAL(selection)==1||GROUP_VAL(selection)==2||GROUP_VAL(selection)==3)
+								   data_process(&(pp->p_tmp_config->s_reference_reg), 3);
+							   else if(GROUP_VAL(selection)==4 || GROUP_VAL(selection)==8 )
+								   data_process(&(pp->p_tmp_config->cursors_angle_reg), 1);
+							   break;
 
-						case 2: break; /* 321 entry image*/ 
-						case 3: data_process(&(pp->p_tmp_config->min_thickness_reg), 3); break;  /*331 */
-						case 4: /* Set Ref. */ break; 
-						default:break;
-					}
-					break;
+					   case 2: break; /* 321 entry image*/ 
+					   case 3: data_process(&(pp->p_tmp_config->min_thickness_reg), 3); break;  /*331 */
+					   case 4: /* Set Ref. */ break; 
+					   default:break;
+				   }
+				   break;
 			case 4: 
-					switch (pp->pos1[4])
-					{
-						case 0: break; 
-						case 1: break;
-						case 2: break; 
-						case 3:
-								switch(GROUP_VAL(col_select_pos)) 
-								{
-									case 0:data_process(&(TMP(color_start_reg)), 1 );break;
-									case 1:data_process(&(TMP(color_contrast_reg)), 1 );break;
-									case 2:data_process(&(TMP(min_reg)), 2);break;
-								}
-								break; 
+				   switch (pp->pos1[4])
+				   {
+					   case 0: break; 
+					   case 1: break;
+					   case 2: break; 
+					   case 3:
+							   switch(GROUP_VAL(col_select_pos)) 
+							   {
+								   case 0:data_process(&(TMP(color_start_reg)), 1 );break;
+								   case 1:data_process(&(TMP(color_contrast_reg)), 1 );break;
+								   case 2:data_process(&(TMP(min_reg)), 2);break;
+							   }
+							   break; 
 
-						case 4:
-								switch(CFG(prop_scan)) 
-								{
-									case 0:break;
-									case 1:data_process(&(TMP(compress_reg)), 2 );break;
-									case 2:break;
-									case 3:break;
-								}
-								break; 
-						default:break;
-					}
-					break;
+					   case 4:
+							   switch(CFG(prop_scan)) 
+							   {
+								   case 0:break;
+								   case 1:data_process(&(TMP(compress_reg)), 2 );break;
+								   case 2:break;
+								   case 3:break;
+							   }
+							   break; 
+					   default:break;
+				   }
+				   break;
 
 			case 5:
-					switch (pp->pos1[5])
-					{
-						case 0: break; 
-						case 1: data_process (&(pp->p_tmp_config->indexoffset_reg), 2);  break; /*511 */
-						case 2: data_process (&(pp->p_tmp_config->db_reg), 2);  break;     /*521*/
-						case 3: data_process (&(pp->p_tmp_config->part_thickness_reg), 3);  break;     /*531*/
-						case 4: break; 
-						default:break;
-					}
-					break;
+				   switch (pp->pos1[5])
+				   {
+					   case 0: break; 
+					   case 1: data_process (&(pp->p_tmp_config->indexoffset_reg), 2);  break; /*511 */
+					   case 2: data_process (&(pp->p_tmp_config->db_reg), 2);  break;     /*521*/
+					   case 3: data_process (&(pp->p_tmp_config->part_thickness_reg), 3);  break;     /*531*/
+					   case 4: break; 
+					   default:break;
+				   }
+				   break;
 
 			case 6:
-					switch (pp->pos1[6])
-					{
-						case 0: data_process (&(pp->p_tmp_config->connection_P_reg), 3);  break;  /*601 */
-						case 1: data_process (&(pp->p_tmp_config->first_element_reg), 2);  break; /*611 */
-						case 2: data_process (&(pp->p_tmp_config->max_angle_reg), 2);  break;     /*621 */
-						case 3: break; 
-						default:break;
-					}
-					break;
+				   switch (pp->pos1[6])
+				   {
+					   case 0: data_process (&(pp->p_tmp_config->connection_P_reg), 3);  break;  /*601 */
+					   case 1: data_process (&(pp->p_tmp_config->first_element_reg), 2);  break; /*611 */
+					   case 2: data_process (&(pp->p_tmp_config->max_angle_reg), 2);  break;     /*621 */
+					   case 3: break; 
+					   default:break;
+				   }
+				   break;
 			case 7:
-					switch (pp->pos1[7])
-					{
-						case 0: break; /*    */
-						case 1: break; /*710 */
-						case 2: data_process (&(pp->p_tmp_config->scan_end_reg), 2);  break;   /*721  */
-						case 3: break; /*731*/ 
-						default:break;
-					}
-					break;
+				   switch (pp->pos1[7])
+				   {
+					   case 0: break; /*    */
+					   case 1: break; /*710 */
+					   case 2: data_process (&(pp->p_tmp_config->scan_end_reg), 2);  break;   /*721  */
+					   case 3: break; /*731*/ 
+					   default:break;
+				   }
+				   break;
 			case 8:
-					switch (pp->pos1[8])
-					{
-						case 0: break; 
-						case 1: break;
-						case 2: break;   /*821  */
-						case 3: break;          /*831  */ 
-						default:break;
-					}
-					break;
+				   switch (pp->pos1[8])
+				   {
+					   case 0: break; 
+					   case 1: break;
+					   case 2: break;   /*821  */
+					   case 3: break;          /*831  */ 
+					   default:break;
+				   }
+				   break;
 			case 9:
-					switch (pp->pos1[9])
-					{
-						case 0: data_process (&(pp->p_tmp_config->bright_reg), 2);  break; /*901  */
-						case 1: break; /*710 */
-						case 2: break;   /*721  */
-						case 3: //pp->p_config->ezview = !pp->p_config->ezview;break;  /*931*/
-						default:break;
-					}
-					break;
+				   switch (pp->pos1[9])
+				   {
+					   case 0: data_process (&(pp->p_tmp_config->bright_reg), 2);  break; /*901  */
+					   case 1: break; /*710 */
+					   case 2: break;   /*721  */
+					   case 3: //pp->p_config->ezview = !pp->p_config->ezview;break;  /*931*/
+					   default:break;
+				   }
+				   break;
 			default:break;
 		}
 	}
@@ -860,59 +860,59 @@ void b3_fun2(gpointer p)
 	switch (pp->pos)
 	{
 		case 1:
-			   switch (pp->pos1[1])
-			   {
-				   case 4: 
-					   GROUP_VAL(db_ref) = !GROUP_VAL(db_ref);
-					   pp->pos_pos = MENU3_STOP;
-					   if (GROUP_VAL(db_ref))
-					   {
-						   tt_label_show_string (pp->label[GAIN_LABEL], con2_p[1][0][7], "\n", "(dB)", "white", 10);
-						   markup = g_markup_printf_escaped (
-								   "<span foreground='white' font_desc='16'>%0.1f(%0.1f)</span>",
-								   (GROUP_VAL(gain) - GROUP_VAL(gainr)) / 100.0, GROUP_VAL(gainr) / 100.0);
-					   }
-					   else
-					   {
-						   tt_label_show_string (pp->label[GAIN_LABEL], con2_p[1][0][0], "\n", "(dB)", "white", 10);
-						   markup = g_markup_printf_escaped ("<span foreground='white' font_desc='24'>%0.1f</span>",
-								   GROUP_VAL(gain) / 100.0 );
-					   }
-					   gtk_label_set_markup (GTK_LABEL(pp->label[GAIN_VALUE]),markup);
-					   g_free(markup);
-					   break; /* dB Ref P142 开关 */
-				   default:break;
-			   }
-				   break;
+			switch (pp->pos1[1])
+			{
+				case 4: 
+					GROUP_VAL(db_ref) = !GROUP_VAL(db_ref);
+					pp->pos_pos = MENU3_STOP;
+					if (GROUP_VAL(db_ref))
+					{
+						tt_label_show_string (pp->label[GAIN_LABEL], con2_p[1][0][7], "\n", "(dB)", "white", 10);
+						markup = g_markup_printf_escaped (
+								"<span foreground='white' font_desc='16'>%0.1f(%0.1f)</span>",
+								(GROUP_VAL(gain) - GROUP_VAL(gainr)) / 100.0, GROUP_VAL(gainr) / 100.0);
+					}
+					else
+					{
+						tt_label_show_string (pp->label[GAIN_LABEL], con2_p[1][0][0], "\n", "(dB)", "white", 10);
+						markup = g_markup_printf_escaped ("<span foreground='white' font_desc='24'>%0.1f</span>",
+								GROUP_VAL(gain) / 100.0 );
+					}
+					gtk_label_set_markup (GTK_LABEL(pp->label[GAIN_VALUE]),markup);
+					g_free(markup);
+					break; /* dB Ref P142 开关 */
+				default:break;
+			}
+			break;
 		case 4:
-			   switch (pp->pos1[4])
-			   {
-				   case 1: 
-					   CFG(sizing_curves) = !CFG(sizing_curves);
-					   break; /* p412 */
-				   case 4: 
-					   CFG(optimum) = !CFG(optimum);
-					   break; /* p442 */
-				   default:break;
-			   }
-				   break;
+			switch (pp->pos1[4])
+			{
+				case 1: 
+					CFG(sizing_curves) = !CFG(sizing_curves);
+					break; /* p412 */
+				case 4: 
+					CFG(optimum) = !CFG(optimum);
+					break; /* p442 */
+				default:break;
+			}
+			break;
 		case 8:
-			   switch (pp->pos1[8])
-			   {
-				   case 2: 
-					   CFG(format_setup)= !CFG(format_setup);/* P822 */
-					   break;
-				   default:break;
-			   }
+			switch (pp->pos1[8])
+			{
+				case 2: 
+					CFG(format_setup)= !CFG(format_setup);/* P822 */
+					break;
+				default:break;
+			}
 			break;
 		case 9:
-			   switch (pp->pos1[9])
-			   {
-				   case 3: 
-					   CFG(remote_desktop)= !CFG(remote_desktop);/* P932 */
-					   break;
-				   default:break;
-			   }
+			switch (pp->pos1[9])
+			{
+				case 3: 
+					CFG(remote_desktop)= !CFG(remote_desktop);/* P932 */
+					break;
+				default:break;
+			}
 			break;
 		default:break;
 	}
@@ -942,26 +942,26 @@ void b3_fun2(gpointer p)
 				   {
 					   case 0:data_process(&(pp->p_tmp_config->agate_start_reg), 3); break; /* 202 agate start*/
 					   case 1:
-						//if (CFG(alarm[CFG(alarm_pos)].conditiona)== 0)
-						//	CFG(alarm[CFG(alarm_pos)].conditionb) = 0;
- /* 弹出一个选择菜单,选择 */                         break; 
+							  //if (CFG(alarm[CFG(alarm_pos)].conditiona)== 0)
+							  //	CFG(alarm[CFG(alarm_pos)].conditionb) = 0;
+							  /* 弹出一个选择菜单,选择 */                         break; 
 					   case 2:data_process(&(pp->p_tmp_config->count_reg), 1); break; /* 222 output count*/
 					   case 3:
-						if( GROUP_VAL(curve_pos)==1 || GROUP_VAL(curve_pos)==2 || GROUP_VAL(curve_pos)==3 )
-						{
-							if( GROUP_VAL(mode_pos)==0 )
-							data_process(&(pp->p_tmp_config->ref_ampl_reg), 2);
-							else
-							{
-								if(GROUP_VAL(curve_pos)==1 || GROUP_VAL(curve_pos)==3)
-								data_process(&(pp->p_tmp_config->position_reg), 3);
-								else
-								data_process(&(pp->p_tmp_config->delay_reg), 3);
-							}
-							
-						}
+							  if( GROUP_VAL(curve_pos)==1 || GROUP_VAL(curve_pos)==2 || GROUP_VAL(curve_pos)==3 )
+							  {
+								  if( GROUP_VAL(mode_pos)==0 )
+									  data_process(&(pp->p_tmp_config->ref_ampl_reg), 2);
+								  else
+								  {
+									  if(GROUP_VAL(curve_pos)==1 || GROUP_VAL(curve_pos)==3)
+										  data_process(&(pp->p_tmp_config->position_reg), 3);
+									  else
+										  data_process(&(pp->p_tmp_config->delay_reg), 3);
+								  }
 
-  							break; /*232 Ref.Amplitude*/
+							  }
+
+							  break; /*232 Ref.Amplitude*/
 
 					   case 4: break;
 					   default:break;
@@ -972,10 +972,10 @@ void b3_fun2(gpointer p)
 				   {
 					   case 0: break; 
 					   case 1:/*312*/
-							if(!GROUP_VAL(selection))
-								data_process(&(pp->p_tmp_config->per_measure_reg), 2); 
-							else if(GROUP_VAL(selection)==1||GROUP_VAL(selection)==2||GROUP_VAL(selection)==3)
-								data_process(&(pp->p_tmp_config->s_measure_reg), 3); break;
+							   if(!GROUP_VAL(selection))
+								   data_process(&(pp->p_tmp_config->per_measure_reg), 2); 
+							   else if(GROUP_VAL(selection)==1||GROUP_VAL(selection)==2||GROUP_VAL(selection)==3)
+								   data_process(&(pp->p_tmp_config->s_measure_reg), 3); break;
 					   case 2: break;
 					   case 3: data_process(&(pp->p_tmp_config->max_thickness_reg), 3); break; /*332 */
 					   case 4: break;
@@ -1069,33 +1069,33 @@ void b3_fun3(gpointer p)
 	switch (pp->pos)
 	{
 		case 1:
-			   switch (pp->pos1[1])
-			   {
-				   case 2: 
-					   GROUP_VAL(video_filter) = !GROUP_VAL(video_filter);
-						send_dsp_data (VIDEO_FILTER_DSP, GROUP_VAL(video_filter)); /* P123 */
-					   break; 
+			switch (pp->pos1[1])
+			{
+				case 2: 
+					GROUP_VAL(video_filter) = !GROUP_VAL(video_filter);
+					send_dsp_data (VIDEO_FILTER_DSP, GROUP_VAL(video_filter)); /* P123 */
+					break; 
 
-				   default:break;
-			   }
-				   break;
+				default:break;
+			}
+			break;
 		case 4:
-			   switch (pp->pos1[4])
-			   {
-				   case 1: 
-					   CFG(overlay_gate) = !CFG(overlay_gate);
-					   break; /* p413 */
-				   default:break;
-			   }
-				   break;
+			switch (pp->pos1[4])
+			{
+				case 1: 
+					CFG(overlay_gate) = !CFG(overlay_gate);
+					break; /* p413 */
+				default:break;
+			}
+			break;
 		case 8:
-			   switch (pp->pos1[8])
-			   {
-				   case 2: 
-					   CFG(format_note)= !CFG(format_note);/* P823 */
-					   break;
-				   default:break;
-			   }
+			switch (pp->pos1[8])
+			{
+				case 2: 
+					CFG(format_note)= !CFG(format_note);/* P823 */
+					break;
+				default:break;
+			}
 			break;
 		default:break;
 	}
@@ -1113,12 +1113,12 @@ void b3_fun3(gpointer p)
 					   case 0:data_process(&(pp->p_tmp_config->wedge_delay_reg), 2); break;   /* 103wedge delay 楔款延时 3种步进 */
 					   case 1: /* 弹出一个选择菜单,选择 */ break; 
 					   case 2: 
-						  break;   /* 123 视频滤波 on or off  */
+														   break;   /* 123 视频滤波 on or off  */
 					   case 3:break; /* 133 Skew (deg)  */
 					   case 4:
-						if (pp->mark_pop_change)
-							data_process(&(pp->p_tmp_config->point_qty_reg), 2); /* 143 Points Qty. 3种步进 */
-						  break; /* 143 Points Qty.  */
+							  if (pp->mark_pop_change)
+								  data_process(&(pp->p_tmp_config->point_qty_reg), 2); /* 143 Points Qty. 3种步进 */
+							  break; /* 143 Points Qty.  */
 
 					   default:break;
 				   }
@@ -1130,16 +1130,16 @@ void b3_fun3(gpointer p)
 					   case 1: /* 弹出一个选择菜单,选择 */ break;
 					   case 2: /* 视频滤波 */ break; /* 123 视频滤波 on or off  */
 					   case 3: 
-						if( GROUP_VAL(curve_pos)==1 || GROUP_VAL(curve_pos)==2|| GROUP_VAL(curve_pos)==3 )
-						{
-							if((GROUP_VAL(mode_pos)==0 )&&(GROUP_VAL(curve_pos)==1 || GROUP_VAL(curve_pos)==2))
-							data_process(&(pp->p_tmp_config->ref_ampl_offset_reg), 3); /* 233 ref.ampl.offset  */
-							else if((GROUP_VAL(mode_pos)==1 )&&(GROUP_VAL(curve_pos)==1 || GROUP_VAL(curve_pos)==2))
-							data_process(&(pp->p_tmp_config->amplitude_reg), 3);
-							else if((GROUP_VAL(mode_pos)==1 )&&(GROUP_VAL(curve_pos)==3))
-							data_process(&(pp->p_tmp_config->tcg_gain_reg), 4);
-						}
-  							break; /*233 Ref.Amplitude*/
+											  if( GROUP_VAL(curve_pos)==1 || GROUP_VAL(curve_pos)==2|| GROUP_VAL(curve_pos)==3 )
+											  {
+												  if((GROUP_VAL(mode_pos)==0 )&&(GROUP_VAL(curve_pos)==1 || GROUP_VAL(curve_pos)==2))
+													  data_process(&(pp->p_tmp_config->ref_ampl_offset_reg), 3); /* 233 ref.ampl.offset  */
+												  else if((GROUP_VAL(mode_pos)==1 )&&(GROUP_VAL(curve_pos)==1 || GROUP_VAL(curve_pos)==2))
+													  data_process(&(pp->p_tmp_config->amplitude_reg), 3);
+												  else if((GROUP_VAL(mode_pos)==1 )&&(GROUP_VAL(curve_pos)==3))
+													  data_process(&(pp->p_tmp_config->tcg_gain_reg), 4);
+											  }
+											  break; /*233 Ref.Amplitude*/
 
 					   case 4: /* 弹出一个选择菜单,选择 */ break;
 					   default:break;
@@ -1150,13 +1150,13 @@ void b3_fun3(gpointer p)
 				   {
 					   case 0: break;
 					   case 1: /* 313 */
-						if( GROUP_VAL(selection)==0 || GROUP_VAL(selection)==1 || GROUP_VAL(selection)==4) 
-							data_process(&(pp->p_tmp_config->u_reference_reg), 3);
-						else if( GROUP_VAL(selection)==2 )
-							data_process(&(pp->p_tmp_config->i_reference_reg), 3);
-						else if( GROUP_VAL(selection)==3 )
-							data_process(&(pp->p_tmp_config->s_refmeas_reg), 3);
-						break;
+							   if( GROUP_VAL(selection)==0 || GROUP_VAL(selection)==1 || GROUP_VAL(selection)==4) 
+								   data_process(&(pp->p_tmp_config->u_reference_reg), 3);
+							   else if( GROUP_VAL(selection)==2 )
+								   data_process(&(pp->p_tmp_config->i_reference_reg), 3);
+							   else if( GROUP_VAL(selection)==3 )
+								   data_process(&(pp->p_tmp_config->s_refmeas_reg), 3);
+							   break;
 
 					   case 2: /* 视频滤波 */ break; 
 					   case 3: data_process(&(TMP(echo_qty_reg)), 1); break;  /*333 */
@@ -1170,11 +1170,11 @@ void b3_fun3(gpointer p)
 					   case 0: break;
 					   case 1: break; /*413*/
 					   case 2: /*423*/
-						if(CFG_ZOOM_POS(zoom_type) == 0) 
-							data_process(&(TMP(end_usound_reg)), 2);
-						else if( CFG_ZOOM_POS(zoom_type) == 1 || CFG_ZOOM_POS(zoom_type) == 2 )
-							data_process(&(TMP(range_usound_reg)), 2);
-						break;
+							   if(CFG_ZOOM_POS(zoom_type) == 0) 
+								   data_process(&(TMP(end_usound_reg)), 2);
+							   else if( CFG_ZOOM_POS(zoom_type) == 1 || CFG_ZOOM_POS(zoom_type) == 2 )
+								   data_process(&(TMP(range_usound_reg)), 2);
+							   break;
 
 					   case 3: break;  
 					   case 4: break; 
@@ -1257,14 +1257,14 @@ void b3_fun4(gpointer p)
 	switch (pp->pos)
 	{
 		case 4:
-			   switch (pp->pos1[4])
-			   {
-				   case 1: 
-					   CFG(overlay_cursor) = !CFG(overlay_cursor);
-					   break; /* p414 */
-				   default:break;
-			   }
-				   break;
+			switch (pp->pos1[4])
+			{
+				case 1: 
+					CFG(overlay_cursor) = !CFG(overlay_cursor);
+					break; /* p414 */
+				default:break;
+			}
+			break;
 		default:break;
 	}
 
@@ -1305,11 +1305,11 @@ void b3_fun4(gpointer p)
 				   {
 					   case 0: break;
 					   case 1:  /* 314 */ 
-						if( GROUP_VAL(selection)==0 || GROUP_VAL(selection)==1 || GROUP_VAL(selection)==4) 
-							data_process(&(pp->p_tmp_config->u_measure_reg), 3);
-						else if( GROUP_VAL(selection)==2 )
-							data_process(&(pp->p_tmp_config->i_measure_reg), 3);
-						break;
+							   if( GROUP_VAL(selection)==0 || GROUP_VAL(selection)==1 || GROUP_VAL(selection)==4) 
+								   data_process(&(pp->p_tmp_config->u_measure_reg), 3);
+							   else if( GROUP_VAL(selection)==2 )
+								   data_process(&(pp->p_tmp_config->i_measure_reg), 3);
+							   break;
 
 					   case 2: data_process(&(pp->p_tmp_config->entry_reg), 1); break;  /*324 */
 					   case 3: break;  /*334 */
@@ -1321,16 +1321,16 @@ void b3_fun4(gpointer p)
 				   switch (pp->pos1[4])
 				   {
 					   case 0:
-						if( CFG(display)==10) 
-							data_process(&(TMP(dis_range_reg)), 2);
-						break; /*404*/
+						   if( CFG(display)==10) 
+							   data_process(&(TMP(dis_range_reg)), 2);
+						   break; /*404*/
 					   case 1:break; /*414*/
 					   case 2:/*424*/
-						if(CFG_ZOOM_POS(zoom_type) == 0 || CFG_ZOOM_POS(zoom_type) == 1) 
-							data_process(&(TMP(start_amplitude_reg)), 1);
-						else if(CFG_ZOOM_POS(zoom_type) == 2 )
-							data_process(&(TMP(center_amplitude_reg)), 1);
-						break;
+							  if(CFG_ZOOM_POS(zoom_type) == 0 || CFG_ZOOM_POS(zoom_type) == 1) 
+								  data_process(&(TMP(start_amplitude_reg)), 1);
+							  else if(CFG_ZOOM_POS(zoom_type) == 2 )
+								  data_process(&(TMP(center_amplitude_reg)), 1);
+							  break;
 					   case 3:break; 
 					   case 4:break; 
 					   default:break;
@@ -1370,23 +1370,23 @@ void b3_fun5(gpointer p)
 	switch (pp->pos)
 	{
 		case 4:
-			   switch (pp->pos1[4])
-			   {
-				   case 1: 
-					   CFG(overlay_overlay) = !CFG(overlay_overlay);
-					   break; /* p415 */
-				   default:break;
-			   }
-				   break;
+			switch (pp->pos1[4])
+			{
+				case 1: 
+					CFG(overlay_overlay) = !CFG(overlay_overlay);
+					break; /* p415 */
+				default:break;
+			}
+			break;
 		case 5:
-			   switch (pp->pos1[5])
-			   {
-				   case 0: 
-					   CFG(auto_detect) = !CFG(auto_detect);
-					   break; /* p505 */
-				   default:break;
-			   }
-				   break;
+			switch (pp->pos1[5])
+			{
+				case 0: 
+					CFG(auto_detect) = !CFG(auto_detect);
+					break; /* p505 */
+				default:break;
+			}
+			break;
 		default:break;
 	}
 
@@ -1445,11 +1445,11 @@ void b3_fun5(gpointer p)
 					   case 0:data_process(&(TMP(avg_scan_speed_reg)), 3); break; /*405*/
 					   case 1:break; /*415*/
 					   case 2:/*425*/
-						if(CFG_ZOOM_POS(zoom_type) == 0) 
-							data_process(&(TMP(end_amplitude_reg)), 1);
-						else if(CFG_ZOOM_POS(zoom_type) == 1 || CFG_ZOOM_POS(zoom_type) == 2 )
-							data_process(&(TMP(range_amplitude_reg)), 1);
-						break;
+							  if(CFG_ZOOM_POS(zoom_type) == 0) 
+								  data_process(&(TMP(end_amplitude_reg)), 1);
+							  else if(CFG_ZOOM_POS(zoom_type) == 1 || CFG_ZOOM_POS(zoom_type) == 2 )
+								  data_process(&(TMP(range_amplitude_reg)), 1);
+							  break;
 					   case 3:break; 
 					   case 4:break; 
 					   default:break;
@@ -1674,7 +1674,7 @@ void data_100 (GtkSpinButton *spinbutton, gpointer data) /* 增益Gain P100 */
 	gtk_label_set_markup (GTK_LABEL(pp->label[GAIN_VALUE]),markup);
 
 	g_free(markup);
-		/* 发送增益给硬件 */
+	/* 发送增益给硬件 */
 }
 
 void data_101 (GtkSpinButton *spinbutton, gpointer data) /*Start 扫描延时 P101 */
@@ -1871,7 +1871,7 @@ void data_115 (GtkMenuItem *menuitem, gpointer data) /* PRF */
 
 void data_121 (GtkMenuItem *menuitem, gpointer data)  /* filter */
 {
-    GROUP_VAL(filter) = (guchar) (GPOINTER_TO_UINT (data));
+	GROUP_VAL(filter) = (guchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
 	send_dsp_data (FILTER_DSP, get_filter());
@@ -2195,7 +2195,7 @@ void data_221 (GtkMenuItem *menuitem, gpointer data) /* Output -> alarm # P221 *
 	else 
 		CFG_OUTPUT_POS(alarm1) = 18;
 
-		pp->pos_pos = MENU3_STOP;
+	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
 	send_dsp_data (ALARM1_DSP, CFG_OUTPUT_POS(alarm1));
 }

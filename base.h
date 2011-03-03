@@ -196,25 +196,25 @@ typedef struct Probe {
 
 /*楔块 (Wedge)*/
 typedef struct Wedge {
-guchar A1[4]; /* 0x03000300 PA 0x01000100 UT*/
-gchar Model[20]; /* 共用 楔块名字 */
-gchar Serial[20]; /* 共用 楔块名字 */
-gushort Angle; /* 共用 角度单位0.1度 */
-gushort A7;
-gushort Probe_delay; /* UT ns为单位 */
-guchar A2;
-guchar Wave_type; /* UT 1 SW 0 LW*/
-gint Ref_point; /* UT 使用 */
-/*这个地方 得 多读一个字节 */
-guint Height; /* 单位微米 */
-guint Velocity_UT;
-guint A8;
-guint Velocity_PA; /* 速度 mm/s */
-gchar Orientation; /* 1 Normal 0 reversal*/
-gchar A4[3];
-gint Primary_offset; /* 微米 */
-guint Secondary_offset; /* 微米 */
-gint A6[107];
+	guchar A1[4]; /* 0x03000300 PA 0x01000100 UT*/
+	gchar Model[20]; /* 共用 楔块名字 */
+	gchar Serial[20]; /* 共用 楔块名字 */
+	gushort Angle; /* 共用 角度单位0.1度 */
+	gushort A7;
+	gushort Probe_delay; /* UT ns为单位 */
+	guchar A2;
+	guchar Wave_type; /* UT 1 SW 0 LW*/
+	gint Ref_point; /* UT 使用 */
+	/*这个地方 得 多读一个字节 */
+	guint Height; /* 单位微米 */
+	guint Velocity_UT;
+	guint A8;
+	guint Velocity_PA; /* 速度 mm/s */
+	gchar Orientation; /* 1 Normal 0 reversal*/
+	gchar A4[3];
+	gint Primary_offset; /* 微米 */
+	guint Secondary_offset; /* 微米 */
+	gint A6[107];
 } WEDGE, *WEDGE_P;
 
 
@@ -245,8 +245,8 @@ typedef struct Group {
 	guchar	db_ref;			/* 参考增益开关 0 off 1 on */
 	/* 发射接收 */
 	guchar	pulser;			/* 1~ 128 - elem_qty(聚焦阵元数最大为32) + 1 
-					   指定发射阵元 与机器配置相关我们是128阵元最大,
-					   Probe 的Auto Program 选择On 以后不可以调节 值与connect P 一样 */
+							   指定发射阵元 与机器配置相关我们是128阵元最大,
+							   Probe 的Auto Program 选择On 以后不可以调节 值与connect P 一样 */
 	guchar  receiver;		/* 接收阵元 必须是 PR 模式才能调节 */
 	guchar	filter;			/* 滤波 */
 	guchar	rectifier;		/* 检波  */
