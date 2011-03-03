@@ -835,7 +835,7 @@ void b3_fun1(gpointer p)
 						case 0: data_process (&(pp->p_tmp_config->bright_reg), 2);  break; /*901  */
 						case 1: break; /*710 */
 						case 2: break;   /*721  */
-						case 3: pp->p_config->ezview = !pp->p_config->ezview;break;  /*931*/
+						case 3: //pp->p_config->ezview = !pp->p_config->ezview;break;  /*931*/
 						default:break;
 					}
 					break;
@@ -2669,7 +2669,7 @@ void data_500 (GtkMenuItem *menuitem, gpointer data) /* Probe/Part -> Select -> 
 
 void data_501 (GtkMenuItem *menuitem, gpointer data) /* Probe/Part -> Select -> Group Mode 501 */
 {
-	CFG(group_mode_pos) = (gchar) (GPOINTER_TO_UINT (data));
+	GROUP_VAL(group_mode) = (gchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
 }

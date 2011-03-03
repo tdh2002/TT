@@ -37,7 +37,7 @@ static void set_config (guint groupid)
 	CFG(groupQty)	= 1;
 	CFG(groupId)	= groupid;
 	CFG(group_pos)	= 1;
-	CFG(group_mode_pos) =0;
+	GROUP_VAL(group_mode) =0;
 	CFG(probe_select)=0;
 	CFG(auto_detect)=0;
 	GROUP_VAL(scan_offset)=10;
@@ -219,6 +219,8 @@ static void set_config (guint groupid)
 	LAW_VAL(Focus_depth)	= 50000;
 	LAW_VAL(law_index_start)= 0;
 	LAW_VAL(law_index_end)	= 1;
+
+
 
 
 
