@@ -7,7 +7,7 @@
 #include <string.h>
 #include <gdk/gdkkeysyms.h>
 
-static void handler_key(guint keyval);
+static void handler_key(guint keyval, gpointer data);
 
 extern const gchar ****con2_p;
 
@@ -1489,12 +1489,17 @@ void b3_fun5(gpointer p)
 	return ;
 }
 
-static void handler_key(guint keyval)
+static void handler_key(guint keyval, gpointer data)
 {
 	guchar tmp = pp->pos_pos;
 	guchar tmp1 = pp->mark_pop_change;
+	guint data1 = (GPOINTER_TO_UINT (data));
 	switch (keyval) 
 	{
+		case GDK_Super_L:
+			if (MAIN_MENU_PRESS == data1)
+				main_menu_pop(MENU_POP);
+			break;
 		case GDK_Escape:
 			if ( pp->mark_pop_change == 1)
 				pp->mark_pop_change = 0;
@@ -1592,7 +1597,7 @@ gboolean key_press_handler (GtkWidget* pWidget,	GdkEventKey* pEvent, gpointer da
 {
 	if (pEvent->type == GDK_KEY_PRESS)
 	{
-		handler_key(pEvent->keyval);
+		handler_key(pEvent->keyval, data);
 	}
 	return TRUE;
 }
@@ -1600,7 +1605,7 @@ gboolean key_press_handler (GtkWidget* pWidget,	GdkEventKey* pEvent, gpointer da
 gboolean foo (GtkAccelGroup *accel_group, GObject *acceleratable,
 		guint keyval, GdkModifierType modifier, gpointer data)
 {
-	handler_key(keyval);
+	handler_key(keyval, data);
 	return 0;
 }
 

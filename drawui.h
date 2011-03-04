@@ -212,7 +212,10 @@
 
 
 
-
+/* 按键是由那个window发出 */
+#define MENU_POP		0
+#define MENU_DOWN		1
+#define	MAIN_MENU_PRESS	0
 
 /*  */
 #define UT_CHANNEL	3
@@ -512,7 +515,7 @@ extern gboolean foo (GtkAccelGroup *accel_group, GObject *acceleratable,
 		guint keyval, GdkModifierType modifier, gpointer data);
 
 extern gboolean key_press_handler (GtkWidget* pWidget, GdkEventKey* pEvent, gpointer data);
-
+extern void main_menu_pop();
 
 extern void draw3_pressed1(gfloat step, guint digit);
 

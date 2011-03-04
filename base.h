@@ -831,7 +831,8 @@ typedef struct Draw_interface {
 	gchar	p_type[12];
 	guchar	tag;		/* 大类选择状态 */
 
-	guchar			mark_pop_change;    /**/
+	guchar			main_menu_pop_status; /* 0 down 1 up */
+	guchar			mark_pop_change;    /*  */
 	guchar			markreturn;
 	guchar			mark3;
 
