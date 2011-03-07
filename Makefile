@@ -1,9 +1,23 @@
 
 CC = gcc
+LD = gcc
+TARGET=main
 
-main: main.c drawui.c callback.c content_en.c drawfb.c drawui.h base.h language.h drawfb.h
-	$(CC) main.c drawui.c drawfb.c callback.c content_en.c -o main -DX86 `pkg-config --cflags --libs webkit-1.0 gtk+-2.0` -lm -Wall
+CFLAGS= -Wall -Os -DX86 `pkg-config --cflags webkit-1.0`
+LDFLAGS= -lm `pkg-config --libs webkit-1.0`
+OBJS+= main.o drawui.o drawfb.o callback.o content_en.o file_op.o
+
+%.o:%.c %.h
+	$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@  
+
+all:$(TARGET)
+
+$(TARGET):$(OBJS)
+	$(LD) $^ $(LDFLAGS) -o $@
+
+#$(OBJS):%.o:%.c %.h
+#	$(CC) -c $(CFLAGS) $(CPPFLAGS) $< -o $@ 
 
 .PHONY:clean
 clean: 
-	rm -f *.o main
+	rm -f *.o $(TARGET) $(OBJS)

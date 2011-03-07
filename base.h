@@ -198,25 +198,6 @@ typedef struct Probe {
 	gushort	Reference_Point; /*  */
 	guint	A9[36];
 } PROBE, *PROBE_P;
-#if 0
-typedef struct Probe {
-	guchar	A1[10];
-	gchar	Name[20];		/* 探头名字 */
-	gchar	Name1[20];		/* 探头名字 */
-	guchar	Elem_qty;		/* 阵元数 */
-	guchar	A2;
-	guint	Pitch;			/* 阵元中心间距 0.001mm 为单位 范围是0.01~65.00mm */
-	guint	A3;
-	gushort A4;
-	gushort	Frequency;				/* 频率 */
-	guint	A5[75];
-	gushort A6;
-	gushort A7;
-	gushort A8;
-	gushort	Reference_Point; /*  */
-	guint	A9[36];
-} PROBE, *PROBE_P;
-#endif
 
 /*楔块 (Wedge)*/
 typedef struct Wedge {
@@ -308,6 +289,8 @@ typedef struct Group {
 	gushort mat_atten;
 	guint   delay;
 	gushort tcg_gain;
+
+	guchar	ut_unit;		/*检测单位 时间2 声程1  实际深度0 .*/
 
 	guchar  group_mode;     /* 组工作模式  0 UT or 1 PA*/
 	LAW_INFO     law_info;	/* 聚焦法则的信息  */
@@ -420,11 +403,6 @@ typedef	struct Config {
 	guchar  dis_mode;
 	guint   dis_range;
 	guint   avg_scan_speed;
-
-	guchar	ut_unit;		/*检测单位 时间2 声程1  实际深度0 .*/
-	//	guchar	color;			/**/
-
-
 	/*选项*/
 	guchar	unit;			/* 0 mm 1 inch */
 	guint	bright;
@@ -866,7 +844,7 @@ typedef struct Draw_interface {
 /* 710 所选菜单项不同，后面跟着弹出的菜单便不同 */
 
 
-#define CUR_POS (pp->pos2[pp->pos][pp->pos1[pp->pos]])      /*0,1,2,3,4,5*/
+#define CUR_POS (pp->pos2[pp->pos][pp->pos1[pp->pos]])      /* 0,1,2,3,4,5 */
 #define CFG(a)	(pp->p_config->a)
 /*#define GROUP_VAL(a)  (pp->p_config->group[pp->p_config->groupId].a)*/	/* 原型 */
 #define GROUP_VAL_POS(a, b)	(CFG(group[a].b))		/* a表示哪个group b是返回哪个值 */

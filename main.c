@@ -75,7 +75,7 @@ static void set_config (guint groupid)
 	GROUP_VAL(rectifier)	= FULL_WAVE;	/* 检波 */
 	GROUP_VAL(averaging)	= 1;	        /* 位置1 值为2*/
 	GROUP_VAL(video_filter)	= VIDEO_FILTER_OFF;
-	GROUP_VAL(point_qty)	= 100;			/* 0是Auto */
+	GROUP_VAL(point_qty)	= 160;			/* 0是Auto */
 	GROUP_VAL(sum_gain)	= 10;			/* 0是Auto */
 	GROUP_VAL(gate_pos)	= GATE_A;		  
 	GROUP_VAL(gate[GROUP_VAL(gate_pos)].start) = 0;  
@@ -130,7 +130,7 @@ static void set_config (guint groupid)
 	CFG(dis_mode)=0;  /* 0是 All & A-Scan */
 	CFG(dis_range)=100.0;
 	CFG(avg_scan_speed)=1000.0;
-	CFG(ut_unit)=0;  /* 0 是 Sound Path */
+	GROUP_VAL(ut_unit)=0;  /* 0 是 Sound Path */
 	CFG(grid)=5;     /*5是 Off*/
 	CFG(sizing_curves)=0;
 	CFG(overlay_gate)=0;

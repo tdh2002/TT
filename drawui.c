@@ -1,3 +1,4 @@
+
 /*
  *345678901234567890123456789012345678901234567890123456789012345678901234567890
  *      10        20        30        40        50        60        70        80
@@ -6,6 +7,7 @@
  */
 
 #include "drawui.h"
+#include "file_op.h"
 #include "drawfb.h"
 #include <dirent.h>
 #include <unistd.h>  
@@ -382,53 +384,13 @@ static gint gtk_entry_digit_only_keypress_event(GtkWidget *widget, GdkEventKey *
 	return FALSE;
 }
 
-void read_probe_file (const gchar *file_path, PROBE_P p)
-{
-	int fd;
-	if ((fd = open(file_path, O_RDONLY ))<0) 
-	{
-		perror("open:");
-		exit(1);
-	}
-	else 
-	{
-		if (GROUP_VAL(group_mode) == PA_SCAN)
-		{
-			lseek (fd, 4, SEEK_SET);
-			read (fd, p, sizeof(PROBE) - 4);
-		}
-		else if (GROUP_VAL(group_mode) == UT_SCAN)
-		{
-			read (fd, p, sizeof(PROBE) );
-			p->Frequency = p->Elem_qty | (p->Freq2 << 8);
-		}
-		close (fd);
-	}
-}
-
-void read_wedge_file (const gchar *file_path, WEDGE_P p)
-{
-	int fd;
-	if ((fd = open(file_path, O_RDONLY ))<0) 
-	{
-		perror("open:");
-		exit(1);
-	}
-	else 
-	{
-		read (fd, p, 52);
-		lseek (fd, 1, SEEK_CUR);
-		read (fd, (void *)((int)(p) + 52), 64);
-	}
-}
-
 /* Probe 选择探头2个按键的处理 一个是确认 一个是取消 */
 static void da_call_probe (GtkDialog *dialog, gint response_id, gpointer user_data)      
 {
 	GtkTreeIter iter;
 	GtkTreeModel *model;
 	gchar *value;
-	gchar *file_path;
+	gchar *file_path = NULL;
 
 	if (GTK_RESPONSE_OK == response_id)  /* 确认 */
 	{
@@ -472,8 +434,8 @@ static void da_call_wedge (GtkDialog *dialog, gint response_id, gpointer user_da
 {
 	GtkTreeIter iter;
 	GtkTreeModel *model;
-	gchar *value;
-	gchar *file_path;
+	gchar *value = NULL;
+	gchar *file_path = NULL;
 
 	if (GTK_RESPONSE_OK == response_id)  /* 确认 */
 	{
@@ -641,8 +603,8 @@ static void on_changed_probe(GtkTreeSelection *selection, gpointer p)
 {
 	GtkTreeIter iter;
 	GtkTreeModel *model;
-	gchar *value;
-	gchar *file_path;
+	gchar *value = NULL;
+	gchar *file_path = NULL;
 
 	if (gtk_tree_selection_get_selected(
 				GTK_TREE_SELECTION(selection), &model, &iter)) {
@@ -690,8 +652,8 @@ static void on_changed_wedge(GtkTreeSelection *selection, gpointer label)
 {
 	GtkTreeIter iter;
 	GtkTreeModel *model;
-	gchar *value;
-	gchar *file_path;
+	gchar *value = NULL;
+	gchar *file_path = NULL;
 
 	if (gtk_tree_selection_get_selected(
 				GTK_TREE_SELECTION(selection), &model, &iter)) {
@@ -737,15 +699,15 @@ static void on_changed_wedge(GtkTreeSelection *selection, gpointer label)
 static gchar* get_probe_info(const gchar *file_path)
 {
 	PROBE p1;
-	gchar *probe_info;
+	gchar *probe_info = NULL;
 	read_probe_file (file_path, &p1);
 
 	switch (CFG(language))
 	{
 		case ENGLISH_:
 			if (GROUP_VAL(group_mode) == PA_SCAN)
-			probe_info = g_strdup_printf ("Model:%s           Frequency:%.1fMHz\nElement Quantity:%d      Element Pitch:%.3f mm\nReference Point:-%.3f mm", 
-					p1.Model, p1.Frequency/1000.0,p1.Elem_qty, p1.Pitch/1000.0, p1.Reference_Point/1000.0 );
+				probe_info = g_strdup_printf ("Model:%s           Frequency:%.1fMHz\nElement Quantity:%d      Element Pitch:%.3f mm\nReference Point:-%.3f mm", 
+						p1.Model, p1.Frequency/1000.0,p1.Elem_qty, p1.Pitch/1000.0, p1.Reference_Point/1000.0 );
 			else if (GROUP_VAL(group_mode) == UT_SCAN)
 				probe_info = g_strdup_printf ("Model:%s           Frequency:%.1fMHz\nElement_size:%.3f", 
 						p1.Model, p1.Frequency/1000.0, p1.Pitch / 1000.0 );
@@ -760,7 +722,7 @@ static gchar* get_probe_info(const gchar *file_path)
 static gchar* get_wedge_info(const gchar *file_path)
 {
 	WEDGE w1;
-	gchar *wedge_info;
+	gchar *wedge_info = NULL;
 	read_wedge_file (file_path, &w1);
 
 	switch (CFG(language))
@@ -1078,7 +1040,6 @@ static void draw_wedge ()
 	g_signal_connect (G_OBJECT(dialog), "response",
 			G_CALLBACK(da_call_wedge), NULL);/*确定 or 取消*/
 
-	pp->file_path = PA_WEDGE_PATH_;
 	g_signal_connect (G_OBJECT (pp->selection), "changed", 
 			G_CALLBACK(on_changed_wedge), (gpointer) (list1));/*使用"changed"信号来与用户的选择信号进行关联起来*/
 
@@ -1636,7 +1597,7 @@ void draw_area_all()
 				gtk_widget_show (pp->vbox_area[0]);
 				break;
 			case A_B_S_SCAN:
-				if (CFG(ut_unit)==2)
+				if (GROUP_VAL(ut_unit)==1)
 				{
 					gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->hbox_area[0], FALSE, FALSE, 0);
 					gtk_box_pack_start (GTK_BOX (pp->hbox_area[0]), pp->vbox_area[0], FALSE, FALSE, 0);
@@ -1713,7 +1674,7 @@ void draw_area_all()
 void draw3_data0(DRAW_UI_P p) 
 {
 	gchar temp[52];
-	gfloat tmpf;/**/
+	gfloat tmpf = 0.0;
 
 	gfloat cur_value=0.0, lower, upper, step;
 	guint digit, pos, unit, content_pos, menu_status;
@@ -1782,8 +1743,7 @@ void draw3_data0(DRAW_UI_P p)
 		case 1:
 			switch (pp->pos1[1])
 			{
-				case 0: /* 增益 Gain P100 */
-					/* 当前步进 */
+				case 0: /* 增益 Gain P100 TAN1 只等硬件 */
 					switch (TMP(db_reg))
 					{
 						case 0:	tmpf = 0.1; break;
@@ -1797,12 +1757,11 @@ void draw3_data0(DRAW_UI_P p)
 						content_pos = 6;
 					else
 						content_pos = 0;
-
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 					{
 						cur_value = (GROUP_VAL(gain) - GROUP_VAL(gainr) * GROUP_VAL(db_ref)) / 100.0; 
 						lower = 0.0 - GROUP_VAL(gainr) * GROUP_VAL(db_ref) / 100.0 ;
-						upper = 86.0 - GROUP_VAL(gainr) * GROUP_VAL(db_ref) / 100.0 ;
+						upper = GAIN_MAX - GROUP_VAL(gainr) * GROUP_VAL(db_ref) / 100.0 ;
 						step = tmpf;
 						digit = 1;
 						pos = 0;
@@ -1819,9 +1778,7 @@ void draw3_data0(DRAW_UI_P p)
 						draw3_digit_stop (cur_value, units[unit], digit, pos, content_pos);
 					}
 					break;
-
-				case 1: /* 发射 Pulser P110 */
-					/* 当前步进 */
+				case 1: /* 发射 Pulser P110  TAN1 和 focal connection P一样的 */
 					switch (TMP(pulser_reg))
 					{
 						case 0:	tmpf = 1.0; break;
@@ -1851,7 +1808,6 @@ void draw3_data0(DRAW_UI_P p)
 						draw3_digit_stop (cur_value, temp, digit, pos, 0);
 					}
 					break;
-
 				case 2: /* Reveiver 接收器  P120 */
 					/* 当前步进 */
 					switch (TMP(receiver_reg))
@@ -2062,10 +2018,10 @@ void draw3_data0(DRAW_UI_P p)
 					pp->x_pos = 566, pp->y_pos = 120-YOFFSET;
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 						draw3_pop_tt (data_410, NULL, 
-								menu_content[UTUNIT + CFG(ut_unit)],
-								menu_content + UTUNIT, 3, 0, CFG(ut_unit), 0);
+								menu_content[UTUNIT + GROUP_VAL(ut_unit)],
+								menu_content + UTUNIT, 3, 0, GROUP_VAL(ut_unit), 0);
 					else 
-						draw3_popdown (menu_content[UTUNIT + CFG(ut_unit)], 0, 0);
+						draw3_popdown (menu_content[UTUNIT + GROUP_VAL(ut_unit)], 0, 0);
 
 					break;
 
@@ -2527,7 +2483,7 @@ void draw3_data0(DRAW_UI_P p)
 void draw3_data1(DRAW_UI_P p) 
 {
 	gchar temp[52];
-	gfloat tmpf;
+	gfloat tmpf = 0.0;
 	gchar *str;
 
 	gfloat cur_value=0.0, lower, upper, step;
@@ -2595,27 +2551,25 @@ void draw3_data1(DRAW_UI_P p)
 		case 1:
 			switch (pp->pos1[1])
 			{
-				case 0: /* start 扫描延时 P101 */
-					/* 当前步进 */
+				case 0: /* start 显示延时 P101 TAN1 等硬件 */
 					switch (TMP(start_reg))
 					{
-						case 0:	tmpf = (GROUP_VAL(range) / 1000.0) / 320.0; break;
+						case 0:	tmpf = (GROUP_VAL(range) / 1000.0) / (gfloat)(GROUP_VAL(point_qty)); break;
 						case 1:	tmpf = (GROUP_VAL(range) / 1000.0) / 20.0 ; break;
 						case 2:	tmpf = (GROUP_VAL(range) / 1000.0) / 10.0 ; break;
 						default:break;
 					}
-
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 					{
-						if ((UT_UNIT_TRUE_DEPTH == CFG(ut_unit)) || (UT_UNIT_SOUNDPATH == CFG(ut_unit)))
+						if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 						{
 							if (UNIT_MM == CFG(unit))
 							{
 								cur_value = (GROUP_VAL(start) / 1000.0) * (GROUP_VAL(velocity) / 200000.0);   /* 当前显示的范围数值mm */
-								//lower = (CFG(beam_delay) /1000.0) * GROUP_VAL(velocity) / 200000.0;
 								lower = (BEAM_INFO(0,beam_delay) /1000.0) * GROUP_VAL(velocity) / 200000.0;
 								upper =	(MAX_RANGE_US - GROUP_VAL(range) / 1000.0) * (GROUP_VAL(velocity) / 200000.0);
 								step = tmpf * (GROUP_VAL(velocity) / 200000.0);
+								(step < 0.01) ? (step = 0.01) : (step = step);
 								digit = 2;
 								pos = 1;
 								unit = UNIT_MM;
@@ -2623,7 +2577,6 @@ void draw3_data1(DRAW_UI_P p)
 							else
 							{
 								cur_value = (GROUP_VAL(start) / 1000.0) * 0.03937 * (GROUP_VAL(velocity) / 200000.0); /* 当前显示的范围inch */
-								/*lower = (CFG(beam_delay) / 1000.0) * 0.03937 * GROUP_VAL(velocity) / 200000.0;*/
 								lower = (BEAM_INFO(0,beam_delay) / 1000.0) * 0.03937 * GROUP_VAL(velocity) / 200000.0;
 								upper =	(MAX_RANGE_US - GROUP_VAL(range) / 1000.0 ) * 0.03937 * GROUP_VAL(velocity) / 200000.0;
 								step = tmpf * 0.03937 * GROUP_VAL(velocity) / 200000.0;
@@ -2635,10 +2588,10 @@ void draw3_data1(DRAW_UI_P p)
 						else 
 						{
 							cur_value = GROUP_VAL(start) / 1000.0 ;
-							//lower =	CFG(beam_delay) / 1000.0;
 							lower =	BEAM_INFO(0,beam_delay) / 1000.0;
 							upper =	(MAX_RANGE_US - GROUP_VAL(range) / 1000.0);
 							step = tmpf;
+							(step < 0.01) ? (step = 0.01) : (step = step);
 							pos = 1;
 							digit = 2;
 							unit = UNIT_US;
@@ -2647,7 +2600,7 @@ void draw3_data1(DRAW_UI_P p)
 					}
 					else
 					{
-						if ((UT_UNIT_TRUE_DEPTH == CFG(ut_unit)) || (UT_UNIT_SOUNDPATH == CFG(ut_unit)))
+						if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 						{
 							if (UNIT_MM == CFG(unit))
 							{
@@ -2674,12 +2627,20 @@ void draw3_data1(DRAW_UI_P p)
 						draw3_digit_stop (cur_value , units[unit], digit, pos, 0);
 					}
 					break;
-				case 1: /* 收发模式 Tx/Rx Mode P111 */
+				case 1: /* 收发模式 Tx/Rx Mode P111 TAN1 */
 					pp->x_pos = 478, pp->y_pos = 203-YOFFSET; 	
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
-						draw3_pop_tt (data_111, NULL, 
-								menu_content[TX_RX_MODE + 4 + GROUP_VAL(tx_rxmode)],
-								menu_content + TX_RX_MODE, 3, 1, GROUP_VAL(tx_rxmode), 0x05);
+					{
+						/* PA时候如何能够选择 TT PC */
+						if (GROUP_VAL (group_mode) == PA_SCAN)
+							draw3_pop_tt (data_111, NULL, 
+									menu_content[TX_RX_MODE + 4 + GROUP_VAL(tx_rxmode)],
+									menu_content + TX_RX_MODE, 3, 1, GROUP_VAL(tx_rxmode), 0x05);
+						else if (GROUP_VAL (group_mode) == UT_SCAN)
+							draw3_pop_tt (data_111, NULL, 
+									menu_content[TX_RX_MODE + 4 + GROUP_VAL(tx_rxmode)],
+									menu_content + TX_RX_MODE, 4, 1, GROUP_VAL(tx_rxmode), 0x00);
+					}
 					else 
 						draw3_popdown (menu_content[TX_RX_MODE + 4 + GROUP_VAL(tx_rxmode)], 1, 0);
 					break;
@@ -3914,11 +3875,11 @@ void draw3_data1(DRAW_UI_P p)
 void draw3_data2(DRAW_UI_P p) 
 {
 	gchar temp[52];
-	gfloat tmpf;/**/
+	gfloat tmpf = 0.0;
 	gchar *str = NULL;
 	guint menu_status = 0;
 
-	gfloat cur_value=0.0, lower, upper, step;
+	gfloat cur_value=0.0, lower, upper, step, max_tmp, max_tmp1;
 	guint digit, pos, unit;
 
 	//	p = NULL;
@@ -3964,26 +3925,25 @@ void draw3_data2(DRAW_UI_P p)
 		case 1:
 			switch (pp->pos1[1])
 			{
-				case 0: /* range范围 P102 */
-					/*当前步进*/
+				case 0: /* range范围 P102 TAN1 */
 					switch (TMP(range_reg))
 					{
-						case 0:	tmpf = 3.2; break;
-						case 1:	tmpf = 16.0; break;
-						case 2:	tmpf = 32.0; break;
+						case 0:	tmpf = GROUP_VAL(point_qty) / 100.0; break;
+						case 1:	tmpf = GROUP_VAL(point_qty) / 20.0; break;
+						case 2:	tmpf = GROUP_VAL(point_qty) / 10.0; break;
 						default:break;
 					}
-
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 					{
-						if ((UT_UNIT_TRUE_DEPTH == CFG(ut_unit)) || (UT_UNIT_SOUNDPATH == CFG(ut_unit)))
+						max_tmp = (MAX_RANGE_US - GROUP_VAL(start) / 1000.0);
+						max_tmp1 = GROUP_VAL(point_qty) * 20.0;
+						if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 						{
 							if (UNIT_MM == CFG(unit))
 							{
 								cur_value = (GROUP_VAL(range) / 1000.0) * (GROUP_VAL(velocity) / 200000.0);   /* 当前显示的范围数值mm */
-								lower = 3.2 * GROUP_VAL(velocity) / 200000.0;
-								upper = ((MAX_RANGE_US - GROUP_VAL(start) / 1000.0) > 6400.0 ? 6400.0 : 
-										(MAX_RANGE_US - GROUP_VAL(start) / 1000.0)) * (GROUP_VAL(velocity) / 200000.0);
+								lower = (GROUP_VAL(point_qty) / 100.0) * GROUP_VAL(velocity) / 200000.0;
+								upper = MIN(max_tmp, max_tmp1) * (GROUP_VAL(velocity) / 200000.0);
 								step = tmpf * (GROUP_VAL(velocity) / 200000.0);
 								digit = 2;
 								pos = 2;
@@ -3992,9 +3952,8 @@ void draw3_data2(DRAW_UI_P p)
 							else
 							{
 								cur_value = (GROUP_VAL(range) / 1000.0) * 0.03937 * (GROUP_VAL(velocity) / 200000.0); /* 当前显示的范围inch */
-								lower =	3.2 * 0.03937 * GROUP_VAL(velocity) / 200000.0;
-								upper =	((MAX_RANGE_US - GROUP_VAL(start) / 1000.0) > 6400.0 ? 6400.0 :
-										(MAX_RANGE_US - GROUP_VAL(start) / 1000.0)) * 0.03937 * (GROUP_VAL(velocity) / 200000.0);
+								lower =	(GROUP_VAL(point_qty) / 100.0) * 0.03937 * GROUP_VAL(velocity) / 200000.0;
+								upper = MIN(max_tmp, max_tmp1) * 0.03937 * (GROUP_VAL(velocity) / 200000.0);
 								step = tmpf * 0.03937 * GROUP_VAL(velocity) / 200000.0;
 								digit = 3;
 								pos = 2;
@@ -4004,8 +3963,8 @@ void draw3_data2(DRAW_UI_P p)
 						else 
 						{
 							cur_value = GROUP_VAL(range) / 1000.0 ;
-							lower =	3.2;
-							upper =	((MAX_RANGE_US - GROUP_VAL(start) /1000.0 ) > 6400.0 ? 6400.0 : (MAX_RANGE_US - GROUP_VAL(start) / 1000.0));
+							lower =	GROUP_VAL(point_qty) / 100.0;
+							upper = MIN(max_tmp, max_tmp1);										
 							step = tmpf;
 							digit = 2;
 							pos = 2;
@@ -4015,7 +3974,7 @@ void draw3_data2(DRAW_UI_P p)
 					}
 					else
 					{
-						if ((UT_UNIT_TRUE_DEPTH == CFG(ut_unit)) || (UT_UNIT_SOUNDPATH == CFG(ut_unit)))
+						if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 						{
 							if (UNIT_MM == CFG(unit))
 							{
@@ -4042,9 +4001,8 @@ void draw3_data2(DRAW_UI_P p)
 						draw3_digit_stop (cur_value , units[unit], digit, pos, 0);
 					}
 					break;
-				case 1: /* Freq频带(Mhz)  P112 */
+				case 1: /* Freq频带(Mhz)  P112 TAN1 */
 					pp->x_pos = 587, pp->y_pos = 288-YOFFSET;	
-					/*当前步进*/
 					switch (TMP(frequence_reg))
 					{
 						case 0:	tmpf = 0.01; break;
@@ -4052,13 +4010,11 @@ void draw3_data2(DRAW_UI_P p)
 						case 2:	tmpf = 1.0; break;
 						default:break;
 					}
-
-					if (GROUP_VAL(probe.Model[0]) != 0)
+					if (GROUP_VAL(probe.Model[0]) != 0)	/* 选择 unknown 时候可以调节频率 */
 					{
 						gtk_widget_set_sensitive (pp->eventbox30[2], FALSE);
 						gtk_widget_set_sensitive (pp->eventbox31[2], FALSE);
 					}
-
 					/*if (GRPUP_VAL(probe.Name[0]) == 0)*/ /*选择探头的时候需要同时修改GROUP_VAL(frequecne) */
 					if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 2) &&
 							(GROUP_VAL(probe.Model[0]) == 0))
@@ -4072,15 +4028,15 @@ void draw3_data2(DRAW_UI_P p)
 							digit = 2;
 							pos = 2;
 							unit = UNIT_NULL;
-							draw3_digit_pressed (data_1121, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
+							draw3_digit_pressed (data_1121, units[unit], cur_value,
+									lower, upper, step, digit, p, pos, 0);
 						}
 						else
 						{
-							/* 更新当前增益值显示 */
 							str = g_strdup_printf ("%0.2f", GROUP_VAL(frequence) / 1000.0);
-							draw3_pop_tt (data_112, NULL, 
-									str, menu_content + FREQUENCE, 13, 2, GROUP_VAL(freq_pos), 0);
-							g_free(str);
+							draw3_pop_tt (data_112, NULL, str,
+									menu_content + FREQUENCE, 13, 2, GROUP_VAL(freq_pos), 0);
+							g_free (str);
 						}
 					}
 					else 
@@ -4144,7 +4100,7 @@ void draw3_data2(DRAW_UI_P p)
 						}
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 						{
-							if ((UT_UNIT_TRUE_DEPTH == CFG(ut_unit)) || (UT_UNIT_SOUNDPATH == CFG(ut_unit)))
+							if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 							{
 								if (UNIT_MM == CFG(unit)) 
 								{
@@ -4183,7 +4139,7 @@ void draw3_data2(DRAW_UI_P p)
 						}
 						else 
 						{
-							if ((UT_UNIT_TRUE_DEPTH == CFG(ut_unit)) || (UT_UNIT_SOUNDPATH == CFG(ut_unit)))
+							if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 							{
 								if (UNIT_MM == CFG(unit))
 								{
@@ -5383,7 +5339,7 @@ void draw3_data2(DRAW_UI_P p)
 void draw3_data3(DRAW_UI_P p) 
 {
 	gchar temp[52];
-	gfloat tmpf;/**/
+	gfloat tmpf = 0.0;
 	gchar *str;
 
 	gfloat cur_value=0.0, lower, upper, step;
@@ -5432,8 +5388,7 @@ void draw3_data3(DRAW_UI_P p)
 		case 1:
 			switch (pp->pos1[1])
 			{
-				case 0:/* wedge delay P103 */
-					/* 当前步进 */
+				case 0:/* wedge delay P103 TAN1 */
 					switch (TMP(wedge_delay_reg))
 					{
 						case 0:	tmpf = 0.01; break;
@@ -5461,25 +5416,24 @@ void draw3_data3(DRAW_UI_P p)
 						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					}
 					break;
-				case 1: /* 发射电压高低  P113 */
-					/* PA 与 UT 的电压不一样 100 50 200 100 50 */
-					pp->x_pos = 586, pp->y_pos = 373-YOFFSET;
+				case 1: /* 发射电压高低  P113 TAN1 */
+					pp->x_pos = 586, pp->y_pos = 373 - YOFFSET;
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 					{
-						if (CFG(groupId) != UT_CHANNEL)
+						if (GROUP_VAL(group_mode) == PA_SCAN)
 							draw3_pop_tt (data_113, NULL, 
 									menu_content[VOLTAGE + 3 + CFG(voltage_pa)],
 									menu_content + VOLTAGE + 6, 2, 3, CFG(voltage_pa), 0);
-						else
+						else if (GROUP_VAL (group_mode) == UT_SCAN)
 							draw3_pop_tt (data_113, NULL, 
 									menu_content[VOLTAGE + 3 + CFG(voltage_ut)],
 									menu_content + VOLTAGE, 3, 3, CFG(voltage_ut), 0);
 					}
 					else 
 					{
-						if (CFG(groupId) != UT_CHANNEL)
+						if (GROUP_VAL(group_mode) == PA_SCAN)
 							draw3_popdown (menu_content[VOLTAGE + 3 + CFG(voltage_pa)], 3, 0);
-						else
+						else if (GROUP_VAL (group_mode) == UT_SCAN)
 							draw3_popdown (menu_content[VOLTAGE + 3 + CFG(voltage_ut)], 3, 0);
 					}
 					break;
@@ -5503,10 +5457,8 @@ void draw3_data3(DRAW_UI_P p)
 					gtk_widget_show (pp->data3[3]);
 					break;
 
-				case 4:/*Points Qty.  P143*/
-
+				case 4:/* Points Qty.  P143 */
 					pp->x_pos = 585, pp->y_pos = 371-YOFFSET;
-					/* 当前步进 */
 					switch (TMP(point_qty_reg))
 					{
 						case 0:	tmpf = 1.0; break;
@@ -5514,14 +5466,13 @@ void draw3_data3(DRAW_UI_P p)
 						case 2:	tmpf = 100.0; break;						
 						default:break;
 					}
-
 					if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 3))
 					{
 						if (pp->mark_pop_change)
 						{
 							cur_value = GROUP_VAL(point_qty) ;
 							lower =	160.0;
-							upper =	8192.0;	
+							upper =	8192.0;	/* 最大值需要计算 TAN1 */
 							step = tmpf;
 							digit = 0;
 							pos = 3;
@@ -5547,20 +5498,11 @@ void draw3_data3(DRAW_UI_P p)
 					}
 					else 
 					{
-						if (GROUP_VAL(point_qty))
-						{
-							str = g_strdup_printf ("%d", GROUP_VAL(point_qty));
-							draw3_popdown (str, 3, 0);
-							g_free(str);
-						}
-						else 
-						{
-							cur_value = GROUP_VAL(point_qty) ;
-							unit = UNIT_NULL;
-							pos = 3;
-							digit = 0;
-							draw3_digit_stop (cur_value , units[unit], digit, pos, 0);
-						}
+						cur_value = GROUP_VAL(point_qty) ;
+						unit = UNIT_NULL;
+						pos = 3;
+						digit = 0;
+						draw3_digit_stop (cur_value , units[unit], digit, pos, 0);
 					}
 					break;
 				default:break;
@@ -5584,7 +5526,7 @@ void draw3_data3(DRAW_UI_P p)
 						}
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 						{
-							if ((UT_UNIT_TRUE_DEPTH == CFG(ut_unit)) || (UT_UNIT_SOUNDPATH == CFG(ut_unit)))
+							if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 							{
 								if (UNIT_MM == CFG(unit))
 								{
@@ -5623,7 +5565,7 @@ void draw3_data3(DRAW_UI_P p)
 						}
 						else 
 						{
-							if ((UT_UNIT_TRUE_DEPTH == CFG(ut_unit)) || (UT_UNIT_SOUNDPATH == CFG(ut_unit)))
+							if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 							{
 								if (UNIT_MM == CFG(unit))
 								{
@@ -6642,7 +6584,7 @@ void draw3_data3(DRAW_UI_P p)
 void draw3_data4(DRAW_UI_P p) 
 {
 	gchar temp[52];
-	gfloat tmpf;/**/
+	gfloat tmpf = 0.0;
 	gchar *str;
 
 	gfloat cur_value, lower, upper, step;
@@ -6684,8 +6626,7 @@ void draw3_data4(DRAW_UI_P p)
 		case 1:
 			switch (pp->pos1[1])
 			{
-				case 0:/* velocity 声速 P104 */
-					/* 当前步进 */
+				case 0:/* velocity 声速 P104 TAN1 */
 					switch (pp->p_tmp_config->velocity_reg)
 					{
 						case 0:	tmpf = 0.1; break;
@@ -6694,7 +6635,6 @@ void draw3_data4(DRAW_UI_P p)
 						case 3:	tmpf = 100.0; break;						
 						default:break;
 					}
-
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
 					{
 						if (CFG(unit) == 0)
@@ -6736,9 +6676,8 @@ void draw3_data4(DRAW_UI_P p)
 						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					}
 					break;
-				case 1: /* 脉冲宽度 pulser width  P114 */
-					pp->x_pos = 588, pp->y_pos = 460-YOFFSET;
-					/*当前步进*/
+				case 1: /* 脉冲宽度 pulser width  P114 TAN1 */
+					pp->x_pos = 588, pp->y_pos = 460 - YOFFSET;
 					switch (TMP(pulser_width_reg))
 					{
 						case 0:	tmpf = 2.5; break;
@@ -6746,7 +6685,6 @@ void draw3_data4(DRAW_UI_P p)
 						case 2:	tmpf = 25.0; break;
 						default:break;
 					}
-
 					if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 4))
 					{
 						if (pp->mark_pop_change)
@@ -6803,8 +6741,6 @@ void draw3_data4(DRAW_UI_P p)
 						}
 					}
 					break;
-
-
 				case 2:/*Averaging  P124 */
 					pp->x_pos = 627, pp->y_pos = 458-YOFFSET;
 					if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 4))
@@ -7671,7 +7607,7 @@ void draw3_data4(DRAW_UI_P p)
 void draw3_data5(DRAW_UI_P p) 
 {
 	gchar temp[52];
-	gfloat tmpf;/**/
+	gfloat tmpf = 0.0;
 	gchar *str;
 	guint menu_status  = 0;
 
@@ -8786,7 +8722,7 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 	p->menubar		= gtk_menu_bar_new();
 	p->menu			= gtk_menu_new();
 	p->menuitem_main	= gtk_menu_item_new_with_label(content_en10[1]);
-	gtk_widget_set_size_request(GTK_WIDGET(p->menuitem_main), 116, 83);          /*刚好合适的大小*/
+	gtk_widget_set_size_request(GTK_WIDGET(p->menuitem_main), 114, 83);          /*刚好合适的大小*/
 	/*	gtk_widget_modify_fg(p->menuitem_main, GTK_STATE_NORMAL, &color_red);
 		gtk_widget_modify_bg(p->menuitem_main, GTK_STATE_NORMAL, &color_green);*/
 	gtk_menu_bar_append(GTK_MENU_BAR(p->menubar), p->menuitem_main);

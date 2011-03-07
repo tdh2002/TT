@@ -1684,7 +1684,7 @@ void data_100 (GtkSpinButton *spinbutton, gpointer data) /* 增益Gain P100 */
 
 void data_101 (GtkSpinButton *spinbutton, gpointer data) /*Start 扫描延时 P101 */
 {
-	if ((UT_UNIT_TRUE_DEPTH == CFG(ut_unit)) || (UT_UNIT_SOUNDPATH == CFG(ut_unit)))
+	if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 	{
 		if (UNIT_MM == CFG(unit))
 			GROUP_VAL(start) = (gint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / (GROUP_VAL(velocity) / 100000.0));
@@ -1699,7 +1699,7 @@ void data_101 (GtkSpinButton *spinbutton, gpointer data) /*Start 扫描延时 P1
 
 void data_102 (GtkSpinButton *spinbutton, gpointer data) /*Range 范围 P102 */
 {
-	if ((UT_UNIT_TRUE_DEPTH == CFG(ut_unit)) || (UT_UNIT_SOUNDPATH == CFG(ut_unit)))
+	if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 	{
 		if (UNIT_MM == CFG(unit))
 			GROUP_VAL(range) = (guint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / (GROUP_VAL(velocity) / 100000.0));
@@ -1757,7 +1757,7 @@ void data_111 (GtkMenuItem *menuitem, gpointer data) /* 收发模式 Tx/Rx Mode 
 void data_1121 (GtkSpinButton *spinbutton, gpointer data) /* 频率 Freq 数值改变 */
 {
 	GROUP_VAL(frequence) =  (gushort) ((gtk_spin_button_get_value (spinbutton)) * 1000.0);
-
+	GROUP_VAL(pulser_width) = ((guint)(GROUP_VAL(frequence) * 2.0) / 250)  * 250 ; /* 改变脉冲宽度 */
 	send_dsp_data (FREQUENCE_DSP, (guint) (GROUP_VAL(frequence)));
 	/* 发送给硬件 */
 }
@@ -1768,6 +1768,7 @@ void data_112 (GtkMenuItem *menuitem, gpointer data) /* 频率 Freq P112 */
 	guint temp = GPOINTER_TO_UINT (data);
 	GROUP_VAL(freq_pos) = (guchar) (GPOINTER_TO_UINT (data));
 	GROUP_VAL(frequence) = get_freq();
+	GROUP_VAL(pulser_width) = GROUP_VAL(frequence) * 2.0 ; /* 改变脉冲宽度 */
 	if (temp != 12)
 	{
 		pp->pos_pos = MENU3_STOP;
@@ -1786,12 +1787,12 @@ void data_112 (GtkMenuItem *menuitem, gpointer data) /* 频率 Freq P112 */
 
 void data_113 (GtkMenuItem *menuitem, gpointer data)  /* Voltage  P113 */
 {
-	if (CFG(groupId) != UT_CHANNEL)
+	if (GROUP_VAL(group_mode) == PA_SCAN)
 	{
 		CFG(voltage_pa) = (gchar) (GPOINTER_TO_UINT (data));
 		send_dsp_data (VOLTAGE_DSP, CFG(voltage_pa));
 	}
-	else
+	else if (GROUP_VAL (group_mode) == UT_SCAN)
 	{
 		CFG(voltage_ut) = (gchar) (GPOINTER_TO_UINT (data));
 		send_dsp_data (VOLTAGE_DSP, CFG(voltage_ut));
@@ -2033,7 +2034,7 @@ void data_201 (GtkMenuItem *menuitem, gpointer data) /* parameter 闸门参数�
 
 void data_202 (GtkSpinButton *spinbutton, gpointer data)	/* 闸门开始位置 P202 */
 {
-	if ((UT_UNIT_TRUE_DEPTH == CFG(ut_unit)) || (UT_UNIT_SOUNDPATH == CFG(ut_unit)))
+	if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 	{
 		if (UNIT_MM == CFG(unit))
 			GROUP_GATE_POS(start) = (gint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / (GROUP_VAL(velocity) / 100000.0));
@@ -2056,7 +2057,7 @@ void data_2021 (GtkMenuItem *menuitem, gpointer data)	/* 闸门同步 */
 
 void data_203 (GtkSpinButton *spinbutton, gpointer data) /* 闸门宽度 P203 */
 {
-	if ((UT_UNIT_TRUE_DEPTH == CFG(ut_unit)) || (UT_UNIT_SOUNDPATH == CFG(ut_unit)))
+	if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 	{
 		if (UNIT_MM == CFG(unit))
 			GROUP_GATE_POS(width) = (guint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / (GROUP_VAL(velocity) / 100000.0));
@@ -2507,7 +2508,7 @@ void data_405 (GtkSpinButton *spinbutton, gpointer data) /*Avg.Scan Speed P405 *
 
 void data_410 (GtkMenuItem *menuitem, gpointer data) /* Display -> Overlay -> UT Unit p410 */
 {
-	CFG(ut_unit) = (guchar) (GPOINTER_TO_UINT (data));
+	GROUP_VAL(ut_unit) = (guchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
 	draw_area_all();

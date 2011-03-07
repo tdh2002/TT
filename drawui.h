@@ -93,6 +93,7 @@
 #define Strip_Chart_AA	 10
 
 
+#define GAIN_MAX	80.0
 #define GAINR_OFF	0
 #define GAINR_ON	1
 #define VIDEO_FILTER_OFF 0
@@ -268,14 +269,6 @@
 #define CURVE_POS_DSP		0x3024
 #define POINT_POS_DSP		0x3025
 
-#define PA_PROBE_PATH	"source/system/Model/Probe/PA/"
-#define PA_PROBE_PATH_	0
-#define UT_PROBE_PATH	"source/system/Model/Probe/UT/"
-#define UT_PROBE_PATH_	1
-#define PA_WEDGE_PATH	"source/system/Model/Wedge/PA/"
-#define PA_WEDGE_PATH_	2
-#define UT_WEDGE_PATH	"source/system/Model/Wedge/UT/"
-#define UT_WEDGE_PATH_	3
 
 
 extern gint (*window_keypress_event_orig)(GtkWidget *widget, GdkEventKey *event);
@@ -520,4 +513,5 @@ extern void main_menu_pop();
 extern void draw3_pressed1(gfloat step, guint digit);
 
 extern void da_call_remark (GtkDialog *dialog, gint response_id, gpointer user_data);
+
 #endif
