@@ -1814,8 +1814,7 @@ void draw3_data0(DRAW_UI_P p)
 						draw3_digit_stop (cur_value, temp, digit, pos, 0);
 					}
 					break;
-				case 2: /* Reveiver 接收器  P120 */
-					/* 当前步进 */
+				case 2: /* Reveiver 接收器  P120 TAN1 */
 					switch (TMP(receiver_reg))
 					{
 						case 0:	tmpf = 1.0; break;
@@ -1823,13 +1822,11 @@ void draw3_data0(DRAW_UI_P p)
 						case 2:	tmpf = 100.0; break;
 						default:break;
 					}
-
-					if (GROUP_VAL(tx_rxmode) == PULSE_ECHO)
+					if (GROUP_VAL(tx_rxmode) == PULSE_ECHO)	/* 脉冲回波模式不可以调节 */
 					{
 						gtk_widget_set_sensitive (pp->eventbox30[0], FALSE);
 						gtk_widget_set_sensitive (pp->eventbox31[0], FALSE);
 					}
-
 					upper = (gfloat) (128 + 1 - LAW_VAL(Last_rx_elem));
 					if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 0))
 					{
@@ -1852,7 +1849,6 @@ void draw3_data0(DRAW_UI_P p)
 						draw3_digit_stop (cur_value, temp, digit, pos, 0);
 					}
 					break;
-
 				case 3:/*Scan Offset p130 */
 					g_sprintf (temp,"%s", con2_p[1][3][0]);
 					/* 设置label */
@@ -2650,7 +2646,7 @@ void draw3_data1(DRAW_UI_P p)
 					else 
 						draw3_popdown (menu_content[TX_RX_MODE + 4 + GROUP_VAL(tx_rxmode)], 1, 0);
 					break;
-				case 2: /* 接收滤波 P121 */
+				case 2: /* 接收滤波 P121 TAN1 */
 					pp->x_pos = 516, pp->y_pos = 201-YOFFSET;
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 					{
@@ -2670,7 +2666,6 @@ void draw3_data1(DRAW_UI_P p)
 							draw3_popdown ("None", 1, 0);
 					}
 					break;
-
 				case 3:/*index Offset P131*/
 					g_sprintf (temp,"%s", con2_p[1][3][1]);
 					/* 设置label */
@@ -5443,11 +5438,10 @@ void draw3_data3(DRAW_UI_P p)
 							draw3_popdown (menu_content[VOLTAGE + 3 + CFG(voltage_ut)], 3, 0);
 					}
 					break;
-				case 2:/*Video Filter  P123 */
+				case 2: /* Video Filter  P123 TAN1 */
 					draw3_popdown (menu_content[OFF_ON + GROUP_VAL(video_filter)], 3, 0);
 					break;
-
-				case 3:/*Skew (deg.)*/
+				case 3: /* Skew (deg.) */
 					/* 格式化字符串 */
 					g_sprintf (temp,"%s", con2_p[1][3][3]);				
 
@@ -7669,7 +7663,7 @@ void draw3_data5(DRAW_UI_P p)
 					gtk_widget_hide (pp->eventbox31[5]);
 					break;
 
-				case 1: /* 重复频率 PRF P115 TAN1  Tandenghua 选择auto max max/2 optimum 时候需要更改界面上的PRF 等的显示 */
+				case 1: /* 重复频率 PRF P115 TAN1  */
 					pp->x_pos = 578, pp->y_pos = 533-YOFFSET;
 					switch (TMP(prf_reg))
 					{
@@ -7678,19 +7672,19 @@ void draw3_data5(DRAW_UI_P p)
 						case 2:	tmpf = 100.0; break;
 						default:break;
 					}
-
 					if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 5))
 					{
 						if (pp->mark_pop_change)
 						{
-							cur_value = GROUP_VAL(prf) / 10.0;
+							cur_value = get_prf() / 10.0;
 							lower =	1.0;
-							upper =	20000.0;	/* 最大值需要计算出来 */
+							upper = (gfloat)(TMP(max_prf));	/* 最大值需要计算出来 */
 							step = tmpf;
 							digit = 0;
 							pos = 5;
 							unit = UNIT_NONE;
-							draw3_digit_pressed (data_1151, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
+							draw3_digit_pressed (data_1151, units[unit], cur_value,
+									lower, upper, step, digit, p, pos, 0);
 						}
 						else
 						{
@@ -7732,7 +7726,7 @@ void draw3_data5(DRAW_UI_P p)
 					{
 						case 0:	tmpf = 1.0; break;
 						case 1:	tmpf = 10.0; break;
-						case 2:	tmpf = 100.0; break;                                               				
+						case 2:	tmpf = 100.0; break;
 						default:break;
 					}
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 5))

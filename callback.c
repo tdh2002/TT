@@ -304,23 +304,36 @@ guint get_point_qty ()
 	return 0;
 }
 
-
+/* 计算prf,并且附加限制 */
 guint get_prf ()
 {
+	guint prf_temp, range_all, gate_range_all[3];
+	range_all =	GROUP_VAL(start) + GROUP_VAL(range);
+	gate_range_all[0] = GROUP_VAL(gate[0].start) + GROUP_VAL(gate[0].width);
+	gate_range_all[1] = GROUP_VAL(gate[1].start) + GROUP_VAL(gate[1].width);
+	gate_range_all[2] = GROUP_VAL(gate[2].start) + GROUP_VAL(gate[2].width);
+	prf_temp = 	MAX((MAX(range_all, gate_range_all[0])), (MAX(gate_range_all[1], gate_range_all[2])));
+	prf_temp = (guint)((1000000 / 4) / (prf_temp /1000.0));
+	(prf_temp > 20000) ? (prf_temp = 20000) : (prf_temp = prf_temp) ;
+	TMP(max_prf) = prf_temp;
 	if (GROUP_VAL(prf_pos) == 3)
+	{
+		if (GROUP_VAL(prf) > prf_temp * 10)
+			GROUP_VAL(prf) = prf_temp * 10;
 		return GROUP_VAL(prf);
+	}
 	else 
 	{
 		switch (GROUP_VAL(prf_pos))
 		{
 			case 0:
-				return 10000;
+				return prf_temp * 10;
 				break;
 			case 1:
-				return 5000;
+				return prf_temp * 5;
 				break;
 			case 2:
-				return 500;
+				return 600;
 				break;
 			default:break;
 		}
@@ -328,6 +341,7 @@ guint get_prf ()
 	return 0;
 }
 
+/* 计算脉冲宽度 */
 guint get_pw ()
 {
 	if (GROUP_VAL(pw_pos))
@@ -336,6 +350,7 @@ guint get_pw ()
 		return ((guint)(GROUP_VAL(frequence) * 2.0) / 250)  * 250 ; /* 改变脉冲宽度 */
 }
 
+/* 计算滤波 0 1 None 和 Auto 时候怎么计算 */
 guint get_filter ()
 {
 	switch (GROUP_VAL(filter))
@@ -1748,6 +1763,8 @@ void data_120 (GtkSpinButton *spinbutton, gpointer data) /* Pulser 发射 P120 *
 void data_111 (GtkMenuItem *menuitem, gpointer data) /* 收发模式 Tx/Rx Mode P111 */
 {
 	GROUP_VAL(tx_rxmode) = (gchar) (GPOINTER_TO_UINT (data));
+	if (GROUP_VAL(tx_rxmode) == PULSE_ECHO )
+		GROUP_VAL(receiver) = GROUP_VAL(pulser);
 	pp->pos_pos = MENU3_STOP;
 	send_dsp_data (TX_RX_MODE_DSP, GROUP_VAL(tx_rxmode));
 	draw_3_menu(0, NULL);
@@ -1762,7 +1779,6 @@ void data_1121 (GtkSpinButton *spinbutton, gpointer data) /* 频率 Freq 数值�
 	send_dsp_data (FREQUENCE_DSP, (guint) (GROUP_VAL(frequence)));
 	/* 发送给硬件 */
 }
-
 
 void data_112 (GtkMenuItem *menuitem, gpointer data) /* 频率 Freq P112 */
 {
@@ -1786,7 +1802,6 @@ void data_112 (GtkMenuItem *menuitem, gpointer data) /* 频率 Freq P112 */
 	/* 发送增益给硬件 */
 }
 
-
 void data_113 (GtkMenuItem *menuitem, gpointer data)  /* Voltage  P113 */
 {
 	if (GROUP_VAL(group_mode) == PA_SCAN)
@@ -1804,7 +1819,6 @@ void data_113 (GtkMenuItem *menuitem, gpointer data)  /* Voltage  P113 */
 	/* 发送增益给硬件 */
 }
 
-
 void data_1141 (GtkSpinButton *spinbutton, gpointer data) /* PW  P114 */
 {
 	guint temp;
@@ -1816,13 +1830,12 @@ void data_1141 (GtkSpinButton *spinbutton, gpointer data) /* PW  P114 */
 	/* 发送给硬件 */
 }
 
-
 void data_114 (GtkMenuItem *menuitem, gpointer data) /* PW */
 {
 	guint temp = GPOINTER_TO_UINT (data);
 	GROUP_VAL(pw_pos) = temp;
 	GROUP_VAL(pulser_width) = get_pw();
-	if (!temp)
+	if (temp == AUTO_SET)
 	{
 		pp->pos_pos = MENU3_STOP;
 		draw_3_menu(0, NULL);
@@ -1840,7 +1853,6 @@ void data_114 (GtkMenuItem *menuitem, gpointer data) /* PW */
 void data_1151 (GtkSpinButton *spinbutton, gpointer data) /* PRF P115 */
 {
 	gchar *markup;
-	//	DRAW_UI_P p = (DRAW_UI_P)(data);
 	GROUP_VAL(prf) =  (guint) (gtk_spin_button_get_value (spinbutton) * 10);
 	markup=g_markup_printf_escaped(
 			"<span foreground='white' font_desc='10'>PRF: %d(%d)</span>",GROUP_VAL(prf) / 10, (GROUP_VAL(prf) / 10) * 1);
@@ -1856,12 +1868,11 @@ void data_1151 (GtkSpinButton *spinbutton, gpointer data) /* PRF P115 */
 	/* 发送给硬件 */
 }
 
-
 void data_115 (GtkMenuItem *menuitem, gpointer data) /* PRF */
 {
 	guint temp = GPOINTER_TO_UINT (data);
 	GROUP_VAL(prf_pos) = temp;
-	GROUP_VAL(prf) = get_prf();
+	GROUP_VAL(prf) = get_prf();			/*  */
 	if (temp != 3)
 	{
 		pp->pos_pos = MENU3_STOP;
@@ -1876,8 +1887,7 @@ void data_115 (GtkMenuItem *menuitem, gpointer data) /* PRF */
 	}
 }
 
-
-void data_121 (GtkMenuItem *menuitem, gpointer data)  /* filter */
+void data_121 (GtkMenuItem *menuitem, gpointer data)  /* filter 滤波 P121 */
 {
 	GROUP_VAL(filter) = (guchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
@@ -1905,7 +1915,6 @@ void data_124 (GtkMenuItem *menuitem, gpointer data)  /* averaging */
 	send_dsp_data (AVERAGING_DSP, GROUP_VAL(averaging));
 	/* 发送增益给硬件 */
 }
-
 
 void data_125 (GtkSpinButton *spinbutton, gpointer data) /*抑制 Reject */
 {

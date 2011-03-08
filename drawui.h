@@ -44,21 +44,23 @@
 #define UT_UNIT_SOUNDPATH	1
 #define UT_UNIT_TIME		2
 
-/* 发射模式 */
-#define PITCH_CATCH	0
-#define	PULSE_ECHO	1
+#define AUTO_SET	0
+/* 发射模式 P111 */
+#define PITCH_CATCH		0
+#define	PULSE_ECHO		1
 #define	THROUGH_TRAN	2
+#define TOFD			3
 
-/* 检波 */
-#define RF_WAVE	0
-#define POSITIVE	1
-#define NAGATIVE	2
-#define FULL_WAVE	3
-
-/* 电压 */
+/* 电压 P113 */
 #define VOLTAGE_HIGH
 #define VOLTAGE_MID
 #define VOLTAGE_LOW
+
+/* 检波 P122 */
+#define RF_WAVE			0
+#define POSITIVE_WAVE	1
+#define NAGATIVE_WAVE	2
+#define FULL_WAVE		3
 
 /* 闸门 */
 #define GATE_A	0
@@ -104,7 +106,6 @@
 #define VOL_LOW		0
 #define VOL_HIGH	1
 
-#define AUTO_SET	0
 
 
 /*上方数值显示信息定义 */
