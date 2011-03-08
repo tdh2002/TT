@@ -333,7 +333,7 @@ guint get_pw ()
 	if (GROUP_VAL(pw_pos))
 		return GROUP_VAL(pulser_width);
 	else
-		return 3000; /* 计算 */
+		return ((guint)(GROUP_VAL(frequence) * 2.0) / 250)  * 250 ; /* 改变脉冲宽度 */
 }
 
 guint get_filter ()
@@ -1757,7 +1757,8 @@ void data_111 (GtkMenuItem *menuitem, gpointer data) /* 收发模式 Tx/Rx Mode 
 void data_1121 (GtkSpinButton *spinbutton, gpointer data) /* 频率 Freq 数值改变 */
 {
 	GROUP_VAL(frequence) =  (gushort) ((gtk_spin_button_get_value (spinbutton)) * 1000.0);
-	GROUP_VAL(pulser_width) = ((guint)(GROUP_VAL(frequence) * 2.0) / 250)  * 250 ; /* 改变脉冲宽度 */
+	if (!GROUP_VAL(pw_pos))
+		GROUP_VAL(pulser_width) = ((guint)(GROUP_VAL(frequence) * 2.0) / 250)  * 250 ; /* 改变脉冲宽度 */
 	send_dsp_data (FREQUENCE_DSP, (guint) (GROUP_VAL(frequence)));
 	/* 发送给硬件 */
 }
@@ -1768,7 +1769,8 @@ void data_112 (GtkMenuItem *menuitem, gpointer data) /* 频率 Freq P112 */
 	guint temp = GPOINTER_TO_UINT (data);
 	GROUP_VAL(freq_pos) = (guchar) (GPOINTER_TO_UINT (data));
 	GROUP_VAL(frequence) = get_freq();
-	GROUP_VAL(pulser_width) = GROUP_VAL(frequence) * 2.0 ; /* 改变脉冲宽度 */
+	if (!GROUP_VAL(pw_pos))
+		GROUP_VAL(pulser_width) = GROUP_VAL(frequence) * 2.0; /* 改变脉冲宽度 */
 	if (temp != 12)
 	{
 		pp->pos_pos = MENU3_STOP;

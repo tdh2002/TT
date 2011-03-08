@@ -404,6 +404,9 @@ static void da_call_probe (GtkDialog *dialog, gint response_id, gpointer user_da
 				file_path = g_strdup_printf ("%s%s/%s", UT_PROBE_PATH, pp->p_type, value);
 			
 			read_probe_file (file_path, &GROUP_VAL(probe));
+			GROUP_VAL (frequence) = GROUP_VAL(probe.Frequency);				/* 频率 */
+			if (!GROUP_VAL(pw_pos))
+				GROUP_VAL(pulser_width) = GROUP_VAL(frequence) * 2.0; /* 改变脉冲宽度 */
 			g_free (file_path);
 			gtk_label_set_text (GTK_LABEL (pp->data3[3]), GROUP_VAL(probe.Model));
 
@@ -413,7 +416,9 @@ static void da_call_probe (GtkDialog *dialog, gint response_id, gpointer user_da
 		{
 			if (pp->tag == 0)/*探头大类选择Unknow时*/
 			{
-				strcpy(GROUP_VAL(probe.Model), value);
+				strcpy(GROUP_VAL(probe.Model), " Unknown");
+				gtk_label_set_text (GTK_LABEL (pp->data3[3]), GROUP_VAL(probe.Model));
+
 				gtk_widget_destroy (GTK_WIDGET (dialog));			
 			}
 			else 
@@ -460,7 +465,8 @@ static void da_call_wedge (GtkDialog *dialog, gint response_id, gpointer user_da
 		{
 			if (pp->tag == 0)/*探头大类选择Unknow时*/
 			{
-				strcpy(GROUP_VAL(probe.Model), value);
+				strcpy(GROUP_VAL(probe.Model), " Unknown");
+				gtk_label_set_text (GTK_LABEL (pp->data3[4]), GROUP_VAL(wedge.Model));
 				gtk_widget_destroy (GTK_WIDGET (dialog));			
 			}
 			else
@@ -706,10 +712,10 @@ static gchar* get_probe_info(const gchar *file_path)
 	{
 		case ENGLISH_:
 			if (GROUP_VAL(group_mode) == PA_SCAN)
-				probe_info = g_strdup_printf ("Model:%s           Frequency:%.1fMHz\nElement Quantity:%d      Element Pitch:%.3f mm\nReference Point:-%.3f mm", 
+				probe_info = g_strdup_printf ("Model:%s           Frequency:%.2fMHz\nElement Quantity:%d      Element Pitch:%.3f mm\nReference Point:-%.3f mm", 
 						p1.Model, p1.Frequency/1000.0,p1.Elem_qty, p1.Pitch/1000.0, p1.Reference_Point/1000.0 );
 			else if (GROUP_VAL(group_mode) == UT_SCAN)
-				probe_info = g_strdup_printf ("Model:%s           Frequency:%.1fMHz\nElement_size:%.3f", 
+				probe_info = g_strdup_printf ("Model:%s           Frequency:%.2fMHz\nElement_size:%.3f", 
 						p1.Model, p1.Frequency/1000.0, p1.Pitch / 1000.0 );
 			break;
 		default:break;
@@ -4005,19 +4011,19 @@ void draw3_data2(DRAW_UI_P p)
 					pp->x_pos = 587, pp->y_pos = 288-YOFFSET;	
 					switch (TMP(frequence_reg))
 					{
-						case 0:	tmpf = 0.01; break;
-						case 1:	tmpf = 0.1; break;
-						case 2:	tmpf = 1.0; break;
+						case 0:	tmpf = 0.01;	break;
+						case 1:	tmpf = 0.1;		break;
+						case 2:	tmpf = 1.0;		break;
 						default:break;
 					}
-					if (GROUP_VAL(probe.Model[0]) != 0)	/* 选择 unknown 时候可以调节频率 */
+					if (GROUP_VAL(probe.Model[0]) != 32) 	/* 选择 unknown 时候可以调节频率 */
 					{
 						gtk_widget_set_sensitive (pp->eventbox30[2], FALSE);
 						gtk_widget_set_sensitive (pp->eventbox31[2], FALSE);
 					}
 					/*if (GRPUP_VAL(probe.Name[0]) == 0)*/ /*选择探头的时候需要同时修改GROUP_VAL(frequecne) */
 					if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 2) &&
-							(GROUP_VAL(probe.Model[0]) == 0))
+							(GROUP_VAL(probe.Model[0]) == 32))
 					{
 						if (pp->mark_pop_change)
 						{
@@ -6701,7 +6707,6 @@ void draw3_data4(DRAW_UI_P p)
 						}
 						else
 						{
-							g_print("pw_pos=%d\n", GROUP_VAL(pw_pos));
 							if (!GROUP_VAL(pw_pos))
 							{
 								/* 更新当前增益值显示 */
@@ -7664,9 +7669,8 @@ void draw3_data5(DRAW_UI_P p)
 					gtk_widget_hide (pp->eventbox31[5]);
 					break;
 
-				case 1: /* 重复频率 PRF P115  Tandenghua 选择auto max max/2 optimum 时候需要更改界面上的PRF 等的显示 */
+				case 1: /* 重复频率 PRF P115 TAN1  Tandenghua 选择auto max max/2 optimum 时候需要更改界面上的PRF 等的显示 */
 					pp->x_pos = 578, pp->y_pos = 533-YOFFSET;
-					/*当前步进*/
 					switch (TMP(prf_reg))
 					{
 						case 0:	tmpf = 1.0; break;

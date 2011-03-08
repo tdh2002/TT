@@ -66,10 +66,10 @@ static void set_config (guint groupid)
 	GROUP_VAL(receiver)     = 1;			/* 1表示第一个探头接口 1-128 */
 	GROUP_VAL(tx_rxmode)	= PULSE_ECHO;	/* 收发模式 */
 	GROUP_VAL(freq_pos)		= 0;			/* 0是1Mhz	*/
-	GROUP_VAL(frequence)	= 1000;			/* 频率 */
+	GROUP_VAL(frequence)	= 5000;			/* 频率 */
 	GROUP_VAL(pw_pos)		= 0;			/* 0是Atuo	*/
 	GROUP_VAL(prf_pos)		= 0;			/* 0是Atuo Max*/
-	GROUP_VAL(pulser_width)	= 3000;			/* 脉冲宽度 30ns */
+	GROUP_VAL(pulser_width)	= 10000;		/* 脉冲宽度 30ns */
 	GROUP_VAL(prf)			= 600;			/* 重复频率 60*/
 	GROUP_VAL(filter)		= 0;			/* 接收滤波器 0是None */
 	GROUP_VAL(rectifier)	= FULL_WAVE;	/* 检波 */
@@ -114,6 +114,8 @@ static void set_config (guint groupid)
 	GROUP_VAL(s_reference)=1000.0;
 	GROUP_VAL(s_measure)=100.0;
 	GROUP_VAL(data_link)=0;  /* 0是none */
+
+	GROUP_VAL(probe.Model[0]) = 32;
 
 	CFG(display_table)=0;  /*0是OFF*/
 	CFG(entry_image)=0;    /*0是OFF*/
