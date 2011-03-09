@@ -1397,6 +1397,7 @@ static void draw3_digit_stop(gfloat cur_value, const gchar *unit,
 		str = g_strdup_printf ("%s\n%s", con2_p[x][y][content_pos ? content_pos : pos], unit);	
 
 	gtk_label_set_text (GTK_LABEL (pp->label3[z]), str);
+	gtk_label_set_justify (GTK_LABEL(pp->label3[z]),GTK_JUSTIFY_CENTER);
 	if ((CUR_POS == z) && (pp->pos_pos == MENU3_STOP))
 	{
 		update_widget_bg(pp->eventbox30[z], backpic[8]);
@@ -1471,7 +1472,6 @@ static gboolean draw_colorbar(GtkWidget *widget, GdkEventExpose *event, gpointer
 static void draw_area(GtkWidget *parent_box, DRAW_AREA *draw_area, guint width, guint height, const gchar *title, 
 		gdouble v1s, gdouble v1e, gdouble v2s, gdouble v2e, gdouble h1s, gdouble h1e, guchar *other)
 {
-
 	draw_area->vbox = gtk_vbox_new (FALSE, 0);
 	/* 窗口名字 */
 	draw_area->ebox = gtk_event_box_new ();
@@ -1681,6 +1681,7 @@ void draw3_data0(DRAW_UI_P p)
 {
 	gchar temp[52];
 	gfloat tmpf = 0.0;
+	gchar *str = NULL;
 
 	gfloat cur_value=0.0, lower, upper, step;
 	guint digit, pos, unit, content_pos, menu_status;
@@ -1801,8 +1802,8 @@ void draw3_data0(DRAW_UI_P p)
 						digit = 0;
 						pos = 0;
 						unit = UNIT_TO;    /* 1 to n 这个范围需要计算出来 waiting */
-						g_sprintf (temp,"(1 to %d)", (guint)(upper));
-						draw3_digit_pressed (data_110, temp, cur_value , lower, upper, step, digit, p, pos, 0);
+						str = g_strdup_printf ("( 1 to %d)", (guint)(upper));
+						draw3_digit_pressed (data_110, str, cur_value , lower, upper, step, digit, p, pos, 0);
 					}
 					else 
 					{
@@ -1810,9 +1811,10 @@ void draw3_data0(DRAW_UI_P p)
 						digit = 0;
 						pos = 0;
 						unit = UNIT_TO;
-						g_sprintf (temp,"(1 to %d)", (guint)(upper));
-						draw3_digit_stop (cur_value, temp, digit, pos, 0);
+						str = g_strdup_printf ("( 1 to %d)", (guint)(upper));
+						draw3_digit_stop (cur_value, str, digit, pos, 0);
 					}
+					g_free(str);
 					break;
 				case 2: /* Reveiver 接收器  P120 TAN1 */
 					switch (TMP(receiver_reg))
@@ -1836,8 +1838,8 @@ void draw3_data0(DRAW_UI_P p)
 						digit = 0;
 						pos = 0;
 						unit = UNIT_TO;    /* 1 to n 这个范围需要计算出来 waiting */
-						g_sprintf (temp,"(1 to %d)", (guint)(upper));
-						draw3_digit_pressed (data_120, temp, cur_value , lower, upper, step, digit, p, pos, 0);
+						str = g_strdup_printf ("( 1 to %d)", (guint)(upper));
+						draw3_digit_pressed (data_120, str, cur_value , lower, upper, step, digit, p, pos, 0);
 					}
 					else 
 					{
@@ -1845,40 +1847,46 @@ void draw3_data0(DRAW_UI_P p)
 						digit = 0;
 						pos = 0;
 						unit = UNIT_TO;
-						g_sprintf (temp,"(1 to %d)", (guint)(upper));
-						draw3_digit_stop (cur_value, temp, digit, pos, 0);
+						str = g_strdup_printf ("( 1 to %d)", (guint)(upper));
+						draw3_digit_stop (cur_value, str, digit, pos, 0);
+					}
+					g_free(str);
+					break;
+				case 3:/* Scan Offset P130 TAN1 */
+					if (GROUP_VAL(group_mode) == PA_SCAN)	/* 脉冲回波模式不可以调节 */
+					{
+						gtk_widget_set_sensitive (pp->eventbox30[0], FALSE);
+						gtk_widget_set_sensitive (pp->eventbox31[0], FALSE);
+					}
+					switch (TMP(scanoffset_reg))
+					{
+						case 0:	tmpf = 0.1; break;
+						case 1:	tmpf = 1.0; break;
+						case 2:	tmpf = 5.0; break;
+						default:break;
+					}
+					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
+					{
+						cur_value = GROUP_VAL(scan_offset)/10.0;
+						lower = -100000.0;
+						upper = 9999999.0;
+						step = tmpf;
+						digit = 1;
+						pos = 0;
+						unit = UNIT_MM;
+						draw3_digit_pressed (data_510, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
+					}
+					else 
+					{
+						cur_value = GROUP_VAL(scan_offset)/10.0;
+						digit = 1;
+						pos = 0;
+						unit = UNIT_MM;
+						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					}
 					break;
-				case 3:/*Scan Offset p130 */
-					g_sprintf (temp,"%s", con2_p[1][3][0]);
-					/* 设置label */
-					gtk_label_set_text (GTK_LABEL (pp->label3[0]), temp);
-					gtk_widget_modify_bg (pp->eventbox30[0], GTK_STATE_NORMAL, &color_button1);
-					gtk_label_set_text (GTK_LABEL (pp->data3[0]), "");
-
-					gtk_widget_modify_bg (pp->eventbox31[0], GTK_STATE_NORMAL, &color_button1);
-
-					/* 显示和隐藏控件 */
-					gtk_widget_show (pp->eventbox30[0]);
-					gtk_widget_show (pp->eventbox31[0]);
-					gtk_widget_show (pp->data3[0]);
-					break;
-
-
-				case 4:/*Set 80%*/
-					g_sprintf (temp,"%s", con2_p[1][4][0]);
-					/* 设置label */
-					gtk_label_set_text (GTK_LABEL (pp->label3[0]), temp);
-					gtk_widget_modify_bg (pp->eventbox30[0], GTK_STATE_NORMAL, &color_button1);
-					gtk_label_set_text (GTK_LABEL (pp->data3[0]), "");
-
-					gtk_widget_modify_bg (pp->eventbox31[0], GTK_STATE_NORMAL, &color_button1);
-
-					/* 显示和隐藏控件 */
-					gtk_widget_show (pp->eventbox30[0]);
-					gtk_widget_show (pp->eventbox31[0]);
-					gtk_widget_show (pp->data3[0]);
-
+				case 4:/* Set 80% P140 */
+					draw3_popdown (NULL, 0, 1);
 					break;
 				default:break;
 			}
@@ -2077,8 +2085,7 @@ void draw3_data0(DRAW_UI_P p)
 
 					break;
 
-				case 1:/*probe/part -> position -> Scan Offset p510 */
-					/* 当前步进 */
+				case 1:/* Scan Offset  P510 */
 					switch (TMP(scanoffset_reg))
 					{
 						case 0:	tmpf = 0.1; break;
@@ -2106,8 +2113,6 @@ void draw3_data0(DRAW_UI_P p)
 						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					}
 					break;
-
-
 				case 2:/*Probe/Part -> characterize -> FFT p520 */
 					draw3_popdown (menu_content[OFF_ON + CFG(fft)], 0, 0);
 					break;
@@ -2133,17 +2138,15 @@ void draw3_data0(DRAW_UI_P p)
 		case 6:
 			switch (pp->pos1[6])
 			{
-				case 0:/*Focal Law -> configuration -> Law Config.  p600 */
-					pp->x_pos = 394, pp->y_pos = 116-YOFFSET;
+				case 0:/* Law config  p600 */
+					pp->x_pos = 394, pp->y_pos = 116 - YOFFSET;
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 						draw3_pop_tt (data_600, NULL, 
-								menu_content[L_CONFIG+GROUP_VAL(law_config)],
-								menu_content+LAW_CONFIG, 4, 0,GROUP_VAL(law_config), 0x04);
+								menu_content[L_CONFIG + LAW_VAL(Focal_type)],
+								menu_content+LAW_CONFIG, 4, 0, LAW_VAL(Focal_type), 0x08);
 					else 
-						draw3_popdown (menu_content[L_CONFIG+GROUP_VAL(law_config)], 0, 0);
-
+						draw3_popdown (menu_content[L_CONFIG + LAW_VAL(Focal_type)], 0, 0);
 					break;
-
 				case 1:/* 聚焦 阵元数量 P610 */
 					/* 当前步进 */
 					switch (pp->p_tmp_config->element_qty_reg)
@@ -2666,28 +2669,45 @@ void draw3_data1(DRAW_UI_P p)
 							draw3_popdown ("None", 1, 0);
 					}
 					break;
-				case 3:/*index Offset P131*/
-					g_sprintf (temp,"%s", con2_p[1][3][1]);
-					/* 设置label */
-					gtk_label_set_text (GTK_LABEL (pp->label3[1]), temp);
-					gtk_widget_modify_bg (pp->eventbox30[1], GTK_STATE_NORMAL, &color_button1);
-					gtk_label_set_text (GTK_LABEL (pp->data3[1]), " ");
-
-					gtk_widget_modify_bg (pp->eventbox31[1], GTK_STATE_NORMAL, &color_button1);
-
-					/* 显示和隐藏控件 */
-					gtk_widget_show (pp->eventbox30[1]);
-					gtk_widget_show (pp->eventbox31[1]);
-					gtk_widget_show (pp->data3[1]);
+				case 3:/* Index Offset P131 TAN1 */
+					if (GROUP_VAL(group_mode) == PA_SCAN)	/* 脉冲回波模式不可以调节 */
+					{
+						gtk_widget_set_sensitive (pp->eventbox30[1], FALSE);
+						gtk_widget_set_sensitive (pp->eventbox31[1], FALSE);
+					}
+					switch (TMP(indexoffset_reg))
+					{
+						case 0:	tmpf = 0.1; break;
+						case 1:	tmpf = 1.0; break;
+						case 2:	tmpf = 5.0; break;
+						default:break;
+					}
+					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
+					{
+						cur_value = GROUP_VAL(index_offset)/10.0;
+						lower = -1000000.0;
+						upper =  9999999.0;
+						step = tmpf;
+						digit = 1;
+						pos = 1;
+						unit = UNIT_MM;
+						draw3_digit_pressed (data_511, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
+					}
+					else 
+					{
+						cur_value =GROUP_VAL(index_offset)/10.0;
+						digit = 1;
+						pos = 1;
+						unit = UNIT_MM;
+						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
+					}
 					break;
-
 				case 4:/*Set Ref P141*/
 					draw3_popdown (NULL, 1, 1);
 					break;
 				default:break;
 			}
 			break;
-
 		case 2:
 			switch (pp->pos1[2])
 			{
@@ -3373,9 +3393,7 @@ void draw3_data1(DRAW_UI_P p)
 
 
 					break;
-
-				case 1:/*probe/part -> position -> Index Offset p511 */
-					/* 当前步进 */
+				case 1:/* Index Offset P511 */
 					switch (TMP(indexoffset_reg))
 					{
 						case 0:	tmpf = 0.1; break;
@@ -3383,7 +3401,6 @@ void draw3_data1(DRAW_UI_P p)
 						case 2:	tmpf = 5.0; break;
 						default:break;
 					}
-
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 					{
 						cur_value = GROUP_VAL(index_offset)/10.0;
@@ -3404,7 +3421,6 @@ void draw3_data1(DRAW_UI_P p)
 						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					}
 					break;
-
 				case 2:/*probe/part -> characterize -> gain P521 */
 					/* 当前步进 */
 					switch (TMP(db_reg))
@@ -3590,7 +3606,7 @@ void draw3_data1(DRAW_UI_P p)
 						default:break;
 					}
 
-					if( GROUP_VAL(law_config)!=1 && CFG(auto_program))
+					if( LAW_VAL(Focal_type)!=1 && CFG(auto_program))
 						/*Law Config 不为linear ,同时auto program 为 on 时，Element Qty 才可调*/
 					{
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
@@ -4058,25 +4074,57 @@ void draw3_data2(DRAW_UI_P p)
 					else 
 						draw3_popdown (menu_content[RECTIFIER + GROUP_VAL(rectifier)], 2, 0);
 					break;
-				case 3:/*Angle (deg.)  p132 */
-					/* 格式化字符串 */
-					if ( (pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2) )
-						g_sprintf (temp,"%s", con2_p[1][3][2]);
-					else 
-						g_sprintf (temp,"%s", con2_p[1][3][2]);
-
-					/* 设置label */
-					gtk_label_set_text (GTK_LABEL (pp->label3[2]), temp);
-					gtk_widget_modify_bg (pp->eventbox30[2], GTK_STATE_NORMAL, &color_button1);
-					gtk_label_set_text (GTK_LABEL (pp->data3[2]), "0.0");
-					gtk_widget_modify_bg (pp->eventbox31[2], GTK_STATE_NORMAL, &color_button1);
-
-					/* 显示和隐藏控件 */
-					gtk_widget_show (pp->eventbox30[2]);
-					gtk_widget_show (pp->eventbox31[2]);
-					gtk_widget_show (pp->data3[2]);
+				case 3:/* Angle (deg.) PA 当前Beam的角度 UT 当前探头的角度  P132 TAN1 */
+					if (GROUP_VAL(group_mode) == PA_SCAN)
+					{
+						gtk_widget_set_sensitive (pp->eventbox30[2], FALSE);
+						gtk_widget_set_sensitive (pp->eventbox31[2], FALSE);
+						/* 计算当前beam的角度 */
+						switch (LAW_VAL(Focal_type))
+						{
+							case ANGLE_SCAN:
+								cur_value = 0.0;break;
+							case LINEAR_SCAN:
+								cur_value = 0.0;break;
+							default:
+								cur_value = 0.0;break;
+						}
+						unit = UNIT_NULL;
+						pos = 2;
+						digit = 1;
+						draw3_digit_stop (cur_value , units[unit], digit, pos, 0);
+					}
+					else if (GROUP_VAL(group_mode) == UT_SCAN)
+					{
+						switch (TMP(angle_reg))
+						{
+							case 0:	tmpf = 1.0; break;
+							case 1:	tmpf = 10.0; break;
+							case 2:	tmpf = 100.0; break;						
+							default:break;
+						}
+						if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 2))
+						{
+								cur_value = LAW_VAL(Angle_start)/100.0 ;
+								lower =	0.0;
+								upper =	89.9;
+								step = tmpf;
+								digit = 1;
+								pos = 2;
+								unit = UNIT_NULL;
+								draw3_digit_pressed (data_132, units[unit], cur_value,
+										lower, upper, step, digit, p, pos, 0);
+						}
+						else 
+						{
+							cur_value = LAW_VAL(Angle_start)/100.0 ;
+							unit = UNIT_NULL;
+							pos = 2;
+							digit = 1;
+							draw3_digit_stop (cur_value , units[unit], digit, pos, 0);
+						}
+					}
 					break;
-
 				case 4:/* dB Ref 开关 P142 */
 					draw3_popdown (menu_content[OFF_ON + GROUP_VAL(db_ref)], 2, 0);
 					break;
@@ -4847,9 +4895,8 @@ void draw3_data2(DRAW_UI_P p)
 
 					break;
 
-				case 1:/*Probe/Part -> position -> skew  p512 */
+				case 1:/* skew angle P512 */
 					pp->x_pos = 588, pp->y_pos = 285-YOFFSET;
-					/* 当前步进 */
 					switch (TMP(skew_reg))
 					{
 						case 0:	tmpf = 1.0; break;
@@ -4857,7 +4904,6 @@ void draw3_data2(DRAW_UI_P p)
 						case 2:	tmpf = 100.0; break;						
 						default:break;
 					}
-
 					if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 2))
 					{
 						if (pp->mark_pop_change)
@@ -4868,7 +4914,7 @@ void draw3_data2(DRAW_UI_P p)
 							step = tmpf;
 							digit = 1;
 							pos = 2;
-							unit = UNIT_NONE;
+							unit = UNIT_NULL;
 							draw3_digit_pressed (data_5121, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 						}
 						else
@@ -4882,13 +4928,12 @@ void draw3_data2(DRAW_UI_P p)
 					else 
 					{
 						cur_value = GROUP_VAL(skew)/100.0 ;
-						unit = UNIT_NONE;
+						unit = UNIT_NULL;
 						pos = 2;
 						digit = 1;
 						draw3_digit_stop (cur_value , units[unit], digit, pos, 0);
 					}
 					break;
-
 				case 2:/*Probe/Part -> Characterize -> start p522 */
 					/* 当前步进 */
 					switch (TMP(agate_start_reg))
@@ -5043,7 +5088,7 @@ void draw3_data2(DRAW_UI_P p)
 						default:break;
 					}
 
-					if (GROUP_VAL(law_config)==1)/*Law Config 为 Linear 时，Last Element可调*/
+					if ( LAW_VAL(Focal_type)==1)/*Law Config 为 Linear 时，Last Element可调*/
 					{
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 						{
@@ -5104,7 +5149,7 @@ void draw3_data2(DRAW_UI_P p)
 						default:break;
 					}
 
-					if( GROUP_VAL(law_config)!=1 && CFG(auto_program))
+					if( LAW_VAL(Focal_type)!=1 && CFG(auto_program))
 						/*Law Config 不为linear ,同时auto program 为 on 时，Element Qty 才可调*/
 					{
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
@@ -5441,23 +5486,24 @@ void draw3_data3(DRAW_UI_P p)
 				case 2: /* Video Filter  P123 TAN1 */
 					draw3_popdown (menu_content[OFF_ON + GROUP_VAL(video_filter)], 3, 0);
 					break;
-				case 3: /* Skew (deg.) */
-					/* 格式化字符串 */
-					g_sprintf (temp,"%s", con2_p[1][3][3]);				
-
-					/* 设置label */
-					gtk_label_set_text (GTK_LABEL (pp->label3[3]), temp);
-					gtk_widget_modify_bg (pp->eventbox30[3], GTK_STATE_NORMAL, &color_button1);
-					gtk_label_set_text (GTK_LABEL (pp->data3[3]), "0.0");
-					gtk_widget_modify_bg (pp->eventbox31[3], GTK_STATE_NORMAL, &color_button1);
-
-					/* 显示和隐藏控件 */
-					gtk_widget_show (pp->eventbox30[3]);
-					gtk_widget_show (pp->eventbox31[3]);
-					gtk_widget_show (pp->data3[3]);
+				case 3: /* Skew (deg.) UT 无 P133 TAN1 */
+					if (GROUP_VAL(group_mode) == UT_SCAN)
+					{
+						gtk_widget_hide (pp->eventbox30[3]);
+						gtk_widget_hide (pp->eventbox31[3]);
+					}
+					else if (GROUP_VAL(group_mode) == PA_SCAN)
+					{
+						gtk_widget_set_sensitive (pp->eventbox30[3], FALSE);
+						gtk_widget_set_sensitive (pp->eventbox31[3], FALSE);
+						cur_value = GROUP_VAL(skew)/100.0 ;
+						unit = UNIT_NULL;
+						pos = 3;
+						digit = 1;
+						draw3_digit_stop (cur_value , units[unit], digit, pos, 0);
+					}
 					break;
-
-				case 4:/* Points Qty.  P143 */
+				case 4:/* Points Qty.  P143 TAN1 */
 					pp->x_pos = 585, pp->y_pos = 371-YOFFSET;
 					switch (TMP(point_qty_reg))
 					{
@@ -6265,7 +6311,7 @@ void draw3_data3(DRAW_UI_P p)
 						default:break;
 					}
 
-					if (GROUP_VAL(law_config)==1)/*Law Config 为 Linear 时，Element Step 可调*/
+					if (LAW_VAL(Focal_type)==1)/*Law Config 为 Linear 时，Element Step 可调*/
 					{
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 						{
@@ -6740,7 +6786,7 @@ void draw3_data4(DRAW_UI_P p)
 						}
 					}
 					break;
-				case 2:/*Averaging  P124 */
+				case 2:/* Averaging  P124 TAN1 */
 					pp->x_pos = 627, pp->y_pos = 458-YOFFSET;
 					if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 4))
 						draw3_pop_tt (data_124, NULL, 
@@ -6749,51 +6795,51 @@ void draw3_data4(DRAW_UI_P p)
 					else 
 						draw3_popdown (menu_content[AVERAGING + GROUP_VAL(averaging)], 4, 0);
 					break;
-
-				case 3:/*Beam Delay  p134 */
-					/* 当前步进 */
-					switch (TMP(beam_delay_reg))
+				case 3:/* Beam Delay 波束延时 UT无 P134 */
+					if (GROUP_VAL(group_mode) == UT_SCAN)
 					{
-						case 0:	tmpf = 0.01; break;
-						case 1:	tmpf = 0.1; break;
-						case 2:	tmpf = 1.0; break;						
-						default:break;
+						gtk_widget_hide (pp->eventbox30[4]);
+						gtk_widget_hide (pp->eventbox31[4]);
 					}
-					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
+					else if (GROUP_VAL(group_mode) == PA_SCAN)
 					{
-						cur_value = BEAM_INFO(0,beam_delay)/1000.0;
-						lower = 1.0;
-						upper = 1000.0;
-						step = tmpf;
-						digit = 2;
-						pos = 4;
-						unit = UNIT_US;
-						draw3_digit_pressed (data_134, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
-					}
-					else 
-					{
-						cur_value = BEAM_INFO(0,beam_delay)/1000.0;
-						digit = 2;
-						pos = 4;
-						unit = UNIT_US;
-						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
+						switch (TMP(beam_delay_reg))
+						{
+							case 0:	tmpf = 0.01; break;
+							case 1:	tmpf = 0.1; break;
+							case 2:	tmpf = 1.0; break;						
+							default:break;
+						}
+						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
+						{
+							cur_value = BEAM_INFO(0,beam_delay)/1000.0;
+							lower = 1.0;
+							upper = 1000.0;
+							step = tmpf;
+							digit = 2;
+							pos = 4;
+							unit = UNIT_US;
+							draw3_digit_pressed (data_134, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
+						}
+						else 
+						{
+							cur_value = BEAM_INFO(0,beam_delay)/1000.0;
+							digit = 2;
+							pos = 4;
+							unit = UNIT_US;
+							draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
+						}
 					}
 					break;
+				case 4:/* Scale Factor P144 OK */
+					gtk_widget_set_sensitive (pp->eventbox30[4], FALSE);
+					gtk_widget_set_sensitive (pp->eventbox31[4], FALSE);
 
-				case 4:/*Scale Factor  p144 */
-					/* 格式化字符串 */
-					g_sprintf (temp,"%s", con2_p[1][4][4]);
-
-					/* 设置label */
-					gtk_label_set_text (GTK_LABEL (pp->label3[4]), temp);
-					gtk_widget_modify_bg (pp->eventbox30[4], GTK_STATE_NORMAL, &color_button1);
-					gtk_label_set_text (GTK_LABEL (pp->data3[4]), "10");
-					gtk_widget_modify_bg (pp->eventbox31[4], GTK_STATE_NORMAL, &color_button1);
-
-					/* 显示和隐藏控件 */
-					gtk_widget_show (pp->eventbox30[4]);
-					gtk_widget_show (pp->eventbox31[4]);
-					gtk_widget_show (pp->data3[4]);
+					cur_value = (GROUP_VAL(range) / 10.0) / GROUP_VAL(point_qty);
+					digit = 0;
+					pos = 4;
+					unit = UNIT_NULL;
+					draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					break;
 				default:break;
 			}
@@ -7719,9 +7765,7 @@ void draw3_data5(DRAW_UI_P p)
 						}
 					}
 					break;
-				case 2:/*Reject  P125 */
-
-					/* 当前步进 */
+				case 2:/* Reject 抑制 P125 TAN1 */
 					switch (TMP(reject_reg))
 					{
 						case 0:	tmpf = 1.0; break;
@@ -7738,7 +7782,8 @@ void draw3_data5(DRAW_UI_P p)
 						digit = 0;
 						pos = 5;
 						unit = UNIT_BFH;
-						draw3_digit_pressed (data_125, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
+						draw3_digit_pressed (data_125, units[unit], cur_value , lower,
+								upper, step, digit, p, pos, 0);
 					}
 					else 
 					{
@@ -7749,44 +7794,46 @@ void draw3_data5(DRAW_UI_P p)
 						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					}
 					break;
-
-
-
-				case 3:/*Gain Offset  135 */
-					/* 当前步进 */
-					switch (TMP(gain_offset_reg))
+				case 3:/* Gain Offset UT 无 P135 */
+					if (GROUP_VAL(group_mode) == UT_SCAN)
 					{
-						case 0:	tmpf = 0.1; break;
-						case 1:	tmpf = 0.5; break;
-						case 2:	tmpf = 1.0; break; 
-						case 3:	tmpf = 2.0; break;
-						case 4:	tmpf = 6.0; break;                                              				
-						default:break;
+						gtk_widget_hide (pp->eventbox30[5]);
+						gtk_widget_hide (pp->eventbox31[5]);
 					}
-					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 5))
+					else if (GROUP_VAL(group_mode) == PA_SCAN) 
 					{
-						cur_value = GROUP_VAL(gain_offset)/10.0;
-						lower = 1.0;
-						upper = 74.0;
-						step = tmpf;
-						digit = 1;
-						pos = 5;
-						unit = UNIT_DB;
-						draw3_digit_pressed (data_135, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
-					}
-					else 
-					{
-						cur_value = GROUP_VAL(gain_offset)/10.0;
-						digit = 1;
-						pos = 5;
-						unit = UNIT_DB;
-						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
+						switch (TMP(gain_offset_reg))
+						{
+							case 0:	tmpf = 0.1; break;
+							case 1:	tmpf = 0.5; break;
+							case 2:	tmpf = 1.0; break; 
+							case 3:	tmpf = 2.0; break;
+							case 4:	tmpf = 6.0; break;                                              				
+							default:break;
+						}
+						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 5))
+						{
+							cur_value = GROUP_VAL(gain_offset)/10.0;
+							lower = 1.0;
+							upper = 74.0;
+							step = tmpf;
+							digit = 1;
+							pos = 5;
+							unit = UNIT_DB;
+							draw3_digit_pressed (data_135, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
+						}
+						else 
+						{
+							cur_value = GROUP_VAL(gain_offset)/10.0;
+							digit = 1;
+							pos = 5;
+							unit = UNIT_DB;
+							draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
+						}
 					}
 					break;
-
-				case 4:/*Sum Gain   P145 */
+				case 4:/* Sum Gain  P145 */
 					pp->x_pos = 587, pp->y_pos = 543-YOFFSET;
-					/* 当前步进 */
 					switch (TMP(sum_gain_reg))
 					{
 						case 0:	tmpf = 0.1; break;
@@ -7796,7 +7843,6 @@ void draw3_data5(DRAW_UI_P p)
 						case 4:	tmpf = 6.0; break;						
 						default:break;
 					}
-
 					if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 5))
 					{
 						if (pp->mark_pop_change)
@@ -7828,12 +7874,10 @@ void draw3_data5(DRAW_UI_P p)
 										str, menu_content + SUM_GAIN, 2, 5, GROUP_VAL(sum_gain_pos), 0);
 								g_free(str);
 							}
-
 						}
 					}
 					else 
 					{
-
 						if (!GROUP_VAL(sum_gain_pos))
 						{
 							str = g_strdup_printf ("%s %0.1f", 
@@ -7849,7 +7893,6 @@ void draw3_data5(DRAW_UI_P p)
 							digit = 1;
 							draw3_digit_stop (cur_value , units[unit], digit, pos, 0);
 						}
-
 					}
 					break;
 				default:break;
@@ -8746,7 +8789,7 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 
 
 
-	/*二级菜单的初始化*/
+	/* 二级菜单的初始化 */
 	for (i = 0; i < 5; i++) 
 	{
 		p->eventbox2[i] = gtk_event_box_new();
@@ -8965,9 +9008,7 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 
 	gtk_widget_show_all (pp->hbox1);   /* 上方显示信息  */
 
-
 	/* 画图区域及各button */
-
 	gtk_box_pack_start (GTK_BOX (p->hbox2), p->vbox21, FALSE, FALSE, 0);
 	gtk_box_pack_start (GTK_BOX (p->hbox2), p->vbox22, FALSE, FALSE, 0);
 	gtk_widget_show(p->vbox21);
@@ -8983,7 +9024,6 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 
 	draw_area_all ();
 	gtk_widget_show_all (p->hbox2); /* 画图区域 及 button 的显示 */
-
 
 	/* 弹出菜单 是否透明 waiting */
 	pp->dialog = gtk_dialog_new_with_buttons("TanDenghua", GTK_WINDOW (pp->window),

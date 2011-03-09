@@ -161,7 +161,7 @@ typedef struct law_info
 	guchar	Last_rx_elem;		/* 法则使用的最后一个接收阵元 */
 	guchar	Elem_step;		/* 线扫时候可以设置阵元间隔 */
 	guchar	Velocity_type;		/* 纵波 或者 横波 */
-	gshort	Angle_start;
+	gshort	Angle_start;	/* PA 时候是开始角度 UT时候记录探头角度 */
 	gshort	Angle_end;		/* 扇扫时候可以设置的角度 0.01度为单位 */
 	gushort	Angle_step;		/* 扇扫时候可以设置的角度步进 */
 	guint	Focus_depth;		/* 扇扫时候为声程 线扫是深度 0.001mm为单位 */
@@ -270,8 +270,8 @@ typedef struct Group {
 	guint	prf;			/* 重复频率 1-20000Hz 取值为10~200000 */
 
 	guchar	point_qty_pos;		/* 点个数 位置 */
-	guchar	sum_gain_pos;
-	guchar  gate_pos;               /* A , B , I*/
+	guchar	sum_gain_pos;		/**/
+	guchar  gate_pos;           /* A , B , I*/
 	gushort	point_qty;			/* 点个数 */
 	gushort	sum_gain;
 	gushort	gain_offset;
@@ -325,7 +325,7 @@ typedef struct Group {
 	gint	agate_start;
 	guint	agate_width;
 
-	guchar  law_config;                     /* 聚焦模式 扇扫 线扫etc */
+//	guchar  law_config;                     /* 聚焦模式 扇扫 线扫etc */
 	guchar  element_qty;
 	guchar  first_element;                  /* 第一个阵元 */
 	guchar  last_element;                   /* 最后一个阵元 (线扫时候可以设置) */
@@ -336,9 +336,6 @@ typedef struct Group {
 	gshort   max_angle;
 	gshort	 angle_step;
 	gushort  focus_depth;                    /*Focal Law -> Beam -> focus_depth*/
-
-
-
 
 } GROUP, *GROUP_P;
 
@@ -577,6 +574,7 @@ typedef struct tmp_config {
 
 	guchar  point_qty_reg;           /*Points Qty 步进*/
 	guchar	sum_gain_reg;           /*Sum Gain 步进*/
+	guchar	angle_reg;
 	guchar	skew_reg;
 
 	guchar	gate_width_reg;        /* */

@@ -40,10 +40,9 @@ static void set_config (guint groupid)
 	CFG(group_pos)	= 1;
 	GROUP_VAL(group_mode) =0;
 	CFG(probe_select)=0;
-	CFG(auto_detect)=0;
-	GROUP_VAL(scan_offset)=10;
-	GROUP_VAL(index_offset)=10;
-	GROUP_VAL(skew)=100;
+	GROUP_VAL(scan_offset)=0;
+	GROUP_VAL(index_offset)=0;
+	GROUP_VAL(skew)=0;
 	GROUP_VAL(agate_start)=1000;
 	GROUP_VAL(agate_width)=1000;
 	CFG(part.Thickness)=100.0;
@@ -171,7 +170,8 @@ static void set_config (guint groupid)
 	CFG(fft_color)=0;/* 0 Yellow*/
 
 	/* focal law */
-	GROUP_VAL(law_config)=0;
+	LAW_VAL(Focal_type)	= ANGLE_SCAN;
+
 	GROUP_VAL(element_qty)=1;
 	GROUP_VAL(first_element)=1;
 	GROUP_VAL(last_element)=1;

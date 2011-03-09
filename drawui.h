@@ -1,6 +1,6 @@
 
 /*345678901234567890123456789012345678901234567890123456789012345678901234567890
- *		10		  20		30		  40		50		  60		70		  80
+ *      10        20        30        40        50        60        70        80
  */
 
 #ifndef	__DRAW_UI_H_
@@ -50,12 +50,10 @@
 #define	PULSE_ECHO		1
 #define	THROUGH_TRAN	2
 #define TOFD			3
-
 /* 电压 P113 */
 #define VOLTAGE_HIGH
 #define VOLTAGE_MID
 #define VOLTAGE_LOW
-
 /* 检波 P122 */
 #define RF_WAVE			0
 #define POSITIVE_WAVE	1
@@ -74,12 +72,9 @@
 #define GATE_II       1
 #define GATE_AA	      2
 
-
-
-
 /* focal law 类型 定义*/
-#define LINEAR_SCAN	0
-#define	ANGLE_SCAN	1
+#define	ANGLE_SCAN	0
+#define LINEAR_SCAN	1
 
 /* 各种数值定义 */
 #define A_SCAN	     0
@@ -94,7 +89,6 @@
 #define PA_TOFD	         9
 #define Strip_Chart_AA	 10
 
-
 #define GAIN_MAX	80.0
 #define GAINR_OFF	0
 #define GAINR_ON	1
@@ -106,12 +100,9 @@
 #define VOL_LOW		0
 #define VOL_HIGH	1
 
-
-
 /*上方数值显示信息定义 */
 #define GAIN_LABEL	0
 #define GAIN_VALUE	1
-
 
 /* 最大测量范围  扫描延时+扫描范围 */
 #define MAX_RANGE_US	9899.89
@@ -212,8 +203,6 @@
 #define ASSIGN_K_P	(ASSIGN_K + 16)
 #define MOUSE		(ASSIGN_K_P + 5)
 
-
-
 /* 按键是由那个window发出 */
 #define MENU_POP		0
 #define MENU_DOWN		1
@@ -221,8 +210,6 @@
 
 /*  */
 #define UT_CHANNEL	3
-
-
 
 /* 发送给硬件数据类型 */
 #define BEAM_DELAY_DSP	0x1000	/* 0x1000~0x10ff 最多256个聚焦法则 */
@@ -269,8 +256,6 @@
 #define MODE_POS_DSP		0x3023
 #define CURVE_POS_DSP		0x3024
 #define POINT_POS_DSP		0x3025
-
-
 
 extern gint (*window_keypress_event_orig)(GtkWidget *widget, GdkEventKey *event);
 extern gint my_keypress_event(GtkWidget *widget, GdkEventKey *event);

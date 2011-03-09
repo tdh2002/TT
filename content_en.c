@@ -114,7 +114,7 @@ static const gchar *content_en212[] = {
 
 static const gchar *content_en213[] = {
 	/* 二级菜单第1页下的第3页三级菜单 */
-	"Scan Offset", "Index Offset", "Angle(deg.)", "Skew(deg.)", "Beam Delay", "Gain Offset"
+	"Scan Offset", "Index Offset", "Angle(°)", "Skew(°)", "Beam Delay", "Gain Offset"
 };
 
 static const gchar *content_en214[] = {
@@ -217,7 +217,7 @@ static const gchar *content_en250[] = {
 
 static const gchar *content_en251[] = {
 	/* 二级菜单第5页下的第1页三级菜单 */
-	"  Scan Offset  ","  Index Offset  ", "  Skew(deg.) ", NULL ,NULL, NULL
+	"  Scan Offset  ","  Index Offset  ", "  Skew(°) ", NULL ,NULL, NULL
 };
 
 static const gchar *content_en252[] = {
@@ -349,9 +349,8 @@ static const gchar *content_en293[] = {
 static const gchar *content_en294[] = {
 	/* 二级菜单第9页下的第4页三级菜单 */
 	/*"  DHCP  ","  IP Address  ", "  Subnet Mask ","  Apply  ", "  Remote Pc  ", "  Connect  "*/
-	"  IP Address  ", "  Subnet Mask ", "  Apply  ", NULL,NULL,NULL
+	"  IP Address  ", "  Subnet Mask ", "  Apply  ", NULL, NULL, NULL
 };
-
 
 const gchar **content1_en[] = 
 {
@@ -370,16 +369,19 @@ static const gchar **content2_en7[] = {	content_en270,	content_en271,	content_en
 static const gchar **content2_en8[] = {	content_en280,	content_en281,	content_en282,	content_en283,	content_en284 };
 static const gchar **content2_en9[] = {	content_en290,	content_en291,	content_en292,	content_en293,	content_en294 };
 
-
 const gchar ***content2_en[] = 
 {
 	content2_en0,	content2_en1,	content2_en2,	content2_en3,	content2_en4,
 	content2_en5,	content2_en6,	content2_en7,	content2_en8,	content2_en9
 };
 
-
 /* 0mm 1英寸 2微秒  */
-const gchar *units_en[] = {"(mm)", "(in)", "(μs)", NULL, "(m/s)", "(in/μs)", "(dB)", "(1 to 97)", "(%)", "(ms)", "(mm/s)", "(1 to 113)", "(dB/mm)", "(s)","(deg)","(Step/mm)", "(rpm)", " "};
+const gchar *units_en[] = 
+{
+	"(mm)", "(in)", "(μs)", NULL, "(m/s)", "(in/μs)", "(dB)", 
+	"(1 to 97)", "(%)", "(ms)", "(mm/s)", "(1 to 113)", "(dB/mm)",
+	"(s)", "(°)", "(Step/mm)", "(rpm)", " "
+};
 
 const gchar *all_menu_content_en[] = 
 {
@@ -387,15 +389,15 @@ const gchar *all_menu_content_en[] =
 	"PC", "PE", "TT", "TOFD",								/* 4 tx_rxmode */
 	"1","1.5","2","2.25","3.5","4","5","7.5","10","12","15","20","UserDef","",	/* 8 frequence */
 	"50 Low", "100 Middle", "200 High",						/* 22 */
-	"50","100","200",								/* 25 */
+	"50", "100", "200",								/* 25 */
 	"50 Low", "100 High",								/* 28 Voltage  */
-	"Auto","UserDef",								/* 30 PW       */	
+	"Auto", "UserDef",								/* 30 PW       */	
 	"Auto Max", "Max/2", "Optimum","UserDef",					/* 32 PRF      */
 	"None  0.5-21.0 MHz", "Auto", "1 MHz", "1.5MHz", "2MHz", 
 	"2.25MHz", "4MHz", "5MHz", "7.5MHz", "10MHz", "12MHz", 
 	"15MHz", "20MHz", "HR", "HR 10 MHz", "None",					/* 36 filter   */
 	"RF", "HW+", "HW-", "FW",							/* 52 rectifier*/
-	"1","2","4","8","16",								/* 56 averaging*/
+	"1", "2", "4", "8", "16",								/* 56 averaging*/
 	"Off", "On",									/* 61 db_ref   */
 	"Auto", "160", "320", "640", "UserDef",						/* 63 points_qty*/
 	"Auto", "UserDef",								/* 68 sum_gain  */
@@ -520,9 +522,9 @@ const gchar *type_en[] = {"Encoder", "Ultrasound", "Code"};
 const gchar *calibration_mode_en[] = {"Velocity", "Wedge Delay", "Sensitivity", "TCG"};
 
 /*  3  */
-const gchar *list_en[] = {"1 Manual Weld 1: A%. DA^. PA^. SA^", "2 Auto. Weld 1: A%. DA^. ViA^. VsA^"};
-const gchar *list1_en[] = {"1", "2"};
-const gchar *field1_en[] = {"A%  Peak amplitude in gate A", "AdBA  Signal in gate minus gate level for gate A", "AdBr  Diff.between signal and reference in gate A","B%  Peak amplitude in gate B"};
-const gchar *field_en[] = {"A%", "AdBA", "AdBr","B%"};
+const gchar *list_en[]		= {"1 Manual Weld 1: A%. DA^. PA^. SA^", "2 Auto. Weld 1: A%. DA^. ViA^. VsA^"};
+const gchar *list1_en[]		= {"1", "2"};
+const gchar *field1_en[]	= {"A%  Peak amplitude in gate A", "AdBA  Signal in gate minus gate level for gate A", "AdBr  Diff.between signal and reference in gate A","B%  Peak amplitude in gate B"};
+const gchar *field_en[]		= {"A%", "AdBA", "AdBr", "B%"};
 //const gchar *selection_en[] = {"A-scan", "B-scan", "C-scan", "Strip Chart", "S-scan", "R and M", "Reference", "Measure", "Data"};
 //const gchar *source_en[] = {"A^", "A^-I^", "A^-I/", "B^", "B^-I^", "B^-I/", "B^-A^", "I^", "I/"};
