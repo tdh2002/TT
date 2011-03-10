@@ -114,8 +114,8 @@
 
 /* 各个menu 弹出菜单的偏移量 */
 #define TX_RX_MODE	0
-#define FREQUENCE	(TX_RX_MODE + 8)
-#define VOLTAGE		(FREQUENCE + 14)
+#define FREQUENCY	(TX_RX_MODE + 8)
+#define VOLTAGE		(FREQUENCY + 14)
 #define PULSER_WIDTH	(VOLTAGE + 8)
 #define PRF		(PULSER_WIDTH + 2)
 #define FILTER		(PRF + 4)
@@ -222,7 +222,7 @@
 #define GATEB_DSP		0x3001
 #define GATEI_DSP		0x3002
 #define TX_RX_MODE_DSP		0x3003
-#define FREQUENCE_DSP		0x3004
+#define FREQUENCY_DSP		0x3004
 #define	VOLTAGE_DSP		0x3005
 #define PW_DSP			0x3006
 #define PRF_DSP			0x3007

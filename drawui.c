@@ -404,9 +404,9 @@ static void da_call_probe (GtkDialog *dialog, gint response_id, gpointer user_da
 				file_path = g_strdup_printf ("%s%s/%s", UT_PROBE_PATH, pp->p_type, value);
 			
 			read_probe_file (file_path, &GROUP_VAL(probe));
-			GROUP_VAL (frequence) = GROUP_VAL(probe.Frequency);				/* 频率 */
+			GROUP_VAL (frequency) = GROUP_VAL(probe.Frequency);				/* 频率 */
 			if (!GROUP_VAL(pw_pos))
-				GROUP_VAL(pulser_width) = GROUP_VAL(frequence) * 2.0; /* 改变脉冲宽度 */
+				GROUP_VAL(pulser_width) = GROUP_VAL(frequency) * 2.0; /* 改变脉冲宽度 */
 			g_free (file_path);
 			gtk_label_set_text (GTK_LABEL (pp->data3[3]), GROUP_VAL(probe.Model));
 
@@ -738,7 +738,7 @@ static gchar* get_wedge_info(const gchar *file_path)
 				wedge_info = g_strdup_printf ("Model:%s           Angle:%.1f°\nWave Type:%s      Probe Delay:%.2f mm\nReference Point:%.3f mm",
 						w1.Model, w1.Angle/10.0, (w1.Wave_type == 2) ? "Shear" : "Longitudinal", (w1.Probe_delay / 1000.0) * (GROUP_VAL(velocity) / 1000.0) / 200.0, w1.Ref_point / 1000.0 );
 			else if (GROUP_VAL(group_mode) == PA_SCAN)
-				wedge_info = g_strdup_printf ("Model:%s         Angle:%.1f°\nOrientation:%s      Height:%.3f mm\n Velocity:%.4f m/s   Primary Offset:-%.3f mm\nSecondary Offset:%.3f mm",
+				wedge_info = g_strdup_printf ("Model:%s         Angle:%.1f°\nOrientation:%s      Height:%.3f mm\n Velocity:%.4f m/s   Primary Offset:%.3f mm\nSecondary Offset:%.3f mm",
 						w1.Model, w1.Angle/10.0, (w1.Orientation == 1) ? "Normal" : "reversal", w1.Height/1000.0, w1.Velocity_PA / 1000.0, w1.Primary_offset/1000.0, w1.Secondary_offset/1000.0 );
 			break;
 		default:break;
@@ -1954,8 +1954,8 @@ void draw3_data0(DRAW_UI_P p)
 		case 2:
 			switch (pp->pos1[2])
 			{
-				case 0:/* Gate 选择调节哪个闸门 P200 */
-					pp->x_pos = 630, pp->y_pos = 119-YOFFSET;
+				case 0:/* Gate 选择调节哪个闸门 P200 TAN1 */
+					pp->x_pos = 630, pp->y_pos = 119 - YOFFSET;
 					if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 0))
 						draw3_pop_tt (data_200, NULL, 
 								menu_content[GATE_POS + GROUP_VAL(gate_pos)],
@@ -1963,8 +1963,7 @@ void draw3_data0(DRAW_UI_P p)
 					else 
 						draw3_popdown (menu_content[GATE_POS + GROUP_VAL(gate_pos)], 0, 0);
 					break;
-
-				case 1:/* Alarm 选择那个报警项 P210 */
+				case 1:/* Alarm 选择哪个报警项 P210 */
 					pp->x_pos = 624, pp->y_pos = 119-YOFFSET;
 
 					if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 0))
@@ -2771,16 +2770,15 @@ void draw3_data1(DRAW_UI_P p)
 		case 2:
 			switch (pp->pos1[2])
 			{
-				case 0:/* Gate->Parameters 选择 Mode还是Position  P201 */
-					pp->x_pos = 584, pp->y_pos = 203-YOFFSET;
+				case 0:/* 闸门调节 Mode还是Position  P201 TAN1 */
+					pp->x_pos = 584, pp->y_pos = 203 - YOFFSET;
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
-						draw3_pop_tt (data_201, NULL, 
+						draw3_pop_tt(data_201, NULL, 
 								menu_content[PARAMETERS + GROUP_GATE_POS(parameters)],
 								menu_content + PARAMETERS, 2, 1, GROUP_GATE_POS(parameters), 0);
 					else 
-						draw3_popdown (menu_content[PARAMETERS + GROUP_GATE_POS(parameters)], 1, 0);
+						draw3_popdown(menu_content[PARAMETERS + GROUP_GATE_POS(parameters)], 1, 0);
 					break;
-
 				case 1:/* Gate -> Alarm -> Group A P211 */
 					pp->x_pos = 632, pp->y_pos = 201-YOFFSET;
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
@@ -3226,7 +3224,7 @@ void draw3_data1(DRAW_UI_P p)
 					}
 					break;
 
-				case 1:/*Display -> Overlay -> grid  p411 */
+				case 1:/*Display -> Overlay -> grid P411 */
 					pp->x_pos = 599, pp->y_pos = 201-YOFFSET;
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 						draw3_pop_tt (data_411, NULL, 
@@ -4084,7 +4082,7 @@ void draw3_data2(DRAW_UI_P p)
 					break;
 				case 1: /* Freq频带(Mhz)  P112 TAN1 */
 					pp->x_pos = 587, pp->y_pos = 288-YOFFSET;	
-					switch (TMP(frequence_reg))
+					switch (TMP(frequency_reg))
 					{
 						case 0:	tmpf = 0.01;	break;
 						case 1:	tmpf = 0.1;		break;
@@ -4102,7 +4100,7 @@ void draw3_data2(DRAW_UI_P p)
 					{
 						if (pp->mark_pop_change)
 						{
-							cur_value = GROUP_VAL(frequence) / 1000.0;
+							cur_value = GROUP_VAL(frequency) / 1000.0;
 							lower =	1.0;
 							upper =	20.0;
 							step = tmpf;
@@ -4114,15 +4112,15 @@ void draw3_data2(DRAW_UI_P p)
 						}
 						else
 						{
-							str = g_strdup_printf ("%0.2f", GROUP_VAL(frequence) / 1000.0);
+							str = g_strdup_printf ("%0.2f", GROUP_VAL(frequency) / 1000.0);
 							draw3_pop_tt (data_112, NULL, str,
-									menu_content + FREQUENCE, 13, 2, GROUP_VAL(freq_pos), 0);
+									menu_content + FREQUENCY, 13, 2, GROUP_VAL(freq_pos), 0);
 							g_free (str);
 						}
 					}
 					else 
 					{
-						cur_value = GROUP_VAL(frequence) / 1000.0;
+						cur_value = GROUP_VAL(frequency) / 1000.0;
 						unit = UNIT_NULL;
 						pos = 2;
 						digit = 2;
@@ -4198,12 +4196,11 @@ void draw3_data2(DRAW_UI_P p)
 		case 2:
 			switch (pp->pos1[2])
 			{
-				case 0:/* 闸门起点 或者 同步模式 P202 */
-					pp->x_pos = 608, pp->y_pos = 295;
+				case 0:/* 闸门起点 或者 同步模式 P202 TAN1 */
+					pp->x_pos = 608, pp->y_pos = 295 - YOFFSET;
 					if (GROUP_GATE_POS(parameters) == 0) /* 闸门起点 */
 					{
-						/* 当前步进 */
-						switch (pp->p_tmp_config->agate_start_reg)
+						switch (TMP(agate_start_reg))
 						{
 							case 0:	tmpf = (GROUP_VAL(range) / 1000.0) / 320.0; break;
 							case 1:	tmpf = (GROUP_VAL(range) / 1000.0) / 20.0 ; break;
@@ -4239,7 +4236,6 @@ void draw3_data2(DRAW_UI_P p)
 							else 
 							{
 								cur_value = GROUP_GATE_POS(start) / 1000.0 ;
-								//lower =	CFG(beam_delay) / 1000.0;
 								lower =	BEAM_INFO(0,beam_delay) / 1000.0;
 								upper =	(MAX_RANGE_US - GROUP_GATE_POS(width) / 1000.0);
 								step = tmpf;
@@ -4247,7 +4243,6 @@ void draw3_data2(DRAW_UI_P p)
 								pos = 2;
 								unit = UNIT_US;
 							}
-
 							draw3_digit_pressed (data_202, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 						}
 						else 
@@ -4281,27 +4276,25 @@ void draw3_data2(DRAW_UI_P p)
 					}
 					else  /* 同步模式 */
 					{
-
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 						{
 							if (GROUP_VAL(gate_pos) != GATE_B) /* 闸门选择B时候 有3个同步选项 */
-							{
-								draw3_pop_tt (data_2021, NULL, menu_content[SYNCHRO + GROUP_GATE_POS(synchro)],menu_content + SYNCHRO, 2, 2, GROUP_GATE_POS(synchro), 0);
-							}
+								draw3_pop_tt (data_2021, NULL,
+										menu_content[SYNCHRO + GROUP_GATE_POS(synchro)],
+										menu_content + SYNCHRO, 2, 2, GROUP_GATE_POS(synchro), 0);
 							else
-							{
-								draw3_pop_tt (data_2021, NULL, menu_content[SYNCHRO + GROUP_GATE_POS(synchro)],menu_content + SYNCHRO, 3, 2, GROUP_GATE_POS(synchro), 0);
-							}
+								draw3_pop_tt (data_2021, NULL, 
+										menu_content[SYNCHRO + GROUP_GATE_POS(synchro)],
+										menu_content + SYNCHRO, 3, 2, GROUP_GATE_POS(synchro), 0);
 						}
 						else 
-						{
 							draw3_popdown (menu_content[SYNCHRO +GROUP_GATE_POS(synchro)], 2, 0);
-						}
 						str = g_strdup_printf ("%s", con2_p[2][0][6]);	
 						gtk_label_set_text (GTK_LABEL (pp->label3[2]), str);
+						if (str)
+							g_free (str);
 					}
 					break;
-
 				case 1:/* Condition GroupA P212 */
 					pp->x_pos = 535, pp->y_pos = 285-YOFFSET;
 					if ((CFG_ALARM_POS(groupa) == CFG_ALARM_POS(groupb)) &&
@@ -5621,11 +5614,10 @@ void draw3_data3(DRAW_UI_P p)
 		case 2:
 			switch (p->pos1[2])
 			{
-				case 0:/* 闸门宽度 P203 */
-					pp->x_pos = 580, pp->y_pos = 380;
+				case 0:/* 闸门宽度 或者 测量(Measure) P203 TAN1 */
+					pp->x_pos = 580, pp->y_pos = 380 - YOFFSET;
 					if (GROUP_GATE_POS(parameters) == 0)
 					{
-						/* 当前步进 */
 						switch (pp->p_tmp_config->gate_width_reg)
 						{
 							case 0:	tmpf = 3.2; break;
@@ -5706,7 +5698,9 @@ void draw3_data3(DRAW_UI_P p)
 					{
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 						{
-							draw3_pop_tt (data_2031, NULL, menu_content[MEASURE + GROUP_GATE_POS(measure)],	menu_content + MEASURE, 2, 3, GROUP_GATE_POS(measure), 0);
+							draw3_pop_tt (data_2031, NULL,
+									menu_content[MEASURE + GROUP_GATE_POS(measure)],	
+									menu_content + MEASURE, 2, 3, GROUP_GATE_POS(measure), 0);
 							str = g_strdup_printf ("%s", con2_p[2][0][7]);	
 							gtk_label_set_text (GTK_LABEL (pp->label3[3]), str);
 						}
@@ -5716,9 +5710,10 @@ void draw3_data3(DRAW_UI_P p)
 							str = g_strdup_printf ("%s", con2_p[2][0][7]);	
 							gtk_label_set_text (GTK_LABEL (pp->label3[3]), str);
 						}
+						if (str)
+							g_free(str);
 					}
 					break;
-
 				case 1:/*Operator  P213*/
 					pp->x_pos = 609, pp->y_pos = 371-YOFFSET;
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
@@ -6911,11 +6906,10 @@ void draw3_data4(DRAW_UI_P p)
 		case 2:
 			switch (pp->pos1[2])
 			{
-				case 0:/* 闸门高度 P204 */
+				case 0:/* 闸门高度 或者 RF P204 TAN1 */
 					pp->x_pos = 590, pp->y_pos = 470;
-					if(GROUP_GATE_POS(parameters)==0)
+					if (GROUP_GATE_POS(parameters) == 0)
 					{
-						/* 当前步进 */
 						switch (TMP(agate_height_reg))
 						{
 							case 0:	tmpf = 1.0; break;
@@ -6931,7 +6925,8 @@ void draw3_data4(DRAW_UI_P p)
 							digit = 0;
 							pos = 4;
 							unit = UNIT_BFH;
-							draw3_digit_pressed (data_204, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
+							draw3_digit_pressed (data_204, units[unit], cur_value,
+									lower, upper, step, digit, p, pos, 0);
 						}
 						else 
 						{
@@ -6944,6 +6939,11 @@ void draw3_data4(DRAW_UI_P p)
 					}
 					else
 					{
+						if (GROUP_VAL(rectifier) == 0)
+						{
+							gtk_widget_set_sensitive(pp->eventbox30[4],FALSE);
+							gtk_widget_set_sensitive(pp->eventbox31[4],FALSE);
+						}
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
 						{
 							draw3_pop_tt (data_2041, NULL, menu_content[RECTIFIER_FREQ + GROUP_GATE_POS(rectifier_freq)],menu_content + RECTIFIER_FREQ, 3, 4, GROUP_GATE_POS(rectifier_freq), 0);
@@ -6956,9 +6956,10 @@ void draw3_data4(DRAW_UI_P p)
 							str = g_strdup_printf ("%s", con2_p[2][0][8]);	
 							gtk_label_set_text (GTK_LABEL (pp->label3[4]), str);
 						}
+						if (str)
+							g_free(str);
 					}
 					break;
-
 				case 1:/*Group B   p214 */
 					pp->x_pos = 632, pp->y_pos = 456-YOFFSET;
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))

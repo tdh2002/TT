@@ -33,6 +33,8 @@
 #define TRUE_DEPTH	ARM_DEPTH
 #endif
 
+#define GATE_MAX_QTY	3
+
 extern GdkColor	color_black;
 extern GdkColor	color_black1;
 extern GdkColor	color_white;
@@ -243,7 +245,7 @@ typedef struct Part {
 /* 组信息 */
 typedef struct Group {
 	/* 基本设置 */
-	guint	wedge_delay;		/* 楔款延时 单位 ns */
+	guint	wedge_delay;	/* 楔款延时 单位 ns */
 	guint	range;			/* 显示范围 单位 ns */
 	gint	start;			/* 扫描延时 单位 ns */
 	gushort	gain;			/* 实际增益 单位 0.01dB */
@@ -258,27 +260,28 @@ typedef struct Group {
 	guchar	filter;			/* 滤波 */
 	guchar	rectifier;		/* 检波  */
 	guchar	averaging;		/* 平均 */
-	guchar	video_filter;           /* 视频滤波*/
+	guchar	video_filter;	/* 视频滤波*/
 
 	guchar  tx_rxmode;		/* 收发模式 */
 	guchar	freq_pos;		/* 频率选择模式是指定还是自己输入 */
 	guchar	pw_pos;			/* 脉冲宽度选择模式 */
 	guchar	prf_pos;		/* 脉冲宽度选择模式 */
-	gushort	frequence;		/* 以0.001Mhz 也就是Khz 1MHz~20MHz 为单位 当探头学选unknown 时候才可以调节 */
-	gushort	pulser_width;	        /* 30~500ns 2.5ns为步进*/
+	gushort	frequency;		/* 以0.001Mhz 也就是Khz 1MHz~20MHz 为单位 当探头学选unknown 时候才可以调节 */
+	gushort	pulser_width;	/* 30~500ns 2.5ns为步进*/
 
 	guint	prf;			/* 重复频率 1-20000Hz 取值为10~200000 */
 
-	guchar	point_qty_pos;		/* 点个数 位置 */
-	guchar	sum_gain_pos;		/**/
-	guchar  gate_pos;           /* A , B , I*/
-	gushort	point_qty;			/* 点个数 */
+	guchar	point_qty_pos;	/* 点个数 位置 */
+	guchar	sum_gain_pos;	/**/
+	guchar  gate_pos;		/* A , B , I 当前修改的是哪个闸门 */
+	gushort	point_qty;		/* 点个数 */
 	gushort	sum_gain;
 	gushort	gain_offset;
-	GATE_INFO    gate[setup_MAX_GATE];        /* gate[0] A , gate[1] B , gate[2] I */
 
-	guchar	mode_pos;                            /*Gate/Alarm->Sizing Curves->Mode*/
-	guchar	curve_pos;                           /*Gate/Alarm->Sizing Curves->Curve*/
+	GATE_INFO    gate[GATE_MAX_QTY];        /* gate[0] A , gate[1] B , gate[2] I */
+
+	guchar	mode_pos;			/*Gate/Alarm->Sizing Curves->Mode*/
+	guchar	curve_pos;			/*Gate/Alarm->Sizing Curves->Curve*/
 	gushort ref_ampl;
 	gushort ref_ampl_offset;
 	gushort curve_step;
@@ -298,7 +301,7 @@ typedef struct Group {
 	WEDGE	     wedge;
 
 	guchar		selection;
-	gushort     	per_reference;       /* 参考光标的高度 */
+	gushort    	per_reference;       /* 参考光标的高度 */
 	gushort		per_measure;         /* 测量光标的高度 */
 	guint           u_reference;         /* 参考光标在超声轴的位置 */
 	guint           u_measure;	     /* 测量光标在超声轴的位置 */
@@ -347,48 +350,23 @@ typedef	struct Config {
 	guchar	voltage_pa;			/*  */
 	guchar	voltage_ut;	
 	guchar	language;			/* 语言 */
-	GROUP	group[4];			/* 前3个都接前面的128的接口 第四个是常规通道结单独的UT接口 */
+	GROUP	group[4];			/* 前3个都接前面的128的接口 */
 	/* 基本参数 */
 	PART	part;				/* 被检测工件... */
 	/* 所有聚焦法则的信息在这里 */
 	LAW_BEAM	focal_law_all_beam[setup_MAX_LAW_QTY];
 	LAW_ELEM	focal_law_all_elem[setup_MAX_LAW_QTY][setup_MAX_ELEM_RX_ACTIVE];	
 	/*  */
-	/*接收*/
-	//	guchar	rectifier;		/*  */
-	//	guchar	video_filter;	        /*  */
-	//	guchar	averaging;		/*  */
-	guchar	reject;		        /*  */
+	guchar	reject;		        /* 抑制 */
+	guchar	auto_height;		/* 自动增益高度*/
 
-	/*波束 beam*/
-	gint	scan_offset;		/**/
-	gint	index_offset;		/**/
-	gint	angle;				/**/
-	gint	skew;				/**/
-
-	/*高级*/
-	guint	auto_height;	/**/
-	//	gushort	point_qty;		/**/
-	//	gushort	sum_gain;		/**/
-
-	/*闸门报警 */
-	gint	agate_start;
-	guint	agate_width;
-
-	guchar	alarm_pos;                 /* 报警信息 0~15 */
-	//guchar	alarm_on_pos;              /* 报警信息 0~15 */
-	ALARM_INFO	alarm[16];         /* alarm[0], alarm[1], ..., alarm[15] */
+	guchar	alarm_pos;          /* 报警信息 0~15 */
+	ALARM_INFO	alarm[16];		/* alarm[0], alarm[1], ..., alarm[15] */
 
 	guchar  output_pos;                /* 0~5 */
 	OUTPUT_INFO  output[3];           /* 输出信息 output[0],output[1],output[2] */
 	ANALOG_INFO  analog[2];           /* Analog 2 个 */
 	//guchar alarm_on[16];  		  /*alarm#中的选项后面是否加[On] 0否 1是*/
-
-	/*测量*/
-	/*	guint	measure1;	
-		guint	measure2;	
-		guint	measure3;	
-		guint	measure4;*/	
 
 	/*显示*/
 	guchar	display;		/*显示模式 A B C A+B A+B+C A+S ...*/
@@ -417,8 +395,6 @@ typedef	struct Config {
 	guchar	field3;                            /*Measurements->Reading->Field3*/
 	guchar	field4;                            /*Measurements->Reading->Field4*/
 
-
-
 	//	guchar	selection;                            /*Measurements->Cursors->selection*/
 	//	SELECTION_INFO   select;			
 	guint	VPA;                            /*Measurements->Cursors->VPA*/
@@ -443,28 +419,6 @@ typedef	struct Config {
 
 	ZOOM_DISPLAY_INFO  zoom_display[6];     /* Display -> zoom -> display   A、B、S..Scan*/
 	guchar  zoom_display_pos;               /* A-Scan  B-Scan  S-Scan  ... Off 共6个*/
-# if 0
-	guchar  zoom_display;                   /* Display -> zoom -> display */
-	guchar  zoom_type;                      /* Display -> zoom -> type */
-	guint   start_usound;			/* Display -> zoom -> Start USound */
-	guint   end_usound;			/* Display -> zoom -> End USound */
-	guint   range_usound;			/* Display -> zoom -> Range USound */
-	guint   center_usound;			/* Display -> zoom -> Center USound */
-	guchar   start_amplitude;		/* Display -> zoom -> Start Amplitude */
-	guchar   end_amplitude;			/* Display -> zoom -> End Amplitude */
-	guchar   range_amplitude;		/* Display -> zoom -> Range Amplitude */
-	guchar   center_amplitude;		/* Display -> zoom -> Center Amplitude */
-
-
-	guchar  color_select;                   /* Display -> Color -> select*/
-	guint   color_start;                    /* Display -> Color -> Start*/
-	guchar  color_contrast;                 /* Display -> Color -> contrast */
-	guint   color_end;                      /* Display -> Color -> end */
-	guchar  brightness;                     /* Display -> Color -> brightness */
-	gushort  min;                            /* Display -> Color -> min */
-	gushort  max;                            /* Display -> Color -> max */
-	guchar  color_mode;                     /* Display -> Color -> Mode */
-#endif
 
 	guchar  prop_scan;                      /* Display -> Properties -> Scan  6个 */
 	guchar  prop_color;
@@ -486,19 +440,11 @@ typedef	struct Config {
 	guchar  probe_select;                   /*Probe/Part -> select -> select*/
 	guchar  fft;                            /*Probe/Part -> characterize -> FFT*/
 
-	/* 聚焦法则 */
-	//	guchar  law_config;                     /* 聚焦模式 扇扫 线扫etc */
-	//	guchar  element_qty;					/* */
 	guchar	connection_P;                   /* 设置收的接口 1-128 */
 	guchar  connection_R;                   /* 设置发的接口 1-128 */
-	//	guchar  first_element;                  /* 第一个阵元 */
-	//	guchar  last_element;                   /* 最后一个阵元 (线扫时候可以设置) */
-	//	guchar  element_step;                   /* 阵元间隔 (线扫时候可以设置) */
-	//	guchar  wave_type;                      /* 0纵波 与 1横波 */
 	//	guint   min_angle;                      /*Focal Law -> Beam -> Min_angle*/
 	guchar  auto_program;                   /* Off   On*/
 	//	guint   focus_depth;                    /*Focal Law -> Beam -> focus_depth*/
-
 	guchar  encoder;
 	guchar  polarity;
 	guchar  e_type;
@@ -544,8 +490,6 @@ typedef	struct Config {
 	//guchar    ezview;                       /* Preferences -> Options -> mouse*/
 	guchar    remote_desktop;                       /* Preferences -> Options -> mouse*/
 
-
-
 	gint	fd_fb;		/* fb设备 */
 	guchar remark_info[256];
 
@@ -559,7 +503,7 @@ typedef struct tmp_config {
 	guchar	velocity_reg;		/* 声速(velocity) 步进	*/
 
 	guchar	pulser_reg;			/* 脉冲发射pulser  步进	*/
-	guchar	frequence_reg;		/* 频率 frequence 步进	*/
+	guchar	frequency_reg;		/* 频率 frequency 步进	*/
 	guchar	pulser_width_reg;	/* 脉宽 PW 步进			*/
 	guchar	prf_reg;			/* 重复频率 PRF 步进	*/
 

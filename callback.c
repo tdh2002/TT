@@ -342,7 +342,7 @@ guint get_pw ()
 	if (GROUP_VAL(pw_pos))
 		return GROUP_VAL(pulser_width);
 	else
-		return ((guint)(GROUP_VAL(frequence) * 2.0) / 250)  * 250 ; /* 改变脉冲宽度 */
+		return ((guint)(GROUP_VAL(frequency) * 2.0) / 250)  * 250 ; /* 改变脉冲宽度 */
 }
 
 /* 计算滤波 0 1 None 和 Auto 时候怎么计算 */
@@ -375,7 +375,7 @@ guint get_freq ()
 		case 11:return 20000;break;
 		default:break;
 	}
-	return GROUP_VAL(frequence);
+	return GROUP_VAL(frequency);
 }
 
 /* 返回skew */
@@ -949,7 +949,7 @@ void b3_fun2(gpointer p)
 					   case 0:data_process(&(pp->p_tmp_config->range_reg), 2); break; /* 102range范围 3种步进 */
 					   case 1:
 							  if (pp->mark_pop_change)
-								  data_process(&(TMP(frequence_reg)), 2); /* 112 频率范围 3种步进 */
+								  data_process(&(TMP(frequency_reg)), 2); /* 112 频率范围 3种步进 */
 							  break; /* 112 频率 Freq.  */
 					   case 2: /* 弹出一个选择菜单,选择 */ break; /* 122 检波 Recitify  */
 					   case 3:  /* 132 角度 PA 不能更改 UT 可以修改 */  data_process(&(TMP(angle_reg)), 2); break; 
@@ -1777,10 +1777,10 @@ void data_111 (GtkMenuItem *menuitem, gpointer data) /* 收发模式 Tx/Rx Mode 
 
 void data_1121 (GtkSpinButton *spinbutton, gpointer data) /* 频率 Freq 数值改变 */
 {
-	GROUP_VAL(frequence) =  (gushort) ((gtk_spin_button_get_value (spinbutton)) * 1000.0);
+	GROUP_VAL(frequency) =  (gushort) ((gtk_spin_button_get_value (spinbutton)) * 1000.0);
 	if (!GROUP_VAL(pw_pos))
-		GROUP_VAL(pulser_width) = ((guint)(GROUP_VAL(frequence) * 2.0) / 250)  * 250 ; /* 改变脉冲宽度 */
-	send_dsp_data (FREQUENCE_DSP, (guint) (GROUP_VAL(frequence)));
+		GROUP_VAL(pulser_width) = ((guint)(GROUP_VAL(frequency) * 2.0) / 250)  * 250 ; /* 改变脉冲宽度 */
+	send_dsp_data (FREQUENCY_DSP, (guint) (GROUP_VAL(frequency)));
 	/* 发送给硬件 */
 }
 
@@ -1788,14 +1788,14 @@ void data_112 (GtkMenuItem *menuitem, gpointer data) /* 频率 Freq P112 */
 {
 	guint temp = GPOINTER_TO_UINT (data);
 	GROUP_VAL(freq_pos) = (guchar) (GPOINTER_TO_UINT (data));
-	GROUP_VAL(frequence) = get_freq();
+	GROUP_VAL(frequency) = get_freq();
 	if (!GROUP_VAL(pw_pos))
-		GROUP_VAL(pulser_width) = GROUP_VAL(frequence) * 2.0; /* 改变脉冲宽度 */
+		GROUP_VAL(pulser_width) = GROUP_VAL(frequency) * 2.0; /* 改变脉冲宽度 */
 	if (temp != 12)
 	{
 		pp->pos_pos = MENU3_STOP;
 		draw_3_menu(0, NULL);
-		send_dsp_data (FREQUENCE_DSP, (guint) (GROUP_VAL(frequence)));
+		send_dsp_data (FREQUENCY_DSP, (guint) (GROUP_VAL(frequency)));
 	}
 	else
 	{
@@ -3064,7 +3064,7 @@ void send_dsp_data (guint data_type, guint value)
 		case TX_RX_MODE_DSP:
 					   g_print("%d\n", value);
 					   break;
-		case FREQUENCE_DSP:
+		case FREQUENCY_DSP:
 					   g_print("%d\n", value);
 					   break;
 		case VOLTAGE_DSP:
