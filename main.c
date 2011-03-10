@@ -65,7 +65,7 @@ static void set_config (guint groupid)
 	GROUP_VAL(receiver)     = 1;			/* 1表示第一个探头接口 1-128 */
 	GROUP_VAL(tx_rxmode)	= PULSE_ECHO;	/* 收发模式 */
 	GROUP_VAL(freq_pos)		= 0;			/* 0是1Mhz	*/
-	GROUP_VAL(frequence)	= 5000;			/* 频率 */
+	GROUP_VAL(frequency)	= 5000;			/* 频率 */
 	GROUP_VAL(pw_pos)		= 0;			/* 0是Atuo	*/
 	GROUP_VAL(prf_pos)		= 0;			/* 0是Atuo Max*/
 	GROUP_VAL(pulser_width)	= 10000;		/* 脉冲宽度 30ns */
