@@ -1469,6 +1469,62 @@ static gboolean draw_colorbar(GtkWidget *widget, GdkEventExpose *event, gpointer
 }
 
 
+/* 画栅格线 */
+static gboolean draw_grid(GtkWidget *widget, GdkEventExpose *event, gpointer data)
+{
+	gfloat i,j,m,n;
+	guint w,h;
+	//guint high ;
+
+	w = GPOINTER_TO_UINT (data) >> 16;
+	h = GPOINTER_TO_UINT (data) & 0xffff;
+	//g_print("w=%d    h=%d\n",w,h);
+
+	cairo_t *cr;        //声明一支画笔
+	cr=gdk_cairo_create(widget->window);//创建画笔
+	cairo_set_line_width(cr, 1);
+	switch(CFG(grid))
+	{
+		case 0:
+			cairo_set_source_rgba(cr,0.0,0.5,0.5,1.0);break;//设置画笔颜色，也就是红，绿，蓝，这里设置成蓝色。
+		case 1:
+			cairo_set_source_rgba(cr,0.3,0.5,0.0,1.0);break;
+		case 2:
+			cairo_set_source_rgba(cr,0.5,0.0,0.0,1.0);break;
+		case 3:
+			cairo_set_source_rgba(cr,0.5,0.5,0.0,1.0);break;
+		case 4:
+			cairo_set_source_rgba(cr,0.0,0.0,0.0,1.0);break;
+		case 5:
+			break;
+		default:break;
+	}
+
+	for(j=0;j<h;j+=h/10)
+	{
+		for(m=0;m<w;m+=w/50)
+		{
+			cairo_move_to (cr, (int)(m) , (int)(j) + 0.5);
+			cairo_line_to (cr, (int)(m) +1 , (int)(j) + 0.5);
+			cairo_stroke (cr);
+		}
+	}
+	for ( i = 0; i < w; i+=w/10.0 )
+	{
+		for(n=0;n<h;n+=h/50.0)
+		{
+			cairo_move_to (cr, (int)(i) , (int)(n) + 0.5);
+			cairo_line_to (cr, (int)(i) +1 , (int)(n) + 0.5);
+			cairo_stroke(cr);
+		}
+	}
+	cairo_destroy(cr);//销毁画笔
+
+	return TRUE;
+}
+
+
+
 static void draw_area(GtkWidget *parent_box, DRAW_AREA *draw_area, guint width, guint height, const gchar *title, 
 		gdouble v1s, gdouble v1e, gdouble v2s, gdouble v2e, gdouble h1s, gdouble h1e, guchar *other)
 {
@@ -1489,6 +1545,10 @@ static void draw_area(GtkWidget *parent_box, DRAW_AREA *draw_area, guint width, 
 	gtk_box_pack_start (GTK_BOX (draw_area->vbox), draw_area->table, FALSE, FALSE, 0);
 	draw_area->drawing_area = gtk_drawing_area_new();
 	gtk_widget_set_size_request (GTK_WIDGET(draw_area->drawing_area), width - 40, height - 35);
+	/* 调用 draw_grid 函数 */
+	g_signal_connect (G_OBJECT (draw_area->drawing_area), "expose_event",
+			G_CALLBACK (draw_grid), GUINT_TO_POINTER (((width-40)<<16) + (height - 35)));
+
 	gtk_widget_modify_bg (draw_area->drawing_area, GTK_STATE_NORMAL, &color_black1);
 	gtk_table_attach (GTK_TABLE (draw_area->table), draw_area->drawing_area, 1, 2, 0, 1,
 			GTK_EXPAND|GTK_FILL, GTK_FILL, 0, 0);
@@ -3175,6 +3235,10 @@ void draw3_data1(DRAW_UI_P p)
 					else 
 						draw3_popdown (menu_content[GRID + CFG(grid)], 1, 0);
 
+					gtk_widget_queue_draw(GTK_WIDGET(pp->draw_area[0].drawing_area));
+					gtk_widget_queue_draw(GTK_WIDGET(pp->draw_area[1].drawing_area));
+					gtk_widget_queue_draw(GTK_WIDGET(pp->draw_area[2].drawing_area));
+
 					break;
 
 				case 2:/* Display -> Zoom -> Type p421 */
@@ -4111,7 +4175,7 @@ void draw3_data2(DRAW_UI_P p)
 								step = tmpf;
 								digit = 1;
 								pos = 2;
-								unit = UNIT_NULL;
+								unit = UNIT_NONE;
 								draw3_digit_pressed (data_132, units[unit], cur_value,
 										lower, upper, step, digit, p, pos, 0);
 						}

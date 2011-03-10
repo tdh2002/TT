@@ -565,10 +565,10 @@ void b3_fun0(gpointer p)
 			case 1: /* UT Settings*/
 				switch (pp->pos1[1])
 				{
-					case 0: data_process (&(pp->p_tmp_config->db_reg), 4);         break; /* 100增益 5种步进 */
+					case 0: data_process (&(pp->p_tmp_config->db_reg), 4);			break; /* 100增益 5种步进 */
 					case 1: data_process (&(pp->p_tmp_config->pulser_reg), 2);		break; /* 110pulser发射 3种步进 */
-					case 2: data_process (&(pp->p_tmp_config->receiver_reg), 2);		break; /* 120receiver接收 3种步进 */
-					case 3: break; /* 130scan offset 这里只有显示数值 不能更改 */
+					case 2: data_process (&(pp->p_tmp_config->receiver_reg), 2);	break; /* 120receiver接收 3种步进 */
+					case 3: data_process (&(pp->p_tmp_config->scanoffset_reg), 2);	break; /* 130 */
 					case 4: break; /* 140 自动80%  */
 					default:break;
 				}
@@ -744,7 +744,7 @@ void b3_fun1(gpointer p)
 					   case 0:data_process(&(pp->p_tmp_config->start_reg), 2); break; /* 101start扫描延时 3种步进 */
 					   case 1: /* 弹出一个选择菜单,选择 */ break; /*111 收发模式Tx/Rx Mode  */
 					   case 2: /* 弹出一个选择菜单,选择 */ break; /*121 滤波Filter  */
-					   case 3: /* 弹出一个选择菜单,选择 */ break; /*131 Index offset 不能更改  */
+					   case 3: data_process (&(pp->p_tmp_config->indexoffset_reg), 2);	break; /* 131 */
 					   case 4: /* Set Ref. */ break; /*141 Set Ref.参考增益  */
 					   default:break;
 				   }
@@ -952,7 +952,7 @@ void b3_fun2(gpointer p)
 								  data_process(&(TMP(frequence_reg)), 2); /* 112 频率范围 3种步进 */
 							  break; /* 112 频率 Freq.  */
 					   case 2: /* 弹出一个选择菜单,选择 */ break; /* 122 检波 Recitify  */
-					   case 3:  /* 132 角度 PA 不能更改 UT 可以修改 */  data_process(&(TMP(angle_reg)), 2); break;  /*512*/ 
+					   case 3:  /* 132 角度 PA 不能更改 UT 可以修改 */  data_process(&(TMP(angle_reg)), 2); break; 
 					   case 4: break;/* dB Ref P142 开关 */
 					   default:break;
 				   }
