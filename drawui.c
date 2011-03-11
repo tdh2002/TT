@@ -1963,21 +1963,20 @@ void draw3_data0(DRAW_UI_P p)
 					else 
 						draw3_popdown (menu_content[GATE_POS + GROUP_VAL(gate_pos)], 0, 0);
 					break;
-				case 1:/* Alarm 选择哪个报警项 P210 */
+				case 1:/* Alarm 选择哪个报警项 P210 TAN1 */
 					pp->x_pos = 624, pp->y_pos = 119-YOFFSET;
-
 					if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 0))
 					{
 						menu_on = 0;
 						for (i = 0 ; i < 16; i++)
 							menu_on |= (CFG(alarm[i].conditiona) !=0 ) << i;
-						draw3_pop_tt_on (data_210, NULL, menu_content[ALARM_POS + CFG(alarm_pos)],
+						draw3_pop_tt_on(data_210, NULL,
+								menu_content[ALARM_POS + CFG(alarm_pos)],
 								menu_content + ALARM_POS, 16, 0, CFG(alarm_pos), 0, menu_on, 16);
 					}
 					else 
-						draw3_popdown (menu_content[ALARM_POS + CFG(alarm_pos)], 0, 0);
+						draw3_popdown(menu_content[ALARM_POS + CFG(alarm_pos)], 0, 0);
 					break;
-
 				case 2:/* Output  P220  */
 					pp->x_pos = 581, pp->y_pos = 120-YOFFSET;
 					if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 0))
@@ -2779,7 +2778,7 @@ void draw3_data1(DRAW_UI_P p)
 					else 
 						draw3_popdown(menu_content[PARAMETERS + GROUP_GATE_POS(parameters)], 1, 0);
 					break;
-				case 1:/* Gate -> Alarm -> Group A P211 */
+				case 1:/* Group A 第一组报警 P211 TAN1 */
 					pp->x_pos = 632, pp->y_pos = 201-YOFFSET;
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 						draw3_pop_tt (data_211, NULL,menu_content[GROUPA + CFG_ALARM_POS(groupa)],
@@ -2787,7 +2786,6 @@ void draw3_data1(DRAW_UI_P p)
 					else 
 						draw3_popdown (menu_content[GROUPA + CFG_ALARM_POS(groupa)], 1, 0);
 					break;
-
 				case 2:/*  Gate -> Output -> Alarm or Group #  P221 */
 					pp->x_pos = 604, pp->y_pos = 202-YOFFSET;
 					if (CFG(output_pos) < 3)
@@ -4295,21 +4293,17 @@ void draw3_data2(DRAW_UI_P p)
 							g_free (str);
 					}
 					break;
-				case 1:/* Condition GroupA P212 */
+				case 1:/* Condition GroupA P212 TAN1 */
 					pp->x_pos = 535, pp->y_pos = 285-YOFFSET;
 					if ((CFG_ALARM_POS(groupa) == CFG_ALARM_POS(groupb)) &&
 							CFG_ALARM_POS(conditionb))
 						menu_status = 1<<(CFG_ALARM_POS(conditionb));
-
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
-					{         
 						draw3_pop_tt (data_212, NULL, menu_content[CONDITIONA +	CFG_ALARM_POS(conditiona)],
 								menu_content + CONDITIONA, 9, 2, CFG_ALARM_POS(conditiona), menu_status);
-					}
 					else 
 						draw3_popdown (menu_content[CONDITIONA + CFG_ALARM_POS(conditiona)], 2, 0);
 					break;
-
 				case 2:/* Output->Count or Data P222 */
 					pp->x_pos = 578, pp->y_pos = 300;
 					/* 当前步进 */
@@ -6939,7 +6933,7 @@ void draw3_data4(DRAW_UI_P p)
 					}
 					else
 					{
-						if (GROUP_VAL(rectifier) == 0)
+						if (GROUP_VAL(rectifier) != RF_WAVE)
 						{
 							gtk_widget_set_sensitive(pp->eventbox30[4],FALSE);
 							gtk_widget_set_sensitive(pp->eventbox31[4],FALSE);
@@ -9160,10 +9154,5 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 	g_timeout_add(33, (GSourceFunc) time_handler2, NULL);
 #endif
 	//	g_thread_create((GThreadFunc)(time_handler), (gpointer) (pp->drawing_area), FALSE, NULL);
-
-	/*
-	   gtk_box_pack_start (GTK_BOX (p->vbox22), p->vbox221, FALSE, FALSE, 0);
-	   gtk_widget_show(p->vbox221);
-	   */
 
 }

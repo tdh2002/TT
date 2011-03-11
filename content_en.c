@@ -408,7 +408,7 @@ const gchar *all_menu_content_en[] =
 	"Absolute", "Positive", "Negative",						/* 80 rectifier_freq*/
 	"1", "2","3","4","5","6","7","8","9","10","11","12","13","14","15","16",	/* 83 Alarm_pos*/
 	"1 [On]", "2 [On]","3 [On]","4 [On]","5 [On]","6 [On]","7 [On]","8 [On]","9 [On]","10 [On]","11 [On]","12 [On]","13 [On]","14 [On]","15 [On]","16 [On]",	/* 99 Alarm [On] */
-	"1", "2","3","4","5","6","7","8",						/* 115 groupA */
+	"1", "2", "3", "4", "5", "6", "7", "8",						/* 115 groupA */
 	"None","Gate A","Gate B","Gate I","Not Gate A","Not Gate B","Not Gate I",">Max.Thickness","<Min.Thickness",/*123 conditiona*/
 	"AND","OR",									/* 132 operator */
 	"Output 1", "Output 2","Output 3", "Analog 1", "Analog 2",			/* 134 Output_pos */

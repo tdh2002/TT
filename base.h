@@ -351,7 +351,7 @@ typedef	struct Config {
 	guchar	voltage_ut;	
 	guchar	language;			/* 语言 */
 	GROUP	group[4];			/* 前3个都接前面的128的接口 */
-	/* 基本参数 */
+
 	PART	part;				/* 被检测工件... */
 	/* 所有聚焦法则的信息在这里 */
 	LAW_BEAM	focal_law_all_beam[setup_MAX_LAW_QTY];
@@ -363,9 +363,9 @@ typedef	struct Config {
 	guchar	alarm_pos;          /* 报警信息 0~15 */
 	ALARM_INFO	alarm[16];		/* alarm[0], alarm[1], ..., alarm[15] */
 
-	guchar  output_pos;                /* 0~5 */
-	OUTPUT_INFO  output[3];           /* 输出信息 output[0],output[1],output[2] */
-	ANALOG_INFO  analog[2];           /* Analog 2 个 */
+	guchar  output_pos;		/* 0~5 */
+	OUTPUT_INFO  output[3];	/* 输出信息 output[0],output[1],output[2] */
+	ANALOG_INFO  analog[2];	/* Analog 2 个 */
 	//guchar alarm_on[16];  		  /*alarm#中的选项后面是否加[On] 0否 1是*/
 
 	/*显示*/
@@ -735,6 +735,7 @@ typedef struct Draw_interface {
 	GtkWidget	*sw1;
 	GtkWidget	*sw2;
 	GtkWidget	*sw3;
+
 
 
 	CONFIG_P		p_config;			/**/

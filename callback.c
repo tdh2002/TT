@@ -1517,6 +1517,8 @@ static void handler_key(guint keyval, gpointer data)
 	{
 		case GDK_Super_L:
 			if (MAIN_MENU_PRESS == data1)
+				main_menu_pop(MENU_DOWN);
+			else
 				main_menu_pop(MENU_POP);
 			break;
 		case GDK_Escape:

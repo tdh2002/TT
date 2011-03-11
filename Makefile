@@ -1,23 +1,36 @@
 
-CC = gcc
-LD = gcc
-TARGET=main
+CC=gcc
+PROG_NAME=main
+INCS=base_const.h callback.h drawfb.h file_op.h main.h \
+base.h content_en.h drawui.h language.h
 
-CFLAGS= -Wall -Os -DX86 `pkg-config --cflags webkit-1.0`
-LDFLAGS= -lm `pkg-config --libs webkit-1.0`
-OBJS+= main.o drawui.o drawfb.o callback.o content_en.o file_op.o
+SRCS=callback.c content_en.c drawfb.c drawui.c file_op.c main.c
 
-%.o:%.c %.h base.h
-	$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@  
+# 从xx.c 文件得到 xx.o 文件
+OBJS=${SRCS:.c=.o}
 
-all:$(TARGET)
+#编译GTK程序时要用到的库
+LIBS=webkit-1.0
+#---- 用户修改区域 结束
 
-$(TARGET):$(OBJS)
-	$(LD) $^ $(LDFLAGS) -o $@
+# -O2
+CFLAGS=`pkg-config --cflags ${LIBS}` -Os -DX86 -Wall
+LDFLAGS=`pkg-config --libs ${LIBS}` -lm -Wall
 
-#$(OBJS):%.o:%.c %.h
-#	$(CC) -c $(CFLAGS) $(CPPFLAGS) $< -o $@ 
+all: ${PROG_NAME}
+
+${PROG_NAME}:${OBJS}
+	${CC} -o ${PROG_NAME} ${OBJS} ${LDFLAGS}
+#注意：上边”${CC}" 的前边有一个TAB键，而不是空格
+
+#如果有头文件进行修改，则自动编译源文件
+${OBJS}:${INCS}
+
+.c.o:
+	${CC} -c $<  ${CFLAGS}
 
 .PHONY:clean
-clean: 
-	rm -f *.o $(TARGET) $(OBJS)
+clean:
+	rm -f *.o  ${PROG_NAME}
+
+rebuild: clean all

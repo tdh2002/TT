@@ -206,7 +206,8 @@
 /* 按键是由那个window发出 */
 #define MENU_POP		0
 #define MENU_DOWN		1
-#define	MAIN_MENU_PRESS	0
+
+#define	MAIN_MENU_PRESS	1
 
 /*  */
 #define UT_CHANNEL	3
