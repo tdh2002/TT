@@ -657,7 +657,7 @@ typedef struct Draw_interface {
 	guchar			pos_last2;          /* 三级菜单位置上一位置  */
 	guchar			menu2_qty;          /*  */
 	GdkColor		col;
-	GtkAdjustment	        *adj;
+	GtkAdjustment	*adj;
 	GSList			*group;
 
 	GtkWidget		*drawing_area;
@@ -676,23 +676,19 @@ typedef struct Draw_interface {
 	GtkWidget		*hbox2;                 /* button 和 画图区域     */
 	GtkWidget		*vbox21;		/* 一、二级菜单， 及画图区域 */
 	GtkWidget		*hbox211;		/* 画图区域 及 vscalebox  */
-	GtkWidget               *vboxtable;             /* 各个画图区域            */
+	GtkWidget	*vboxtable;             /* 各个画图区域            */
 
 	GtkWidget	*vbox_area[4];
 	GtkWidget	*hbox_area[4];
-
-	//	GtkWidget		*vbox2111;
-	//	GtkWidget		*hbox2112;	
 
 	GtkWidget		*hbox212;		/*一级菜单 二级菜单显示*/
 
 	GtkWidget		*vbox22;		/*三级菜单*/
 	GtkWidget		*vbox221[6];
 
-
 	/*menubar menu menuitem_main 可以不用放在这里*/
-	GtkWidget	        *event[20];	       /*测量信息等的显示*/
-	GtkWidget	        *label[20];	       /*测量信息等的显示*/
+	GtkWidget  *event[20];	       /*测量信息等的显示*/
+	GtkWidget  *label[20];	       /*测量信息等的显示*/
 
 	GtkWidget		*menubar;			/* 一级菜单 */
 	GtkWidget		*menu;				/* 一级菜单 */
@@ -708,7 +704,6 @@ typedef struct Draw_interface {
 	GtkWidget		*label3[6];         /* data 是lable   */
 	GtkWidget		*data3[6];			/* */
 	GtkWidget		*eventbox32[6];                 /* */
-	//	GtkWidget		*entry3[6];
 	GtkWidget		*sbutton[6];
 	GtkWidget		*button;
 	/* waiting for delete*/
@@ -717,9 +712,7 @@ typedef struct Draw_interface {
 	GtkWidget		*root_menu3;
 	GtkWidget		*menu_item3[30];
 
-	gint			xx;
 	GtkWidget		*window;
-	GtkWidget		*spinbutton;
 
 	GtkWidget		*dialog;
 	GtkWidget		*popbox;
@@ -731,21 +724,23 @@ typedef struct Draw_interface {
 	GtkWidget		*scale_drawarea;
 	GtkWidget		*vscale;
 
-
 	/* 画图区域 */
-	GtkWidget               *table;
-	GtkWidget               *vrule1;
-	GtkWidget               *vrule2;
-	GtkWidget               *hrule;
-	GtkWidget               *title;
-	GtkWidget               *drawlabel;
+	GtkWidget	*table;
+	GtkWidget	*vrule1;
+	GtkWidget	*vrule2;
+	GtkWidget	*hrule;
+	GtkWidget	*title;
+	GtkWidget	*drawlabel;
+	GtkWidget	*sw;
+	GtkWidget	*sw1;
+	GtkWidget	*sw2;
+	GtkWidget	*sw3;
 
-	GtkWidget		*window2;
+
 	CONFIG_P		p_config;			/**/
 	TMP_CONFIG_P	p_tmp_config;		/**/
 	gulong			signal_id;
 
-	guint	file_path;	/* 0 1 2 3 4 5 6 7 8 9 0*/
 	GtkWidget	*label_probe;	/* dialog 最下面一排信息   无 probe wedge之分 */
 	GtkTreeSelection *selection; 
 	GtkTreeSelection *selection1; 

@@ -48,7 +48,6 @@ static void set_config (guint groupid)
 	CFG(part.Thickness)=100.0;
 	CFG(part.Diameter)=10000.0;
 
-
 	CFG(auto_program)=0;
 
 	CFG(voltage_pa) = 0;
@@ -223,10 +222,6 @@ static void set_config (guint groupid)
 	LAW_VAL(law_index_start)= 0;
 	LAW_VAL(law_index_end)	= 1;
 
-
-
-
-
 }
 
 /* You have to start somewhere */
@@ -251,10 +246,14 @@ int main (int argc, char *argv[])
 	p_ui		= (DRAW_UI_P)malloc(sizeof(DRAW_UI));
 	p_config	= (CONFIG_P)malloc(sizeof(CONFIG));
 	p_tmp_config	= (TMP_CONFIG_P)malloc(sizeof(TMP_CONFIG));
+	if (!p_ui)	return ;
+	if (!p_config)	return ;
+	if (!p_tmp_config)	return ;
+
 	memset (p_ui, 0x0, sizeof(DRAW_UI));
 	memset (p_config, 0x0, sizeof(CONFIG));
 	memset (p_tmp_config, 0x0, sizeof(TMP_CONFIG));
-	g_print("DRAW_UI's size:%d xx = %d\n", sizeof(DRAW_UI), p_ui->xx);
+	g_print("DRAW_UI's size:%d xx = %d\n", sizeof(DRAW_UI), p_ui->mark3);
 	g_print("CONFIG's size:%d xx = %d\n", sizeof(CONFIG), p_config->time);
 
 	/*	window = gtk_window_new (GTK_WINDOW_POPUP);*/
