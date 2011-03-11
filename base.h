@@ -33,6 +33,8 @@
 #define TRUE_DEPTH	ARM_DEPTH
 #endif
 
+#define LAW_MAX_QTY		256
+#define ELEM_RX_MAX_QTY	32
 #define GATE_MAX_QTY	3
 
 extern GdkColor	color_black;
@@ -740,6 +742,12 @@ typedef struct Draw_interface {
 
 	CONFIG_P		p_config;			/**/
 	TMP_CONFIG_P	p_tmp_config;		/**/
+	gpointer	p_beam_data;
+	gpointer	p_a_scan_data[4];
+	gpointer	p_b_scan_data[4];
+	gpointer	p_c_scan_data[4];
+	gpointer	p_s_scan_data[4];
+
 	gulong			signal_id;
 
 	GtkWidget	*label_probe;	/* dialog 最下面一排信息   无 probe wedge之分 */

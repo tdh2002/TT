@@ -233,6 +233,7 @@ int main (int argc, char *argv[])
 	GtkWidget		*window;
 	GtkAccelGroup	*accel;
 	GClosure		*closure;
+	gint			i;
 
 	g_thread_init(NULL);
 	gdk_threads_init();
@@ -246,15 +247,19 @@ int main (int argc, char *argv[])
 	p_ui		= (DRAW_UI_P)malloc(sizeof(DRAW_UI));
 	p_config	= (CONFIG_P)malloc(sizeof(CONFIG));
 	p_tmp_config	= (TMP_CONFIG_P)malloc(sizeof(TMP_CONFIG));
-	if (!p_ui)	return ;
-	if (!p_config)	return ;
-	if (!p_tmp_config)	return ;
+
+	if (!p_ui)	return 0;
+	if (!p_config)	return 1;
+	if (!p_tmp_config)	return 2;
 
 	memset (p_ui, 0x0, sizeof(DRAW_UI));
 	memset (p_config, 0x0, sizeof(CONFIG));
 	memset (p_tmp_config, 0x0, sizeof(TMP_CONFIG));
 	g_print("DRAW_UI's size:%d xx = %d\n", sizeof(DRAW_UI), p_ui->mark3);
 	g_print("CONFIG's size:%d xx = %d\n", sizeof(CONFIG), p_config->time);
+
+	p_ui->p_beam_data = malloc(LAW_MAX_QTY * 640 * 2);
+	for (i = 0; i < 4; i++);
 
 	/*	window = gtk_window_new (GTK_WINDOW_POPUP);*/
 	window = gtk_window_new (GTK_WINDOW_TOPLEVEL);

@@ -110,13 +110,26 @@ void fbline(gushort *p, gint x1, gint y1, gint x2, gint y2, gushort col)
 	}
 }
 
-
+/* 画A扫描 */
 void draw_a_scan (gushort *p, guint width, guint height, gushort *data,
 		guint xoffset, guint yoffset, gushort col)
 {
 	gint i;
 	for (i = 0; i < height; i++)
 		memset (p + FB_WIDTH * (i + yoffset) + xoffset, 0x0, width * 2 );
+	for (i = 0; i < width - 1; i++)
+		fbline (p, xoffset + i, yoffset + data[i], xoffset + i + 1,
+				yoffset + data[i + 1], col);
+}
+
+/* 画B扫描 */
+void draw_b_scan (gushort *p, guint width, guint height, gushort *data,
+		guint xoffset, guint yoffset, gushort col, guchar mark)
+{
+	gint i;
+	if (mark)
+		for (i = 0; i < height; i++)
+			memset (p + FB_WIDTH * (i + yoffset) + xoffset, 0x0, width * 2 );
 	for (i = 0; i < width - 1; i++)
 		fbline (p, xoffset + i, yoffset + data[i], xoffset + i + 1,
 				yoffset + data[i + 1], col);
