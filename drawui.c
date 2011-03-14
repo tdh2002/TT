@@ -1571,6 +1571,69 @@ static gboolean draw_grid(GtkWidget *widget, GdkEventExpose *event, gpointer dat
 }
 
 
+/* 画电池等信息 */
+static gboolean draw_other_info (GtkWidget *widget, GdkEventExpose *event, gpointer data)
+{
+	
+	gint y1 = 3, y2 = 23;
+
+	cairo_t *cr;        //声明一支画笔
+	cr = gdk_cairo_create(widget->window);//创建画笔
+	cairo_set_line_width(cr, 2);
+
+	/* 第一个电池 需要根据电量来改变颜色 */
+
+	cairo_move_to (cr, 0, 3);
+	cairo_line_to (cr, 50, 3);
+
+	cairo_move_to (cr, 0, 3);
+	cairo_line_to (cr, 0, 18);
+
+	cairo_move_to (cr, 0, 18);
+	cairo_line_to (cr, 50, 18);
+
+	cairo_move_to (cr, 50, 3);
+	cairo_line_to (cr, 50, 18);
+
+	cairo_move_to (cr, 50, 8);
+	cairo_line_to (cr, 55, 8);
+
+	cairo_move_to (cr, 50, 13);
+	cairo_line_to (cr, 55, 13);
+
+	cairo_move_to (cr, 55, 8);
+	cairo_line_to (cr, 55, 13);
+
+	cairo_stroke (cr);
+
+	/* 第二个电池 */
+	cairo_move_to (cr, 0, y2);
+	cairo_line_to (cr, 50, y2);
+
+	cairo_move_to (cr, 0, y2);
+	cairo_line_to (cr, 0, y2 + 15);
+
+	cairo_move_to (cr, 0, y2 +15);
+	cairo_line_to (cr, 50, y2 + 15);
+
+	cairo_move_to (cr, 50, y2);
+	cairo_line_to (cr, 50, y2 +15);
+
+	cairo_move_to (cr, 50, y2 + 5);
+	cairo_line_to (cr, 55, y2 + 5);
+
+	cairo_move_to (cr, 50, y2 + 10);
+	cairo_line_to (cr, 55, y2 + 10);
+
+	cairo_move_to (cr, 55, y2 + 5);
+	cairo_line_to (cr, 55, y2 + 10);
+
+	cairo_stroke (cr);
+
+	cairo_destroy(cr);//销毁画笔
+
+	return TRUE;
+}
 
 static void draw_area(GtkWidget *parent_box, DRAW_AREA *draw_area, guint width, guint height, const gchar *title, 
 		gdouble v1s, gdouble v1e, gdouble v2s, gdouble v2e, gdouble h1s, gdouble h1e, guchar *other)
@@ -8999,15 +9062,19 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 	gtk_box_pack_start (GTK_BOX (p->vbox11), pp->hbox112, FALSE, FALSE, 0);
 
 	/*软键盘显示*/
-	gtk_box_pack_start (GTK_BOX (pp->vbox12), pp->event[16], FALSE, FALSE, 0);
-	gtk_widget_set_size_request (GTK_WIDGET(pp->event[16]), 115, 52); 
-	gtk_widget_modify_bg(pp->event[16], GTK_STATE_NORMAL, &color_black);
+	pp->drawing_area = gtk_drawing_area_new();
+	gtk_box_pack_start (GTK_BOX (pp->vbox12), pp->drawing_area, FALSE, FALSE, 0);
+	gtk_widget_set_size_request (GTK_WIDGET(pp->drawing_area), 115, 65); 
+	g_signal_connect (G_OBJECT (pp->drawing_area), "expose_event",
+			G_CALLBACK (draw_other_info), NULL);
+
+
 	gtk_box_pack_start (GTK_BOX (pp->vbox12), pp->hbox121, FALSE, FALSE, 0);
 	gtk_box_pack_start (GTK_BOX (pp->hbox121), pp->event[17], FALSE, FALSE, 0);
-	gtk_widget_set_size_request (GTK_WIDGET(pp->event[17]), 40, 38);
+	gtk_widget_set_size_request (GTK_WIDGET(pp->event[17]), 40, 25);
 	update_widget_bg(pp->event[17], backpic[12]); 
 	gtk_box_pack_start (GTK_BOX (pp->hbox121), pp->event[18], FALSE, FALSE, 0);
-	gtk_widget_set_size_request (GTK_WIDGET(pp->event[18]), 70, 38); 
+	gtk_widget_set_size_request (GTK_WIDGET(pp->event[18]), 70, 25); 
 	gtk_widget_modify_bg(pp->event[18], GTK_STATE_NORMAL, &color_black);
 
 	/* 增益显示 */
