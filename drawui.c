@@ -182,6 +182,7 @@ void main_menu_pop(guint action)
 //	pp->main_menu_pop_status = !pp->main_menu_pop_status ;
 }
 
+/*  */
 void show_help(guint i)
 {
 	if (i == HELP_Y) /*弹出帮助窗口*/
@@ -854,6 +855,28 @@ static void on_changed1_wedge(GtkTreeSelection *selection, gpointer label)
 		g_free(wedge_info);
 }
 
+/* Wedge 大类(左边treeview)选择的处理函数 */
+static void on_changed_palette(GtkTreeSelection *selection, gpointer label) 
+{
+	GtkTreeIter iter;
+	GtkTreeModel *model;
+	gchar *value = NULL;
+	gchar *file_path = NULL;
+
+	if (gtk_tree_selection_get_selected(
+				GTK_TREE_SELECTION(selection), &model, &iter)) {
+		gtk_tree_model_get(model, &iter, LIST_ITEM, &value,  -1);
+			file_path = g_strdup_printf ("file://%s%s/", PALETTE_PATH , value);	
+		webkit_web_view_load_uri ((WebKitWebView *)(label), file_path);   /* 本地文件路径前面加上file:// */
+		printf("file_path = %s\n", file_path);
+		g_free(file_path);
+		g_free(value);
+	}
+		printf("file_path = %s\n", file_path);
+	gtk_tree_model_unref_node (model, &iter);
+
+}
+
 /* 0 记事本 备注 等 */
 static void draw_remark ()
 {
@@ -1103,6 +1126,91 @@ static void draw_wedge ()
 
 }
 
+/* 11 调色板 */
+static void draw_color_palette ()
+{
+	GtkWindow *win = GTK_WINDOW (pp->window);
+	GtkWidget *dialog;
+	GtkWidget *vbox1;	/* 指向dialog的vbox */
+
+	GtkWidget *sw;		/* 第一个scroll 备注只要一个sw */
+	GtkWidget *sw1;		/* 第二个scroll 探头 楔块 聚焦法则 setup 调色板 等需要2个sw */
+
+	GtkWidget *list;	/* 2个treeview 用来放置 探头大类和名称 楔块也一样 */
+	GtkCellRenderer *renderer;
+	GtkTreeViewColumn *column;
+	GtkListStore *store;
+
+	GtkWidget *hpaned;
+	WebKitWebView	*web_view;
+
+	dialog = gtk_dialog_new_with_buttons ("Dialog_Wedge", win,
+			GTK_DIALOG_MODAL |	GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_NO_SEPARATOR,
+			GTK_STOCK_OK, GTK_RESPONSE_OK,
+			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+			NULL);
+	gtk_window_set_decorated (GTK_WINDOW (dialog), FALSE);			/*不可以装饰*/
+	gtk_widget_set_size_request(GTK_WIDGET (dialog), 400, 370);
+
+	vbox1 = GTK_WIDGET (GTK_DIALOG(dialog)->vbox);
+
+	sw = gtk_scrolled_window_new (NULL, NULL);
+	sw1 = gtk_scrolled_window_new ( NULL, NULL);
+	/* 调色板名字 */
+	gtk_widget_set_size_request (sw, 200, 230);
+	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW(sw),
+			GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw),
+			GTK_SHADOW_ETCHED_IN);
+
+	/* 调色板信息 */
+	gtk_widget_set_size_request (sw1, 200, 230);
+	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW(sw1),
+			GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw1),
+			GTK_SHADOW_ETCHED_IN);
+
+	/* treeview 放置调色板名字 */
+	list = gtk_tree_view_new();
+	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(list), FALSE);
+	/* 初始化list */
+	renderer = gtk_cell_renderer_text_new();
+	column = gtk_tree_view_column_new_with_attributes("List Items",
+			renderer, "text", LIST_ITEM, NULL);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(list), column);
+
+	store = gtk_list_store_new(N_COLUMNS, G_TYPE_STRING);
+	gtk_tree_view_set_model(GTK_TREE_VIEW(list), 
+			GTK_TREE_MODEL(store));
+	g_object_unref(store);
+
+	web_view = WEBKIT_WEB_VIEW (webkit_web_view_new ());
+	webkit_web_view_set_custom_encoding (web_view, "UTF-8");
+	/* 放置名字和内容 */
+	hpaned = gtk_hpaned_new ();
+	gtk_paned_add1 (GTK_PANED (hpaned), sw);		
+	gtk_paned_add2 (GTK_PANED (hpaned), sw1);
+	gtk_container_add(GTK_CONTAINER (sw), list);
+	gtk_container_add(GTK_CONTAINER (sw1), GTK_WIDGET (web_view));
+
+//	gtk_container_add(GTK_CONTAINER (sw1), list1);
+
+	gtk_box_pack_start(GTK_BOX(vbox1), hpaned, FALSE, FALSE, 5);
+	pp->selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(list));
+
+	init_file_list (list, pp->selection, PALETTE_PATH, DT_REG);
+
+
+	g_signal_connect (G_OBJECT(pp->selection), "changed",
+			G_CALLBACK(on_changed_palette), (gpointer)(web_view));/*确定 or 取消*/
+
+//	g_signal_connect (G_OBJECT (pp->selection), "changed", 
+//			G_CALLBACK(on_changed_wedge), (gpointer) (list1));/*使用"changed"信号来与用户的选择信号进行关联起来*/
+
+	gtk_widget_show_all(dialog);
+
+}
+
 /*
  * 弹出的dialog
  * 0 记事本 备注等等
@@ -1116,7 +1224,8 @@ static void draw_wedge ()
  * 7 保存 配置文件
  * 8 系统信息的显示 
  * 9 报告的显示
- * 10  Export Table
+ * 10 Export Table
+ * 11 调色板
  *
  */
 static void draw_dialog_all (guint type)
@@ -1126,6 +1235,8 @@ static void draw_dialog_all (guint type)
 		case DIALOG_REMARK: draw_remark(); break;
 		case DIALOG_PROBE:  draw_probe(); break;
 		case DIALOG_WEDGE:  draw_wedge(); break;
+
+		case DIALOG_COLOR_PALETTE:  draw_color_palette(); break;
 		default:break;
 	}
 }
@@ -1581,7 +1692,12 @@ static gboolean draw_other_info (GtkWidget *widget, GdkEventExpose *event, gpoin
 	cr = gdk_cairo_create(widget->window);//创建画笔
 	cairo_set_line_width(cr, 2);
 
+	/* 清空背景 */
+	cairo_rectangle (cr , 0, 0, 115, 65);
+	cairo_fill (cr);
 	/* 第一个电池 需要根据电量来改变颜色 */
+
+	cairo_set_source_rgba (cr, 1, 1, 1, 1);
 
 	cairo_move_to (cr, 0, 3);
 	cairo_line_to (cr, 50, 3);
@@ -6301,8 +6417,10 @@ void draw3_data3(DRAW_UI_P p)
 					break;
 
 
-				case 3:/*Display -> Color -> load p433 */
-					draw3_popdown(NULL,3,1);
+				case 3:/* Load color 调色板 P433 */
+					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
+						draw_dialog_all (DIALOG_COLOR_PALETTE);
+					draw3_popdown(NULL, 3, 1);
 					break;
 				case 4:/*Display -> Properties -> Source  p443 */
 					pp->x_pos = 567, pp->y_pos =368-YOFFSET;

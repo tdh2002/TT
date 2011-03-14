@@ -112,6 +112,8 @@
 #define DIALOG_PROBE	1
 #define DIALOG_WEDGE	2
 
+#define DIALOG_COLOR_PALETTE	11
+
 /* 各个menu 弹出菜单的偏移量 */
 #define TX_RX_MODE	0
 #define FREQUENCY	(TX_RX_MODE + 8)
@@ -210,8 +212,9 @@
 #define MENU_UP			3
 #define MENU_DOWN		4
 #define MENU_ENTER		5
-#define HELP_N		6
-#define HELP_Y		6
+
+#define HELP_N		0
+#define HELP_Y		1
 
 #define	MAIN_MENU_PRESS	1
 
@@ -502,6 +505,7 @@ extern gboolean foo (GtkAccelGroup *accel_group, GObject *acceleratable,
 
 extern gboolean key_press_handler (GtkWidget* pWidget, GdkEventKey* pEvent, gpointer data);
 extern void main_menu_pop();
+extern void show_help(guint i);
 
 extern void draw3_pressed1(gfloat step, guint digit);
 

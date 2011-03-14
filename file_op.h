@@ -23,4 +23,7 @@ extern void read_wedge_file (const gchar *file_path, WEDGE_P p);	/* 读取楔块
 #define UT_WEDGE_PATH	"source/system/Model/Wedge/UT/"
 
 
+#define PALETTE_PATH	"/home/tt/TT/source/system/Sample/Palette/"
+
+
 #endif

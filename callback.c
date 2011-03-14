@@ -442,11 +442,14 @@ void tt_label_show_float (GtkWidget *label, const gchar *s1, gfloat value, guint
 /*5个二级菜单按钮的回调函数*/
 void b2_fun0(DRAW_UI_P p, gint pos)
 {
-	p->pos_last1 = p->pos1[p->pos];
-	p->pos1[p->pos] = pos;
-	pp->pos_pos = MENU3_STOP;
-	draw_2_menu(0);
-	draw_3_menu(0, NULL);
+	if (gtk_widget_get_visible (pp->eventbox2[pos]))
+	{
+		p->pos_last1 = p->pos1[p->pos];
+		p->pos1[p->pos] = pos;
+		pp->pos_pos = MENU3_STOP;
+		draw_2_menu(0);
+		draw_3_menu(0, NULL);
+	}
 }
 
 gboolean eventbox2_function0 (GtkWidget *widget, GdkEventButton *event,	gpointer data)
@@ -1576,6 +1579,15 @@ static void handler_key(guint keyval, gpointer data)
 				}
 			}
 			break;
+		case GDK_F6:
+			if (pp->pos_pos == MENU2_PRESSED)
+				;
+			else
+			{
+				b2_fun0(pp, 4);
+				pp->pos_pos = MENU2_PRESSED;
+			}
+			break;
 		case GDK_F12:
 			if (pp->pos_pos == MENU3_PRESSED)
 				b3_fun0(GUINT_TO_POINTER (0x01));
@@ -1588,7 +1600,7 @@ static void handler_key(guint keyval, gpointer data)
 			else
 				show_help(HELP_Y);/*弹出帮助窗口*/
 			pp->help_yn = !pp->help_yn;
-
+			g_print("%d\n", pp->help_yn);
 			break;
 		case GDK_Left:
 		case GDK_Up:
