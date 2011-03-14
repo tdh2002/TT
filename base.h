@@ -71,7 +71,6 @@ typedef struct zoom_display_info {
 
 } ZOOM_DISPLAY_INFO, *ZOOM_DISPLAY_INFO_P;
 
-
 # if 0
 /* Measurement->Cursors->Selection信息 */
 typedef struct selection_info {
@@ -85,7 +84,6 @@ typedef struct selection_info {
 
 } SELECTION_INFO, *SELECTION_INFO_P;
 #endif
-
 
 /* 闸门信息 */
 typedef struct gate_info {
@@ -119,7 +117,6 @@ typedef struct output_info {
 	guint	holdtime;       /* holdtime */
 } OUTPUT_INFO, *OUTPUT_INFO_P;
 
-
 /* 光标信息 */
 typedef struct cursors_info {
 	gushort    angle;	     
@@ -129,8 +126,6 @@ typedef struct cursors_info {
 	guint      index;
 
 } CURSORS_INFO, *CURSORS_INFO_P;
-
-
 
 /* 输出信息 */
 typedef struct analog_info {
@@ -148,9 +143,7 @@ typedef struct law_elem
 typedef struct law_beam
 {
 	guint	beam_delay;
-
 } LAW_BEAM, *LAW_BEAM_P;
-
 
 /*聚焦法则信息(law_info) 28byte*/
 typedef struct law_info
@@ -176,12 +169,11 @@ typedef struct law_info
 typedef struct element_law
 {
 	guchar	e_number;
-
 } ELEMENT_LAW, *ELEMENT_LAW_P;
 
 /*探头(Probe)  516 byte*/
 typedef struct Probe {
-		/*PA 时候先读走4个字节*/
+	/*PA 时候先读走4个字节*/
 	gchar	A1[2];
 	guchar	PA_probe_type;	/* 探头类型 1 是Custom 3 是angle beam 5 是 Contact 6是Immersion */
 	gchar	A10;
@@ -227,7 +219,6 @@ typedef struct Wedge {
 	guint Secondary_offset; /* 微米 */
 	gint A6[107];
 } WEDGE, *WEDGE_P;
-
 
 /*材料 (Material) 28byte */
 typedef struct Material {
@@ -280,10 +271,10 @@ typedef struct Group {
 	gushort	sum_gain;
 	gushort	gain_offset;
 
-	GATE_INFO    gate[GATE_MAX_QTY];        /* gate[0] A , gate[1] B , gate[2] I */
+	GATE_INFO    gate[GATE_MAX_QTY];	/* gate[0] A , gate[1] B , gate[2] I */
 
-	guchar	mode_pos;			/*Gate/Alarm->Sizing Curves->Mode*/
-	guchar	curve_pos;			/*Gate/Alarm->Sizing Curves->Curve*/
+	guchar	mode_pos;					/*Gate/Alarm->Sizing Curves->Mode*/
+	guchar	curve_pos;					/*Gate/Alarm->Sizing Curves->Curve*/
 	gushort ref_ampl;
 	gushort ref_ampl_offset;
 	gushort curve_step;
@@ -297,28 +288,28 @@ typedef struct Group {
 
 	guchar	ut_unit;		/*检测单位 时间2 声程1  实际深度0 .*/
 
-	guchar  group_mode;     /* 组工作模式  0 UT or 1 PA*/
-	LAW_INFO     law_info;	/* 聚焦法则的信息  */
-	PROBE	     probe;
-	WEDGE	     wedge;
+	guchar		group_mode;     /* 组工作模式  0 UT or 1 PA*/
+	LAW_INFO	law_info;	/* 聚焦法则的信息  */
+	PROBE	probe;
+	WEDGE	wedge;
 
-	guchar		selection;
-	gushort    	per_reference;       /* 参考光标的高度 */
-	gushort		per_measure;         /* 测量光标的高度 */
-	guint           u_reference;         /* 参考光标在超声轴的位置 */
-	guint           u_measure;	     /* 测量光标在超声轴的位置 */
-	gint            s_reference;	     /* 参考光标在扫描轴的位置 */	     
-	gint            s_measure;	     /* 测量光标在扫描轴的位置 */
-	guchar          data_link;
-	gint            i_reference;         /* 参考光标在指数轴的位置 */
-	gint            i_measure;	     /* 测量光标在指数轴的位置 */
-	gushort		s_refmeas;
-	gushort		cursors_angle;
-	CURSORS_INFO    cursors_info[4];
-	guchar	 source;
+	guchar	selection;
+	gushort	per_reference;       /* 参考光标的高度 */
+	gushort	per_measure;         /* 测量光标的高度 */
+	guint	u_reference;         /* 参考光标在超声轴的位置 */
+	guint	u_measure;	     /* 测量光标在超声轴的位置 */
+	gint	s_reference;	     /* 参考光标在扫描轴的位置 */	     
+	gint	s_measure;	     /* 测量光标在扫描轴的位置 */
+	guchar	data_link;
+	gint	i_reference;         /* 参考光标在指数轴的位置 */
+	gint	i_measure;	     /* 测量光标在指数轴的位置 */
+	gushort	s_refmeas;
+	gushort	cursors_angle;
+	CURSORS_INFO	cursors_info[4];
+	guchar	source;
 
-	COL_SELECT_INFO  col_select[3];     /* Amplitude TOFD Depth 3个*/
-	guchar  col_select_pos;             /* 0 Amplitude  1 TOFD  2 Depth 共3个*/
+	COL_SELECT_INFO	col_select[3];     /* Amplitude TOFD Depth 3个*/
+	guchar	col_select_pos;             /* 0 Amplitude  1 TOFD  2 Depth 共3个*/
 
 	/*波束 beam*/
 	gint	scan_offset;		/**/
@@ -330,18 +321,17 @@ typedef struct Group {
 	gint	agate_start;
 	guint	agate_width;
 
-//	guchar  law_config;                     /* 聚焦模式 扇扫 线扫etc */
-	guchar  element_qty;
-	guchar  first_element;                  /* 第一个阵元 */
-	guchar  last_element;                   /* 最后一个阵元 (线扫时候可以设置) */
-	guchar  element_step;                   /* 阵元间隔 (线扫时候可以设置) */
-	guchar  wave_type;                      /* 0纵波 与 1横波 */
+	//	guchar  law_config;                     /* 聚焦模式 扇扫 线扫etc */
+	guchar	element_qty;
+	guchar	first_element;                  /* 第一个阵元 */
+	guchar	last_element;                   /* 最后一个阵元 (线扫时候可以设置) */
+	guchar	element_step;                   /* 阵元间隔 (线扫时候可以设置) */
+	guchar	wave_type;                      /* 0纵波 与 1横波 */
 
-	gshort   min_angle;                      /*Focal Law -> Beam -> Min_angle*/
-	gshort   max_angle;
-	gshort	 angle_step;
-	gushort  focus_depth;                    /*Focal Law -> Beam -> focus_depth*/
-
+	gshort	min_angle;                      /*Focal Law -> Beam -> Min_angle*/
+	gshort	max_angle;
+	gshort	angle_step;
+	gushort	focus_depth;                    /*Focal Law -> Beam -> focus_depth*/
 } GROUP, *GROUP_P;
 
 /*配置信息 (CONFIG)*/
@@ -365,9 +355,9 @@ typedef	struct Config {
 	guchar	alarm_pos;          /* 报警信息 0~15 */
 	ALARM_INFO	alarm[16];		/* alarm[0], alarm[1], ..., alarm[15] */
 
-	guchar  output_pos;		/* 0~5 */
-	OUTPUT_INFO  output[3];	/* 输出信息 output[0],output[1],output[2] */
-	ANALOG_INFO  analog[2];	/* Analog 2 个 */
+	guchar	output_pos;		/* 0~5 */
+	OUTPUT_INFO	output[3];	/* 输出信息 output[0],output[1],output[2] */
+	ANALOG_INFO	analog[2];	/* Analog 2 个 */
 	//guchar alarm_on[16];  		  /*alarm#中的选项后面是否加[On] 0否 1是*/
 
 	/*显示*/
@@ -377,9 +367,9 @@ typedef	struct Config {
 	guchar	c_scan11;
 	guchar	data1;
 	guchar	data2;
-	guchar  dis_mode;
-	guint   dis_range;
-	guint   avg_scan_speed;
+	guchar	dis_mode;
+	guint	dis_range;
+	guint	avg_scan_speed;
 	/*选项*/
 	guchar	unit;			/* 0 mm 1 inch */
 	guint	bright;
@@ -411,90 +401,87 @@ typedef	struct Config {
 	guint	max_thickness;                  /*Measurements->Thickness->max*/
 	guchar	echo_qty;                       /*Measurements->Thickness->echo_qty*/
 
-	guchar  dis_group;
+	guchar	dis_group;
 
-	guchar  grid;                           /* Display -> Overlay -> grid */
-	guchar  sizing_curves;                  /* Display -> overlay -> sizing curves*/
-	guchar   overlay_gate;                   /* Display -> overlay -> gate*/
-	guchar   overlay_cursor;                 /* Display -> overlay -> cursor*/
-	guchar   overlay_overlay;                /* Display -> overlay -> overlay*/
+	guchar	grid;                           /* Display -> Overlay -> grid */
+	guchar	sizing_curves;                  /* Display -> overlay -> sizing curves*/
+	guchar	overlay_gate;                   /* Display -> overlay -> gate*/
+	guchar	overlay_cursor;                 /* Display -> overlay -> cursor*/
+	guchar	overlay_overlay;                /* Display -> overlay -> overlay*/
 
-	ZOOM_DISPLAY_INFO  zoom_display[6];     /* Display -> zoom -> display   A、B、S..Scan*/
-	guchar  zoom_display_pos;               /* A-Scan  B-Scan  S-Scan  ... Off 共6个*/
+	ZOOM_DISPLAY_INFO	zoom_display[6];     /* Display -> zoom -> display   A、B、S..Scan*/
+	guchar	zoom_display_pos;               /* A-Scan  B-Scan  S-Scan  ... Off 共6个*/
 
-	guchar  prop_scan;                      /* Display -> Properties -> Scan  6个 */
-	guchar  prop_color;
-	guchar  envelope;                       /* Display -> Properties -> envelope */
-	guchar  prop_source;                    /* Display -> Properties -> Source */
+	guchar	prop_scan;                      /* Display -> Properties -> Scan  6个 */
+	guchar	prop_color;
+	guchar	envelope;                       /* Display -> Properties -> envelope */
+	guchar	prop_source;                    /* Display -> Properties -> Source */
 
-	guchar  prop_app;                       /* Display -> Properties -> appearance */
-	guchar  prop_overlay;                   /* Display -> Properties -> overlay */
-	guint   compress;                       /* Display -> Properties -> compress */
-	guchar  optimum;                        /* Display -> Properties -> optimum */
-	guchar  ratio;                          /* Display -> Properties -> Ratio 1:1 */
-	guchar  interpolation;                  /* Display -> Properties -> Interpolation */
-	guchar  fft_color;                      /* Display -> Properties -> fft_color */
-	guchar  orientation;                      /* Display -> Properties -> orientation*/
+	guchar	prop_app;                       /* Display -> Properties -> appearance */
+	guchar	prop_overlay;                   /* Display -> Properties -> overlay */
+	guint	compress;                       /* Display -> Properties -> compress */
+	guchar	optimum;                        /* Display -> Properties -> optimum */
+	guchar	ratio;                          /* Display -> Properties -> Ratio 1:1 */
+	guchar	interpolation;                  /* Display -> Properties -> Interpolation */
+	guchar	fft_color;                      /* Display -> Properties -> fft_color */
+	guchar	orientation;                      /* Display -> Properties -> orientation*/
 
 	//guint   part_thickness;                 /*Probe/Part -> Parts -> thickness*/
-	guchar  auto_detect;                    /* 自动检测探头连接状态 开启时候不能调节 收发起止位置 */
+	guchar	auto_detect;                    /* 自动检测探头连接状态 开启时候不能调节 收发起止位置 */
 
-	guchar  probe_select;                   /*Probe/Part -> select -> select*/
-	guchar  fft;                            /*Probe/Part -> characterize -> FFT*/
+	guchar	probe_select;                   /*Probe/Part -> select -> select*/
+	guchar	fft;                            /*Probe/Part -> characterize -> FFT*/
 
 	guchar	connection_P;                   /* 设置收的接口 1-128 */
 	guchar  connection_R;                   /* 设置发的接口 1-128 */
 	//	guint   min_angle;                      /*Focal Law -> Beam -> Min_angle*/
-	guchar  auto_program;                   /* Off   On*/
+	guchar	auto_program;                   /* Off   On*/
 	//	guint   focus_depth;                    /*Focal Law -> Beam -> focus_depth*/
-	guchar  encoder;
-	guchar  polarity;
-	guchar  e_type;
-	guint   encoder_resolution;
+	guchar	encoder;
+	guchar	polarity;
+	guchar	e_type;
+	guint	encoder_resolution;
 	gint	origin;
-	guchar  i_type;
-	guchar  i_scan;
-	guchar  i_index;
-	guint   scanspeed;
-	guint   scanspeed_rpm;
-	guint   indexspeed;
+	guchar	i_type;
+	guchar	i_scan;
+	guchar	i_index;
+	guint	scanspeed;
+	guint	scanspeed_rpm;
+	guint	indexspeed;
 
-	guint    scan_start;                    /* Scan -> Area -> Scan start*/
-	guint    scan_end;                      /* Scan -> Area -> Scan end*/
-	guint    scan_resolution;               /* Scan -> Area -> Scan resolution*/
-	guint    index_start;                   /* Scan -> Area -> index_start*/
-	guint    index_end;                     /* Scan -> Area -> index_end*/
-	guint    index_resolution;              /* Scan -> Area -> index_resolution*/
-	guchar   start_mode;                    /* Scan -> Start -> start mode*/
-	guchar   pause;                         /* Scan -> Start -> pause*/
-	guchar   storage;                       /* Scan -> Data  -> storage*/
-	guchar   inspec_data;                   /* Scan -> Data  -> Inspec.data*/
+	guint	scan_start;                    /* Scan -> Area -> Scan start*/
+	guint	scan_end;                      /* Scan -> Area -> Scan end*/
+	guint	scan_resolution;               /* Scan -> Area -> Scan resolution*/
+	guint	index_start;                   /* Scan -> Area -> index_start*/
+	guint	index_end;                     /* Scan -> Area -> index_end*/
+	guint	index_resolution;              /* Scan -> Area -> index_resolution*/
+	guchar	start_mode;                    /* Scan -> Start -> start mode*/
+	guchar	pause;                         /* Scan -> Start -> pause*/
+	guchar	storage;                       /* Scan -> Data  -> storage*/
+	guchar	inspec_data;                   /* Scan -> Data  -> Inspec.data*/
 
-	guchar   file_storage;                  /* File -> File -> Storage*/
-	guchar   save_mode;                     /* File -> File -> save mode */
-	guchar   templa;
-	guchar   paper_size;                    /* File -> Report -> paper size */
-	guchar    format_userfield;              /* File -> Format -> UserField*/
-	guchar    format_probe;                  /* File -> Format -> probe*/
-	guchar    format_setup;                  /* File -> Format -> setup*/
-	guchar    format_note;                   /* File -> Format -> note*/
-	guchar    view;                         /* File -> Format -> view*/
-	guchar    file_select;                  /* File -> User Field -> file_select*/
-	guchar    enable;                       /* File -> User Field -> enable*/
+	guchar	file_storage;                  /* File -> File -> Storage*/
+	guchar	save_mode;                     /* File -> File -> save mode */
+	guchar	templa;
+	guchar	paper_size;                    /* File -> Report -> paper size */
+	guchar	format_userfield;              /* File -> Format -> UserField*/
+	guchar	format_probe;                  /* File -> Format -> probe*/
+	guchar	format_setup;                  /* File -> Format -> setup*/
+	guchar	format_note;                   /* File -> Format -> note*/
+	guchar	view;                         /* File -> Format -> view*/
+	guchar	file_select;                  /* File -> User Field -> file_select*/
+	guchar	enable;                       /* File -> User Field -> enable*/
 
-	guchar    scheme;                       /* Preferences -> Pref. -> Scheme */
-	guchar    gate_mode;                    /* Preferences -> Pref. -> Gate Mode */
-	guchar    select_key;                    /* Preferences -> Pref. -> Select Key */
-	guchar    assign_key;                    /* Preferences -> Pref. -> Assign Key */
-	guchar	  assign_key_p;
-	guchar    startup_mode;                    /* Preferences -> Service -> Startup Mode*/
-	guchar    mouse;                       /* Preferences -> Options -> mouse*/
+	guchar	scheme;                       /* Preferences -> Pref. -> Scheme */
+	guchar	gate_mode;                    /* Preferences -> Pref. -> Gate Mode */
+	guchar	select_key;                    /* Preferences -> Pref. -> Select Key */
+	guchar	assign_key;                    /* Preferences -> Pref. -> Assign Key */
+	guchar	assign_key_p;
+	guchar	mouse;                       /* Preferences -> Options -> mouse*/
 	//guchar    ezview;                       /* Preferences -> Options -> mouse*/
-	guchar    remote_desktop;                       /* Preferences -> Options -> mouse*/
+	guchar	remote_desktop;                       /* Preferences -> Options -> mouse*/
 
-	gint	fd_fb;		/* fb设备 */
-	guchar remark_info[256];
-
+	guchar	remark_info[256];
 } CONFIG, *CONFIG_P;
 
 typedef struct tmp_config {
@@ -518,28 +505,28 @@ typedef struct tmp_config {
 
 	guchar  beam_delay_reg;		/*beam delay 步进*/
 
-	guchar  point_qty_reg;           /*Points Qty 步进*/
-	guchar	sum_gain_reg;           /*Sum Gain 步进*/
+	guchar  point_qty_reg;		/*Points Qty 步进*/
+	guchar	sum_gain_reg;		/*Sum Gain 步进*/
 	guchar	angle_reg;
 	guchar	skew_reg;
 
-	guchar	gate_width_reg;        /* */
+	guchar	gate_width_reg;		/* */
 
-	guchar	agate_start_reg;        /*agate_start步进*/
-	guchar	agate_width_reg;        /*agate_width步进*/
-	guchar	agate_height_reg;       /*agate_height步进*/
-	guchar	count_reg;              /*count步进*/
-	guchar	active_delay_reg;       /* active_delay  步进 */
+	guchar	agate_start_reg;    /*agate_start步进*/
+	guchar	agate_width_reg;    /*agate_width步进*/
+	guchar	agate_height_reg;	/*agate_height步进*/
+	guchar	count_reg;			/*count步进*/
+	guchar	active_delay_reg;	/* active_delay  步进 */
 	guchar	holdtime_reg;		/* holdtime  步进 */
-	guchar	VPA_reg;		/* VPA  步进 */
-	guchar	cursors_scan_reg;		/* cursors_scan  步进 */
-	guchar  cursors_index_reg;           /*cursors_index步进*/
-	guchar  min_thickness_reg;           /*min_thickness步进*/
-	guchar  max_thickness_reg;           /*max_thickness步进*/
-	guchar  entry_reg;                   /*entry步进*/
-	guchar  echo_qty_reg;                /*echo_qty步进*/
+	guchar	VPA_reg;			/* VPA  步进 */
+	guchar	cursors_scan_reg;	/* cursors_scan  步进 */
+	guchar  cursors_index_reg;	/*cursors_index步进*/
+	guchar  min_thickness_reg;	/*min_thickness步进*/
+	guchar  max_thickness_reg;	/*max_thickness步进*/
+	guchar  entry_reg;			/*entry步进*/
+	guchar  echo_qty_reg;		/*echo_qty步进*/
 
-	guchar  ref_ampl_reg;                /*232 Gate/Alarm->Sizing Curves */
+	guchar  ref_ampl_reg;		/*232 Gate/Alarm->Sizing Curves */
 	guchar  ref_ampl_offset_reg;
 	guchar  curve_step_reg;
 	guchar  ref_gain_reg;
@@ -549,7 +536,7 @@ typedef struct tmp_config {
 	guchar  delay_reg;
 	guchar  tcg_gain_reg;
 
-	guchar  per_reference_reg;		     /* 311 Measurements-> cursors -> %(r) */
+	guchar  per_reference_reg;	 /* 311 Measurements-> cursors -> %(r) */
 	guchar  per_measure_reg;
 	guchar  u_reference_reg;
 	guchar  u_measure_reg;
@@ -562,74 +549,72 @@ typedef struct tmp_config {
 
 	guchar   dis_range_reg;
 	guchar   avg_scan_speed_reg;
-	guchar   start_usound_reg;			/* Display -> zoom -> Start USound */
-	guchar   end_usound_reg;			/* Display -> zoom -> End USound */
-	guchar   range_usound_reg;			/* Display -> zoom -> Range USound */
+	guchar   start_usound_reg;	/* Display -> zoom -> Start USound */
+	guchar   end_usound_reg;	/* Display -> zoom -> End USound */
+	guchar   range_usound_reg;	/* Display -> zoom -> Range USound */
 	guchar   center_usound_reg;
-	guchar   start_amplitude_reg;			/* Display -> zoom -> Start Amplitude */
-	guchar   end_amplitude_reg;			/* Display -> zoom -> End Amplitude */
-	guchar   range_amplitude_reg;			/* Display -> zoom -> Range Amplitude */
+	guchar   start_amplitude_reg;	/* Display -> zoom -> Start Amplitude */
+	guchar   end_amplitude_reg;	/* Display -> zoom -> End Amplitude */
+	guchar   range_amplitude_reg;	/* Display -> zoom -> Range Amplitude */
 	guchar   center_amplitude_reg;
 
-	guchar   color_contrast_reg;                 /* Display -> Color -> contrast  */
-	guchar   brightness_reg;                     /* Display -> Color -> brightness*/
-	guchar   color_start_reg;                    /* Display -> Color -> Start步进  */
-	guchar   color_end_reg;                      /* Display -> Color -> end步进    */
-	guchar   min_reg;                            /* Display -> Color -> min       */
-	guchar   max_reg;                            /* Display -> Color -> max       */
-	guchar   compress_reg;                       /* Display -> Properties -> compress */
+	guchar   color_contrast_reg;	/* Display -> Color -> contrast  */
+	guchar   brightness_reg;	/* Display -> Color -> brightness*/
+	guchar   color_start_reg;	/* Display -> Color -> Start步进  */
+	guchar   color_end_reg;		/* Display -> Color -> end步进    */
+	guchar   min_reg;			/* Display -> Color -> min       */
+	guchar   max_reg;			/* Display -> Color -> max       */
+	guchar   compress_reg;		/* Display -> Properties -> compress */
 
-	guchar   part_thickness_reg;                 /* Probe/Part -> parts -> thickness步进*/
-	guchar   diameter_reg;                       /* Probe/Part -> parts -> diameter步进*/
+	guchar   part_thickness_reg;	/* Probe/Part -> parts -> thickness步进*/
+	guchar   diameter_reg;		/* Probe/Part -> parts -> diameter步进*/
 
-	guchar   connection_P_reg;                   /* Focal_Law -> configuration -> connection P*/
-	guchar   connection_R_reg;                   /*Focal_Law -> configuration -> connection R*/
+	guchar   connection_P_reg;	/* Focal_Law -> configuration -> connection P*/
+	guchar   connection_R_reg;	/*Focal_Law -> configuration -> connection R*/
 
-	guchar   element_qty_reg;                    /* Focal_Law -> aperture -> element qty*/
-	guchar   first_element_reg;                  /* Focal_Law -> aperture -> first element*/
-	guchar   last_element_reg;                   /* Focal_Law -> aperture -> last_element*/
-	guchar   element_step_reg;                   /* Focal_Law -> aperture -> element_step*/
-
-
-	guchar   min_angle_reg;                      /* Focal Law -> Beam -> Min_angle*/
-	guchar   max_angle_reg;                      /* Focal Law -> Beam -> Max_angle*/
-	guchar   focus_depth_reg;                    /* Focal Law -> Beam -> focus_depth*/
-	guchar   angle_step_reg;                     /* Focal_Law -> Beam -> angle_step*/
+	guchar   element_qty_reg;	/* Focal_Law -> aperture -> element qty*/
+	guchar   first_element_reg;	/* Focal_Law -> aperture -> first element*/
+	guchar   last_element_reg;	/* Focal_Law -> aperture -> last_element*/
+	guchar   element_step_reg;	/* Focal_Law -> aperture -> element_step*/
 
 
-	guchar	  encoder_resolution_reg;		/* Scan -> Encoder -> resolution  */
+	guchar   min_angle_reg;		/* Focal Law -> Beam -> Min_angle*/
+	guchar   max_angle_reg;		/* Focal Law -> Beam -> Max_angle*/
+	guchar   focus_depth_reg;	/* Focal Law -> Beam -> focus_depth*/
+	guchar   angle_step_reg;	/* Focal_Law -> Beam -> angle_step*/
+
+
+	guchar	  encoder_resolution_reg;	/* Scan -> Encoder -> resolution  */
 	guchar	  origin_reg;
 	//	guchar    scan_speed_reg;                      /* Scan -> Inspection -> Scan speed*/
 	guchar   scanspeed_reg;
 	guchar   scanspeed_rpm_reg;
 	guchar   indexspeed_reg;
 
-	guchar    scan_start_reg;                      /* Scan -> Area -> Scan start*/
-	guchar    scan_end_reg;                        /* Scan -> Area -> Scan end*/
-	guchar    scan_resolution_reg;                 /* Scan -> Area -> Scan resolution*/
+	guchar    scan_start_reg;	/* Scan -> Area -> Scan start*/
+	guchar    scan_end_reg;		/* Scan -> Area -> Scan end*/
+	guchar    scan_resolution_reg;	/* Scan -> Area -> Scan resolution*/
 
-	guchar    index_start_reg;                      /* Scan -> Area -> index_start*/
-	guchar    index_end_reg;                            /* Scan -> Area -> index_end*/
-	guchar    index_resolution_reg;                     /* Scan -> Area -> index_resolution*/
+	guchar    index_start_reg;	/* Scan -> Area -> index_start*/
+	guchar    index_end_reg;	/* Scan -> Area -> index_end*/
+	guchar    index_resolution_reg;	/* Scan -> Area -> index_resolution*/
 
-	guchar    bright_reg;                          /*preferences -> pref. -> bright*/
+	guchar    bright_reg;		/*preferences -> pref. -> bright*/
 
-	
+	gushort		color[256];		/* 调色板信息 */
+
 	guint	max_prf;
 	gushort	*fb1_addr;
 	gushort	*virtual_add;
+
+
 	gint	fd_config;
-
-
 } TMP_CONFIG, *TMP_CONFIG_P;
 
 /*测量数据 (MEASURE_DATA)*/
 typedef struct Measure_data {
 
-
-
 } MEASURE_DATA, *MEASURE_DATA_P;
-
 
 /*画图区域*/
 typedef struct draw_area {
@@ -645,9 +630,6 @@ typedef struct draw_area {
 	GtkWidget *drawarea_colorbar;        /*颜色条*/
 } DRAW_AREA, *DRAW_AREA_P;
 
-
-
-
 /*画界面结构体*/
 typedef struct Draw_interface {
 	guchar			pos_pos;       /* 指示当前位置信息 0 2级停留 1 2级按下 2 3级停留 3 3级按下 */
@@ -658,7 +640,7 @@ typedef struct Draw_interface {
 	guchar			pos_last1;          /* 二级菜单位置上一位置  */
 	guchar			pos_last2;          /* 三级菜单位置上一位置  */
 	guchar			menu2_qty;          /*  */
-	GdkColor		col;
+
 	GtkAdjustment	*adj;
 	GSList			*group;
 
@@ -678,10 +660,10 @@ typedef struct Draw_interface {
 	GtkWidget		*hbox2;                 /* button 和 画图区域     */
 	GtkWidget		*vbox21;		/* 一、二级菜单， 及画图区域 */
 	GtkWidget		*hbox211;		/* 画图区域 及 vscalebox  */
-	GtkWidget	*vboxtable;             /* 各个画图区域            */
+	GtkWidget		*vboxtable;             /* 各个画图区域            */
 
-	GtkWidget	*vbox_area[4];
-	GtkWidget	*hbox_area[4];
+	GtkWidget		*vbox_area[4];
+	GtkWidget		*hbox_area[4];
 
 	GtkWidget		*hbox212;		/*一级菜单 二级菜单显示*/
 
@@ -689,8 +671,8 @@ typedef struct Draw_interface {
 	GtkWidget		*vbox221[6];
 
 	/*menubar menu menuitem_main 可以不用放在这里*/
-	GtkWidget  *event[20];	       /*测量信息等的显示*/
-	GtkWidget  *label[20];	       /*测量信息等的显示*/
+	GtkWidget		*event[20];	       /*测量信息等的显示*/
+	GtkWidget		*label[20];	       /*测量信息等的显示*/
 
 	GtkWidget		*menubar;			/* 一级菜单 */
 	GtkWidget		*menu;				/* 一级菜单 */
@@ -707,7 +689,6 @@ typedef struct Draw_interface {
 	GtkWidget		*data3[6];			/* */
 	GtkWidget		*eventbox32[6];                 /* */
 	GtkWidget		*sbutton[6];
-	GtkWidget		*button;
 	/* waiting for delete*/
 	GtkWidget		*menu3;
 	GtkWidget		*menu_bar3;
@@ -717,8 +698,6 @@ typedef struct Draw_interface {
 	GtkWidget		*window;
 
 	GtkWidget		*dialog;
-	GtkWidget		*popbox;
-	GtkWidget		*popbutton[30];
 	/* scale 快速调节数值 */
 	GtkWidget		*button_add;
 	GtkWidget		*button_sub;
@@ -734,10 +713,6 @@ typedef struct Draw_interface {
 	GtkWidget	*title;
 	GtkWidget	*drawlabel;
 	GtkWidget	*sw;
-	GtkWidget	*sw1;
-	GtkWidget	*sw2;
-	GtkWidget	*sw3;
-
 
 
 	CONFIG_P		p_config;			/**/
@@ -767,18 +742,12 @@ typedef struct Draw_interface {
 	guchar  help_yn; /*是否弹出help窗口 0 否，1 是*/	
 } DRAW_UI, *DRAW_UI_P;
 
-
-/* guchar 0~256   gushort 0~65536  guint 0~2^32 */
-/* 13*。。。。  */
-
 /* 315 Data Link 止 20110212*/
 /* 522\523 与 A闸门时的 202\203 相同，未实现 */
 /* 524 525 可编辑状态 未实现 */
 /* 805 */
 
 /* Wizard 中各Start , Next。。。等的实现 */
-/* UT Settings -> Beam 下几个菜单unsensitive */
-/* UT Settings -> Advanced -> Set 80% , Set Ref. 的实现 */
 /* 201 220 231  所选菜单项不同，后面跟着弹出的菜单便不同 */
 /* 212 与 215 的关系  */
 /* 310  所选菜单项不同，后面跟着弹出的菜单便不同 */
@@ -791,7 +760,6 @@ typedef struct Draw_interface {
 /* 612 613 何时为sensitive , 何时为 unsensitive 状态*/
 /* 620 621 622 何时为sensitive , 何时为 unsensitive 状态*/
 /* 710 所选菜单项不同，后面跟着弹出的菜单便不同 */
-
 
 #define CUR_POS (pp->pos2[pp->pos][pp->pos1[pp->pos]])      /* 0,1,2,3,4,5 */
 #define CFG(a)	(pp->p_config->a)

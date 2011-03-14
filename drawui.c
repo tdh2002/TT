@@ -867,7 +867,7 @@ static void on_changed_palette(GtkTreeSelection *selection, gpointer label)
 				GTK_TREE_SELECTION(selection), &model, &iter)) {
 		gtk_tree_model_get(model, &iter, LIST_ITEM, &value,  -1);
 			file_path = g_strdup_printf ("file://%s%s/", PALETTE_PATH , value);	
-		webkit_web_view_load_uri ((WebKitWebView *)(label), file_path);   /* 本地文件路径前面加上file:// */
+		webkit_web_view_load_uri ((WebKitWebView *)(label), file_path);   
 		printf("file_path = %s\n", file_path);
 		g_free(file_path);
 		g_free(value);
@@ -1136,7 +1136,7 @@ static void draw_color_palette ()
 	GtkWidget *sw;		/* 第一个scroll 备注只要一个sw */
 	GtkWidget *sw1;		/* 第二个scroll 探头 楔块 聚焦法则 setup 调色板 等需要2个sw */
 
-	GtkWidget *list;	/* 2个treeview 用来放置 探头大类和名称 楔块也一样 */
+	GtkWidget *list;	/* 1个treeview 用来放置调色板名称 */
 	GtkCellRenderer *renderer;
 	GtkTreeViewColumn *column;
 	GtkListStore *store;
