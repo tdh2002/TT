@@ -19,6 +19,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
+#include <webkit/webkit.h>
 
 #define EVENT_METHOD(i, x) GTK_WIDGET_GET_CLASS((GtkObject*)(i))->x
 #define YOFFSET  26
@@ -137,16 +138,62 @@ void update_widget_bg(GtkWidget *widget, const gchar *img_file)
 
 void main_menu_pop(guint action)
 {
+	int i;
 	pp->x_pos = 0, pp->y_pos =0;
-	if (MENU_POP == action)
+	if (MENU_POP == action)/*弹出主菜单*/
+	{
 		gtk_menu_popup ( GTK_MENU (pp->menu), NULL, NULL, 
 				(GtkMenuPositionFunc)set_menu_position_tdh,
 				NULL,
 				0,
 				gtk_get_current_event_time());
-	else if (MENU_DOWN == action) 
+		for(i=0;i<10;i++)
+			gtk_menu_item_deselect (GTK_MENU_ITEM (pp->menuitem[i]));
+		gtk_menu_item_select (GTK_MENU_ITEM (pp->menuitem[pp->pos]));
+	}
+	else if (MENU_DIS == action) /*收回主菜单*/
+	{
 		gtk_menu_popdown( GTK_MENU (pp->menu));
-	pp->main_menu_pop_status = !pp->main_menu_pop_status ;
+	}
+	 else if ( (MENU_CHANGE == action)||(MENU_DOWN == action) )	/*轮流切换主菜单*/
+	{
+		gtk_menu_item_deselect (GTK_MENU_ITEM (pp->menuitem[pp->pos]));
+		if((pp->pos) == 9)
+			pp->pos = 0;
+		else
+			pp->pos++;
+		gtk_menu_item_select (GTK_MENU_ITEM (pp->menuitem[pp->pos]));
+	}
+	 else if (MENU_UP == action)/*向上切换主菜单*/
+	{
+		gtk_menu_item_deselect (GTK_MENU_ITEM (pp->menuitem[pp->pos]));
+		if((pp->pos) == 0)
+			pp->pos = 9;
+		else
+			pp->pos--;
+		gtk_menu_item_select (GTK_MENU_ITEM (pp->menuitem[pp->pos]));
+	}
+	else if (MENU_ENTER == action) /*选中当前菜单项，并收回主菜单*/
+	{
+		gtk_menu_item_activate (GTK_MENU_ITEM (pp->menuitem[pp->pos]));
+		gtk_menu_popdown( GTK_MENU (pp->menu));
+	}
+
+//	pp->main_menu_pop_status = !pp->main_menu_pop_status ;
+}
+
+void show_help(guint i)
+{
+	if (i == HELP_Y) /*弹出帮助窗口*/
+	{
+		gtk_widget_hide(pp->hbox211);
+		gtk_widget_show(pp->sw);
+	}
+	else  if (i == HELP_N) /*隐藏帮助窗口*/
+	{
+		gtk_widget_show(pp->hbox211);
+		gtk_widget_hide(pp->sw);
+	}
 }
 
 gboolean main_menu_press (GtkWidget *widget, GdkEventButton *event,	gpointer data)
@@ -8760,6 +8807,7 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 	pp->menu2_qty = 5;
 	GtkWidgetClass *widget_window_class1;
 	gchar *markup;
+	WebKitWebView* web_view;
 
 	for (i = 0; i < 512; i++) 
 	{
@@ -8788,6 +8836,7 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 	p->vbox21		= gtk_vbox_new(FALSE, 0);	
 	p->hbox211		= gtk_hbox_new(FALSE, 0);
 	p->vboxtable            = gtk_vbox_new(FALSE, 0);
+	p->sw			= gtk_scrolled_window_new(NULL, NULL);
 
 
 	//	p->vbox2111		= gtk_vbox_new(FALSE, 0);	
@@ -9074,9 +9123,20 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 	gtk_widget_show(p->vbox22);
 
 	gtk_box_pack_start (GTK_BOX (p->vbox21), p->hbox211, FALSE, FALSE, 0);
+	gtk_widget_set_size_request(p->sw,685,425);	/*显示帮助文档*/
+	gtk_box_pack_start (GTK_BOX (p->vbox21), p->sw, FALSE, FALSE, 0);
 	gtk_box_pack_start (GTK_BOX (p->vbox21), p->hbox212, FALSE, FALSE, 0);
 	gtk_widget_show(p->hbox211);
 	gtk_widget_show(p->hbox212);
+
+	/*帮助文档*/
+	web_view = WEBKIT_WEB_VIEW (webkit_web_view_new ());	/*???*/
+	webkit_web_view_set_custom_encoding (web_view, "UTF-8");	/*???????????*/
+	gtk_container_add(GTK_CONTAINER (p->sw), GTK_WIDGET (web_view));
+
+	//gchar *file_path="/home/gll/arraytop/TT/source/system/Help/Contextual/Wizard_Menu.html";
+	webkit_web_view_load_uri (web_view, "file:///home/tt/TT/source/system/Help/Contextual/Wizard_Menu.html");
+
 
 	gtk_box_pack_start (GTK_BOX (p->hbox211), p->vboxtable, FALSE, FALSE, 0);
 	gtk_widget_show(p->vboxtable);
@@ -9131,6 +9191,7 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 	gtk_widget_show (pp->button_sub);
 	gtk_widget_show (pp->vscale);
 	gtk_widget_show (pp->vscalebox);
+	gtk_widget_hide (pp->sw);
 
 	gtk_widget_set_can_focus (pp->button_add, FALSE);
 	gtk_widget_set_can_focus (pp->vscale, FALSE);

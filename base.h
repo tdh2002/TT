@@ -763,6 +763,8 @@ typedef struct Draw_interface {
 
 	gint x_pos;
 	gint y_pos;  /* 弹出窗口的xy坐标 */
+
+	guchar  help_yn; /*是否弹出help窗口 0 否，1 是*/	
 } DRAW_UI, *DRAW_UI_P;
 
 

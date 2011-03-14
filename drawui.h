@@ -205,7 +205,13 @@
 
 /* 按键是由那个window发出 */
 #define MENU_POP		0
-#define MENU_DOWN		1
+#define MENU_DIS		1 /*disappear*/
+#define MENU_CHANGE		2
+#define MENU_UP			3
+#define MENU_DOWN		4
+#define MENU_ENTER		5
+#define HELP_N		6
+#define HELP_Y		6
 
 #define	MAIN_MENU_PRESS	1
 

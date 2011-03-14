@@ -1516,33 +1516,51 @@ static void handler_key(guint keyval, gpointer data)
 	switch (keyval) 
 	{
 		case GDK_Super_L:
-			if (MAIN_MENU_PRESS == data1)
-				main_menu_pop(MENU_DOWN);
-			else
-				main_menu_pop(MENU_POP);
+			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
+				//main_menu_pop(MENU_DIS);/*收回主菜单条*/
+			{
+				main_menu_pop(MENU_CHANGE);/*被选中的主菜单轮流切换*/
+			}
+			else/*当主菜单条处于收回状态时*/
+				main_menu_pop(MENU_POP);/*弹出主菜单条并选中当前选项*/
 			break;
 		case GDK_Escape:
-			if ( pp->mark_pop_change == 1)
-				pp->mark_pop_change = 0;
-			switch (pp->pos_pos)
+			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
 			{
-				case MENU2_STOP:
-					break;
-				case MENU2_PRESSED:
-					pp->pos_pos = MENU2_STOP;
-					break;
-				case MENU3_STOP:
-					pp->pos_pos = MENU2_STOP;
-					break;
-				case MENU3_PRESSED:
-					pp->pos_pos = MENU3_STOP;
-					break;
-				default:break;
+				main_menu_pop(MENU_DIS);/*收回主菜单条*/
+			}
+			else/*当主菜单条处于收回状态时*/
+			{
+
+				if ( pp->mark_pop_change == 1)
+					pp->mark_pop_change = 0;
+				switch (pp->pos_pos)
+				{
+					case MENU2_STOP:
+						break;
+					case MENU2_PRESSED:
+						pp->pos_pos = MENU2_STOP;
+						break;
+					case MENU3_STOP:
+						pp->pos_pos = MENU2_STOP;
+						break;
+					case MENU3_PRESSED:
+						pp->pos_pos = MENU3_STOP;
+						break;
+					default:break;
+				}
 			}
 			break;
-		case GDK_Return:
-			switch (pp->pos_pos)
+		case GDK_Return:	/*回车键*/
+			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
 			{
+				main_menu_pop(MENU_ENTER);/*选中当前主菜单，并收回主菜单条*/
+			}
+			else/*当主菜单条处于收回状态时*/
+			{
+
+				switch (pp->pos_pos)
+				{
 				case MENU2_STOP:
 					pp->pos_pos = MENU3_STOP;
 					break;
@@ -1555,6 +1573,7 @@ static void handler_key(guint keyval, gpointer data)
 					pp->pos_pos = MENU3_STOP;
 					break;
 				default:break;
+				}
 			}
 			break;
 		case GDK_F12:
@@ -1563,44 +1582,70 @@ static void handler_key(guint keyval, gpointer data)
 			else 
 				pp->pos_pos = MENU3_PRESSED;
 			break;
+		case GDK_F1:
+			if(pp->help_yn == 0)
+				show_help(HELP_N);/*隐藏帮助窗口*/
+			else
+				show_help(HELP_Y);/*弹出帮助窗口*/
+			pp->help_yn = !pp->help_yn;
+
+			break;
+		case GDK_Left:
 		case GDK_Up:
-			switch (pp->pos_pos)
+			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
 			{
-				case MENU2_STOP:
-					pp->pos_last1 = pp->pos1[pp->pos];
-					pp->pos1[pp->pos] < (pp->menu2_qty - 1) ? pp->pos1[pp->pos]++ :  (pp->pos1[pp->pos] = 0);
-					draw_2_menu(0);
-					draw_3_menu(1, NULL);
-					break;
-				case MENU2_PRESSED:
-					break;
-				case MENU3_STOP:
-					break;
-				case MENU3_PRESSED:
-					break;
+				main_menu_pop(MENU_UP);/*被选中的主菜单向上切换*/
+			}
+			else/*当主菜单条处于收回状态时*/
+			{
+				switch (pp->pos_pos)
+				{
+					case MENU2_STOP:
+						pp->pos_last1 = pp->pos1[pp->pos];
+						pp->pos1[pp->pos] > 0 ? pp->pos1[pp->pos]-- :  (pp->pos1[pp->pos] = (pp->menu2_qty - 1));
+						draw_2_menu(0);
+						draw_3_menu(1, NULL);
+						break;
+					case MENU2_PRESSED:
+						break;
+					case MENU3_STOP:
+						break;
+					case MENU3_PRESSED:
+						break;
+				}
+
+
 			}
 			break;
 		case GDK_Right:
-			break;
+			//break;
 		case GDK_Down:
-			switch (pp->pos_pos)
+			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
 			{
-				case MENU2_STOP:
-					pp->pos_last1 = pp->pos1[pp->pos];
-					pp->pos1[pp->pos] > 0 ? pp->pos1[pp->pos]-- :  (pp->pos1[pp->pos] = (pp->menu2_qty - 1));
-					draw_2_menu(0);
-					draw_3_menu(1, NULL);
-					break;
-				case MENU2_PRESSED:
-					break;
-				case MENU3_STOP:
-					break;
-				case MENU3_PRESSED:
-					break;
+				main_menu_pop(MENU_DOWN);/*被选中的主菜单向下切换*/
+			}
+			else/*当主菜单条处于收回状态时*/
+			{
+
+				switch (pp->pos_pos)
+				{
+					case MENU2_STOP:
+						pp->pos_last1 = pp->pos1[pp->pos];
+						pp->pos1[pp->pos] < (pp->menu2_qty - 1) ? pp->pos1[pp->pos]++ :  (pp->pos1[pp->pos] = 0);
+						draw_2_menu(0);
+						draw_3_menu(1, NULL);
+						break;
+					case MENU2_PRESSED:
+						break;
+					case MENU3_STOP:
+						break;
+					case MENU3_PRESSED:
+						break;
+				}
 			}
 			break;
-		case GDK_Left:
-			break;
+		//case GDK_Left:
+			//break;
 		default:break;
 	}
 	if ((tmp != pp->pos_pos) || (tmp1 != pp->mark_pop_change))
