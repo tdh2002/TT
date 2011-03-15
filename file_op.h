@@ -16,6 +16,7 @@
 
 extern void read_probe_file (const gchar *file_path, PROBE_P p);	/* 读取探头信息 */
 extern void read_wedge_file (const gchar *file_path, WEDGE_P p);	/* 读取楔块信息 */
+extern void read_palette_file (const gchar *file_path, gushort *sp_col, gushort *col);
 
 #define PA_PROBE_PATH	"source/system/Model/Probe/PA/"
 #define UT_PROBE_PATH	"source/system/Model/Probe/UT/"

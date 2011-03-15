@@ -531,6 +531,31 @@ static void da_call_wedge (GtkDialog *dialog, gint response_id, gpointer user_da
 		gtk_widget_destroy (GTK_WIDGET (dialog));
 }
 
+/* 调色板 选择2个按键的处理 一个是确认 一个是取消 */
+static void da_call_palette (GtkDialog *dialog, gint response_id, gpointer user_data)      
+{
+	GtkTreeIter iter;
+	GtkTreeModel *model;
+	gchar *value;
+	gchar *file_path = NULL;
+
+	if (GTK_RESPONSE_OK == response_id)  /* 确认 */
+	{
+		if (gtk_tree_selection_get_selected(
+					GTK_TREE_SELECTION(pp->selection), &model, &iter)) /* 选中探头型号时 */
+		{
+			gtk_tree_model_get(model, &iter, LIST_ITEM, &value,  -1);
+			file_path = g_strdup_printf ("%s%s", PALETTE_PATH, value);
+			g_print ("%s", file_path);
+
+			g_free (file_path);
+			gtk_widget_destroy (GTK_WIDGET (dialog));
+		}
+	}
+	else if (GTK_RESPONSE_CANCEL == response_id) /* 取消 */
+		gtk_widget_destroy (GTK_WIDGET (dialog));
+}
+
 /*
  * 警告信息 
  * btn_qty: 表示几个按钮 1-2; 1就是 确认 2是确认和取消
@@ -862,17 +887,26 @@ static void on_changed_palette(GtkTreeSelection *selection, gpointer label)
 	GtkTreeModel *model;
 	gchar *value = NULL;
 	gchar *file_path = NULL;
+	int i;
+	gushort sp_col[3];
+	gushort col[256];
 
 	if (gtk_tree_selection_get_selected(
 				GTK_TREE_SELECTION(selection), &model, &iter)) {
 		gtk_tree_model_get(model, &iter, LIST_ITEM, &value,  -1);
-			file_path = g_strdup_printf ("file://%s%s/", PALETTE_PATH , value);	
-		webkit_web_view_load_uri ((WebKitWebView *)(label), file_path);   
+		file_path = g_strdup_printf ("%s%s", PALETTE_PATH , value);	
+		read_palette_file (file_path, sp_col, col);
 		printf("file_path = %s\n", file_path);
 		g_free(file_path);
 		g_free(value);
 	}
-		printf("file_path = %s\n", file_path);
+
+	for (i = 0; i < 3; i++)
+		g_print("%x \n", sp_col[i]);
+	for (i = 0; i < 16; i++)
+		g_print("%x \n", col[i]);
+
+
 	gtk_tree_model_unref_node (model, &iter);
 
 }
@@ -1200,15 +1234,13 @@ static void draw_color_palette ()
 
 	init_file_list (list, pp->selection, PALETTE_PATH, DT_REG);
 
+	g_signal_connect (G_OBJECT(dialog), "response",
+			G_CALLBACK(da_call_palette), NULL);
 
 	g_signal_connect (G_OBJECT(pp->selection), "changed",
-			G_CALLBACK(on_changed_palette), (gpointer)(web_view));/*确定 or 取消*/
-
-//	g_signal_connect (G_OBJECT (pp->selection), "changed", 
-//			G_CALLBACK(on_changed_wedge), (gpointer) (list1));/*使用"changed"信号来与用户的选择信号进行关联起来*/
+			G_CALLBACK(on_changed_palette), (gpointer)(web_view));
 
 	gtk_widget_show_all(dialog);
-
 }
 
 /*

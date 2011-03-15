@@ -599,9 +599,10 @@ typedef struct tmp_config {
 	guchar    index_end_reg;	/* Scan -> Area -> index_end*/
 	guchar    index_resolution_reg;	/* Scan -> Area -> index_resolution*/
 
-	guchar    bright_reg;		/*preferences -> pref. -> bright*/
+	guchar	bright_reg;		/*preferences -> pref. -> bright*/
 
-	gushort		color[256];		/* 调色板信息 */
+	gushort	specical_col[3];/* 特殊颜色 */
+	gushort	color[256];		/* 调色板信息 */
 
 	guint	max_prf;
 	gushort	*fb1_addr;

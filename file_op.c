@@ -19,6 +19,8 @@
 #include <unistd.h>  
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <libxml/xmlmemory.h>
+#include <libxml/parser.h>
 
 /* 探头 PA opp UT oup  */
 void read_probe_file (const gchar *file_path, PROBE_P p)
@@ -62,5 +64,92 @@ void read_wedge_file (const gchar *file_path, WEDGE_P p)
 		lseek (fd, 1, SEEK_CUR);
 		i = read (fd, (void *)((int)(p) + 52), 64);
 	}
+}
+
+int parseStory(xmlDocPtr doc, xmlNodePtr cur, int x, gushort *sp_col, gushort *col)
+{
+	xmlChar *key;
+	xmlChar *Red, *Green, *Blue, *Fire;
+	cur = cur->xmlChildrenNode;
+	int  i = 0;
+	while(cur != NULL)
+	{
+		if((!xmlStrcmp(cur->name, (const xmlChar*)"Version")))
+		{
+			key=xmlNodeListGetString(doc, cur->xmlChildrenNode, 1);
+			g_print("%s=>%s\n", cur->name, key);
+			xmlFree(key);
+		}
+		else if((!xmlStrcmp(cur->name, (const xmlChar*)"SpecialColors")))
+		{
+			g_print("[%s]\n", cur->name);
+			parseStory(doc, cur, 1, sp_col, col);
+		}
+		else if((!xmlStrcmp(cur->name, (const xmlChar*)"MainColors")))
+		{
+			g_print("[%s]\n", cur->name);
+			parseStory(doc, cur, 2, sp_col, col);
+		}
+		else if((!xmlStrcmp(cur->name, (const xmlChar*)"Color")))
+		{
+			Red		= xmlGetProp(cur, (const xmlChar*)"R");
+			Green	= xmlGetProp(cur, (const xmlChar*)"G");
+			Blue	= xmlGetProp(cur, (const xmlChar*)"B");
+			Fire	= xmlGetProp(cur, (const xmlChar*)"F");
+
+			g_print("[%s] R=%s G=%s B=%s F=%s\n", cur->name, Red, Green, Blue, Fire);
+			if (x == 2)
+				col[i++] = atoi(Red)  << 16 | atoi(Green) << 8 | atoi(Blue);
+			else if (x == 1)
+				sp_col[i++] = atoi(Red)  << 16 | atoi(Green) << 8 | atoi(Blue);
+			xmlFree(Red);
+			xmlFree(Green);
+			xmlFree(Blue);
+		}
+		cur = cur->next;
+	}
+	return 0;
+
+}
+
+/* 读取XML的调色板信息 */
+void read_palette_file (const gchar *file_path, gushort *sp_col, gushort *col)
+{
+	/* 定义2个指针 doc指向整个dom；cur指向结点 以后遍历树就靠这个指针 */
+	xmlDocPtr doc;
+	xmlNodePtr cur;
+	/*获取doc指针 也是把其他格式转成utf8的功能 */
+	doc = xmlParseFile (file_path);
+	if (doc == NULL)
+	{
+		printf ("Document not parsed successfully. \n");
+		exit(1);
+	}
+	printf ("xmlParseFile ok.\n");
+	/* 取得结点指针 */
+	cur = xmlDocGetRootElement(doc);
+	if (cur == NULL)
+	{
+		printf ("empty document. \n");
+		xmlFreeDoc (doc);
+		exit(1);
+	}
+	printf ("xmlDocGetRootElement ok.\n");
+	/* 取得根结点指针 这里一定要是根结点*/
+	if (xmlStrcmp(cur->name, (const xmlChar *)"Palette"))
+	{
+		printf ("document of the wrong type, root node != Palette\n");
+		xmlFreeDoc (doc);
+		exit(1);
+	}
+	printf ("ok.\n");
+	sp_col[0] = 0x1234;
+	sp_col[1] = 0x1234;
+	sp_col[2] = 0x1234;
+	/*通过这个递归函数，遍历出所有感兴趣的结点。*/
+	parseStory (doc, cur, 0, sp_col, col);
+
+	xmlFreeDoc (doc);
+	return ;
 }
 
