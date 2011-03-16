@@ -48,14 +48,13 @@ extern GdkColor	color_button2;
 extern GdkColor color_rule;
 
 typedef struct col_select_info {
-	guchar   color_start;
-	guchar   color_end;                    
-	guchar   color_contrast;                                     
+	guchar   start;
+	guchar   end;                    
+	guchar   contrast;                                     
 	guchar   brightness;                     
 	guint    min;                          
 	guint    max;                           
-	guchar   color_mode;                     
-
+	guchar   mode;                     
 } COL_SELECT_INFO, *COL_SELECT_INFO_P;
 
 typedef struct zoom_display_info {
@@ -308,8 +307,8 @@ typedef struct Group {
 	CURSORS_INFO	cursors_info[4];
 	guchar	source;
 
-	COL_SELECT_INFO	col_select[3];     /* Amplitude TOFD Depth 3个*/
-	guchar	col_select_pos;             /* 0 Amplitude  1 TOFD  2 Depth 共3个*/
+	guchar	col_select_pos;        /* 0 Amplitude  1 TOFD  2 Depth 共3个*/
+	COL_SELECT_INFO	col_select[3]; /* Amplitude TOFD Depth 3个*/
 
 	/*波束 beam*/
 	gint	scan_offset;		/**/
@@ -601,8 +600,11 @@ typedef struct tmp_config {
 
 	guchar	bright_reg;		/*preferences -> pref. -> bright*/
 
-	gushort	specical_col[3];/* 特殊颜色 */
+	gushort	special_col[3];/* 特殊颜色 */
 	gushort	color[256];		/* 调色板信息 */
+
+	guint	t_special_col[3];/* 临时特殊颜色 */
+	guint	t_color[256];		/* 临时调色板信息 */
 
 	guint	max_prf;
 	gushort	*fb1_addr;

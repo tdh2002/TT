@@ -139,7 +139,7 @@ void update_widget_bg(GtkWidget *widget, const gchar *img_file)
 void main_menu_pop(guint action)
 {
 	int i;
-	pp->x_pos = 0, pp->y_pos =0;
+	pp->x_pos = 0, pp->y_pos = 200;
 	if (MENU_POP == action)/*弹出主菜单*/
 	{
 		gtk_menu_popup ( GTK_MENU (pp->menu), NULL, NULL, 
@@ -774,6 +774,102 @@ static void on_changed_wedge(GtkTreeSelection *selection, gpointer label)
 	}
 }
 
+/* 画调色板 */
+static gboolean draw_palette(GtkWidget *widget, GdkEventExpose *event, gpointer data)
+{
+	gint i;
+	gfloat color_r;
+	gfloat color_g;
+	gfloat color_b;
+
+	cairo_t *cr;        //声明一支画笔
+	cr=gdk_cairo_create(widget->window);//创建画笔
+	cairo_set_line_width(cr, 2);
+
+	cairo_set_source_rgba(cr,0.0,0.0,0.0,1.0);/*设置画笔颜色为黑色*/
+	cairo_move_to(cr,10,15);
+	cairo_show_text(cr,"Palette");   	/*最顶端标签 Palette*/
+
+	cairo_rectangle(cr,10,30,265,70);	/*special colors 外框*/
+	cairo_move_to(cr,13,45);
+	cairo_show_text(cr,"Special colors");	/*标签  Special colors*/
+
+	if (TMP(t_special_col[0]) != 0x12345678)  
+	{
+		cairo_move_to(cr,13,60);
+		cairo_show_text(cr,"No data");		/*标签  No data*/
+		cairo_move_to(cr,13,75);
+		cairo_show_text(cr,"No detection");	/*标签  No detection*/
+		cairo_move_to(cr,13,90);
+		cairo_show_text(cr,"No synchro");	/*标签  No synchro*/
+	}
+	cairo_rectangle(cr,10,102,265,306);	/*Main colors 外框*/
+	cairo_move_to(cr,13,120);
+	cairo_show_text(cr,"Main colors");	/*标签  Main colors*/
+	cairo_move_to(cr,120,120);
+	cairo_show_text(cr,"Quantity");		/*标签  Quantity*/
+	cairo_move_to(cr,120,135);
+	cairo_show_text(cr,"256");		/*标签  256 */
+	cairo_stroke(cr);
+	/*
+	cairo_rectangle(cr,20,140,245,256);	
+	cairo_stroke(cr);
+	*/
+	if (TMP(t_special_col[0]) != 0x12345678)  
+	{
+		for (i = 0; i < 3; i++)
+		{
+			color_r = (TMP(t_special_col[i]) >> 16) / 256.0;
+			color_g = ((TMP(t_special_col[i]) & 0xff00) >> 8) / 256.0;
+			color_b = ((TMP(t_special_col[i]) & 0xff)) /  256.0;
+			cairo_set_source_rgba(cr,color_r,color_g,color_b,1.0);
+			cairo_rectangle(cr,85,50 + 15 * i,185,10);
+			cairo_fill(cr);
+			cairo_stroke(cr);
+		}
+	}
+
+	for (i = 1; i < 255; i++)
+	{
+		color_r = (TMP(t_color[i]) >> 16) / 256.0;
+		color_g = ((TMP(t_color[i]) & 0xff00) >> 8) / 256.0;
+		color_b = ((TMP(t_color[i]) & 0xff)) /  256.0;
+		cairo_set_source_rgba(cr,color_r,color_g,color_b,1.0);
+		cairo_set_line_width(cr, 1);
+		cairo_move_to(cr,20,140+i);
+		cairo_line_to(cr,265,140+i);
+		cairo_stroke(cr);
+	}
+
+	cairo_destroy(cr);//销毁画笔
+	return TRUE;
+}
+
+/* Palette 大类(左边treeview)选择的处理函数 */
+static void on_changed_palette(GtkTreeSelection *selection, gpointer drawing_area) 
+{
+	GtkTreeIter iter;
+	GtkTreeModel *model;
+	gchar *value = NULL;
+	gchar *file_path = NULL;
+
+	if (gtk_tree_selection_get_selected(
+				GTK_TREE_SELECTION(selection), &model, &iter)) {
+		gtk_tree_model_get(model, &iter, LIST_ITEM, &value,  -1);
+		file_path = g_strdup_printf ("%s%s", PALETTE_PATH , value);	
+		read_palette_file (file_path, TMP(t_special_col), TMP(t_color));  /*   */
+		printf("file_path = %s\n", file_path);
+		g_free(file_path);
+		g_free(value);
+	}
+
+	gtk_tree_model_unref_node (model, &iter);
+
+	gtk_widget_queue_draw(GTK_WIDGET (drawing_area));
+
+}
+
+
 /* 简单获取探头的信息 */
 static gchar* get_probe_info(const gchar *file_path)
 {
@@ -880,36 +976,7 @@ static void on_changed1_wedge(GtkTreeSelection *selection, gpointer label)
 		g_free(wedge_info);
 }
 
-/* Wedge 大类(左边treeview)选择的处理函数 */
-static void on_changed_palette(GtkTreeSelection *selection, gpointer label) 
-{
-	GtkTreeIter iter;
-	GtkTreeModel *model;
-	gchar *value = NULL;
-	gchar *file_path = NULL;
-	int i;
-	gushort sp_col[3];
-	gushort col[256];
 
-	if (gtk_tree_selection_get_selected(
-				GTK_TREE_SELECTION(selection), &model, &iter)) {
-		gtk_tree_model_get(model, &iter, LIST_ITEM, &value,  -1);
-		file_path = g_strdup_printf ("%s%s", PALETTE_PATH , value);	
-		read_palette_file (file_path, sp_col, col);
-		printf("file_path = %s\n", file_path);
-		g_free(file_path);
-		g_free(value);
-	}
-
-	for (i = 0; i < 3; i++)
-		g_print("%x \n", sp_col[i]);
-	for (i = 0; i < 16; i++)
-		g_print("%x \n", col[i]);
-
-
-	gtk_tree_model_unref_node (model, &iter);
-
-}
 
 /* 0 记事本 备注 等 */
 static void draw_remark ()
@@ -1103,7 +1170,7 @@ static void draw_wedge ()
 	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw1),
 			GTK_SHADOW_ETCHED_IN);
 
-	/* 2个treeview 放置探头大类和名字 */
+	/* 2个treeview 放置楔块大类和名字 */
 	list = gtk_tree_view_new();
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(list), FALSE);
 	list1 = gtk_tree_view_new();
@@ -1169,6 +1236,9 @@ static void draw_color_palette ()
 
 	GtkWidget *sw;		/* 第一个scroll 备注只要一个sw */
 	GtkWidget *sw1;		/* 第二个scroll 探头 楔块 聚焦法则 setup 调色板 等需要2个sw */
+	GtkWidget *drawarea;
+
+	GtkWidget *hbox_sw;	/* 装在sw1中的box, 用来装调色板信息*/
 
 	GtkWidget *list;	/* 1个treeview 用来放置调色板名称 */
 	GtkCellRenderer *renderer;
@@ -1176,32 +1246,25 @@ static void draw_color_palette ()
 	GtkListStore *store;
 
 	GtkWidget *hpaned;
-	WebKitWebView	*web_view;
 
-	dialog = gtk_dialog_new_with_buttons ("Dialog_Wedge", win,
+	dialog = gtk_dialog_new_with_buttons ("Dialog_Palette", win,
 			GTK_DIALOG_MODAL |	GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_NO_SEPARATOR,
 			GTK_STOCK_OK, GTK_RESPONSE_OK,
 			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 			NULL);
 	gtk_window_set_decorated (GTK_WINDOW (dialog), FALSE);			/*不可以装饰*/
-	gtk_widget_set_size_request(GTK_WIDGET (dialog), 400, 370);
+	gtk_widget_set_size_request(GTK_WIDGET (dialog), 460, 460);
 
 	vbox1 = GTK_WIDGET (GTK_DIALOG(dialog)->vbox);
 
 	sw = gtk_scrolled_window_new (NULL, NULL);
 	sw1 = gtk_scrolled_window_new ( NULL, NULL);
+	drawarea = gtk_drawing_area_new ();
 	/* 调色板名字 */
-	gtk_widget_set_size_request (sw, 200, 230);
+	gtk_widget_set_size_request (sw, 165, 410);
 	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW(sw),
 			GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw),
-			GTK_SHADOW_ETCHED_IN);
-
-	/* 调色板信息 */
-	gtk_widget_set_size_request (sw1, 200, 230);
-	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW(sw1),
-			GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw1),
 			GTK_SHADOW_ETCHED_IN);
 
 	/* treeview 放置调色板名字 */
@@ -1218,16 +1281,12 @@ static void draw_color_palette ()
 			GTK_TREE_MODEL(store));
 	g_object_unref(store);
 
-	web_view = WEBKIT_WEB_VIEW (webkit_web_view_new ());
-	webkit_web_view_set_custom_encoding (web_view, "UTF-8");
+	hbox_sw = gtk_hbox_new(FALSE,0);
 	/* 放置名字和内容 */
 	hpaned = gtk_hpaned_new ();
-	gtk_paned_add1 (GTK_PANED (hpaned), sw);		
-	gtk_paned_add2 (GTK_PANED (hpaned), sw1);
+	gtk_paned_add1 (GTK_PANED (hpaned), sw);
+	gtk_paned_add2 (GTK_PANED (hpaned), drawarea);		
 	gtk_container_add(GTK_CONTAINER (sw), list);
-	gtk_container_add(GTK_CONTAINER (sw1), GTK_WIDGET (web_view));
-
-//	gtk_container_add(GTK_CONTAINER (sw1), list1);
 
 	gtk_box_pack_start(GTK_BOX(vbox1), hpaned, FALSE, FALSE, 5);
 	pp->selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(list));
@@ -1238,7 +1297,10 @@ static void draw_color_palette ()
 			G_CALLBACK(da_call_palette), NULL);
 
 	g_signal_connect (G_OBJECT(pp->selection), "changed",
-			G_CALLBACK(on_changed_palette), (gpointer)(web_view));
+			G_CALLBACK(on_changed_palette), (gpointer)(drawarea));
+
+	g_signal_connect (G_OBJECT (drawarea), "expose_event",
+			G_CALLBACK (draw_palette), NULL);
 
 	gtk_widget_show_all(dialog);
 }
@@ -1718,7 +1780,7 @@ static gboolean draw_grid(GtkWidget *widget, GdkEventExpose *event, gpointer dat
 static gboolean draw_other_info (GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
 	
-	gint y1 = 3, y2 = 23;
+	gint  y2 = 23;	//y1 = 3,
 
 	cairo_t *cr;        //声明一支画笔
 	cr = gdk_cairo_create(widget->window);//创建画笔
@@ -3518,9 +3580,9 @@ void draw3_data1(DRAW_UI_P p)
 						}
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 						{
-							cur_value = GROUP_COL_SELECT(color_start);
+							cur_value = GROUP_COL_SELECT(start);
 							lower = 0.0;
-							upper = GROUP_COL_SELECT(color_end)-1.0;
+							upper = GROUP_COL_SELECT(end)-1.0;
 							step = tmpf;
 							digit = 0;
 							pos = 1;
@@ -3529,7 +3591,7 @@ void draw3_data1(DRAW_UI_P p)
 						}
 						else 
 						{
-							cur_value = GROUP_COL_SELECT(color_start);
+							cur_value = GROUP_COL_SELECT(start);
 							digit = 0;
 							pos = 1;
 							unit = UNIT_BFH;
@@ -3549,7 +3611,7 @@ void draw3_data1(DRAW_UI_P p)
 						}
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 						{
-							cur_value = GROUP_COL_SELECT(color_contrast);
+							cur_value = GROUP_COL_SELECT(contrast);
 							lower = 0.0;
 							upper = 99.0;
 							step = tmpf;
@@ -3562,7 +3624,7 @@ void draw3_data1(DRAW_UI_P p)
 						}
 						else 
 						{
-							cur_value = GROUP_COL_SELECT(color_contrast);
+							cur_value = GROUP_COL_SELECT(contrast);
 							digit = 0;
 							pos = 1;
 							unit = UNIT_BFH;
@@ -5057,8 +5119,8 @@ void draw3_data2(DRAW_UI_P p)
 						}
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 						{
-							cur_value = GROUP_COL_SELECT(color_end);
-							lower = GROUP_COL_SELECT(color_start)+1;
+							cur_value = GROUP_COL_SELECT(end);
+							lower = GROUP_COL_SELECT(start)+1;
 							upper = 100.0;
 							step = tmpf;
 							digit = 0;
@@ -5068,7 +5130,7 @@ void draw3_data2(DRAW_UI_P p)
 						}
 						else 
 						{
-							cur_value = GROUP_COL_SELECT(color_end);
+							cur_value = GROUP_COL_SELECT(end);
 							digit = 0;
 							pos = 2;
 							unit = UNIT_BFH;
@@ -5087,7 +5149,7 @@ void draw3_data2(DRAW_UI_P p)
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 						{
 							cur_value = GROUP_COL_SELECT(brightness);
-							lower = (int)((100.0-GROUP_COL_SELECT(color_contrast))/2.0);
+							lower = (int)((100.0-GROUP_COL_SELECT(contrast))/2.0);
 							upper = 100.0-lower;
 							step = tmpf;
 							digit = 0;
@@ -7587,10 +7649,10 @@ void draw3_data4(DRAW_UI_P p)
 
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
 							draw3_pop_tt (data_434, NULL, 
-									menu_content[COL_MODE+GROUP_COL_SELECT(color_mode)],
-									menu_content+COL_MODE, 2, 4, GROUP_COL_SELECT(color_mode), 0);
+									menu_content[COL_MODE+GROUP_COL_SELECT(mode)],
+									menu_content+COL_MODE, 2, 4, GROUP_COL_SELECT(mode), 0);
 						else 
-							draw3_popdown (menu_content[COL_MODE+GROUP_COL_SELECT(color_mode)], 4, 0);
+							draw3_popdown (menu_content[COL_MODE+GROUP_COL_SELECT(mode)], 4, 0);
 					}
 					else
 					{

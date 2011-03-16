@@ -1645,7 +1645,6 @@ static void handler_key(guint keyval, gpointer data)
 			}			
 			break;
 		case GDK_F9:
-                        g_printf("GDK_F9\n");
 			if(gtk_widget_get_sensitive(pp->eventbox30[3]))
 			{
 				if (pp->pos_pos == MENU3_PRESSED)
@@ -1655,7 +1654,6 @@ static void handler_key(guint keyval, gpointer data)
 			}			
 			break;
 		case GDK_F10:
-                        g_printf("GDK_F10\n");
 			if(gtk_widget_get_sensitive(pp->eventbox30[2]))
 			{
 				if (pp->pos_pos == MENU3_PRESSED)
@@ -1665,7 +1663,6 @@ static void handler_key(guint keyval, gpointer data)
 			}		
 			break;
 		case GDK_F11:
-                        g_printf("GDK_F11\n");
 			if(gtk_widget_get_sensitive(pp->eventbox30[1]))
 			{
 				if (pp->pos_pos == MENU3_PRESSED)
@@ -1675,7 +1672,6 @@ static void handler_key(guint keyval, gpointer data)
 			}			
 			break;
 		case GDK_F12:
-                        g_printf("GDK_F12\n");
 			if(gtk_widget_get_sensitive(pp->eventbox30[0]))
 			{
 				if (pp->pos_pos == MENU3_PRESSED)
@@ -2721,12 +2717,12 @@ void data_430 (GtkMenuItem *menuitem, gpointer data) /* Display -> Color -> sele
 
 void data_431 (GtkSpinButton *spinbutton, gpointer data) /*color_start p431 */
 {
-	GROUP_COL_SELECT(color_start) =  (guchar) (gtk_spin_button_get_value (spinbutton));
+	GROUP_COL_SELECT(start) =  (guchar) (gtk_spin_button_get_value (spinbutton));
 }
 
 void data_4311 (GtkSpinButton *spinbutton, gpointer data) /*color_contrast */
 {
-	GROUP_COL_SELECT(color_contrast) =  (guchar) (gtk_spin_button_get_value (spinbutton));
+	GROUP_COL_SELECT(contrast) =  (guchar) (gtk_spin_button_get_value (spinbutton));
 }
 void data_4312 (GtkSpinButton *spinbutton, gpointer data) /*color_min */
 {
@@ -2735,7 +2731,7 @@ void data_4312 (GtkSpinButton *spinbutton, gpointer data) /*color_min */
 
 void data_432 (GtkSpinButton *spinbutton, gpointer data) /*color_end */
 {
-	GROUP_COL_SELECT(color_end) =  (guchar) (gtk_spin_button_get_value (spinbutton));
+	GROUP_COL_SELECT(end) =  (guchar) (gtk_spin_button_get_value (spinbutton));
 }
 
 void data_4321 (GtkSpinButton *spinbutton, gpointer data) /*color_brightness */
@@ -2749,7 +2745,7 @@ void data_4322 (GtkSpinButton *spinbutton, gpointer data) /*color_max */
 
 void data_434 (GtkMenuItem *menuitem, gpointer data) /* Display -> color -> mode 434 */
 {
-	GROUP_COL_SELECT(color_mode) = (guchar) (GPOINTER_TO_UINT (data));
+	GROUP_COL_SELECT(mode) = (guchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
 }
