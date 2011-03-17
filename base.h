@@ -47,16 +47,6 @@ extern GdkColor	color_button1;
 extern GdkColor	color_button2;
 extern GdkColor color_rule;
 
-typedef struct col_select_info {
-	guchar   start;
-	guchar   end;                    
-	guchar   contrast;                                     
-	guchar   brightness;                     
-	guint    min;                          
-	guint    max;                           
-	guchar   mode;                     
-} COL_SELECT_INFO, *COL_SELECT_INFO_P;
-
 typedef struct zoom_display_info {
 	guchar  zoom_type;                      
 	guint   start_usound;			
@@ -307,8 +297,15 @@ typedef struct Group {
 	CURSORS_INFO	cursors_info[4];
 	guchar	source;
 
-	guchar	col_select_pos;        /* 0 Amplitude  1 TOFD  2 Depth 共3个*/
-	COL_SELECT_INFO	col_select[3]; /* Amplitude TOFD Depth 3个*/
+	guchar	 col_select_pos;        /* 0 Amplitude  1 TOFD  2 Depth 共3个*/
+	guchar   col_start;
+	guchar   col_end;                    
+	guchar   col_contrast;                                     
+	guchar   col_brightness;                     
+	guint    col_min;                          
+	guint    col_max;                           
+	guchar   col_mode; 
+//	COL_SELECT_INFO	col_select[3]; /* Amplitude TOFD Depth 3个*/
 
 	/*波束 beam*/
 	gint	scan_offset;		/**/
@@ -780,7 +777,7 @@ typedef struct Draw_interface {
 #define GROUP_CURSORS_POS(a) GROUP_VAL(cursors_info[GROUP_VAL(selection)-5].a)
 
 #define CFG_ZOOM_POS(a)  CFG(zoom_display[CFG(zoom_display_pos)].a)
-#define GROUP_COL_SELECT(a)  GROUP_VAL(col_select[GROUP_VAL(col_select_pos)].a)
+//#define GROUP_COL_SELECT(a)  GROUP_VAL(col_select[GROUP_VAL(col_select_pos)].a)
 
 #define TMP(a)  (pp->p_tmp_config->a)
 #define	MENU_STATUS	(pp->pos_pos) 

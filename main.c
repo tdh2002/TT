@@ -151,13 +151,13 @@ static void set_config (guint groupid)
 
 	/**/
 	GROUP_VAL(col_select_pos)=0;  /*0 Amplitude*/
-	GROUP_COL_SELECT(start)   = 0.0;
-	GROUP_COL_SELECT(end)     = 100.0;
-	GROUP_COL_SELECT(contrast)= 0.0;
-	GROUP_COL_SELECT(brightness)    = 50.0;
-	GROUP_COL_SELECT(min)           = 5000.0;
-	GROUP_COL_SELECT(max)           = 50000.0;
-	GROUP_COL_SELECT(mode)    = 0;  /*0 Exclusion*/
+	GROUP_VAL(col_start)   = 0.0;
+	GROUP_VAL(col_end)     = 100.0;
+	GROUP_VAL(col_contrast)= 0.0;
+	GROUP_VAL(col_brightness)    = 50.0;
+	GROUP_VAL(col_min)           = 5000.0;
+	GROUP_VAL(col_max)           = 50000.0;
+	GROUP_VAL(col_mode)    = 0;  /*0 Exclusion*/
 
 	CFG(prop_scan)=0;/*0 A-Scan*/
 	CFG(envelope)=0; /*0 None*/

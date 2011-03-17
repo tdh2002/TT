@@ -1586,10 +1586,11 @@ static void handler_key(guint keyval, gpointer data)
 			break;
 
 		case GDK_F1:
-			if(pp->help_yn == 0)
+			if(pp->help_yn == 1)
 				show_help(HELP_N);/*隐藏帮助窗口*/
-			else if(pp->help_yn == 1)
+			else if(pp->help_yn == 0)
 				show_help(HELP_Y);/*弹出帮助窗口*/
+			pp->help_yn = !pp->help_yn;
 			break;
 		case GDK_F2:
 			if (pp->pos_pos == MENU2_PRESSED)
@@ -2717,35 +2718,35 @@ void data_430 (GtkMenuItem *menuitem, gpointer data) /* Display -> Color -> sele
 
 void data_431 (GtkSpinButton *spinbutton, gpointer data) /*color_start p431 */
 {
-	GROUP_COL_SELECT(start) =  (guchar) (gtk_spin_button_get_value (spinbutton));
+	GROUP_VAL(col_start) =  (guchar) (gtk_spin_button_get_value (spinbutton));
 }
 
 void data_4311 (GtkSpinButton *spinbutton, gpointer data) /*color_contrast */
 {
-	GROUP_COL_SELECT(contrast) =  (guchar) (gtk_spin_button_get_value (spinbutton));
+	GROUP_VAL(col_contrast) =  (guchar) (gtk_spin_button_get_value (spinbutton));
 }
 void data_4312 (GtkSpinButton *spinbutton, gpointer data) /*color_min */
 {
-	GROUP_COL_SELECT(min) =  (guint) ((gtk_spin_button_get_value (spinbutton)) * 1000.0);
+	GROUP_VAL(col_min) =  (guint) ((gtk_spin_button_get_value (spinbutton)) * 1000.0);
 }
 
 void data_432 (GtkSpinButton *spinbutton, gpointer data) /*color_end */
 {
-	GROUP_COL_SELECT(end) =  (guchar) (gtk_spin_button_get_value (spinbutton));
+	GROUP_VAL(col_end) =  (guchar) (gtk_spin_button_get_value (spinbutton));
 }
 
 void data_4321 (GtkSpinButton *spinbutton, gpointer data) /*color_brightness */
 {
-	GROUP_COL_SELECT(brightness) =  (guchar) (gtk_spin_button_get_value (spinbutton));
+	GROUP_VAL(col_brightness) =  (guchar) (gtk_spin_button_get_value (spinbutton));
 }
 void data_4322 (GtkSpinButton *spinbutton, gpointer data) /*color_max */
 {
-	GROUP_COL_SELECT(max) =  (guint) ((gtk_spin_button_get_value (spinbutton)) * 1000.0);
+	GROUP_VAL(col_max) =  (guint) ((gtk_spin_button_get_value (spinbutton)) * 1000.0);
 }
 
 void data_434 (GtkMenuItem *menuitem, gpointer data) /* Display -> color -> mode 434 */
 {
-	GROUP_COL_SELECT(mode) = (guchar) (GPOINTER_TO_UINT (data));
+	GROUP_VAL(col_mode) = (guchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
 }

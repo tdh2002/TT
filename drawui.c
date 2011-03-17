@@ -3580,9 +3580,9 @@ void draw3_data1(DRAW_UI_P p)
 						}
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 						{
-							cur_value = GROUP_COL_SELECT(start);
+							cur_value = GROUP_VAL(col_start);
 							lower = 0.0;
-							upper = GROUP_COL_SELECT(end)-1.0;
+							upper = GROUP_VAL(col_end)-1.0;
 							step = tmpf;
 							digit = 0;
 							pos = 1;
@@ -3591,7 +3591,7 @@ void draw3_data1(DRAW_UI_P p)
 						}
 						else 
 						{
-							cur_value = GROUP_COL_SELECT(start);
+							cur_value = GROUP_VAL(col_start);
 							digit = 0;
 							pos = 1;
 							unit = UNIT_BFH;
@@ -3611,7 +3611,7 @@ void draw3_data1(DRAW_UI_P p)
 						}
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 						{
-							cur_value = GROUP_COL_SELECT(contrast);
+							cur_value = GROUP_VAL(col_contrast);
 							lower = 0.0;
 							upper = 99.0;
 							step = tmpf;
@@ -3624,7 +3624,7 @@ void draw3_data1(DRAW_UI_P p)
 						}
 						else 
 						{
-							cur_value = GROUP_COL_SELECT(contrast);
+							cur_value = GROUP_VAL(col_contrast);
 							digit = 0;
 							pos = 1;
 							unit = UNIT_BFH;
@@ -3648,9 +3648,9 @@ void draw3_data1(DRAW_UI_P p)
 						}
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 						{
-							cur_value = GROUP_COL_SELECT(min)/1000.0;
+							cur_value = GROUP_VAL(col_min)/1000.0;
 							lower = 0.05;
-							upper = GROUP_COL_SELECT(max)/1000.0-0.01;
+							upper = GROUP_VAL(col_max)/1000.0-0.01;
 							step = tmpf;
 							digit = 2;
 							pos = 1;
@@ -3661,18 +3661,15 @@ void draw3_data1(DRAW_UI_P p)
 						}
 						else 
 						{
-							cur_value = GROUP_COL_SELECT(min)/1000.0;
+							cur_value = GROUP_VAL(col_min)/1000.0;
 							digit = 2;
 							pos = 1;
 							unit = UNIT_MM;
 							draw3_digit_stop (cur_value, units[unit], digit, pos, 8);
 							//str = g_strdup_printf ("%s\n(mm)", con2_p[4][3][8]);	
 							//gtk_label_set_text (GTK_LABEL (pp->label3[1]), str);
-
 						}
-
 					}
-
 					break;
 
 				case 4:/*Display -> Color -> Color  p441 */
@@ -5119,8 +5116,8 @@ void draw3_data2(DRAW_UI_P p)
 						}
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 						{
-							cur_value = GROUP_COL_SELECT(end);
-							lower = GROUP_COL_SELECT(start)+1;
+							cur_value = GROUP_VAL(col_end);
+							lower = GROUP_VAL(col_start)+1;
 							upper = 100.0;
 							step = tmpf;
 							digit = 0;
@@ -5130,7 +5127,7 @@ void draw3_data2(DRAW_UI_P p)
 						}
 						else 
 						{
-							cur_value = GROUP_COL_SELECT(end);
+							cur_value = GROUP_VAL(col_end);
 							digit = 0;
 							pos = 2;
 							unit = UNIT_BFH;
@@ -5148,8 +5145,8 @@ void draw3_data2(DRAW_UI_P p)
 						}
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 						{
-							cur_value = GROUP_COL_SELECT(brightness);
-							lower = (int)((100.0-GROUP_COL_SELECT(contrast))/2.0);
+							cur_value = GROUP_VAL(col_brightness);
+							lower = (int)((100.0-GROUP_VAL(col_contrast))/2.0);
 							upper = 100.0-lower;
 							step = tmpf;
 							digit = 0;
@@ -5161,7 +5158,7 @@ void draw3_data2(DRAW_UI_P p)
 						}
 						else 
 						{
-							cur_value = GROUP_COL_SELECT(brightness);
+							cur_value = GROUP_VAL(col_brightness);
 							digit = 0;
 							pos = 2;
 							unit = UNIT_BFH;
@@ -5183,8 +5180,8 @@ void draw3_data2(DRAW_UI_P p)
 						}
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 						{
-							cur_value = GROUP_COL_SELECT(max)/1000.0;
-							lower = GROUP_COL_SELECT(min)/1000.0 + 0.01;
+							cur_value = GROUP_VAL(col_max)/1000.0;
+							lower = GROUP_VAL(col_min)/1000.0 + 0.01;
 							upper = 99999.0;
 							step = tmpf;
 							digit = 2;
@@ -5196,7 +5193,7 @@ void draw3_data2(DRAW_UI_P p)
 						}
 						else 
 						{
-							cur_value = GROUP_COL_SELECT(max)/1000.0;
+							cur_value = GROUP_VAL(col_max)/1000.0;
 							digit = 2;
 							pos = 2;
 							unit = UNIT_MM;
@@ -7649,10 +7646,10 @@ void draw3_data4(DRAW_UI_P p)
 
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
 							draw3_pop_tt (data_434, NULL, 
-									menu_content[COL_MODE+GROUP_COL_SELECT(mode)],
-									menu_content+COL_MODE, 2, 4, GROUP_COL_SELECT(mode), 0);
+									menu_content[COL_MODE+GROUP_VAL(col_mode)],
+									menu_content+COL_MODE, 2, 4, GROUP_VAL(col_mode), 0);
 						else 
-							draw3_popdown (menu_content[COL_MODE+GROUP_COL_SELECT(mode)], 4, 0);
+							draw3_popdown (menu_content[COL_MODE+GROUP_VAL(col_mode)], 4, 0);
 					}
 					else
 					{
@@ -9415,7 +9412,6 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 
 	//gchar *file_path="/home/gll/arraytop/TT/source/system/Help/Contextual/Wizard_Menu.html";
 	webkit_web_view_load_uri (web_view, "file:///home/tt/TT/source/system/Help/Contextual/Wizard_Menu.html");
-
 
 	gtk_box_pack_start (GTK_BOX (p->hbox211), p->vboxtable, FALSE, FALSE, 0);
 	gtk_widget_show(p->vboxtable);
