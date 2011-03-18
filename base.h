@@ -33,6 +33,9 @@
 #define TRUE_DEPTH	ARM_DEPTH
 #endif
 
+#define MAX_GROUP_NUM	4
+
+#define	MAX_DOT_QTY		163840
 #define LAW_MAX_QTY		256
 #define ELEM_RX_MAX_QTY	32
 #define GATE_MAX_QTY	3
@@ -41,11 +44,22 @@ extern GdkColor	color_black;
 extern GdkColor	color_black1;
 extern GdkColor	color_white;
 extern GdkColor	color_yellow;
+extern GdkColor	color_green;
+extern GdkColor	color_blue;
+extern GdkColor	color_red;
 extern GdkColor	color_text_base;
-extern GdkColor	color_button0;
-extern GdkColor	color_button1;
-extern GdkColor	color_button2;
 extern GdkColor color_rule;
+
+
+extern GdkColor	all_col[];
+extern gushort	all_col_16[];
+
+#define	COLOR_BLACK	4
+#define	COLOR_WHITE	5
+#define	COLOR_YELLOW	3
+#define	COLOR_GREEN		1
+#define	COLOR_BLUE		0
+#define	COLOR_RED	2	
 
 typedef struct zoom_display_info {
 	guchar  zoom_type;                      
@@ -305,6 +319,15 @@ typedef struct Group {
 	guint    col_min;                          
 	guint    col_max;                           
 	guchar   col_mode; 
+
+	/* Display Ascan的设置 */
+	guchar	ascan_color;		/**/
+	guchar	ascan_envelope;		/* 0 None 1 Infinite */
+	guchar	ascan_source;		/**/
+	guchar	ascan_appearance;	/**/
+	guchar	ascan_overlay;		/**/
+
+
 //	COL_SELECT_INFO	col_select[3]; /* Amplitude TOFD Depth 3个*/
 
 	/*波束 beam*/
@@ -597,6 +620,10 @@ typedef struct tmp_config {
 
 	guchar	bright_reg;		/*preferences -> pref. -> bright*/
 
+	gushort	envelope_max[MAX_GROUP_NUM][640];	/**/
+	gushort	envelope_min[MAX_GROUP_NUM][640];	/**/
+	gushort	a_scan_data[MAX_GROUP_NUM][640];	/**/
+
 	gushort	special_col[3];/* 特殊颜色 */
 	gushort	color[256];		/* 调色板信息 */
 
@@ -717,13 +744,13 @@ typedef struct Draw_interface {
 
 	CONFIG_P		p_config;			/**/
 	TMP_CONFIG_P	p_tmp_config;		/**/
-	gpointer	p_beam_data;
+	guint		p_beam_data;
 	gpointer	p_a_scan_data[4];
 	gpointer	p_b_scan_data[4];
 	gpointer	p_c_scan_data[4];
 	gpointer	p_s_scan_data[4];
 
-	gulong			signal_id;
+	gulong		signal_id;
 
 	GtkWidget	*label_probe;	/* dialog 最下面一排信息   无 probe wedge之分 */
 	GtkTreeSelection *selection; 
@@ -736,11 +763,36 @@ typedef struct Draw_interface {
 	guchar			markreturn;
 	guchar			mark3;
 
+	/* 各种扫描窗口的大小, 位置 */
+	guint	a_scan_width;
+	guint	a_scan_height;
+	guint	b_scan_width;
+	guint	b_scan_height;
+	guint	s_scan_width;
+	guint	s_scan_height;
+	guint	c_scan_width;
+	guint	c_scan_height;
+
+	guint	scan_xpos[16];
+	guint	scan_ypos[16];
+
 	gint x_pos;
 	gint y_pos;  /* 弹出窗口的xy坐标 */
 
 	guchar  help_yn; /*是否弹出help窗口 0 否，1 是*/	
 } DRAW_UI, *DRAW_UI_P;
+
+typedef struct _MY_SIGNAL_TMP
+{
+	GtkTreeModel *source_model;
+	GtkTreeSelection *source_selection;
+	GtkWidget *source_list;
+
+	GtkTreeModel *target_model;
+	GtkTreeSelection *target_selection;
+	GtkWidget *target_list;
+}MY_SIGNAL,*MY_SIGNAL_P;
+
 
 /* 315 Data Link 止 20110212*/
 /* 522\523 与 A闸门时的 202\203 相同，未实现 */
@@ -764,7 +816,7 @@ typedef struct Draw_interface {
 #define CUR_POS (pp->pos2[pp->pos][pp->pos1[pp->pos]])      /* 0,1,2,3,4,5 */
 #define CFG(a)	(pp->p_config->a)
 /*#define GROUP_VAL(a)  (pp->p_config->group[pp->p_config->groupId].a)*/	/* 原型 */
-#define GROUP_VAL_POS(a, b)	(CFG(group[a].b))		/* a表示哪个group b是返回哪个值 */
+#define GROUP_VAL_POS(a, b)	(CFG(group[a].b))				/* a表示哪个group b是返回哪个值 */
 #define GROUP_VAL(a)  (CFG(group[CFG(groupId)].a))
 #define LAW_VAL_POS(a, b)  (GROUP_VAL_POS(a,law_info).b)
 #define LAW_VAL(a)  (GROUP_VAL(law_info).a)

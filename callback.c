@@ -2758,12 +2758,13 @@ void data_440 (GtkMenuItem *menuitem, gpointer data) /* Display -> Properties ->
 	draw_3_menu(0, NULL);
 }
 
-void data_441 (GtkMenuItem *menuitem, gpointer data) /* Display -> Properties -> Color 441 */
+void data_441 (GtkMenuItem *menuitem, gpointer data) /* A-Scan -> Color P441 */
 {
-	CFG(prop_color) = (guchar) (GPOINTER_TO_UINT (data));
+	GROUP_VAL(ascan_color) = (guchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
 }
+
 void data_4411 (GtkSpinButton *spinbutton, gpointer data) /*Display -> Properties -> Compress 4411 */
 {
 	pp->p_config->compress =  (guint) ((gtk_spin_button_get_value (spinbutton)) * 1000.0);
@@ -2781,30 +2782,30 @@ void data_4415 (GtkMenuItem *menuitem, gpointer data) /* Display -> Properties -
 	draw_3_menu(0, NULL);
 }
 
-void data_442 (GtkMenuItem *menuitem, gpointer data) /* Display -> Properties -> Envelope 442 */
+void data_442 (GtkMenuItem *menuitem, gpointer data) /* Ascan Envelope 包络 P442 */
 {
-	CFG(envelope) = (guchar) (GPOINTER_TO_UINT (data));
+	GROUP_VAL(ascan_envelope) = (guchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
 }
 
-void data_443 (GtkMenuItem *menuitem, gpointer data) /* Display -> Properties -> Source 443 */
+void data_443 (GtkMenuItem *menuitem, gpointer data) /* Ascan Source A扫描源 P443 */
 {
-	CFG(prop_source) = (guchar) (GPOINTER_TO_UINT (data));
+	GROUP_VAL(ascan_source) = (guchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
 }
 
-void data_444 (GtkMenuItem *menuitem, gpointer data) /* Display -> Properties -> Appearance 444 */
+void data_444 (GtkMenuItem *menuitem, gpointer data) /* Ascan appearance P444 */
 {
-	pp->p_config->prop_app = (guchar) (GPOINTER_TO_UINT (data));
+	GROUP_VAL(ascan_appearance) = (guchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
 }
 
-void data_445 (GtkMenuItem *menuitem, gpointer data) /* Display -> Properties -> Overlay 445 */
+void data_445 (GtkMenuItem *menuitem, gpointer data) /* Ascan Overlay 445 */
 {
-	pp->p_config->prop_overlay = (guchar) (GPOINTER_TO_UINT (data));
+	GROUP_VAL(ascan_overlay) = (guchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
 }
@@ -3340,3 +3341,7 @@ void da_call_remark (GtkDialog *dialog, gint response_id, gpointer user_data)
 }
 
 
+void dialog_destroy(GtkWidget *widget,	GdkEventButton *event,	gpointer       data)
+{
+	gtk_widget_destroy (GTK_WIDGET(data));
+}

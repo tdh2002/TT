@@ -113,6 +113,7 @@
 #define DIALOG_WEDGE	2
 
 #define DIALOG_COLOR_PALETTE	11
+#define DIALOG_FILE_MANAGE		12
 
 /* 各个menu 弹出菜单的偏移量 */
 #define TX_RX_MODE	0
@@ -511,4 +512,5 @@ extern void draw3_pressed1(gfloat step, guint digit);
 
 extern void da_call_remark (GtkDialog *dialog, gint response_id, gpointer user_data);
 
+extern void dialog_destroy(GtkWidget *widget,	GdkEventButton *event,	gpointer       data);
 #endif

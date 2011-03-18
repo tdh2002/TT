@@ -17,6 +17,9 @@ extern void fbliney(gushort *p, gint x, gint y1, gint y2, gushort col);
 extern void fblinex(gushort *p, gint y, gint x1, gint x2, gushort col);
 extern void fbline(gushort *p, gint x1, gint y1, gint x2, gint y2, gushort col);
 
-extern void draw_a_scan (gushort *p, guint width, guint height, gushort *data, guint xoffset, guint yoffset, gushort col);
+/*  */
+extern void draw_a_scan (gushort *p, guint width, guint height, 
+		gushort *data, gushort *data1, gushort *data2,
+		guint xoffset, guint yoffset, guchar groupId);
 
 #endif

@@ -16,20 +16,35 @@
 #include <gdk/gdkkeysyms.h>
 
 GdkColor	color_black     = {0x0, 0x0, 0x0, 0x0};
-GdkColor	color_black1     = {0x0, 0x0, 0x0, 0x0800};
+GdkColor	color_black1    = {0x0, 0x0, 0x0, 0x0800};
 GdkColor	color_white     = {0x0, 0xffff, 0xffff, 0xffff};
 GdkColor	color_yellow    = {0x0, 0xffff, 0xffff, 0x0};
+GdkColor	color_green     = {0x0, 0x0, 0xffff, 0x0};
+GdkColor	color_blue      = {0x0, 0x0, 0x0, 0xffff};
+GdkColor	color_red       = {0x0, 0x0, 0x0, 0xffff};
 GdkColor	color_text_base = {0x0, 0x1300, 0x4900, 0x7600};
 GdkColor	color_rule      = {0x0, 0xc300, 0xf000, 0x1d00};
 
-#if 0
-GdkColor	color_button0= {0x0, 0x3100, 0x0900, 0x9f00}; /*按下*/
-GdkColor	color_button1= {0x0, 0x2200, 0x5f00, 0xe700}; /*未选中*/
-GdkColor	color_button2= {0x0, 0x7e00, 0xb700, 0xf300}; /*停留*/
-#endif
-GdkColor	color_button0= {0x0, 0x1f00, 0x2b00, 0x6b00}; /*按下*/
-GdkColor	color_button1= {0x0, 0x7100, 0x8200, 0xde00}; /*未选中*/
-GdkColor	color_button2= {0x0, 0x4c00, 0x5a00, 0xa100}; /*停留*/
+GdkColor	all_col[] = 
+{
+	{0x0, 0x0, 0x0, 0xffff},	/* blue */
+	{0x0, 0x0, 0xffff, 0x0}, /* green*/
+	{0x0, 0xffff, 0x0, 0x0},		/* red */
+	{0x0, 0xffff, 0xffff, 0x0}, /* yellow */
+	{0x0, 0x0, 0x0, 0x0},	/* black */
+	{0x0, 0xffff, 0xffff, 0xffff} /* white */
+};
+
+gushort	all_col_16[] =
+{
+	0x001f,
+	0x03e0,
+	0xf800,
+	0xffe0,
+	0x0000,
+	0xffff
+};
+
 DRAW_UI_P	pp;					
 
 /* 测试用的初始值 */
@@ -258,7 +273,7 @@ int main (int argc, char *argv[])
 	g_print("DRAW_UI's size:%d xx = %d\n", sizeof(DRAW_UI), p_ui->mark3);
 	g_print("CONFIG's size:%d xx = %d\n", sizeof(CONFIG), p_config->time);
 
-	p_ui->p_beam_data = malloc(LAW_MAX_QTY * 640 * 2);
+	p_ui->p_beam_data = (guint)malloc(MAX_DOT_QTY * 2);		/* FPGA过来的数据 */
 	for (i = 0; i < 4; i++);
 
 	/*	window = gtk_window_new (GTK_WINDOW_POPUP);*/
@@ -286,6 +301,15 @@ int main (int argc, char *argv[])
 
 	pp = p_ui;
 	set_config(0);
+	pp->a_scan_width = 615;
+	pp->a_scan_height = 390;
+	for (i = 0; i < 20480; i++)
+	{
+		*(gushort *)(pp->p_beam_data + i * 2) = i % 390;
+		if ( *(gushort *)(pp->p_beam_data + i * 2) > 400)
+		g_print ("%d = %d\n", i, 
+				*(gushort *)(pp->p_beam_data + i * 2));
+	}
 #if ARM
 	init_fb (); /* 初始化fb1 */
 #endif

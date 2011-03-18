@@ -111,15 +111,33 @@ void fbline(gushort *p, gint x1, gint y1, gint x2, gint y2, gushort col)
 }
 
 /* 画A扫描 */
-void draw_a_scan (gushort *p, guint width, guint height, gushort *data,
-		guint xoffset, guint yoffset, gushort col)
+void draw_a_scan (gushort *p, guint width, guint height, 
+		gushort *data, gushort *data1, gushort *data2,
+		guint xoffset, guint yoffset, guchar groupId)
 {
 	gint i;
+	/* 清空这块显示区 背景暂定黑色 */
 	for (i = 0; i < height; i++)
 		memset (p + FB_WIDTH * (i + yoffset) + xoffset, 0x0, width * 2 );
-	for (i = 0; i < width - 1; i++)
-		fbline (p, xoffset + i, yoffset + data[i], xoffset + i + 1,
-				yoffset + data[i + 1], col);
+	/* 画回波 */
+	if (GROUP_VAL_POS(groupId, point_qty) < width )
+	{
+		g_print(" dot < qty\n ");
+	}
+	else 
+	{
+		for (i = 0; i < width - 1; i++)
+		{
+			fbline (p, xoffset + i, yoffset + data[i], xoffset + i + 1,
+					yoffset + data[i + 1], 
+					all_col_16[GROUP_VAL_POS(groupId, ascan_color)]);
+			/* 画包络 */
+			if (GROUP_VAL_POS(groupId, ascan_envelope))
+			{
+				g_print(" envelope\n ");
+			}
+		}
+	}
 }
 
 /* 画B扫描 */

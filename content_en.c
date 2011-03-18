@@ -469,7 +469,7 @@ const gchar *all_menu_content_en[] =
 	"Amplitude", "Rectification-TOFD", "Depth",							 /*343 Select*/
 	"Exclusion", "Compression",									/* 346 Mode */
 	"A-Scan", "B-Scan", "C-Scan", "S-Scan", "FFT", "Strip Chart",					/* 348 Scan */
-	"Blue", "Green", "Yellow", "Black", "White", "Red",						/* 354 Color*/
+	"Blue", "Green", "Red", "Yellow", "Black", "White",						/* 354 Color*/
 	"None", "Infinite",										/* 360 Envelope*/
 	"Normal", "Highest(%)", "Thinnest", "All Laws",							/* 362 Source*/
 	"Hollow", "Fill", "Hollow 2 Colors", "Fill 2 Colors",						/* 366 Appearance*/
