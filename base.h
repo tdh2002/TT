@@ -23,6 +23,7 @@
 
 #include "base_const.h"
 #include <gtk/gtk.h>
+#include <webkit/webkit.h>
 
 #define X86_DEPTH	24
 #define ARM_DEPTH	16
@@ -122,11 +123,11 @@ typedef struct output_info {
 
 /* 光标信息 */
 typedef struct cursors_info {
-	gushort    angle;	     
+	gshort    angle;	     
 	gushort    amplitude;
-	guint	   UT;
-	guint      scan;
-	guint      index;
+	gushort	   UT;
+	gint      scan;
+	gint      index;
 
 } CURSORS_INFO, *CURSORS_INFO_P;
 
@@ -538,6 +539,8 @@ typedef struct tmp_config {
 	guchar	active_delay_reg;	/* active_delay  步进 */
 	guchar	holdtime_reg;		/* holdtime  步进 */
 	guchar	VPA_reg;			/* VPA  步进 */
+	guchar  cursors_amplitude_reg;
+	guchar  cursors_ut_reg;
 	guchar	cursors_scan_reg;	/* cursors_scan  步进 */
 	guchar  cursors_index_reg;	/*cursors_index步进*/
 	guchar  min_thickness_reg;	/*min_thickness步进*/
@@ -668,6 +671,8 @@ typedef struct Draw_interface {
 	guchar			pos_last2;          /* 三级菜单位置上一位置  */
 	guchar			menu2_qty;          /*  */
 
+	gchar			*file_path;	/* 帮助文档的路径 */
+	WebKitWebView*		web_view;
 	GtkAdjustment	*adj;
 	GSList			*group;
 

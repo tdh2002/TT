@@ -159,7 +159,7 @@ static const gchar *content_en230[] = {
 
 static const gchar *content_en231[] = {
 	/* 二级菜单第3页下的第1页三级菜单 */
-	"  Selection  ","  %(r)  ", "  %(m)  ","  U(r)  ", "  U(m)  ", NULL , "S(r)", "S(m)", "Data Link", "I(r)", "I(m)", "S(r&m)", "Angle"
+	"  Selection  ","  %(r)  ", "  %(m)  ","  U(r)  ", "  U(m)  ", NULL , "S(r)", "S(m)", "Data Link", "I(r)", "I(m)", "S(r&m)",  "Angle",  "Amplitude",  "UT",  "Scan",  "Index", "Add Entry"
 };
 
 static const gchar *content_en232[] = {

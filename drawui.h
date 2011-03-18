@@ -376,15 +376,20 @@ extern void data_305 (GtkMenuItem *menuitem, gpointer data);         /* Measurem
 extern void data_310 (GtkMenuItem *menuitem, gpointer data);         /* Measurements -> cursors -> selection 310 */
 extern void data_311 (GtkSpinButton *spinbutton, gpointer data);	/*311*/
 extern void data_3111 (GtkSpinButton *spinbutton, gpointer data);
-extern void data_3112 (GtkSpinButton *spinbutton, gpointer data);	
+extern void data_3112 (GtkSpinButton *spinbutton, gpointer data);
+extern void data_3113 (GtkSpinButton *spinbutton, gpointer data);	
 extern void data_312 (GtkSpinButton *spinbutton, gpointer data);	/*312*/
 extern void data_3121 (GtkSpinButton *spinbutton, gpointer data);	/*312*/
+extern void data_3122 (GtkSpinButton *spinbutton, gpointer data);
 extern void data_313 (GtkSpinButton *spinbutton, gpointer data);	/*313*/
 extern void data_3131 (GtkSpinButton *spinbutton, gpointer data);
 extern void data_3132 (GtkSpinButton *spinbutton, gpointer data);
+extern void data_3133 (GtkSpinButton *spinbutton, gpointer data);
 extern void data_314 (GtkSpinButton *spinbutton, gpointer data);	/*314*/
 extern void data_3141 (GtkSpinButton *spinbutton, gpointer data);
+extern void data_3142 (GtkSpinButton *spinbutton, gpointer data);
 extern void data_315 (GtkMenuItem *menuitem, gpointer data);
+extern void data_3151 (GtkSpinButton *spinbutton, gpointer data);
 extern void data_324 (GtkSpinButton *spinbutton, gpointer data);        /*324*/
 extern void data_330 (GtkMenuItem *menuitem, gpointer data);          /* Measurements -> Thickness -> source 330 */
 extern void data_331 (GtkSpinButton *spinbutton, gpointer data);	/*331*/
