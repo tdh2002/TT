@@ -41,6 +41,15 @@
 #define ELEM_RX_MAX_QTY	32
 #define GATE_MAX_QTY	3
 
+#define COL_24_TO_16(a) ((((a)>>9)&0x7c00)|(((a)>>6)&0x03e0)|(((a)>>3)&0x1f))
+
+/* 回波信号8位还是16位 */
+#if 1
+typedef	guchar	DOT_TYPE;
+#else
+typedef	gushort	DOT_TYPE;
+#endif
+
 extern GdkColor	color_black;
 extern GdkColor	color_black1;
 extern GdkColor	color_white;
@@ -623,12 +632,19 @@ typedef struct tmp_config {
 
 	guchar	bright_reg;		/*preferences -> pref. -> bright*/
 
-	gushort	envelope_max[MAX_GROUP_NUM][640];	/**/
-	gushort	envelope_min[MAX_GROUP_NUM][640];	/**/
-	gushort	a_scan_data[MAX_GROUP_NUM][640];	/**/
+	DOT_TYPE	envelope_max[MAX_GROUP_NUM][640];	/**/
+	DOT_TYPE	envelope_min[MAX_GROUP_NUM][640];	/**/
+	DOT_TYPE	a_scan_data[MAX_GROUP_NUM][640];	/**/
+	DOT_TYPE	b_scan_data[640*400];		/**/
 
-	gushort	special_col[3];/* 特殊颜色 */
-	gushort	color[256];		/* 调色板信息 */
+	gushort	special_col_amp[3];	/* 特殊颜色 */
+	gushort	color_amp[256];		/* 调色板信息 */
+
+	gushort	special_col_tofd[3];	/* 特殊颜色 */
+	gushort	color_tofd[256];		/* 调色板信息 */
+
+	gushort	special_col_depth[3];	/* 特殊颜色 */
+	gushort	color_depth[256];		/* 调色板信息 */
 
 	guint	t_special_col[3];/* 临时特殊颜色 */
 	guint	t_color[256];		/* 临时调色板信息 */

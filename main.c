@@ -249,6 +249,7 @@ int main (int argc, char *argv[])
 	GtkAccelGroup	*accel;
 	GClosure		*closure;
 	gint			i;
+	gint			tt;
 
 	g_thread_init(NULL);
 	gdk_threads_init();
@@ -302,13 +303,16 @@ int main (int argc, char *argv[])
 	pp = p_ui;
 	set_config(0);
 	pp->a_scan_width = 615;
-	pp->a_scan_height = 390;
+	pp->a_scan_height = 120;
 	for (i = 0; i < 20480; i++)
 	{
-		*(gushort *)(pp->p_beam_data + i * 2) = i % 390;
-		if ( *(gushort *)(pp->p_beam_data + i * 2) > 400)
-		g_print ("%d = %d\n", i, 
-				*(gushort *)(pp->p_beam_data + i * 2));
+		tt = i % 511;
+		if ( tt > 255)
+			*(DOT_TYPE *)(pp->p_beam_data + i) = 511 - tt;
+		else 
+			*(DOT_TYPE *)(pp->p_beam_data + i) = tt;
+//		g_print ("%d = %d\n", i, 
+//				*(DOT_TYPE *)(pp->p_beam_data + i));
 	}
 #if ARM
 	init_fb (); /* 初始化fb1 */

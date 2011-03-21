@@ -77,17 +77,14 @@ int parseStory(xmlDocPtr doc, xmlNodePtr cur, int x, guint *sp_col, guint *col)
 		if((!xmlStrcmp(cur->name, (const xmlChar*)"Version")))
 		{
 			key=xmlNodeListGetString(doc, cur->xmlChildrenNode, 1);
-			g_print("%s=>%s\n", cur->name, key);
 			xmlFree(key);
 		}
 		else if((!xmlStrcmp(cur->name, (const xmlChar*)"SpecialColors")))
 		{
-			g_print("[%s]\n", cur->name);
 			parseStory(doc, cur, 1, sp_col, col);
 		}
 		else if((!xmlStrcmp(cur->name, (const xmlChar*)"MainColors")))
 		{
-			g_print("[%s]\n", cur->name);
 			parseStory(doc, cur, 2, sp_col, col);
 		}
 		else if((!xmlStrcmp(cur->name, (const xmlChar*)"Color")))

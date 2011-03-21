@@ -32,8 +32,8 @@ enum
 };
 
 static char buffer[32];
-static gushort dot_temp[800];
-static gushort dot_temp1[800*400*2];
+static guchar dot_temp[800];
+static gushort dot_temp1[FB_WIDTH*400];
 
 gint (*window_keypress_event_orig)(GtkWidget *widget, GdkEventKey *event);/* window 原始的按键处理 */
 gint my_keypress_event(GtkWidget *widget, GdkEventKey *event);			/* 自己的按键处理*/
@@ -582,6 +582,7 @@ static void da_call_palette (GtkDialog *dialog, gint response_id, gpointer user_
 	GtkTreeModel *model;
 	gchar *value;
 	gchar *file_path = NULL;
+	gint i;
 
 	if (GTK_RESPONSE_OK == response_id)  /* 确认 */
 	{
@@ -590,7 +591,42 @@ static void da_call_palette (GtkDialog *dialog, gint response_id, gpointer user_
 		{
 			gtk_tree_model_get(model, &iter, LIST_ITEM, &value,  -1);
 			file_path = g_strdup_printf ("%s%s", PALETTE_PATH, value);
-			g_print ("%s", file_path);
+
+			read_palette_file (file_path, TMP(t_special_col), TMP(t_color));  /*   */
+			switch (GROUP_VAL(col_select_pos))
+			{
+				case 0:
+					if (TMP(t_special_col[0]) != 0x12345678)
+					{
+						TMP(special_col_amp[0]) = COL_24_TO_16(TMP(t_special_col)[0]);
+						TMP(special_col_amp[1]) = COL_24_TO_16(TMP(t_special_col)[1]);
+						TMP(special_col_amp[2]) = COL_24_TO_16(TMP(t_special_col)[2]);
+					}
+					for (i = 0; i < 256; i ++)
+						TMP(color_amp[i]) = COL_24_TO_16(TMP(t_color)[i]);
+					break;
+				case 1:
+					if (TMP(t_special_col[0]) != 0x12345678)
+					{
+						TMP(special_col_tofd[0]) = COL_24_TO_16(TMP(t_special_col)[0]);
+						TMP(special_col_tofd[1]) = COL_24_TO_16(TMP(t_special_col)[1]);
+						TMP(special_col_tofd[2]) = COL_24_TO_16(TMP(t_special_col)[2]);
+					}
+					for (i = 0; i < 256; i ++)
+						TMP(color_tofd[i]) = COL_24_TO_16(TMP(t_color)[i]);
+					break;
+				case 2:
+					if (TMP(t_special_col[0]) != 0x12345678)
+					{
+						TMP(special_col_depth[0]) = COL_24_TO_16(TMP(t_special_col)[0]);
+						TMP(special_col_depth[1]) = COL_24_TO_16(TMP(t_special_col)[1]);
+						TMP(special_col_depth[2]) = COL_24_TO_16(TMP(t_special_col)[2]);
+					}
+					for (i = 0; i < 256; i ++)
+						TMP(color_depth[i]) = COL_24_TO_16(TMP(t_color)[i]);
+					break;
+				default:break;
+			}
 
 			g_free (file_path);
 			gtk_widget_destroy (GTK_WIDGET (dialog));
@@ -873,7 +909,7 @@ static gboolean draw_palette(GtkWidget *widget, GdkEventExpose *event, gpointer 
 		}
 	}
 
-	for (i = 1; i < 255; i++)
+	for (i = 0; i < 256; i++)
 	{
 		color_r = (TMP(t_color[i]) >> 16) / 256.0;
 		color_g = ((TMP(t_color[i]) & 0xff00) >> 8) / 256.0;
@@ -902,7 +938,6 @@ static void on_changed_palette(GtkTreeSelection *selection, gpointer drawing_are
 		gtk_tree_model_get(model, &iter, LIST_ITEM, &value,  -1);
 		file_path = g_strdup_printf ("%s%s", PALETTE_PATH , value);	
 		read_palette_file (file_path, TMP(t_special_col), TMP(t_color));  /*   */
-		printf("file_path = %s\n", file_path);
 		g_free(file_path);
 		g_free(value);
 	}
@@ -1278,11 +1313,10 @@ static void draw_color_palette ()
 	GtkWidget *dialog;
 	GtkWidget *vbox1;	/* 指向dialog的vbox */
 
-	GtkWidget *sw;		/* 第一个scroll 备注只要一个sw */
-	GtkWidget *sw1;		/* 第二个scroll 探头 楔块 聚焦法则 setup 调色板 等需要2个sw */
+	GtkWidget *sw;		/* 第一个scroll */
 	GtkWidget *drawarea;
 
-	GtkWidget *hbox_sw;	/* 装在sw1中的box, 用来装调色板信息*/
+	GtkWidget *hbox_sw;	/* 用来装调色板信息*/
 
 	GtkWidget *list;	/* 1个treeview 用来放置调色板名称 */
 	GtkCellRenderer *renderer;
@@ -1302,7 +1336,6 @@ static void draw_color_palette ()
 	vbox1 = GTK_WIDGET (GTK_DIALOG(dialog)->vbox);
 
 	sw = gtk_scrolled_window_new (NULL, NULL);
-	sw1 = gtk_scrolled_window_new ( NULL, NULL);
 	drawarea = gtk_drawing_area_new ();
 	/* 调色板名字 */
 	gtk_widget_set_size_request (sw, 165, 410);
@@ -1701,7 +1734,6 @@ static void draw_dialog_all (guint type)
  * pop_pos 弹出菜单选中的位置
  * menu_status 标志当前menu_item是否可以选择 0-31 位 0是第一个 1是第二个....
  */
-
 static void draw3_pop_tt (void (*fun)(GtkMenuItem*, gpointer),
 		gpointer p,	const gchar *cur_value,	const gchar *content[],
 		guint qty, gint pos, guint pop_pos, guint menu_status)
@@ -1779,7 +1811,6 @@ static void draw3_pop_tt (void (*fun)(GtkMenuItem*, gpointer),
  * menu_on 标志当前menu_item是否显示［On］在其后
  * offset  偏移量
  */
-
 static void draw3_pop_tt_on (void (*fun)(GtkMenuItem*, gpointer),
 		gpointer p,	const gchar *cur_value,	const gchar *content[],
 		guint qty, gint pos, guint pop_pos, guint menu_status, guint menu_on, guint offset)
@@ -4780,7 +4811,8 @@ void draw3_data2(DRAW_UI_P p)
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 						draw3_pop_tt (data_122, NULL, 
 								menu_content[RECTIFIER + GROUP_VAL(rectifier)],
-								menu_content + RECTIFIER, 4, 2, GROUP_VAL(rectifier), 0);
+								menu_content + RECTIFIER, 4, 2, GROUP_VAL(rectifier), 
+								((GROUP_VAL(video_filter) == GAINR_ON) ? 0x01 : 0x0));
 					else 
 						draw3_popdown (menu_content[RECTIFIER + GROUP_VAL(rectifier)], 2, 0);
 					break;
@@ -6269,6 +6301,11 @@ void draw3_data3(DRAW_UI_P p)
 					}
 					break;
 				case 2: /* Video Filter  P123 TAN1 */
+					if (GROUP_VAL(rectifier) == RF_WAVE)
+					{
+						gtk_widget_set_sensitive (pp->eventbox30[3], FALSE);
+						gtk_widget_set_sensitive (pp->eventbox31[3], FALSE);
+					}
 					draw3_popdown (menu_content[OFF_ON + GROUP_VAL(video_filter)], 3, 0);
 					break;
 				case 3: /* Skew (deg.) UT 无 P133 TAN1 */
@@ -6302,7 +6339,7 @@ void draw3_data3(DRAW_UI_P p)
 						if (pp->mark_pop_change)
 						{
 							cur_value = GROUP_VAL(point_qty) ;
-							lower =	160.0;
+							lower =	32.0;
 							upper =	8192.0;	/* 最大值需要计算 TAN1 */
 							step = tmpf;
 							digit = 0;
@@ -7328,8 +7365,7 @@ void draw3_data3(DRAW_UI_P p)
 						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					}
 					break;
-				case 1:/*Scan -> Inspection -> scan speed p713 */
-					/* 当前步进 */
+				case 1:/* 扫查移动速度 P713 */
 					switch (TMP(scanspeed_reg))
 					{
 						case 0:	tmpf = 1.0; break;
@@ -7345,9 +7381,9 @@ void draw3_data3(DRAW_UI_P p)
 
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 					{
-						cur_value = CFG(scanspeed)/10.0;
-						lower = 0.0;
-						upper = 1000.0;
+						cur_value = CFG(scanspeed) / 10.0;
+						lower = 1.0;
+						upper = 100.0;
 						step = tmpf;
 						digit = 1;
 						pos = 3;
@@ -7363,8 +7399,6 @@ void draw3_data3(DRAW_UI_P p)
 						draw3_digit_stop (cur_value, units[unit], digit, pos, content_pos);
 					}
 					break;
-
-
 				case 2:/*Scan -> area -> index start p723 */
 					/* 当前步进 */
 					switch (TMP(index_start_reg))
@@ -8682,7 +8716,8 @@ void draw3_data5(DRAW_UI_P p)
 						{
 							cur_value = get_prf() / 10.0;
 							lower =	1.0;
-							upper = (gfloat)(TMP(max_prf));	/* 最大值需要计算出来 */
+//							upper = (gfloat)(TMP(max_prf));	/* 最大值需要计算出来 */
+							upper = 100.0;
 							step = tmpf;
 							digit = 0;
 							pos = 5;
@@ -9128,7 +9163,7 @@ void draw3_data5(DRAW_UI_P p)
 		case 4:
 			switch (pp->pos1[4])
 			{
-				case 0:
+				case 0:		/*  */
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 5))/*选中405这个位置*/
 					{
 						if(CFG(display)==10)
@@ -9146,7 +9181,7 @@ void draw3_data5(DRAW_UI_P p)
 
 							cur_value = CFG(avg_scan_speed)/100.0;
 							lower = 0.01;
-							upper = 1000.0;
+							upper = 100.0;	/* 与prf一样 */
 							step = tmpf;
 							digit = 2;
 							pos = 5;
@@ -9159,7 +9194,6 @@ void draw3_data5(DRAW_UI_P p)
 							gtk_widget_hide (pp->eventbox30[5]);
 							gtk_widget_hide (pp->eventbox31[5]);
 						}
-
 					}
 					else 
 					{
@@ -9172,7 +9206,6 @@ void draw3_data5(DRAW_UI_P p)
 							unit = UNIT_MM_S;
 							draw3_digit_stop (cur_value, units[unit], digit, pos, 12);
 						}
-
 						else 
 						{
 							gtk_widget_hide (pp->eventbox30[5]);
@@ -9647,40 +9680,56 @@ static gboolean time_handler1(GtkWidget *widget)
 	return TRUE;
 }
 
+static void	compress_data (DOT_TYPE *source_data, DOT_TYPE *target_data,
+		gint qty1, gint qty2, guint	rectify)
+{
+	guint	temp_1, temp_2, i, j;
+	for (i = 0; i < qty2; i++) 
+	{
+		temp_2 = qty1 / qty2;
+		temp_1 = i * qty1 / qty2;
+		target_data[i] = source_data[temp_1];
+		for (j = 1; j < temp_2; j++) {
+			if (rectify == RF_WAVE) {
+				if (target_data[i] > 127) {
+					if (source_data[temp_1 + j] > target_data[i]) 
+						target_data[i] = source_data[temp_1 + j];
+				} else {
+					if (source_data[temp_1 + j] < target_data[i]) 
+						target_data[i] = source_data[temp_1 + j];
+				}
+			} else {
+				if (source_data[temp_1 + j] > target_data[i]) 
+					target_data[i] = source_data[temp_1 + j];
+			}
+		}
+	}
+}
+
+
 static gboolean time_handler2(GtkWidget *widget)
 {
 	gint i;
 
-	for (i = 0; i < 615; i++)
-		dot_temp[i] = i%390;
-	//		dot_temp[i] = g_random_int_range(0, 390);
-
-	/*	这里需要压缩数据 或者 插值数据 */
+	/*	这里需要压缩数据 或者 插值数据 这里只有一个beam 同时最多处理256beam */
 	if (GROUP_VAL(point_qty) <= pp->a_scan_width)
-	{
-		memcpy(	TMP(a_scan_data[CFG(groupId)]), 
-				(void *)(pp->p_beam_data + GROUP_VAL(point_qty) * 0 * 2),/* 0 是第几个beam */
-					GROUP_VAL(point_qty) * 2);
-	}
+		memcpy (TMP(a_scan_data[CFG(groupId)]), 
+				(void *)(pp->p_beam_data + GROUP_VAL(point_qty) * 0),/* 0 是第几个beam */
+					GROUP_VAL(point_qty));
 	else if (GROUP_VAL(point_qty) > pp->a_scan_width)
-	{
-		for ( i = 0 ; i < pp->a_scan_width; i++)
-		{
-			TMP(a_scan_data[CFG(groupId)][i]) = 
-//			dot_temp[i] =
-				*(gushort *)(pp->p_beam_data +
-						GROUP_VAL(point_qty) * 0 * 2 +  
-						2 * (i * GROUP_VAL(point_qty) / pp->a_scan_width));
-		}
-	}
-
-//	g_print("%d %d \n", pp->a_scan_width, pp->a_scan_height);
+		compress_data (
+				(DOT_TYPE *)(pp->p_beam_data + GROUP_VAL(point_qty) * 0),
+				TMP(a_scan_data[CFG(groupId)]), 
+				GROUP_VAL_POS(CFG(groupId), point_qty),
+				pp->a_scan_width, GROUP_VAL_POS(CFG(groupId), rectifier)
+				);
 
 	draw_a_scan (dot_temp1, pp->a_scan_width, pp->a_scan_height,
-//			dot_temp, dot_temp, dot_temp, 0, 0, CFG(groupId));
 			TMP(a_scan_data[CFG(groupId)]), dot_temp, dot_temp, 0, 0, CFG(groupId));
 
-	memcpy (TMP(fb1_addr), dot_temp1, 800*400*2);	/* 如果用dma更快啊 */
+
+	/* 复制波形到显存 */
+	memcpy (TMP(fb1_addr), dot_temp1, FB_WIDTH*400*2);	/* 如果用dma更快啊 */
 
 	return TRUE;
 }
