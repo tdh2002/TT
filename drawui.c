@@ -634,6 +634,11 @@ static void da_call_palette (GtkDialog *dialog, gint response_id, gpointer user_
 	}
 	else if (GTK_RESPONSE_CANCEL == response_id) /* 取消 */
 		gtk_widget_destroy (GTK_WIDGET (dialog));
+	
+//	for ( i = 0 ; i < 256 ; i ++)
+//	{
+//		g_print("%x,\n", TMP(color_amp[i]));
+//	}
 }
 
 /*
@@ -899,10 +904,13 @@ static gboolean draw_palette(GtkWidget *widget, GdkEventExpose *event, gpointer 
 	{
 		for (i = 0; i < 3; i++)
 		{
-			color_r = (TMP(t_special_col[i]) >> 16) / 256.0;
-			color_g = ((TMP(t_special_col[i]) & 0xff00) >> 8) / 256.0;
-			color_b = ((TMP(t_special_col[i]) & 0xff)) /  256.0;
-			cairo_set_source_rgba(cr,color_r,color_g,color_b,1.0);
+//			color_r = (TMP(t_special_col[i]) >> 16) / 256.0;
+//			color_g = ((TMP(t_special_col[i]) & 0xff00) >> 8) / 256.0;
+//			color_b = ((TMP(t_special_col[i]) & 0xff)) /  256.0;
+			color_r = ((TMP(t_special_col[i]) >> 16) >> 3) / 32.0;
+			color_g = (((TMP(t_special_col[i]) & 0xff00) >> 8) >> 2) / 64.0;
+			color_b = (((TMP(t_special_col[i]) & 0xff)) >> 3) /  32.0;
+			cairo_set_source_rgba(cr, color_r, color_g, color_b, 1.0);
 			cairo_rectangle(cr,85,50 + 15 * i,185,10);
 			cairo_fill(cr);
 			cairo_stroke(cr);
@@ -2136,22 +2144,25 @@ static gboolean draw_grid(GtkWidget *widget, GdkEventExpose *event, gpointer dat
 		default:break;
 	}
 
-	for(j=0;j<h;j+=h/10)
+	if (CFG(grid) != 5) 
 	{
-		for(m=0;m<w;m+=w/50)
+		for(j=0;j<h;j+=h/10)
 		{
-			cairo_move_to (cr, (int)(m) , (int)(j) + 0.5);
-			cairo_line_to (cr, (int)(m) +1 , (int)(j) + 0.5);
-			cairo_stroke (cr);
+			for(m=0;m<w;m+=w/50)
+			{
+				cairo_move_to (cr, (int)(m) , (int)(j) + 0.5);
+				cairo_line_to (cr, (int)(m) +1 , (int)(j) + 0.5);
+				cairo_stroke (cr);
+			}
 		}
-	}
-	for ( i = 0; i < w; i+=w/10.0 )
-	{
-		for(n=0;n<h;n+=h/50.0)
+		for ( i = 0; i < w; i+=w/10.0 )
 		{
-			cairo_move_to (cr, (int)(i) , (int)(n) + 0.5);
-			cairo_line_to (cr, (int)(i) +1 , (int)(n) + 0.5);
-			cairo_stroke(cr);
+			for(n=0;n<h;n+=h/50.0)
+			{
+				cairo_move_to (cr, (int)(i) , (int)(n) + 0.5);
+				cairo_line_to (cr, (int)(i) +1 , (int)(n) + 0.5);
+				cairo_stroke(cr);
+			}
 		}
 	}
 	cairo_destroy(cr);//销毁画笔
@@ -9706,12 +9717,20 @@ static void	compress_data (DOT_TYPE *source_data, DOT_TYPE *target_data,
 	}
 }
 
-
+/*   */
 static gboolean time_handler2(GtkWidget *widget)
 {
-	gint i;
+	gint i, prf_count;
+	pp->scan_count++;
 
-	/*	这里需要压缩数据 或者 插值数据 这里只有一个beam 同时最多处理256beam */
+	(GROUP_VAL(prf) > 250) ? (prf_count = 25) : (prf_count = (GROUP_VAL(prf) / 10));
+
+	prf_count = 25 / prf_count;
+
+	if ( (pp->scan_count % prf_count) == 0 )
+	{
+
+	/* 这里需要压缩数据 或者 插值数据 这里只有一个beam 同时最多处理256beam */
 	if (GROUP_VAL(point_qty) <= pp->a_scan_width)
 		memcpy (TMP(a_scan_data[CFG(groupId)]), 
 				(void *)(pp->p_beam_data + GROUP_VAL(point_qty) * 0),/* 0 是第几个beam */
@@ -9727,7 +9746,10 @@ static gboolean time_handler2(GtkWidget *widget)
 	draw_a_scan (dot_temp1, pp->a_scan_width, pp->a_scan_height,
 			TMP(a_scan_data[CFG(groupId)]), dot_temp, dot_temp, 0, 0, CFG(groupId));
 
+	draw_b_scan (dot_temp1, pp->b_scan_width, pp->b_scan_height,
+			TMP(b_scan_data), TMP(a_scan_data[CFG(groupId)]), 0, 130, CFG(groupId), 0);
 
+	}
 	/* 复制波形到显存 */
 	memcpy (TMP(fb1_addr), dot_temp1, FB_WIDTH*400*2);	/* 如果用dma更快啊 */
 
@@ -10156,7 +10178,7 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 	/*	pp->p_config->unit = 1;*/
 
 #if ARM
-	g_timeout_add(33, (GSourceFunc) time_handler2, NULL);
+	g_timeout_add(25, (GSourceFunc) time_handler2, NULL);
 #endif
 	//	g_thread_create((GThreadFunc)(time_handler), (gpointer) (pp->drawing_area), FALSE, NULL);
 

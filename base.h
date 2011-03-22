@@ -41,7 +41,7 @@
 #define ELEM_RX_MAX_QTY	32
 #define GATE_MAX_QTY	3
 
-#define COL_24_TO_16(a) ((((a)>>9)&0x7c00)|(((a)>>6)&0x03e0)|(((a)>>3)&0x1f))
+#define COL_24_TO_16(a) ((((a)>>8)&0xf800)|(((a)>>5)&0x07e0)|(((a)>>3)&0x1f))
 
 /* 回波信号8位还是16位 */
 #if 1
@@ -770,6 +770,7 @@ typedef struct Draw_interface {
 	gpointer	p_b_scan_data[4];
 	gpointer	p_c_scan_data[4];
 	gpointer	p_s_scan_data[4];
+	guint		scan_count;
 
 	gulong		signal_id;
 

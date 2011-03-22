@@ -304,6 +304,9 @@ int main (int argc, char *argv[])
 	set_config(0);
 	pp->a_scan_width = 615;
 	pp->a_scan_height = 120;
+
+	pp->b_scan_width = 615;
+	pp->b_scan_height = 260;
 	for (i = 0; i < 20480; i++)
 	{
 		tt = i % 511;

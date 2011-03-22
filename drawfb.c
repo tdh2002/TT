@@ -200,17 +200,30 @@ void draw_a_scan (gushort *p, guint width, guint height,
 }
 
 /* 画B扫描 */
-void draw_b_scan (gushort *p, guint width, guint height, DOT_TYPE *data,
+void draw_b_scan (gushort *p, guint width, guint height, DOT_TYPE *data, DOT_TYPE *data1,
 		guint xoffset, guint yoffset, guchar groupId, guchar mark)
 {
-	gint i;
+	gint i, j;
 	if (mark)
 	{
 		for (i = 0; i < height; i++)
-			memset (p + FB_WIDTH * (i + yoffset) + xoffset, 0x0, width * 2 );
+			memset (p + FB_WIDTH * (i + yoffset) + xoffset, 0x0, width * 2);
 		return ;
 	}
-	for (i = 0; i < width - 1; i++)
-		fbline (p, xoffset + i, yoffset + data[i], xoffset + i + 1,
-				yoffset + data[i + 1], col);
+
+
+	for (i = 0; i < height - 1; i++)
+		memcpy(p + (i + yoffset) * FB_WIDTH, p + (i + yoffset + 1) * FB_WIDTH, FB_WIDTH * 2);
+//				FB_WIDTH * (height -1) * 2);
+
+	for (j = 0; j < width - 1; j++)
+		fbdot (p, xoffset + j, yoffset + height - 1,
+				TMP(color_amp[data1[j]]));
+#if 0
+	for (i = 0; i < height - 1; i++)
+		for (j = 0; j < width - 1; j++)
+			fbdot (p, xoffset + j, yoffset + i,
+					TMP(color_amp[data[i * width + j]]));
+#endif
+
 }
