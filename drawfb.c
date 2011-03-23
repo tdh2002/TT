@@ -151,50 +151,23 @@ void draw_a_scan (gushort *p, guint width, guint height,
 		DOT_TYPE *data, DOT_TYPE *data1, DOT_TYPE *data2,
 		guint xoffset, guint yoffset, guchar groupId)
 {
-	gint	i, x_tmp,	x1_tmp;
+	gint	i;
 	/* 清空这块显示区 背景暂定黑色 可以全部一起清空 */
 	for (i = 0; i < height; i++)
 		memset (p + FB_WIDTH * (i + yoffset) + xoffset, 0x0, width * 2 );
 	/* 画回波 */
-	if (GROUP_VAL_POS(groupId, point_qty) < width )
+	for (i = 0; i < width - 1; i++)
 	{
-		for (i = 0; i < width - 1; i++)
+		fbline (p, 
+				xoffset + i,
+				yoffset + height * HEIGHT_TABLE[data[i]],
+				xoffset + i + 1,
+				yoffset + height * HEIGHT_TABLE[data[i + 1]],
+				all_col_16[GROUP_VAL_POS(groupId, ascan_color)]);
+		/* 画包络 */
+		if (GROUP_VAL_POS(groupId, ascan_envelope))
 		{
-			x_tmp = (i * width /  GROUP_VAL_POS( groupId, point_qty));
-			x1_tmp = ((i +1)  * width /  GROUP_VAL_POS( groupId, point_qty));
-			if ( x_tmp <= width ) 
-			{
-				fbline (p, 
-						xoffset + x_tmp,
-						yoffset + height * HEIGHT_TABLE[data[i]],
-						xoffset + (x1_tmp > width) ? width : x1_tmp,
-						yoffset + height * HEIGHT_TABLE[data[i + 1]],
-						all_col_16[GROUP_VAL_POS(groupId, ascan_color)]);
-				/* 画包络 */
-				if (GROUP_VAL_POS(groupId, ascan_envelope))
-				{
-					/* 未完成 */
-				}
-			}
-			else
-				continue;
-		}
-	}
-	else 
-	{
-		for (i = 0; i < width - 1; i++)
-		{
-			fbline (p, 
-					xoffset + i,
-					yoffset + height * HEIGHT_TABLE[data[i]],
-					xoffset + i + 1,
-					yoffset + height * HEIGHT_TABLE[data[i + 1]],
-					all_col_16[GROUP_VAL_POS(groupId, ascan_color)]);
-			/* 画包络 */
-			if (GROUP_VAL_POS(groupId, ascan_envelope))
-			{
-				/* 未完成 */
-			}
+			/* 未完成 */
 		}
 	}
 }
@@ -211,14 +184,13 @@ void draw_b_scan (gushort *p, guint width, guint height, DOT_TYPE *data, DOT_TYP
 		return ;
 	}
 
+//	for (i = 0; i < height - 1; i++)
+//		memcpy(p + (i + yoffset) * FB_WIDTH, p + (i + yoffset + 1) * FB_WIDTH, FB_WIDTH * 2);
 
-	for (i = 0; i < height - 1; i++)
-		memcpy(p + (i + yoffset) * FB_WIDTH, p + (i + yoffset + 1) * FB_WIDTH, FB_WIDTH * 2);
-//				FB_WIDTH * (height -1) * 2);
+	memcpy(p + (yoffset) * FB_WIDTH, p + (yoffset + 1) * FB_WIDTH, FB_WIDTH * (height - 1) * 2);
 
 	for (j = 0; j < width - 1; j++)
-		fbdot (p, xoffset + j, yoffset + height - 1,
-				TMP(color_amp[data1[j]]));
+		fbdot (p, xoffset + j, yoffset + height - 1, TMP(color_amp[data1[j]]));
 #if 0
 	for (i = 0; i < height - 1; i++)
 		for (j = 0; j < width - 1; j++)
@@ -226,4 +198,10 @@ void draw_b_scan (gushort *p, guint width, guint height, DOT_TYPE *data, DOT_TYP
 					TMP(color_amp[data[i * width + j]]));
 #endif
 
+}
+
+/* 画S扫描 */
+void draw_s_scan (gushort *p, guint width, guint height, DOT_TYPE *data, DOT_TYPE *data1,
+		guint xoffset, guint yoffset, guchar groupId, guchar mark)
+{
 }

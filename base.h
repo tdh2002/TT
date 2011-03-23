@@ -34,7 +34,7 @@
 #define TRUE_DEPTH	ARM_DEPTH
 #endif
 
-#define MAX_GROUP_NUM	4
+#define MAX_GROUP_NUM	8
 
 #define	MAX_DOT_QTY		163840
 #define LAW_MAX_QTY		256
@@ -371,7 +371,7 @@ typedef	struct Config {
 	guchar	voltage_pa;			/*  */
 	guchar	voltage_ut;	
 	guchar	language;			/* 语言 */
-	GROUP	group[4];			/* 前3个都接前面的128的接口 */
+	GROUP	group[MAX_GROUP_NUM];			/* 前3个都接前面的128的接口 */
 
 	PART	part;				/* 被检测工件... */
 	/* 所有聚焦法则的信息在这里 */
@@ -430,7 +430,7 @@ typedef	struct Config {
 	guint	max_thickness;                  /*Measurements->Thickness->max*/
 	guchar	echo_qty;                       /*Measurements->Thickness->echo_qty*/
 
-	guchar	dis_group;
+	guchar	display_group;
 
 	guchar	grid;                           /* Display -> Overlay -> grid */
 	guchar	sizing_curves;                  /* Display -> overlay -> sizing curves*/
@@ -442,12 +442,7 @@ typedef	struct Config {
 	guchar	zoom_display_pos;               /* A-Scan  B-Scan  S-Scan  ... Off 共6个*/
 
 	guchar	prop_scan;                      /* Display -> Properties -> Scan  6个 */
-	guchar	prop_color;
-	guchar	envelope;                       /* Display -> Properties -> envelope */
-	guchar	prop_source;                    /* Display -> Properties -> Source */
 
-	guchar	prop_app;                       /* Display -> Properties -> appearance */
-	guchar	prop_overlay;                   /* Display -> Properties -> overlay */
 	guint	compress;                       /* Display -> Properties -> compress */
 	guchar	optimum;                        /* Display -> Properties -> optimum */
 	guchar	ratio;                          /* Display -> Properties -> Ratio 1:1 */
@@ -635,7 +630,7 @@ typedef struct tmp_config {
 	DOT_TYPE	envelope_max[MAX_GROUP_NUM][640];	/**/
 	DOT_TYPE	envelope_min[MAX_GROUP_NUM][640];	/**/
 	DOT_TYPE	a_scan_data[MAX_GROUP_NUM][640];	/**/
-	DOT_TYPE	b_scan_data[640*400];		/**/
+	DOT_TYPE	s_scan_data[640*400];		/**/
 
 	gushort	special_col_amp[3];	/* 特殊颜色 */
 	gushort	color_amp[256];		/* 调色板信息 */
@@ -794,6 +789,9 @@ typedef struct Draw_interface {
 	guint	s_scan_height;
 	guint	c_scan_width;
 	guint	c_scan_height;
+
+	guchar	scan_type[16];	/* 16个窗口显示的类型 */
+/*	guint	scan_dispaly_qty;*/	/* 显示几个窗口 */
 
 	guint	scan_xpos[16];
 	guint	scan_ypos[16];

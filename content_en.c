@@ -476,7 +476,7 @@ const gchar *all_menu_content_en[] =
 	"None", "Peak", "Reference",									/* 370 Overlay*/
 	"Yellow", "Blue", "White","Black",								/* 373 FFT->Color*/
 	"Vertical", "Horizontal",									/* 377 Orientation*/
-	"Add", "1", "2", "3", "4", "Remove",								/* 379 Group */
+	"Add", "1", "2", "3", "4", "5", "6", "7", "8", "Remove",	/* 379 Group */
 	"UT  Conventional Ultrasound", "PA  Phassed Array",						/* 385 Group Mode*/
 	"UT", "PA",											/* 387 */
 	"Select Tx/Rx", "Defines",									/* 389 Select*/

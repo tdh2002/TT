@@ -2630,14 +2630,15 @@ void data_333 (GtkSpinButton *spinbutton, gpointer data) /*echo_qty p333 */
 
 void data_400 (GtkMenuItem *menuitem, gpointer data) /* Display -> Selection -> display p400 */
 {
-	CFG(display) = (gchar) (GPOINTER_TO_UINT (data));
+	CFG(display) = (guchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
-	draw_3_menu(0, NULL);
-	draw_area_all();
+	draw_3_menu (0, NULL);
+	draw_area_all ();
 }
+
 void data_401 (GtkMenuItem *menuitem, gpointer data) /* Display -> Selection -> group p401 */
 {
-	CFG(dis_group) = (guchar) (GPOINTER_TO_UINT (data));
+	CFG(display_group) = (guchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
 }
@@ -2695,10 +2696,11 @@ void data_410 (GtkMenuItem *menuitem, gpointer data) /* Display -> Overlay -> UT
 	draw_area_all();
 }
 
-void data_411 (GtkMenuItem *menuitem, gpointer data) /* Display -> Overlay -> Grid p411 */
+void data_411 (GtkMenuItem *menuitem, gpointer data) /* 选择栅格颜色  P411 */
 {
 	CFG(grid) = (guchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
+	gtk_widget_queue_draw (pp->vboxtable);
 	draw_3_menu(0, NULL);
 }
 
@@ -2847,9 +2849,29 @@ void data_445 (GtkMenuItem *menuitem, gpointer data) /* Display -> Properties ->
 	draw_3_menu(0, NULL);
 }
 
-void data_500 (GtkMenuItem *menuitem, gpointer data) /* Probe/Part -> Select -> Group  500 */
+void data_500 (GtkMenuItem *menuitem, gpointer data) /* 增加删除选择group P500 */
 {
-	CFG(group_pos) = (guchar) (GPOINTER_TO_UINT (data));
+	guchar temp;
+	temp = (guchar)(GPOINTER_TO_UINT (data));
+	switch (temp)
+	{
+		case 0:CFG(groupQty) += 1;break;						/* 增加*/
+		case 1:
+		case 2:
+		case 3:
+		case 4:
+		case 5:
+		case 6:
+		case 7:
+		case 8:
+			   CFG(group_pos) = temp;
+			   /* 把参数切换到当前选择的group 未完成 */
+//			   CFG(groupId)	= temp - 1;
+			   break;
+		case 9:CFG(groupQty) -= 1;break;
+		default:break;
+	}
+
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
 }

@@ -136,7 +136,7 @@ static void set_config (guint groupid)
 	CFG(min_thickness)=50;
 	CFG(max_thickness)=99900;
 	CFG(echo_qty)=1;
-	CFG(dis_group)=0; /*0是All*/
+	CFG(display_group) = DISPLAY_CURRENT_GROUP; /*0是All*/
 	CFG(c_scan1)=0;   /*0是A%*/
 	CFG(c_scan2)=0;   /*0是A%*/
 	CFG(c_scan11)=0;  /*0是A%*/
@@ -175,9 +175,9 @@ static void set_config (guint groupid)
 	GROUP_VAL(col_mode)    = 0;  /*0 Exclusion*/
 
 	CFG(prop_scan)=0;/*0 A-Scan*/
-	CFG(envelope)=0; /*0 None*/
-	CFG(prop_app)=0; /*0 Hollow*/
-	CFG(prop_overlay)=0; /*0 None*/
+	GROUP_VAL(ascan_envelope)	=	0; /*0 None*/
+	GROUP_VAL(ascan_appearance)	=	0; /*0 Hollow*/
+	GROUP_VAL(ascan_overlay)		=	0; /*0 None*/
 	CFG(optimum)=0; /*0 off*/
 	CFG(ratio)=0; /*0 off*/
 	CFG(interpolation)=0; /*0 off*/
@@ -317,6 +317,7 @@ int main (int argc, char *argv[])
 //		g_print ("%d = %d\n", i, 
 //				*(DOT_TYPE *)(pp->p_beam_data + i));
 	}
+	memset (pp->scan_type, 0xff, 16);
 #if ARM
 	init_fb (); /* 初始化fb1 */
 #endif

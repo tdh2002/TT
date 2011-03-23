@@ -12,7 +12,7 @@
 /* 扫查模式 */
 #define UT_SCAN		0
 #define PA_SCAN		1
-/*  */
+/* 当前位置信息  */
 #define MENU1_STOP    4
 #define MENU2_STOP    0 
 #define MENU2_PRESSED 1
@@ -38,7 +38,6 @@
 #define UNIT_RPM	16
 #define UNIT_NONE	17
 
-
 /* UT_UNIT */
 #define UT_UNIT_TRUE_DEPTH	0
 #define UT_UNIT_SOUNDPATH	1
@@ -54,12 +53,15 @@
 #define VOLTAGE_HIGH
 #define VOLTAGE_MID
 #define VOLTAGE_LOW
+/* 电压 */
+#define VOL_LOW		0
+#define VOL_HIGH	1
+
 /* 检波 P122 */
 #define RF_WAVE			0
 #define POSITIVE_WAVE	1
 #define NAGATIVE_WAVE	2
 #define FULL_WAVE		3
-
 /* 闸门 */
 #define GATE_A	0
 #define GATE_B  1
@@ -76,7 +78,9 @@
 #define	ANGLE_SCAN	0
 #define LINEAR_SCAN	1
 
-/* 各种数值定义 */
+/* 显示模式ABSC */
+#define	DISPLAY_ALL_GROUP	0
+#define DISPLAY_CURRENT_GROUP	1
 #define A_SCAN	     0
 #define B_SCAN	     1
 #define C_SCAN	     2
@@ -95,10 +99,11 @@
 #define VIDEO_FILTER_OFF 0
 #define VIDEO_FILTER_ON	 1
 
-//#define gate_A		0
+/*  */
+#define UT_CHANNEL	3
 
-#define VOL_LOW		0
-#define VOL_HIGH	1
+
+
 
 /*上方数值显示信息定义 */
 #define GAIN_LABEL	0
@@ -169,7 +174,7 @@
 #define FFT_COLOR	(PROP_OVERLAY + 3)
 #define ORIENTATION	(FFT_COLOR + 4)
 #define GROUP_P		(ORIENTATION + 2)
-#define GROUP_MODE	(GROUP_P + 6)
+#define GROUP_MODE	(GROUP_P + 10)
 #define GROUP_MODE_P	(GROUP_MODE + 2)
 #define PROB_SELECT	(GROUP_MODE_P + 2)
 #define PROB_SKEW	(PROB_SELECT + 2 )
@@ -218,9 +223,6 @@
 #define HELP_Y		1
 
 #define	MAIN_MENU_PRESS	1
-
-/*  */
-#define UT_CHANNEL	3
 
 /* 发送给硬件数据类型 */
 #define BEAM_DELAY_DSP	0x1000	/* 0x1000~0x10ff 最多256个聚焦法则 */
