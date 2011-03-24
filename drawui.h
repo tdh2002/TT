@@ -223,6 +223,12 @@
 #define HELP_Y		1
 
 #define	MAIN_MENU_PRESS	1
+#define	MENU31_PRESS	2
+#define	MENU32_PRESS	3
+#define	MENU33_PRESS	4
+#define	MENU34_PRESS	5
+#define	MENU35_PRESS	6
+#define	MENU36_PRESS	7
 
 /* 发送给硬件数据类型 */
 #define BEAM_DELAY_DSP	0x1000	/* 0x1000~0x10ff 最多256个聚焦法则 */

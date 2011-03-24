@@ -1651,10 +1651,10 @@ static void handler_key(guint keyval, gpointer data)
 		case GDK_F7:
 			if(gtk_widget_get_sensitive(pp->eventbox30[5]))
 			{
-				if (pp->pos_pos == MENU3_PRESSED)
+//				if (pp->pos_pos == MENU3_PRESSED)
 					b3_fun5(NULL);
-				else 
-					pp->pos_pos = MENU3_PRESSED;
+//				else 
+//					pp->pos_pos = MENU3_PRESSED;
 			}			
 			break;
 		case GDK_F8:
@@ -1687,20 +1687,20 @@ static void handler_key(guint keyval, gpointer data)
 		case GDK_F11:
 			if(gtk_widget_get_sensitive(pp->eventbox30[1]))
 			{
-				if (pp->pos_pos == MENU3_PRESSED)
-					b3_fun1(NULL);
-				else 
-					pp->pos_pos = MENU3_PRESSED;
+//				if (pp->pos_pos == MENU3_PRESSED)
+				b3_fun1(NULL);
+//				else 
+//					pp->pos_pos = MENU3_PRESSED;
+//				g_print("F11\n");
 			}			
 			break;
 		case GDK_F12:
 			if(gtk_widget_get_sensitive(pp->eventbox30[0]))
 			{
-				if (pp->pos_pos == MENU3_PRESSED)
-					//b3_fun0(GUINT_TO_POINTER (0x01));
+//				if (pp->pos_pos == MENU3_PRESSED)
 					b3_fun0(NULL);
-				else 
-					pp->pos_pos = MENU3_PRESSED;
+//				else 
+//					pp->pos_pos = MENU3_PRESSED;
 			}
 			break;
 		case GDK_Left:
@@ -1757,11 +1757,11 @@ static void handler_key(guint keyval, gpointer data)
 			break;
 		default:break;
 	}
-	if ((tmp != pp->pos_pos) || (tmp1 != pp->mark_pop_change))
-	{
-		draw_2_menu(0);
-		draw_3_menu(0, NULL);
-	}
+//	if ((tmp != pp->pos_pos) || (tmp1 != pp->mark_pop_change))
+//	{
+//		draw_2_menu(0);
+//		draw_3_menu(0, NULL);
+//	}
 
 	return ;
 
@@ -2895,6 +2895,10 @@ void data_500 (GtkMenuItem *menuitem, gpointer data) /* 增加删除选择group 
 void data_501 (GtkMenuItem *menuitem, gpointer data) /* Probe/Part -> Select -> Group Mode 501 */
 {
 	GROUP_VAL(group_mode) = (gchar) (GPOINTER_TO_UINT (data));
+	if(!GROUP_VAL(group_mode)) /*group mode 选择UT时，focal law 不可用*/
+		gtk_widget_set_sensitive(pp->menuitem[6],FALSE);
+	else
+		gtk_widget_set_sensitive(pp->menuitem[6],TRUE);
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
 }

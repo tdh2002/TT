@@ -86,7 +86,6 @@ void menuitem9_function(GtkMenuItem *menuitem, gpointer data);
 gint my_keypress_event(GtkWidget *widget, GdkEventKey *event)
 {
 	gpointer data = NULL;
-	g_print("%x", event->keyval);
 	key_press_handler (widget, event, data);
 	return 0;
 }
@@ -236,7 +235,6 @@ void show_help(guint i)
 
 gboolean main_menu_press (GtkWidget *widget, GdkEventButton *event,	gpointer data)
 {
-	g_print("hello\n");
 	main_menu_pop(MENU_POP);
 	return TRUE;
 }
@@ -549,7 +547,6 @@ static void da_call_wedge (GtkDialog *dialog, gint response_id, gpointer user_da
 			read_wedge_file (file_path, &GROUP_VAL(wedge));
 			g_free(file_path);
 
-			g_print("probe.Name = %s\n", GROUP_VAL(wedge.Model));
 			gtk_label_set_text (GTK_LABEL (pp->data3[4]), GROUP_VAL(wedge.Model));
 			gtk_widget_destroy (GTK_WIDGET (dialog));
 		}
@@ -999,7 +996,6 @@ static gchar* get_wedge_info(const gchar *file_path)
 			break;
 		default:break;
 	}
-	g_print ("%d\n", w1.Wave_type);
 	return wedge_info;
 }
 
@@ -1051,7 +1047,6 @@ static void on_changed1_wedge(GtkTreeSelection *selection, gpointer label)
 		else if (GROUP_VAL(group_mode) == UT_SCAN)
 			file_path = g_strdup_printf ("%s%s/%s", UT_WEDGE_PATH, pp->p_type, value);	
 		g_free(value);
-		g_print("%s\n", file_path);
 		wedge_info = get_wedge_info(file_path);
 		gtk_label_set_text (GTK_LABEL (pp->label_probe), wedge_info);
 	}
@@ -1766,7 +1761,8 @@ static void draw3_pop_tt (void (*fun)(GtkMenuItem*, gpointer),
 	for (i = 0; i < qty; i++ )
 	{
 		pp->menu_item3[i] = gtk_menu_item_new_with_label (content[i]);
-		gtk_menu_shell_append (GTK_MENU_SHELL (pp->menu3), pp->menu_item3[i]);
+//		gtk_menu_shell_append (GTK_MENU_SHELL (pp->menu3), pp->menu_item3[i]);
+		gtk_menu_shell_append (GTK_MENU_SHELL (pp->menu33[pos]), pp->menu_item3[i]);
 		g_signal_connect (pp->menu_item3[i], "activate",
 				G_CALLBACK(fun), (GUINT_TO_POINTER (i)));
 		if (0x01 & (menu_status >> i))
@@ -1775,7 +1771,8 @@ static void draw3_pop_tt (void (*fun)(GtkMenuItem*, gpointer),
 	}
 	gtk_menu_item_select (GTK_MENU_ITEM (pp->menu_item3[pop_pos]));
 
-	menu = GTK_MENU (pp->menu3);
+//	menu = GTK_MENU (pp->menu3);
+	menu = GTK_MENU (pp->menu33[pos]);
 
 	gtk_menu_popup (menu, NULL, NULL, 
 			(GtkMenuPositionFunc)set_menu_position_tdh,
@@ -1847,7 +1844,8 @@ static void draw3_pop_tt_on (void (*fun)(GtkMenuItem*, gpointer),
 		else
 			pp->menu_item3[i] = gtk_menu_item_new_with_label (content[i]);
 
-		gtk_menu_shell_append (GTK_MENU_SHELL (pp->menu3), pp->menu_item3[i]);
+//		gtk_menu_shell_append (GTK_MENU_SHELL (pp->menu3), pp->menu_item3[i]);
+		gtk_menu_shell_append (GTK_MENU_SHELL (pp->menu33[pos]), pp->menu_item3[i]);
 		g_signal_connect (pp->menu_item3[i], "activate",
 				G_CALLBACK(fun), (GUINT_TO_POINTER (i)));
 		if (0x01 & (menu_status >> i))
@@ -1856,7 +1854,8 @@ static void draw3_pop_tt_on (void (*fun)(GtkMenuItem*, gpointer),
 	}
 	gtk_menu_item_select (GTK_MENU_ITEM (pp->menu_item3[pop_pos]));
 
-	menu = GTK_MENU (pp->menu3);
+//	menu = GTK_MENU (pp->menu3);
+	menu = GTK_MENU (pp->menu33[pos]);
 
 	gtk_menu_popup (menu, NULL, NULL, 
 			(GtkMenuPositionFunc)set_menu_position_tdh,
@@ -1901,7 +1900,8 @@ static void draw3_popdown (const gchar *cur_value, guint pos, guint big_menu)
 	y = pp->pos1[x];
 	z = pos;
 
-	gtk_menu_popdown( GTK_MENU (pp->menu3));
+//	gtk_menu_popdown( GTK_MENU (pp->menu3));
+	gtk_menu_popdown( GTK_MENU (pp->menu33[pos]));
 
 	if (big_menu)
 		str = g_strdup_printf ("\n\n%s", con2_p[x][y][z]);	
@@ -4274,12 +4274,6 @@ void draw3_data1(DRAW_UI_P p)
 								menu_content + GROUP_MODE, 2, 1, GROUP_VAL(group_mode), 0);
 					else 
 						draw3_popdown (menu_content[GROUP_MODE_P + GROUP_VAL(group_mode)], 1, 0);
-
-					if(!GROUP_VAL(group_mode)) /*group mode 选择UT时，focal law 不可用*/
-						gtk_widget_set_sensitive(pp->menuitem[6],FALSE);
-					else
-						gtk_widget_set_sensitive(pp->menuitem[6],TRUE);
-
 					break;
 				case 1:/* Index Offset P511 */
 					switch (TMP(indexoffset_reg))
@@ -4399,7 +4393,6 @@ void draw3_data1(DRAW_UI_P p)
 						case 3:	tmpf = 100.0; break;
 						default:break;
 					}
-
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 					{
 						cur_value = pp->p_config->connection_P;
@@ -4422,8 +4415,6 @@ void draw3_data1(DRAW_UI_P p)
 					//gtk_widget_set_sensitive(pp->eventbox30[1],FALSE);
 					//gtk_widget_set_sensitive(pp->eventbox31[1],FALSE);
 					break;
-
-
 				case 1:/*Focal Law -> aperture -> first element p611 */
 					/* 当前步进 */
 					switch (TMP(first_element_reg))
@@ -10046,6 +10037,8 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 				G_CALLBACK(menu_fun[i]), (gpointer) (p));
 		gtk_menu_shell_append(GTK_MENU_SHELL(p->menu), p->menuitem[i]);
 		gtk_widget_show(p->menuitem[i]);
+		if ((i == 6) && GROUP_VAL (group_mode) == UT_SCAN)
+			gtk_widget_set_sensitive(pp->menuitem[i] ,FALSE);
 	}
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(p->menuitem_main), p->menu);/*最后把菜单menu1粘到菜单项menuitem1上*/
 	gtk_box_pack_start(GTK_BOX(p->hbox212), p->menubar, FALSE, FALSE, 0);
@@ -10119,6 +10112,12 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 	/* 三级菜单 弹出的初始化 */
 
 	pp->menu3 = gtk_menu_new();
+	for ( i = 0; i < 6; i++)
+	{
+		pp->menu33[i] = gtk_menu_new();
+		g_signal_connect (pp->menu33[i], "key-press-event", 
+				G_CALLBACK(key_press_handler) ,(gpointer)(i + 2));
+	}
 	for ( i = 0; i < 30; i++)
 		pp->menu_item3[i] = NULL;
 
@@ -10137,8 +10136,8 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 	pp->root_menu3 = gtk_menu_item_new_with_label ("TAN");
 
 	gtk_menu_item_set_submenu (GTK_MENU_ITEM (pp->root_menu3), pp->menu3);
-	g_signal_connect (pp->menu3, "key-press-event", 
-			G_CALLBACK(key_press_handler), NULL);
+//	g_signal_connect (pp->menu3, "key-press-event", 
+//			G_CALLBACK(key_press_handler) ,(gpointer)(MENU3_PRESS));
 
 	pp->menu_bar3 = gtk_menu_bar_new ();
 	gtk_menu_shell_append (GTK_MENU_SHELL (pp->menu_bar3) , pp->root_menu3);

@@ -753,6 +753,7 @@ typedef struct Draw_interface {
 	GtkWidget		*sbutton[6];
 	/* waiting for delete*/
 	GtkWidget		*menu3;
+	GtkWidget		*menu33[6];
 	GtkWidget		*menu_bar3;
 	GtkWidget		*root_menu3;
 	GtkWidget		*menu_item3[30];
