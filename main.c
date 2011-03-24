@@ -177,7 +177,7 @@ static void set_config (guint groupid)
 	CFG(prop_scan)=0;/*0 A-Scan*/
 	GROUP_VAL(ascan_envelope)	=	0; /*0 None*/
 	GROUP_VAL(ascan_appearance)	=	0; /*0 Hollow*/
-	GROUP_VAL(ascan_overlay)		=	0; /*0 None*/
+	GROUP_VAL(ascan_overlay)	=	0; /*0 None*/
 	CFG(optimum)=0; /*0 off*/
 	CFG(ratio)=0; /*0 off*/
 	CFG(interpolation)=0; /*0 off*/
@@ -302,11 +302,9 @@ int main (int argc, char *argv[])
 
 	pp = p_ui;
 	set_config(0);
-	pp->a_scan_width = 615;
-	pp->a_scan_height = 120;
+	TMP(a_scan_width) = 615;
+	TMP(a_scan_height) = 120;
 
-	pp->b_scan_width = 615;
-	pp->b_scan_height = 260;
 	for (i = 0; i < 20480; i++)
 	{
 		tt = i % 511;
@@ -317,7 +315,15 @@ int main (int argc, char *argv[])
 //		g_print ("%d = %d\n", i, 
 //				*(DOT_TYPE *)(pp->p_beam_data + i));
 	}
-	memset (pp->scan_type, 0xff, 16);
+	memset (TMP(scan_type), 0xff, 16);
+	TMP(beam_qty[0]) = 1;
+	TMP(beam_qty[1]) = 1;
+	TMP(beam_qty[2]) = 1;
+	TMP(beam_qty[3]) = 1;
+	TMP(beam_num[0]) = 0;
+	TMP(beam_num[1]) = 0;
+	TMP(beam_num[2]) = 0;
+	TMP(beam_num[3]) = 0;
 #if ARM
 	init_fb (); /* 初始化fb1 */
 #endif

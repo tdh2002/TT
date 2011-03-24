@@ -205,3 +205,5 @@ void draw_s_scan (gushort *p, guint width, guint height, DOT_TYPE *data, DOT_TYP
 		guint xoffset, guint yoffset, guchar groupId, guchar mark)
 {
 }
+
+

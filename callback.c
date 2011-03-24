@@ -1533,6 +1533,12 @@ static void handler_key(guint keyval, gpointer data)
 	guint data1 = (GPOINTER_TO_UINT (data));
 	switch (keyval) 
 	{
+		case GDK_KP_0:
+			(TMP(beam_num[CFG(groupId)])	< (TMP(beam_qty[CFG(groupId)]) - 1))	?
+				(TMP(beam_num[CFG(groupId)]) += 1)	:	
+			(TMP(beam_num[CFG(groupId)])	= (TMP(beam_qty[CFG(groupId)]) - 1));
+			g_print("beam num =%d\n", TMP(beam_num[CFG(groupId)]));
+			break;
 		case GDK_Super_L:
 			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
 			{
@@ -2632,6 +2638,13 @@ void data_400 (GtkMenuItem *menuitem, gpointer data) /* Display -> Selection -> 
 {
 	CFG(display) = (guchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
+	switch (CFG(display))
+	{
+		case A_SCAN:break;
+		case B_SCAN:
+					CFG(display_group) = DISPLAY_CURRENT_GROUP;
+		default:break;
+	}
 	draw_3_menu (0, NULL);
 	draw_area_all ();
 }
@@ -2855,7 +2868,10 @@ void data_500 (GtkMenuItem *menuitem, gpointer data) /* 增加删除选择group 
 	temp = (guchar)(GPOINTER_TO_UINT (data));
 	switch (temp)
 	{
-		case 0:CFG(groupQty) += 1;break;						/* 增加*/
+		case 0:CFG(groupQty) += 1;
+			   CFG(group[CFG(groupQty) -1]) = CFG(group[0]);
+//			   memcpy(&CFG(group[CFG(groupQty) -1]), &CFG(group[0]) , sizeof(GROUP));
+			   break;						/* 增加*/
 		case 1:
 		case 2:
 		case 3:
@@ -2866,7 +2882,7 @@ void data_500 (GtkMenuItem *menuitem, gpointer data) /* 增加删除选择group 
 		case 8:
 			   CFG(group_pos) = temp;
 			   /* 把参数切换到当前选择的group 未完成 */
-//			   CFG(groupId)	= temp - 1;
+			   CFG(groupId)	= temp - 1;
 			   break;
 		case 9:CFG(groupQty) -= 1;break;
 		default:break;

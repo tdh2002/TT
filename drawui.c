@@ -2075,7 +2075,7 @@ static void draw3_digit_stop(gfloat cur_value, const gchar *unit,
 }
 
 /* 画栅格线 */
-static gboolean draw_grid(GtkWidget *widget, GdkEventExpose *event, gpointer data)
+static gboolean draw_info(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
 	gfloat color_r, color_g, color_b;
 	gint i,j,m,n,w,h;
@@ -2128,9 +2128,19 @@ static gboolean draw_grid(GtkWidget *widget, GdkEventExpose *event, gpointer dat
 	cairo_fill (cr);
 	for ( i = 1; i < h - 1; i++ )
 	{
-		color_r = (TMP(t_color[i * 256 / h]) >> 16) / 256.0;
-		color_g = ((TMP(t_color[i * 256 / h]) & 0xff00) >> 8) / 256.0;
-		color_b = ((TMP(t_color[i * 256 / h]) & 0xff)) /  256.0;
+		switch (((DRAW_AREA_P)(data))->scan_type)
+		{
+			case	A_SCAN:
+			case	B_SCAN:
+				color_r = ((TMP(color_amp[i * 256 / h]) >> 11)) / 32.0;
+				color_g = ((TMP(color_amp[i * 256 / h]) & 0x07e0) >> 5) / 64.0;
+				color_b = ((TMP(color_amp[i * 256 / h]) & 0x1f)) /  32.0;
+				break;
+			case	C_SCAN:
+			case	S_SCAN:
+				break;
+			default:break;
+		}
 		cairo_set_source_rgba (cr, color_r, color_g, color_b, 1.0);
 		cairo_move_to (cr, w + 1, i);
 		cairo_line_to (cr, w + 9, i);
@@ -2214,7 +2224,7 @@ static gboolean draw_other_info (GtkWidget *widget, GdkEventExpose *event, gpoin
 
 static void draw_area(GtkWidget *parent_box, DRAW_AREA *draw_area, guint width, guint height,
 		const gchar *title, gdouble v1s, gdouble v1e, gdouble v2s, gdouble v2e, 
-		gdouble h1s, gdouble h1e, guchar *other)
+		gdouble h1s, gdouble h1e, gpointer *other)
 {
 	draw_area->vbox = gtk_vbox_new (FALSE, 0);
 	/* 窗口名字 */
@@ -2233,9 +2243,9 @@ static void draw_area(GtkWidget *parent_box, DRAW_AREA *draw_area, guint width, 
 	gtk_box_pack_start (GTK_BOX (draw_area->vbox), draw_area->table, FALSE, FALSE, 0);
 	draw_area->drawing_area = gtk_drawing_area_new();
 	gtk_widget_set_size_request (GTK_WIDGET(draw_area->drawing_area), width - 40, height - 35);
-	/* 调用 draw_grid 函数 */
+	/* 调用 draw_info 函数 */
 	g_signal_connect (G_OBJECT (draw_area->drawing_area), "expose_event",
-			G_CALLBACK (draw_grid), GUINT_TO_POINTER (((width - 40) << 16) + (height - 35)));
+			G_CALLBACK (draw_info), (gpointer)(draw_area));
 
 	gtk_widget_modify_bg (draw_area->drawing_area, GTK_STATE_NORMAL, &color_black1);
 	gtk_table_attach (GTK_TABLE (draw_area->table), draw_area->drawing_area, 1, 2, 0, 1,
@@ -2265,19 +2275,62 @@ static void draw_area(GtkWidget *parent_box, DRAW_AREA *draw_area, guint width, 
 	gtk_table_attach (GTK_TABLE (draw_area->table), draw_area->vruler2, 3, 4, 0, 1,
 			GTK_FILL, GTK_EXPAND|GTK_SHRINK|GTK_FILL, 0, 0);
 
-	draw_area->hruler = gtk_hruler_new ();
-	gtk_ruler_set_metric (GTK_RULER (draw_area->hruler), GTK_PIXELS);
-	gtk_ruler_set_range (GTK_RULER (draw_area->hruler), h1s, h1e, 0, 60);
-	gtk_widget_modify_bg(draw_area->hruler, GTK_STATE_NORMAL, &color_rule);
-	gtk_widget_set_size_request (GTK_WIDGET (draw_area->hruler), width - 40, 20);
-	g_signal_connect_swapped (G_OBJECT (draw_area->drawing_area), "motion_notify_event",
-			G_CALLBACK (EVENT_METHOD (draw_area->hruler, motion_notify_event)),
-			draw_area->hruler);
-	gtk_table_attach (GTK_TABLE (draw_area->table), draw_area->hruler, 1, 2, 1, 2,
-			GTK_EXPAND|GTK_SHRINK|GTK_FILL, GTK_FILL, 0, 0);
+	if (h1s != h1e) 
+	{
+		draw_area->hruler = gtk_hruler_new ();
+		gtk_ruler_set_metric (GTK_RULER (draw_area->hruler), GTK_PIXELS);
+		gtk_ruler_set_range (GTK_RULER (draw_area->hruler), h1s, h1e, 0, 60);
+		gtk_widget_modify_bg(draw_area->hruler, GTK_STATE_NORMAL, &color_rule);
+		gtk_widget_set_size_request (GTK_WIDGET (draw_area->hruler), width - 40, 20);
+		g_signal_connect_swapped (G_OBJECT (draw_area->drawing_area), "motion_notify_event",
+				G_CALLBACK (EVENT_METHOD (draw_area->hruler, motion_notify_event)),
+				draw_area->hruler);
+		gtk_table_attach (GTK_TABLE (draw_area->table), draw_area->hruler, 1, 2, 1, 2,
+				GTK_EXPAND|GTK_SHRINK|GTK_FILL, GTK_FILL, 0, 0);
+	}
 	gtk_widget_show_all(draw_area->vbox);
 
 	gtk_box_pack_start (GTK_BOX (parent_box), draw_area->vbox, FALSE, FALSE, 0);
+	return ;
+}
+
+/*
+ * scan_num 第几个窗口0-15,
+ * scan_type ABSC 
+ * w h 宽高
+ * xoff yoff 偏移
+ * group 哪个组
+ *  
+ */
+static inline void set_scan_config (guchar scan_num,guchar scan_type, guint aw, guint w, guint h, 
+		guint xoff, guint yoff, guchar group)
+{
+
+	TMP(scan_type[scan_num])	=	scan_type;
+	TMP(scan_xpos[scan_num])	=	xoff;
+	TMP(scan_ypos[scan_num])	=	yoff;
+	TMP(scan_group[scan_num])	=	group;
+	switch (scan_type)
+	{
+		case A_SCAN:
+			TMP(a_scan_width)	=	w;
+			TMP(a_scan_height)	=	h;
+			break;
+		case B_SCAN:
+			TMP(b_scan_width)	=	w;
+			TMP(b_scan_height)	=	h;
+			break;
+		case C_SCAN:
+			TMP(c_scan_width)	=	w;
+			TMP(c_scan_height)	=	h;
+			break;
+		case S_SCAN:
+			TMP(s_scan_width)	=	w;
+			TMP(s_scan_height)	=	h;
+			break;
+		default:break;
+	}
+	TMP(a_scan_width)	=	aw;
 	return ;
 }
 
@@ -2295,7 +2348,7 @@ void draw_area_all()
 			gtk_widget_destroy(pp->hbox_area[i]);
 		pp->vbox_area[i] = gtk_vbox_new(FALSE, 0);
 		pp->hbox_area[i] = gtk_hbox_new(FALSE, 0);
-		memset (pp->scan_type, 0xff, 16);
+		memset (TMP(scan_type), 0xff, 16);
 	}
 
 	if (CFG (display_group) == DISPLAY_CURRENT_GROUP) 
@@ -2303,19 +2356,21 @@ void draw_area_all()
 		switch (CFG(display))
 		{
 			case A_SCAN:
+				pp->draw_area[0].scan_type	=	A_SCAN;
 				gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
-				draw_area (pp->vbox_area[0], &(pp->draw_area[0]), 655, 425, "A-scan", 0.0, 100.0,
-						0.0, 100.0, 0.0, 100.0, NULL);
+				draw_area (pp->vbox_area[0], &(pp->draw_area[0]), 655, 425, "A-scan", 
+						0.0, 100.0, 0.0, 100.0, 0.0, 100.0, NULL);
 				gtk_widget_show (pp->vbox_area[0]);
-				pp->a_scan_width	=	615;
-				pp->a_scan_height	=	390;
-				pp->scan_type[0]	=	A_SCAN;
+				set_scan_config (0, A_SCAN, 615, 615, 390, 0, 0, CFG(groupId));
+				/* 显示的位置 偏移等等 */
 				break;
 			case B_SCAN:
+				pp->draw_area[0].scan_type	=	B_SCAN;
 				gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
 				draw_area(pp->vbox_area[0], &(pp->draw_area[0]), 655, 425, "B-scan", 0.0, 100.0,
 						0.0, 100.0, 0.0, 100.0, NULL);
 				gtk_widget_show (pp->vbox_area[0]);
+				set_scan_config (0, B_SCAN, 615, 615, 390, 0, 0, CFG(groupId));
 				break;
 			case C_SCAN:
 				gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
@@ -2330,12 +2385,16 @@ void draw_area_all()
 				gtk_widget_show (pp->vbox_area[0]);
 				break;
 			case A_B_SCAN:
+				pp->draw_area[0].scan_type	=	A_SCAN;
+				pp->draw_area[1].scan_type	=	B_SCAN;
 				gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
 				draw_area(pp->vbox_area[0], &(pp->draw_area[0]), 655, 150, "A-scan", 0.0, 100.0,
-						0.0, 100.0, 0.0, 100.0, NULL);
-				draw_area(pp->vbox_area[0], &(pp->draw_area[1]), 655, 275, "B-scan", 0.0, 100.0,
+						0.0, 100.0, 0.0, 0.0, NULL);
+				draw_area(pp->vbox_area[0], &(pp->draw_area[1]), 655, 295, "B-scan", 0.0, 100.0,
 						0.0, 100.0, 0.0, 100.0, NULL);
 				gtk_widget_show (pp->vbox_area[0]);
+				set_scan_config (0, A_SCAN, 615, 615, 115, 0, 0, CFG(groupId));
+				set_scan_config (1, B_SCAN, 615, 615, 260, 0, 130, CFG(groupId));
 				break;
 			case A_B_C_SCAN:
 				gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
@@ -2410,7 +2469,109 @@ void draw_area_all()
 	}
 	else 
 	if (CFG (display_group) == DISPLAY_ALL_GROUP) 
-		;
+	{
+		switch (CFG(groupQty))
+		{
+			case 2:
+				switch (CFG(display))
+				{
+					case A_SCAN:
+						pp->draw_area[0].scan_type	=	A_SCAN;
+						pp->draw_area[1].scan_type	=	A_SCAN;
+						gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
+						draw_area (pp->vbox_area[0], &(pp->draw_area[0]), 655, 212, "A-scan", 
+								0.0, 100.0, 0.0, 100.0, 0.0, 100.0, NULL);
+						draw_area (pp->vbox_area[0], &(pp->draw_area[1]), 655, 213, "A-scan", 
+								0.0, 100.0, 0.0, 100.0, 0.0, 100.0, NULL);
+						gtk_widget_show (pp->vbox_area[0]);
+						set_scan_config (0, A_SCAN, 615, 615, 178, 0, 0,  0);
+						set_scan_config (1, A_SCAN, 615, 615, 178, 0, 212, 1);
+						/* 显示的位置 偏移等等 */
+						break;
+					case S_SCAN:
+						gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
+						draw_area(pp->vbox_area[0], &(pp->draw_area[0]), 655, 425, "S-scan", 0.0, 100.0,
+								0.0, 100.0, 0.0, 100.0, NULL);
+						gtk_widget_show (pp->vbox_area[0]);
+						break;
+					case A_C_CC_SCAN:
+						gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
+						draw_area(pp->vbox_area[0], &(pp->draw_area[0]), 655, 150, "A-scan", 0.0, 100.0,
+								0.0, 100.0, 0.0, 100.0, NULL);
+						draw_area(pp->vbox_area[0], &(pp->draw_area[1]), 655, 275, "C-scan", 0.0, 100.0,
+								0.0, 100.0, 0.0, 100.0, NULL);
+						gtk_widget_show (pp->vbox_area[0]);
+						break;
+					case A_S_CC_SCAN:
+						gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
+						draw_area(pp->vbox_area[0], &(pp->draw_area[0]), 655, 150, "A-scan", 0.0, 100.0,
+								0.0, 100.0, 0.0, 100.0, NULL);
+						draw_area(pp->vbox_area[0], &(pp->draw_area[1]), 655, 275, "S-scan", 0.0, 100.0,
+								0.0, 100.0, 0.0, 100.0, NULL);
+						gtk_widget_show (pp->vbox_area[0]);
+						break;
+					default:
+						break;
+				}
+				break;
+			case 3:
+				switch (CFG(display))
+				{
+					case A_SCAN:
+						pp->draw_area[0].scan_type	=	A_SCAN;
+						pp->draw_area[1].scan_type	=	A_SCAN;
+						pp->draw_area[2].scan_type	=	A_SCAN;
+						gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
+						draw_area (pp->vbox_area[0], &(pp->draw_area[0]), 655, 141, "A-scan", 
+								0.0, 100.0, 0.0, 100.0, 0.0, 100.0, NULL);
+						draw_area (pp->vbox_area[0], &(pp->draw_area[1]), 655, 142, "A-scan", 
+								0.0, 100.0, 0.0, 100.0, 0.0, 100.0, NULL);
+						draw_area (pp->vbox_area[0], &(pp->draw_area[2]), 655, 142, "A-scan", 
+								0.0, 100.0, 0.0, 100.0, 0.0, 100.0, NULL);
+						gtk_widget_show (pp->vbox_area[0]);
+						set_scan_config (0, A_SCAN, 615, 615, 106, 0, 0,  0);
+						set_scan_config (1, A_SCAN, 615, 615, 107, 0, 141, 1);
+						set_scan_config (2, A_SCAN, 615, 615, 107, 0, 283, 2);
+						/* 显示的位置 偏移等等 */
+						break;
+					default:break;
+				}
+				break;
+			case 4:
+				switch (CFG(display))
+				{
+					case A_SCAN:
+						pp->draw_area[0].scan_type	=	A_SCAN;
+						pp->draw_area[1].scan_type	=	A_SCAN;
+						pp->draw_area[2].scan_type	=	A_SCAN;
+						pp->draw_area[4].scan_type	=	A_SCAN;
+						gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->hbox_area[0], FALSE, FALSE, 0);
+						gtk_box_pack_start (GTK_BOX (pp->hbox_area[0]), pp->vbox_area[0], FALSE, FALSE, 0);
+						gtk_box_pack_start (GTK_BOX (pp->hbox_area[0]), pp->vbox_area[1], FALSE, FALSE, 0);
+						draw_area (pp->vbox_area[0], &(pp->draw_area[0]), 327, 212, "A-scan", 
+								0.0, 100.0, 0.0, 100.0, 0.0, 100.0, NULL);
+						draw_area (pp->vbox_area[0], &(pp->draw_area[1]), 327, 212, "A-scan", 
+								0.0, 100.0, 0.0, 100.0, 0.0, 100.0, NULL);
+						draw_area (pp->vbox_area[1], &(pp->draw_area[2]), 327, 213, "A-scan", 
+								0.0, 100.0, 0.0, 100.0, 0.0, 100.0, NULL);
+						draw_area (pp->vbox_area[1], &(pp->draw_area[3]), 327, 213, "A-scan", 
+								0.0, 100.0, 0.0, 100.0, 0.0, 100.0, NULL);
+						gtk_widget_show (pp->vbox_area[0]);
+						gtk_widget_show (pp->vbox_area[1]);
+						gtk_widget_show (pp->hbox_area[0]);
+						set_scan_config (0, A_SCAN, 327, 327, 178, 0, 0, 0);
+						set_scan_config (1, A_SCAN, 327, 327, 178, 327, 0, 1);
+						set_scan_config (2, A_SCAN, 327, 327, 178, 0, 212, 2);
+						set_scan_config (3, A_SCAN, 327, 327, 178, 327, 212, 3);
+						/* 显示的位置 偏移等等 */
+						break;
+					default:break;
+				}
+				break;
+				break;
+			default:break;
+		}
+	}
 
 	return ;
 }
@@ -9694,41 +9855,42 @@ static void	compress_data (DOT_TYPE *source_data, DOT_TYPE *target_data,
 static void interpolation_data (DOT_TYPE *source_data, DOT_TYPE *target_data,
 		gint qty1, gint qty2)
 {
-	guint	t1, t2, i, j;
+	gint	t1, t2, i, j;
 	if (qty1 == qty2)
-		memcpy ((void *)(target_data), (void *)(source_data), qty1* sizeof(DOT_TYPE));
+		memcpy ((void *)(target_data), (void *)(source_data), qty1 * sizeof(DOT_TYPE));
 	else 
 	{
 		for (i = 0 ; i < qty1 ; i++)
 		{
 			for (t1 = i * qty2 / qty1, t2 = (i + 1) * qty2 /qty1, j = t1; j < t2; j++)
 			{
-				target_data[j] = source_data[i] + 
-					(j - t1) * (source_data[i + 1] - source_data[i]) / (qty2 / qty1);
+				target_data[j] = (guchar)((gint)(source_data[i]) + 
+					(j - t1) * ((gint)(source_data[i + 1]) - (gint)(source_data[i])) / (qty2 / qty1));
 			}
 		}
 	}
-
 }
 
-static void draw_scan(guchar scan_num, guchar scan_type, guchar group)
+/*  */
+static void draw_scan(guchar scan_num, guchar scan_type, guchar group,
+		guint xoff, guint yoff)
 {
 	switch (scan_type)
 	{
 		case A_SCAN:
-			draw_a_scan (dot_temp1, pp->a_scan_width, pp->a_scan_height,
-					TMP(a_scan_data[group]), dot_temp, dot_temp, 
-					pp->scan_xpos[scan_num], pp->scan_ypos[scan_num], group);
+			draw_a_scan(dot_temp1, TMP(a_scan_width), TMP(a_scan_height),
+					TMP(scan_data[group]) + TMP(a_scan_width) * TMP(beam_num[group]),
+					dot_temp, dot_temp, 
+					xoff, yoff, group);
 			break;
 		case B_SCAN:
-			draw_b_scan (dot_temp1, pp->b_scan_width, pp->b_scan_height,
-					NULL, TMP(a_scan_data[group]), 
-					pp->scan_xpos[scan_num], pp->scan_ypos[scan_num], group, 0);
+			draw_b_scan(dot_temp1, TMP(b_scan_width), TMP(b_scan_height),dot_temp,
+					TMP(scan_data[group]) + TMP(a_scan_width) * TMP(beam_num[group]),
+					xoff, yoff, group, 0);
 			break;
 		case S_SCAN:
-			draw_s_scan (dot_temp1, pp->b_scan_width, pp->b_scan_height,
-					NULL, TMP(a_scan_data[group]), 
-					pp->scan_xpos[scan_num], pp->scan_ypos[scan_num], group, 0);
+			break;
+		case C_SCAN:
 			break;
 		default:break;
 	}
@@ -9739,38 +9901,58 @@ static void draw_scan(guchar scan_num, guchar scan_type, guchar group)
 /*   */
 static gboolean time_handler2(GtkWidget *widget)
 {
-	gint i, prf_count;
+	gint i, j, k, prf_count, offset;
 	pp->scan_count++;
 
 	/* 第一个GROUP */
 	(GROUP_VAL(prf) > 250) ? (prf_count = 25) : (prf_count = (GROUP_VAL(prf) / 10));
 	prf_count = 25 / prf_count;
 
-	if ((pp->scan_count % prf_count) == 0)
+	for (i = 0 ; i < CFG(groupQty); i++)
 	{
-		/* 获取数据 */
-		/* 这里需要压缩数据 或者 插值数据 这里只有一个beam 同时最多处理256beam */
-		if (GROUP_VAL(point_qty) <= pp->a_scan_width)
+		(GROUP_VAL_POS(i, prf) > 250) ? 
+			(prf_count = 25) : (prf_count = (GROUP_VAL_POS(i, prf) / 10));
+		prf_count = 25 / prf_count;
+		if ((pp->scan_count % prf_count) == 0)
 		{
-			interpolation_data (
-					(DOT_TYPE *)(pp->p_beam_data + GROUP_VAL(point_qty) * 0),
-					TMP(a_scan_data[CFG(groupId)]), 
-					GROUP_VAL_POS(CFG(groupId), point_qty),
-					pp->a_scan_width);
-		}
-		else if (GROUP_VAL(point_qty) > pp->a_scan_width)
-			compress_data (
-					(DOT_TYPE *)(pp->p_beam_data + GROUP_VAL(point_qty) * 0),
-					TMP(a_scan_data[CFG(groupId)]), 
-					GROUP_VAL_POS(CFG(groupId), point_qty),
-					pp->a_scan_width, GROUP_VAL_POS(CFG(groupId), rectifier));
-	
+			/* 获取数据 */
+			/* 这里需要压缩数据 或者 插值数据 这里只有一个beam 同时最多处理256beam */
+			for	(j = 0 ; j < TMP(beam_qty[i]); j++)
+			{  
+				for (offset = 0, k = 0 ; k < i; k++)
+					offset += GROUP_VAL_POS((k), point_qty) * TMP(beam_qty[k]);
+				if (GROUP_VAL_POS(i, point_qty) <= TMP(a_scan_width))
+				{
+					interpolation_data (
+							(DOT_TYPE *)(pp->p_beam_data + offset +
+								GROUP_VAL_POS(i, point_qty) * j),
+							TMP(scan_data[i] + TMP(a_scan_width) * j), 
+							GROUP_VAL_POS(i, point_qty),
+							TMP(a_scan_width));
+				}
+				else if (GROUP_VAL_POS(i, point_qty) > TMP(a_scan_width))
+					compress_data (
+							(DOT_TYPE *)(pp->p_beam_data + offset +
+								GROUP_VAL_POS(i, point_qty) * j),
+							TMP(scan_data[i] + TMP(a_scan_width) * j), 
+							GROUP_VAL_POS(i, point_qty),
+							TMP(a_scan_width), 
+							GROUP_VAL_POS(i, rectifier));
+			}
+			for (k = 0; ((k < 16) && (TMP(scan_type[k]) != 0xff)); k++)
+			{
+				if (TMP(scan_group[k]) == i)
+					draw_scan(k, TMP(scan_type[k]), TMP(scan_group[k]), 
+							TMP(scan_xpos[k]), TMP(scan_ypos[k]));
+			}
+		} 
 	}
 
-	for (i = 0; (i < 16) && (pp->scan_type[i] != 0xff); i++)
-	{
-		draw_scan(0, pp->scan_type[i], CFG(groupId));
-	}
+
+//	for (i = 0; (i < 16) && (TMP(scan_type[i]) != 0xff); i++)
+//	{
+//		draw_scan(i, TMP(scan_type[i]), TMP(scan_group[i]), TMP(scan_xpos[i]), TMP(scan_ypos[i]));
+//	}
 
 	/* 复制波形到显存 */
 	memcpy (TMP(fb1_addr), dot_temp1, FB_WIDTH*400*2);	/* 如果用dma更快啊 */
@@ -9882,13 +10064,11 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 	for (i = 0; i < 5; i++) 
 	{
 		p->eventbox2[i] = gtk_event_box_new();
-		gtk_widget_set_size_request(GTK_WIDGET(p->eventbox2[i]), 114, 85);
+		gtk_widget_set_size_request(GTK_WIDGET(p->eventbox2[i]), 113, 85);
 		p->label2[i] = gtk_label_new("<^_^>");
 		gtk_container_add(GTK_CONTAINER(p->eventbox2[i]), p->label2[i]);
 		gtk_container_set_border_width( GTK_CONTAINER(p->eventbox2[i]), 0);     /*设置边框大小，这个地方使用图片做背景*/
 		update_widget_bg(p->eventbox2[i], backpic[1]);
-		/*		color_green.red = 0x7e00, color_green.green = 0xb700, color_green.blue = 0xf300;      */
-		/*		gtk_widget_modify_fg(p->eventbox2[i], GTK_STATE_NORMAL, &color_white);*/
 		gtk_widget_modify_fg(p->label2[i], GTK_STATE_NORMAL, &color_white);
 		g_signal_connect(G_OBJECT(p->eventbox2[i]), "button-press-event", 
 				G_CALLBACK(eventbox2_fun[i]), (gpointer) (p));
@@ -10119,8 +10299,6 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 	webkit_web_view_set_custom_encoding (pp->web_view, "UTF-8");	/*???????????*/
 	gtk_container_add(GTK_CONTAINER (pp->sw), GTK_WIDGET (pp->web_view));
 
-
-
 	//gchar *file_path="/home/gll/arraytop/TT/source/system/Help/Contextual/Wizard_Menu.html";
 	//webkit_web_view_load_uri (web_view, "file:///home/tt/TT/source/system/Help/Contextual/UT_Settings_Menu.html");
 	pp->file_path = "file:///home/gll/arraytop/TT/source/system/Help/Contextual/UT_Settings_Menu.html";
@@ -10197,11 +10375,8 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 	draw_2_menu(1);
 	draw_3_menu(1, NULL);
 
-	/*	pp->p_config->unit = 1;*/
-
 #if ARM
 	g_timeout_add(40, (GSourceFunc) time_handler2, NULL);
 #endif
 	//	g_thread_create((GThreadFunc)(time_handler), (gpointer) (pp->drawing_area), FALSE, NULL);
-
 }
