@@ -2343,9 +2343,13 @@ void draw_area_all()
 	for (i = 0; i < 4; i ++)
 	{
 		if (pp->vbox_area[i])
+		{
 			gtk_widget_destroy(pp->vbox_area[i]);
+		}
 		if (pp->hbox_area[i])
+		{
 			gtk_widget_destroy(pp->hbox_area[i]);
+		}
 		pp->vbox_area[i] = gtk_vbox_new(FALSE, 0);
 		pp->hbox_area[i] = gtk_hbox_new(FALSE, 0);
 		memset (TMP(scan_type), 0xff, 16);

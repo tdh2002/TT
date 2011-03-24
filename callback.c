@@ -1660,28 +1660,28 @@ static void handler_key(guint keyval, gpointer data)
 		case GDK_F8:
 			if(gtk_widget_get_sensitive(pp->eventbox30[4]))
 			{
-				if (pp->pos_pos == MENU3_PRESSED)
+//				if (pp->pos_pos == MENU3_PRESSED)
 					b3_fun4(NULL);
-				else 
-					pp->pos_pos = MENU3_PRESSED;
+//				else 
+//					pp->pos_pos = MENU3_PRESSED;
 			}			
 			break;
 		case GDK_F9:
 			if(gtk_widget_get_sensitive(pp->eventbox30[3]))
 			{
-				if (pp->pos_pos == MENU3_PRESSED)
+//				if (pp->pos_pos == MENU3_PRESSED)
 					b3_fun3(NULL);
-				else 
-					pp->pos_pos = MENU3_PRESSED;
+//				else 
+//					pp->pos_pos = MENU3_PRESSED;
 			}			
 			break;
 		case GDK_F10:
 			if(gtk_widget_get_sensitive(pp->eventbox30[2]))
 			{
-				if (pp->pos_pos == MENU3_PRESSED)
+//				if (pp->pos_pos == MENU3_PRESSED)
 					b3_fun2(NULL);
-				else 
-					pp->pos_pos = MENU3_PRESSED;	
+//				else 
+//					pp->pos_pos = MENU3_PRESSED;	
 			}		
 			break;
 		case GDK_F11:
