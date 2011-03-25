@@ -202,8 +202,32 @@ void draw_b_scan (gushort *p, guint width, guint height, DOT_TYPE *data, DOT_TYP
 
 /* 画S扫描 */
 void draw_s_scan (gushort *p, guint width, guint height, DOT_TYPE *data, DOT_TYPE *data1,
-		guint xoffset, guint yoffset, guchar groupId, guchar mark)
+		guint xoffset, guint yoffset, guchar groupId, guchar ut_unit)
 {
+	gint i, temp;
+	switch (ut_unit)	
+	{
+		case UT_UNIT_SOUNDPATH:
+		case UT_UNIT_TIME:
+				if (height < TMP(beam_qty[groupId]))
+				{
+
+				}
+				else if (height = TMP(beam_qty[groupId]))
+				{
+
+				}
+				else if (height > TMP(beam_qty[groupId]))
+				{
+
+				}
+			break;
+		case  UT_UNIT_TRUE_DEPTH:
+
+			break;
+		default:break;
+	}
+	return ;
 }
 
 

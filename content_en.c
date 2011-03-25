@@ -462,7 +462,7 @@ const gchar *all_menu_content_en[] =
 	"A%", "B%", "Thickness","I/","Off",								 /* 309 C-Scan1  */
 	"A%", "B%", "Thickness","Off",									 /* 314 Data2 */
 	"All & A-Scan", "Current & A-Scan", "All", "current",						 /* 318 Mode  */
-	"Sound Path", "True Depth","Time",								 /* 322 UT Unit */
+	"Sound Path", "Time", "True Depth"								 /* 322 UT Unit */
 	"Blue", "Green", "Red", "Yellow", "Black", "Off",						 /* 325 Grid */
 	"A-Scan", "B-Scan", "S-Scan", "Strip Chart", "Uncorrected C-Scan", "Off",			 /* 331 display*/
 	"Absolute", "Start", "Center", "Cursor", "Gate A", "Gate B", 					 /* 337  Type*/

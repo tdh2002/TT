@@ -654,7 +654,7 @@ static void draw_warning(guint btn_qty, gchar *warn_info)
 **/
 
 /* 向列表里添加东西 */
-static void add_to_list(GtkWidget *list, const gchar *str, guint count)
+void add_to_list(GtkWidget *list, const gchar *str, guint count)
 {
 	GtkListStore *store;
 	GtkTreeModel *model;
@@ -1399,13 +1399,9 @@ static void draw_file_manage ()
 
 	GtkWidget *vbox_1_1;
 
-	GtkWidget *vbox_1_1_1;
-	GtkWidget *vbox_1_1_2;
-	GtkWidget *vbox_1_1_3;
-	GtkWidget *vbox_1_1_4;
-	GtkWidget *vbox_1_1_5;
-	GtkWidget *vbox_1_1_6;
-	GtkWidget *vbox_1_1_7;
+       GtkWidget *vbox_1_1_1[7];
+	GtkWidget *label_1_1_1[7];
+       char *char_1_1_1[7] = {"","","Close","","","",""};
 
 	GtkWidget *hbox_2;
 
@@ -1418,22 +1414,9 @@ static void draw_file_manage ()
 
 	GtkWidget *hbox_2_1_2_1;
 
-	GtkWidget *hbox_2_1_2_1_1;
-	GtkWidget *hbox_2_1_2_1_2;
-	GtkWidget *hbox_2_1_2_1_3;
-	GtkWidget *hbox_2_1_2_1_4;
-	GtkWidget *hbox_2_1_2_1_5;
-	GtkWidget *hbox_2_1_2_1_6;
-
-	GtkWidget *label1;
-	GtkWidget *label2;
-	GtkWidget *label3;
-	GtkWidget *label4;
-	GtkWidget *label5;
-	GtkWidget *label6;
-	GtkWidget *label7;
-	GtkWidget *label8;
-	GtkWidget *label9;
+       GtkWidget *hbox_2_1_2_1_1[6];
+       GtkWidget *label_2_1_2_1_1[6];
+       char *char_2_1_2_1_1[6] = {"Select","Select All","Copy","Move","Delect","Rename"};
 
 	GtkWidget *sw_2_1_1_1_1;
 	GtkWidget *sw_2_1_1_1_2;
@@ -1452,6 +1435,8 @@ static void draw_file_manage ()
 	GtkListStore *store;
 
 	MY_SIGNAL my_signal;
+
+       int i;
 
 	dialog = gtk_dialog_new_with_buttons ("Dialog_Wedge", win,
 			GTK_DIALOG_MODAL |	GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_NO_SEPARATOR,
@@ -1506,13 +1491,7 @@ static void draw_file_manage ()
 
 	vbox_1_1 = gtk_vbox_new(FALSE,0); 
 
-	vbox_1_1_1 = gtk_vbox_new(FALSE,0);  
-	vbox_1_1_2 = gtk_vbox_new(FALSE,0);
-	vbox_1_1_3 = gtk_event_box_new();
-	vbox_1_1_4 = gtk_event_box_new();
-	vbox_1_1_5 = gtk_event_box_new();
-	vbox_1_1_6 = gtk_vbox_new(FALSE,0);
-	vbox_1_1_7 = gtk_vbox_new(FALSE,0);
+
 
 
 	hbox_2 = gtk_hbox_new(FALSE,0);
@@ -1527,119 +1506,55 @@ static void draw_file_manage ()
 
 	hbox_2_1_2_1 = gtk_hbox_new(FALSE,0);
 
-	hbox_2_1_2_1_1 = gtk_event_box_new();
-	hbox_2_1_2_1_2 = gtk_event_box_new();
-	hbox_2_1_2_1_3 = gtk_event_box_new();
-	hbox_2_1_2_1_4 = gtk_event_box_new();
-	hbox_2_1_2_1_5 = gtk_event_box_new();
-	hbox_2_1_2_1_6 = gtk_event_box_new();
+        for(i=0;i<6;i++)
+         {
+            hbox_2_1_2_1_1[i] = gtk_event_box_new();
+	     gtk_widget_set_size_request(GTK_WIDGET(hbox_2_1_2_1_1[i]),114,85);
+            update_widget_bg(hbox_2_1_2_1_1[i], backpic[1]);
+	     label_2_1_2_1_1[i] = gtk_label_new(char_2_1_2_1_1[i]);
+	     gtk_widget_modify_fg (label_2_1_2_1_1[i], GTK_STATE_NORMAL, &color_black);
+	     gtk_label_set_justify(GTK_LABEL(label_2_1_2_1_1[i]), GTK_JUSTIFY_CENTER);
+	     gtk_box_pack_start(GTK_BOX(hbox_2_1_2_1),hbox_2_1_2_1_1[i],FALSE,FALSE,0);
+            gtk_container_add(GTK_CONTAINER(hbox_2_1_2_1_1[i]), label_2_1_2_1_1[i]);
+         }   
+	
+        for(i=0;i<7;i++)
+        {
+            vbox_1_1_1[i] = gtk_event_box_new();
+            gtk_widget_set_size_request(GTK_WIDGET(vbox_1_1_1[i]),114,85);
+            update_widget_bg(vbox_1_1_1[i], backpic[1]);
 
+	     label_1_1_1[i] = gtk_label_new(char_1_1_1[i]);
+	     gtk_widget_modify_fg (label_1_1_1[i], GTK_STATE_NORMAL, &color_black);
+	     gtk_label_set_justify(GTK_LABEL(label_1_1_1[i]), GTK_JUSTIFY_CENTER);
 
-	gtk_widget_set_size_request(GTK_WIDGET(vbox_1_1_1),114,85);
-	gtk_widget_set_size_request(GTK_WIDGET(vbox_1_1_2),114,85);
-	gtk_widget_set_size_request(GTK_WIDGET(vbox_1_1_3),114,85);
-	gtk_widget_set_size_request(GTK_WIDGET(vbox_1_1_4),114,85);
-	gtk_widget_set_size_request(GTK_WIDGET(vbox_1_1_5),114,85);
-	gtk_widget_set_size_request(GTK_WIDGET(vbox_1_1_6),114,85);
-	gtk_widget_set_size_request(GTK_WIDGET(vbox_1_1_7),114,85);
-
-	update_widget_bg(vbox_1_1_1, backpic[1]);
-	update_widget_bg(vbox_1_1_2, backpic[1]);
-	update_widget_bg(vbox_1_1_3, backpic[1]);
-	update_widget_bg(vbox_1_1_4, backpic[1]);
-	update_widget_bg(vbox_1_1_5, backpic[1]);  
-	update_widget_bg(vbox_1_1_6, backpic[1]); 
-	update_widget_bg(vbox_1_1_7, backpic[1]); 
-
-	//把vbox放在window里面  
-	gtk_box_pack_start(GTK_BOX(vbox_1_1),vbox_1_1_1,FALSE,FALSE,0);   
-	gtk_box_pack_start(GTK_BOX(vbox_1_1),vbox_1_1_2,FALSE,FALSE,0);   
-	gtk_box_pack_start(GTK_BOX(vbox_1_1),vbox_1_1_3,FALSE,FALSE,0);   
-	gtk_box_pack_start(GTK_BOX(vbox_1_1),vbox_1_1_4,FALSE,FALSE,0);   
-	gtk_box_pack_start(GTK_BOX(vbox_1_1),vbox_1_1_5,FALSE,FALSE,0);   
-	gtk_box_pack_start(GTK_BOX(vbox_1_1),vbox_1_1_6,FALSE,FALSE,0);   
-	gtk_box_pack_start(GTK_BOX(vbox_1_1),vbox_1_1_7,FALSE,FALSE,0);   
-
-	gtk_widget_set_size_request(GTK_WIDGET(hbox_2_1_2_1_1),114,85);
-	gtk_widget_set_size_request(GTK_WIDGET(hbox_2_1_2_1_2),114,85);
-	gtk_widget_set_size_request(GTK_WIDGET(hbox_2_1_2_1_3),114,85);
-	gtk_widget_set_size_request(GTK_WIDGET(hbox_2_1_2_1_4),114,85);
-	gtk_widget_set_size_request(GTK_WIDGET(hbox_2_1_2_1_5),114,85);
-	gtk_widget_set_size_request(GTK_WIDGET(hbox_2_1_2_1_6),114,85);
-
-	update_widget_bg(hbox_2_1_2_1_1, backpic[1]);
-	update_widget_bg(hbox_2_1_2_1_2, backpic[1]);
-	update_widget_bg(hbox_2_1_2_1_3, backpic[1]);
-	update_widget_bg(hbox_2_1_2_1_4, backpic[1]);
-	update_widget_bg(hbox_2_1_2_1_5, backpic[1]);  
-	update_widget_bg(hbox_2_1_2_1_6, backpic[1]); 
-
-
-	//把vbox放在window里面  
-	gtk_box_pack_start(GTK_BOX(hbox_2_1_2_1),hbox_2_1_2_1_1,FALSE,FALSE,0);   
-	gtk_box_pack_start(GTK_BOX(hbox_2_1_2_1),hbox_2_1_2_1_2,FALSE,FALSE,0);   
-	gtk_box_pack_start(GTK_BOX(hbox_2_1_2_1),hbox_2_1_2_1_3,FALSE,FALSE,0);   
-	gtk_box_pack_start(GTK_BOX(hbox_2_1_2_1),hbox_2_1_2_1_4,FALSE,FALSE,0);   
-	gtk_box_pack_start(GTK_BOX(hbox_2_1_2_1),hbox_2_1_2_1_5,FALSE,FALSE,0);   
-	gtk_box_pack_start(GTK_BOX(hbox_2_1_2_1),hbox_2_1_2_1_6,FALSE,FALSE,0);   
+	     gtk_container_add(GTK_CONTAINER(vbox_1_1_1[i]),label_1_1_1[i]);
+	     gtk_box_pack_start(GTK_BOX(vbox_1_1),vbox_1_1_1[i],FALSE,FALSE,0);   
+        }  
+  
 
 	gtk_box_pack_start(GTK_BOX(vbox_2_1_2),hbox_2_1_2_1,FALSE,FALSE,0);   
 
 	//源文件路径
-//	Set_Source_File_Path("/home/geniikid/tmp/");
+	Set_Source_File_Path("/");
 	//目标文件路径    
-//	Set_Target_File_Path("/home/geniikid/zsh/");
+	Set_Target_File_Path("/");
 	//
-//	Create_Source_File_List(source_list);
-	//
-//	Create_Target_File_List(target_list);
 
 	pp->selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(source_list));
 	pp->selection1 = gtk_tree_view_get_selection(GTK_TREE_VIEW(target_list));
 
-//	source_model=gtk_tree_view_get_model(GTK_TREE_VIEW(source_list));
-//	target_model=gtk_tree_view_get_model(GTK_TREE_VIEW(target_list));
+       source_selection = pp->selection;
+       target_selection = pp->selection1;
 
+	source_model=gtk_tree_view_get_model(GTK_TREE_VIEW(source_list));
+	target_model=gtk_tree_view_get_model(GTK_TREE_VIEW(target_list));
+        
+        //源文件，文件视图
 	init_file_list (source_list, pp->selection, "/" , DT_DIR);
+        //目标文件，文件视图
 	init_file_list (target_list, pp->selection1, "/" , DT_DIR);
-	//Select_All_File(list);
-
-	label1 = gtk_label_new("Select");
-	gtk_widget_modify_fg (label1, GTK_STATE_NORMAL, &color_black);
-	gtk_label_set_justify(GTK_LABEL(label1), GTK_JUSTIFY_CENTER);
-
-	label2 = gtk_label_new("Select All");
-	gtk_widget_modify_fg (label2, GTK_STATE_NORMAL, &color_black);
-	gtk_label_set_justify(GTK_LABEL(label2), GTK_JUSTIFY_CENTER);
-
-	label3 = gtk_label_new("Copy");
-	gtk_widget_modify_fg (label3, GTK_STATE_NORMAL, &color_black);
-	gtk_label_set_justify(GTK_LABEL(label3), GTK_JUSTIFY_CENTER);
-
-	label4 = gtk_label_new("Move");
-	gtk_widget_modify_fg (label4, GTK_STATE_NORMAL, &color_black);
-	gtk_label_set_justify(GTK_LABEL(label4), GTK_JUSTIFY_CENTER);
-
-	label5 = gtk_label_new("Delect");
-	gtk_widget_modify_fg (label5, GTK_STATE_NORMAL, &color_black);
-	gtk_label_set_justify(GTK_LABEL(label5), GTK_JUSTIFY_CENTER);
-
-	label6 = gtk_label_new("Rename");
-	gtk_widget_modify_fg (label6, GTK_STATE_NORMAL, &color_black);
-	gtk_label_set_justify(GTK_LABEL(label6), GTK_JUSTIFY_CENTER);
-
-	label7 = gtk_label_new("Close");
-	gtk_widget_modify_fg (label7, GTK_STATE_NORMAL, &color_black);
-	gtk_label_set_justify(GTK_LABEL(label7), GTK_JUSTIFY_CENTER);
-
-	gtk_container_add(GTK_CONTAINER(hbox_2_1_2_1_1), label1);
-	gtk_container_add(GTK_CONTAINER(hbox_2_1_2_1_2), label2);
-	gtk_container_add(GTK_CONTAINER(hbox_2_1_2_1_3), label3);
-	gtk_container_add(GTK_CONTAINER(hbox_2_1_2_1_4), label4);
-	gtk_container_add(GTK_CONTAINER(hbox_2_1_2_1_5), label5);
-	gtk_container_add(GTK_CONTAINER(hbox_2_1_2_1_6), label6);
-	gtk_container_add(GTK_CONTAINER(vbox_1_1_3), label7);
-
+	
 	gtk_container_add(GTK_CONTAINER(sw_2_1_1_1_1),source_list);
 
 	gtk_container_add(GTK_CONTAINER(sw_2_1_1_1_2),target_list);    
@@ -1672,20 +1587,17 @@ static void draw_file_manage ()
 	my_signal.target_list = target_list;
 
 	//关闭窗口的信号
-	g_signal_connect(G_OBJECT (vbox_1_1_3), "button-press-event",
-			G_CALLBACK(dialog_destroy), dialog);
-#if 0
-	g_signal_connect(G_OBJECT(hbox_2_1_2_1_2), "button-press-event",G_CALLBACK(Select_All_File), (gpointer)source_list);
+	g_signal_connect(G_OBJECT (vbox_1_1_1[2]), "button-press-event",G_CALLBACK(dialog_destroy), dialog);
 
-	g_signal_connect(G_OBJECT(hbox_2_1_2_1_3), "button-press-event",G_CALLBACK(Copy_File), (gpointer)&my_signal);
+	g_signal_connect(G_OBJECT(hbox_2_1_2_1_1[1]), "button-press-event",G_CALLBACK(Select_All_File), (gpointer)source_list);
 
-	g_signal_connect(G_OBJECT(hbox_2_1_2_1_4), "button-press-event",G_CALLBACK(Move_File), (gpointer)&my_signal);
+	g_signal_connect(G_OBJECT(hbox_2_1_2_1_1[2]), "button-press-event",G_CALLBACK(Copy_File), (gpointer)&my_signal);
 
-	g_signal_connect(G_OBJECT(hbox_2_1_2_1_5), "button-press-event",G_CALLBACK(Delect_File), (gpointer)&my_signal);
+	g_signal_connect(G_OBJECT(hbox_2_1_2_1_1[3]), "button-press-event",G_CALLBACK(Move_File), (gpointer)&my_signal);
 
-	g_signal_connect(G_OBJECT(hbox_2_1_2_1_6), "button-press-event",G_CALLBACK(Rename_File), (gpointer)&my_signal);
-#endif
+	g_signal_connect(G_OBJECT(hbox_2_1_2_1_1[4]), "button-press-event",G_CALLBACK(Delect_File), (gpointer)&my_signal);
 
+	g_signal_connect(G_OBJECT(hbox_2_1_2_1_1[5]), "button-press-event",G_CALLBACK(Rename_File), (gpointer)&my_signal);
 
 	gtk_widget_show_all(dialog);
 
@@ -2077,7 +1989,7 @@ static void draw3_digit_stop(gfloat cur_value, const gchar *unit,
 /* 画栅格线 */
 static gboolean draw_info(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
-	gfloat color_r, color_g, color_b;
+	gfloat color_r = 0, color_g = 0, color_b = 0;
 	gint i,j,m,n,w,h;
 	cairo_t *cr; 
 
@@ -9879,11 +9791,21 @@ static void draw_scan(guchar scan_num, guchar scan_type, guchar group,
 					xoff, yoff, group);
 			break;
 		case B_SCAN:
-			draw_b_scan(dot_temp1, TMP(b_scan_width), TMP(b_scan_height),dot_temp,
-					TMP(scan_data[group]) + TMP(a_scan_width) * TMP(beam_num[group]),
-					xoff, yoff, group, 0);
+			if (pp->bscan_mark)
+			{
+				draw_b_scan(dot_temp1, TMP(b_scan_width), TMP(b_scan_height),dot_temp,
+						TMP(scan_data[group]) + TMP(a_scan_width) * TMP(beam_num[group]),
+						xoff, yoff, group, 1);
+				pp->bscan_mark = 0;
+			}
+			else
+				draw_b_scan(dot_temp1, TMP(b_scan_width), TMP(b_scan_height),dot_temp,
+						TMP(scan_data[group]) + TMP(a_scan_width) * TMP(beam_num[group]),
+						xoff, yoff, group, 0);
 			break;
 		case S_SCAN:
+
+
 			break;
 		case C_SCAN:
 			break;
@@ -9955,6 +9877,7 @@ static gboolean time_handler2(GtkWidget *widget)
 	return TRUE;
 }
 
+/*  */
 void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 {
 	gint i;

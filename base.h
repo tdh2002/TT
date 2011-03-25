@@ -800,6 +800,8 @@ typedef struct Draw_interface {
 	guchar			markreturn;
 	guchar			mark3;
 
+	guchar	bscan_mark;
+
 
 /*	guint	scan_dispaly_qty;*/	/* 显示几个窗口 */
 

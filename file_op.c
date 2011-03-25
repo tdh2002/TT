@@ -21,6 +21,14 @@
 #include <sys/stat.h>
 #include <libxml/xmlmemory.h>
 #include <libxml/parser.h>
+#include <assert.h>
+#include <string.h>
+#include <glib/gprintf.h>
+
+char SOURCE_FILE_NAME[FILE_NAME_MAX];
+char SOURCE_FILE_PATH[FILE_NAME_MAX];
+char TARGET_FILE_NAME[FILE_NAME_MAX];
+char TARGET_FILE_PATH[FILE_NAME_MAX];
 
 /* 探头 PA opp UT oup  */
 void read_probe_file (const gchar *file_path, PROBE_P p)
@@ -142,4 +150,347 @@ void read_palette_file (const gchar *file_path, guint *sp_col, guint *col)
 	xmlFreeDoc (doc);
 	return ;
 }
+
+int Set_Source_File_Path(char *path)
+{
+    assert(path != NULL);
+    strcpy(SOURCE_FILE_PATH,path);
+    return 0;
+}
+
+char *Get_Source_File_Path()
+{
+    return (char *)&SOURCE_FILE_PATH[0];
+}
+
+int Set_Target_File_Path(char *path)
+{
+    assert(path != NULL);
+    strcpy(TARGET_FILE_PATH,path);
+    return 0;
+}
+
+char *Get_Target_File_Path()
+{
+    return (char *)&TARGET_FILE_PATH[0];
+}
+
+int Set_Source_File_Name(char *name)
+{
+    assert(name != NULL);
+    strcpy(SOURCE_FILE_NAME,name);
+    return 0;
+}
+
+char *Get_Source_File_Name()
+{
+    return (char *)&SOURCE_FILE_NAME[0];
+} 
+
+int Set_Target_File_Name(char *name)
+{
+    assert(name != NULL);
+    strcpy(TARGET_FILE_NAME,name);
+    return 0;
+}
+
+char *Get_Target_File_Name()
+{
+    return (char *)&TARGET_FILE_NAME[0];
+}
+
+int Scan_Target_File(GtkWidget *widget,GtkTreeModel *model,char *file_name)
+{    
+    int i;
+    int value;
+    char *value_name;
+    GtkWidget *target_list = widget;
+    GtkTreeIter target_iter;
+    GtkTreeModel *target_model = model;
+
+    value = gtk_tree_model_get_iter_from_string (target_model, &target_iter, "0");
+
+    i = 0;
+
+    while(value)
+    {
+        gtk_tree_model_get(target_model, &target_iter, 0, &value_name,  -1);
+     
+        if (strcmp(value_name,file_name) == 0)
+            return -1;
+         
+        value = gtk_tree_model_iter_next(target_model,&target_iter);
+         
+        i++; 
+    }
+
+    add_to_list(target_list,file_name,i);    
+
+    return 0;
+}
+
+int Select_File()
+{
+    
+    return 0;
+}
+
+int Unselect_File()
+{
+    return 0;
+}
+
+gboolean Select_All_File(GtkWidget *widget,	GdkEventButton *event,	gpointer       data)
+{
+  GtkWidget *list = (GtkWidget *)data;
+    
+  GtkTreeSelection *selection;
+    
+  selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(list));
+
+  gtk_tree_selection_select_all(selection);  
+
+    return 0;
+}
+
+int Unselect_All_File(GtkWidget *list)
+{
+    
+  GtkTreeSelection *selection;
+   
+  selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(list));
+
+  gtk_tree_selection_unselect_all(selection);
+  
+   return 0;
+}
+
+
+gboolean Copy_File(GtkWidget *widget,	GdkEventButton *event,	gpointer       data)
+{
+
+    char *target_file;
+    char *source_file;
+    char command[1024] = "cp ";
+    int value; 
+    char *value_name;
+
+    MY_SIGNAL *my_signal = (MY_SIGNAL *)data;
+
+    GtkTreeIter source_iter;
+  
+    GtkTreeModel *source_model;
+    GtkTreeModel *target_model;
+    GtkTreeSelection *source_selection; 
+
+    GtkWidget *target_list;
+    
+    target_list = my_signal->target_list;
+
+    source_model = my_signal->source_model;
+
+    source_selection = my_signal->source_selection;
+
+    target_model = my_signal->target_model;
+
+    value = gtk_tree_model_get_iter_from_string (source_model, &source_iter, "0");
+
+    while(value)
+    {
+        if (gtk_tree_selection_iter_is_selected(source_selection,&source_iter))
+        {
+            gtk_tree_model_get(source_model, &source_iter, 0, &value_name,  -1);
+
+            g_printf("value_name = %s\n",value_name);
+
+            memset(command,0,sizeof(command));
+              
+            strcpy(command,"cp ");
+
+            target_file = Get_Target_File_Path();
+
+            source_file = Get_Source_File_Path();    
+
+            strcat(command,source_file);
+
+            strcat(command,value_name);
+
+            strcat(command," ");
+
+            strcat(command,target_file);
+
+            value = system(command); 
+              
+            Scan_Target_File(target_list,target_model,value_name);
+ 
+            g_free(value_name);
+
+            g_printf("selection \n");
+        }
+
+        value = gtk_tree_model_iter_next(source_model,&source_iter); 
+
+    }
+
+    return 0;
+
+}
+
+gboolean Move_File(GtkWidget *widget,	GdkEventButton *event,	gpointer       data)
+{
+    char *target_file;
+    char *source_file;
+    char command[1024] = "mv ";
+    int value; 
+    char *value_name;
+
+    MY_SIGNAL *my_signal = (MY_SIGNAL *)data;
+
+    GtkTreeIter source_iter;
+ 
+    GtkTreeModel *source_model;
+    GtkTreeModel *target_model;
+    GtkTreeSelection *source_selection; 
+    
+    GtkListStore *source_list_store;
+    GtkWidget *source_list;
+    GtkWidget *target_list;
+
+    source_model = my_signal->source_model;
+
+    target_model = my_signal->target_model;
+
+    source_selection = my_signal->source_selection;
+
+    source_list = my_signal->source_list;
+
+    target_list = my_signal->target_list;    
+
+    source_list_store = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(source_list)));
+
+    value = gtk_tree_model_get_iter_from_string (source_model, &source_iter, "0");
+
+    while(value)   
+    {
+        if (gtk_tree_selection_iter_is_selected(source_selection,&source_iter))
+        {
+
+            gtk_tree_model_get(source_model, &source_iter, 0, &value_name,  -1);
+
+            g_printf("value_name = %s\n",value_name);
+
+            memset(command,0,sizeof(command));
+              
+            strcpy(command,"mv ");
+
+            target_file = Get_Target_File_Path();
+
+            source_file = Get_Source_File_Path();    
+
+            strcat(command,source_file);
+
+            strcat(command,value_name);
+
+            strcat(command," ");
+
+            strcat(command,target_file);
+
+            value = system(command); 
+
+            Scan_Target_File(target_list,target_model,value_name);
+            
+            g_free(value_name);
+
+            g_printf("selection \n");
+
+            gtk_list_store_remove(source_list_store,&source_iter);
+
+            value = gtk_tree_model_get_iter_from_string (source_model, &source_iter, "0");
+        }
+        else
+        {
+        value = gtk_tree_model_iter_next(source_model,&source_iter);
+        } 
+
+    }
+    
+    //g_object_unref(source_list_store); 
+  
+    return 0;
+}
+
+gboolean Delect_File(GtkWidget *widget,	GdkEventButton *event,	gpointer       data)
+{
+    char *source_file;
+    char command[1024] = "mv ";
+    int value; 
+    char *value_name;
+
+    MY_SIGNAL *my_signal = (MY_SIGNAL *)data;
+
+    GtkTreeIter source_iter;
+  
+    GtkTreeModel *source_model;
+    GtkTreeSelection *source_selection; 
+
+    GtkListStore *source_list_store;
+    GtkWidget *source_list;
+
+    source_model = my_signal->source_model;
+
+    source_selection = my_signal->source_selection;
+
+    source_list = my_signal->source_list;
+    
+    source_list_store = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(source_list)));
+
+    value = gtk_tree_model_get_iter_from_string (source_model, &source_iter, "0");
+
+    while(value)   
+    {
+        if (gtk_tree_selection_iter_is_selected(source_selection,&source_iter))
+        {
+
+            gtk_tree_model_get(source_model, &source_iter, 0, &value_name,  -1);
+
+            g_printf("value_name = %s\n",value_name);
+
+            memset(command,0,sizeof(command));
+              
+            strcpy(command,"rm ");
+
+            source_file = Get_Source_File_Path();    
+
+            strcat(command,source_file);
+
+            strcat(command,value_name);
+
+            value = system(command); 
+      
+            g_free(value_name);
+
+            g_printf("selection \n");
+
+            gtk_list_store_remove(source_list_store,&source_iter);
+
+            value = gtk_tree_model_get_iter_from_string (source_model, &source_iter, "0");
+        }
+        else
+        {
+            value = gtk_tree_model_iter_next(source_model,&source_iter);
+        } 
+
+    }
+    
+    //g_object_unref(list_store); 
+  
+    return 0;
+}
+
+int Rename_File(char *file_name)
+{
+    return 0;
+}
+
+
 

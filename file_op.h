@@ -27,5 +27,48 @@ extern void read_palette_file (const gchar *file_path, guint *sp_col, guint *col
 /*#define PALETTE_PATH	"/home/gll/arraytop/TT/source/system/Sample/Palette/"*/
 #define PALETTE_PATH	"/home/tt/TT/source/system/Sample/Palette/"
 
+#define FILE_NAME_MAX 256
+
+extern char SOURCE_FILE_NAME[FILE_NAME_MAX];
+extern char SOURCE_FILE_PATH[FILE_NAME_MAX];
+extern char TARGET_FILE_NAME[FILE_NAME_MAX];
+extern char TARGET_FILE_PATH[FILE_NAME_MAX];
+
+
+extern int Set_Source_File_Path(char *path);
+
+extern char *Get_Source_File_Path();
+
+extern int Set_Target_File_Path(char *path);
+
+extern char *Get_Target_File_Path();
+
+extern int Set_Source_File_Name(char *name);
+
+extern char *Get_Source_File_Name();
+
+extern int Set_Target_File_Name(char *name);
+
+extern char *Get_Target_File_Name();
+
+extern int Scan_Target_File(GtkWidget *widget,GtkTreeModel *model,char *file_name);
+
+extern int Select_File();
+
+extern int Unselect_File();
+
+extern gboolean Select_All_File (GtkWidget *widget,	GdkEventButton *event,	gpointer       data);
+
+extern int Unselect_All_File();
+
+extern gboolean Copy_File(GtkWidget *widget,	GdkEventButton *event,	gpointer       data);
+
+extern gboolean Move_File(GtkWidget *widget,	GdkEventButton *event,	gpointer       data);
+
+extern gboolean Delect_File(GtkWidget *widget,	GdkEventButton *event,	gpointer       data);
+
+extern int Rename_File(char *file_name);
+
+
 
 #endif

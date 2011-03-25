@@ -39,9 +39,9 @@
 #define UNIT_NONE	17
 
 /* UT_UNIT */
-#define UT_UNIT_TRUE_DEPTH	0
-#define UT_UNIT_SOUNDPATH	1
-#define UT_UNIT_TIME		2
+#define UT_UNIT_SOUNDPATH	0
+#define UT_UNIT_TIME		1
+#define UT_UNIT_TRUE_DEPTH	2
 
 #define AUTO_SET	0
 /* 发射模式 P111 */
@@ -526,4 +526,6 @@ extern void draw3_pressed1(gfloat step, guint digit);
 extern void da_call_remark (GtkDialog *dialog, gint response_id, gpointer user_data);
 
 extern void dialog_destroy(GtkWidget *widget,	GdkEventButton *event,	gpointer       data);
+
+extern void add_to_list(GtkWidget *list, const gchar *str, guint count);
 #endif
