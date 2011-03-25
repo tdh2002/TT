@@ -96,6 +96,8 @@
 #define GAIN_MAX	80.0
 #define GAINR_OFF	0
 #define GAINR_ON	1
+#define AUTO_FOCAL_OFF	0
+#define AUTO_FOCAL_ON	1
 #define VIDEO_FILTER_OFF 0
 #define VIDEO_FILTER_ON	 1
 

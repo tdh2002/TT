@@ -53,7 +53,7 @@ static void set_config (guint groupid)
 	CFG(groupQty)	= 1;
 	CFG(groupId)	= groupid;
 	CFG(group_pos)	= 1;
-	GROUP_VAL(group_mode) =0;
+	GROUP_VAL(group_mode) = PA_SCAN;
 	CFG(probe_select)=0;
 	GROUP_VAL(scan_offset)=0;
 	GROUP_VAL(index_offset)=0;
@@ -63,12 +63,12 @@ static void set_config (guint groupid)
 	CFG(part.Thickness)=100.0;
 	CFG(part.Diameter)=10000.0;
 
-	CFG(auto_program)=0;
+	CFG(auto_program)	=	AUTO_FOCAL_ON;
 
 	CFG(voltage_pa) = 0;
 	CFG(voltage_ut) = 0;
 	/* UT settings */
-	GROUP_VAL(velocity) = 592000;	/* 5920m/s */ 
+	GROUP_VAL(velocity)	= 592000;	/* 5920m/s */ 
 	GROUP_VAL(gain)         = 0;
 	GROUP_VAL(gainr)        = 0;
 	GROUP_VAL(db_ref)	= GAINR_OFF;
@@ -183,8 +183,6 @@ static void set_config (guint groupid)
 	CFG(interpolation)=0; /*0 off*/
 	CFG(fft_color)=0;/* 0 Yellow*/
 
-	/* focal law */
-	LAW_VAL(Focal_type)	= ANGLE_SCAN;
 
 	GROUP_VAL(element_qty)=1;
 	GROUP_VAL(first_element)=1;
@@ -221,7 +219,7 @@ static void set_config (guint groupid)
 	GROUP_VAL(probe.Elem_qty)	= 32; /*  */
 	/*	memcpy (GROUP_VAL(probe.Name), "5L64-A2", 8);*/ /* 探头名字 */
 	/* 聚焦法则信息 */
-	LAW_VAL(Focal_type)	= LINEAR_SCAN;
+	LAW_VAL(Focal_type)	= ANGLE_SCAN;
 	LAW_VAL(Tx_connect)	= 1;
 	LAW_VAL(Rx_connect)	= 1;
 	LAW_VAL(Elem_qty)	= 16;

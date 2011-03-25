@@ -241,22 +241,22 @@ static const gchar *content_en254[] = {
 
 static const gchar *content_en260[] = {
 	/* 二级菜单第6页下的第0页三级菜单 */
-	"  Law Config.  ","  Connection P  ", "  Connection R ", NULL, NULL, NULL
+	"Law Config.", "Connection P", "Connection R", NULL, NULL, NULL
 };
 
 static const gchar *content_en261[] = {
 	/* 二级菜单第6页下的第1页三级菜单 */
-	"  Element Qty.  ","  First Element  ", "  Last Element ","  Element Step  ", "  Wave Type  ", NULL
+	"Element Qty.", "First Element", "Last Element", "Element Step", "Wave Type", NULL
 };
 
 static const gchar *content_en262[] = {
 	/* 二级菜单第6页下的第2页三级菜单 */
-	"  Min.Angle  ","  Max.Angle  ", "  Angle Step ","  Focus Depth  ", NULL, NULL
+	"Min.Angle", "Max.Angle", "Angle Step", "Focus Depth", NULL, NULL
 };
 
 static const gchar *content_en263[] = {
 	/* 二级菜单第6页下的第3页三级菜单 */
-	"  Auto Program  ","  Load Law File  ", "  Save Law File ", NULL, NULL, NULL
+	"Auto Program", "Load Law File", "Save Law File",  NULL, NULL, NULL
 };
 
 static const gchar *content_en264[] = {
@@ -462,7 +462,7 @@ const gchar *all_menu_content_en[] =
 	"A%", "B%", "Thickness","I/","Off",								 /* 309 C-Scan1  */
 	"A%", "B%", "Thickness","Off",									 /* 314 Data2 */
 	"All & A-Scan", "Current & A-Scan", "All", "current",						 /* 318 Mode  */
-	"Sound Path", "Time", "True Depth"								 /* 322 UT Unit */
+	"Sound Path", "Time", "True Depth",								 /* 322 UT Unit */
 	"Blue", "Green", "Red", "Yellow", "Black", "Off",						 /* 325 Grid */
 	"A-Scan", "B-Scan", "S-Scan", "Strip Chart", "Uncorrected C-Scan", "Off",			 /* 331 display*/
 	"Absolute", "Start", "Center", "Cursor", "Gate A", "Gate B", 					 /* 337  Type*/
