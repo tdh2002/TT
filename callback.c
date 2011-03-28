@@ -19,6 +19,7 @@ gboolean key_press_handler (GtkWidget* pWidget,
 		GdkEventKey* pEvent, gpointer data);
 
 void send_dsp_data (guint data_type, guint value);
+guint get_beam_qty();
 guint get_skew();
 guint get_freq ();
 guint get_pw ();
@@ -271,6 +272,14 @@ gboolean (*eventbox2_fun[5])(GtkWidget *widget, GdkEventButton *event, gpointer 
 	eventbox2_function0,	eventbox2_function1,	eventbox2_function2,	
 	eventbox2_function3,	eventbox2_function4
 };
+
+guint	get_beam_qty()
+{
+	gint i, beam_qty = 0;
+	for (i = 0; i < MAX_GROUP_QTY; i++)
+		beam_qty += TMP(beam_qty[i]);
+	return beam_qty;
+}
 
 /*  */
 guint get_sum_gain ()
@@ -2988,19 +2997,18 @@ void data_600 (GtkMenuItem *menuitem, gpointer data) /* Focal law -> Configurati
 	draw_3_menu(0, NULL);
 }
 
-void data_601 (GtkSpinButton *spinbutton, gpointer data) /*connection_P*/
+void data_601 (GtkSpinButton *spinbutton, gpointer data) /* connection_P P601 */
 {
-	pp->p_config->connection_P =  (guint) (gtk_spin_button_get_value (spinbutton));
 }
 
 void data_610 (GtkSpinButton *spinbutton, gpointer data) /*element_qty*/
 {
-	GROUP_VAL(element_qty) =  (guchar) (gtk_spin_button_get_value (spinbutton));
+	LAW_VAL(Elem_qty) =  (guchar) (gtk_spin_button_get_value (spinbutton));
 }
 
 void data_611 (GtkSpinButton *spinbutton, gpointer data) /*first_element*/
 {
-	GROUP_VAL(first_element) =  (guchar) (gtk_spin_button_get_value (spinbutton));
+	LAW_VAL(First_tx_elem) =  (guchar) (gtk_spin_button_get_value (spinbutton));
 }
 
 void data_612 (GtkSpinButton *spinbutton, gpointer data) /*last_element*/
@@ -3022,7 +3030,9 @@ void data_614 (GtkMenuItem *menuitem, gpointer data) /* Focal law -> Configurati
 
 void data_620 (GtkSpinButton *spinbutton, gpointer data) /*min_angle*/
 {
-	GROUP_VAL(min_angle) =  (gshort) (gtk_spin_button_get_value (spinbutton) * 100.0);
+	guint temp =  (gtk_spin_button_get_value (spinbutton) * 100.0);
+
+	LAW_VAL(Angle_start) =  (gshort) (gtk_spin_button_get_value (spinbutton) * 100.0);
 }
 
 void data_621 (GtkSpinButton *spinbutton, gpointer data) /*max_angle*/

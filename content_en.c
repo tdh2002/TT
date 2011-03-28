@@ -44,7 +44,7 @@ static const gchar *content_en25[] = {
 
 static const gchar *content_en26[] = {
 	/* 二级菜单第6页 */
-	"Configuration", "Aperature", "Beam", "Laws", NULL
+	"Configuration", "Aperture", "Beam", "Laws", NULL
 };
 
 static const gchar *content_en27[] = {

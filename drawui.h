@@ -285,6 +285,7 @@ extern GtkWidgetClass *widget_window_class;
 extern DRAW_UI_P pp;					
 
 //extern guint address[];
+extern guint get_beam_qty();
 extern guint get_freq ();
 extern guint get_pw ();
 extern guint get_prf ();

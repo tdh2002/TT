@@ -211,15 +211,17 @@ void draw_s_scan (gushort *p, guint width, guint height, DOT_TYPE *data, DOT_TYP
 		case UT_UNIT_TIME:
 				if (height < TMP(beam_qty[groupId]))
 				{
+					/* 压缩s扫描 */
 
 				}
-				else if (height = TMP(beam_qty[groupId]))
+				else if (height == TMP(beam_qty[groupId]))
 				{
+					/* 不变 */
 
 				}
 				else if (height > TMP(beam_qty[groupId]))
 				{
-
+					/* 拉伸 */
 				}
 			break;
 		case  UT_UNIT_TRUE_DEPTH:

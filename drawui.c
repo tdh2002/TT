@@ -56,6 +56,8 @@ void draw_3_menu(gint pa, gpointer p);
 void init_ui(DRAW_UI_P p);				/* 初始化界面 */
 void draw_area_all();
 
+void save_config (GtkWidget *widget, GdkEventButton *event,	gpointer data);
+
 /**/
 const gchar **con0_p	 = content_en10;
 const gchar ***con1_p	 = content1_en;
@@ -506,7 +508,16 @@ static void da_call_probe (GtkDialog *dialog, gint response_id, gpointer user_da
 		{
 			if (pp->tag == 0)/*探头大类选择Unknow时*/
 			{
-				strcpy(GROUP_VAL(probe.Model), " Unknown");
+				//				strcpy(GROUP_VAL(probe.Model), " Unknown");
+
+				if (GROUP_VAL(group_mode) == PA_SCAN )
+					read_probe_file (PA_UNKNOWN_PROBE, &GROUP_VAL(probe));
+				else if (GROUP_VAL(group_mode) == UT_SCAN )
+					read_probe_file (UT_UNKNOWN_PROBE, &GROUP_VAL(probe));
+
+				GROUP_VAL (frequency) = GROUP_VAL(probe.Frequency);				/* 频率 */
+				if (!GROUP_VAL(pw_pos))
+					GROUP_VAL(pulser_width) = GROUP_VAL(frequency) * 2.0; /* 改变脉冲宽度 */
 				gtk_label_set_text (GTK_LABEL (pp->data3[3]), GROUP_VAL(probe.Model));
 
 				gtk_widget_destroy (GTK_WIDGET (dialog));			
@@ -646,12 +657,43 @@ static void da_call_palette (GtkDialog *dialog, gint response_id, gpointer user_
  *
  *
  */
-/**
-static void draw_warning(guint btn_qty, gchar *warn_info)
-{
 
+static void draw_warning(guint btn_qty, const gchar *warn_info)
+{
+	GtkWindow *win = GTK_WINDOW (pp->window);
+	GtkWidget *dialog;
+	GtkWidget *vbox1;	/* 指向dialog的vbox */
+	GtkWidget *label;
+
+	switch (btn_qty)
+	{
+		case 1:
+			dialog = gtk_dialog_new_with_buttons("Dialog_Warning", win,
+					GTK_DIALOG_MODAL |	GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_NO_SEPARATOR,
+					GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
+			break;
+		case 2:
+			dialog = gtk_dialog_new_with_buttons("Dialog_Warning", win,
+					GTK_DIALOG_MODAL |	GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_NO_SEPARATOR,
+					GTK_STOCK_OK, GTK_RESPONSE_OK,
+					GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
+			break;
+		default:break;
+	}
+	gtk_window_set_decorated (GTK_WINDOW (dialog), FALSE);			/*不可以装饰*/
+
+/*	gtk_widget_set_size_request (GTK_WIDGET (dialog), 300, 300);*/
+	vbox1 = GTK_WIDGET (GTK_DIALOG(dialog)->vbox);
+
+	label = gtk_label_new(NULL);
+	gtk_box_pack_start(GTK_BOX(vbox1), label, TRUE, TRUE, 5);
+	gtk_label_set_markup(GTK_LABEL(label), warn_info);
+
+/*	g_signal_connect (G_OBJECT(dialog), "response",
+			G_CALLBACK(da_call_remark), (gpointer) (TextBuffer));*/
+
+	gtk_widget_show_all(dialog);
 }
-**/
 
 /* 向列表里添加东西 */
 void add_to_list(GtkWidget *list, const gchar *str, guint count)
@@ -2968,7 +3010,6 @@ void draw3_data0(DRAW_UI_P p)
 						draw3_popdown (menu_content[L_CONFIG + LAW_VAL(Focal_type)], 0, 0);
 					break;
 				case 1:/* 聚焦 阵元数量 P610 */
-					/* 当前步进 */
 					switch (pp->p_tmp_config->element_qty_reg)
 					{
 						case 0:	tmpf = 1.0; break;
@@ -2976,56 +3017,43 @@ void draw3_data0(DRAW_UI_P p)
 						case 2:	tmpf = 100.0; break;
 						default:break;
 					}
-					if(CFG(auto_program))/*auto program 为 on 时，Element Qty 才可用*/
+					if (CFG(auto_program) == AUTO_FOCAL_ON) /* 聚焦法则自动计算为 on 时，Element Qty 才可调节 */
 					{
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 						{
-							cur_value = GROUP_VAL(element_qty);
+							cur_value = LAW_VAL(Elem_qty);
 							lower = 1.0;
-							upper = 32.0;
+							/* 计算最大激发阵元数 */
+							upper = MIN( MIN(32.0, GROUP_VAL(probe.Elem_qty)), 
+								  (GROUP_VAL(probe.Elem_qty) - LAW_VAL(First_tx_elem) + 1));
 							step = tmpf;
 							digit = 0;
 							pos = 0;
 							unit = UNIT_NONE;
-							draw3_digit_pressed (data_610, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
+							draw3_digit_pressed (data_610, units[unit], cur_value , lower,
+									upper, step, digit, p, pos, 0);
 						}
 						else 
 						{
-							cur_value = GROUP_VAL(element_qty);
+							cur_value = LAW_VAL(Elem_qty);
 							digit = 0;
 							pos = 0;
 							unit = UNIT_NONE;
 							draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 						}
 					}
-					else/*auto program 为 off 时，Element Qty 为 unsensitive*/
+					else /* 聚焦法则自动计算为off时，Element Qty 不可以调节 */
 					{
-						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
-						{
-							cur_value = GROUP_VAL(element_qty);
-							lower = 1.0;
-							upper = 32.0;
-							step = tmpf;
-							digit = 0;
-							pos = 0;
-							unit = UNIT_NONE;
-							draw3_digit_pressed (data_610, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
-						}
-						else 
-						{
-							cur_value = GROUP_VAL(element_qty);
-							digit = 0;
-							pos = 0;
-							unit = UNIT_NONE;
-							draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
-						}
+						cur_value = LAW_VAL(Elem_qty);
+						digit = 0;
+						pos = 0;
+						unit = UNIT_NONE;
+						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 						gtk_widget_set_sensitive(pp->eventbox30[0],FALSE);
 						gtk_widget_set_sensitive(pp->eventbox31[0],FALSE);
 					}
 					break;
-
-				case 2:/*Focal Law -> beam -> Min.Angle p620 */
-					/* 当前步进 */
+				case 2:/* beam的最小角度 线性扫描就只有一个角度 角度扫差时候需可设置多个角度  P620 */
 					switch (TMP(min_angle_reg))
 					{
 						case 0:	tmpf = 0.1; break;
@@ -3033,55 +3061,41 @@ void draw3_data0(DRAW_UI_P p)
 						case 2:	tmpf = 10.0; break;
 						default:break;
 					}
-					if(CFG(auto_program))/*auto program 为 on 时，Element Qty 才可用*/
+					if(CFG(auto_program) == AUTO_FOCAL_ON)/* 聚焦法则自动计算开启时, MIn Angle 才可调节 */
 					{
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 						{
-							cur_value = GROUP_VAL(min_angle)/100.0;
+							/* 最大不能超过最大angle_end */
+							cur_value = LAW_VAL (Angle_start) / 100.0;
 							lower = -89.9;
 							upper = 89.9;
 							step = tmpf;
 							digit = 1;
 							pos = 0;
 							unit = UNIT_DEG;
-							draw3_digit_pressed (data_620, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
+							draw3_digit_pressed (data_620, units[unit], cur_value , lower, 
+									upper, step, digit, p, pos, 0);
 						}
 						else 
 						{
-							cur_value = GROUP_VAL(min_angle)/100.0;
+							cur_value = LAW_VAL (Angle_start) / 100.0;
 							digit = 1;
 							pos = 0;
 							unit = UNIT_DEG;
 							draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 						}
 					}
-					else/*auto program 不为 on 时，Element Qty 不可用*/
+					else /* 聚焦法则自动计算为OFF, Min.Angle 不可调节 */
 					{
-						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
-						{
-							cur_value = GROUP_VAL(min_angle)/100.0;
-							lower = -89.9;
-							upper = 89.9;
-							step = tmpf;
-							digit = 1;
-							pos = 0;
-							unit = UNIT_DEG;
-							draw3_digit_pressed (data_620, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
-						}
-						else 
-						{
-							cur_value = GROUP_VAL(min_angle)/100.0;
-							digit = 1;
-							pos = 0;
-							unit = UNIT_DEG;
-							draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
-						}
-
+						cur_value = LAW_VAL (Angle_start) / 100.0;
+						digit = 1;
+						pos = 0;
+						unit = UNIT_DEG;
+						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 						gtk_widget_set_sensitive(pp->eventbox30[0],FALSE);
 						gtk_widget_set_sensitive(pp->eventbox31[0],FALSE);
 					}
 					break;
-
 				case 3:/*Focal Law -> laws -> auto program  p630 */
 					draw3_popdown (menu_content[OFF_ON + CFG(auto_program)], 0, 0);
 					break;
@@ -4324,8 +4338,7 @@ void draw3_data1(DRAW_UI_P p)
 					}
 					g_free(str);
 					break;
-				case 1:/*Focal Law -> aperture -> first element p611 */
-					/* 当前步进 */
+				case 1:/* 聚焦法则的第一个阵元编号 P611 */
 					switch (TMP(first_element_reg))
 					{
 						case 0:	tmpf = 1.0; break;
@@ -4333,14 +4346,14 @@ void draw3_data1(DRAW_UI_P p)
 						case 2:	tmpf = 100.0; break;
 						default:break;
 					}
-
-					if(CFG(auto_program))/*auto program 为 on 时，Element Qty 才可用*/
+					if(CFG(auto_program) == AUTO_FOCAL_ON)/* 聚焦法则自动计算开启时, First Element才可调节 */
 					{
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 						{
-							cur_value = GROUP_VAL(first_element);
+							cur_value = LAW_VAL(First_tx_elem);
 							lower = 1.0;
-							upper = 97.0;
+							/* 计算最大值 */
+							upper = GROUP_VAL(probe.Elem_qty) - LAW_VAL(Elem_qty) + 1;
 							step = tmpf;
 							digit = 0;
 							pos = 1;
@@ -4349,41 +4362,24 @@ void draw3_data1(DRAW_UI_P p)
 						}
 						else 
 						{
-							cur_value = GROUP_VAL(first_element);
+							cur_value = LAW_VAL(First_tx_elem);
 							digit = 0;
 							pos = 1;
 							unit = UNIT_NONE;
 							draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 						}
 					}
-					else /*auto program 为 off 时，Element Qty   unsensitive*/
+					else /* 聚焦法则自动计算为off时, Firest Element 不可以调节 */
 					{
-
-						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
-						{
-							cur_value = GROUP_VAL(first_element);
-							lower = 1.0;
-							upper = 97.0;
-							step = tmpf;
-							digit = 0;
-							pos = 1;
-							unit = UNIT_NONE;
-							draw3_digit_pressed (data_611, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
-						}
-						else 
-						{
-							cur_value = GROUP_VAL(first_element);
-							digit = 0;
-							pos = 1;
-							unit = UNIT_NONE;
-							draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
-						}
+						cur_value = LAW_VAL(First_tx_elem);
+						digit = 0;
+						pos = 1;
+						unit = UNIT_NONE;
+						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 						gtk_widget_set_sensitive(pp->eventbox30[1],FALSE);
 						gtk_widget_set_sensitive(pp->eventbox31[1],FALSE);
 					}
 					break;
-
-
 				case 2:/*focal law -> beam -> max angle  p621*/
 					/* 当前步进 */
 					switch (TMP(max_angle_reg))
@@ -4828,7 +4824,7 @@ void draw3_data2(DRAW_UI_P p)
 							step = tmpf;
 							digit = 2;
 							pos = 2;
-							unit = UNIT_NULL;
+							unit = UNIT_NONE;
 							draw3_digit_pressed (data_1121, units[unit], cur_value,
 									lower, upper, step, digit, p, pos, 0);
 						}
@@ -5938,7 +5934,7 @@ void draw3_data2(DRAW_UI_P p)
 					}
 					g_free(str);
 					break;
-				case 1:/*Focal Law -> aperture -> last element p612 */
+				case 1:/* Focal Law -> aperture -> last element P612 */
 					/* 当前步进 */
 					switch (TMP(last_element_reg))
 					{
@@ -6232,6 +6228,8 @@ void draw3_data2(DRAW_UI_P p)
 					break;
 
 				case 4:/*Preferences -> network -> Apply p942 */
+					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
+						draw_warning(1, "test");
 					draw3_popdown(NULL,2,1);
 					break;
 				default:break;
@@ -7148,12 +7146,11 @@ void draw3_data3(DRAW_UI_P p)
 		case 5:
 			switch (pp->pos1[5])
 			{
-				case 0:/*Probe/Part -> Select -> Probe p503 */
+				case 0:/* Probe/Part -> Select -> Probe 探头选择  P503 */
 					if(CFG(auto_detect))
 					{
 						if(CFG(probe_select)==0)
 						{
-
 							if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 							{
 								draw_dialog_all (DIALOG_PROBE);
@@ -7163,9 +7160,7 @@ void draw3_data3(DRAW_UI_P p)
 
 							g_sprintf (temp,"%s", con2_p[5][0][3]);
 							gtk_label_set_text (GTK_LABEL (pp->label3[3]), temp);
-
 						}
-
 						else if(CFG(probe_select)==1)
 						{
 							draw3_popdown(NULL,3,1);
@@ -7185,13 +7180,12 @@ void draw3_data3(DRAW_UI_P p)
 								draw_dialog_all (DIALOG_PROBE);
 							}
 							else
-								draw3_popdown(GROUP_VAL(probe.Model),3,0);
+								draw3_popdown(GROUP_VAL(probe.Model), 3, 0);
 
 							g_sprintf (temp,"%s", con2_p[5][0][3]);
 							gtk_label_set_text (GTK_LABEL (pp->label3[3]), temp);
+							gtk_label_set_text (GTK_LABEL (pp->data3[3]), GROUP_VAL(probe.Model));
 						}
-
-
 						else if( CFG(probe_select)==1 )
 						{
 							draw3_popdown(NULL,3,1);
@@ -7199,8 +7193,7 @@ void draw3_data3(DRAW_UI_P p)
 							gtk_label_set_text (GTK_LABEL (pp->label3[3]), temp);
 						}
 					}
-
-					if( GROUP_VAL(group_mode) && CFG(auto_detect) )	/* PA模式时，探头不可选 */
+					if( GROUP_VAL(group_mode) && CFG(auto_detect))	/* 自动检测开启时同时又在PA模式时，探头不可选 */
 					{
 						gtk_widget_set_sensitive(pp->eventbox30[3],FALSE);
 						gtk_widget_set_sensitive(pp->eventbox31[3],FALSE);
@@ -7210,9 +7203,7 @@ void draw3_data3(DRAW_UI_P p)
 						gtk_widget_set_sensitive(pp->eventbox30[3],TRUE);
 						gtk_widget_set_sensitive(pp->eventbox31[3],TRUE);
 					}
-
 					break;
-
 				case 1:
 					if ( !con2_p[5][1][3] )
 						gtk_widget_hide (pp->eventbox30[3]);
@@ -8369,7 +8360,7 @@ void draw3_data4(DRAW_UI_P p)
 		case 5:
 			switch (pp->pos1[5])
 			{
-				case 0:/* Probe/Part -> Select -> Wedge p504*/
+				case 0:/* Probe/Part -> Select -> Wedge P504*/
 					if (CFG(probe_select)==0)
 					{
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
@@ -10138,6 +10129,9 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 	gtk_widget_set_size_request (GTK_WIDGET(pp->event[6]), 172, 22);
 	markup = g_markup_printf_escaped ("<span foreground='red' font_desc='10'>%s</span>", VERSION);
 	gtk_label_set_markup (GTK_LABEL (pp->label[6]), markup); 
+	g_signal_connect(G_OBJECT(pp->event[6]), "button-press-event", 
+			G_CALLBACK(save_config), NULL);
+
 	update_widget_bg(pp->event[6], backpic[5]);
 	markup = g_markup_printf_escaped ("<span foreground='white' font_desc='10'>V: %.2f mm/s</span>",
 			(gfloat)(GROUP_VAL(prf)));
@@ -10298,4 +10292,13 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 	g_timeout_add(40, (GSourceFunc) time_handler2, NULL);
 #endif
 	//	g_thread_create((GThreadFunc)(time_handler), (gpointer) (pp->drawing_area), FALSE, NULL);
+}
+
+
+void save_config (GtkWidget *widget, GdkEventButton *event,	gpointer data)
+{
+	gint i;
+	i	=	lseek (TMP(fd_config), 0, SEEK_SET);
+	i	=	write (TMP(fd_config), pp->p_config, sizeof(CONFIG));
+	gtk_main_quit();
 }

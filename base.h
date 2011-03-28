@@ -38,6 +38,7 @@
 
 #define	MAX_DOT_QTY		163840
 #define LAW_MAX_QTY		256
+#define ELEM_TX_MAX_QTY	32
 #define ELEM_RX_MAX_QTY	32
 #define GATE_MAX_QTY	3
 
@@ -162,8 +163,8 @@ typedef struct law_beam
 typedef struct law_info
 {
 	guchar	Focal_type;		/* 聚焦类型 */
-	guchar	Tx_connect;		/* 该法则的探头发射第一个阵元其连接口的编号 */
-	guchar	Rx_connect;		/* 该法则 */
+	guchar	Tx_connect;		/* pulser该法则的探头发射第一个阵元其连接口的编号 */
+	guchar	Rx_connect;		/* receiver */
 	guchar	Elem_qty;		/* 聚焦阵元数 */
 	guchar	First_tx_elem;		/* 法则使用的第一个发射阵元 收发分离时候 tx rx 不一样 */
 	guchar	First_rx_elem;		/* 法则使用的第一个接收阵元 */
@@ -337,7 +338,6 @@ typedef struct Group {
 	guchar	ascan_appearance;	/**/
 	guchar	ascan_overlay;		/**/
 
-
 //	COL_SELECT_INFO	col_select[3]; /* Amplitude TOFD Depth 3个*/
 
 	/*波束 beam*/
@@ -350,14 +350,10 @@ typedef struct Group {
 	gint	agate_start;
 	guint	agate_width;
 
-	//	guchar  law_config;                     /* 聚焦模式 扇扫 线扫etc */
-	guchar	element_qty;
-	guchar	first_element;                  /* 第一个阵元 */
 	guchar	last_element;                   /* 最后一个阵元 (线扫时候可以设置) */
 	guchar	element_step;                   /* 阵元间隔 (线扫时候可以设置) */
 	guchar	wave_type;                      /* 0纵波 与 1横波 */
 
-	gshort	min_angle;                      /*Focal Law -> Beam -> Min_angle*/
 	gshort	max_angle;
 	gshort	angle_step;
 	gushort	focus_depth;                    /*Focal Law -> Beam -> focus_depth*/
@@ -456,11 +452,8 @@ typedef	struct Config {
 	guchar	probe_select;                   /*Probe/Part -> select -> select*/
 	guchar	fft;                            /*Probe/Part -> characterize -> FFT*/
 
-	guchar	connection_P;                   /* 设置收的接口 1-128 */
-	guchar  connection_R;                   /* 设置发的接口 1-128 */
-	//	guint   min_angle;                      /*Focal Law -> Beam -> Min_angle*/
 	guchar	auto_program;                   /* Off   On*/
-	//	guint   focus_depth;                    /*Focal Law -> Beam -> focus_depth*/
+
 	guchar	encoder;
 	guchar	polarity;
 	guchar	e_type;

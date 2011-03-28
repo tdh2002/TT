@@ -184,12 +184,12 @@ static void set_config (guint groupid)
 	CFG(fft_color)=0;/* 0 Yellow*/
 
 
-	GROUP_VAL(element_qty)=1;
-	GROUP_VAL(first_element)=1;
+	LAW_VAL(Elem_qty)		=	1;
+	LAW_VAL(First_tx_elem)	=	1;
 	GROUP_VAL(last_element)=1;
 	GROUP_VAL(element_step)=1;
 	GROUP_VAL(wave_type)=0;	/* 0纵波 与 1横波 */
-	GROUP_VAL(min_angle)=0.0;
+	LAW_VAL(Angle_start) = 0.0;
 	GROUP_VAL(max_angle)=100.0;
 	GROUP_VAL(angle_step)=100.0;
 	GROUP_VAL(focus_depth)=5000.0;
@@ -290,16 +290,26 @@ int main (int argc, char *argv[])
 	p_ui->p_tmp_config	= p_tmp_config;
 	p_ui->window		= window;
 
+	pp = p_ui;
+
 	p_ui->p_tmp_config->fd_config = open ("default.cfg", O_RDWR);
-	if (p_ui->p_tmp_config->fd_config < 0)
-		g_print("error open config file\n");
+	if (!argv[1])
+	{
+		set_config(0);
+	} 
 	else 
-		g_print("success open config file\n");
+	{
+		if (p_ui->p_tmp_config->fd_config < 0)
+			g_print("error open config file\n");
+		else 
+		{ 
+			i = read (TMP(fd_config), pp->p_config, sizeof(CONFIG));
+			g_print("success open config file\n");
+		}
+	}
 
 	/*	write(p_ui->p_tmp_config->fd_config, (void*)(p_ui->p_config), sizeof(CONFIG));*/
 
-	pp = p_ui;
-	set_config(0);
 	TMP(a_scan_width) = 615;
 	TMP(a_scan_height) = 120;
 
