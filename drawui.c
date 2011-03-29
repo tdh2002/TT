@@ -142,7 +142,7 @@ void main_menu_pop(guint action)
 {
 	int i;
 	pp->x_pos = 0, pp->y_pos = 200;
-	if (MENU_POP == action)/*弹出主菜单*/
+	if (MENU_POP == action)	/*弹出主菜单*/
 	{
 		gtk_menu_popup ( GTK_MENU (pp->menu), NULL, NULL, 
 				(GtkMenuPositionFunc)set_menu_position_tdh,
@@ -164,7 +164,13 @@ void main_menu_pop(guint action)
 			pp->pos = 0;
 		else
 			pp->pos++;
-		gtk_menu_item_select (GTK_MENU_ITEM (pp->menuitem[pp->pos]));
+		if (gtk_widget_get_sensitive(pp->menuitem[pp->pos]))
+			gtk_menu_item_select (GTK_MENU_ITEM (pp->menuitem[pp->pos]));
+		else 
+		{
+			pp->pos++;
+			gtk_menu_item_select (GTK_MENU_ITEM (pp->menuitem[pp->pos]));
+		}
 	}
 	 else if (MENU_UP == action)/*向上切换主菜单*/
 	{
@@ -173,7 +179,13 @@ void main_menu_pop(guint action)
 			pp->pos = 9;
 		else
 			pp->pos--;
-		gtk_menu_item_select (GTK_MENU_ITEM (pp->menuitem[pp->pos]));
+		if (gtk_widget_get_sensitive(pp->menuitem[pp->pos]))
+			gtk_menu_item_select (GTK_MENU_ITEM (pp->menuitem[pp->pos]));
+		else 
+		{
+			pp->pos--;
+			gtk_menu_item_select (GTK_MENU_ITEM (pp->menuitem[pp->pos]));
+		}
 	}
 	else if (MENU_ENTER == action) /*选中当前菜单项，并收回主菜单*/
 	{
@@ -181,7 +193,83 @@ void main_menu_pop(guint action)
 		gtk_menu_popdown( GTK_MENU (pp->menu));
 	}
 
-//	pp->main_menu_pop_status = !pp->main_menu_pop_status ;
+}
+
+/* 按键 弹出三级菜单选项 的处理函数 */
+void menu3_pop(guint action)
+{
+	int i;
+
+	if ( (MENU3_TURN == action))	/*轮流切换三级菜单选项*/
+	{
+		gtk_menu_item_deselect (GTK_MENU_ITEM (pp->menu_item3[pp->menu3_poppos]));
+		if((pp->menu3_poppos) == (pp->menu3_qty - 1) )
+			pp->menu3_poppos = 0;
+		else
+			pp->menu3_poppos++;
+		if(gtk_widget_get_sensitive(pp->menu_item3[pp->menu3_poppos]))
+			gtk_menu_item_select (GTK_MENU_ITEM (pp->menu_item3[pp->menu3_poppos]));
+		else
+		{
+			if((pp->menu3_poppos) == (pp->menu3_qty - 1) )/*当三级菜单选项的最后一个为不可选状态时*/
+				pp->menu3_poppos = 0;
+			else
+				pp->menu3_poppos++;
+			gtk_menu_item_select (GTK_MENU_ITEM (pp->menu_item3[pp->menu3_poppos]));
+		}
+
+	}
+	else if (MENU3_UP == action) /*向上切换三级菜单选项*/
+	{
+		gtk_menu_item_deselect (GTK_MENU_ITEM (pp->menu_item3[pp->menu3_poppos]));
+		if((pp->menu3_poppos) == 0 )
+			pp->menu3_poppos = (pp->menu3_qty - 1);
+		else
+			pp->menu3_poppos--;
+		if (gtk_widget_get_sensitive(pp->menu_item3[pp->menu3_poppos]))
+			gtk_menu_item_select (GTK_MENU_ITEM (pp->menu_item3[pp->menu3_poppos]));
+		else 
+		{
+			if((pp->menu3_poppos) == 0 )/*当三级菜单选项的第一个为不可选状态时*/
+				pp->menu3_poppos = (pp->menu3_qty - 1);
+			else
+				pp->menu3_poppos--;
+			gtk_menu_item_select (GTK_MENU_ITEM (pp->menu_item3[pp->menu3_poppos]));
+		}
+
+	}
+	else if (MENU3_DOWN == action) 		/*向下切换三级菜单选项*/
+	{
+		gtk_menu_item_deselect (GTK_MENU_ITEM (pp->menu_item3[pp->menu3_poppos]));
+		if((pp->menu3_poppos) == (pp->menu3_qty - 1) )
+			pp->menu3_poppos = 0;
+		else
+			pp->menu3_poppos++;
+		if (gtk_widget_get_sensitive(pp->menu_item3[pp->menu3_poppos]))
+			gtk_menu_item_select (GTK_MENU_ITEM (pp->menu_item3[pp->menu3_poppos]));
+		else 
+		{
+			if((pp->menu3_poppos) == (pp->menu3_qty - 1) )	/* 当三级菜单选项的最后一个为不可选状态时 */
+				pp->menu3_poppos = 0;
+			else
+				pp->menu3_poppos++;
+			gtk_menu_item_select (GTK_MENU_ITEM (pp->menu_item3[pp->menu3_poppos]));
+		}
+
+	}
+	else if (MENU3_ENTER == action) 	/* 选中当前菜单项，并收回三级菜单 */
+	{
+		gtk_menu_item_activate (GTK_MENU_ITEM (pp->menu_item3[pp->menu3_poppos]));
+		for(i=0;i<6;i++)
+			gtk_menu_popdown( GTK_MENU (pp->menu33[i]));
+		draw_3_menu(1, NULL);
+	}
+	else if (MENU3_DIS == action) 		/* 收回三级菜单选项 */
+	{
+		for(i=0;i<6;i++)
+			gtk_menu_popdown( GTK_MENU (pp->menu33[i]));
+	}
+
 }
 
 /* 弹出 隐藏 帮助窗口 */

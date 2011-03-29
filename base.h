@@ -802,6 +802,13 @@ typedef struct Draw_interface {
 	gint y_pos;  /* 弹出窗口的xy坐标 */
 
 	guchar  help_yn; /*是否弹出help窗口 0 否，1 是*/	
+
+	guchar  menu3_qty;	/* 三级菜单弹出选项的个数 */
+	guchar  menu3_poppos;	/* 三级菜单弹出选项选中的是第几个 */
+	guchar  menu3_pos;	/* 当前按下的是第几个三级菜单 0 1 ... 5 */
+
+	guchar  menu3_geshu;	/* 三级菜单的个数 */
+
 } DRAW_UI, *DRAW_UI_P;
 
 typedef struct _MY_SIGNAL_TMP

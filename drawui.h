@@ -221,6 +221,13 @@
 #define MENU_DOWN		4
 #define MENU_ENTER		5
 
+#define MENU3_TURN 	3
+#define MENU3_ENTER	4
+#define MENU3_UP	5
+#define MENU3_DOWN	6
+#define MENU3_DIS	7
+#define MENU3_SHOW	8
+
 #define HELP_N		0
 #define HELP_Y		1
 
@@ -523,6 +530,7 @@ extern gboolean foo (GtkAccelGroup *accel_group, GObject *acceleratable,
 extern gboolean key_press_handler (GtkWidget* pWidget, GdkEventKey* pEvent, gpointer data);
 extern void main_menu_pop();
 extern void show_help(guint i);
+extern void menu3_pop();
 
 extern void draw3_pressed1(gfloat step, guint digit);
 
