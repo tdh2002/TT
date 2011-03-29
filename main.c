@@ -188,11 +188,11 @@ static void set_config (guint groupid)
 	LAW_VAL(First_tx_elem)	=	1;
 	GROUP_VAL(last_element)=1;
 	GROUP_VAL(element_step)=1;
-	GROUP_VAL(wave_type)=0;	/* 0纵波 与 1横波 */
-	LAW_VAL(Angle_start) = 0.0;
-	GROUP_VAL(max_angle)=100.0;
-	GROUP_VAL(angle_step)=100.0;
-	GROUP_VAL(focus_depth)=5000.0;
+	LAW_VAL (Wave_type)		=	LONGITUDINAL_WAVE;
+	LAW_VAL (Angle_start)	=	0.0;
+	LAW_VAL (Angle_end)		=	0.0;
+	LAW_VAL	(Angle_step)	=	100.0;
+	LAW_VAL (Focus_depth)	=	5000.0;
 
 	CFG(polarity)=0;  /* 0 Normal */
 	CFG(e_type)=0;  /* 0 Clock/Dir */
@@ -327,6 +327,11 @@ int main (int argc, char *argv[])
 	TMP(beam_qty[0]) = 1;
 	TMP(beam_qty[1]) = 1;
 	TMP(beam_qty[2]) = 1;
+	TMP(beam_qty[3]) = 1;
+	TMP(beam_qty[4]) = 0;
+	TMP(beam_qty[5]) = 0;
+	TMP(beam_qty[6]) = 0;
+	TMP(beam_qty[7]) = 0;
 	TMP(beam_qty[3]) = 1;
 	TMP(beam_num[0]) = 0;
 	TMP(beam_num[1]) = 0;

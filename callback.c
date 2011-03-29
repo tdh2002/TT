@@ -275,7 +275,7 @@ gboolean (*eventbox2_fun[5])(GtkWidget *widget, GdkEventButton *event, gpointer 
 
 guint	get_beam_qty()
 {
-	gint i, beam_qty = 0;
+	guint i, beam_qty = 0;
 	for (i = 0; i < MAX_GROUP_QTY; i++)
 		beam_qty += TMP(beam_qty[i]);
 	return beam_qty;
@@ -3114,33 +3114,54 @@ void data_613 (GtkSpinButton *spinbutton, gpointer data) /*element_step*/
 	GROUP_VAL(element_step) =  (guchar) (gtk_spin_button_get_value (spinbutton));
 }
 
-void data_614 (GtkMenuItem *menuitem, gpointer data) /* Focal law -> Configuration -> Wave Type */
+void data_614 (GtkMenuItem *menuitem, gpointer data) /* 纵横波  P614 */
 {
-	GROUP_VAL(wave_type) = (guchar) (GPOINTER_TO_UINT (data));
+	LAW_VAL(Wave_type) = (guchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
 }
 
-void data_620 (GtkSpinButton *spinbutton, gpointer data) /*min_angle*/
+void data_620 (GtkSpinButton *spinbutton, gpointer data) /* min_angle P620*/
 {
-	guint temp =  (gtk_spin_button_get_value (spinbutton) * 100.0);
+	guint temp_beam;
 
-	LAW_VAL(Angle_start) =  (gshort) (gtk_spin_button_get_value (spinbutton) * 100.0);
+	if (LAW_VAL(Focal_type) == ANGLE_SCAN)
+	{
+		LAW_VAL(Angle_start) =  (gshort) (gtk_spin_button_get_value (spinbutton) * 100.0);
+		temp_beam = (guint)((LAW_VAL(Angle_end) - LAW_VAL(Angle_start))) /
+			LAW_VAL(Angle_step) + 1;
+		TMP(beam_qty[CFG(groupId)])	= temp_beam;
+	}
+	else if (LAW_VAL(Focal_type) == LINEAR_SCAN)
+		LAW_VAL(Angle_start) =  (gshort) (gtk_spin_button_get_value (spinbutton) * 100.0);
 }
 
-void data_621 (GtkSpinButton *spinbutton, gpointer data) /*max_angle*/
+void data_621 (GtkSpinButton *spinbutton, gpointer data) /* max_angle */
 {
-	GROUP_VAL(max_angle) =  (gshort) (gtk_spin_button_get_value (spinbutton) * 100.0);
+	guint temp_beam;
+
+	if (LAW_VAL(Focal_type) == ANGLE_SCAN)
+	{
+		LAW_VAL(Angle_end) =  (gshort) (gtk_spin_button_get_value (spinbutton) * 100.0);
+		temp_beam = (guint) (LAW_VAL(Angle_end) - LAW_VAL(Angle_start)) /
+			LAW_VAL(Angle_step) + 1;
+		TMP(beam_qty[CFG(groupId)])	= temp_beam;
+	}
 }
 
-void data_622 (GtkSpinButton *spinbutton, gpointer data) /*Angle Step*/
+void data_622 (GtkSpinButton *spinbutton, gpointer data) /* Angle Step P622 */
 {
-	GROUP_VAL(angle_step) =  (gshort) (gtk_spin_button_get_value (spinbutton) * 100.0);
+	guint temp_beam;
+
+	LAW_VAL(Angle_step) =  (gushort) (gtk_spin_button_get_value (spinbutton) * 100.0);
+	temp_beam = (guint) (LAW_VAL(Angle_end) - LAW_VAL(Angle_start)) /
+		LAW_VAL(Angle_step) + 1;
+	TMP(beam_qty[CFG(groupId)])	= temp_beam;
 }
 
-void data_623 (GtkSpinButton *spinbutton, gpointer data) /*focus_depth*/
+void data_623 (GtkSpinButton *spinbutton, gpointer data) /* focus_depth P623*/
 {
-	GROUP_VAL(focus_depth) =  (gushort) (gtk_spin_button_get_value (spinbutton) * 100.0);
+	LAW_VAL(Focus_depth) =  (guint) (gtk_spin_button_get_value (spinbutton) * 100.0);
 }
 
 void data_700 (GtkMenuItem *menuitem, gpointer data) /* Encoder */

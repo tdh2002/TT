@@ -78,6 +78,10 @@
 #define	ANGLE_SCAN	0
 #define LINEAR_SCAN	1
 
+/* 0纵波 1横波 */
+#define LONGITUDINAL_WAVE	0
+#define SHEAR_WAVE	1
+
 /* 显示模式ABSC */
 #define	DISPLAY_ALL_GROUP	0
 #define DISPLAY_CURRENT_GROUP	1
@@ -531,6 +535,8 @@ extern gboolean key_press_handler (GtkWidget* pWidget, GdkEventKey* pEvent, gpoi
 extern void main_menu_pop();
 extern void show_help(guint i);
 extern void menu3_pop();
+
+extern void draw_warning(guint btn_qty, const gchar *warn_info);
 
 extern void draw3_pressed1(gfloat step, guint digit);
 

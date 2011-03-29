@@ -222,7 +222,7 @@ void menu3_pop(guint action)
 	else if (MENU3_UP == action) /*向上切换三级菜单选项*/
 	{
 		gtk_menu_item_deselect (GTK_MENU_ITEM (pp->menu_item3[pp->menu3_poppos]));
-		if((pp->menu3_poppos) == 0 )
+		if((pp->menu3_poppos) == 0)
 			pp->menu3_poppos = (pp->menu3_qty - 1);
 		else
 			pp->menu3_poppos--;
@@ -737,6 +737,13 @@ static void da_call_palette (GtkDialog *dialog, gint response_id, gpointer user_
 //	}
 }
 
+static void da_call_warning (GtkDialog *dialog, 
+		gint response_id, gpointer user_data)      
+{
+	gtk_widget_destroy (GTK_WIDGET (dialog));
+	return ;
+}
+
 /*
  * 警告信息 
  * btn_qty: 表示几个按钮 1-2; 1就是 确认 2是确认和取消
@@ -746,10 +753,10 @@ static void da_call_palette (GtkDialog *dialog, gint response_id, gpointer user_
  *
  */
 
-static void draw_warning(guint btn_qty, const gchar *warn_info)
+void draw_warning(guint btn_qty, const gchar *warn_info)
 {
 	GtkWindow *win = GTK_WINDOW (pp->window);
-	GtkWidget *dialog;
+	GtkWidget *dialog = NULL;
 	GtkWidget *vbox1;	/* 指向dialog的vbox */
 	GtkWidget *label;
 
@@ -777,8 +784,8 @@ static void draw_warning(guint btn_qty, const gchar *warn_info)
 	gtk_box_pack_start(GTK_BOX(vbox1), label, TRUE, TRUE, 5);
 	gtk_label_set_markup(GTK_LABEL(label), warn_info);
 
-/*	g_signal_connect (G_OBJECT(dialog), "response",
-			G_CALLBACK(da_call_remark), (gpointer) (TextBuffer));*/
+	g_signal_connect (G_OBJECT(dialog), "response",
+			G_CALLBACK(da_call_warning), NULL);
 
 	gtk_widget_show_all(dialog);
 }
@@ -2632,7 +2639,7 @@ void draw3_data0(DRAW_UI_P p)
 	gfloat cur_value=0.0, lower, upper, step;
 	guint digit, pos, unit, content_pos, menu_status = 0;
 
-	guint menu_on=0, i;
+	guint menu_on=0, i, temp_beam;
 
 	p = NULL;
 
@@ -3141,7 +3148,8 @@ void draw3_data0(DRAW_UI_P p)
 						gtk_widget_set_sensitive(pp->eventbox31[0],FALSE);
 					}
 					break;
-				case 2:/* beam的最小角度 线性扫描就只有一个角度 角度扫差时候需可设置多个角度  P620 */
+				case 2:
+					/* beam的最小角度 线性扫描就只有一个角度 角度扫差时候需可设置多个角度  P620 */
 					switch (TMP(min_angle_reg))
 					{
 						case 0:	tmpf = 0.1; break;
@@ -3149,14 +3157,18 @@ void draw3_data0(DRAW_UI_P p)
 						case 2:	tmpf = 10.0; break;
 						default:break;
 					}
-					if(CFG(auto_program) == AUTO_FOCAL_ON)/* 聚焦法则自动计算开启时, MIn Angle 才可调节 */
+					if(CFG(auto_program) == AUTO_FOCAL_ON)
+						/* 聚焦法则自动计算开启时, Min Angle 才可调节 */
 					{
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 						{
 							/* 最大不能超过最大angle_end */
 							cur_value = LAW_VAL (Angle_start) / 100.0;
-							lower = -89.9;
-							upper = 89.9;
+							/* 计算lower为妙 */
+							temp_beam = LAW_MAX_QTY - get_beam_qty() + TMP(beam_qty[CFG(groupId)]);
+							lower = MAX (((gint)(LAW_VAL (Angle_end)) - 
+										(gint)(temp_beam * LAW_VAL(Angle_step))) / 100.0, -89.9);
+							upper = LAW_VAL (Angle_end) / 100.0;
 							step = tmpf;
 							digit = 1;
 							pos = 0;
@@ -3410,7 +3422,7 @@ void draw3_data1(DRAW_UI_P p)
 	gchar *str;
 
 	gfloat cur_value=0.0, lower, upper, step;
-	guint digit, pos, unit, content_pos, menu_status = 0;
+	guint digit, pos, unit, content_pos, menu_status = 0, temp_beam;
 
 	p = NULL;
 
@@ -4468,8 +4480,7 @@ void draw3_data1(DRAW_UI_P p)
 						gtk_widget_set_sensitive(pp->eventbox31[1],FALSE);
 					}
 					break;
-				case 2:/*focal law -> beam -> max angle  p621*/
-					/* 当前步进 */
+				case 2:/* 角度扫查的最大角度 P621 */
 					switch (TMP(max_angle_reg))
 					{
 						case 0:	tmpf = 0.1; break;
@@ -4477,24 +4488,28 @@ void draw3_data1(DRAW_UI_P p)
 						case 2:	tmpf = 10.0; break;
 						default:break;
 					}
-
-					if( LAW_VAL(Focal_type)!=1 && CFG(auto_program))
-						/*Law Config 不为linear ,同时auto program 为 on 时，Element Qty 才可调*/
+					if( (LAW_VAL(Focal_type) == ANGLE_SCAN) &&
+							(CFG(auto_program) == AUTO_FOCAL_ON))
+						/* 聚焦法则自动计算开启时并且是角度扫查, Max Angle 才可调节 */
 					{
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 						{
-							cur_value = GROUP_VAL(max_angle)/100.0;
-							lower = -89.9;
-							upper = 89.9;
+							/* 计算lower为妙 */
+							cur_value = LAW_VAL(Angle_end) / 100.0;
+							temp_beam = LAW_MAX_QTY - get_beam_qty() + TMP(beam_qty[CFG(groupId)]);
+							lower = LAW_VAL (Angle_start) / 100.0;
+							upper = MIN ((gint)(LAW_VAL (Angle_start) +
+										(gint)(temp_beam * LAW_VAL(Angle_step))) / 100.0, 89.9);
 							step = tmpf;
 							digit = 1;
 							pos = 1;
 							unit = UNIT_DEG;
-							draw3_digit_pressed (data_621, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
+							draw3_digit_pressed (data_621, units[unit], cur_value , lower, upper,
+									step, digit, p, pos, 0);
 						}
 						else 
 						{
-							cur_value = GROUP_VAL(max_angle)/100.0;
+							cur_value = LAW_VAL(Angle_end) / 100.0;
 							digit = 1;
 							pos = 1;
 							unit = UNIT_DEG;
@@ -4502,27 +4517,12 @@ void draw3_data1(DRAW_UI_P p)
 						}
 					}
 					else
-						/*Law Config 为linear ,或auto program 为 off 时，Element Qty 不可调*/
 					{
-						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
-						{
-							cur_value = GROUP_VAL(max_angle)/100.0;
-							lower = -89.9;
-							upper = 89.9;
-							step = tmpf;
-							digit = 1;
-							pos = 1;
-							unit = UNIT_DEG;
-							draw3_digit_pressed (data_621, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
-						}
-						else 
-						{
-							cur_value = GROUP_VAL(max_angle)/100.0;
-							digit = 1;
-							pos = 1;
-							unit = UNIT_DEG;
-							draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
-						}
+						cur_value = LAW_VAL(Angle_end) / 100.0;
+						digit = 1;
+						pos = 1;
+						unit = UNIT_DEG;
+						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 						gtk_widget_set_sensitive(pp->eventbox30[1],FALSE);
 						gtk_widget_set_sensitive(pp->eventbox31[1],FALSE);
 					}
@@ -4764,7 +4764,7 @@ void draw3_data2(DRAW_UI_P p)
 	gchar *str = NULL;
 	guint menu_status = 0;
 
-	gfloat cur_value=0.0, lower, upper, step, max_tmp, max_tmp1;
+	gfloat cur_value=0.0, lower, upper, step, max_tmp, max_tmp1, temp_beam;
 	guint digit, pos, unit;
 
 	//	p = NULL;
@@ -6081,10 +6081,7 @@ void draw3_data2(DRAW_UI_P p)
 					}
 
 					break;
-
-
-				case 2:/*focal law -> beam -> angel step p622 */
-					/* 当前步进 */
+				case 2:/* 角度扫查的步进 P622 */
 					switch (pp->p_tmp_config->angle_step_reg)
 					{
 						case 0:	tmpf = 0.1; break;
@@ -6092,24 +6089,28 @@ void draw3_data2(DRAW_UI_P p)
 						case 2:	tmpf = 10.0; break;
 						default:break;
 					}
-
-					if( LAW_VAL(Focal_type)!=1 && CFG(auto_program))
-						/*Law Config 不为linear ,同时auto program 为 on 时，Element Qty 才可调*/
+					if (( LAW_VAL(Focal_type) == ANGLE_SCAN) &&
+							(CFG(auto_program) == AUTO_FOCAL_ON))
+						/* 角度扫查时开始自动计算聚焦法则时候可以调节 */
 					{
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 						{
-							cur_value = GROUP_VAL(angle_step)/100.0;
-							lower = 0.1;
+							cur_value = LAW_VAL (Angle_step) / 100.0;
+							temp_beam = LAW_MAX_QTY - get_beam_qty() + TMP(beam_qty[CFG(groupId)]);
+							lower = MAX (((gint)(LAW_VAL (Angle_end)) - 
+										(gint)(LAW_VAL (Angle_start))) 
+									/ (100.0 * temp_beam), 0.1);
 							upper = 89.9;
 							step = tmpf;
 							digit = 1;
 							pos = 2;
 							unit = UNIT_DEG;
-							draw3_digit_pressed (data_622, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
+							draw3_digit_pressed (data_622, units[unit], cur_value,
+									lower, upper, step, digit, p, pos, 0);
 						}
 						else 
 						{
-							cur_value = GROUP_VAL(angle_step)/100.0;
+							cur_value = LAW_VAL (Angle_step) / 100.0;
 							digit = 1;
 							pos = 2;
 							unit = UNIT_DEG;
@@ -6117,27 +6118,12 @@ void draw3_data2(DRAW_UI_P p)
 						}
 					}
 					else
-						/*Law Config 为linear ,或auto program 为 off 时，Element Qty 不可调*/
 					{
-						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
-						{
-							cur_value = GROUP_VAL(angle_step)/100.0;
-							lower = 0.1;
-							upper = 89.9;
-							step = tmpf;
-							digit = 1;
-							pos = 2;
-							unit = UNIT_DEG;
-							draw3_digit_pressed (data_621, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
-						}
-						else 
-						{
-							cur_value = GROUP_VAL(angle_step)/100.0;
-							digit = 1;
-							pos = 2;
-							unit = UNIT_DEG;
-							draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
-						}
+						cur_value = LAW_VAL (Angle_step) / 100.0;
+						digit = 1;
+						pos = 2;
+						unit = UNIT_DEG;
+						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 						gtk_widget_set_sensitive(pp->eventbox30[2],FALSE);
 						gtk_widget_set_sensitive(pp->eventbox31[2],FALSE);
 					}
@@ -7413,10 +7399,7 @@ void draw3_data3(DRAW_UI_P p)
 						gtk_widget_set_sensitive(pp->eventbox31[3],FALSE);
 					}
 					break;
-
-
-				case 2:/*Focal law -> Beam -> focus depth p623 */
-					/* 当前步进 */
+				case 2:/* 聚焦深度 线扫   聚焦声程 角度扫查 P623 */
 					switch (TMP(focus_depth_reg))
 					{
 						case 0:	tmpf = 0.1; break;
@@ -7424,28 +7407,41 @@ void draw3_data3(DRAW_UI_P p)
 						case 2:	tmpf = 10.0; break;
 						default:break;
 					}
-					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
+					if (( LAW_VAL(Focal_type) == ANGLE_SCAN) &&
+							(CFG(auto_program) == AUTO_FOCAL_ON))
+						/* 自动计算聚焦法则时候可以调节 */
 					{
-						cur_value = GROUP_VAL(focus_depth)/100.0;
-						lower = 0.10;
-						upper = 100.00;
-						step = tmpf;
-						digit = 1;
-						pos = 3;
-						unit = UNIT_MM;
-						draw3_digit_pressed (data_623, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
+						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
+						{
+							cur_value = LAW_VAL(Focus_depth)/100.0;
+							lower = 0.10;
+							upper = 100.00;
+							step = tmpf;
+							digit = 1;
+							pos = 3;
+							unit = UNIT_MM;
+							draw3_digit_pressed (data_623, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
+						}
+						else 
+						{
+							cur_value = LAW_VAL(Focus_depth)/100.0;
+							digit = 1;
+							pos = 3;
+							unit = UNIT_MM;
+							draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
+						}
 					}
-					else 
+					else
 					{
-						cur_value = GROUP_VAL(focus_depth)/100.0;
+						cur_value = LAW_VAL(Focus_depth)/100.0;
 						digit = 1;
 						pos = 3;
-						unit = UNIT_MM;
+						unit = UNIT_DEG;
 						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
+						gtk_widget_set_sensitive(pp->eventbox30[3],FALSE);
+						gtk_widget_set_sensitive(pp->eventbox31[3],FALSE);
 					}
 					break;
-
-
 				case 3:
 					if ( !con2_p[6][3][3] )
 						gtk_widget_hide (pp->eventbox30[3]);
@@ -8506,18 +8502,25 @@ void draw3_data4(DRAW_UI_P p)
 						gtk_widget_hide (pp->eventbox30[4]);
 					gtk_widget_hide (pp->eventbox31[4]);
 					break;
-				case 1:/*Focal Law -> aperture -> wave type  p614 */
+				case 1: /* 选择纵波还是横波 P614 */
 					pp->x_pos = 544, pp->y_pos = 456-YOFFSET;
-					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
-						draw3_pop_tt (data_614, NULL, 
-								menu_content[W_TYPE+GROUP_VAL(wave_type)],
-								menu_content+WAVE_TYPE, 3, 4, GROUP_VAL(wave_type), 0);
-					else 
-						draw3_popdown (menu_content[W_TYPE+GROUP_VAL(wave_type)], 4, 0);
-
+					if(CFG(auto_program) == AUTO_FOCAL_ON)
+						/* 聚焦法则自动计算开启时, 纵横才可以调节 */
+					{
+						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
+							draw3_pop_tt (data_614, NULL, 
+									menu_content[W_TYPE + LAW_VAL(Wave_type)],
+									menu_content+WAVE_TYPE, 3, 4, LAW_VAL(Wave_type), 0);
+						else 
+							draw3_popdown (menu_content[W_TYPE + LAW_VAL(Wave_type)], 4, 0);
+					}
+					else /* 聚焦法则自动计算为OFF, Min.Angle 不可调节 */
+					{
+						draw3_popdown (menu_content[W_TYPE + LAW_VAL(Wave_type)], 4, 0);
+						gtk_widget_set_sensitive(pp->eventbox30[4],FALSE);
+						gtk_widget_set_sensitive(pp->eventbox31[4],FALSE);
+					}
 					break;
-
-
 				case 2:
 					if ( !con2_p[6][2][4] )
 						gtk_widget_hide (pp->eventbox30[4]);

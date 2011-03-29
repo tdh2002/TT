@@ -171,7 +171,7 @@ typedef struct law_info
 	guchar	Last_tx_elem;		/* 法则使用的最后一个发射阵元 */
 	guchar	Last_rx_elem;		/* 法则使用的最后一个接收阵元 */
 	guchar	Elem_step;		/* 线扫时候可以设置阵元间隔 */
-	guchar	Velocity_type;		/* 纵波 或者 横波 */
+	guchar	Wave_type;		/* 纵波 或者 横波 */
 	gshort	Angle_start;	/* PA 时候是开始角度 UT时候记录探头角度 */
 	gshort	Angle_end;		/* 扇扫时候可以设置的角度 0.01度为单位 */
 	gushort	Angle_step;		/* 扇扫时候可以设置的角度步进 */
@@ -352,11 +352,6 @@ typedef struct Group {
 
 	guchar	last_element;                   /* 最后一个阵元 (线扫时候可以设置) */
 	guchar	element_step;                   /* 阵元间隔 (线扫时候可以设置) */
-	guchar	wave_type;                      /* 0纵波 与 1横波 */
-
-	gshort	max_angle;
-	gshort	angle_step;
-	gushort	focus_depth;                    /*Focal Law -> Beam -> focus_depth*/
 } GROUP, *GROUP_P;
 
 /*配置信息 (CONFIG)*/
@@ -811,8 +806,7 @@ typedef struct Draw_interface {
 
 } DRAW_UI, *DRAW_UI_P;
 
-typedef struct _MY_SIGNAL_TMP
-{
+typedef struct _MY_SIGNAL_TMP {
 	GtkTreeModel *source_model;
 	GtkTreeSelection *source_selection;
 	GtkWidget *source_list;
@@ -820,7 +814,7 @@ typedef struct _MY_SIGNAL_TMP
 	GtkTreeModel *target_model;
 	GtkTreeSelection *target_selection;
 	GtkWidget *target_list;
-}MY_SIGNAL,*MY_SIGNAL_P;
+} MY_SIGNAL,*MY_SIGNAL_P;
 
 
 /* 315 Data Link 止 20110212*/

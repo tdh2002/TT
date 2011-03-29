@@ -528,3 +528,8 @@ const gchar *field1_en[]	= {"A%  Peak amplitude in gate A", "AdBA  Signal in gat
 const gchar *field_en[]		= {"A%", "AdBA", "AdBr", "B%"};
 //const gchar *selection_en[] = {"A-scan", "B-scan", "C-scan", "Strip Chart", "S-scan", "R and M", "Reference", "Measure", "Data"};
 //const gchar *source_en[] = {"A^", "A^-I^", "A^-I/", "B^", "B^-I^", "B^-I/", "B^-A^", "I^", "I/"};
+
+
+const gchar *warning_info_en[] = {
+	"max laws is 256!"
+};

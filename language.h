@@ -26,4 +26,5 @@ extern const gchar *field_en[];
 
 extern const gchar *mouse_en[];
 
+extern const gchar *warning_info_en[];
 #endif
