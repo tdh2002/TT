@@ -204,7 +204,7 @@ void draw_b_scan (gushort *p, guint width, guint height, DOT_TYPE *data, DOT_TYP
 void draw_s_scan (gushort *p, guint width, guint height, DOT_TYPE *data, DOT_TYPE *data1,
 		guint xoffset, guint yoffset, guchar groupId, guchar ut_unit)
 {
-	gint i, temp;
+	gint i, j, k, temp;
 	switch (ut_unit)	
 	{
 		case UT_UNIT_SOUNDPATH:
@@ -217,13 +217,21 @@ void draw_s_scan (gushort *p, guint width, guint height, DOT_TYPE *data, DOT_TYP
 				else if (height == TMP(beam_qty[groupId]))
 				{
 					/* 不变 */
-
+					for (i = 0; i < TMP(beam_qty[groupId]); i++)
+							for (k = 0; k < width - 1; k++)
+								fbdot (p, xoffset + k, yoffset + i,
+										TMP(color_amp[data1[width * i + k]]));
 				}
 				else if (height > TMP(beam_qty[groupId]))
 				{
 					/* 拉伸 */
+					for (i = 0; i < TMP(beam_qty[groupId]); i++)
+						for (j = 0; j < height / TMP(beam_qty[groupId]); j++)
+							for (k = 0; k < width - 1; k++)
+								fbdot (p, xoffset + k, yoffset + i * height / TMP(beam_qty[groupId]) + j
+										, TMP(color_amp[data1[width * i + k]]));
 				}
-			break;
+				break;
 		case  UT_UNIT_TRUE_DEPTH:
 
 			break;

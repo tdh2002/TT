@@ -2432,10 +2432,12 @@ void draw_area_all()
 				gtk_widget_show (pp->vbox_area[0]);
 				break;
 			case S_SCAN:
+				pp->draw_area[0].scan_type	=	S_SCAN;
 				gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
 				draw_area(pp->vbox_area[0], &(pp->draw_area[0]), 655, 425, "S-scan", 0.0, 100.0,
 						0.0, 100.0, 0.0, 100.0, NULL);
 				gtk_widget_show (pp->vbox_area[0]);
+				set_scan_config (0, S_SCAN, 615, 615, 390, 0, 0, CFG(groupId));
 				break;
 			case A_B_SCAN:
 				pp->draw_area[0].scan_type	=	A_SCAN;
@@ -7407,7 +7409,7 @@ void draw3_data3(DRAW_UI_P p)
 						case 2:	tmpf = 10.0; break;
 						default:break;
 					}
-					if (( LAW_VAL(Focal_type) == ANGLE_SCAN) &&
+					if ((LAW_VAL(Focal_type) == ANGLE_SCAN) &&
 							(CFG(auto_program) == AUTO_FOCAL_ON))
 						/* 自动计算聚焦法则时候可以调节 */
 					{
@@ -7420,7 +7422,8 @@ void draw3_data3(DRAW_UI_P p)
 							digit = 1;
 							pos = 3;
 							unit = UNIT_MM;
-							draw3_digit_pressed (data_623, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
+							draw3_digit_pressed (data_623, units[unit], cur_value , lower, upper,
+									step, digit, p, pos, 0);
 						}
 						else 
 						{
@@ -9871,7 +9874,7 @@ static void draw_scan(guchar scan_num, guchar scan_type, guchar group,
 				draw_b_scan(dot_temp1, TMP(b_scan_width), TMP(b_scan_height),dot_temp,
 						TMP(scan_data[group]) + TMP(a_scan_width) * TMP(beam_num[group]),
 						xoff, yoff, group, 1);
-				pp->bscan_mark = 0;
+				pp->bscan_mark = 0;	/* mark 的时候把画图区清空 */
 			}
 			else
 				draw_b_scan(dot_temp1, TMP(b_scan_width), TMP(b_scan_height),dot_temp,
@@ -9879,8 +9882,9 @@ static void draw_scan(guchar scan_num, guchar scan_type, guchar group,
 						xoff, yoff, group, 0);
 			break;
 		case S_SCAN:
-
-
+				draw_s_scan(dot_temp1, TMP(s_scan_width), TMP(s_scan_height),dot_temp,
+						TMP(scan_data[group]),
+						xoff, yoff, group, 0);
 			break;
 		case C_SCAN:
 			break;

@@ -1543,10 +1543,12 @@ static void handler_key(guint keyval, gpointer data)
 	switch (keyval) 
 	{
 		case GDK_KP_0:
-			(TMP(beam_num[CFG(groupId)])	< (TMP(beam_qty[CFG(groupId)]) - 1))	?
+			(TMP(beam_num[CFG(groupId)])	< (TMP(beam_qty[CFG(groupId)])) - 1)	?
 				(TMP(beam_num[CFG(groupId)]) += 1)	:	
-			(TMP(beam_num[CFG(groupId)])	= (TMP(beam_qty[CFG(groupId)]) - 1));
-			g_print("beam num =%d\n", TMP(beam_num[CFG(groupId)]));
+			(TMP(beam_num[CFG(groupId)])	= 0);
+			g_print("beam num = %d beam_qt = y%d\n", TMP(beam_num[CFG(groupId)]),
+					(TMP(beam_qty[CFG(groupId)])));
+			;
 			break;
 		case GDK_Super_L:
 			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
