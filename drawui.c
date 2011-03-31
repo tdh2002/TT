@@ -2181,12 +2181,12 @@ static gboolean draw_info(GtkWidget *widget, GdkEventExpose *event, gpointer dat
 		{
 			case	A_SCAN:
 			case	B_SCAN:
+			case	S_SCAN:
 				color_r = ((TMP(color_amp[i * 256 / h]) >> 11)) / 32.0;
 				color_g = ((TMP(color_amp[i * 256 / h]) & 0x07e0) >> 5) / 64.0;
 				color_b = ((TMP(color_amp[i * 256 / h]) & 0x1f)) /  32.0;
 				break;
 			case	C_SCAN:
-			case	S_SCAN:
 				break;
 			default:break;
 		}
@@ -2302,27 +2302,33 @@ static void draw_area(GtkWidget *parent_box, DRAW_AREA *draw_area, guint width, 
 	gtk_widget_set_events (draw_area->drawing_area, GDK_POINTER_MOTION_MASK |
 			GDK_POINTER_MOTION_HINT_MASK);
 
-	draw_area->vruler1 = gtk_vruler_new ();
-	gtk_ruler_set_metric (GTK_RULER (draw_area->vruler1), GTK_PIXELS);
-	gtk_ruler_set_range (GTK_RULER (draw_area->vruler1), v1s, v1e, 0, 1);
-	gtk_widget_modify_bg (draw_area->vruler1, GTK_STATE_NORMAL, &color_rule);
-	gtk_widget_set_size_request (GTK_WIDGET (draw_area->vruler1), 15, height - 35);
-	g_signal_connect_swapped ((draw_area->drawing_area), "motion_notify_event",
-			G_CALLBACK (EVENT_METHOD ((draw_area->vruler1), motion_notify_event)),
-			draw_area->vruler1);
-	gtk_table_attach (GTK_TABLE (draw_area->table), draw_area->vruler1, 0, 1, 0, 1,
-			GTK_FILL, GTK_EXPAND|GTK_SHRINK|GTK_FILL, 0, 0);
+	if (v1s != v1e) 
+	{
+		draw_area->vruler1 = gtk_vruler_new ();
+		gtk_ruler_set_metric (GTK_RULER (draw_area->vruler1), GTK_PIXELS);
+		gtk_ruler_set_range (GTK_RULER (draw_area->vruler1), v1s, v1e, 0, 1);
+		gtk_widget_modify_bg (draw_area->vruler1, GTK_STATE_NORMAL, &color_rule);
+		gtk_widget_set_size_request (GTK_WIDGET (draw_area->vruler1), 15, height - 35);
+		g_signal_connect_swapped ((draw_area->drawing_area), "motion_notify_event",
+				G_CALLBACK (EVENT_METHOD ((draw_area->vruler1), motion_notify_event)),
+				draw_area->vruler1);
+		gtk_table_attach (GTK_TABLE (draw_area->table), draw_area->vruler1, 0, 1, 0, 1,
+				GTK_FILL, GTK_EXPAND|GTK_SHRINK|GTK_FILL, 0, 0);
+	}
 
-	draw_area->vruler2 = gtk_vruler_new ();
-	gtk_ruler_set_metric (GTK_RULER (draw_area->vruler2), GTK_PIXELS);
-	gtk_ruler_set_range (GTK_RULER (draw_area->vruler2), v2e, v2s, 0, 1);
-	gtk_widget_modify_bg(draw_area->vruler2, GTK_STATE_NORMAL, &color_rule);
-	gtk_widget_set_size_request (GTK_WIDGET (draw_area->vruler2), 15, height - 35);
-	g_signal_connect_swapped (G_OBJECT (draw_area->drawing_area), "motion_notify_event",
-			G_CALLBACK (EVENT_METHOD (draw_area->vruler2, motion_notify_event)),
-			draw_area->vruler2);			
-	gtk_table_attach (GTK_TABLE (draw_area->table), draw_area->vruler2, 3, 4, 0, 1,
-			GTK_FILL, GTK_EXPAND|GTK_SHRINK|GTK_FILL, 0, 0);
+	if (v2s != v2e) 
+	{
+		draw_area->vruler2 = gtk_vruler_new ();
+		gtk_ruler_set_metric (GTK_RULER (draw_area->vruler2), GTK_PIXELS);
+		gtk_ruler_set_range (GTK_RULER (draw_area->vruler2), v2e, v2s, 0, 1);
+		gtk_widget_modify_bg(draw_area->vruler2, GTK_STATE_NORMAL, &color_rule);
+		gtk_widget_set_size_request (GTK_WIDGET (draw_area->vruler2), 15, height - 35);
+		g_signal_connect_swapped (G_OBJECT (draw_area->drawing_area), "motion_notify_event",
+				G_CALLBACK (EVENT_METHOD (draw_area->vruler2, motion_notify_event)),
+				draw_area->vruler2);			
+		gtk_table_attach (GTK_TABLE (draw_area->table), draw_area->vruler2, 3, 4, 0, 1,
+				GTK_FILL, GTK_EXPAND|GTK_SHRINK|GTK_FILL, 0, 0);
+	}
 
 	if (h1s != h1e) 
 	{
@@ -2362,6 +2368,7 @@ static inline void set_scan_config (guchar scan_num,guchar scan_type, guint aw, 
 	switch (scan_type)
 	{
 		case A_SCAN:
+		case A_SCAN_R:
 			TMP(a_scan_width)	=	w;
 			TMP(a_scan_height)	=	h;
 			break;
@@ -2379,8 +2386,17 @@ static inline void set_scan_config (guchar scan_num,guchar scan_type, guint aw, 
 			break;
 		default:break;
 	}
-	TMP(a_scan_width)	=	aw;
+	TMP(a_scan_dot_qty)	=	aw;
 	return ;
+}
+
+/*
+ * 修改波形区的 刻度尺 标签的信息 
+ *
+ */
+void set_drawarea_property()
+{
+
 }
 
 /* 画波形数据显示区 */
@@ -2501,12 +2517,39 @@ void draw_area_all()
 				break;
 
 			case A_S_CC_SCAN:
-				gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
-				draw_area(pp->vbox_area[0], &(pp->draw_area[0]), 655, 150, "A-scan", 0.0, 100.0,
-						0.0, 100.0, 0.0, 100.0, NULL);
-				draw_area(pp->vbox_area[0], &(pp->draw_area[1]), 655, 275, "S-scan", 0.0, 100.0,
-						0.0, 100.0, 0.0, 100.0, NULL);
-				gtk_widget_show (pp->vbox_area[0]);
+				if (CFG(c_scan11) == C_SCAN_OFF)
+				{
+					if ((GROUP_VAL(ut_unit) == UT_UNIT_SOUNDPATH) ||
+							(GROUP_VAL(ut_unit) == UT_UNIT_TIME))
+					{
+						pp->draw_area[0].scan_type	=	A_SCAN;
+						pp->draw_area[1].scan_type	=	S_SCAN;
+						gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
+						draw_area(pp->vbox_area[0], &(pp->draw_area[0]), 655, 150, "A-scan", 0.0, 100.0,
+								0.0, 100.0, 0.0, 0.0, NULL);
+						draw_area(pp->vbox_area[0], &(pp->draw_area[1]), 655, 295, "S-scan", 0.0, 100.0,
+								0.0, 100.0, 0.0, 100.0, NULL);
+						gtk_widget_show (pp->vbox_area[0]);
+						set_scan_config (0, A_SCAN, 615, 615, 115, 0, 0, CFG(groupId));
+						set_scan_config (1, S_SCAN, 615, 615, 260, 0, 130, CFG(groupId));
+					}
+					else if (GROUP_VAL(ut_unit) == UT_UNIT_TRUE_DEPTH)
+					{
+						pp->draw_area[0].scan_type	=	A_SCAN_R;
+						pp->draw_area[1].scan_type	=	S_SCAN;
+						gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->hbox_area[0], FALSE, FALSE, 0);
+						draw_area(pp->hbox_area[0], &(pp->draw_area[0]), 250, 425, "A-scann", 0.0,
+								100.0, 0.0, 100.0, 0.0, 100.0, NULL);
+						draw_area(pp->hbox_area[0], &(pp->draw_area[1]), 405, 425, "S-scan", 0.0, 
+								100.0, 0.0, 100.0, 0.0, 100.0, NULL);
+						gtk_widget_show (pp->hbox_area[0]);
+						set_scan_config (0, A_SCAN_R, 390, 210, 390, 0, 0, CFG(groupId));
+						set_scan_config (1, S_SCAN, 390, 365, 390, 250, 0, CFG(groupId));
+					}
+				}
+				else
+				{
+				}
 				break;
 
 			case Strip_Chart_AA:
@@ -4013,25 +4056,23 @@ void draw3_data1(DRAW_UI_P p)
 									menu_content[GROUP + CFG(display_group)],
 									menu_content + GROUP, 2, 1, CFG(display_group), menu_status);
 						}
-						else if(CFG(display)==2 || CFG(display)==5 || CFG(display)==7)
-							/*Display 为 C-Scan 或 A-B-C 或 A-C-[C]*/
+						else if ((CFG(display) == C_SCAN) || 
+								(CFG(display) == A_B_C_SCAN) ||
+								(CFG(display) == A_C_CC_SCAN))
 						{
 							draw3_pop_tt (data_4011, NULL, 
-									menu_content[C_SCAN1+CFG(c_scan1)],
+									menu_content[C_SCAN1 + CFG(c_scan1)],
 									menu_content + C_SCAN1, 4, 1, CFG(c_scan1), 0);
 							str = g_strdup_printf ("%s", con2_p[4][0][6]);	
 							gtk_label_set_text (GTK_LABEL (pp->label3[1]), str);
-
 						}
-						else if(CFG(display)==8)
-							/*Display 为 A-S-[C]*/
+						else if (CFG(display) == A_S_CC_SCAN)
 						{
 							draw3_pop_tt (data_4012, NULL, 
 									menu_content[C_SCAN1+CFG(c_scan11)],
 									menu_content + C_SCAN1, 5, 1, CFG(c_scan11), 0);
 							str = g_strdup_printf ("%s", con2_p[4][0][6]);	
 							gtk_label_set_text (GTK_LABEL (pp->label3[1]), str);
-
 						}
 						else if(CFG(display)==10)
 							/*Display 为 Strip Chart-[A]*/
@@ -4051,12 +4092,13 @@ void draw3_data1(DRAW_UI_P p)
 					}
 					else 
 					{
-						if(CFG(display)==0 || CFG(display)==3)/*Display 为 A-Scan 或 S-Scan*/
+						if(CFG(display) == A_SCAN || CFG(display) == S_SCAN)
 						{
 							draw3_popdown (menu_content[GROUP+CFG(display_group)], 1, 0);
 						}
-						else if(CFG(display)==2 || CFG(display)==5 || CFG(display)==7)
-							/*Display 为 C-Scan 或 A-B-C 或 A-C-[C]*/
+						else if ((CFG(display) == C_SCAN) || 
+								(CFG(display) == A_B_C_SCAN) ||
+								(CFG(display) == A_C_CC_SCAN))
 						{
 							draw3_popdown (menu_content[C_SCAN1+CFG(c_scan1)], 1, 0);
 							str = g_strdup_printf ("%s", con2_p[4][0][6]);	
@@ -9868,6 +9910,12 @@ static void draw_scan(guchar scan_num, guchar scan_type, guchar group,
 					dot_temp, dot_temp, 
 					xoff, yoff, group);
 			break;
+		case A_SCAN_R:
+			draw_a_scan_r(dot_temp1, TMP(a_scan_width), TMP(a_scan_height),
+					TMP(scan_data[group]) + TMP(a_scan_width) * TMP(beam_num[group]),
+					dot_temp, dot_temp, 
+					xoff, yoff, group);
+			break;
 		case B_SCAN:
 			if (pp->bscan_mark)
 			{
@@ -9917,22 +9965,22 @@ static gboolean time_handler2(GtkWidget *widget)
 			{  
 				for (offset = 0, k = 0 ; k < i; k++)
 					offset += GROUP_VAL_POS((k), point_qty) * TMP(beam_qty[k]);
-				if (GROUP_VAL_POS(i, point_qty) <= TMP(a_scan_width))
+				if (GROUP_VAL_POS(i, point_qty) <= TMP(a_scan_dot_qty))
 				{
 					interpolation_data (
 							(DOT_TYPE *)(pp->p_beam_data + offset +
 								GROUP_VAL_POS(i, point_qty) * j),
-							TMP(scan_data[i] + TMP(a_scan_width) * j), 
+							TMP(scan_data[i] + TMP(a_scan_dot_qty) * j), 
 							GROUP_VAL_POS(i, point_qty),
-							TMP(a_scan_width));
+							TMP(a_scan_dot_qty));
 				}
-				else if (GROUP_VAL_POS(i, point_qty) > TMP(a_scan_width))
+				else if (GROUP_VAL_POS(i, point_qty) > TMP(a_scan_dot_qty))
 					compress_data (
 							(DOT_TYPE *)(pp->p_beam_data + offset +
 								GROUP_VAL_POS(i, point_qty) * j),
-							TMP(scan_data[i] + TMP(a_scan_width) * j), 
+							TMP(scan_data[i] + TMP(a_scan_dot_qty) * j), 
 							GROUP_VAL_POS(i, point_qty),
-							TMP(a_scan_width), 
+							TMP(a_scan_dot_qty), 
 							GROUP_VAL_POS(i, rectifier));
 			}
 			for (k = 0; ((k < 16) && (TMP(scan_type[k]) != 0xff)); k++)

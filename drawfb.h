@@ -23,6 +23,9 @@ extern void fbline(gushort *p, gint x1, gint y1, gint x2, gint y2, gushort col);
 extern void draw_a_scan (gushort *p, guint width, guint height, 
 		DOT_TYPE *data, DOT_TYPE *data1, DOT_TYPE *data2,
 		guint xoffset, guint yoffset, guchar groupId);
+extern void draw_a_scan_r (gushort *p, guint width, guint height, 
+		DOT_TYPE *data, DOT_TYPE *data1, DOT_TYPE *data2,
+		guint xoffset, guint yoffset, guchar groupId);
 /* */
 extern void draw_b_scan (gushort *p, guint width, guint height, DOT_TYPE *data, DOT_TYPE *data1,
 		guint xoffset, guint yoffset, guchar groupId, guchar mark);

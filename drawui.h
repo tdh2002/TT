@@ -85,10 +85,20 @@
 /* 显示模式ABSC */
 #define	DISPLAY_ALL_GROUP	0
 #define DISPLAY_CURRENT_GROUP	1
+
+#define C_SCAN_A_HEIGHT		0
+#define C_SCAN_B_HEIGHT		1
+#define C_SCAN_THICKNESS	2
+#define C_SCAN_I_GATE		3
+#define C_SCAN_OFF			4
+
+
 #define A_SCAN	     0
+#define A_SCAN_R		0x20
 #define B_SCAN	     1
 #define C_SCAN	     2
 #define S_SCAN	     3
+#define S_SCAN_R		0x23
 #define A_B_SCAN     4
 #define A_B_C_SCAN	 5
 #define A_B_S_SCAN	 6

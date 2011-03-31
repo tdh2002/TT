@@ -1546,7 +1546,7 @@ static void handler_key(guint keyval, gpointer data)
 			(TMP(beam_num[CFG(groupId)])	< (TMP(beam_qty[CFG(groupId)])) - 1)	?
 				(TMP(beam_num[CFG(groupId)]) += 1)	:	
 			(TMP(beam_num[CFG(groupId)])	= 0);
-			g_print("beam num = %d beam_qt = y%d\n", TMP(beam_num[CFG(groupId)]),
+			g_print("beam num = %d beam_qty = %d\n", TMP(beam_num[CFG(groupId)]),
 					(TMP(beam_qty[CFG(groupId)])));
 			;
 			break;
@@ -2765,12 +2765,14 @@ void data_4011 (GtkMenuItem *menuitem, gpointer data) /* Display -> Selection ->
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
 }
-void data_4012 (GtkMenuItem *menuitem, gpointer data) /* Display -> Selection -> C-Scan1 p401 */
+
+void data_4012 (GtkMenuItem *menuitem, gpointer data) /* ASC显示模式后时候Cscan的source P401 */
 {
 	CFG(c_scan11) = (guchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
 }
+
 void data_4013 (GtkMenuItem *menuitem, gpointer data) /* Display -> Selection -> Data1 p401 */
 {
 	CFG(data1) = (guchar) (GPOINTER_TO_UINT (data));

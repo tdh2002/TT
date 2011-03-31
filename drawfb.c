@@ -172,6 +172,32 @@ void draw_a_scan (gushort *p, guint width, guint height,
 	}
 }
 
+/* 画A扫描 data 原始数据 data1 data2 包络数据 */
+void draw_a_scan_r (gushort *p, guint width, guint height, 
+		DOT_TYPE *data, DOT_TYPE *data1, DOT_TYPE *data2,
+		guint xoffset, guint yoffset, guchar groupId)
+{
+	gint	i;
+	/* 清空这块显示区 背景暂定黑色 可以全部一起清空 */
+	for (i = 0; i < height; i++)
+		memset (p + FB_WIDTH * (i + yoffset) + xoffset, 0x0, width * 2 );
+	/* 画回波 */
+	for (i = 0; i < height - 1; i++)
+	{
+		fbline (p, 
+				xoffset + width * HEIGHT_TABLE[data[i]],
+				yoffset + i,
+				xoffset + width * HEIGHT_TABLE[data[i + 1]],
+				yoffset + i + 1,
+				all_col_16[GROUP_VAL_POS(groupId, ascan_color)]);
+		/* 画包络 */
+		if (GROUP_VAL_POS(groupId, ascan_envelope))
+		{
+			/* 未完成 */
+		}
+	}
+}
+
 /* 画B扫描 */
 void draw_b_scan (gushort *p, guint width, guint height, DOT_TYPE *data, DOT_TYPE *data1,
 		guint xoffset, guint yoffset, guchar groupId, guchar mark)
@@ -212,7 +238,13 @@ void draw_s_scan (gushort *p, guint width, guint height, DOT_TYPE *data, DOT_TYP
 				if (height < TMP(beam_qty[groupId]))
 				{
 					/* 压缩s扫描 */
-
+					for (i = 0 ; i < height ; i++)		
+						for (k = 0; k < width - 1; k++)
+						{
+							temp = width * i * TMP(beam_qty[groupId]) / height;
+								fbdot (p, xoffset + k, yoffset + i,
+										TMP(color_amp[data1[temp + k]]));
+						}
 				}
 				else if (height == TMP(beam_qty[groupId]))
 				{

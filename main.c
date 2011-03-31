@@ -139,7 +139,7 @@ static void set_config (guint groupid)
 	CFG(display_group) = DISPLAY_CURRENT_GROUP; /*0是All*/
 	CFG(c_scan1)=0;   /*0是A%*/
 	CFG(c_scan2)=0;   /*0是A%*/
-	CFG(c_scan11)=0;  /*0是A%*/
+	CFG(c_scan11)	=	C_SCAN_OFF;
 	CFG(data1)=0;     /*0是A%*/
 	CFG(data2)=0;     /*0是A%*/
 	CFG(dis_mode)=0;  /* 0是 All & A-Scan */
@@ -311,6 +311,7 @@ int main (int argc, char *argv[])
 	/*	write(p_ui->p_tmp_config->fd_config, (void*)(p_ui->p_config), sizeof(CONFIG));*/
 
 	TMP(a_scan_width) = 615;
+	TMP(a_scan_dot_qty) = 615;
 	TMP(a_scan_height) = 120;
 
 	for (i = 0; i < 20480; i++)

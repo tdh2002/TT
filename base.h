@@ -642,6 +642,7 @@ typedef struct tmp_config {
 	guint	beam_qty[MAX_GROUP_QTY];		/* Group beam总数量	*/
 
 	/* 各种扫描窗口的大小, 位置 */
+	guint	a_scan_dot_qty;		/*  */
 	guint	a_scan_width;
 	guint	a_scan_height;
 	guint	b_scan_width;
