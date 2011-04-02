@@ -7,6 +7,8 @@
 #include "drawui.h"
 #include "drawfb.h"
 #include <fcntl.h>
+#include <stdlib.h>
+#include <math.h>
 #include <string.h>
 #include <sys/ioctl.h>
 #include <sys/mman.h>
@@ -146,6 +148,38 @@ void fbline(gushort *p, gint x1, gint y1, gint x2, gint y2, gushort col)
 	}
 }
 
+/* 画圆 */
+void fbround(gushort *p, gint x0, gint y0, gint radius, gushort color)
+{
+	unsigned int x,y,y1=0;
+	int s0,s1,s2;
+	int i=0;
+	x=x0+radius+1;        
+	y=y0;
+	do
+	{      
+		s0=abs((x-x0-1)*(x-x0-1)+(y-y0)*(y-y0)-radius*radius);
+		s1=abs((x-x0)*(x-x0)+(y-y0-1)*(y-y0-1)-radius*radius);
+		s2=abs((x-x0-1)*(x-x0-1)+(y-y0-1)*(y-y0-1)-radius*radius);
+		s0<=s1?(s0<=s2?x=x-1:(x=x-1,y=y-1)):(s1<=s2?y=y-1:(x=x-1,y=y-1));
+		if((x!=2*x0-x)&&(y1!=y))
+		{   
+			fbdot(p,2*x0-x,y,color);
+			fbdot(p,x,2*y0-y,color);
+//			fbline(p,x-1,y,2*x0-x+1,y,color);
+		}
+		if((y!=2*y0-y)&&(y1!=y))
+		{      
+			fbdot(p,x,y,color);    
+			fbdot(p,2*x0-x,2*y0-y,color);
+			fbline(p,2*x0-x+1,2*y0-y,x-1,2*y0-y,color);
+		}            
+		y1=y;
+	}while((x!=x0)&&(y!=(y0-radius)));
+
+}
+
+
 /* 画A扫描 data 原始数据 data1 data2 包络数据 */
 void draw_a_scan (gushort *p, guint width, guint height, 
 		DOT_TYPE *data, DOT_TYPE *data1, DOT_TYPE *data2,
@@ -226,8 +260,70 @@ void draw_b_scan (gushort *p, guint width, guint height, DOT_TYPE *data, DOT_TYP
 
 }
 
-/* 画S扫描 */
+/* 画S扫描 角度扫查 */
 void draw_s_scan (gushort *p, guint width, guint height, DOT_TYPE *data, DOT_TYPE *data1,
+		guint xoffset, guint yoffset, guchar groupId, guchar ut_unit)
+{
+	gint i, j, k, temp;
+	switch (ut_unit)	
+	{
+		case UT_UNIT_SOUNDPATH:
+		case UT_UNIT_TIME:
+				if (height < TMP(beam_qty[groupId]))
+				{
+					/* 压缩s扫描 */
+					for (i = 0 ; i < height ; i++)		
+						for (k = 0; k < width - 1; k++)
+						{
+							temp = width * i * TMP(beam_qty[groupId]) / height;
+								fbdot (p, xoffset + k, yoffset + i,
+										TMP(color_amp[data1[temp + k]]));
+						}
+				}
+				else if (height == TMP(beam_qty[groupId]))
+				{
+					/* 不变 */
+					for (i = 0; i < TMP(beam_qty[groupId]); i++)
+							for (k = 0; k < width - 1; k++)
+								fbdot (p, xoffset + k, yoffset + i,
+										TMP(color_amp[data1[width * i + k]]));
+				}
+				else if (height > TMP(beam_qty[groupId]))
+				{
+					/* 拉伸 */
+					for (i = 0; i < TMP(beam_qty[groupId]); i++)
+						for (j = 0; j <= height / TMP(beam_qty[groupId]); j++)
+							for (k = 0; k < width - 1; k++)
+								fbdot (p, xoffset + k, yoffset + i * height / TMP(beam_qty[groupId]) + j
+										, TMP(color_amp[data1[width * i + k]]));
+				}
+				break;
+		case  UT_UNIT_TRUE_DEPTH:
+				if (width > TMP(beam_qty[groupId]))
+				{
+					fbround(p, xoffset + width / 2, yoffset + height / 2,
+							MIN((width / 2), (height / 2)), all_col_16[2] );
+
+#if 0				
+					/* 拉伸 */
+					for (i = 0; i < TMP(beam_qty[groupId]); i++)
+						for (j = 0; j <= width / TMP(beam_qty[groupId]); j++)
+							for (k = 0; k < height - 1; k++)
+								fbdot (p, 
+										xoffset + i * width / TMP(beam_qty[groupId]) + j,
+										yoffset + k,
+										TMP(color_amp[data1[height * i + k]]));
+#endif
+
+				}
+			break;
+		default:break;
+	}
+	return ;
+}
+
+/* 画S扫描 */
+void draw_s_scan_r (gushort *p, guint width, guint height, DOT_TYPE *data, DOT_TYPE *data1,
 		guint xoffset, guint yoffset, guchar groupId, guchar ut_unit)
 {
 	gint i, j, k, temp;

@@ -15,7 +15,7 @@ LIBS=webkit-1.0 libxml-2.0
 
 # -O2
 CFLAGS=`pkg-config --cflags ${LIBS}` -Os -DX86 -Wall
-LDFLAGS=`pkg-config --libs ${LIBS}` -Wall
+LDFLAGS=`pkg-config --libs ${LIBS}` -Wall 
 
 all: ${PROG_NAME}
 

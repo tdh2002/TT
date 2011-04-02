@@ -1543,12 +1543,10 @@ static void handler_key(guint keyval, gpointer data)
 	switch (keyval) 
 	{
 		case GDK_KP_0:
-			(TMP(beam_num[CFG(groupId)])	< (TMP(beam_qty[CFG(groupId)])) - 1)	?
+			(TMP(beam_num[CFG(groupId)])	< (TMP(beam_qty[CFG(groupId)]) - 1))	?
 				(TMP(beam_num[CFG(groupId)]) += 1)	:	
-			(TMP(beam_num[CFG(groupId)])	= 0);
-			g_print("beam num = %d beam_qty = %d\n", TMP(beam_num[CFG(groupId)]),
-					(TMP(beam_qty[CFG(groupId)])));
-			;
+			(TMP(beam_num[CFG(groupId)])	= (TMP(beam_qty[CFG(groupId)]) - 1));
+			g_print("beam num =%d\n", TMP(beam_num[CFG(groupId)]));
 			break;
 		case GDK_Super_L:
 			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
@@ -1557,7 +1555,7 @@ static void handler_key(guint keyval, gpointer data)
 			}
 			else/*当主菜单条处于收回状态时*/
 			{
-				menu3_pop(MENU3_DIS);/*隐藏三级菜单的弹出菜单*/
+				menu3_pop(MENU3_HIDE);/*隐藏三级菜单的弹出菜单*/
 				main_menu_pop(MENU_POP);/*弹出主菜单条并选中当前选项*/
 				if ((tmp != pp->pos_pos) || (tmp1 != pp->mark_pop_change))
 				{
@@ -1569,12 +1567,16 @@ static void handler_key(guint keyval, gpointer data)
 		case GDK_Escape:
 			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
 			{
-				main_menu_pop(MENU_DIS);/*收回主菜单条*/
+				main_menu_pop(MENU_HIDE);/*收回主菜单条*/
 			}
 			else if((MENU31_PRESS == data1)||(MENU32_PRESS == data1)||(MENU33_PRESS == data1)||(MENU34_PRESS == data1)||(MENU35_PRESS == data1)||(MENU36_PRESS == data1))/*当三级菜单中有弹出菜单选项时*/
 			{
-				menu3_pop(MENU3_DIS);/*隐藏三级菜单的弹出菜单*/
+				menu3_pop(MENU3_HIDE);/*隐藏三级菜单的弹出菜单*/
 			}
+			/*if(PROBE_DIALOG_KEYPRESS == data1)
+			{
+				pp->response_id = GTK_RESPONSE_CANCEL;
+			}*/
 			else/*当主菜单条处于收回状态时*/
 			{
 				if ( pp->mark_pop_change == 1)
@@ -1608,9 +1610,8 @@ static void handler_key(guint keyval, gpointer data)
 			}
 			else if((MENU31_PRESS == data1)||(MENU32_PRESS == data1)||(MENU33_PRESS == data1)||(MENU34_PRESS == data1)||(MENU35_PRESS == data1)||(MENU36_PRESS == data1))/*当三级菜单中有弹出菜单选项时*/
 			{
-					menu3_pop(MENU3_ENTER);/*选中当前三级菜单，并收回三级菜单条*/
+				menu3_pop(MENU3_ENTER);/*选中当前三级菜单，并收回三级菜单条*/
 			}
-
 			else/*当主菜单条 三级菜单条 都处于收回状态时*/
 			{
 
@@ -1624,7 +1625,11 @@ static void handler_key(guint keyval, gpointer data)
 					pp->pos_pos = MENU3_STOP;
 					break;
 				case MENU3_STOP:
-					pp->pos_pos = MENU3_PRESSED;
+					if(gtk_widget_get_sensitive(pp->eventbox30[CUR_POS]))
+						pp->pos_pos = MENU3_PRESSED;
+					else
+						pp->pos_pos = MENU3_STOP;
+
 					/* 按下的动作在这里实现 */
 					break;
 				case MENU3_PRESSED:
@@ -1650,6 +1655,7 @@ static void handler_key(guint keyval, gpointer data)
 		case GDK_F2:
 			if(gtk_widget_get_sensitive(pp->eventbox2[0]))
 			{
+				menu3_pop(MENU3_HIDE);
 				if (pp->pos_pos == MENU2_PRESSED)
 					;
 				else 
@@ -1660,6 +1666,7 @@ static void handler_key(guint keyval, gpointer data)
 		case GDK_F3:
 			if(gtk_widget_get_sensitive(pp->eventbox2[1]))
 			{
+				menu3_pop(MENU3_HIDE);
 				if (pp->pos_pos == MENU2_PRESSED)
 					;
 				else 
@@ -1670,6 +1677,7 @@ static void handler_key(guint keyval, gpointer data)
 		case GDK_F4:
 			if(gtk_widget_get_sensitive(pp->eventbox2[2]))
 			{
+				menu3_pop(MENU3_HIDE);
 				if (pp->pos_pos == MENU2_PRESSED)
 					;
 				else 
@@ -1680,6 +1688,7 @@ static void handler_key(guint keyval, gpointer data)
 		case GDK_F5:
 			if(gtk_widget_get_sensitive(pp->eventbox2[3]))
 			{
+				menu3_pop(MENU3_HIDE);
 				if (pp->pos_pos == MENU2_PRESSED)
 					;
 				else 
@@ -1690,6 +1699,7 @@ static void handler_key(guint keyval, gpointer data)
 		case GDK_F6:
 			if(gtk_widget_get_sensitive(pp->eventbox2[4]))
 			{
+				menu3_pop(MENU3_HIDE);
 				if (pp->pos_pos == MENU2_PRESSED)
 					;
 				else 
@@ -1705,7 +1715,7 @@ static void handler_key(guint keyval, gpointer data)
 					menu3_pop(MENU3_TURN);
 				else
 				{
-					menu3_pop(MENU3_DIS); 
+					menu3_pop(MENU3_HIDE); 
 					b3_fun5(NULL);
 				}
 			}			
@@ -1717,7 +1727,7 @@ static void handler_key(guint keyval, gpointer data)
 					menu3_pop(MENU3_TURN);
 				else
 				{
-					menu3_pop(MENU3_DIS); 
+					menu3_pop(MENU3_HIDE); 
 					b3_fun4(NULL);
 				}
 			}			
@@ -1729,7 +1739,7 @@ static void handler_key(guint keyval, gpointer data)
 					menu3_pop(MENU3_TURN);
 				else
 				{
-					menu3_pop(MENU3_DIS); 
+					menu3_pop(MENU3_HIDE); 
 					b3_fun3(NULL);
 				}
 			}			
@@ -1741,7 +1751,7 @@ static void handler_key(guint keyval, gpointer data)
 					menu3_pop(MENU3_TURN);
 				else
 				{
-					menu3_pop(MENU3_DIS); 
+					menu3_pop(MENU3_HIDE); 
 					b3_fun2(NULL);
 				}	
 			}		
@@ -1753,7 +1763,7 @@ static void handler_key(guint keyval, gpointer data)
 					menu3_pop(MENU3_TURN);
 				else
 				{
-					menu3_pop(MENU3_DIS); 
+					menu3_pop(MENU3_HIDE); 
 					b3_fun1(NULL);
 				}
 			}			
@@ -1765,7 +1775,7 @@ static void handler_key(guint keyval, gpointer data)
 					menu3_pop(MENU3_TURN);
 				else
 				{
-					menu3_pop(MENU3_DIS); 
+					menu3_pop(MENU3_HIDE); 
 					b3_fun0(NULL);
 				}
 			}
@@ -1800,11 +1810,11 @@ static void handler_key(guint keyval, gpointer data)
 
 						else if(CUR_POS == 0)
 						{
-							pp->menu3_geshu = 5;
-							while(!(gtk_widget_get_visible(pp->eventbox30[pp->menu3_geshu])))
-								pp->menu3_geshu--;
-							g_print("\n menu3_geshu = %d \n",pp->menu3_geshu);
-							CUR_POS = pp->menu3_geshu;
+							pp->menu3_amount = 5;
+							while(!(gtk_widget_get_visible(pp->eventbox30[pp->menu3_amount])))
+								pp->menu3_amount--;
+							g_print("\n menu3_amount = %d \n",pp->menu3_amount);
+							CUR_POS = pp->menu3_amount;
 						}
 						draw_3_menu(1, NULL);
 						break;
@@ -1821,7 +1831,7 @@ static void handler_key(guint keyval, gpointer data)
 			}
 			else if((MENU31_PRESS == data1)||(MENU32_PRESS == data1)||(MENU33_PRESS == data1)||(MENU34_PRESS == data1)||(MENU35_PRESS == data1)||(MENU36_PRESS == data1))/*当三级菜单中有弹出菜单选项时*/
 			{
-				menu3_pop(MENU3_DOWN);/*被选中的三级菜单向下切换*/
+				menu3_pop(MENU3_TURN);/*被选中的三级菜单向下切换*/
 			}
 			else/*当主菜单条处于收回状态时*/
 			{
@@ -1843,11 +1853,11 @@ static void handler_key(guint keyval, gpointer data)
 
 						else if(CUR_POS < 5)
 						{
-							pp->menu3_geshu = CUR_POS;
-							if(gtk_widget_get_visible(pp->eventbox30[pp->menu3_geshu+1]))
+							pp->menu3_amount = CUR_POS;
+							if(gtk_widget_get_visible(pp->eventbox30[pp->menu3_amount+1]))
 							{
 								CUR_POS++;
-								g_print("\n menu3_geshu = %d \n",CUR_POS);
+								g_print("\n menu3_amount = %d \n",CUR_POS);
 							}
 							else
 								CUR_POS=0;

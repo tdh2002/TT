@@ -97,8 +97,9 @@
 #define A_SCAN_R		0x20
 #define B_SCAN	     1
 #define C_SCAN	     2
-#define S_SCAN	     3
-#define S_SCAN_R		0x23
+#define S_SCAN	     3			/*  */
+#define S_SCAN_A		0x23	/* truedepath 的角度扫查 */
+#define S_SCAN_L		0x33	/* truedepth 的线扫 */
 #define A_B_SCAN     4
 #define A_B_C_SCAN	 5
 #define A_B_S_SCAN	 6
@@ -229,7 +230,7 @@
 
 /* 按键是由那个window发出 */
 #define MENU_POP		0
-#define MENU_DIS		1 /*disappear*/
+#define MENU_HIDE		1 /*disappear*/
 #define MENU_CHANGE		2
 #define MENU_UP			3
 #define MENU_DOWN		4
@@ -239,7 +240,7 @@
 #define MENU3_ENTER	4
 #define MENU3_UP	5
 #define MENU3_DOWN	6
-#define MENU3_DIS	7
+#define MENU3_HIDE	7
 #define MENU3_SHOW	8
 
 #define HELP_N		0

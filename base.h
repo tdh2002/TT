@@ -758,14 +758,12 @@ typedef struct Draw_interface {
 	GtkWidget		*vscale;
 
 	/* 画图区域 */
-	GtkWidget	*table;
-	GtkWidget	*vrule1;
-	GtkWidget	*vrule2;
-	GtkWidget	*hrule;
-	GtkWidget	*title;
-	GtkWidget	*drawlabel;
-	GtkWidget	*sw;
-
+//	GtkWidget	*table;
+//	GtkWidget	*vrule1;
+//	GtkWidget	*vrule2;
+//	GtkWidget	*hrule;
+//	GtkWidget	*title;
+//	GtkWidget	*drawlabel;
 
 	CONFIG_P		p_config;			/**/
 	TMP_CONFIG_P	p_tmp_config;		/**/
@@ -790,6 +788,7 @@ typedef struct Draw_interface {
 	guchar			mark3;
 
 	guchar	bscan_mark;
+	guchar	refresh_mark;
 
 
 /*	guint	scan_dispaly_qty;*/	/* 显示几个窗口 */
@@ -803,7 +802,17 @@ typedef struct Draw_interface {
 	guchar  menu3_poppos;	/* 三级菜单弹出选项选中的是第几个 */
 	guchar  menu3_pos;	/* 当前按下的是第几个三级菜单 0 1 ... 5 */
 
-	guchar  menu3_geshu;	/* 三级菜单的个数 */
+	guchar  menu3_amount;	/* 三级菜单的个数 */
+	guchar  menu3_s;	/* 正数第一个可以选的三级菜单选项的位置*/
+	guchar  menu3_e;	/* 倒数第一个可以选的三级菜单选项的位置*/
+
+	gpointer probe_dialog;
+
+	GtkWidget *sw;		/* 第一个scroll 备注只要一个sw */
+	GtkWidget *sw1;		/* 第二个scroll 探头 楔块 聚焦法则 setup 等需要2个sw */
+
+	guchar  iter_qty;       /* treeview 中 iter 的个数 */
+	guchar  iter_pos;	/* treeview 中 iter 的位置 */
 
 } DRAW_UI, *DRAW_UI_P;
 

@@ -153,7 +153,7 @@ void main_menu_pop(guint action)
 			gtk_menu_item_deselect (GTK_MENU_ITEM (pp->menuitem[i]));
 		gtk_menu_item_select (GTK_MENU_ITEM (pp->menuitem[pp->pos]));
 	}
-	else if (MENU_DIS == action) /*收回主菜单*/
+	else if (MENU_HIDE == action) /*收回主菜单*/
 	{
 		gtk_menu_popdown( GTK_MENU (pp->menu));
 	}
@@ -161,31 +161,35 @@ void main_menu_pop(guint action)
 	{
 		gtk_menu_item_deselect (GTK_MENU_ITEM (pp->menuitem[pp->pos]));
 		if((pp->pos) == 9)
+		{
 			pp->pos = 0;
+			while (!gtk_widget_get_sensitive(pp->menuitem[pp->pos]))
+				pp->pos++;
+		}
 		else
-			pp->pos++;
-		if (gtk_widget_get_sensitive(pp->menuitem[pp->pos]))
-			gtk_menu_item_select (GTK_MENU_ITEM (pp->menuitem[pp->pos]));
-		else 
 		{
 			pp->pos++;
-			gtk_menu_item_select (GTK_MENU_ITEM (pp->menuitem[pp->pos]));
+			while (!gtk_widget_get_sensitive(pp->menuitem[pp->pos]))
+				pp->pos++;
 		}
+		gtk_menu_item_select (GTK_MENU_ITEM (pp->menuitem[pp->pos]));
 	}
 	 else if (MENU_UP == action)/*向上切换主菜单*/
 	{
 		gtk_menu_item_deselect (GTK_MENU_ITEM (pp->menuitem[pp->pos]));
 		if((pp->pos) == 0)
+		{
 			pp->pos = 9;
+			while (!gtk_widget_get_sensitive(pp->menuitem[pp->pos]))
+				pp->pos--;
+		}
 		else
-			pp->pos--;
-		if (gtk_widget_get_sensitive(pp->menuitem[pp->pos]))
-			gtk_menu_item_select (GTK_MENU_ITEM (pp->menuitem[pp->pos]));
-		else 
 		{
 			pp->pos--;
-			gtk_menu_item_select (GTK_MENU_ITEM (pp->menuitem[pp->pos]));
+			while (!gtk_widget_get_sensitive(pp->menuitem[pp->pos]))
+				pp->pos--;
 		}
+		gtk_menu_item_select (GTK_MENU_ITEM (pp->menuitem[pp->pos]));
 	}
 	else if (MENU_ENTER == action) /*选中当前菜单项，并收回主菜单*/
 	{
@@ -199,63 +203,52 @@ void main_menu_pop(guint action)
 void menu3_pop(guint action)
 {
 	int i;
-
-	if ( (MENU3_TURN == action))	/*轮流切换三级菜单选项*/
+	if (MENU3_TURN == action)	/* 轮流、向下切换三级菜单选项 */
 	{
 		gtk_menu_item_deselect (GTK_MENU_ITEM (pp->menu_item3[pp->menu3_poppos]));
-		if((pp->menu3_poppos) == (pp->menu3_qty - 1) )
-			pp->menu3_poppos = 0;
-		else
-			pp->menu3_poppos++;
-		if(gtk_widget_get_sensitive(pp->menu_item3[pp->menu3_poppos]))
-			gtk_menu_item_select (GTK_MENU_ITEM (pp->menu_item3[pp->menu3_poppos]));
+
+		pp->menu3_e= pp->menu3_qty - 1;
+		while(!gtk_widget_get_sensitive(pp->menu_item3[pp->menu3_e]))
+			pp->menu3_e--;		/* pp->menu3_e为最后一个可以选的菜单选项位置 */
+
+		if( (pp->menu3_poppos) == (pp->menu3_e) )	/*当在三级菜单选项的可以选择的最后一个位置时*/
+		{
+			pp->menu3_poppos = 0;			/*选中的位置跳到最前去*/
+			while(!gtk_widget_get_sensitive(pp->menu_item3[pp->menu3_poppos]))/*判断这一个位置是否可选*/
+				pp->menu3_poppos++;
+			//g_print("pp->menu3_poppos1 = %d\n",pp->menu3_poppos);
+		}
 		else
 		{
-			if((pp->menu3_poppos) == (pp->menu3_qty - 1) )/*当三级菜单选项的最后一个为不可选状态时*/
-				pp->menu3_poppos = 0;
-			else
+			pp->menu3_poppos++;
+			while(!gtk_widget_get_sensitive(pp->menu_item3[pp->menu3_poppos]))
 				pp->menu3_poppos++;
-			gtk_menu_item_select (GTK_MENU_ITEM (pp->menu_item3[pp->menu3_poppos]));
+			//g_print("pp->menu3_poppos2 = %d\n",pp->menu3_poppos);
 		}
-
+		gtk_menu_item_select (GTK_MENU_ITEM (pp->menu_item3[pp->menu3_poppos]));
 	}
 	else if (MENU3_UP == action) /*向上切换三级菜单选项*/
 	{
 		gtk_menu_item_deselect (GTK_MENU_ITEM (pp->menu_item3[pp->menu3_poppos]));
-		if((pp->menu3_poppos) == 0)
-			pp->menu3_poppos = (pp->menu3_qty - 1);
-		else
-			pp->menu3_poppos--;
-		if (gtk_widget_get_sensitive(pp->menu_item3[pp->menu3_poppos]))
-			gtk_menu_item_select (GTK_MENU_ITEM (pp->menu_item3[pp->menu3_poppos]));
-		else 
+
+		pp->menu3_s=0;
+		while(!gtk_widget_get_sensitive(pp->menu_item3[pp->menu3_s]))
+			pp->menu3_s++;		/* pp->menu3_s为第一个可以选的菜单选项位置 */
+
+		if((pp->menu3_poppos) == pp->menu3_s )		/*当在三级菜单选项的可以选择的第一个位置时*/
 		{
-			if((pp->menu3_poppos) == 0 )/*当三级菜单选项的第一个为不可选状态时*/
-				pp->menu3_poppos = (pp->menu3_qty - 1);
-			else
+			pp->menu3_poppos = (pp->menu3_qty - 1);	/*选中的位置跳到最后去*/
+			while(!gtk_widget_get_sensitive(pp->menu_item3[pp->menu3_poppos]))/*判断这一个位置是否可选*/
 				pp->menu3_poppos--;
-			gtk_menu_item_select (GTK_MENU_ITEM (pp->menu_item3[pp->menu3_poppos]));
 		}
-
-	}
-	else if (MENU3_DOWN == action) 		/*向下切换三级菜单选项*/
-	{
-		gtk_menu_item_deselect (GTK_MENU_ITEM (pp->menu_item3[pp->menu3_poppos]));
-		if((pp->menu3_poppos) == (pp->menu3_qty - 1) )
-			pp->menu3_poppos = 0;
 		else
-			pp->menu3_poppos++;
-		if (gtk_widget_get_sensitive(pp->menu_item3[pp->menu3_poppos]))
-			gtk_menu_item_select (GTK_MENU_ITEM (pp->menu_item3[pp->menu3_poppos]));
-		else 
 		{
-			if((pp->menu3_poppos) == (pp->menu3_qty - 1) )	/* 当三级菜单选项的最后一个为不可选状态时 */
-				pp->menu3_poppos = 0;
-			else
-				pp->menu3_poppos++;
-			gtk_menu_item_select (GTK_MENU_ITEM (pp->menu_item3[pp->menu3_poppos]));
+			pp->menu3_poppos--;
+			while(!gtk_widget_get_sensitive(pp->menu_item3[pp->menu3_poppos]))
+				pp->menu3_poppos--;
 		}
 
+		gtk_menu_item_select (GTK_MENU_ITEM (pp->menu_item3[pp->menu3_poppos]));		
 	}
 	else if (MENU3_ENTER == action) 	/* 选中当前菜单项，并收回三级菜单 */
 	{
@@ -264,10 +257,10 @@ void menu3_pop(guint action)
 			gtk_menu_popdown( GTK_MENU (pp->menu33[i]));
 		draw_3_menu(1, NULL);
 	}
-	else if (MENU3_DIS == action) 		/* 收回三级菜单选项 */
+	else if (MENU3_HIDE == action) 		/* 收回三级菜单选项 */
 	{
 		for(i=0;i<6;i++)
-			gtk_menu_popdown( GTK_MENU (pp->menu33[i]));
+		gtk_menu_popdown( GTK_MENU (pp->menu33[i]));
 	}
 
 }
@@ -1845,6 +1838,9 @@ static void draw3_pop_tt (void (*fun)(GtkMenuItem*, gpointer),
 	gtk_widget_hide (pp->button_sub);
 	gtk_widget_hide (pp->vscale);
 
+	pp->menu3_qty = qty;
+	pp->menu3_poppos = pop_pos;
+	//pp->menu3_pos = pos;
 
 	return ;
 }
@@ -1928,6 +1924,8 @@ static void draw3_pop_tt_on (void (*fun)(GtkMenuItem*, gpointer),
 	gtk_widget_hide (pp->button_sub);
 	gtk_widget_hide (pp->vscale);
 
+	pp->menu3_qty = qty;
+	pp->menu3_poppos = pop_pos;
 
 	return ;
 }
@@ -2180,8 +2178,10 @@ static gboolean draw_info(GtkWidget *widget, GdkEventExpose *event, gpointer dat
 		switch (((DRAW_AREA_P)(data))->scan_type)
 		{
 			case	A_SCAN:
+			case	A_SCAN_R:
 			case	B_SCAN:
 			case	S_SCAN:
+			case	S_SCAN_A:
 				color_r = ((TMP(color_amp[i * 256 / h]) >> 11)) / 32.0;
 				color_g = ((TMP(color_amp[i * 256 / h]) & 0x07e0) >> 5) / 64.0;
 				color_b = ((TMP(color_amp[i * 256 / h]) & 0x1f)) /  32.0;
@@ -2365,6 +2365,7 @@ static inline void set_scan_config (guchar scan_num,guchar scan_type, guint aw, 
 	TMP(scan_xpos[scan_num])	=	xoff;
 	TMP(scan_ypos[scan_num])	=	yoff;
 	TMP(scan_group[scan_num])	=	group;
+	TMP(a_scan_dot_qty)			=	aw;
 	switch (scan_type)
 	{
 		case A_SCAN:
@@ -2381,12 +2382,13 @@ static inline void set_scan_config (guchar scan_num,guchar scan_type, guint aw, 
 			TMP(c_scan_height)	=	h;
 			break;
 		case S_SCAN:
+		case S_SCAN_A:
+		case S_SCAN_L:
 			TMP(s_scan_width)	=	w;
 			TMP(s_scan_height)	=	h;
 			break;
 		default:break;
 	}
-	TMP(a_scan_dot_qty)	=	aw;
 	return ;
 }
 
@@ -2535,16 +2537,32 @@ void draw_area_all()
 					}
 					else if (GROUP_VAL(ut_unit) == UT_UNIT_TRUE_DEPTH)
 					{
-						pp->draw_area[0].scan_type	=	A_SCAN_R;
-						pp->draw_area[1].scan_type	=	S_SCAN;
-						gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->hbox_area[0], FALSE, FALSE, 0);
-						draw_area(pp->hbox_area[0], &(pp->draw_area[0]), 250, 425, "A-scann", 0.0,
-								100.0, 0.0, 100.0, 0.0, 100.0, NULL);
-						draw_area(pp->hbox_area[0], &(pp->draw_area[1]), 405, 425, "S-scan", 0.0, 
-								100.0, 0.0, 100.0, 0.0, 100.0, NULL);
-						gtk_widget_show (pp->hbox_area[0]);
-						set_scan_config (0, A_SCAN_R, 390, 210, 390, 0, 0, CFG(groupId));
-						set_scan_config (1, S_SCAN, 390, 365, 390, 250, 0, CFG(groupId));
+						if (LAW_VAL(Focal_type) == ANGLE_SCAN)
+						{
+							pp->draw_area[0].scan_type	=	A_SCAN_R;
+							pp->draw_area[1].scan_type	=	S_SCAN_A;
+							gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->hbox_area[0], FALSE, FALSE, 0);
+							draw_area(pp->hbox_area[0], &(pp->draw_area[0]), 250, 425, "A-scan", 0.0,
+									100.0, 0.0, 100.0, 0.0, 100.0, NULL);
+							draw_area(pp->hbox_area[0], &(pp->draw_area[1]), 405, 425, "S-scan", 0.0, 
+									100.0, 0.0, 100.0, 0.0, 100.0, NULL);
+							gtk_widget_show (pp->hbox_area[0]);
+							set_scan_config (0, A_SCAN_R, 390, 210, 390, 0, 0, CFG(groupId));
+							set_scan_config (1, S_SCAN_A, 390, 365, 390, 250, 0, CFG(groupId));
+						} 
+						else if (LAW_VAL(Focal_type) == LINEAR_SCAN)
+						{
+							pp->draw_area[0].scan_type	=	A_SCAN_R;
+							pp->draw_area[1].scan_type	=	S_SCAN_L;
+							gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->hbox_area[0], FALSE, FALSE, 0);
+							draw_area(pp->hbox_area[0], &(pp->draw_area[0]), 250, 425, "A-scan", 0.0,
+									100.0, 0.0, 100.0, 0.0, 100.0, NULL);
+							draw_area(pp->hbox_area[0], &(pp->draw_area[1]), 405, 425, "S-scan", 0.0, 
+									100.0, 0.0, 100.0, 0.0, 100.0, NULL);
+							gtk_widget_show (pp->hbox_area[0]);
+							set_scan_config (0, A_SCAN_R, 390, 210, 390, 0, 0, CFG(groupId));
+							set_scan_config (1, S_SCAN_L, 390, 365, 390, 250, 0, CFG(groupId));
+						}
 					}
 				}
 				else
@@ -9930,9 +9948,10 @@ static void draw_scan(guchar scan_num, guchar scan_type, guchar group,
 						xoff, yoff, group, 0);
 			break;
 		case S_SCAN:
+		case S_SCAN_A:
 				draw_s_scan(dot_temp1, TMP(s_scan_width), TMP(s_scan_height),dot_temp,
 						TMP(scan_data[group]),
-						xoff, yoff, group, 0);
+						xoff, yoff, group, GROUP_VAL_POS(group, ut_unit));
 			break;
 		case C_SCAN:
 			break;
@@ -9949,16 +9968,17 @@ static gboolean time_handler2(GtkWidget *widget)
 	pp->scan_count++;
 
 	/* 第一个GROUP */
-	(GROUP_VAL(prf) > 250) ? (prf_count = 25) : (prf_count = (GROUP_VAL(prf) / 10));
-	prf_count = 25 / prf_count;
+//	(GROUP_VAL(prf) > 500) ? (prf_count = 50) : (prf_count = (GROUP_VAL(prf) / 10));
+//	prf_count = 50 / prf_count;
 
 	for (i = 0 ; i < CFG(groupQty); i++)
 	{
-		(GROUP_VAL_POS(i, prf) > 250) ? 
-			(prf_count = 25) : (prf_count = (GROUP_VAL_POS(i, prf) / 10));
-		prf_count = 25 / prf_count;
+		(GROUP_VAL_POS(i, prf) > 500) ? 
+			(prf_count = 50) : (prf_count = (GROUP_VAL_POS(i, prf) / 10));
+		prf_count = 50 / prf_count;
 		if ((pp->scan_count % prf_count) == 0)
 		{
+			pp->refresh_mark = 1;
 			/* 获取数据 */
 			/* 这里需要压缩数据 或者 插值数据 这里只有一个beam 同时最多处理256beam */
 			for	(j = 0 ; j < TMP(beam_qty[i]); j++)
@@ -9999,7 +10019,11 @@ static gboolean time_handler2(GtkWidget *widget)
 //	}
 
 	/* 复制波形到显存 */
-	memcpy (TMP(fb1_addr), dot_temp1, FB_WIDTH*400*2);	/* 如果用dma更快啊 */
+	if (pp->refresh_mark ) 
+	{
+		memcpy (TMP(fb1_addr), dot_temp1, FB_WIDTH*400*2);	/* 如果用dma更快啊 */
+		pp->refresh_mark = 0;
+	}
 
 	return TRUE;
 }
@@ -10432,11 +10456,11 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 	draw_3_menu(1, NULL);
 
 #if ARM
-	g_timeout_add(40, (GSourceFunc) time_handler2, NULL);
+	g_timeout_add(20, (GSourceFunc) time_handler2, NULL);
 #endif
+	g_timeout_add(1000, (GSourceFunc) time_handler1, NULL);
 	//	g_thread_create((GThreadFunc)(time_handler), (gpointer) (pp->drawing_area), FALSE, NULL);
 }
-
 
 void save_config (GtkWidget *widget, GdkEventButton *event,	gpointer data)
 {
