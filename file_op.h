@@ -27,6 +27,8 @@ extern void read_palette_file (const gchar *file_path, guint *sp_col, guint *col
 #define PA_WEDGE_PATH	"source/system/Model/Wedge/PA/"
 #define UT_WEDGE_PATH	"source/system/Model/Wedge/UT/"
 
+#define SYS_LAW_PATH	"/home/tt/TT/source/system/Sample/Law/"
+#define USER_LAW_PATH	"/home/tt/TT/source/user/law/"
 
 /*#define PALETTE_PATH	"/home/gll/arraytop/TT/source/system/Sample/Palette/"*/
 #define PALETTE_PATH	"/home/tt/TT/source/system/Sample/Palette/"

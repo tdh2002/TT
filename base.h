@@ -178,10 +178,19 @@ typedef struct law_beam
 	guint Scan_offset;			/* 单位 0.001 mm*/
 	guint Index_offset;			/* 单位 0.001 mm*/
 	gint G_delay;				/* 单位ns Wedge Delay + Law Delay */
-	gint beam_delay;			/* 单位ns Wedge Delay + Law Delay */
+	gint beam_delay;			/* 单位ns Law Delay */
 	gint F_depth;				/* 单位 微粒 */
 	guint M_velocity;			/* 单位 m/s */
 } LAW_BEAM, *LAW_BEAM_P;
+
+typedef struct law_focal
+{
+	gchar	version[16];
+	gshort	beam_qty;		/* 这个focal有几个beam */
+	LAW_BEAM_P	*law_beam_p;
+	LAW_ELEM_P	*law_elem_p;
+} LAW_FOCAL, *LAW_FOCAL_P;
+
 
 /*聚焦法则信息(law_info) 28byte*/
 typedef struct law_info
@@ -716,6 +725,7 @@ typedef struct Draw_interface {
 
 	gchar			*file_path;	/* 帮助文档的路径 */
 	WebKitWebView*		web_view;
+	WebKitWebView*		web_view_tmp;
 	GtkAdjustment	*adj;
 	GSList			*group;
 
