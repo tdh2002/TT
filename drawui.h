@@ -36,7 +36,9 @@
 #define UNIT_DEG	14
 #define UNIT_STEP_MM	15
 #define UNIT_RPM	16
-#define UNIT_NONE	17
+#define UNIT_DB_INCH	17
+#define UNIT_DB_US	18
+#define UNIT_NONE	19
 
 /* UT_UNIT */
 #define UT_UNIT_SOUNDPATH	0

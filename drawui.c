@@ -538,11 +538,14 @@ void draw_2_menu(gint pa)
 
 	gtk_widget_modify_fg(pp->label2[pp->pos1[pp->pos]], GTK_STATE_NORMAL, &color_yellow);
 
-	if(pp->pos == 4)
+	if ((pp->pos == 4)||(pp->pos == 3))
 		gtk_widget_set_sensitive(pp->eventbox2[2],FALSE);
 	else
 		gtk_widget_set_sensitive(pp->eventbox2[2],TRUE);
-
+	if (pp->pos == 3)
+		gtk_widget_set_sensitive(pp->eventbox2[4],FALSE);
+	else
+		gtk_widget_set_sensitive(pp->eventbox2[4],TRUE);
 
 	return ;
 }
@@ -3282,6 +3285,9 @@ void draw3_data0(DRAW_UI_P p)
 								menu_content+ENCODER, 2, 0,CFG(encoder), 0);
 					else 
 						draw3_popdown (menu_content[ENCODER+CFG(encoder)], 0, 0);
+
+					gtk_widget_set_sensitive(pp->eventbox30[0],FALSE);
+					gtk_widget_set_sensitive(pp->eventbox31[0],FALSE);
 					break;
 
 				case 1:/*Scan -> Inspection -> type  p710 */
@@ -3389,6 +3395,7 @@ void draw3_data0(DRAW_UI_P p)
 					else 
 						draw3_popdown (menu_content[TEMPLA_P+CFG(templa)], 0, 0);
 
+
 					break;
 
 				case 2:/*File -> format -> user field  p820 */
@@ -3409,6 +3416,8 @@ void draw3_data0(DRAW_UI_P p)
 
 				case 4:/*File -> notes-> edit notes  p840 */
 					draw3_popdown(NULL,0,1);
+					gtk_widget_set_sensitive(pp->eventbox30[0],FALSE);
+					gtk_widget_set_sensitive(pp->eventbox31[0],FALSE);
 					break;
 
 				default:break;
@@ -3432,6 +3441,8 @@ void draw3_data0(DRAW_UI_P p)
 				case 1:/*Preferences -> system -> clock set p910*/
 					/* 格式化字符串 */
 					g_sprintf (temp,"%s\n(HH:MM:SS)", con2_p[9][1][0]);
+					gtk_widget_set_sensitive(pp->eventbox30[0],FALSE);
+					gtk_widget_set_sensitive(pp->eventbox31[0],FALSE);
 
 					/* 设置label */
 					gtk_label_set_text (GTK_LABEL (pp->label3[0]), temp);
@@ -3445,6 +3456,8 @@ void draw3_data0(DRAW_UI_P p)
 
 				case 2:/*Preferences -> service -> system info  p920*/
 					draw3_popdown(NULL,0,1);
+					gtk_widget_set_sensitive(pp->eventbox30[0],FALSE);
+					gtk_widget_set_sensitive(pp->eventbox31[0],FALSE);
 					break;
 
 				case 3:/*Preferences -> options -> mouse  p930 */
@@ -3455,6 +3468,8 @@ void draw3_data0(DRAW_UI_P p)
 								menu_content+MOUSE, 3, 0,CFG(mouse), 0);
 					else 
 						draw3_popdown (menu_content[MOUSE+CFG(mouse)], 0, 0);
+					gtk_widget_set_sensitive(pp->eventbox30[0],FALSE);
+					gtk_widget_set_sensitive(pp->eventbox31[0],FALSE);
 
 					break;
 
@@ -3470,6 +3485,9 @@ void draw3_data0(DRAW_UI_P p)
 					gtk_widget_show (pp->eventbox30[0]);
 					gtk_widget_show (pp->eventbox31[0]);
 					gtk_widget_show (pp->data3[0]);
+
+					gtk_widget_set_sensitive(pp->eventbox30[0],FALSE);
+					gtk_widget_set_sensitive(pp->eventbox31[0],FALSE);
 					break;
 				default:break;
 			}
@@ -3802,22 +3820,67 @@ void draw3_data1(DRAW_UI_P p)
 							}
 							if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 							{
-								cur_value = GROUP_VAL(mat_atten) / 1000.0;
-								lower = 0.00;
-								upper = 6.76;
-								step = tmpf;
-								digit = 2;
-								pos = 1;
-								unit = UNIT_DB_MM;
-								draw3_digit_pressed (data_2312, units[unit], cur_value , lower, 
-										upper, step, digit, p, pos, 15);
+								if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
+								{
+									if (UNIT_MM == CFG(unit))
+									{
+										cur_value = GROUP_VAL(mat_atten) / 1000.0;
+										lower = 0.00;
+										upper = 4002000.0/GROUP_VAL(velocity);
+										step = tmpf;
+										digit = 2;
+										pos = 1;
+										unit = UNIT_DB_MM;
+									}
+									else
+									{
+										cur_value = GROUP_VAL(mat_atten) / 1000.0 / 0.03937;
+										lower = 0.00;
+										upper = 4002000.0/GROUP_VAL(velocity)/0.03937;
+										step = tmpf;
+										digit = 3;
+										pos = 1;
+										unit = UNIT_DB_INCH;
+									}
+								}
+								else
+								{
+									cur_value = GROUP_VAL(mat_atten) / 1000.0/0.338;
+									lower = 0.00;
+									upper = 20.0;
+									step = tmpf;
+									digit = 2;
+									pos = 1;
+									unit = UNIT_DB_US;
+								}
+								draw3_digit_pressed (data_2312, units[unit], cur_value , lower, upper, step, digit, p, pos, 15);
 							}
 							else 
 							{
-								cur_value = GROUP_VAL(mat_atten) / 1000.0;
-								digit = 2;
-								pos = 1;
-								unit = UNIT_DB_MM;
+								if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
+								{
+									if (UNIT_MM == CFG(unit))
+									{
+										cur_value = GROUP_VAL(mat_atten) / 1000.0;
+										digit = 2;
+										pos = 1;
+										unit = UNIT_DB_MM;
+									}
+									else
+									{
+										cur_value = GROUP_VAL(mat_atten) / 1000.0 / 0.03937;
+										digit = 2;
+										pos = 1;
+										unit = UNIT_DB_INCH;
+									}
+								}
+								else
+								{
+									cur_value = GROUP_VAL(mat_atten) / 1000.0/0.338;
+									digit = 2;
+									pos = 1;
+									unit = UNIT_DB_US;
+								}
 								draw3_digit_stop (cur_value, units[unit], digit, pos, 15);
 							}
 						}
@@ -4599,6 +4662,9 @@ void draw3_data1(DRAW_UI_P p)
 					}
 					else
 						draw3_popdown(NULL, 1, 1);
+
+					gtk_widget_set_sensitive(pp->eventbox30[1],FALSE);
+					gtk_widget_set_sensitive(pp->eventbox31[1],FALSE);
 					break;
 
 				case 4:
@@ -4620,6 +4686,8 @@ void draw3_data1(DRAW_UI_P p)
 								menu_content + POLARITY, 2, 1, CFG(polarity), 0);
 					else 
 						draw3_popdown (menu_content[POLARITY + CFG(polarity)], 1, 0);
+					gtk_widget_set_sensitive(pp->eventbox30[1],FALSE);
+					gtk_widget_set_sensitive(pp->eventbox31[1],FALSE);
 					break;
 
 				case 1:/*Scan -> Inspection -> scan  p711 */
@@ -4708,6 +4776,8 @@ void draw3_data1(DRAW_UI_P p)
 			{
 				case 0:/*File -> File -> Open  p801 */
 					draw3_popdown(NULL,1,1);
+					gtk_widget_set_sensitive(pp->eventbox30[1],FALSE);
+					gtk_widget_set_sensitive(pp->eventbox31[1],FALSE);
 					break;
 
 				case 1:/*File -> report -> file name p811 */
@@ -4722,10 +4792,14 @@ void draw3_data1(DRAW_UI_P p)
 					gtk_widget_show (pp->eventbox30[1]);
 					gtk_widget_show (pp->eventbox31[1]);
 					gtk_widget_show (pp->data3[1]);
+
+					gtk_widget_set_sensitive(pp->eventbox30[1],FALSE);
+					gtk_widget_set_sensitive(pp->eventbox31[1],FALSE);
 					break;
 
 				case 2:/*File -> format -> probe  p821 */
 					draw3_popdown (menu_content[OFF_ON + CFG(format_probe)], 1, 0);
+
 					break;
 
 				case 3:/*File -> user field -> enable  p831 */
@@ -4734,6 +4808,8 @@ void draw3_data1(DRAW_UI_P p)
 
 				case 4:/*File -> notes-> edit header p841 */
 					draw3_popdown(NULL,1,1);
+					gtk_widget_set_sensitive(pp->eventbox30[1],FALSE);
+					gtk_widget_set_sensitive(pp->eventbox31[1],FALSE);
 					break;
 
 				default:break;
@@ -4774,9 +4850,11 @@ void draw3_data1(DRAW_UI_P p)
 					break;
 
 
-				case 1:/*Preferences -> system -> data set*/
+				case 1:/*Preferences -> system -> data set p911*/
 					/* 格式化字符串 */
 					g_sprintf (temp,"%s\n(YYYY/MM/DD)", con2_p[9][1][1]);
+					gtk_widget_set_sensitive(pp->eventbox30[1],FALSE);
+					gtk_widget_set_sensitive(pp->eventbox31[1],FALSE);
 
 					/* 设置label */
 					gtk_label_set_text (GTK_LABEL (pp->label3[1]), temp);
@@ -4793,14 +4871,18 @@ void draw3_data1(DRAW_UI_P p)
 					draw3_popdown(NULL,1,1);
 					break;
 
-				case 3:/*Preferences -> options -> Option Key  931 */
+				case 3:/*Preferences -> options -> Option Key  p931 */
 
 					draw3_popdown(NULL,1,1);
+					gtk_widget_set_sensitive(pp->eventbox30[1],FALSE);
+					gtk_widget_set_sensitive(pp->eventbox31[1],FALSE);
 					break;
 
-				case 4:/*Preferences -> Network -> IP Address  941*/
+				case 4:/*Preferences -> Network -> IP Address  p941*/
 					/* 格式化字符串 */
 					g_sprintf (temp,"%s", con2_p[9][4][1]);
+					gtk_widget_set_sensitive(pp->eventbox30[1],FALSE);
+					gtk_widget_set_sensitive(pp->eventbox31[1],FALSE);
 
 					/* 设置label */
 					gtk_label_set_text (GTK_LABEL (pp->label3[1]), temp);
@@ -5233,7 +5315,7 @@ void draw3_data2(DRAW_UI_P p)
 							{
 								case 0:	tmpf = 0.1; break;
 								case 1:	tmpf = 1.0; break;
-								case 2:	tmpf = 10.0; break;						
+								case 2:	tmpf = 10.0; break;
 								default:break;
 							}
 							if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
@@ -5269,31 +5351,79 @@ void draw3_data2(DRAW_UI_P p)
 							/* Curve选项为 DAC或TCG 时 */
 						{
 							/* 当前步进 */
-							switch (pp->p_tmp_config->position_reg)
+							switch (pp -> p_tmp_config -> position_reg)
 							{
 								case 0:	tmpf = 0.01; break;
 								case 1:	tmpf = 0.1; break;
 								case 2:	tmpf = 1.0; break;
-								case 3:tmpf = 10.0;break;						
+								case 3:	tmpf = 10.0; break;					
 								default:break;
 							}
+
 							if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 							{
-								cur_value = GROUP_VAL(position) / 1000.0;
-								lower = 0.0;
-								upper = 29306.37;
-								step = tmpf;
-								digit = 2;
-								pos = 2;
-								unit = UNIT_MM;
+								if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
+								{
+									if (UNIT_MM == CFG(unit))
+									{
+									cur_value = GROUP_VAL(position) / 1000.0;
+									lower = 0.0;
+									upper = GROUP_VAL(velocity)/100.0 * 4.95;
+									step = tmpf;
+									digit = 2;
+									pos = 2;
+									unit = UNIT_MM;
+									}
+									else
+									{
+									cur_value = GROUP_VAL(position) / 1000.0 * 0.03937;
+									lower = 0.0;
+									upper = GROUP_VAL(velocity)/100.0 * 4.95 * 0.03937;
+									step = tmpf * 0.03937;
+									digit = 3;
+									pos = 2;
+									unit = UNIT_INCH;
+									}
+								}
+								else
+								{
+									cur_value = GROUP_VAL(position) / 1000.0 * 0.03937/0.1159;
+									lower = 0.0;
+									upper = 9900.80;
+									step = tmpf*5.0;
+									digit = 2;
+									pos = 2;
+									unit = UNIT_US;
+								}
 								draw3_digit_pressed (data_2321, units[unit], cur_value , lower, upper, step, digit, p, pos, 11);
+
 							}
 							else 
 							{
-								cur_value = GROUP_VAL(position)/1000.0;
-								digit = 2;
-								pos = 2;
-								unit = UNIT_MM;
+								if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
+								{
+									if (UNIT_MM == CFG(unit))
+									{
+									cur_value = GROUP_VAL(position)/1000.0;
+									digit = 2;
+									pos = 2;
+									unit = UNIT_MM;
+									}
+									else
+									{
+									cur_value = GROUP_VAL(position)/1000.0 * 0.03937;
+									digit = 3;
+									pos = 2;
+									unit = UNIT_INCH;
+									}
+								}
+								else
+								{
+									cur_value = GROUP_VAL(position) / 1000.0 * 0.03937/0.1159;
+									digit = 2;
+									pos = 2;
+									unit = UNIT_US;
+								}
 								draw3_digit_stop (cur_value, units[unit], digit, pos, 11);
 							}
 						}
@@ -5305,29 +5435,79 @@ void draw3_data2(DRAW_UI_P p)
 								case 0:	tmpf = 0.01; break;
 								case 1:	tmpf = 0.1; break;
 								case 2:	tmpf = 1.0; break;
-								case 3:tmpf=10.0;break;						
+								case 3: tmpf = 10.0; break;
 								default:break;
 							}
+
 							if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 							{
-								cur_value =GROUP_VAL(delay)/1000.0;
-								lower = 0.0;
-								upper = 296.0;
-								step = tmpf;
-								digit = 2;
-								pos = 2;
-								unit = UNIT_MM;
-								draw3_digit_pressed (data_2322, units[unit], cur_value , lower, upper, step, digit, p, pos, 16);
+								if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
+								{
+									if (UNIT_MM == CFG(unit))
+									{
+									cur_value =GROUP_VAL(delay)/1000.0;
+									lower = 0.0;
+									upper = GROUP_VAL(velocity) / 2000.0;
+									step = tmpf;
+									digit = 2;
+									pos = 2;
+									unit = UNIT_MM;
+									}
+									else
+									{
+									cur_value =GROUP_VAL(delay)/1000.0*0.03937;
+									lower = 0.0;
+									upper = GROUP_VAL(velocity) / 2000.0*0.03937;
+									step = tmpf/10.0;
+									digit = 3;
+									pos = 2;
+									unit = UNIT_INCH;
+									}
+								}
+								else
+								{
+									cur_value =GROUP_VAL(delay)/1000.0/2.945;
+									lower = 0.0;
+									upper = 100.0;
+									step = tmpf/10.0;
+									digit = 2;
+									pos = 2;
+									unit = UNIT_US;
+
+								}
+
+								draw3_digit_pressed (data_2322, units[unit], cur_value , lower,
+ upper, step, digit, p, pos, 16);
+
 							}
 							else 
 							{
+								if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
+								{
+									if (UNIT_MM == CFG(unit))
+									{
+									cur_value =GROUP_VAL(delay)/1000.0;
+									digit = 2;
+									pos = 2;
+									unit = UNIT_MM;
+									}
+									else
+									{
+									cur_value =GROUP_VAL(delay)/1000.0*0.03937;
+									digit = 3;
+									pos = 2;
+									unit = UNIT_INCH;
+									}
+								}
+								else
+								{
+									cur_value =GROUP_VAL(delay)/1000.0/2.945;
+									digit = 2;
+									pos = 2;
+									unit = UNIT_US;
 
-								cur_value = GROUP_VAL(delay)/1000.0;
-								digit = 2;
-								pos = 2;
-								unit = UNIT_MM;
+								}
 								draw3_digit_stop (cur_value, units[unit], digit, pos, 16);
-
 							}
 
 						}
@@ -6190,8 +6370,10 @@ void draw3_data2(DRAW_UI_P p)
 						gtk_widget_set_sensitive(pp->eventbox31[2],FALSE);
 					}
 					break;
-				case 3:/*focal law -> laws -> save law file 632*/
+				case 3:/*focal law -> laws -> save law file p632*/
 					draw3_popdown(NULL, 2, 1);
+					gtk_widget_set_sensitive(pp->eventbox30[2],FALSE);
+					gtk_widget_set_sensitive(pp->eventbox31[2],FALSE);
 					break;
 				case 4:
 					if ( !con2_p[6][4][2] )
@@ -6213,6 +6395,8 @@ void draw3_data2(DRAW_UI_P p)
 								menu_content + E_TYPE, 9, 2, CFG(e_type), 0);
 					else 
 						draw3_popdown (menu_content[E_TYPE + CFG(e_type)], 2, 0);
+					gtk_widget_set_sensitive(pp->eventbox30[2],FALSE);
+					gtk_widget_set_sensitive(pp->eventbox31[2],FALSE);
 					break;
 
 				case 1:/*Scan -> Inspection -> Index p712 */
@@ -6307,6 +6491,8 @@ void draw3_data2(DRAW_UI_P p)
 			{
 				case 0:/* File -> File -> save setup as  p802 */
 					draw3_popdown(NULL,2,1);
+					gtk_widget_set_sensitive(pp->eventbox30[2],FALSE);
+					gtk_widget_set_sensitive(pp->eventbox31[2],FALSE);
 					break;
 
 				case 1:/*File -> report -> paper size  p812 */
@@ -6317,6 +6503,8 @@ void draw3_data2(DRAW_UI_P p)
 								menu_content+PAPER_SIZE, 4, 2,CFG(paper_size), 0);
 					else 
 						draw3_popdown (menu_content[PAPER_SIZE+CFG(paper_size)], 2, 0);
+					gtk_widget_set_sensitive(pp->eventbox30[2],FALSE);
+					gtk_widget_set_sensitive(pp->eventbox31[2],FALSE);
 
 					break;
 
@@ -6340,6 +6528,8 @@ void draw3_data2(DRAW_UI_P p)
 			{
 				case 0:/*preferences -> pref. -> scheme  p902 */
 					draw3_popdown (NULL, 2, 1);
+					gtk_widget_set_sensitive(pp->eventbox30[2],FALSE);
+					gtk_widget_set_sensitive(pp->eventbox31[2],FALSE);
 					break;
 
 				case 1:/*Preferences -> system -> select key  p912 */
@@ -6350,6 +6540,8 @@ void draw3_data2(DRAW_UI_P p)
 								menu_content+SELECT_K, 9, 2,CFG(select_key), 0);
 					else 
 						draw3_popdown (menu_content[SELECT_K+CFG(select_key)], 2, 0);
+					gtk_widget_set_sensitive(pp->eventbox30[2],FALSE);
+					gtk_widget_set_sensitive(pp->eventbox31[2],FALSE);
 
 
 					break;
@@ -6357,16 +6549,22 @@ void draw3_data2(DRAW_UI_P p)
 
 				case 2:/*Preferences -> service -> Import/Export p922 */
 					draw3_popdown(NULL,2,1);
+					gtk_widget_set_sensitive(pp->eventbox30[2],FALSE);
+					gtk_widget_set_sensitive(pp->eventbox31[2],FALSE);
 					break;
 
 				case 3:/*Preferences -> Options -> Remote Desktop p932 */
 					draw3_popdown (menu_content[OFF_ON+CFG(remote_desktop)], 2, 0);
+					gtk_widget_set_sensitive(pp->eventbox30[2],FALSE);
+					gtk_widget_set_sensitive(pp->eventbox31[2],FALSE);
 					break;
 
 				case 4:/*Preferences -> network -> Apply p942 */
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 						draw_warning(1, "test");
 					draw3_popdown(NULL,2,1);
+					gtk_widget_set_sensitive(pp->eventbox30[2],FALSE);
+					gtk_widget_set_sensitive(pp->eventbox31[2],FALSE);
 					break;
 				default:break;
 			}
@@ -7387,6 +7585,9 @@ void draw3_data3(DRAW_UI_P p)
 					else 
 						draw3_popdown (menu_content[MATERIAL + CFG(part.Material)], 3, 0);
 
+					gtk_widget_set_sensitive(pp->eventbox30[3],FALSE);
+					gtk_widget_set_sensitive(pp->eventbox31[3],FALSE);
+
 					break;
 				case 4:
 					if ( !con2_p[5][4][3] )
@@ -7550,6 +7751,8 @@ void draw3_data3(DRAW_UI_P p)
 						unit = UNIT_STEP_MM;
 						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					}
+					gtk_widget_set_sensitive(pp->eventbox30[3],FALSE);
+					gtk_widget_set_sensitive(pp->eventbox31[3],FALSE);
 					break;
 				case 1:/* 扫查移动速度 P713 */
 					switch (TMP(scanspeed_reg))
@@ -7656,10 +7859,14 @@ void draw3_data3(DRAW_UI_P p)
 						gtk_widget_set_sensitive (pp->eventbox30[3], FALSE);
 						gtk_widget_set_sensitive (pp->eventbox31[3], FALSE);
 					}
+					gtk_widget_set_sensitive(pp->eventbox30[3],FALSE);
+					gtk_widget_set_sensitive(pp->eventbox31[3],FALSE);
 					break;
 
 				case 1:/*File -> report -> build p813 */
 					draw3_popdown(NULL,3,1);
+					gtk_widget_set_sensitive(pp->eventbox30[3],FALSE);
+					gtk_widget_set_sensitive(pp->eventbox31[3],FALSE);
 					break;
 
 				case 2:/*File -> format -> Note  p823 */
@@ -7689,6 +7896,9 @@ void draw3_data3(DRAW_UI_P p)
 					else 
 						draw3_popdown (menu_content[SCHEME + CFG(scheme)], 3, 0);
 
+					gtk_widget_set_sensitive(pp->eventbox30[3],FALSE);
+					gtk_widget_set_sensitive(pp->eventbox31[3],FALSE);
+
 					break;
 
 				case 1:/*Preferences -> system -> assign key  p913 */
@@ -7711,6 +7921,8 @@ void draw3_data3(DRAW_UI_P p)
 						else 
 							draw3_popdown (menu_content[ASSIGN_K_P + CFG(assign_key_p)], 3, 0);
 					}
+					gtk_widget_set_sensitive(pp->eventbox30[3],FALSE);
+					gtk_widget_set_sensitive(pp->eventbox31[3],FALSE);
 					break;
 
 				case 2:/*Preferences -> service -> Import/Export  p923 */
@@ -8526,12 +8738,12 @@ void draw3_data4(DRAW_UI_P p)
 					}
 					break;
 
-				case 1:
+				case 1:/* p514 */
 					if ( !con2_p[5][1][4] )
 						gtk_widget_hide (pp->eventbox30[4]);
 					gtk_widget_hide (pp->eventbox31[4]);
 					break;
-				case 2:/*Probe/Part -> characterize -> procedure*/
+				case 2:/*Probe/Part -> characterize -> procedure  p524 */
 					/* 格式化字符串 */
 					g_sprintf (temp,"%s", con2_p[5][2][4]);
 
@@ -8543,6 +8755,9 @@ void draw3_data4(DRAW_UI_P p)
 					gtk_widget_show (pp->eventbox30[4]);
 					gtk_widget_show (pp->eventbox31[4]);
 					gtk_widget_show (pp->data3[4]);
+
+					gtk_widget_set_sensitive(pp->eventbox30[4],FALSE);
+					gtk_widget_set_sensitive(pp->eventbox31[4],FALSE);
 					break;
 				case 3:
 					if ( !con2_p[5][3][4] )
@@ -8633,6 +8848,8 @@ void draw3_data4(DRAW_UI_P p)
 						unit = UNIT_MM;
 						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					}
+					gtk_widget_set_sensitive(pp->eventbox30[4],FALSE);
+					gtk_widget_set_sensitive(pp->eventbox31[4],FALSE);
 					break;
 
 				case 1: /* Max.Scan Speed p714 */
@@ -8761,6 +8978,8 @@ void draw3_data4(DRAW_UI_P p)
 						gtk_widget_set_sensitive (pp->eventbox30[4], FALSE);
 						gtk_widget_set_sensitive (pp->eventbox31[4], FALSE);
 					}
+					gtk_widget_set_sensitive(pp->eventbox30[4],FALSE);
+					gtk_widget_set_sensitive(pp->eventbox31[4],FALSE);
 
 					break;
 
@@ -8804,6 +9023,8 @@ void draw3_data4(DRAW_UI_P p)
 								menu_content+GATE_M, 2, 4, CFG(gate_mode), 0);
 					else 
 						draw3_popdown (menu_content[GATE_M + CFG(gate_mode)], 4, 0);
+					gtk_widget_set_sensitive(pp->eventbox30[4],FALSE);
+					gtk_widget_set_sensitive(pp->eventbox31[4],FALSE);
 
 					break;
 				case 1:
@@ -8824,6 +9045,9 @@ void draw3_data4(DRAW_UI_P p)
 					gtk_widget_hide (pp->eventbox31[4]);
 					break;
 				case 4:/*Preferences -> Network -> Remote PC*/
+					if ( !con2_p[9][4][4] )
+						gtk_widget_hide (pp->eventbox30[4]);
+					gtk_widget_hide (pp->eventbox31[4]);
 
 					break;
 				default:break;
@@ -9526,7 +9750,7 @@ void draw3_data5(DRAW_UI_P p)
 						gtk_widget_hide (pp->eventbox30[5]);
 					gtk_widget_hide (pp->eventbox31[5]);
 					break;
-				case 2:/*Probe/Part -> characterize -> procedure*/
+				case 2:/*Probe/Part -> characterize -> procedure  p525 */
 					/* 格式化字符串 */
 					g_sprintf (temp,"%s", con2_p[5][2][5]);
 
@@ -9538,6 +9762,9 @@ void draw3_data5(DRAW_UI_P p)
 					gtk_widget_show (pp->eventbox30[5]);
 					gtk_widget_show (pp->eventbox31[5]);
 					gtk_widget_show (pp->data3[5]);
+
+					gtk_widget_set_sensitive(pp->eventbox30[5],FALSE);
+					gtk_widget_set_sensitive(pp->eventbox31[5],FALSE);
 					break;
 				case 3:
 					if ( !con2_p[5][3][5] )
@@ -9588,6 +9815,8 @@ void draw3_data5(DRAW_UI_P p)
 			{
 				case 0:/*Scan -> Encodr -> preset p705 */
 					draw3_popdown(NULL,5,1);
+					gtk_widget_set_sensitive(pp->eventbox30[5],FALSE);
+					gtk_widget_set_sensitive(pp->eventbox31[5],FALSE);
 					break;
 				case 1: /* Max.Index  Speed  p715 */
 					if(CFG(i_type)==2)
@@ -9721,6 +9950,8 @@ void draw3_data5(DRAW_UI_P p)
 						gtk_widget_set_sensitive (pp->eventbox30[5], FALSE);
 						gtk_widget_set_sensitive (pp->eventbox31[5], FALSE);
 					}
+					gtk_widget_set_sensitive(pp->eventbox30[5],FALSE);
+					gtk_widget_set_sensitive(pp->eventbox31[5],FALSE);
 					break;
 
 				case 1:
@@ -9770,6 +10001,9 @@ void draw3_data5(DRAW_UI_P p)
 					gtk_widget_hide (pp->eventbox31[5]);
 					break;
 				case 4:/*Preferences -> Network -> connect*/
+					if ( !con2_p[9][4][5] )
+						gtk_widget_hide (pp->eventbox30[5]);
+					gtk_widget_hide (pp->eventbox31[5]);
 					break;
 				default:break;
 			}

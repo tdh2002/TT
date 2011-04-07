@@ -984,21 +984,19 @@ void b3_fun2(gpointer p)
 							  /* 弹出一个选择菜单,选择 */                         break; 
 					   case 2:data_process(&(pp->p_tmp_config->count_reg), 1); break; /* 222 output count*/
 					   case 3:
-							  if( GROUP_VAL(curve_pos)==1 || GROUP_VAL(curve_pos)==2 || GROUP_VAL(curve_pos)==3 )
-							  {
-								  if( GROUP_VAL(mode_pos)==0 )
-									  data_process(&(pp->p_tmp_config->ref_ampl_reg), 2);
-								  else
-								  {
-									  if(GROUP_VAL(curve_pos)==1 || GROUP_VAL(curve_pos)==3)
-										  data_process(&(pp->p_tmp_config->position_reg), 3);
-									  else
-										  data_process(&(pp->p_tmp_config->delay_reg), 3);
-								  }
-
-							  }
-
-							  break; /*232 Ref.Amplitude*/
+							if(GROUP_VAL(mode_pos) == 1)
+							{
+								if( GROUP_VAL(curve_pos) == 1|| GROUP_VAL(curve_pos)==3)
+  									data_process(&(pp->p_tmp_config->position_reg),3);
+								else if(GROUP_VAL(curve_pos) == 2)
+									data_process(&(pp->p_tmp_config->delay_reg), 3);
+							}
+							else
+							{
+								if(GROUP_VAL(curve_pos) == 1|| GROUP_VAL(curve_pos)==2)
+									data_process(&(pp->p_tmp_config->ref_ampl_reg), 2);
+							}
+							break; /*232 Ref.Amplitude*/
 
 					   case 4: break;
 					   default:break;
@@ -2552,7 +2550,16 @@ void data_2311 (GtkMenuItem *menuitem, gpointer data) /* Gate/Alarm -> Sizing Cu
 
 void data_2312 (GtkSpinButton *spinbutton, gpointer data) /* Mat.Attenuatior P2312 */
 {
-	GROUP_VAL(mat_atten) =  (gushort) (gtk_spin_button_get_value (spinbutton) * 1000.0);
+	if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
+	{
+		if (UNIT_MM == CFG(unit))
+			GROUP_VAL(mat_atten) = (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 );
+		else  /* 英寸 */
+			GROUP_VAL(mat_atten) = (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 * 0.03937);
+	}
+	else /* 显示方式为时间 */
+		GROUP_VAL(mat_atten) = (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 * 0.338) ; 
+
 	//send_dsp_data (REF_AMPL_DSP, GROUP_VAL(ref_ampl));
 }
 
@@ -2563,12 +2570,30 @@ void data_232 (GtkSpinButton *spinbutton, gpointer data) /* Ref.Amplitude P232 *
 }
 void data_2321 (GtkSpinButton *spinbutton, gpointer data) /* Position P2321 */
 {
-	GROUP_VAL(position) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
+	if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
+	{
+		if (UNIT_MM == CFG(unit))
+			GROUP_VAL(position) = (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
+		else  /* 英寸 */
+			GROUP_VAL(position) = (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 / 0.03937 );
+	}
+	else /* 显示方式为时间 */
+			GROUP_VAL(position) = (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 * 0.1159 / 0.03937);
+
 	//send_dsp_data (REF_AMPL_DSP, GROUP_VAL(ref_ampl));
 }
 void data_2322 (GtkSpinButton *spinbutton, gpointer data) /* Delay P2322 */
 {
-	GROUP_VAL(delay) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
+	if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
+	{
+		if (UNIT_MM == CFG(unit))
+			GROUP_VAL(delay) = (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 ) ;
+		else  /* 英寸 */
+			GROUP_VAL(delay) = (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 / 0.03937) ;
+	}
+	else /* 显示方式为时间 */
+		GROUP_VAL(delay) = (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 * 2.945 ) ; 
+
 	//send_dsp_data (REF_AMPL_DSP, GROUP_VAL(ref_ampl));
 }
 

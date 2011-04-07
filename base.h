@@ -150,13 +150,37 @@ typedef struct analog_info {
 /* 一个阵元的聚焦信息*/
 typedef struct law_elem
 {
-
+    guchar	E_number;
+	guchar	Amplitude;		/* 电压 单位V */
+	gushort	FL_gain;		/* Focal Gain 0.1db单位 */
+	gushort	T_delay;		/* 0-25560 单位 ns 65535不活动状态 */
+	gushort	R_delay;		/*  */
+	gushort	P_width;			/* 50-500 单位ns*/
 } LAW_ELEM, *LAW_ELEM_P;
 
 /* 一条beam的聚焦信息 */
 typedef struct law_beam
 {
-	guint	beam_delay;
+/*    gchar Version[32];	*/
+/*    gint  N_laws;			*/
+    
+    guchar N_ActiveElements;	/* 同时激发的阵元数 */
+	guchar cycle;
+	guchar sumgain;				/*  */
+	guchar mode;				/* 0 T/R 1 Pulse-echo*/
+	guchar filter;				/* 0 no filter 1 0.5-5 2 2-10 3 5-15 */
+	guchar T_first;
+	guchar R_first;
+	guchar TTT_TTT;				/* 占位置 */
+	gushort frequency;			/* 频率0.001Mhz 为单位 */
+	gushort R_angle;
+	gushort S_angle;
+	guint Scan_offset;			/* 单位 0.001 mm*/
+	guint Index_offset;			/* 单位 0.001 mm*/
+	gint G_delay;				/* 单位ns Wedge Delay + Law Delay */
+	gint beam_delay;			/* 单位ns Wedge Delay + Law Delay */
+	gint F_depth;				/* 单位 微粒 */
+	guint M_velocity;			/* 单位 m/s */
 } LAW_BEAM, *LAW_BEAM_P;
 
 /*聚焦法则信息(law_info) 28byte*/
