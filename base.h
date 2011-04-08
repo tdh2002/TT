@@ -153,9 +153,10 @@ typedef struct law_elem
     guchar	E_number;
 	guchar	Amplitude;		/* 电压 单位V */
 	gushort	FL_gain;		/* Focal Gain 0.1db单位 */
-	gushort	T_delay;		/* 0-25560 单位 ns 65535不活动状态 */
 	gushort	R_delay;		/*  */
+	gushort	T_delay;		/* 0-25560 单位 ns 65535不活动状态 */
 	gushort	P_width;			/* 50-500 单位ns*/
+	gushort TT_TT;
 } LAW_ELEM, *LAW_ELEM_P;
 
 /* 一条beam的聚焦信息 */
@@ -175,6 +176,7 @@ typedef struct law_beam
 	gushort frequency;			/* 频率0.001Mhz 为单位 */
 	gushort R_angle;
 	gushort S_angle;
+	gushort	TTT__TTT;			/* 占位置 */
 	guint Scan_offset;			/* 单位 0.001 mm*/
 	guint Index_offset;			/* 单位 0.001 mm*/
 	gint G_delay;				/* 单位ns Wedge Delay + Law Delay */
