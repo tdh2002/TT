@@ -38,7 +38,7 @@ static gushort dot_temp1[FB_WIDTH*400];
 gint (*window_keypress_event_orig)(GtkWidget *widget, GdkEventKey *event);/* window 原始的按键处理 */
 gint my_keypress_event(GtkWidget *widget, GdkEventKey *event);			/* 自己的按键处理*/
 GtkWidgetClass *widget_window_class;									/* 原始widnow class */
-GtkWidgetClass *widget_window_class1;
+//GtkWidgetClass *widget_window_class1;
 GdkPoint a[512] = {{0,0}, {240,200}, {400,200}};
 
 const gchar *backpic[] = 
@@ -555,9 +555,12 @@ static gint gtk_entry_digit_only_keypress_event(GtkWidget *widget, GdkEventKey *
 {
 	gpointer data = NULL;
 	if (event->keyval == GDK_F12)
+	{
+		g_print("F12\n");
 		return key_press_handler (widget, event, data);
+	}
 	else
-		return window_keypress_event_orig(widget, event); 
+		return window_keypress_event_orig (widget, event); 
 	return FALSE;
 }
 
@@ -1203,7 +1206,7 @@ static void draw_remark ()
 	GtkWidget *sw;		/* 第一个scroll 备注只要一个sw */
 	GtkWidget *view;
 	GtkTextBuffer *TextBuffer;
-//	GtkWidgetClass *widget_window_class1;
+	GtkWidgetClass *widget_window_class1;
 	const gchar *buf = (const gchar *)(CFG(remark_info));
 
 
@@ -1213,8 +1216,8 @@ static void draw_remark ()
 			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 			NULL);
 	gtk_window_set_decorated (GTK_WINDOW (dialog), FALSE);			/*不可以装饰*/
-//	widget_window_class1 = GTK_WIDGET_GET_CLASS (((GtkObject*)(dialog))); 
-//	widget_window_class1->key_press_event = gtk_entry_digit_only_keypress_event; /* 指定哪些字符输入 */
+	widget_window_class1 = GTK_WIDGET_GET_CLASS (((GtkObject*)(dialog))); 
+	widget_window_class1->key_press_event = gtk_entry_digit_only_keypress_event; /* 指定哪些字符输入 */
 
 	gtk_widget_set_size_request(GTK_WIDGET (dialog), 300, 300);
 	vbox1 = GTK_WIDGET (GTK_DIALOG(dialog)->vbox);
@@ -1763,19 +1766,61 @@ void  on_changed_law_save(GtkWidget *widget, gpointer label)
 
 }
 
+gboolean law_save (GtkWidget *widget, GdkEventButton *event, gpointer data)
+{
+	gchar *file_path;
+	gint offset, k;
+	file_path = g_strdup_printf ("%s%s.law",
+			USER_LAW_PATH, gtk_entry_get_text (GTK_ENTRY (data)));
+	for (offset = 0, k = 0 ; k < CFG(groupId); k++)
+		offset += TMP(beam_qty[k]);
+	save_law_file(file_path, offset, CFG(groupId));
+	g_free (file_path);
+	widget_window_class->key_press_event = my_keypress_event;
+	gtk_widget_destroy (gtk_widget_get_parent 
+			(gtk_widget_get_parent
+			 (gtk_widget_get_parent (widget))));
+	return TRUE;
+}
+
+gboolean law_close (GtkWidget *widget, GdkEventButton *event,	gpointer data)
+{
+	widget_window_class->key_press_event = my_keypress_event;
+	gtk_widget_destroy (GTK_WIDGET (data));
+	return TRUE;
+}
+
+gboolean law_name (GtkWidget *widget, GdkEventButton *event,	gpointer data)
+{
+	gtk_widget_grab_focus (GTK_WIDGET (data));
+
+	return 0;
+}
+
 /* 13 保存聚焦法则 */
 static void draw_law_save ()
 {
 	GtkWindow *win = GTK_WINDOW (pp->window);
+	GtkWidgetClass *widget_window_class1;
 	GtkWidget *dialog;
-	GtkWidget *vbox;
 	GtkWidget *vbox1;
+
+	GtkWidget *ebox_save;
+	GtkWidget *label_save;
+
+	GtkWidget *ebox_close;
+	GtkWidget *label_close;
+
+	GtkWidget *vbox_name;
+	GtkWidget *entry_name;
+	GtkWidget *ebox_name;
+	GtkWidget *label_name;
 
 	GtkWidget *sw;
 	GtkWidget *sw1;
-	GtkWidget *refresh;
 	GtkWidget *table;
-    GtkWidget *hpaned;
+	GtkWidget *hpaned;
+	GtkWidget *list;
 	GtkCellRenderer *renderer;
 	GtkTreeViewColumn *column;
 	GtkListStore *store;
@@ -1786,11 +1831,39 @@ static void draw_law_save ()
 
 	gtk_window_set_decorated (GTK_WINDOW (dialog), FALSE);			/*不可以装饰*/
 	gtk_widget_set_size_request(GTK_WIDGET (dialog), 800, 600);
+	widget_window_class->key_press_event = window_keypress_event_orig;
+	widget_window_class1 = GTK_WIDGET_GET_CLASS (((GtkObject*)(dialog))); 
+	widget_window_class1->key_press_event = gtk_entry_digit_only_keypress_event;
+	/* 这里处理按键 */
 
-	vbox1 = GTK_WIDGET (GTK_DIALOG(dialog)->vbox);
-	vbox = gtk_vbox_new(FALSE, 0);
-	sw = gtk_scrolled_window_new(NULL, NULL);
-	sw1 = gtk_scrolled_window_new(NULL, NULL);
+
+	vbox1	= GTK_WIDGET (GTK_DIALOG(dialog)->vbox);
+	ebox_save	= gtk_event_box_new();
+	label_save	= gtk_label_new("Save");
+	ebox_close	= gtk_event_box_new();
+	label_close	= gtk_label_new("Close");
+	entry_name	= gtk_entry_new();
+	vbox_name	= gtk_vbox_new(FALSE, 0);
+	ebox_name	= gtk_event_box_new();
+	label_name	= gtk_label_new("Name");
+
+	gtk_container_add (GTK_CONTAINER (ebox_save), label_save);
+	gtk_container_add (GTK_CONTAINER (ebox_close), label_close);
+	gtk_container_add (GTK_CONTAINER (ebox_name), label_name);
+	gtk_box_pack_start (GTK_BOX(vbox_name), entry_name, FALSE, FALSE, 5);
+	gtk_box_pack_start (GTK_BOX(vbox_name), ebox_name, TRUE, TRUE, 5);
+
+	g_signal_connect (G_OBJECT(ebox_save), "button-press-event", 
+			G_CALLBACK(law_save), (gpointer) (entry_name));
+
+	g_signal_connect (G_OBJECT(ebox_close), "button-press-event", 
+			G_CALLBACK(law_close), (gpointer) (dialog));
+
+	g_signal_connect (G_OBJECT(ebox_name), "button-press-event", 
+			G_CALLBACK(law_name), (gpointer) (entry_name));
+
+	sw		= gtk_scrolled_window_new(NULL, NULL);
+	sw1		= gtk_scrolled_window_new(NULL, NULL);
 	/* 文件的名字 */
 	gtk_widget_set_size_request(sw, 200, 400);
 	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW(sw),
@@ -1818,6 +1891,154 @@ static void draw_law_save ()
 	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw1),
 			GTK_SHADOW_ETCHED_IN);
 
+	pp->web_view_tmp = WEBKIT_WEB_VIEW (webkit_web_view_new ());
+	webkit_web_view_set_custom_encoding (pp->web_view_tmp, "UTF-8");
+	/* 放置名字和内容 */
+	hpaned = gtk_hpaned_new ();
+	gtk_paned_add1 (GTK_PANED (hpaned), sw);
+	gtk_paned_add2 (GTK_PANED (hpaned), sw1);
+	gtk_container_add (GTK_CONTAINER (sw), list);
+	gtk_container_add (GTK_CONTAINER (sw1), GTK_WIDGET (pp->web_view_tmp));
+
+	pp->selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(list));
+
+	init_file_list (list, pp->selection, USER_LAW_PATH, DT_REG);
+	//	on_changed(GTK_WIDGET (pp->selection), NULL) ;/* 初始化 */
+
+	g_signal_connect (G_OBJECT (pp->selection), "changed", 
+			G_CALLBACK(on_changed_law_save), USER_LAW_PATH);
+
+	table = gtk_table_new(6, 7, TRUE);
+	gtk_table_set_row_spacings(GTK_TABLE(table), 0);
+	gtk_table_set_col_spacings(GTK_TABLE(table), 0);
+
+
+	gtk_table_attach(GTK_TABLE(table), hpaned, 0, 6, 0, 5, 
+			GTK_FILL | GTK_EXPAND, GTK_FILL | GTK_EXPAND, 0, 0);
+
+	gtk_table_attach(GTK_TABLE(table), ebox_save, 6, 7, 1, 2,		/* 0 5   */
+			GTK_FILL | GTK_EXPAND, GTK_FILL | GTK_EXPAND, 0, 0);	/* 侧边栏 */
+
+	gtk_table_attach(GTK_TABLE(table), ebox_close, 6, 7, 2, 3, 
+			GTK_FILL | GTK_EXPAND, GTK_FILL | GTK_EXPAND, 0, 0);	/* 侧边栏 */
+
+	gtk_table_attach(GTK_TABLE(table), vbox_name, 0, 7, 5, 6, 
+			GTK_FILL | GTK_EXPAND, GTK_FILL | GTK_EXPAND, 0, 0);	/* 下方栏 */
+
+
+	gtk_box_pack_start (GTK_BOX(vbox1), table, TRUE, TRUE, 5);
+	gtk_widget_show_all (dialog);
+	gtk_widget_hide (GTK_DIALOG(dialog)->action_area);
+}
+
+gboolean law_read (GtkWidget *widget, GdkEventButton *event, gpointer data)
+{
+	GtkTreeIter iter;
+	GtkTreeModel *model;
+	gint offset, k;
+	gchar *value = NULL;
+	gchar *file_path = NULL;
+
+	if (gtk_tree_selection_get_selected(
+				GTK_TREE_SELECTION(pp->selection), &model, &iter)) /* 选中探头型号时 */
+	{
+		gtk_tree_model_get(model, &iter, LIST_ITEM, &value,  -1);
+		file_path = g_strdup_printf ("%s%s", USER_LAW_PATH, value);
+
+		for (offset = 0, k = 0 ; k < CFG(groupId); k++)
+			offset += TMP(beam_qty[k]);
+		g_print("%s\n", file_path);
+		read_law_file(file_path, offset, CFG(groupId));
+		GROUP_VAL (frequency) = GROUP_VAL(probe.Frequency);				/* 频率 */
+
+	}
+
+	g_free (file_path);
+	widget_window_class->key_press_event = my_keypress_event;
+	gtk_widget_destroy (gtk_widget_get_parent 
+			(gtk_widget_get_parent
+			 (gtk_widget_get_parent (widget))));
+	return TRUE;
+}
+
+/* 14 读取聚焦法则 */
+static void draw_law_read ()
+{
+	GtkWindow *win = GTK_WINDOW (pp->window);
+	GtkWidgetClass *widget_window_class1;
+	GtkWidget *dialog;
+	GtkWidget *vbox1;
+
+	GtkWidget *ebox_read;
+	GtkWidget *label_read;
+
+	GtkWidget *ebox_close;
+	GtkWidget *label_close;
+
+	GtkWidget *sw;
+	GtkWidget *sw1;
+	GtkWidget *table;
+    GtkWidget *hpaned;
+	GtkWidget *list;
+	GtkCellRenderer *renderer;
+	GtkTreeViewColumn *column;
+	GtkListStore *store;
+
+	dialog = gtk_dialog_new_with_buttons("Dialog_Law_Save", win,
+			GTK_DIALOG_MODAL |	GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_NO_SEPARATOR,
+			GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
+
+	gtk_window_set_decorated (GTK_WINDOW (dialog), FALSE);			/*不可以装饰*/
+	gtk_widget_set_size_request(GTK_WIDGET (dialog), 800, 600);
+	widget_window_class->key_press_event = window_keypress_event_orig;
+	widget_window_class1 = GTK_WIDGET_GET_CLASS (((GtkObject*)(dialog))); 
+	widget_window_class1->key_press_event = gtk_entry_digit_only_keypress_event;
+	/* 这里处理按键 */
+
+
+	vbox1	= GTK_WIDGET (GTK_DIALOG(dialog)->vbox);
+	ebox_read	= gtk_event_box_new();
+	label_read	= gtk_label_new("Read");
+	ebox_close	= gtk_event_box_new();
+	label_close	= gtk_label_new("Close");
+
+	gtk_container_add (GTK_CONTAINER (ebox_read), label_read);
+	gtk_container_add (GTK_CONTAINER (ebox_close), label_close);
+
+	g_signal_connect (G_OBJECT(ebox_read), "button-press-event", 
+			G_CALLBACK(law_read), (gpointer) (NULL));
+
+	g_signal_connect (G_OBJECT(ebox_close), "button-press-event", 
+			G_CALLBACK(law_close), (gpointer) (dialog));
+
+	sw		= gtk_scrolled_window_new(NULL, NULL);
+	sw1		= gtk_scrolled_window_new(NULL, NULL);
+	/* 文件的名字 */
+	gtk_widget_set_size_request(sw, 200, 640);
+	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW(sw),
+			GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw),
+			GTK_SHADOW_ETCHED_IN);
+
+	list = gtk_tree_view_new();
+	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(list), FALSE);
+
+	renderer = gtk_cell_renderer_text_new();
+	column = gtk_tree_view_column_new_with_attributes("List Items",
+			renderer, "text", LIST_ITEM, NULL);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(list), column);
+
+	store = gtk_list_store_new(N_COLUMNS, G_TYPE_STRING);
+	gtk_tree_view_set_model(GTK_TREE_VIEW(list), 
+			GTK_TREE_MODEL(store));
+	g_object_unref(store);
+
+	/* 文件的内容 */
+	gtk_widget_set_size_request(sw1, 400, 640);
+	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW(sw1),
+			GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw1),
+			GTK_SHADOW_ETCHED_IN);
 
 	pp->web_view_tmp = WEBKIT_WEB_VIEW (webkit_web_view_new ());
 	webkit_web_view_set_custom_encoding (pp->web_view_tmp, "UTF-8");
@@ -1825,36 +2046,33 @@ static void draw_law_save ()
     hpaned = gtk_hpaned_new ();
     gtk_paned_add1 (GTK_PANED (hpaned), sw);
     gtk_paned_add2 (GTK_PANED (hpaned), sw1);
-	gtk_container_add(GTK_CONTAINER (sw), list);
-	gtk_container_add(GTK_CONTAINER (sw1), GTK_WIDGET (pp->web_view_tmp));
+	gtk_container_add (GTK_CONTAINER (sw), list);
+	gtk_container_add (GTK_CONTAINER (sw1), GTK_WIDGET (pp->web_view_tmp));
 
 	pp->selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(list));
 
 	init_file_list (list, pp->selection, USER_LAW_PATH, DT_REG);
 //	on_changed(GTK_WIDGET (pp->selection), NULL) ;/* 初始化 */
 
-	g_signal_connect(G_OBJECT (pp->selection), "changed", 
+	g_signal_connect (G_OBJECT (pp->selection), "changed", 
 			G_CALLBACK(on_changed_law_save), USER_LAW_PATH);
 
 	table = gtk_table_new(6, 7, TRUE);
 	gtk_table_set_row_spacings(GTK_TABLE(table), 0);
 	gtk_table_set_col_spacings(GTK_TABLE(table), 0);
 
-	gtk_box_pack_start(GTK_BOX(vbox), hpaned, TRUE, TRUE, 5);
 	
-	gtk_table_attach(GTK_TABLE(table), vbox, 0, 6, 0, 5, 
+	gtk_table_attach(GTK_TABLE(table), hpaned, 0, 6, 0, 6, 
 			GTK_FILL | GTK_EXPAND, GTK_FILL | GTK_EXPAND, 0, 0);
 
-	refresh = gtk_button_new_with_label("Refresh");
-	gtk_table_attach(GTK_TABLE(table), refresh, 6, 7, 0, 5, 
-			GTK_FILL | GTK_EXPAND, GTK_FILL | GTK_EXPAND, 0, 0);
-	refresh = gtk_button_new_with_label("Refresh");
-	gtk_table_attach(GTK_TABLE(table), refresh, 0, 7, 5, 6, 
-			GTK_FILL | GTK_EXPAND, GTK_FILL | GTK_EXPAND, 0, 0);
+	gtk_table_attach(GTK_TABLE(table), ebox_read, 6, 7, 1, 2,		/* 0 5   */
+			GTK_FILL | GTK_EXPAND, GTK_FILL | GTK_EXPAND, 0, 0);	/* 侧边栏 */
 
+	gtk_table_attach(GTK_TABLE(table), ebox_close, 6, 7, 2, 3, 
+			GTK_FILL | GTK_EXPAND, GTK_FILL | GTK_EXPAND, 0, 0);	/* 侧边栏 */
 
-	gtk_box_pack_start(GTK_BOX(vbox1), table, TRUE, TRUE, 5);
-	gtk_widget_show_all(dialog);
+	gtk_box_pack_start (GTK_BOX(vbox1), table, TRUE, TRUE, 5);
+	gtk_widget_show_all (dialog);
 	gtk_widget_hide (GTK_DIALOG(dialog)->action_area);
 }
 
@@ -1865,7 +2083,7 @@ static void draw_law_save ()
  * 2 楔块 
  * 3 自定义探头
  * 4 自定义楔块
- * 5 聚焦法则读入
+ * 5 
  * 13 聚焦法则保存
  * 6 配置 数据 报告 图像 的读入
  * 7 保存 配置文件
@@ -1874,6 +2092,9 @@ static void draw_law_save ()
  * 10 Export Table
  * 11 调色板
  * 12 文件管理
+ * 13 聚集法则的保存
+ * 14 聚集法则的读入
+ *
  */
 static void draw_dialog_all (guint type)
 {
@@ -1882,9 +2103,10 @@ static void draw_dialog_all (guint type)
 		case DIALOG_REMARK: draw_remark(); break;
 		case DIALOG_PROBE:  draw_probe(); break;
 		case DIALOG_WEDGE:  draw_wedge(); break;
-		case DIALOG_LAW_SAVE:	draw_law_save();break;
 		case DIALOG_COLOR_PALETTE:  draw_color_palette(); break;
 		case DIALOG_FILE_MANAGE:	draw_file_manage(); break;
+		case DIALOG_LAW_SAVE:	draw_law_save();break;
+		case DIALOG_LAW_READ:	draw_law_read();break;
 		default:break;
 	}
 }
@@ -4774,20 +4996,23 @@ void draw3_data1(DRAW_UI_P p)
 					}
 					break;
 
-				case 3:/*Focal Law -> laws -> load law file P631*/
-					if(CFG(auto_program))
+				case 3:/* 读取聚集法则 P631*/
+					if (CFG(auto_program) == AUTO_FOCAL_ON )
 					{
 						draw3_popdown(NULL, 1, 1);
 						gtk_widget_set_sensitive(pp->eventbox30[1],FALSE);
 						gtk_widget_set_sensitive(pp->eventbox31[1],FALSE);
 					}
 					else
-						draw3_popdown(NULL, 1, 1);
-
-					gtk_widget_set_sensitive(pp->eventbox30[1],FALSE);
-					gtk_widget_set_sensitive(pp->eventbox31[1],FALSE);
+					{
+						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
+						{
+							draw_dialog_all (DIALOG_LAW_READ);
+						}
+						else
+							draw3_popdown(NULL, 1, 1);
+					}
 					break;
-
 				case 4:
 					if ( !con2_p[6][4][1] )
 						gtk_widget_hide (pp->eventbox30[1]);
@@ -10393,17 +10618,14 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 	GtkWidget *window = p->window;
 	pp->pos_pos = MENU3_STOP;
 	pp->menu2_qty = 5;
-//	GtkWidgetClass *widget_window_class1;
 	gchar *markup;
 	//WebKitWebView* web_view;
-
 
 	for (i = 0; i < 512; i++) 
 	{
 		a[i].x =  i;
 		a[i].y =  i;
 	}
-
 
 	/* New a window */
 	p->pos	= 1;
@@ -10756,8 +10978,8 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 //	widget_window_class1 = GTK_WIDGET_GET_CLASS (((GtkObject*)(pp->dialog))); 
 //	widget_window_class1->key_press_event =	my_keypress_event;
 
-	widget_window_class1 = GTK_WIDGET_GET_CLASS (((GtkObject*)(pp->dialog))); 
-	widget_window_class1->key_press_event = gtk_entry_digit_only_keypress_event; /* 指定哪些字符输入 */
+//	widget_window_class1 = GTK_WIDGET_GET_CLASS (((GtkObject*)(pp->dialog))); 
+//	widget_window_class1->key_press_event = gtk_entry_digit_only_keypress_event; /* 指定哪些字符输入 */
 
 	gtk_window_set_decorated (GTK_WINDOW (pp->dialog), FALSE);			/*不可以装饰*/
 	gtk_container_set_border_width( GTK_CONTAINER (GTK_DIALOG(pp->dialog)->vbox), 0);     /* */

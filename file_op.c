@@ -151,6 +151,100 @@ void read_palette_file (const gchar *file_path, guint *sp_col, guint *col)
 	return ;
 }
 
+/* 保存当前group的聚焦法则 */
+void read_law_file (const gchar *file_path, gint offset, gint group)
+{
+	char version[16];
+	int i, j, k;
+	FILE *fd;
+
+
+//	if ((fd = open(file_path, O_RDWR | O_CREAT |  O_TRUNC, 0644))<0) 
+	if((fd = fopen(file_path, "rb")) == NULL)
+	{
+		perror("open:");
+		exit(1);
+	}
+	else 
+	{
+		g_print("read focal law data\n");
+		fscanf(fd, "%s	%d", version, &k);
+		g_print("read focal law data %d %d\n", &TMP(beam_qty[group]));
+		k = TMP(beam_qty[group]);
+		for (i = 0; i < k; i++)
+		{
+			fscanf(fd, "%d	%d	%d	%d	%d	%d	%d	%d	%d	%d	%d	%d	%d	%d	%d",
+					&CFG(focal_law_all_beam[offset + i]).N_ActiveElements, 
+					&CFG(focal_law_all_beam[offset + i]).frequency, 
+					&CFG(focal_law_all_beam[offset + i]).cycle, 
+					&CFG(focal_law_all_beam[offset + i]).sumgain,
+					&CFG(focal_law_all_beam[offset + i]).mode,
+					&CFG(focal_law_all_beam[offset + i]).filter, 
+					&CFG(focal_law_all_beam[offset + i]).R_angle,
+					&CFG(focal_law_all_beam[offset + i]).S_angle, 
+					&CFG(focal_law_all_beam[offset + i]).T_first, 
+					&CFG(focal_law_all_beam[offset + i]).R_first,
+					&CFG(focal_law_all_beam[offset + i]).Scan_offset, 
+					&CFG(focal_law_all_beam[offset + i]).Index_offset, 
+					&CFG(focal_law_all_beam[offset + i]).G_delay,
+					&CFG(focal_law_all_beam[offset + i]).F_depth,
+					&CFG(focal_law_all_beam[offset + i]).M_velocity );
+
+			for (j = 0; j < CFG(focal_law_all_beam[offset + i]).N_ActiveElements; j++)
+			{
+					fscanf(fd, "%d	%d	%d	%d	%d	%d",          
+							&CFG(focal_law_all_elem[offset + i][j]).E_number, 
+							&CFG(focal_law_all_elem[offset + i][j]).FL_gain,   
+							&CFG(focal_law_all_elem[offset + i][j]).T_delay,
+							&CFG(focal_law_all_elem[offset + i][j]).R_delay,
+							&CFG(focal_law_all_elem[offset + i][j]).Amplitude, 
+							&CFG(focal_law_all_elem[offset + i][j]).P_width ); 
+			} 
+		} 
+	}
+	fclose (fd);
+}
+
+/* 保存当前group的聚焦法则 */
+void save_law_file (const gchar *file_path, gint offset, gint group)
+{
+	int i, j;
+	FILE *fd;
+
+//	if ((fd = open(file_path, O_RDWR | O_CREAT |  O_TRUNC, 0644))<0) 
+	if((fd = fopen(file_path, "wb+")) == NULL)
+	{
+		perror("open:");
+		exit(1);
+	}
+	else 
+	{
+		g_print("Save focal law data\n");
+		fprintf(fd, "%s	%d\015\012", "dp1.00", TMP(beam_qty[group]));
+		for (i = 0; i < TMP(beam_qty[group]); i++)
+		{
+			fprintf(fd, "%d	%d	%d	%d	%d	%d	%d	%d	%d	%d	%d	%d	%d	%d	%d\015\012",
+					CFG(focal_law_all_beam[offset + i]).N_ActiveElements, CFG(focal_law_all_beam[offset + i]).frequency, CFG(focal_law_all_beam[offset + i]).cycle, CFG(focal_law_all_beam[offset + i]).sumgain, CFG(focal_law_all_beam[offset + i]).mode,
+					CFG(focal_law_all_beam[offset + i]).filter, CFG(focal_law_all_beam[offset + i]).R_angle,CFG(focal_law_all_beam[offset + i]).S_angle, CFG(focal_law_all_beam[offset + i]).T_first, CFG(focal_law_all_beam[offset + i]).R_first,
+					CFG(focal_law_all_beam[offset + i]).Scan_offset, CFG(focal_law_all_beam[offset + i]).Index_offset, CFG(focal_law_all_beam[offset + i]).G_delay, CFG(focal_law_all_beam[offset + i]).F_depth, CFG(focal_law_all_beam[offset + i]).M_velocity );
+
+
+			for (j = 0; j < CFG(focal_law_all_beam[offset + i]).N_ActiveElements; j++)
+			{
+					fprintf(fd, "%d	%d	%d	%d	%d	%d\015\012",          
+							CFG(focal_law_all_elem[offset + i][j]).E_number,
+							CFG(focal_law_all_elem[offset + i][j]).FL_gain,  
+							CFG(focal_law_all_elem[offset + i][j]).T_delay,
+							CFG(focal_law_all_elem[offset + i][j]).R_delay,
+							CFG(focal_law_all_elem[offset + i][j]).Amplitude, 
+							CFG(focal_law_all_elem[offset + i][j]).P_width ); 
+			} 
+
+		} 
+	}
+	fclose (fd);
+}
+
 int Set_Source_File_Path(char *path)
 {
     assert(path != NULL);

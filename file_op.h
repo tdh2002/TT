@@ -17,6 +17,8 @@
 extern void read_probe_file (const gchar *file_path, PROBE_P p);	/* 读取探头信息 */
 extern void read_wedge_file (const gchar *file_path, WEDGE_P p);	/* 读取楔块信息 */
 extern void read_palette_file (const gchar *file_path, guint *sp_col, guint *col);
+extern void save_law_file (const gchar *file_path, gint offset, gint group);
+extern void read_law_file (const gchar *file_path, gint offset, gint group);
 
 
 #define PA_UNKNOWN_PROBE	"source/system/Model/Probe/unknown_pa.opp"
