@@ -38,6 +38,7 @@ static gushort dot_temp1[FB_WIDTH*400];
 gint (*window_keypress_event_orig)(GtkWidget *widget, GdkEventKey *event);/* window 原始的按键处理 */
 gint my_keypress_event(GtkWidget *widget, GdkEventKey *event);			/* 自己的按键处理*/
 GtkWidgetClass *widget_window_class;									/* 原始widnow class */
+GtkWidgetClass *widget_window_class1;
 GdkPoint a[512] = {{0,0}, {240,200}, {400,200}};
 
 const gchar *backpic[] = 
@@ -1202,7 +1203,7 @@ static void draw_remark ()
 	GtkWidget *sw;		/* 第一个scroll 备注只要一个sw */
 	GtkWidget *view;
 	GtkTextBuffer *TextBuffer;
-	GtkWidgetClass *widget_window_class1;
+//	GtkWidgetClass *widget_window_class1;
 	const gchar *buf = (const gchar *)(CFG(remark_info));
 
 
@@ -1212,8 +1213,8 @@ static void draw_remark ()
 			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 			NULL);
 	gtk_window_set_decorated (GTK_WINDOW (dialog), FALSE);			/*不可以装饰*/
-	widget_window_class1 = GTK_WIDGET_GET_CLASS (((GtkObject*)(dialog))); 
-	widget_window_class1->key_press_event = gtk_entry_digit_only_keypress_event; /* 指定哪些字符输入 */
+//	widget_window_class1 = GTK_WIDGET_GET_CLASS (((GtkObject*)(dialog))); 
+//	widget_window_class1->key_press_event = gtk_entry_digit_only_keypress_event; /* 指定哪些字符输入 */
 
 	gtk_widget_set_size_request(GTK_WIDGET (dialog), 300, 300);
 	vbox1 = GTK_WIDGET (GTK_DIALOG(dialog)->vbox);
@@ -10392,7 +10393,7 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 	GtkWidget *window = p->window;
 	pp->pos_pos = MENU3_STOP;
 	pp->menu2_qty = 5;
-	GtkWidgetClass *widget_window_class1;
+//	GtkWidgetClass *widget_window_class1;
 	gchar *markup;
 	//WebKitWebView* web_view;
 
@@ -10752,8 +10753,11 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 			GTK_DIALOG_NO_SEPARATOR,
 			GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
 
+//	widget_window_class1 = GTK_WIDGET_GET_CLASS (((GtkObject*)(pp->dialog))); 
+//	widget_window_class1->key_press_event =	my_keypress_event;
+
 	widget_window_class1 = GTK_WIDGET_GET_CLASS (((GtkObject*)(pp->dialog))); 
-	widget_window_class1->key_press_event =	my_keypress_event;
+	widget_window_class1->key_press_event = gtk_entry_digit_only_keypress_event; /* 指定哪些字符输入 */
 
 	gtk_window_set_decorated (GTK_WINDOW (pp->dialog), FALSE);			/*不可以装饰*/
 	gtk_container_set_border_width( GTK_CONTAINER (GTK_DIALOG(pp->dialog)->vbox), 0);     /* */
