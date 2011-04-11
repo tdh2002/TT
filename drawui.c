@@ -19,6 +19,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
+#include <assert.h>
 #include <webkit/webkit.h>
 
 #define EVENT_METHOD(i, x) GTK_WIDGET_GET_CLASS((GtkObject*)(i))->x
@@ -1446,6 +1447,424 @@ static void draw_wedge ()
 
 }
 
+//作者 geniikid
+//日期 2011-3-28
+//函数 selection_file_type
+//参数 char *dir_path
+//参数 char *file_type
+void selection_file_type(GtkWidget *list,char *dir_path,char *file_type)
+{
+    DIR *dir;      
+    int i;
+    struct dirent* enump = NULL;
+    char *pos;
+    int name_len;
+    int suffix_len;
+
+    assert(dir_path != NULL);
+    assert(file_type != NULL);
+    
+     i = 0;    
+
+    dir = opendir(dir_path);
+    
+    if (dir == NULL)
+    {
+        g_printf("Open directory failed:%s \n",dir_path);
+        return ;
+    }
+
+    suffix_len = strlen(file_type);
+
+    while((enump = readdir(dir)))
+    {
+        name_len = strlen(enump->d_name);
+
+	if ((name_len == 1 && enump->d_name[0] == '.')|| (name_len == 2 && !strncmp(enump->d_name, "..", 2)))
+			continue;
+
+        if ( name_len <= suffix_len )
+            continue;
+
+        pos = strstr(enump->d_name,file_type);
+         
+        if (pos == NULL)
+            continue;
+        else
+        {    
+            add_to_list(list, enump->d_name, i);
+            i++;
+        }
+        
+    }
+   
+    closedir(dir);
+}
+
+//作者 geniikid
+//日期 2011-4-1
+//函数 open_config_file
+//参数 char *path
+int open_config_file(GtkWidget *widget,	GdkEventButton *event,	gpointer       data)
+{
+    FILE *fp;
+    char *path;
+
+    char file_name[1024] = "";
+
+    int value; 
+    char *value_name;
+    
+    GtkTreeIter source_iter;
+  
+    GtkTreeModel *source_model;
+    GtkTreeSelection *source_selection; 
+
+    GtkWidget *source_list = (GtkWidget *)data;
+
+    char *source_file;
+
+    source_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(source_list));
+
+    source_model=gtk_tree_view_get_model(GTK_TREE_VIEW(source_list));
+
+    value = gtk_tree_model_get_iter_from_string (source_model, &source_iter, "0");
+
+    while(value)   
+    {
+        if (gtk_tree_selection_iter_is_selected(source_selection,&source_iter))
+        {
+
+            gtk_tree_model_get(source_model, &source_iter, 0, &value_name,  -1);
+
+            g_printf("value_name = %s\n",value_name);
+
+            memset(file_name,0,sizeof(file_name));
+
+            source_file = Get_Source_File_Path();    
+
+            strcpy(file_name,source_file);
+
+            strcat(file_name,value_name);
+
+            fp = fopen(file_name, "r+");
+
+            if (fp < 0)
+                return -1;
+     
+            fread(pp->p_config, sizeof(CONFIG),1,fp);
+                    
+            gtk_tree_selection_unselect_iter(source_selection,&source_iter);
+            
+            g_free(value_name);
+
+            g_printf("selection \n");
+
+        }
+        else
+        {
+            value = gtk_tree_model_iter_next(source_model,&source_iter);
+        } 
+
+    }
+
+    return 0; 
+}
+
+/* 打开文件 */
+static void draw_file_open_main()
+{ 
+    GtkWindow *window = GTK_WINDOW (pp->window);
+
+    GtkWidget *dialog;
+
+    GtkWidget *hbox_first;
+
+    GtkWidget *hbox;
+
+    GtkWidget *hbox_1;
+    
+    GtkWidget *vbox_1_1;
+
+    GtkWidget *vbox_1_1_1[7];
+    GtkWidget *label_1_1_1[7];
+    char *char_1_1_1[7] = {"","","Close","File Type","listed files","",""};
+
+    GtkWidget *hbox_2;
+
+    GtkWidget *vbox_2_1;
+
+    GtkWidget *vbox_2_1_1;
+
+    GtkWidget *vbox_2_1_2;
+
+    GtkWidget *hbox_2_1_1_1;
+
+    GtkWidget *sw_2_1_1_1_1;
+    
+    GtkWidget *sw_2_1_1_1_2;
+
+    GtkWidget *hbox_2_1_2_1;
+
+    GtkWidget *hbox_2_1_2_1_1[6];
+    GtkWidget *label_2_1_2_1_1[6];
+    char *char_2_1_2_1_1[6] = {"Open","","","","",""};
+
+    int i;
+
+    GtkWidget *source_list;
+
+    GtkTreeSelection *source_selection; 
+
+    GtkTreeModel *source_model;
+
+    GtkCellRenderer *renderer;
+    GtkTreeViewColumn *column;
+    GtkListStore *store;
+
+    MY_SIGNAL my_signal;
+
+   	dialog = gtk_dialog_new_with_buttons ("Dialog_Wedge", window,
+			GTK_DIALOG_MODAL |	GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_NO_SEPARATOR,
+			GTK_STOCK_OK, GTK_RESPONSE_OK,
+			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+			NULL);
+
+    gtk_window_set_decorated (GTK_WINDOW (dialog), FALSE);			/*不可以装饰*/
+    gtk_widget_set_size_request(GTK_WIDGET (dialog), 800, 600);
+
+    hbox_first = GTK_WIDGET (GTK_DIALOG(dialog)->vbox);
+    
+     //源文件列表
+    source_list = gtk_tree_view_new();
+    gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(source_list), FALSE);
+
+    renderer = gtk_cell_renderer_text_new();
+    column = gtk_tree_view_column_new_with_attributes("List Items",renderer, "text", 0, NULL);
+    gtk_tree_view_append_column(GTK_TREE_VIEW(source_list), column);
+
+    store = gtk_list_store_new(1, G_TYPE_STRING);
+    gtk_tree_view_set_model(GTK_TREE_VIEW(source_list), GTK_TREE_MODEL(store));
+    //g_object_unref(store);
+
+    source_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(source_list));
+
+    source_model=gtk_tree_view_get_model(GTK_TREE_VIEW(source_list));
+
+    my_signal.source_model = source_model;
+    my_signal.source_selection = source_selection;
+    my_signal.source_list = source_list;
+    my_signal.target_model = NULL;
+    my_signal.target_selection = NULL;
+    my_signal.target_list = NULL;
+
+
+    hbox = gtk_hbox_new(FALSE,0);
+
+    hbox_1 = gtk_hbox_new(FALSE,0);
+    
+    vbox_1_1 = gtk_vbox_new(FALSE,0);
+
+    for(i=0;i<7;i++)
+    {
+        vbox_1_1_1[i] = gtk_event_box_new();
+        gtk_widget_set_size_request(GTK_WIDGET(vbox_1_1_1[i]),114,85);
+        update_widget_bg(vbox_1_1_1[i], backpic[1]);
+
+	label_1_1_1[i] = gtk_label_new(char_1_1_1[i]);
+	gtk_widget_modify_fg (label_1_1_1[i], GTK_STATE_NORMAL, &color_black);
+	gtk_label_set_justify(GTK_LABEL(label_1_1_1[i]), GTK_JUSTIFY_CENTER);
+
+	gtk_container_add(GTK_CONTAINER(vbox_1_1_1[i]),label_1_1_1[i]);
+	gtk_box_pack_start(GTK_BOX(vbox_1_1),vbox_1_1_1[i],FALSE,FALSE,0);   
+    }
+
+    gtk_box_pack_start(GTK_BOX(hbox_1),vbox_1_1,FALSE,FALSE,0);
+
+    gtk_box_pack_start(GTK_BOX(hbox),hbox_1,FALSE,FALSE,0);
+
+    hbox_2 = gtk_hbox_new(FALSE,0);
+
+    vbox_2_1 = gtk_vbox_new(FALSE,0);
+
+    vbox_2_1_1 = gtk_vbox_new(FALSE,0);
+
+    hbox_2_1_1_1 = gtk_hbox_new(FALSE,0);
+
+     //
+    sw_2_1_1_1_1 = gtk_scrolled_window_new (NULL, NULL);
+    gtk_widget_set_size_request(sw_2_1_1_1_1, 343, 515);
+    
+    //
+    sw_2_1_1_1_2 = gtk_scrolled_window_new (NULL, NULL);
+    gtk_widget_set_size_request(sw_2_1_1_1_2, 343, 515);
+
+    gtk_box_pack_start(GTK_BOX(hbox_2_1_1_1),sw_2_1_1_1_1,FALSE,FALSE,0);
+     
+    gtk_box_pack_start(GTK_BOX(hbox_2_1_1_1),sw_2_1_1_1_2,FALSE,FALSE,0);
+
+    gtk_box_pack_start(GTK_BOX(vbox_2_1_1),hbox_2_1_1_1,FALSE,FALSE,0);
+
+    gtk_box_pack_start(GTK_BOX(vbox_2_1),vbox_2_1_1,FALSE,FALSE,0);
+
+
+
+    vbox_2_1_2 = gtk_vbox_new(FALSE,0);
+
+    hbox_2_1_2_1 = gtk_hbox_new(FALSE,0);
+
+    for(i=0;i<6;i++)
+    {
+            hbox_2_1_2_1_1[i] = gtk_event_box_new();
+	     gtk_widget_set_size_request(GTK_WIDGET(hbox_2_1_2_1_1[i]),114,85);
+            update_widget_bg(hbox_2_1_2_1_1[i], backpic[1]);
+	     label_2_1_2_1_1[i] = gtk_label_new(char_2_1_2_1_1[i]);
+	     gtk_widget_modify_fg (label_2_1_2_1_1[i], GTK_STATE_NORMAL, &color_black);
+	     gtk_label_set_justify(GTK_LABEL(label_2_1_2_1_1[i]), GTK_JUSTIFY_CENTER);
+	     gtk_box_pack_start(GTK_BOX(hbox_2_1_2_1),hbox_2_1_2_1_1[i],FALSE,FALSE,0);
+            gtk_container_add(GTK_CONTAINER(hbox_2_1_2_1_1[i]), label_2_1_2_1_1[i]);
+    }
+
+    gtk_box_pack_start(GTK_BOX(vbox_2_1_2),hbox_2_1_2_1,FALSE,FALSE,0);
+
+    gtk_box_pack_start(GTK_BOX(vbox_2_1),vbox_2_1_2,FALSE,FALSE,0);
+
+    gtk_box_pack_start(GTK_BOX(hbox_2),vbox_2_1,FALSE,FALSE,0);
+
+    gtk_box_pack_start(GTK_BOX(hbox),hbox_2,FALSE,FALSE,0);
+   
+    gtk_box_pack_start(GTK_BOX(hbox_first),hbox,FALSE,FALSE,0);
+
+    //gtk_container_add(GTK_CONTAINER(window), hbox);
+
+    //selection_file_type(source_list,"/home/geniikid/zsh/",".ops");
+    
+    gtk_container_add(GTK_CONTAINER(sw_2_1_1_1_1),source_list);
+
+    //gtk_list_store_clear(store);
+
+    //g_object_unref(store);
+
+    //store = gtk_list_store_new(N_COLUMNS, G_TYPE_STRING);
+    //gtk_tree_view_set_model(GTK_TREE_VIEW(source_list), 
+    //GTK_TREE_MODEL(store));
+
+    Set_Source_File_Path(USER_CFG_PATH);
+
+    selection_file_type(source_list, USER_CFG_PATH,	".cfg");
+
+    g_signal_connect(G_OBJECT (vbox_1_1_1[2]), "button-press-event",G_CALLBACK(dialog_destroy), dialog);
+
+    g_signal_connect(G_OBJECT (hbox_2_1_2_1_1[0]), "button-press-event",G_CALLBACK(open_config_file), (gpointer)source_list);
+
+    gtk_widget_show_all(dialog);
+
+}
+
+/* 系统信息的显示 */
+static void draw_system_info ()
+{ 
+    GtkWidget *window = GTK_WINDOW (pp->window);
+
+    GtkWidget *dialog;
+
+    WebKitWebView* web_view;
+
+    gchar *file_path = "file:///home/tt/TT/system_info.htm";
+//    gchar *file_path = "file:///home/geniikid/tmp/system_info.htm";
+
+    GtkWidget *sw;
+
+    GtkWidget *vbox_first;
+
+    GtkWidget *vbox;
+
+    GtkWidget *vbox_1;
+
+    GtkWidget *vbox_2;
+
+    GtkWidget *hbox_2_1;
+
+    GtkWidget *hbox_2_1_1[7];
+
+    GtkWidget *label_2_1_1[7];
+
+    char *char_2_1_1[7] = {"","","","","Print","Save and close","Close"};
+
+    int i;
+
+    //window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    
+    //gtk_widget_set_size_request(GTK_WIDGET (window), 800, 600);
+
+    dialog = gtk_dialog_new_with_buttons ("Dialog_Wedge", window,
+			GTK_DIALOG_MODAL |	GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_NO_SEPARATOR,
+			GTK_STOCK_OK, GTK_RESPONSE_OK,
+			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+			NULL);
+
+    gtk_window_set_decorated (GTK_WINDOW (dialog), FALSE);			/*不可以装饰*/
+
+    vbox_first = GTK_WIDGET (GTK_DIALOG(dialog)->vbox);
+
+    gtk_widget_set_size_request(GTK_WIDGET (dialog), 800, 600);
+
+    vbox = gtk_vbox_new(FALSE,0); 
+
+    vbox_1 = gtk_vbox_new(FALSE,0);
+
+    vbox_2 = gtk_vbox_new(FALSE,0);
+
+    hbox_2_1 = gtk_hbox_new(FALSE,0);
+
+    for(i=0;i<7;i++)
+    {
+        hbox_2_1_1[i] = gtk_event_box_new();
+        gtk_widget_set_size_request(GTK_WIDGET(hbox_2_1_1[i]),114,85);
+        update_widget_bg(hbox_2_1_1[i], backpic[1]);
+        label_2_1_1[i] = gtk_label_new(char_2_1_1[i]);
+        gtk_widget_modify_fg (label_2_1_1[i], GTK_STATE_NORMAL, &color_black);
+        gtk_label_set_justify(GTK_LABEL(label_2_1_1[i]), GTK_JUSTIFY_CENTER);
+        gtk_container_add(GTK_CONTAINER(hbox_2_1_1[i]), label_2_1_1[i]);
+        gtk_box_pack_start(GTK_BOX(hbox_2_1),hbox_2_1_1[i], FALSE, FALSE, 0);
+    }
+
+    sw = gtk_scrolled_window_new (NULL, NULL);
+
+    gtk_widget_set_size_request(GTK_WIDGET(sw),800,515);
+
+    //
+    web_view = WEBKIT_WEB_VIEW (webkit_web_view_new());
+    //web的编码方式
+    webkit_web_view_set_custom_encoding (web_view, "UTF-8");    
+    //
+    webkit_web_view_load_uri (web_view, file_path);
+
+    g_signal_connect(G_OBJECT(window), "destroy",G_CALLBACK(gtk_main_quit), NULL);
+
+    g_signal_connect(G_OBJECT (hbox_2_1_1[6]), "button-press-event",G_CALLBACK(dialog_destroy), window);
+
+    gtk_container_add(GTK_CONTAINER(sw),web_view);
+
+    gtk_box_pack_start(GTK_BOX(vbox_1),sw, FALSE, FALSE, 0);
+
+    gtk_box_pack_start(GTK_BOX(vbox),vbox_1, FALSE, FALSE, 0);
+
+    gtk_box_pack_start(GTK_BOX(vbox_2),hbox_2_1, FALSE, FALSE, 0);
+    
+    gtk_box_pack_start(GTK_BOX(vbox),vbox_2, FALSE, FALSE, 0);
+
+    //gtk_container_add(GTK_CONTAINER(window), vbox);
+
+    gtk_box_pack_start(GTK_BOX(vbox_first), vbox,FALSE,FALSE,0);
+
+    //gtk_widget_show_all(window);
+
+    gtk_widget_show_all(dialog);
+
+    return ;
+}
+
 /* 11 调色板 */
 static void draw_color_palette ()
 {
@@ -2103,6 +2522,8 @@ static void draw_dialog_all (guint type)
 		case DIALOG_REMARK: draw_remark(); break;
 		case DIALOG_PROBE:  draw_probe(); break;
 		case DIALOG_WEDGE:  draw_wedge(); break;
+		case DIALOG_FILE_OPEN:  draw_file_open_main(); break;
+		case DIALOG_SYSTEM_INFO:  draw_system_info(); break;
 		case DIALOG_COLOR_PALETTE:  draw_color_palette(); break;
 		case DIALOG_FILE_MANAGE:	draw_file_manage(); break;
 		case DIALOG_LAW_SAVE:	draw_law_save();break;
@@ -2796,12 +3217,34 @@ void draw_area_all()
 				gtk_widget_show (pp->vbox_area[0]);
 				break;
 			case S_SCAN:
-				pp->draw_area[0].scan_type	=	S_SCAN;
-				gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
-				draw_area(pp->vbox_area[0], &(pp->draw_area[0]), 655, 425, "S-scan", 0.0, 100.0,
-						0.0, 100.0, 0.0, 100.0, NULL);
-				gtk_widget_show (pp->vbox_area[0]);
-				set_scan_config (0, S_SCAN, 615, 615, 390, 0, 0, CFG(groupId));
+				if ((GROUP_VAL(ut_unit) == UT_UNIT_SOUNDPATH) ||
+						(GROUP_VAL(ut_unit) == UT_UNIT_TIME))
+				{
+					pp->draw_area[0].scan_type	=	S_SCAN;
+					gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
+					draw_area(pp->vbox_area[0], &(pp->draw_area[0]), 655, 425, "S-scan", 0.0, 100.0,
+							0.0, 100.0, 0.0, 100.0, NULL);
+					gtk_widget_show (pp->vbox_area[0]);
+					set_scan_config (0, S_SCAN, 615, 615, 390, 0, 0, CFG(groupId));
+				}
+				else if (LAW_VAL(Focal_type) == ANGLE_SCAN)
+				{
+					pp->draw_area[0].scan_type	=	S_SCAN_A;
+					gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
+					draw_area(pp->vbox_area[0], &(pp->draw_area[0]), 655, 425, "S-scan", 0.0, 100.0,
+							0.0, 100.0, 0.0, 100.0, NULL);
+					gtk_widget_show (pp->vbox_area[0]);
+					set_scan_config (0, S_SCAN_A, 615, 615, 390, 0, 0, CFG(groupId));
+				}
+				else if (LAW_VAL(Focal_type) == ANGLE_SCAN)
+				{
+					pp->draw_area[0].scan_type	=	S_SCAN_L;
+					gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
+					draw_area(pp->vbox_area[0], &(pp->draw_area[0]), 655, 425, "S-scan", 0.0, 100.0,
+							0.0, 100.0, 0.0, 100.0, NULL);
+					gtk_widget_show (pp->vbox_area[0]);
+					set_scan_config (0, S_SCAN_L, 615, 615, 390, 0, 0, CFG(groupId));
+				}
 				break;
 			case A_B_SCAN:
 				pp->draw_area[0].scan_type	=	A_SCAN;
@@ -2929,7 +3372,7 @@ void draw_area_all()
 				break;
 		}
 	}
-	else 
+		else 
 	if (CFG (display_group) == DISPLAY_ALL_GROUP) 
 	{
 		switch (CFG(groupQty))
@@ -3605,7 +4048,7 @@ void draw3_data0(DRAW_UI_P p)
 						gtk_widget_set_sensitive(pp->eventbox31[0],FALSE);
 					}
 					break;
-				case 3:/*Focal Law -> laws -> auto program  p630 */
+				case 3:/* 自动计算聚焦法则 P630 */
 					draw3_popdown (menu_content[OFF_ON + CFG(auto_program)], 0, 0);
 					break;
 
@@ -3797,12 +4240,11 @@ void draw3_data0(DRAW_UI_P p)
 					gtk_widget_show (pp->data3[0]);
 					break;
 
-				case 2:/*Preferences -> service -> system info  p920*/
+				case 2:/* 系统信息  P920*/
+					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
+						draw_dialog_all(DIALOG_SYSTEM_INFO);
 					draw3_popdown(NULL,0,1);
-					gtk_widget_set_sensitive(pp->eventbox30[0],FALSE);
-					gtk_widget_set_sensitive(pp->eventbox31[0],FALSE);
 					break;
-
 				case 3:/*Preferences -> options -> mouse  p930 */
 					pp->x_pos = 560, pp->y_pos = 118-YOFFSET;
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
@@ -5120,34 +5562,11 @@ void draw3_data1(DRAW_UI_P p)
 		case 8:
 			switch (pp->pos1[8])
 			{
-				case 0:/*File -> File -> Open  p801 */
+				case 0:/* 打开文件 P801 */
+					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
+						draw_dialog_all (DIALOG_FILE_OPEN);
 					draw3_popdown(NULL,1,1);
-					gtk_widget_set_sensitive(pp->eventbox30[1],FALSE);
-					gtk_widget_set_sensitive(pp->eventbox31[1],FALSE);
 					break;
-
-				case 1:/*File -> report -> file name p811 */
-					/* 格式化字符串 */
-					g_sprintf (temp,"%s", con2_p[8][1][1]);
-
-					/* 设置label */
-					gtk_label_set_text (GTK_LABEL (pp->label3[1]), temp);
-					gtk_label_set_text (GTK_LABEL (pp->data3[1]), "Report####");
-
-					/* 显示和隐藏控件 */
-					gtk_widget_show (pp->eventbox30[1]);
-					gtk_widget_show (pp->eventbox31[1]);
-					gtk_widget_show (pp->data3[1]);
-
-					gtk_widget_set_sensitive(pp->eventbox30[1],FALSE);
-					gtk_widget_set_sensitive(pp->eventbox31[1],FALSE);
-					break;
-
-				case 2:/*File -> format -> probe  p821 */
-					draw3_popdown (menu_content[OFF_ON + CFG(format_probe)], 1, 0);
-
-					break;
-
 				case 3:/*File -> user field -> enable  p831 */
 					draw3_popdown (menu_content[OFF_ON + CFG(enable)], 1, 0);
 					break;
@@ -5216,7 +5635,6 @@ void draw3_data1(DRAW_UI_P p)
 						draw_dialog_all(DIALOG_FILE_MANAGE);
 					draw3_popdown(NULL,1,1);
 					break;
-
 				case 3:/*Preferences -> options -> Option Key  p931 */
 
 					draw3_popdown(NULL,1,1);
@@ -8053,10 +8471,13 @@ void draw3_data3(DRAW_UI_P p)
 						gtk_widget_set_sensitive(pp->eventbox31[3],FALSE);
 					}
 					break;
-				case 3:
-					if ( !con2_p[6][3][3] )
-						gtk_widget_hide (pp->eventbox30[3]);
-					gtk_widget_hide (pp->eventbox31[3]);
+				case 3: /* 级软聚焦法则 P633 */
+					draw3_popdown (NULL, 3, 1);
+					if (CFG(auto_program) == AUTO_FOCAL_OFF)
+					{
+						gtk_widget_set_sensitive(pp->eventbox30[3],FALSE);
+						gtk_widget_set_sensitive(pp->eventbox31[3],FALSE);
+					}
 					break;
 				case 4:
 					if ( !con2_p[6][4][3] )
@@ -10449,6 +10870,7 @@ static gboolean time_handler1(GtkWidget *widget)
 	gtk_label_set_markup (GTK_LABEL(pp->label[4]),markup);
 
 	g_free (markup);
+
 	return TRUE;
 }
 
@@ -10529,10 +10951,32 @@ static void draw_scan(guchar scan_num, guchar scan_type, guchar group,
 						xoff, yoff, group, 0);
 			break;
 		case S_SCAN:
+			draw_s_scan(dot_temp1, TMP(s_scan_width), TMP(s_scan_height),dot_temp,
+					TMP(scan_data[group]),
+					xoff, yoff, group, GROUP_VAL_POS(group, ut_unit));
+			break;
+		case S_SCAN_L:
+			draw_s_scan(dot_temp1, TMP(s_scan_width), TMP(s_scan_height),dot_temp,
+					TMP(scan_data[group]),
+					xoff, yoff, group, GROUP_VAL_POS(group, ut_unit));
+			break;
 		case S_SCAN_A:
-				draw_s_scan(dot_temp1, TMP(s_scan_width), TMP(s_scan_height),dot_temp,
-						TMP(scan_data[group]),
-						xoff, yoff, group, GROUP_VAL_POS(group, ut_unit));
+			/* 计算查找表 */
+			if ((GROUP_VAL_POS(group, ut_unit) == UT_UNIT_TRUE_DEPTH) &&
+					pp->sscan_mark)
+			{
+				/* 初始化扇型查找表 */
+				CalcFanScan (
+						LAW_VAL(Angle_start) / 100.0,
+						LAW_VAL(Angle_end) /100.0,	/*  */
+
+						LAW_VAL(Angle_step) / 100.0, 0, TMP(a_scan_dot_qty),
+						TMP(s_scan_width), TMP(s_scan_width), TMP(s_scan_height));
+				pp->sscan_mark = 0;
+			}
+			draw_s_scan(dot_temp1, TMP(s_scan_width), TMP(s_scan_height), dot_temp,
+					TMP(scan_data[group]),
+					xoff, yoff, group, GROUP_VAL_POS(group, ut_unit));
 			break;
 		case C_SCAN:
 			break;

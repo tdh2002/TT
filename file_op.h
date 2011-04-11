@@ -29,6 +29,8 @@ extern void read_law_file (const gchar *file_path, gint offset, gint group);
 #define PA_WEDGE_PATH	"source/system/Model/Wedge/PA/"
 #define UT_WEDGE_PATH	"source/system/Model/Wedge/UT/"
 
+#define USER_CFG_PATH	"source/user/setup/"
+
 #define SYS_LAW_PATH	"/home/tt/TT/source/system/Sample/Law/"
 #define USER_LAW_PATH	"/home/tt/TT/source/user/law/"
 

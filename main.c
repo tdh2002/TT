@@ -351,7 +351,7 @@ int main (int argc, char *argv[])
 	   g_signal_connect (G_OBJECT (window), "key-press-event",
 	   G_CALLBACK (key_press_handler), NULL);
 	   */
-/****
+
 	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) NULL, NULL);
 	gtk_accel_group_connect(accel, GDK_F1, 0, GTK_ACCEL_VISIBLE, closure);
 	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) NULL, NULL);
@@ -383,7 +383,7 @@ int main (int argc, char *argv[])
 	gtk_accel_group_connect(accel, GDK_Escape, 0, GTK_ACCEL_VISIBLE, closure);
 
 	gtk_window_add_accel_group(GTK_WINDOW(window), accel);
-****/
+
 	gdk_threads_enter();
 	gtk_main();
 	gdk_threads_leave();

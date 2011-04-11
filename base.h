@@ -401,6 +401,7 @@ typedef	struct Config {
 
 	PART	part;				/* 被检测工件... */
 	/* 所有聚焦法则的信息在这里 */
+	LAW_FOCAL	focal_law_all_info[MAX_GROUP_QTY];
 	LAW_BEAM	focal_law_all_beam[setup_MAX_LAW_QTY];
 	LAW_ELEM	focal_law_all_elem[setup_MAX_LAW_QTY][setup_MAX_ELEM_RX_ACTIVE];	
 	/*  */
@@ -692,6 +693,11 @@ typedef struct tmp_config {
 	guint	scan_xpos[16];
 	guint	scan_ypos[16];
 
+	gchar	*pDraw;			/*  */
+	guchar	*pAngleZoom;	/*  */
+	guchar	*pDrawRate;		/*  */
+	gint	*pDataNo;		/*  */
+
 	gint	fd_config;
 } TMP_CONFIG, *TMP_CONFIG_P;
 
@@ -711,7 +717,7 @@ typedef struct draw_area {
 	GtkWidget *vruler1;
 	GtkWidget *vruler2;
 	GtkWidget *drawing_area;             /*波形显示区*/
-	guchar		scan_type;
+	guchar	scan_type;
 } DRAW_AREA, *DRAW_AREA_P;
 
 /*画界面结构体*/
@@ -824,6 +830,7 @@ typedef struct Draw_interface {
 	guchar			mark3;
 
 	guchar	bscan_mark;
+	guchar	sscan_mark;
 	guchar	refresh_mark;
 
 

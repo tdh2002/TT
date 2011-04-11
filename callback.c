@@ -1100,6 +1100,7 @@ void b3_fun2(gpointer p)
 
 void b3_fun3(gpointer p)
 {
+	guint temp_beam;
 	/* 之前的位置 */
 	pp->pos_last2 = pp->pos2[pp->pos][pp->pos1[pp->pos]];
 	pp->pos2[pp->pos][pp->pos1[pp->pos]] = 3;
@@ -1122,6 +1123,17 @@ void b3_fun3(gpointer p)
 				case 1: 
 					CFG(overlay_gate) = !CFG(overlay_gate);
 					break; /* p413 */
+				default:break;
+			}
+			break;
+		case 6:
+			switch (pp->pos1[6])
+			{
+				case 3:
+					temp_beam = (guint)((LAW_VAL(Angle_end) - LAW_VAL(Angle_start))) /
+						LAW_VAL(Angle_step) + 1;
+					TMP(beam_qty[CFG(groupId)])	= temp_beam;
+					break;  /* 计算聚焦法则 P633 */
 				default:break;
 			}
 			break;
@@ -3162,40 +3174,44 @@ void data_614 (GtkMenuItem *menuitem, gpointer data) /* 纵横波  P614 */
 
 void data_620 (GtkSpinButton *spinbutton, gpointer data) /* min_angle P620*/
 {
-	guint temp_beam;
 
 	if (LAW_VAL(Focal_type) == ANGLE_SCAN)
 	{
 		LAW_VAL(Angle_start) =  (gshort) (gtk_spin_button_get_value (spinbutton) * 100.0);
+		/*
 		temp_beam = (guint)((LAW_VAL(Angle_end) - LAW_VAL(Angle_start))) /
 			LAW_VAL(Angle_step) + 1;
 		TMP(beam_qty[CFG(groupId)])	= temp_beam;
+		*/
 	}
 	else if (LAW_VAL(Focal_type) == LINEAR_SCAN)
 		LAW_VAL(Angle_start) =  (gshort) (gtk_spin_button_get_value (spinbutton) * 100.0);
 }
 
-void data_621 (GtkSpinButton *spinbutton, gpointer data) /* max_angle */
+void data_621 (GtkSpinButton *spinbutton, gpointer data) /* max_angle P621 */
 {
-	guint temp_beam;
 
 	if (LAW_VAL(Focal_type) == ANGLE_SCAN)
 	{
 		LAW_VAL(Angle_end) =  (gshort) (gtk_spin_button_get_value (spinbutton) * 100.0);
+		/*
 		temp_beam = (guint) (LAW_VAL(Angle_end) - LAW_VAL(Angle_start)) /
 			LAW_VAL(Angle_step) + 1;
 		TMP(beam_qty[CFG(groupId)])	= temp_beam;
+		*/
+		pp->sscan_mark = 1;
 	}
 }
 
 void data_622 (GtkSpinButton *spinbutton, gpointer data) /* Angle Step P622 */
 {
-	guint temp_beam;
 
 	LAW_VAL(Angle_step) =  (gushort) (gtk_spin_button_get_value (spinbutton) * 100.0);
+	/*
 	temp_beam = (guint) (LAW_VAL(Angle_end) - LAW_VAL(Angle_start)) /
 		LAW_VAL(Angle_step) + 1;
 	TMP(beam_qty[CFG(groupId)])	= temp_beam;
+	*/
 }
 
 void data_623 (GtkSpinButton *spinbutton, gpointer data) /* focus_depth P623*/

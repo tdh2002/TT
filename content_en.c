@@ -256,7 +256,7 @@ static const gchar *content_en262[] = {
 
 static const gchar *content_en263[] = {
 	/* 二级菜单第6页下的第3页三级菜单 */
-	"Auto Program", "Load Law File", "Save Law File",  NULL, NULL, NULL
+	"Auto Program", "Load Law File", "Save Law File",  "Cal Focallaw", NULL, NULL
 };
 
 static const gchar *content_en264[] = {
@@ -380,7 +380,7 @@ const gchar *units_en[] =
 {
 	"(mm)", "(in)", "(μs)", NULL, "(m/s)", "(in/μs)", "(dB)", 
 	"(1 to 97)", "(%)", "(ms)", "(mm/s)", "(1 to 113)", "(dB/mm)",
-	"(s)", "(°)", "(Step/mm)", "(rpm)", " "
+	"(s)", "(°)", "(Step/mm)", "(rpm)", "dB/in", "dB/μs"," "
 };
 
 const gchar *all_menu_content_en[] = 

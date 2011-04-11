@@ -29,6 +29,9 @@ extern void draw_a_scan_r (gushort *p, guint width, guint height,
 /* */
 extern void draw_b_scan (gushort *p, guint width, guint height, DOT_TYPE *data, DOT_TYPE *data1,
 		guint xoffset, guint yoffset, guchar groupId, guchar mark);
+extern int CalcFanScan(gdouble startAngle, gdouble endAngle,
+		gdouble stepAngle, gint startWave, gint endWave,
+		gint widstep, gint width, gint height);
 extern void draw_s_scan (gushort *p, guint width, guint height, DOT_TYPE *data, DOT_TYPE *data1,
 		guint xoffset, guint yoffset, guchar groupId, guchar ut_unit);
 #endif
