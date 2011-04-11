@@ -20,7 +20,7 @@ LDFLAGS=`pkg-config --libs ${LIBS}` -Wall
 all: ${PROG_NAME}
 
 ${PROG_NAME}:${OBJS}
-	${CC} -o ${PROG_NAME} ${OBJS} ${LDFLAGS}
+	${CC} -o ${PROG_NAME} ${OBJS} ${LDFLAGS} focallaw.o
 #注意：上边”${CC}" 的前边有一个TAB键，而不是空格
 
 #如果有头文件进行修改，则自动编译源文件
@@ -31,6 +31,6 @@ ${OBJS}:${INCS}
 
 .PHONY:clean
 clean:
-	rm -f *.o  ${PROG_NAME}
+	rm -f ${PROG_NAME}
 
 rebuild: clean all
