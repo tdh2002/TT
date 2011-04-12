@@ -497,11 +497,11 @@ typedef	struct Config {
 	guint	scanspeed_rpm;
 	guint	indexspeed;
 
-	guint	scan_start;                    /* Scan -> Area -> Scan start*/
-	guint	scan_end;                      /* Scan -> Area -> Scan end*/
+	gint	scan_start;                    /* Scan -> Area -> Scan start*/
+	gint	scan_end;                      /* Scan -> Area -> Scan end*/
 	guint	scan_resolution;               /* Scan -> Area -> Scan resolution*/
-	guint	index_start;                   /* Scan -> Area -> index_start*/
-	guint	index_end;                     /* Scan -> Area -> index_end*/
+	gint	index_start;                   /* Scan -> Area -> index_start*/
+	gint	index_end;                     /* Scan -> Area -> index_end*/
 	guint	index_resolution;              /* Scan -> Area -> index_resolution*/
 	guchar	start_mode;                    /* Scan -> Start -> start mode*/
 	guchar	pause;                         /* Scan -> Start -> pause*/
@@ -881,13 +881,21 @@ typedef struct _MY_SIGNAL_TMP {
 /* 310  所选菜单项不同，后面跟着弹出的菜单便不同 */
 /* 322 323 控制324 的值加减，  325 340弹出一个窗口 */
 /* 400 420 所选菜单项不同，后面跟着弹出的菜单便不同 */
-/* 430 440已完成 */
+/* 430 440 已完成 */
 /* 501 502 所选菜单项不同，后面跟着弹出的菜单便不同 */
 /* 503 504 弹出一个窗口 */
 /* 524 525 可编辑状态  */
 /* 612 613 何时为sensitive , 何时为 unsensitive 状态*/
 /* 620 621 622 何时为sensitive , 何时为 unsensitive 状态*/
 /* 710 所选菜单项不同，后面跟着弹出的菜单便不同 */
+
+
+/* probe  wedge  弹出窗口的按键处理 */
+///* 72*  mm   in    */
+/* 31***   313 mm   in */
+/* 三级菜单弹出选项哪些哪时为黑 */
+
+
 
 #define CUR_POS (pp->pos2[pp->pos][pp->pos1[pp->pos]])      /* 0,1,2,3,4,5 */
 #define CFG(a)	(pp->p_config->a)

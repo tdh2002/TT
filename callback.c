@@ -878,8 +878,7 @@ void b3_fun1(gpointer p)
 								"<span foreground='white' font_desc='16'>%0.1f(%0.1f)</span>",
 								(GROUP_VAL(gain) - GROUP_VAL(gainr)) / 100.0, GROUP_VAL(gainr) / 100.0);
 					else
-						markup = g_markup_printf_escaped ("<span foreground='white' font_desc='24'>%0.1f</span>",
-								GROUP_VAL(gain) / 100.0 );
+						markup = g_markup_printf_escaped ("<span foreground='white' font_desc='24'>%0.1f</span>",	GROUP_VAL(gain) / 100.0 );
 					gtk_label_set_markup (GTK_LABEL(pp->label[GAIN_VALUE]),markup);
 
 					g_free(markup);
@@ -907,6 +906,7 @@ void b3_fun1(gpointer p)
 						case 1:break;
 						case 2:CFG(ratio)= !CFG(ratio);break;
 						case 3:CFG(interpolation) = !CFG(interpolation);break;
+						default:break;
 					}
 					break;  
 					/* P441 */
@@ -971,15 +971,24 @@ void b3_fun1(gpointer p)
 				   switch (pp->pos1[3])
 				   {
 					   case 0: break; 
-					   case 1: /* 311 */
-							   if(!GROUP_VAL(selection))
-								   data_process(&(pp->p_tmp_config->per_reference_reg), 2); 
-							   else if(GROUP_VAL(selection)==1||GROUP_VAL(selection)==2||GROUP_VAL(selection)==3)
-								   data_process(&(pp->p_tmp_config->s_reference_reg), 3);
-							   else if(GROUP_VAL(selection)==4 || GROUP_VAL(selection)==5 || GROUP_VAL(selection)==8)
-								   data_process(&(pp->p_tmp_config->cursors_angle_reg), 1);
-							   break;
-
+					   case 1:
+					   	  switch(GROUP_VAL(selection))  
+					   	  {
+							case 0:
+								data_process(&(TMP(per_reference_reg)), 2);break;
+							case 1:
+							case 2:
+							case 3:
+								data_process(&(TMP(s_reference_reg)), 3);break;
+							case 4:
+							case 5:
+							case 6:
+							case 7:
+							case 8:
+								data_process(&(TMP(cursors_angle_reg)), 1);break;
+							default:break;
+					  	  }
+					  	   break;	/*p311*/
 					   case 2: break; /* 321 entry image*/ 
 					   case 3: data_process(&(pp->p_tmp_config->min_thickness_reg), 3); break;  /*331 */
 					   case 4: /* Set Ref. */ break; 
@@ -1197,13 +1206,26 @@ void b3_fun2(gpointer p)
 				   {
 					   case 0: break; 
 					   case 1:/*312*/
-							   if(!GROUP_VAL(selection))
-								   data_process(&(pp->p_tmp_config->per_measure_reg), 2); 
-							   else if(GROUP_VAL(selection)==1||GROUP_VAL(selection)==2||GROUP_VAL(selection)==3)
-								   data_process(&(pp->p_tmp_config->s_measure_reg), 3);
-							   else if(GROUP_VAL(selection)==5||GROUP_VAL(selection)==6||GROUP_VAL(selection)==7)
-								   data_process(&(TMP(cursors_amplitude_reg)), 2);
-								 break;
+					   	  switch(GROUP_VAL(selection))  
+					   	  {
+							case 0:
+								data_process(&(TMP(per_measure_reg)), 2);break;
+							case 1:
+							case 2:
+							case 3:
+								data_process(&(TMP(s_measure_reg)), 3);break;
+							case 4:
+								data_process(&(TMP(u_reference_reg)), 3);break;
+							case 5:
+							case 6:
+							case 7:
+								data_process(&(TMP(cursors_amplitude_reg)), 2);break;
+							case 8:
+								data_process(&(TMP(cursors_scan_reg)), 3);break;
+							default:break;
+					  	  }
+						   break;
+
 					   case 2: break;
 					   case 3: data_process(&(pp->p_tmp_config->max_thickness_reg), 3); break; /*332 */
 					   case 4: break;
@@ -1391,15 +1413,25 @@ void b3_fun3(gpointer p)
 				   {
 					   case 0: break;
 					   case 1: /* 313 */
-							   if( GROUP_VAL(selection)==0 || GROUP_VAL(selection)==1 || GROUP_VAL(selection)==4) 
-								   data_process(&(pp->p_tmp_config->u_reference_reg), 3);
-							   else if( GROUP_VAL(selection)==2 )
-								   data_process(&(pp->p_tmp_config->i_reference_reg), 3);
-							   else if( GROUP_VAL(selection)==3 )
-								   data_process(&(pp->p_tmp_config->s_refmeas_reg), 3);
-							   else if( GROUP_VAL(selection)==5|| GROUP_VAL(selection)==6|| GROUP_VAL(selection)==7 )
-								   data_process(&(TMP(cursors_ut_reg)), 3);
-							   break;
+					   	  switch(GROUP_VAL(selection))  
+					   	  {
+							case 0:
+							case 1:
+							case 4:
+								data_process(&(TMP(u_reference_reg)), 3);break;
+							case 2:
+								data_process(&(TMP(i_reference_reg)), 3);break;
+							case 3:
+								data_process(&(TMP(s_refmeas_reg)), 3);break;
+							case 5:
+							case 6:
+							case 7:
+								data_process(&(TMP(cursors_ut_reg)), 3);break;
+							case 8:
+								data_process(&(TMP(cursors_index_reg)), 3);break;
+							default:break;
+					  	  }
+						   break;
 
 					   case 2: /* 视频滤波 */ break; 
 					   case 3: data_process(&(TMP(echo_qty_reg)), 1); break;  /*333 */
@@ -1430,7 +1462,7 @@ void b3_fun3(gpointer p)
 				   {
 					   case 0: break;
 					   case 1: break;
-					   case 2: data_process(&(pp->p_tmp_config->agate_width_reg), 3);  break; /* 523 */
+					   case 2: data_process(&(pp->p_tmp_config->gate_width_reg), 3);  break; /* 523 */
 					   case 3: break;  
 					   case 4: break; 
 					   default:break;
@@ -1548,13 +1580,21 @@ void b3_fun4(gpointer p)
 				   {
 					   case 0: break;
 					   case 1:  /* 314 */ 
-							   if( GROUP_VAL(selection)==0 || GROUP_VAL(selection)==1 || GROUP_VAL(selection)==4) 
-								   data_process(&(pp->p_tmp_config->u_measure_reg), 3);
-							   else if( GROUP_VAL(selection)==2 )
-								   data_process(&(pp->p_tmp_config->i_measure_reg), 3);
-							   else if( GROUP_VAL(selection)==5 || GROUP_VAL(selection)==6 || GROUP_VAL(selection)==7) 
-								   data_process(&(TMP(cursors_scan_reg)), 3);
-							   break;
+					   	  switch(GROUP_VAL(selection))  
+					   	  {
+							case 0:
+							case 1:
+							case 4:
+								data_process(&(TMP(u_measure_reg)), 3);break;
+							case 2:
+								data_process(&(TMP(i_measure_reg)), 3);break;
+							case 5:
+							case 6:
+							case 7:
+								data_process(&(TMP(cursors_scan_reg)), 3);break;
+							default:break;
+					  	  }
+						   break;
 
 					   case 2: data_process(&(pp->p_tmp_config->entry_reg), 1); break;  /*324 */
 					   case 3: break;  /*334 */
@@ -1677,9 +1717,17 @@ void b3_fun5(gpointer p)
 				   {
 					   case 0: break; 
 					   case 1: 
-						if(GROUP_VAL(selection)==5||GROUP_VAL(selection)==6||GROUP_VAL(selection)==7)
-							data_process(&(TMP(cursors_index_reg)), 3);
-							break;/*p315*/
+					   	  switch(GROUP_VAL(selection))  
+					   	  {
+							case 4:
+								data_process(&(TMP(s_measure_reg)), 3);break;
+							case 5:
+							case 6:
+							case 7:
+								data_process(&(TMP(cursors_index_reg)), 3);break;
+							default:break;
+					  	  }
+						   break;
 					   case 2: break; 
 					   case 3: break; 
 					   case 4: break; 
@@ -2877,7 +2925,10 @@ void data_311 (GtkSpinButton *spinbutton, gpointer data)
 }
 void data_3111 (GtkSpinButton *spinbutton, gpointer data) 
 {
-	GROUP_VAL(s_reference) =  (guint) (gtk_spin_button_get_value (spinbutton)*100.0);
+	if(CFG(unit) == UNIT_MM)
+		GROUP_VAL(s_reference) =  (gint) (gtk_spin_button_get_value (spinbutton)*100.0);
+	else
+		GROUP_VAL(s_reference) =  (gint) (gtk_spin_button_get_value (spinbutton)*100.0/0.03937);
 }
 void data_3112 (GtkSpinButton *spinbutton, gpointer data) 
 {
@@ -2896,7 +2947,10 @@ void data_312 (GtkSpinButton *spinbutton, gpointer data) /* */
 
 void data_3121 (GtkSpinButton *spinbutton, gpointer data) /* */
 {
-	GROUP_VAL(s_measure) =  (guint) (gtk_spin_button_get_value (spinbutton)*100.0);
+	if(CFG(unit) == UNIT_MM)
+		GROUP_VAL(s_measure) =  (gint) (gtk_spin_button_get_value (spinbutton)*100.0);
+	else
+		GROUP_VAL(s_measure) =  (gint) (gtk_spin_button_get_value (spinbutton)*100.0/0.03937);
 }
 
 void data_3122 (GtkSpinButton *spinbutton, gpointer data) /* */
@@ -2906,37 +2960,76 @@ void data_3122 (GtkSpinButton *spinbutton, gpointer data) /* */
 
 void data_313 (GtkSpinButton *spinbutton, gpointer data) /* */
 {
-	GROUP_VAL(u_reference) =  (guint) (gtk_spin_button_get_value (spinbutton)*1000.0);
+	if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
+	{
+		if(CFG(unit) == UNIT_MM)
+			GROUP_VAL(u_reference) =  (guint) (gtk_spin_button_get_value (spinbutton)*1000.0);
+		else
+			GROUP_VAL(u_reference) =  (guint) (gtk_spin_button_get_value (spinbutton)*1000.0/0.03937);
+	}
+	else
+		GROUP_VAL(u_reference) =  (guint) (gtk_spin_button_get_value (spinbutton)*(GROUP_VAL(velocity))/200.0);
 }
 
 void data_3131 (GtkSpinButton *spinbutton, gpointer data) /* */
 {
-	GROUP_VAL(i_reference) =  (gint) (gtk_spin_button_get_value (spinbutton)*100.0);
+	if(CFG(unit) == UNIT_MM)
+		GROUP_VAL(i_reference) =  (gint) (gtk_spin_button_get_value (spinbutton)*100.0);
+	else
+		GROUP_VAL(i_reference) =  (gint) (gtk_spin_button_get_value (spinbutton)*100.0/0.03937);
 }
 
 void data_3132 (GtkSpinButton *spinbutton, gpointer data) /* */
 {
-	GROUP_VAL(s_refmeas) =  (gushort) (gtk_spin_button_get_value (spinbutton)*100.0);
+	if(CFG(unit) == UNIT_MM)
+		GROUP_VAL(s_refmeas) =  (gushort) (gtk_spin_button_get_value (spinbutton)*100.0);
+	else
+		GROUP_VAL(s_refmeas) =  (gushort) (gtk_spin_button_get_value (spinbutton)*100.0/0.03937);
 }
 
 void data_3133 (GtkSpinButton *spinbutton, gpointer data) /* */
 {
 	GROUP_CURSORS_POS(UT) =  (gshort) (gtk_spin_button_get_value (spinbutton)*100.0);
+
+	if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
+	{
+		if(CFG(unit) == UNIT_MM)
+			GROUP_CURSORS_POS(UT) =  (gshort) (gtk_spin_button_get_value (spinbutton)*1000.0);
+		else
+			GROUP_CURSORS_POS(UT) =  (gshort) (gtk_spin_button_get_value (spinbutton)*1000.0/0.03937);
+	}
+	else
+		GROUP_CURSORS_POS(UT) =  (gshort) (gtk_spin_button_get_value (spinbutton)*1000.0);
 }
 
 void data_314 (GtkSpinButton *spinbutton, gpointer data) /* */
 {
-	GROUP_VAL(u_measure) =  (guint) (gtk_spin_button_get_value (spinbutton)*1000.0);
+	if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
+	{
+		if(CFG(unit) == UNIT_MM)
+			GROUP_VAL(u_measure) =  (guint) (gtk_spin_button_get_value (spinbutton)*1000.0);
+		else
+			GROUP_VAL(u_measure) =  (guint) (gtk_spin_button_get_value (spinbutton)*1000.0/0.03937);
+	}
+	else
+		GROUP_VAL(u_measure) =  (guint) (gtk_spin_button_get_value (spinbutton)*1000.0);
+
 }
 
 void data_3141 (GtkSpinButton *spinbutton, gpointer data) /* */
 {
-	GROUP_VAL(i_measure) =  (gint) (gtk_spin_button_get_value (spinbutton)*100.0);
+	if(CFG(unit) == UNIT_MM)
+		GROUP_VAL(i_measure) =  (gint) (gtk_spin_button_get_value (spinbutton)*100.0);
+	else
+		GROUP_VAL(i_measure) =  (gint) (gtk_spin_button_get_value (spinbutton)*100.0/0.03937);
 }
 
 void data_3142 (GtkSpinButton *spinbutton, gpointer data) /* */
 {
-	GROUP_CURSORS_POS(scan) =  (gint) (gtk_spin_button_get_value (spinbutton)*100.0);
+	if(CFG(unit) == UNIT_MM)
+		GROUP_CURSORS_POS(scan) =  (gint) (gtk_spin_button_get_value (spinbutton)*100.0);
+	else
+		GROUP_CURSORS_POS(scan) =  (gint) (gtk_spin_button_get_value (spinbutton)*100.0/0.03937);
 }
 
 void data_315 (GtkMenuItem *menuitem, gpointer data) /* Measurements -> DATA LINK */
@@ -2947,7 +3040,10 @@ void data_315 (GtkMenuItem *menuitem, gpointer data) /* Measurements -> DATA LIN
 }
 void data_3151 (GtkSpinButton *spinbutton, gpointer data) /* */
 {
-	GROUP_CURSORS_POS(index) =  (gint) (gtk_spin_button_get_value (spinbutton)*100.0);
+	if(CFG(unit) == UNIT_MM)
+		GROUP_CURSORS_POS(index) =  (gint) (gtk_spin_button_get_value (spinbutton)*100.0);
+	else
+		GROUP_CURSORS_POS(index) =  (gint) (gtk_spin_button_get_value (spinbutton)*100.0/0.03937);
 }
 
 void data_324 (GtkSpinButton *spinbutton, gpointer data) /*entry_qty */
@@ -2964,12 +3060,18 @@ void data_330 (GtkMenuItem *menuitem, gpointer data) /* Measurements -> Thicknes
 
 void data_331 (GtkSpinButton *spinbutton, gpointer data) /*min_thickness p331 */
 {
-	CFG(min_thickness) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
+	if(UNIT_MM == CFG(unit))
+		CFG(min_thickness) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
+	else
+		CFG(min_thickness) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 / 0.03937);
 }
 
 void data_332 (GtkSpinButton *spinbutton, gpointer data) /*max_thickness p332 */
 {
-	CFG(max_thickness) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
+	if(UNIT_MM == CFG(unit))
+		CFG(max_thickness) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
+	else
+		CFG(max_thickness) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 / 0.03937 );
 }
 
 void data_333 (GtkSpinButton *spinbutton, gpointer data) /*echo_qty p333 */
@@ -3257,12 +3359,18 @@ void data_502 (GtkMenuItem *menuitem, gpointer data) /* Probe/Part -> Select -> 
 
 void data_510 (GtkSpinButton *spinbutton, gpointer data) /*scanoffset */
 {
+	if(CFG(unit) == UNIT_MM)
 	GROUP_VAL(scan_offset) =  (gint) (gtk_spin_button_get_value (spinbutton) * 10.0);
+	else
+	GROUP_VAL(scan_offset) =  (gint) (gtk_spin_button_get_value (spinbutton) * 10.0 / 0.03937);
 }
 
 void data_511 (GtkSpinButton *spinbutton, gpointer data) /*indexoffset */
 {
+	if(CFG(unit) == UNIT_MM)
 	GROUP_VAL(index_offset) =  (gint) (gtk_spin_button_get_value (spinbutton) * 10.0);
+	else
+	GROUP_VAL(index_offset) =  (gint) (gtk_spin_button_get_value (spinbutton) * 10.0 / 0.03937);
 }
 
 void data_5121 (GtkSpinButton *spinbutton, gpointer data) /* Skew (deg) */
@@ -3312,11 +3420,17 @@ void data_530 (GtkMenuItem *menuitem, gpointer data) /* Probe/Part -> Parts -> G
 
 void data_531 (GtkSpinButton *spinbutton, gpointer data) /*part_thickness*/
 {
-	CFG(part.Thickness) =  (guint) (gtk_spin_button_get_value (spinbutton) * 100.0);
+	if(UNIT_MM == CFG(unit))
+		CFG(part.Thickness) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
+	else
+		CFG(part.Thickness) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 / 0.03937 );
 }
 void data_532 (GtkSpinButton *spinbutton, gpointer data) /*part_thickness*/
 {
-	CFG(part.Diameter) =  (guint) (gtk_spin_button_get_value (spinbutton) * 100.0);
+	if(UNIT_MM == CFG(unit))
+		CFG(part.Diameter) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
+	else
+		CFG(part.Diameter) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 / 0.03937 );
 }
 
 void data_533 (GtkMenuItem *menuitem, gpointer data) /* Probe/Part -> Parts -> Material 533 */
@@ -3408,7 +3522,10 @@ void data_622 (GtkSpinButton *spinbutton, gpointer data) /* Angle Step P622 */
 
 void data_623 (GtkSpinButton *spinbutton, gpointer data) /* focus_depth P623*/
 {
-	LAW_VAL(Focus_depth) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
+	if(UNIT_MM == CFG(unit))
+		LAW_VAL(Focus_depth) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
+	else
+		LAW_VAL(Focus_depth) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 / 0.03937 );
 }
 
 void data_700 (GtkMenuItem *menuitem, gpointer data) /* Encoder */
@@ -3465,7 +3582,10 @@ void data_712 (GtkMenuItem *menuitem, gpointer data) /* Scan -> Inspection -> In
 
 void data_713 (GtkSpinButton *spinbutton, gpointer data) /*scan_speed*/
 {
-	pp->p_config->scanspeed =  (guint) (gtk_spin_button_get_value (spinbutton) * 10.0);
+	if(UNIT_MM == CFG(unit))
+		CFG(scanspeed) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
+	else
+		CFG(scanspeed) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 / 0.03937 );
 }
 
 void data_714 (GtkSpinButton *spinbutton, gpointer data) /*scan_speed*/
@@ -3480,32 +3600,50 @@ void data_715 (GtkSpinButton *spinbutton, gpointer data) /*index_speed*/
 
 void data_720 (GtkSpinButton *spinbutton, gpointer data) /*scan_start*/
 {
-	CFG(scan_start) =  (guint) (gtk_spin_button_get_value (spinbutton));
+	if(UNIT_MM == CFG(unit))
+		CFG(scan_start) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
+	else
+		CFG(scan_start) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 / 0.03937 );
 }
 
 void data_721 (GtkSpinButton *spinbutton, gpointer data) /*scan_end*/
 {
-	CFG(scan_end) =  (guint) (gtk_spin_button_get_value (spinbutton));
+	if(UNIT_MM == CFG(unit))
+		CFG(scan_end) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
+	else
+		CFG(scan_end) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 / 0.03937 );
 }
 
 void data_722 (GtkSpinButton *spinbutton, gpointer data) /*scan_resolution*/
 {
-	CFG(scan_resolution) =  (guint) (gtk_spin_button_get_value (spinbutton) * 100.0);
+	if(UNIT_MM == CFG(unit))
+		CFG(scan_resolution) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
+	else
+		CFG(scan_resolution) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 / 0.03937 );
 }
 
 void data_723 (GtkSpinButton *spinbutton, gpointer data) /*index_start*/
 {
-	CFG(index_start) =  (guint) (gtk_spin_button_get_value (spinbutton));
+	if(UNIT_MM == CFG(unit))
+		CFG(index_start) =  (guint) (gtk_spin_button_get_value (spinbutton)*1000.0);
+	else
+		CFG(index_start) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 / 0.03937 );
 }
 
 void data_724 (GtkSpinButton *spinbutton, gpointer data) /*index_end*/
 {
-	CFG(index_end) =  (guint) (gtk_spin_button_get_value (spinbutton));
+	if(UNIT_MM == CFG(unit))
+		CFG(index_end) =  (guint) (gtk_spin_button_get_value (spinbutton)*1000.0);
+	else
+		CFG(index_end) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 / 0.03937 );
 }
 
 void data_725 (GtkSpinButton *spinbutton, gpointer data) /*index_resolution*/
 {
-	CFG(index_resolution) =  (guint) (gtk_spin_button_get_value (spinbutton) * 100.0 );
+	if(UNIT_MM == CFG(unit))
+		CFG(index_resolution) =  (guint) (gtk_spin_button_get_value (spinbutton)*1000.0);
+	else
+		CFG(index_resolution) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 / 0.03937 );
 }
 
 void data_730 (GtkMenuItem *menuitem, gpointer data) /* Scan -> start -> start mode */

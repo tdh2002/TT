@@ -32,10 +32,11 @@ extern void read_law_file (const gchar *file_path, gint offset, gint group);
 #define USER_CFG_PATH	"source/user/setup/"
 
 #define SYS_LAW_PATH	"/home/tt/TT/source/system/Sample/Law/"
-#define USER_LAW_PATH	"/home/tt/TT/source/user/law/"
+//#define USER_LAW_PATH	"/home/tt/TT/source/user/law/"
+#define USER_LAW_PATH	"/home/gll/arraytop/TT/source/user/law/"
 
-/*#define PALETTE_PATH	"/home/gll/arraytop/TT/source/system/Sample/Palette/"*/
-#define PALETTE_PATH	"/home/tt/TT/source/system/Sample/Palette/"
+#define PALETTE_PATH	"/home/gll/arraytop/TT/source/system/Sample/Palette/"
+//#define PALETTE_PATH	"/home/tt/TT/source/system/Sample/Palette/"
 
 #define FILE_NAME_MAX 256
 

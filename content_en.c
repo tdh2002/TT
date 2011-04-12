@@ -380,7 +380,7 @@ const gchar *units_en[] =
 {
 	"(mm)", "(in)", "(μs)", NULL, "(m/s)", "(in/μs)", "(dB)", 
 	"(1 to 97)", "(%)", "(ms)", "(mm/s)", "(1 to 113)", "(dB/mm)",
-	"(s)", "(°)", "(Step/mm)", "(rpm)", "dB/in", "dB/μs"," "
+	"(s)", "(°)", "(Step/mm)", "(rpm)", "(dB/in)","(dB/μs)","(in/s)"," "
 };
 
 const gchar *all_menu_content_en[] = 

@@ -38,7 +38,8 @@
 #define UNIT_RPM	16
 #define UNIT_DB_INCH	17
 #define UNIT_DB_US	18
-#define UNIT_NONE	19
+#define UNIT_INCH_S	19
+#define UNIT_NONE	20
 
 /* UT_UNIT */
 #define UT_UNIT_SOUNDPATH	0

@@ -3904,6 +3904,8 @@ void draw3_data0(DRAW_UI_P p)
 					}
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 					{
+						if(UNIT_MM == CFG(unit))
+						{
 						cur_value = GROUP_VAL(scan_offset)/10.0;
 						lower = -100000.0;
 						upper = 9999999.0;
@@ -3911,15 +3913,37 @@ void draw3_data0(DRAW_UI_P p)
 						digit = 1;
 						pos = 0;
 						unit = UNIT_MM;
+						}
+						else
+						{
+						cur_value = GROUP_VAL(scan_offset)/10.0*0.03937;
+						lower = -100000.0*0.03937;
+						upper = 9999999.0*0.03937;
+						step = tmpf/100.0;
+						digit = 1;
+						pos = 0;
+						unit = UNIT_INCH;
+						}
 						draw3_digit_pressed (data_510, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 					}
 					else 
 					{
+						if(UNIT_MM == CFG(unit))
+						{
 						cur_value = GROUP_VAL(scan_offset)/10.0;
 						digit = 1;
 						pos = 0;
 						unit = UNIT_MM;
 						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
+						}
+						else
+						{
+						cur_value = GROUP_VAL(scan_offset)/10.0*0.03937;
+						digit = 1;
+						pos = 0;
+						unit = UNIT_INCH;
+						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
+						}
 					}
 					break;
 				case 2:/*Probe/Part -> characterize -> FFT p520 */
@@ -4090,9 +4114,9 @@ void draw3_data0(DRAW_UI_P p)
 					/* 当前步进 */
 					switch (TMP(scan_start_reg))
 					{
-						case 0:	tmpf = 1.0; break;
-						case 1:	tmpf = 10.0; break;
-						case 2:	tmpf = 100.0; break;
+						case 0:	tmpf = 0.001 * CFG(scan_resolution); break;
+						case 1:	tmpf = 0.01 * CFG(scan_resolution); break;
+						case 2:	tmpf = 0.1 * CFG(scan_resolution); break;
 						default:break;
 					}
 					if(CFG(i_type)==0 || CFG(i_type)==1)
@@ -4100,30 +4124,64 @@ void draw3_data0(DRAW_UI_P p)
 					{
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 						{
-							cur_value = CFG(scan_start);
+							if(CFG(unit) == UNIT_MM)
+							{
+							cur_value = CFG(scan_start)/1000.0;
 							lower = -99999.0;
 							upper = 99999.0;
 							step = tmpf;
-							digit = 0;
+							digit = 2;
 							pos = 0;
 							unit = UNIT_MM;
+							}
+							else
+							{
+							cur_value = CFG(scan_start)/1000.0*0.03937;
+							lower = -99999.0*0.03937;
+							upper = 99999.0*0.03937;
+							step = tmpf*0.03937;
+							digit = 3;
+							pos = 0;
+							unit = UNIT_INCH;
+							}
+
 							draw3_digit_pressed (data_720, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 						}
 						else 
 						{
-							cur_value = CFG(scan_start);
-							digit = 0;
+							if(CFG(unit) == UNIT_MM)
+							{
+							cur_value = CFG(scan_start)/1000.0;
+							digit = 2;
 							pos = 0;
 							unit = UNIT_MM;
+							}
+							else
+							{
+							cur_value = CFG(scan_start)/1000.0*0.03937;
+							digit = 3;
+							pos = 0;
+							unit = UNIT_INCH;
+							}
 							draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 						}
 					}
 					else  /* Inspection -> Type 选择 Helicoidal Scan  时 */
 					{
+						if(CFG(unit) == UNIT_MM)
+						{
 						CFG(scan_start) = 0;
 						digit = 0;
 						pos = 0;
 						unit = UNIT_MM;
+						}
+						else
+						{
+						CFG(scan_start) = 0;
+						digit = 0;
+						pos = 0;
+						unit = UNIT_INCH;
+						}
 						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 
 						gtk_widget_set_sensitive(pp->eventbox30[0],FALSE);
@@ -4618,10 +4676,10 @@ void draw3_data1(DRAW_UI_P p)
 									}
 									else
 									{
-										cur_value = GROUP_VAL(mat_atten) / 1000.0 / 0.03937;
+										cur_value = GROUP_VAL(mat_atten) /1000.0 / 0.03937;
 										lower = 0.00;
 										upper = 4002000.0/GROUP_VAL(velocity)/0.03937;
-										step = tmpf;
+										step = tmpf/10.0;
 										digit = 3;
 										pos = 1;
 										unit = UNIT_DB_INCH;
@@ -4632,7 +4690,7 @@ void draw3_data1(DRAW_UI_P p)
 									cur_value = GROUP_VAL(mat_atten) / 1000.0/0.338;
 									lower = 0.00;
 									upper = 20.0;
-									step = tmpf;
+									step = tmpf/10.0;
 									digit = 2;
 									pos = 1;
 									unit = UNIT_DB_US;
@@ -4652,8 +4710,8 @@ void draw3_data1(DRAW_UI_P p)
 									}
 									else
 									{
-										cur_value = GROUP_VAL(mat_atten) / 1000.0 / 0.03937;
-										digit = 2;
+										cur_value = GROUP_VAL(mat_atten) /1000.0 / 0.03937;
+										digit = 3;
 										pos = 1;
 										unit = UNIT_DB_INCH;
 									}
@@ -4743,6 +4801,8 @@ void draw3_data1(DRAW_UI_P p)
 						}
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 						{
+							if(CFG(unit) == UNIT_MM)
+							{
 							cur_value = GROUP_VAL(s_reference)/100.0;
 							lower = -1000000.0;
 							upper =  1000000.0;
@@ -4750,14 +4810,35 @@ void draw3_data1(DRAW_UI_P p)
 							digit = 1;
 							pos = 1;
 							unit = UNIT_MM;
+							}
+							else
+							{
+							cur_value = GROUP_VAL(s_reference)/100.0*0.03937;
+							lower = -1000000.0*0.03937;
+							upper =  1000000.0*0.03937;
+							step = tmpf;
+							digit = 3;
+							pos = 1;
+							unit = UNIT_INCH;
+							}
 							draw3_digit_pressed (data_3111, units[unit], cur_value , lower, upper, step, digit, p, pos, 6);
 						}
 						else 
 						{
+							if(CFG(unit) == UNIT_MM)
+							{
 							cur_value = GROUP_VAL(s_reference)/100.0;
 							digit = 1;
 							pos = 1;
 							unit = UNIT_MM;
+							}
+							else
+							{
+							cur_value = GROUP_VAL(s_reference)/100.0*0.03937;
+							digit = 3;
+							pos = 1;
+							unit = UNIT_INCH;
+							}
 							draw3_digit_stop (cur_value, units[unit], digit, pos, 6);
 						}
 
@@ -4785,7 +4866,7 @@ void draw3_data1(DRAW_UI_P p)
 							step = tmpf;
 							digit = 1;
 							pos = 1;
-							unit = UNIT_NONE;
+							unit = UNIT_DEG;
 							draw3_digit_pressed (data_3112, units[unit], cur_value , lower, upper, step, digit, p, pos, 12);
 						}
 						else 
@@ -4793,7 +4874,7 @@ void draw3_data1(DRAW_UI_P p)
 							cur_value = GROUP_VAL(cursors_angle)/100.0;
 							digit = 1;
 							pos = 1;
-							unit = UNIT_NONE;
+							unit = UNIT_DEG;
 							draw3_digit_stop (cur_value, units[unit], digit, pos, 12);
 						}
 					}
@@ -4815,7 +4896,7 @@ void draw3_data1(DRAW_UI_P p)
 							step = tmpf;
 							digit = 1;
 							pos = 1;
-							unit = UNIT_NONE;
+							unit = UNIT_DEG;
 							draw3_digit_pressed (data_3113, units[unit], cur_value , lower, upper, step, digit, p, pos, 12);
 						}
 						else 
@@ -4823,42 +4904,10 @@ void draw3_data1(DRAW_UI_P p)
 							cur_value = GROUP_CURSORS_POS(angle)/100.0;
 							digit = 1;
 							pos = 1;
-							unit = UNIT_NONE;
+							unit = UNIT_DEG;
 							draw3_digit_stop (cur_value, units[unit], digit, pos, 12);
 						}
 					}
-
-
-
-#if 0
-					/* 当前步进 */
-					switch (pp->p_tmp_config->VPA_reg)
-					{
-						case 0:	tmpf = 0.1; break;
-						case 1:	tmpf = 1.0; break;
-						case 2:	tmpf = 10.0; break;
-						default:break;
-					}
-					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
-					{
-						cur_value = pp->p_config->VPA;
-						lower = 1.0;
-						upper = 128.0;
-						step = tmpf;
-						digit = 0;
-						pos = 1;
-						unit = UNIT_NONE;
-						draw3_digit_pressed (data_311, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
-					}
-					else 
-					{
-						cur_value = pp->p_config->VPA;
-						digit = 0;
-						pos = 1;
-						unit = UNIT_NONE;
-						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
-					}
-#endif
 					break;
 
 				case 2:/*Measurements -> Table -> Entry Image p321*/
@@ -4878,6 +4927,8 @@ void draw3_data1(DRAW_UI_P p)
 					}
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 					{
+						if (CFG(unit)==UNIT_MM)
+						{
 						cur_value = CFG(min_thickness)/1000.0;
 						lower = 0.05;
 						upper = (CFG(max_thickness)/1000.0)-0.01;
@@ -4885,14 +4936,36 @@ void draw3_data1(DRAW_UI_P p)
 						digit = 2;
 						pos = 1;
 						unit = UNIT_MM;
+						}
+						else
+						{
+						cur_value = CFG(min_thickness)/1000.0*0.03937;
+						lower = 0.002;
+						upper = (CFG(max_thickness)/1000.0*0.03937)-0.005;
+						step = tmpf/2.0;
+						digit = 3;
+						pos = 1;
+						unit = UNIT_INCH;
+						}
+
 						draw3_digit_pressed (data_331, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 					}
 					else 
 					{
+						if (CFG(unit)==UNIT_MM)
+						{
 						cur_value = CFG(min_thickness)/1000.0;
 						digit = 2;
 						pos = 1;
 						unit = UNIT_MM;
+						}
+						else
+						{
+						cur_value = CFG(min_thickness)/1000.0*0.03937;
+						digit = 3;
+						pos = 1;
+						unit = UNIT_INCH;
+						}
 						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					}
 					break;
@@ -5220,6 +5293,8 @@ void draw3_data1(DRAW_UI_P p)
 					}
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 					{
+						if(UNIT_MM == CFG(unit))
+						{
 						cur_value = GROUP_VAL(index_offset)/10.0;
 						lower = -1000000.0;
 						upper =  9999999.0;
@@ -5227,14 +5302,35 @@ void draw3_data1(DRAW_UI_P p)
 						digit = 1;
 						pos = 1;
 						unit = UNIT_MM;
+						}
+						else
+						{						
+						cur_value = GROUP_VAL(index_offset)/10.0*0.03937;
+						lower = -1000000.0*0.03937;
+						upper =  9999999.0*0.03937;
+						step = tmpf/10.0;
+						digit = 1;
+						pos = 1;
+						unit = UNIT_INCH;
+						}
 						draw3_digit_pressed (data_511, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 					}
 					else 
 					{
+						if(UNIT_MM == CFG(unit))
+						{
 						cur_value =GROUP_VAL(index_offset)/10.0;
 						digit = 1;
 						pos = 1;
 						unit = UNIT_MM;
+						}
+						else
+						{
+						cur_value =GROUP_VAL(index_offset)/10.0*0.03937;
+						digit = 1;
+						pos = 1;
+						unit = UNIT_INCH;
+						}
 						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					}
 					break;
@@ -5288,21 +5384,44 @@ void draw3_data1(DRAW_UI_P p)
 					}
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 					{
-						cur_value = CFG(part.Thickness)/100.0;
+						if(UNIT_MM == CFG(unit))
+						{
+						cur_value = CFG(part.Thickness)/1000.0;
 						lower = 0.05;
-						upper = 1000000.0;
+						upper = CFG(part.Diameter)/2000.0;
 						step = tmpf;
 						digit = 2;
 						pos = 1;
 						unit = UNIT_MM;
+						}
+						else
+						{
+						cur_value = CFG(part.Thickness)/1000.0*0.03937;
+						lower = 0.002;
+						upper = CFG(part.Diameter)/2000.0*0.03937;
+						step = tmpf*0.03937;
+						digit = 3;
+						pos = 1;
+						unit = UNIT_INCH;
+						}
 						draw3_digit_pressed (data_531, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 					}
 					else 
 					{
-						cur_value = CFG(part.Thickness)/100.0;
+						if(UNIT_MM == CFG(unit))
+						{
+						cur_value = CFG(part.Thickness)/1000.0;
 						digit = 2;
 						pos = 1;
 						unit = UNIT_MM;
+						}
+						else
+						{
+						cur_value = CFG(part.Thickness)/1000.0*0.03937;
+						digit = 3;
+						pos = 1;
+						unit = UNIT_INCH;
+						}
 						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					}
 					break;
@@ -5498,9 +5617,9 @@ void draw3_data1(DRAW_UI_P p)
 					/* 当前步进 */
 					switch (TMP(scan_end_reg))
 					{
-						case 0:	tmpf = 1.0; break;
-						case 1:	tmpf = 10.0; break;
-						case 2:	tmpf = 100.0; break;
+						case 0:	tmpf = 0.001 * CFG(scan_resolution); break;
+						case 1:	tmpf = 0.01 * CFG(scan_resolution); break;
+						case 2:	tmpf = 0.1 * CFG(scan_resolution); break;
 						default:break;
 					}
 
@@ -5509,30 +5628,63 @@ void draw3_data1(DRAW_UI_P p)
 					{
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 						{
-							cur_value = pp->p_config->scan_end;
-							lower = -100000.0;
+							if(CFG(unit) == UNIT_MM)
+							{
+							cur_value = CFG(scan_end)/1000.0;
+							lower = CFG(scan_start)/1000.0;
 							upper = 100000.0;
 							step = tmpf;
-							digit = 0;
+							digit = 2;
 							pos = 1;
 							unit = UNIT_MM;
+							}
+							else
+							{
+							cur_value = CFG(scan_end)/1000.0 * 0.03937;
+							lower = CFG(scan_start)/1000.0 * 0.03937;
+							upper = 100000.0;
+							step = tmpf*0.03937;
+							digit = 3;
+							pos = 1;
+							unit = UNIT_INCH;
+							}
 							draw3_digit_pressed (data_721, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 						}
 						else 
 						{
-							cur_value = pp->p_config->scan_end;
-							digit = 0;
+							if(CFG(unit) == UNIT_MM)
+							{
+							cur_value = CFG(scan_end)/1000.0;
+							digit = 2;
 							pos = 1;
 							unit = UNIT_MM;
+							}
+							else
+							{
+							cur_value = CFG(scan_end)/1000.0*0.03937;
+							digit = 3;
+							pos = 1;
+							unit = UNIT_INCH;
+							}
 							draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 						}
 					}
-					else  /* Inspection -> Type 选择 Helicoidal Scan  时 */
+					else  /* Inspection -> Type 选择 Helicoidal Scan  时  ????CFG(scan_start)的值有待确定 */
 					{
+						if(CFG(unit) == UNIT_MM)
+						{
 						CFG(scan_start) = 346.0;
-						digit = 0;
+						digit = 2;
 						pos = 1;
 						unit = UNIT_MM;
+						}
+						else
+						{
+						CFG(scan_start) = 346.0*0.03937;
+						digit = 3;
+						pos = 1;
+						unit = UNIT_INCH;
+						}
 						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 
 						gtk_widget_set_sensitive(pp->eventbox30[1],FALSE);
@@ -6142,7 +6294,7 @@ void draw3_data2(DRAW_UI_P p)
 									cur_value = GROUP_VAL(position) / 1000.0 * 0.03937;
 									lower = 0.0;
 									upper = GROUP_VAL(velocity)/100.0 * 4.95 * 0.03937;
-									step = tmpf * 0.03937;
+									step = tmpf/2.0;
 									digit = 3;
 									pos = 2;
 									unit = UNIT_INCH;
@@ -6350,6 +6502,8 @@ void draw3_data2(DRAW_UI_P p)
 						}
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 						{
+							if(CFG(unit) == UNIT_MM)
+							{
 							cur_value = GROUP_VAL(s_measure)/100.0;
 							lower = -1000000.0;
 							upper =  1000000.0;
@@ -6357,14 +6511,35 @@ void draw3_data2(DRAW_UI_P p)
 							digit = 1;
 							pos = 2;
 							unit = UNIT_MM;
+							}
+							else
+							{
+							cur_value = GROUP_VAL(s_measure)/100.0*0.03937;
+							lower = -1000000.0*0.03937;
+							upper =  1000000.0*0.03937;
+							step = tmpf/500.0;
+							digit = 3;
+							pos = 2;
+							unit = UNIT_INCH;
+							}
 							draw3_digit_pressed (data_3121, units[unit], cur_value , lower, upper, step, digit, p, pos, 7);
 						}
 						else 
 						{
+							if(CFG(unit) == UNIT_MM)
+							{
 							cur_value = GROUP_VAL(s_measure)/100.0;
 							digit = 1;
 							pos = 2;
 							unit = UNIT_MM;
+							}
+							else
+							{
+							cur_value = GROUP_VAL(s_measure)/100.0*0.03937;
+							digit = 3;
+							pos = 2;
+							unit = UNIT_INCH;
+							}
 							draw3_digit_stop (cur_value, units[unit], digit, pos, 7);
 						}
 
@@ -6388,23 +6563,70 @@ void draw3_data2(DRAW_UI_P p)
 						}
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 						{
-							cur_value = GROUP_VAL(u_reference)/1000.0;
-							lower = 0.0;
-							upper = 422.92;
-							step = tmpf;
-							digit = 2;
-							pos = 2;
-							unit = UNIT_MM;
-							draw3_digit_pressed (data_313, units[unit], cur_value , lower, upper, step, digit, p, pos, 3);
+							if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
+							{
+								if(CFG(unit) == UNIT_MM)
+								{
+								cur_value = GROUP_VAL(u_reference)/1000.0;
+								lower = 0.0;
+								upper = 422.92;
+								step = tmpf;
+								digit = 2;
+								pos = 2;
+								unit = UNIT_MM;
+								}
+								else
+								{
+								cur_value = GROUP_VAL(u_reference)/1000.0*0.03937;
+								lower = 0.0;
+								upper = 422.92*0.03937;
+								step = tmpf/2.0;
+								digit = 3;
+								pos = 2;
+								unit = UNIT_INCH;
+								}
+								draw3_digit_pressed (data_313, units[unit], cur_value , lower, upper, step, digit, p, pos, 3);
+							}
+							else	/* ???? */
+							{
+								cur_value = GROUP_VAL(u_reference)/1000.0;
+								lower = 0.0;
+								upper = 422.92;
+								step = tmpf;
+								digit = 2;
+								pos = 2;
+								unit = UNIT_US;
+							}
 						}
 						else 
 						{
-							cur_value = GROUP_VAL(u_reference)/1000.0;
-							digit = 2;
-							pos = 2;
-							unit = UNIT_MM;
+							if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
+							{
+								if(CFG(unit) == UNIT_MM)
+								{
+								cur_value = GROUP_VAL(u_reference)/1000.0;
+								digit = 2;
+								pos = 2;
+								unit = UNIT_MM;
+								}
+								else
+								{
+								cur_value = GROUP_VAL(u_reference)/1000.0*0.03937;
+								digit = 3;
+								pos = 2;
+								unit = UNIT_INCH;
+								}
+							}
+							else
+							{
+								cur_value = GROUP_VAL(u_reference)/1000.0;
+								digit = 2;
+								pos = 2;
+								unit = UNIT_US;
+							}
 							draw3_digit_stop (cur_value, units[unit], digit, pos, 3);
 						}
+
 					}
 					else if (GROUP_VAL(selection)==5||GROUP_VAL(selection)==6||GROUP_VAL(selection)==7)
 					{
@@ -6449,6 +6671,8 @@ void draw3_data2(DRAW_UI_P p)
 						}
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 						{
+							if(CFG(unit) == UNIT_MM)
+							{
 							cur_value = GROUP_CURSORS_POS(scan)/100.0;
 							lower = -100000.0;
 							upper = 100000;
@@ -6456,48 +6680,38 @@ void draw3_data2(DRAW_UI_P p)
 							digit = 1;
 							pos = 2;
 							unit = UNIT_MM;
+							}
+							else
+							{
+							cur_value = GROUP_CURSORS_POS(scan)/100.0*0.03937;
+							lower = -100000.0*0.03937;
+							upper = 100000*0.03937;
+							step = tmpf;
+							digit = 3;
+							pos = 2;
+							unit = UNIT_INCH;
+							}
 							draw3_digit_pressed (data_3142, units[unit], cur_value , lower, upper, step, digit, p, pos, 15);
 						}
 						else 
 						{
+							if(CFG(unit) == UNIT_MM)
+							{
 							cur_value = GROUP_CURSORS_POS(scan)/100.0;
 							digit = 1;
 							pos = 2;
 							unit = UNIT_MM;
+							}
+							else
+							{
+							cur_value = GROUP_CURSORS_POS(scan)/100.0*0.03937;
+							digit = 3;
+							pos = 2;
+							unit = UNIT_INCH;
+							}
 							draw3_digit_stop (cur_value, units[unit], digit, pos, 15);
 						}
 					}
-
-# if 0
-					/* 当前步进 */
-					switch (pp->p_tmp_config->cursors_scan_reg)
-					{
-						case 0:	tmpf = 0.01; break;
-						case 1:	tmpf = 0.1;  break;
-						case 2:	tmpf = 1.0;  break;
-						case 3:	tmpf = 10.0;  break;					
-						default:break;
-					}
-					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
-					{
-						cur_value = pp->p_config->cursors_scan;
-						lower = 1.0;
-						upper = 100.0;
-						step = tmpf;
-						digit = 2;
-						pos = 2;
-						unit = UNIT_MM;
-						draw3_digit_pressed (data_222, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
-					}
-					else 
-					{
-						cur_value = pp->p_config->cursors_scan;
-						digit = 2;
-						pos = 2;
-						unit = UNIT_MM;
-						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
-					}
-#endif
 					break;
 
 
@@ -6516,6 +6730,8 @@ void draw3_data2(DRAW_UI_P p)
 					}
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 					{
+						if(UNIT_MM == CFG(unit))
+						{
 						cur_value = CFG(max_thickness)/1000.0;
 						lower = (CFG(min_thickness)/1000.0) + 0.01;
 						upper = 99999.00;
@@ -6523,14 +6739,35 @@ void draw3_data2(DRAW_UI_P p)
 						digit = 2;
 						pos = 2;
 						unit = UNIT_MM;
+						}
+						else
+						{
+						cur_value = CFG(max_thickness)/1000.0 * 0.03937;
+						lower = (CFG(min_thickness)/1000.0 * 0.03937) + 0.005;
+						upper = 99999.00 * 0.03937;
+						step = tmpf/2.0;
+						digit = 3;
+						pos = 2;
+						unit = UNIT_INCH;
+						}
 						draw3_digit_pressed (data_332, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 					}
 					else 
 					{
+						if(UNIT_MM == CFG(unit))
+						{
 						cur_value = CFG(max_thickness)/1000.0;
 						digit = 2;
 						pos = 2;
 						unit = UNIT_MM;
+						}
+						else
+						{
+						cur_value = CFG(max_thickness)/1000.0 * 0.03937;
+						digit = 3;
+						pos = 2;
+						unit = UNIT_INCH;
+						}
 						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					}
 					break;
@@ -6884,6 +7121,7 @@ void draw3_data2(DRAW_UI_P p)
 					}
 					break;
 				case 2:/*Probe/Part -> Characterize -> start p522 */
+# if 0
 					/* 当前步进 */
 					switch (TMP(agate_start_reg))
 					{
@@ -6912,39 +7150,104 @@ void draw3_data2(DRAW_UI_P p)
 						unit = UNIT_MM;
 						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					}
+
+#endif
+
+						switch (TMP(agate_start_reg))
+						{
+							case 0:	tmpf = (GROUP_VAL(range) / 1000.0) / 320.0; break;
+							case 1:	tmpf = (GROUP_VAL(range) / 1000.0) / 20.0 ; break;
+							case 2:	tmpf = (GROUP_VAL(range) / 1000.0) / 10.0 ; break;
+							case 3:	tmpf = (GROUP_VAL(range) / 1000.0) / 1.0  ; break;
+							default:break;
+						}
+						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
+						{
+							if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
+							{
+								if (UNIT_MM == CFG(unit)) 
+								{
+									cur_value = (GROUP_VAL(gate[0].start) / 1000.0) * (GROUP_VAL(velocity) / 200000.0);   /* 当前显示的起位数值mm */
+									lower = (BEAM_INFO(0,beam_delay) /1000.0) * (GROUP_VAL(velocity) / 200000.0);
+									upper =	(MAX_RANGE_US - GROUP_GATE_POS(width) / 1000.0) * (GROUP_VAL(velocity) / 200000.0);
+									step = tmpf * (GROUP_VAL(velocity) / 200000.0);
+									digit = 2;
+									pos = 2;
+									unit = UNIT_MM;
+								}
+								else 
+								{
+									cur_value = (GROUP_VAL(gate[0].start) / 1000.0) * 0.03937 * (GROUP_VAL(velocity) / 200000.0); /* 当前显示的范围inch */
+									lower = (BEAM_INFO(0,beam_delay) / 1000.0) * 0.03937 * GROUP_VAL(velocity) / 200000.0;
+									upper =	(MAX_RANGE_US - GROUP_GATE_POS(width) / 1000.0 ) * 0.03937 * GROUP_VAL(velocity) / 200000.0;
+									step = tmpf * 0.03937 * GROUP_VAL(velocity) / 200000.0;
+									digit = 3;
+									pos = 2;
+									unit = UNIT_INCH;
+								}
+							}
+							else 
+							{
+								cur_value = GROUP_VAL(gate[0].start) / 1000.0 ;
+								lower =	BEAM_INFO(0,beam_delay) / 1000.0;
+								upper =	(MAX_RANGE_US - GROUP_GATE_POS(width) / 1000.0);
+								step = tmpf;
+								digit = 2;
+								pos = 2;
+								unit = UNIT_US;
+							}
+							draw3_digit_pressed (data_202, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
+						}
+						else 
+						{
+							if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
+							{
+								if (UNIT_MM == CFG(unit))
+								{
+									cur_value = (GROUP_VAL(gate[0].start) / 1000.0) * (GROUP_VAL(velocity) / 200000.0);   /* 当前显示的范围数值mm */
+									unit = UNIT_MM;
+									digit = 2;
+									pos = 2;
+								}
+								else
+								{
+									cur_value = (GROUP_VAL(gate[0].start) / 1000.0) * 0.03937 * (GROUP_VAL(velocity) / 200000.0); /* 当前显示的范围inch */
+									unit = UNIT_INCH;
+									digit = 3;
+									pos = 2;
+								}
+							}
+							else
+							{
+								cur_value = GROUP_VAL(gate[0].start)/1000.0;
+								unit = UNIT_US;
+								digit = 2;
+								pos = 2;
+							}
+							draw3_digit_stop (cur_value , units[unit], digit, pos, 0);
+						}
+
 					break;
 
 				case 3:/*Probe/Part -> Parts -> diameter p532 */
 					switch(CFG(part.Geometry_pos))
 					{
 						case 0:
-							switch (pp->p_tmp_config->diameter_reg)
-							{
-								case 0:	tmpf = 0.01; break;
-								case 1:	tmpf = 0.1; break;
-								case 2:	tmpf = 1.0; break;
-								case 3:	tmpf = 10.0; break;						
-								default:break;
-							}
-							if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
-							{
-								cur_value = pp->p_config->part.Diameter/100.0;
-								lower = 100.00;
-								upper = 1000000.00;
-								step = tmpf;
+								if(UNIT_MM == CFG(unit))
+								{
+								cur_value = pp->p_config->part.Diameter/1000.0;
 								digit = 2;
 								pos = 2;
 								unit = UNIT_MM;
-								draw3_digit_pressed (data_532, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
-							}
-							else 
-							{
-								cur_value = pp->p_config->part.Diameter/100.0;
-								digit = 2;
+								}
+								else
+								{
+								cur_value = pp->p_config->part.Diameter/1000.0 * 0.03937;
+								digit = 3;
 								pos = 2;
-								unit = UNIT_MM;
+								unit = UNIT_INCH;
+								}
 								draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
-							}
 							gtk_widget_set_sensitive(pp->eventbox30[2],FALSE);
 							gtk_widget_set_sensitive(pp->eventbox31[2],FALSE);
 							break;
@@ -6961,21 +7264,44 @@ void draw3_data2(DRAW_UI_P p)
 							}
 							if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 							{
-								cur_value = pp->p_config->part.Diameter/100.0;
-								lower = 100.00;
+								if(UNIT_MM == CFG(unit))
+								{
+								cur_value = CFG(part.Diameter)/1000.0;
+								lower = 2.0 * CFG(part.Thickness) / 1000.0;
 								upper = 1000000.00;
 								step = tmpf;
 								digit = 2;
 								pos = 2;
 								unit = UNIT_MM;
+								}
+								else
+								{
+								cur_value = CFG(part.Diameter)/1000.0 * 0.03937;
+								lower = 2.0 * CFG(part.Thickness) / 1000.0*0.03937;
+								upper = 1000000.00 * 0.03937;
+								step = tmpf;
+								digit = 3;
+								pos = 2;
+								unit = UNIT_INCH;
+								}
 								draw3_digit_pressed (data_532, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 							}
 							else 
 							{
-								cur_value = pp->p_config->part.Diameter/100.0;
+								if(UNIT_MM == CFG(unit))
+								{
+								cur_value = CFG(part.Diameter)/1000.0;
 								digit = 2;
 								pos = 2;
 								unit = UNIT_MM;
+								}
+								else
+								{
+								cur_value = CFG(part.Diameter)/1000.0 * 0.03937;
+								digit = 3;
+								pos = 2;
+								unit = UNIT_INCH;
+								}
 								draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 							}
 							break;
@@ -7133,6 +7459,7 @@ void draw3_data2(DRAW_UI_P p)
 						gtk_widget_set_sensitive(pp->eventbox31[2],FALSE);
 					}
 					break;
+
 				case 3:/* 保存聚焦法则 P632 */
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 						draw_dialog_all (DIALOG_LAW_SAVE);
@@ -7212,21 +7539,44 @@ void draw3_data2(DRAW_UI_P p)
 					}
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 					{
-						cur_value = CFG(scan_resolution)/100.0;
+						if(CFG(unit) == UNIT_MM)
+						{
+						cur_value = CFG(scan_resolution)/1000.0;
 						lower = 1.0;
 						upper = 357.0;
 						step = tmpf;
-						digit = 1;
+						digit = 2;
 						pos = 2;
 						unit = UNIT_MM;
+						}
+						else
+						{
+						cur_value = CFG(scan_resolution)/1000.0*0.03937;
+						lower = 0.001;
+						upper = 9.281;
+						step = tmpf/10.0;
+						digit = 3;
+						pos = 2;
+						unit = UNIT_INCH;
+						}
 						draw3_digit_pressed (data_722, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 					}
 					else 
 					{
-						cur_value = CFG(scan_resolution)/100.0;
-						digit = 1;
+						if(CFG(unit) == UNIT_MM)
+						{
+						cur_value = CFG(scan_resolution)/1000.0;
+						digit = 2;
 						pos = 2;
 						unit = UNIT_MM;
+						}
+						else
+						{
+						cur_value = CFG(scan_resolution)/1000.0*0.03937;
+						digit = 3;
+						pos = 2;
+						unit = UNIT_INCH;
+						}
 						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					}
 					break;
@@ -7816,21 +8166,67 @@ void draw3_data3(DRAW_UI_P p)
 						}
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 						{
-							cur_value = GROUP_VAL(u_reference)/1000.0;
-							lower = 0.0;
-							upper = 422.92;
-							step = tmpf;
-							digit = 2;
-							pos = 3;
-							unit = UNIT_MM;
+							if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
+							{
+								if(CFG(unit) == UNIT_MM)
+								{
+								cur_value = GROUP_VAL(u_reference)/1000.0;
+								lower = 0.0;
+								upper = GROUP_VAL(velocity)/100.0/20.85;
+								step = tmpf;
+								digit = 2;
+								pos = 3;
+								unit = UNIT_MM;
+								}
+								else
+								{
+								cur_value = GROUP_VAL(u_reference) / 1000.0 * 0.03937;
+								lower = 0.0;
+								upper = GROUP_VAL(velocity) / 100.0 / 20.85 * 0.03937;
+								step = tmpf/2.0;
+								digit = 3;
+								pos = 3;
+								unit = UNIT_INCH;
+								}
+							}
+							else	/* ????? us */
+							{
+								cur_value = GROUP_VAL(u_reference)/(GROUP_VAL(velocity))*200.0;
+								lower = -0.1;
+								upper = 95.91;
+								step = tmpf;
+								digit = 2;
+								pos = 3;
+								unit = UNIT_US;
+							}
 							draw3_digit_pressed (data_313, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 						}
 						else 
 						{
-							cur_value = GROUP_VAL(u_reference)/1000.0;
-							digit = 2;
-							pos = 3;
-							unit = UNIT_MM;
+							if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
+							{
+								if(CFG(unit) == UNIT_MM)
+								{
+								cur_value = GROUP_VAL(u_reference)/1000.0;
+								digit = 2;
+								pos = 3;
+								unit = UNIT_MM;
+								}
+								else
+								{
+								cur_value = GROUP_VAL(u_reference)/1000.0*0.03937;
+								digit = 3;
+								pos = 3;
+								unit = UNIT_INCH;
+								}
+							}
+							else
+							{
+								cur_value = GROUP_VAL(u_reference)/(GROUP_VAL(velocity))*200.0;
+								digit = 2;
+								pos = 3;
+								unit = UNIT_US;
+							}
 							draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 						}
 					}
@@ -7847,6 +8243,8 @@ void draw3_data3(DRAW_UI_P p)
 						}
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 						{
+							if(CFG(unit) == UNIT_MM)
+							{
 							cur_value = GROUP_VAL(i_reference)/100.0;
 							lower = -999999.0;
 							upper = 999999.0;
@@ -7854,14 +8252,35 @@ void draw3_data3(DRAW_UI_P p)
 							digit = 1;
 							pos = 3;
 							unit = UNIT_MM;
+							}
+							else
+							{
+							cur_value = GROUP_VAL(i_reference)/100.0*0.03937;
+							lower = -999999.0*0.03937;
+							upper = 999999.0*0.03937;
+							step = tmpf;
+							digit = 3;
+							pos = 3;
+							unit = UNIT_INCH;
+							}
 							draw3_digit_pressed (data_3131, units[unit], cur_value , lower, upper, step, digit, p, pos, 9);
 						}
 						else 
 						{
+							if(CFG(unit) == UNIT_MM)
+							{
 							cur_value = GROUP_VAL(i_reference)/100.0;
 							digit = 1;
 							pos = 3;
 							unit = UNIT_MM;
+							}
+							else
+							{
+							cur_value = GROUP_VAL(i_reference)/100.0*0.03937;
+							digit = 3;
+							pos = 3;
+							unit = UNIT_INCH;
+							}
 							draw3_digit_stop (cur_value, units[unit], digit, pos, 9);
 						}
 					}
@@ -7878,6 +8297,8 @@ void draw3_data3(DRAW_UI_P p)
 						}
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 						{
+							if(CFG(unit) == UNIT_MM)
+							{
 							cur_value = GROUP_VAL(s_refmeas)/100.0;
 							lower = 12.0;
 							upper = 400.5;
@@ -7885,14 +8306,35 @@ void draw3_data3(DRAW_UI_P p)
 							digit = 1;
 							pos = 3;
 							unit = UNIT_MM;
+							}
+							else
+							{
+							cur_value = GROUP_VAL(s_refmeas)/100.0*0.03937;
+							lower = 0.001;
+							upper = 400.5*0.03937;
+							step = tmpf/100.0;
+							digit = 3;
+							pos = 3;
+							unit = UNIT_INCH;
+							}
 							draw3_digit_pressed (data_3132, units[unit], cur_value , lower, upper, step, digit, p, pos, 11);
 						}
 						else 
 						{
+							if(CFG(unit) == UNIT_MM)
+							{
 							cur_value = GROUP_VAL(s_refmeas)/100.0;
 							digit = 1;
 							pos = 3;
 							unit = UNIT_MM;
+							}
+							else
+							{
+							cur_value = GROUP_VAL(s_refmeas)/100.0*0.03937;
+							digit = 3;
+							pos = 3;
+							unit = UNIT_INCH;
+							}
 							draw3_digit_stop (cur_value, units[unit], digit, pos, 11);
 						}
 
@@ -7910,21 +8352,68 @@ void draw3_data3(DRAW_UI_P p)
 						}
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 						{
-							cur_value = GROUP_VAL(u_measure)/1000.0;
-							lower = 0.0;
-							upper = 422.92;
-							step = tmpf;
-							digit = 2;
-							pos = 3;
-							unit = UNIT_MM;
+							if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
+							{
+								if(CFG(unit) == UNIT_MM)
+								{
+								cur_value = GROUP_VAL(u_measure)/1000.0;
+								lower = 0.0;
+								upper = 422.92;
+								step = tmpf;
+								digit = 2;
+								pos = 3;
+								unit = UNIT_MM;
+								}
+								else
+								{
+								cur_value = GROUP_VAL(u_measure)/1000.0*0.03937;
+								lower = 0.0;
+								upper = 422.92*0.03937;
+								step = tmpf/2.0;
+								digit = 3;
+								pos = 3;
+								unit = UNIT_INCH;
+								}
+							}
+							else
+							{
+								cur_value = GROUP_VAL(u_measure)/1000.0;
+								lower = 0.0;
+								upper = 422.92;
+								step  = tmpf/2.0;
+								digit = 3;
+								pos   = 3;
+								unit  = UNIT_US;
+
+							}
 							draw3_digit_pressed (data_314, units[unit], cur_value , lower, upper, step, digit, p, pos, 4);
 						}
 						else 
 						{
-							cur_value = GROUP_VAL(u_measure)/1000.0;
-							digit = 2;
-							pos = 3;
-							unit = UNIT_MM;
+							if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
+							{
+								if(CFG(unit) == UNIT_MM)
+								{
+									cur_value = GROUP_VAL(u_measure)/1000.0;
+									digit = 2;
+									pos = 3;
+									unit = UNIT_MM;
+								}
+								else
+								{
+									cur_value = GROUP_VAL(u_measure)/1000.0*0.03937;
+									digit = 3;
+									pos = 3;
+									unit = UNIT_INCH;
+								}
+							}
+							else
+							{
+								cur_value = GROUP_VAL(u_measure)/1000.0;
+								digit = 3;
+								pos   = 3;
+								unit  = UNIT_US;
+							}
 							draw3_digit_stop (cur_value, units[unit], digit, pos, 4);
 						}
 
@@ -7942,21 +8431,68 @@ void draw3_data3(DRAW_UI_P p)
 						}
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 						{
-							cur_value = GROUP_CURSORS_POS(UT)/100.0;
-							lower = -0.07;
-							upper = 58.3;
-							step = tmpf;
-							digit = 2;
-							pos = 3;
-							unit = UNIT_MM;
+							if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
+							{
+								if(CFG(unit) == UNIT_MM)
+								{
+								cur_value = GROUP_CURSORS_POS(UT)/100.0;
+								lower = -0.07;
+								upper = 58.3;
+								step = tmpf;
+								digit = 2;
+								pos = 3;
+								unit = UNIT_MM;
+								}
+								else
+								{
+								cur_value = GROUP_CURSORS_POS(UT)/100.0*0.03937;
+								lower = -0.07*0.03937;
+								upper = 58.3*0.03937;
+								step = tmpf;
+								digit = 3;
+								pos = 3;
+								unit = UNIT_INCH;
+								}
+							}
+							else
+							{
+								cur_value = GROUP_CURSORS_POS(UT)/100.0;
+								lower = -0.07;
+								upper = 58.3;
+								step = tmpf;
+								digit = 2;
+								pos = 3;
+								unit = UNIT_US;
+
+							}
 							draw3_digit_pressed (data_3133, units[unit], cur_value , lower, upper, step, digit, p, pos, 14);
 						}
 						else 
 						{
-							cur_value = GROUP_CURSORS_POS(UT)/100.0;
-							digit = 2;
-							pos = 3;
-							unit = UNIT_MM;
+							if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
+							{
+								if(CFG(unit) == UNIT_MM)
+								{
+								cur_value = GROUP_CURSORS_POS(UT)/100.0;
+								digit = 2;
+								pos = 3;
+								unit = UNIT_MM;
+								}
+								else
+								{
+								cur_value = GROUP_CURSORS_POS(UT)/100.0*0.03937;
+								digit = 3;
+								pos = 3;
+								unit = UNIT_INCH;
+								}
+							}
+							else
+							{
+								cur_value = GROUP_CURSORS_POS(UT)/100.0;
+								digit = 2;
+								pos = 3;
+								unit = UNIT_US;
+							}
 							draw3_digit_stop (cur_value, units[unit], digit, pos, 14);
 						}
 					}
@@ -7973,6 +8509,8 @@ void draw3_data3(DRAW_UI_P p)
 						}
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 						{
+							if(CFG(unit) == UNIT_MM)
+							{
 							cur_value = GROUP_CURSORS_POS(index)/100.0;
 							lower = -100000.0;
 							upper = 100000;
@@ -7980,47 +8518,39 @@ void draw3_data3(DRAW_UI_P p)
 							digit = 1;
 							pos = 3;
 							unit = UNIT_MM;
+							}
+							else
+							{
+							cur_value = GROUP_CURSORS_POS(index)/100.0*0.03937;
+							lower = -100000.0*0.03937;
+							upper = 100000*0.03937;
+							step = tmpf;
+							digit = 3;
+							pos = 3;
+							unit = UNIT_INCH;
+							}
 							draw3_digit_pressed (data_3151, units[unit], cur_value , lower, upper, step, digit, p, pos, 16);
 						}
 						else 
 						{
+							if(CFG(unit) == UNIT_MM)
+							{
 							cur_value = GROUP_CURSORS_POS(index)/100.0;
 							digit = 1;
 							pos = 3;
 							unit = UNIT_MM;
+							}
+							else
+							{
+							cur_value = GROUP_CURSORS_POS(index)/100.0*0.03937;
+							digit = 3;
+							pos = 3;
+							unit = UNIT_INCH;
+							}
 							draw3_digit_stop (cur_value, units[unit], digit, pos, 16);
 						}
 
 					}
-# if 0
-					/* 当前步进 */
-					switch (pp->p_tmp_config->cursors_index_reg)
-					{
-						case 0:	tmpf = 1.0; break;
-						case 1:	tmpf = 10.0;  break;
-						case 2:	tmpf = 100.0;  break;				
-						default:break;
-					}
-					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
-					{
-						cur_value = pp->p_config->cursors_index;
-						lower = 0.5;
-						upper = 127.5;
-						step = tmpf;
-						digit = 1;
-						pos = 3;
-						unit = UNIT_MM;
-						draw3_digit_pressed (data_313, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
-					}
-					else 
-					{
-						cur_value = pp->p_config->cursors_index;
-						digit = 1;
-						pos = 3;
-						unit = UNIT_MM;
-						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
-					}
-#endif
 					break;
 
 				case 2:/*Measurements -> Table -> Delete Entry  p323 */
@@ -8309,6 +8839,7 @@ void draw3_data3(DRAW_UI_P p)
 					break;
 				case 2:/*Probe/Part -> Characterize -> width p523 */
 					/* 当前步进 */
+# if 0
 
 					switch (TMP(agate_width_reg))
 					{
@@ -8337,6 +8868,83 @@ void draw3_data3(DRAW_UI_P p)
 						unit = UNIT_MM;
 						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					}
+#endif
+
+						switch (TMP(gate_width_reg))
+						{
+							case 0:	tmpf = 3.2; break;
+							case 1:	tmpf = 16.0; break;
+							case 2:	tmpf = 32.0; break;
+							case 3:	tmpf = 64.0; break;
+							default:break;
+						}
+						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
+						{
+							if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
+							{
+								if (UNIT_MM == CFG(unit))
+								{
+									cur_value = (GROUP_VAL(gate[0].width) / 1000.0) * (GROUP_VAL(velocity) / 200000.0);   /* 当前显示的范围数值mm */
+									lower = 3.2 * GROUP_VAL(velocity) / 200000.0;
+									upper = ((MAX_RANGE_US - GROUP_GATE_POS(start) / 1000.0) > 6400.0 ? 6400.0 : 
+											(MAX_RANGE_US - GROUP_GATE_POS(start) / 1000.0)) * (GROUP_VAL(velocity) / 200000.0);
+									step = tmpf * (GROUP_VAL(velocity) / 200000.0);
+									digit = 2;
+									pos = 3;
+									unit = UNIT_MM;
+								}
+								else
+								{
+									cur_value = (GROUP_VAL(gate[0].width) / 1000.0) * 0.03937 * (GROUP_VAL(velocity) / 200000.0); /* 当前显示的范围inch */
+									lower =	3.2 * 0.03937 * GROUP_VAL(velocity) / 200000.0;
+									upper =	((MAX_RANGE_US - GROUP_GATE_POS(start) / 1000.0) > 6400.0 ? 6400.0 :
+											(MAX_RANGE_US - GROUP_GATE_POS(start) / 1000.0)) * 0.03937 * (GROUP_VAL(velocity) / 200000.0);
+									step = tmpf * 0.03937 * GROUP_VAL(velocity) / 200000.0;
+									digit = 3;
+									pos = 3;
+									unit = UNIT_INCH;
+								}
+							}
+							else 
+							{
+								cur_value = GROUP_VAL(gate[0].width) / 1000.0 ;
+								lower =	3.2;
+								upper =	((MAX_RANGE_US - GROUP_GATE_POS(start) /1000.0 ) > 6400.0 ? 6400.0 : (MAX_RANGE_US - GROUP_VAL(start) / 1000.0));
+								step = tmpf;
+								digit = 2;
+								pos = 3;
+								unit = UNIT_US;
+							}
+							draw3_digit_pressed (data_203, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
+						}
+						else 
+						{
+							if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
+							{
+								if (UNIT_MM == CFG(unit))
+								{
+									cur_value = (GROUP_VAL(gate[0].width) / 1000.0) * (GROUP_VAL(velocity) / 200000.0);   /* 当前显示的范围数值mm */
+									unit = UNIT_MM;
+									digit = 2;
+									pos = 3;
+								}
+								else
+								{
+									cur_value = (GROUP_VAL(gate[0].width) / 1000.0) * 0.03937 * (GROUP_VAL(velocity) / 200000.0); /* 当前显示的范围inch */
+									unit = UNIT_INCH;
+									digit = 3;
+									pos = 3;
+								}
+							}
+							else
+							{
+								cur_value = GROUP_VAL(gate[0].width) / 1000.0 ;
+								unit = UNIT_US;
+								pos = 3;
+								digit = 2;
+							}
+							draw3_digit_stop (cur_value , units[unit], digit, pos, 0);
+						}
 					break;
 
 
@@ -8440,34 +9048,64 @@ void draw3_data3(DRAW_UI_P p)
 					{
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 						{
-							cur_value = LAW_VAL(Focus_depth) / 1000.0;
+							if(UNIT_MM == CFG(unit))
+							{
+							cur_value = LAW_VAL(Focus_depth)/1000.0;
 							lower = 0.10;
-							upper = 100.00;
+							upper = 10000.00;
 							step = tmpf;
-							digit = 1;
+							digit = 2;
 							pos = 3;
 							unit = UNIT_MM;
+							}
+							else
+							{
+							cur_value = LAW_VAL(Focus_depth)/1000.0 * 0.03937 ;
+							lower = 0.004;
+							upper = 10000.00*0.03937;
+							step = tmpf/10.0;
+							digit = 3;
+							pos = 3;
+							unit = UNIT_INCH;
+							}
 							draw3_digit_pressed (data_623, units[unit], cur_value , lower, upper,
 									step, digit, p, pos, 0);
 						}
 						else 
 						{
-							cur_value = LAW_VAL(Focus_depth) / 1000.0;
-							digit = 1;
+							if(UNIT_MM == CFG(unit))
+							{
+							cur_value = LAW_VAL(Focus_depth)/1000.0;
+							digit = 2;
 							pos = 3;
 							unit = UNIT_MM;
+							}
+							else
+							{
+							cur_value = LAW_VAL(Focus_depth)/1000.0 * 0.03937;
+							digit = 3;
+							pos = 3;
+							unit = UNIT_INCH;
+							}
 							draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 						}
 					}
 					else
 					{
-						cur_value = LAW_VAL(Focus_depth) / 1000.0;
-						digit = 1;
-						pos = 3;
-						unit = UNIT_DEG;
-						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
-						gtk_widget_set_sensitive(pp->eventbox30[3],FALSE);
-						gtk_widget_set_sensitive(pp->eventbox31[3],FALSE);
+						if(UNIT_MM == CFG(unit))
+						{
+							cur_value = LAW_VAL(Focus_depth)/1000.0;
+							digit = 2;
+							pos = 3;
+							unit = UNIT_MM;
+						}
+						else
+						{
+							cur_value = LAW_VAL(Focus_depth)/1000.0 * 0.03937;
+							digit = 3;
+							pos = 3;
+							unit = UNIT_INCH;
+						}
 					}
 					break;
 				case 3: /* 级软聚焦法则 P633 */
@@ -8537,21 +9175,44 @@ void draw3_data3(DRAW_UI_P p)
 
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 					{
-						cur_value = CFG(scanspeed) / 10.0;
+						if(UNIT_MM == CFG(unit))
+						{
+						cur_value = CFG(scanspeed) / 1000.0;
 						lower = 1.0;
-						upper = 100.0;
+						upper = 6000.0;
 						step = tmpf;
-						digit = 1;
+						digit = 2;
 						pos = 3;
 						unit = UNIT_MM_S;
+						}
+						else
+						{
+						cur_value = CFG(scanspeed) / 1000.0 * 0.03937;
+						lower = 0.039;
+						upper = 236.220;
+						step = tmpf;
+						digit = 3;
+						pos = 3;
+						unit = UNIT_INCH_S;
+						}
 						draw3_digit_pressed (data_713, units[unit], cur_value , lower, upper, step, digit, p, pos, content_pos);
 					}
 					else 
 					{
-						cur_value = CFG(scanspeed)/10.0;
-						digit = 1;
+						if(UNIT_MM == CFG(unit))
+						{
+						cur_value = CFG(scanspeed)/1000.0;
+						digit = 2;
 						pos = 3;
 						unit = UNIT_MM_S;
+						}
+						else
+						{
+						cur_value = CFG(scanspeed)/1000.0 * 0.03937;
+						digit = 3;
+						pos = 3;
+						unit = UNIT_INCH_S;
+						}
 						draw3_digit_stop (cur_value, units[unit], digit, pos, content_pos);
 					}
 					break;
@@ -8559,9 +9220,9 @@ void draw3_data3(DRAW_UI_P p)
 					/* 当前步进 */
 					switch (TMP(index_start_reg))
 					{
-						case 0:	tmpf = 0.01 * CFG(index_resolution); break;
-						case 1:	tmpf = 0.1 * CFG(index_resolution); break;
-						case 2:	tmpf = 1.0 * CFG(index_resolution); break;
+						case 0:	tmpf = 0.001 * CFG(index_resolution); break;
+						case 1:	tmpf = 0.01 * CFG(index_resolution); break;
+						case 2:	tmpf = 0.1 * CFG(index_resolution); break;
 						default:break;
 					}
 					if(CFG(i_type)==1 || CFG(i_type)==2)
@@ -8569,33 +9230,65 @@ void draw3_data3(DRAW_UI_P p)
 					{
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 						{
-							cur_value = CFG(index_start);
+							if(CFG(unit) == UNIT_MM)
+							{
+							cur_value = CFG(index_start)/1000.0;
 							lower = -99999.0;
 							upper = 99999.0;
 							step = tmpf;
-							digit = 0;
+							digit = 2;
 							pos = 3;
 							unit = UNIT_MM;
+							}
+							else
+							{
+							cur_value = CFG(index_start) / 1000.0 * 0.03937;
+							lower = -99999.0 * 0.03937;
+							upper = 99999.0 * 0.03937;
+							step = tmpf*0.03937;
+							digit = 3;
+							pos = 3;
+							unit = UNIT_INCH;
+							}
 							draw3_digit_pressed (data_723, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 						}
 						else 
 						{
-							cur_value = CFG(index_start);
-							digit = 0;
+							if(CFG(unit) == UNIT_MM)
+							{
+							cur_value = CFG(index_start)/1000.0;
+							digit = 2;
 							pos = 3;
 							unit = UNIT_MM;
+							}
+							else
+							{
+							cur_value = CFG(index_start)/1000*0.03937;
+							digit = 3;
+							pos = 3;
+							unit = UNIT_INCH;
+							}
 							draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 						}
 					}
 					else
 						/* Inspection -> Type 选择 One-Line Scan 时 */
 					{
-						cur_value = CFG(index_start);
-						digit = 0;
-						pos = 3;
-						unit = UNIT_MM;
+						if(CFG(unit) == UNIT_MM)
+						{
+							cur_value = CFG(index_start);
+							digit = 2;
+							pos = 3;
+							unit = UNIT_MM;
+						}
+						else
+						{
+							cur_value = CFG(index_start)/1000*0.03937;
+							digit = 3;
+							pos = 3;
+							unit = UNIT_INCH;
+						}
 						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
-
 						gtk_widget_set_sensitive (pp->eventbox30[3], FALSE);
 						gtk_widget_set_sensitive (pp->eventbox31[3], FALSE);
 					}
@@ -9136,21 +9829,67 @@ void draw3_data4(DRAW_UI_P p)
 						}
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
 						{
-							cur_value = GROUP_VAL(u_measure)/1000.0;
-							lower = 0.0;
-							upper = 422.92;
-							step = tmpf;
-							digit = 2;
-							pos = 4;
-							unit = UNIT_MM;
+							if((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
+							{
+								if(CFG(unit) == UNIT_MM)
+								{
+								cur_value = GROUP_VAL(u_measure)/1000.0;
+								lower = 0.0;
+								upper = 422.92;
+								step = tmpf;
+								digit = 2;
+								pos = 4;
+								unit = UNIT_MM;
+								}
+								else
+								{
+								cur_value = GROUP_VAL(u_measure)/1000.0*0.03937;
+								lower = 0.0;
+								upper = 422.92*0.03937;
+								step = tmpf;
+								digit = 2;
+								pos = 4;
+								unit = UNIT_INCH;
+								}
+							}
+							else	/*????*/
+							{
+								cur_value = GROUP_VAL(u_measure)/1000.0;
+								lower = 0.0;
+								upper = 422.92;
+								step = tmpf;
+								digit = 2;
+								pos = 4;
+								unit = UNIT_US;
+							}
 							draw3_digit_pressed (data_314, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 						}
 						else 
 						{
-							cur_value = GROUP_VAL(u_measure)/1000.0;
-							digit = 2;
-							pos = 4;
-							unit = UNIT_MM;
+							if((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
+							{
+								if(CFG(unit) == UNIT_MM)
+								{
+								cur_value = GROUP_VAL(u_measure)/1000.0;
+								digit = 2;
+								pos = 4;
+								unit = UNIT_MM;
+								}
+								else
+								{
+								cur_value = GROUP_VAL(u_measure)/1000.0*0.03937;
+								digit = 3;
+								pos = 4;
+								unit = UNIT_INCH;
+								}
+							}
+							else	/*????*/
+							{
+								cur_value = GROUP_VAL(u_measure)/1000.0;
+								digit = 2;
+								pos = 4;
+								unit = UNIT_US;
+							}
 							draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 						}
 					}
@@ -9167,6 +9906,8 @@ void draw3_data4(DRAW_UI_P p)
 						}
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
 						{
+							if(CFG(unit) == UNIT_MM)
+							{
 							cur_value = GROUP_VAL(i_measure)/100.0;
 							lower = -999999.0;
 							upper = 999999.0;
@@ -9174,14 +9915,35 @@ void draw3_data4(DRAW_UI_P p)
 							digit = 1;
 							pos = 4;
 							unit = UNIT_MM;
+							}
+							else
+							{
+							cur_value = GROUP_VAL(i_measure)/100.0*0.03937;
+							lower = -999999.0*0.03937;
+							upper = 999999.0*0.03937;
+							step = tmpf;
+							digit = 3;
+							pos = 4;
+							unit = UNIT_INCH;
+							}
 							draw3_digit_pressed (data_3141, units[unit], cur_value , lower, upper, step, digit, p, pos, 10);
 						}
 						else 
 						{
+							if(CFG(unit) == UNIT_MM)
+							{
 							cur_value = GROUP_VAL(i_measure)/100.0;
 							digit = 1;
 							pos = 4;
 							unit = UNIT_MM;
+							}
+							else
+							{
+							cur_value = GROUP_VAL(i_measure)/100.0*0.03937;
+							digit = 3;
+							pos = 4;
+							unit = UNIT_INCH;
+							}
 							draw3_digit_stop (cur_value, units[unit], digit, pos, 10);
 						}
 					}
@@ -9190,6 +9952,7 @@ void draw3_data4(DRAW_UI_P p)
 						gtk_widget_hide (pp->eventbox30[4]);
 						gtk_widget_hide (pp->eventbox31[4]);
 					}
+# if 0
 					else if( GROUP_VAL(selection)==4)
 					{
 						/* 当前步进 */
@@ -9221,6 +9984,12 @@ void draw3_data4(DRAW_UI_P p)
 							draw3_digit_stop (cur_value, units[unit], digit, pos, 6);
 						}
 					}
+#endif
+					else if (GROUP_VAL(selection)==4)
+					{
+						gtk_widget_hide(pp->eventbox30[4]);
+						gtk_widget_hide(pp->eventbox31[4]);
+					}
 					else if (GROUP_VAL(selection)==5||GROUP_VAL(selection)==6||GROUP_VAL(selection)==7)
 					{
 						/* 当前步进 */
@@ -9234,6 +10003,8 @@ void draw3_data4(DRAW_UI_P p)
 						}
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
 						{
+							if(CFG(unit) == UNIT_MM)
+							{
 							cur_value = GROUP_CURSORS_POS(scan)/100.0;
 							lower = -100000.0;
 							upper = 100000;
@@ -9241,14 +10012,35 @@ void draw3_data4(DRAW_UI_P p)
 							digit = 1;
 							pos = 4;
 							unit = UNIT_MM;
+							}
+							else
+							{
+							cur_value = GROUP_CURSORS_POS(scan)/100.0*0.03937;
+							lower = -100000.0*0.03937;
+							upper = 100000*0.03937;
+							step = tmpf;
+							digit = 3;
+							pos = 4;
+							unit = UNIT_MM;
+							}
 							draw3_digit_pressed (data_3142, units[unit], cur_value , lower, upper, step, digit, p, pos, 15);
 						}
 						else 
 						{
+							if(CFG(unit) == UNIT_MM)
+							{
 							cur_value = GROUP_CURSORS_POS(scan)/100.0;
 							digit = 1;
 							pos = 4;
 							unit = UNIT_MM;
+							}
+							else
+							{
+							cur_value = GROUP_CURSORS_POS(scan)/100.0*0.03937;
+							digit = 3;
+							pos = 4;
+							unit = UNIT_MM;
+							}
 							draw3_digit_stop (cur_value, units[unit], digit, pos, 15);
 						}
 					}
@@ -9667,9 +10459,9 @@ void draw3_data4(DRAW_UI_P p)
 					/* 当前步进 */
 					switch (pp->p_tmp_config->index_end_reg)
 					{
-						case 0:	tmpf = 0.01 * CFG(index_resolution); break;
-						case 1:	tmpf = 0.1 * CFG(index_resolution); break;
-						case 2:	tmpf = 1.0 * CFG(index_resolution); break;
+						case 0:	tmpf = 0.001 * CFG(index_resolution); break;
+						case 1:	tmpf = 0.01 * CFG(index_resolution); break;
+						case 2:	tmpf = 0.1 * CFG(index_resolution); break;
 						default:break;
 					}
 
@@ -9678,21 +10470,44 @@ void draw3_data4(DRAW_UI_P p)
 					{
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
 						{
-							cur_value = CFG(index_end);
-							lower = -100000.0;
+							if( CFG(unit) == UNIT_MM )
+							{
+							cur_value = CFG(index_end)/1000.0;
+							lower = CFG(index_start)/1000.0;
 							upper = 100000.0;
 							step = tmpf;
-							digit = 0;
+							digit = 2;
 							pos = 4;
 							unit = UNIT_MM;
+							}
+							else
+							{
+							cur_value = CFG(index_end)/1000.0*0.03937;
+							lower = CFG(index_start)/1000.0*0.03937;
+							upper = 100000.0*0.03937;
+							step = tmpf*0.03937;
+							digit = 3;
+							pos = 4;
+							unit = UNIT_INCH;
+							}
 							draw3_digit_pressed (data_724, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 						}
 						else 
 						{
-							cur_value = CFG(index_end);
-							digit = 0;
+							if( CFG(unit) == UNIT_MM )
+							{
+							cur_value = CFG(index_end)/1000.0;
+							digit = 2;
 							pos = 4;
 							unit = UNIT_MM;
+							}
+							else
+							{
+							cur_value = CFG(index_end)/1000.0*0.03937;
+							digit = 3;
+							pos = 4;
+							unit = UNIT_INCH;
+							}
 							draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 						}
 					}
@@ -9700,10 +10515,20 @@ void draw3_data4(DRAW_UI_P p)
 					else
 						/* Inspection -> Type 选择 One-Line Scan 时 */
 					{
-						cur_value = CFG(index_end);
-						digit = 0;
-						pos = 4;
-						unit = UNIT_MM;
+						if( CFG(unit) == UNIT_MM )
+						{
+							cur_value = CFG(index_end);
+							digit = 2;
+							pos = 4;
+							unit = UNIT_MM;
+						}
+						else
+						{
+							cur_value = CFG(index_end)/1000.0*0.03937;
+							digit = 3;
+							pos = 4;
+							unit = UNIT_INCH;
+						}
 						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 
 						gtk_widget_set_sensitive (pp->eventbox30[4], FALSE);
@@ -9918,7 +10743,7 @@ void draw3_data5(DRAW_UI_P p)
 										str, menu_content + PRF, 4, 5, GROUP_VAL(prf_pos), 0);
 								g_free(str);
 							}
-							else							/* Auto ==时候 显示当前选项 */
+							else	/* Auto ==时候 显示当前选项 */
 								draw3_pop_tt (data_115, NULL, menu_content[PRF + GROUP_VAL(prf_pos)],
 										menu_content + PRF, 4, 5, GROUP_VAL(prf_pos), 0);
 						}
@@ -10239,7 +11064,7 @@ void draw3_data5(DRAW_UI_P p)
 					break;
 
 				case 1:/* p315 */
-					if( GROUP_VAL(selection)==0||GROUP_VAL(selection)==8)
+					if( GROUP_VAL(selection)==0||GROUP_VAL(selection)==8||GROUP_VAL(selection)==4)
 					{
 						gtk_widget_hide (pp->eventbox30[5]);
 						gtk_widget_hide (pp->eventbox31[5]);
@@ -10261,6 +11086,7 @@ void draw3_data5(DRAW_UI_P p)
 						gtk_widget_set_sensitive(pp->eventbox30[5],FALSE);
 						gtk_widget_set_sensitive(pp->eventbox31[5],FALSE);
 					}
+#if 0
 					else if( GROUP_VAL(selection)==4 )
 					{
 						/* 当前步进 */
@@ -10293,6 +11119,7 @@ void draw3_data5(DRAW_UI_P p)
 						}
 
 					}
+#endif
 					else if (GROUP_VAL(selection)==5||GROUP_VAL(selection)==6||GROUP_VAL(selection)==7)
 					{
 						/* 当前步进 */
@@ -10306,6 +11133,8 @@ void draw3_data5(DRAW_UI_P p)
 						}
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 5))
 						{
+							if(CFG(unit)==UNIT_MM)
+							{
 							cur_value = GROUP_CURSORS_POS(index)/100.0;
 							lower = -100000.0;
 							upper = 100000;
@@ -10313,14 +11142,35 @@ void draw3_data5(DRAW_UI_P p)
 							digit = 1;
 							pos = 5;
 							unit = UNIT_MM;
+							}
+							else
+							{
+							cur_value = GROUP_CURSORS_POS(index)/100.0*0.03937;
+							lower = -100000.0*0.03937;
+							upper = 100000*0.03937;
+							step = tmpf;
+							digit = 3;
+							pos = 5;
+							unit = UNIT_MM;
+							}
 							draw3_digit_pressed (data_3151, units[unit], cur_value , lower, upper, step, digit, p, pos, 16);
 						}
 						else 
 						{
+							if(CFG(unit)==UNIT_MM)
+							{
 							cur_value = GROUP_CURSORS_POS(index)/100.0;
 							digit = 1;
 							pos = 5;
 							unit = UNIT_MM;
+							}
+							else
+							{
+							cur_value = GROUP_CURSORS_POS(index)/100.0*0.03937;
+							digit = 3;
+							pos = 5;
+							unit = UNIT_INCH;
+							}
 							draw3_digit_stop (cur_value, units[unit], digit, pos, 16);
 						}
 					}
@@ -10347,7 +11197,8 @@ void draw3_data5(DRAW_UI_P p)
 			switch (pp->pos1[4])
 			{
 				case 0:		/*  */
-					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 5))/*选中405这个位置*/
+# if 0
+					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 5))/*选中p405这个位置*/
 					{
 						if(CFG(display)==10)
 							/*Display 为 Strip Chart-[A]*/
@@ -10362,14 +11213,30 @@ void draw3_data5(DRAW_UI_P p)
 								default:break;
 							}
 
-							cur_value = CFG(avg_scan_speed)/100.0;
+							if(UNIT_MM == CFG(unit))
+							{
+							cur_value = GROUP_VAL(prf)/10.0;//CFG(avg_scan_speed)/100.0;
 							lower = 0.01;
 							upper = 100.0;	/* 与prf一样 */
 							step = tmpf;
 							digit = 2;
 							pos = 5;
 							unit = UNIT_MM_S;
-							draw3_digit_pressed (data_405, units[unit], cur_value , lower, upper, step, digit, p, pos, 12);							
+							}
+							else
+							{
+							cur_value =  GROUP_VAL(prf)/10.0*0.03937;
+							lower = 0.01;
+							upper = 100.0*0.03937;	/* 与prf一样 */
+							step = tmpf;
+							digit = 2;
+							pos = 5;
+							unit = UNIT_INCH_S;
+							
+							}
+							draw3_digit_pressed (data_405, units[unit], cur_value , lower, upper, step, digit, p, pos, 12);
+							gtk_widget_set_sensitive (pp->eventbox30[5],FALSE);
+							gtk_widget_set_sensitive (pp->eventbox31[5],FALSE);
 
 						}
 						else 
@@ -10395,6 +11262,34 @@ void draw3_data5(DRAW_UI_P p)
 							gtk_widget_hide (pp->eventbox31[5]);
 						}
 					}
+#endif
+						if(CFG(display)==10)
+							/*Display 为 Strip Chart-[A]*/
+						{
+							if(UNIT_MM == CFG(unit))
+							{
+							cur_value = GROUP_VAL(prf)/10.0;
+							digit = 2;
+							pos = 5;
+							unit = UNIT_MM_S;
+							}
+							else
+							{
+							cur_value = GROUP_VAL(prf)/10.0*0.03937;
+							digit = 3;
+							pos = 5;
+							unit = UNIT_INCH_S;
+							}
+							draw3_digit_stop (cur_value, units[unit], digit, pos, 12);
+							gtk_widget_set_sensitive (pp->eventbox30[5],FALSE);
+							gtk_widget_set_sensitive (pp->eventbox31[5],FALSE);
+						}
+						else 
+						{
+							gtk_widget_hide (pp->eventbox30[5]);
+							gtk_widget_hide (pp->eventbox31[5]);
+						}
+
 					break;
 
 				case 1:/*Display -> Overlay -> overlay  p415 */
@@ -10647,31 +11542,64 @@ void draw3_data5(DRAW_UI_P p)
 					{
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 5))
 						{
-							cur_value = CFG(index_resolution)/100.0;
-							lower = 1.0;
-							upper = 100.0;
+							if( CFG(unit) == UNIT_MM )
+							{
+							cur_value = CFG(index_resolution)/1000.0;
+							lower = 0.01;
+							upper = 99999.0;
 							step = tmpf;
-							digit = 1;
+							digit = 2;
 							pos = 5;
 							unit = UNIT_MM;
+							}
+							else
+							{
+							cur_value = CFG(index_resolution)/1000.0*0.03937;
+							lower = 0.001;
+							upper = 99999.0 * 0.03937;
+							step = tmpf/10.0;
+							digit = 3;
+							pos = 5;
+							unit = UNIT_INCH;
+							}
 							draw3_digit_pressed (data_725, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 						}
 						else 
 						{
-							cur_value = CFG(index_resolution)/100.0;
-							digit = 1;
+							if( CFG(unit) == UNIT_MM )
+							{
+							cur_value = CFG(index_resolution)/1000.0;
+							digit = 2;
 							pos = 5;
 							unit = UNIT_MM;
+							}
+							else
+							{
+							cur_value = CFG(index_resolution)/1000.0 * 0.03937;
+							digit = 3;
+							pos = 5;
+							unit = UNIT_INCH;
+							}
 							draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 						}
 					}
 					else
 						/* Inspection -> Type 选择 One-Line Scan 时 */
 					{
-						cur_value = CFG(index_resolution)/100.0;
-						digit = 0;
-						pos = 5;
-						unit = UNIT_MM;
+						if( CFG(unit) == UNIT_MM )
+						{
+							cur_value = CFG(index_resolution)/1000.0;
+							digit = 2;
+							pos = 5;
+							unit = UNIT_MM;
+						}
+						else
+						{
+							cur_value = CFG(index_resolution)/1000.0 * 0.03937;
+							digit = 3;
+							pos = 5;
+							unit = UNIT_INCH;
+						}
 						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 
 						gtk_widget_set_sensitive (pp->eventbox30[5], FALSE);
