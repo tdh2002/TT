@@ -174,7 +174,7 @@ typedef struct law_beam
 	guchar R_first;
 	guchar TTT_TTT;				/* 占位置 */
 	gushort frequency;			/* 频率0.001Mhz 为单位 */
-	gushort R_angle;
+	gshort R_angle;
 	gushort S_angle;
 	gushort	TTT__TTT;			/* 占位置 */
 	guint Scan_offset;			/* 单位 0.001 mm*/
@@ -220,7 +220,7 @@ typedef struct element_law
 	guchar	e_number;
 } ELEMENT_LAW, *ELEMENT_LAW_P;
 
-/*探头(Probe)  516 byte*/
+/* 探头(Probe)  516 byte 如果探头是unknown 必须给一个参数 */
 typedef struct Probe {
 	/*PA 时候先读走4个字节*/
 	gchar	A1[2];

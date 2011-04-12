@@ -6,6 +6,7 @@
 #include "drawui.h"
 #include "drawuif.h"		/* 计算聚焦法则的头文件 */
 #include <math.h>
+#include <stdlib.h>
 #include <string.h>
 #include <gdk/gdkkeysyms.h>
 
@@ -28,156 +29,6 @@ guint get_freq ();
 guint get_pw ();
 guint get_prf ();
 guint get_filter ();
-
-static void setup_para(PARAMETER_P p)
-{
-	/* 探头 */
-	p->probe_p->D1_D2 = 0;	/* 0 1d 1 2d*/
-	p->probe_p->Pitch_Catch = 0;	/* 0 PE 1 PT*/
-	p->probe_p->transmi_trans_longi = 0;	/* 1 SW 横波慢 0 LW 纵波快 */
-	p->probe_p->recev_trans_longi = 0;	/* */
-//	p->probe_p->pb_skew_angle = 0;	/* ffff*/
-//	p->probe_p->pb_frequency = 5.0;	/* ffff*/
-	p->probe_p->ele_num_pri = 32;	/* */
-	p->probe_p->ele_num_sec = 1;	/* */
-	p->probe_p->pri_axis_pitch = 1;	/* */
-	p->probe_p->sec_axis_pitch = 0;	/* */
-	p->probe_p->pri_ele_size = 1;	/* ffff*/
-	p->probe_p->sec_ele_size = 0;	/* ffff*/
-
-//	p->probe_p->pb_skew_angle_r = 0;	/*ffff */
-//	p->probe_p->pb_frequency = 5.0;	/*ffff */
-	p->probe_p->ele_num_pri_r = 32;	/* */
-	p->probe_p->ele_num_sec_r = 1;	/* */
-	p->probe_p->pri_axis_pitch_r = 1;	/* */
-	p->probe_p->sec_axis_pitch_r = 0;	/* */
-	p->probe_p->pri_ele_size_r = 1;	/*ffff */
-	p->probe_p->sec_ele_size_r = 0;	/*ffff */
-
-	/* 楔块 */
-    p->wedge_p->wg_wedge_angle = 30.0; /* 楔块角 度 */
-    p->wedge_p->wg_roof_angle=0;/* 顶角 度*/
-    p->wedge_p->wg_lon_vel = 3230;/*纵波声速m/s*/
-    p->wedge_p->wg_trans_vel = 3230;/*横波声速m/s*/
-//    p->wedge_p->wg_density= 7.8;/* 密度 */
-    p->wedge_p->wg_heigh_fir = 12;/*第一阵元高度mm*/
-    p->wedge_p->wg_pri_elem_offset_fir = 0;/*第一主轴阵元偏移mm*/
-    p->wedge_p->wg_sec_elem_offset_fir = 0;/*第一次轴阵元偏移mm*/
-    p->wedge_p->wg_pri_axis_reference = 0;/*主轴楔块参考位置mm*/
-    p->wedge_p->wg_sec_axis_reference = 0;/*次轴楔块参考位置mm*/
-    p->wedge_p->wg_length = 1;/*楔块长度mm*/
-    p->wedge_p->wg_width = 1;/*楔块宽度mm*/
-    p->wedge_p->wg_height = 1;/*楔块高imm*/
-	p->wedge_p->wg_separation = 0;
-
-    p->wedge_r->wg_wedge_angle = 30.0; /* 楔块角 度 */
-    p->wedge_r->wg_roof_angle=0;/* 顶角 度*/
-    p->wedge_r->wg_lon_vel = 3230;/*纵波声速m/s*/
-    p->wedge_r->wg_trans_vel = 3230;/*横波声速m/s*/
-//    p->wedge_r->wg_density= 7.8;/* 密度 */
-    p->wedge_r->wg_heigh_fir = 12;/*第一阵元高度mm*/
-    p->wedge_r->wg_pri_elem_offset_fir = 0;/*第一主轴阵元偏移mm*/
-    p->wedge_r->wg_sec_elem_offset_fir = 0;/*第一次轴阵元偏移mm*/
-    p->wedge_r->wg_pri_axis_reference = 0;/*主轴楔块参考位置mm*/
-    p->wedge_r->wg_sec_axis_reference = 0;/*次轴楔块参考位置mm*/
-    p->wedge_r->wg_length = 1;/*楔块长度mm*/
-    p->wedge_r->wg_width = 1;/*楔块宽度mm*/
-    p->wedge_r->wg_height = 1;/*楔块高度mm*/
-	p->wedge_r->wg_separation = 0;
-	
-	/* BEAM */
-    p->beam_angle->beam_pri_steer_angle_start = 0 ;
-    p->beam_angle->beam_pri_steer_angle_stop = 0;
-    p->beam_angle->beam_pri_steer_angle_resolution = 0;
-    //
-    p->beam_angle->beam_sec_steer_angle_start = 0;
-	p->beam_angle->beam_sec_steer_angle_stop = 0;
-    p->beam_angle->beam_sec_steer_angle_resolution = 0;
-    //
-    p->beam_angle->beam_refrac_angle_start = 40;  
-    p->beam_angle->beam_refrac_angle_stop = 55;
-    p->beam_angle->beam_refrac_angle_resolution = 5; 
-    // 
-    p->beam_angle->beam_skew_angle_start = 0;  
-    p->beam_angle->beam_skew_angle_stop = 0;
-    p->beam_angle->beam_skew_angle_resolution = 0;
-    p->beam_angle->beam_type = 0;
-    p->beam_angle->beam_angle_sel = 0;
-
-	/* 样本 */
-    p->specimen->speci_longitudinal_wave = 3230;//样本纵波声速     
-    p->specimen->speci_transverse_wave = 3230;//样本横波声速 
-    //
-//    p->specimen->speci_length_flat = 0;
-//    p->specimen->speci_height_flat = 0;
-//    p->specimen->speci_width_flat = 0;  
-    //
-    p->specimen->speci_inside_cylindrical = 0;
-    p->specimen->speci_outside_cylindrical = 0;
-//    p->specimen->speci_length_cylindrical = 0; 
-    p->specimen->flat_cylindrical = 0;
-    //
-    p->specimen->Inspection_od_id[0] = 0;  
-    p->specimen->Inspection_od_id[1] = 1;  
-
-	/* 聚焦点 */
-    p->focal_point->focal_focus_type = 1;
-    p->focal_point->focal_focus_point_start = 20;
-    p->focal_point->focal_focus_point_stop = 0; 
-    p->focal_point->focal_focus_point_resolution = 0; 
-    
-    p->element_sel->pri_axis_ape = 5;
-    p->element_sel->sec_axis_ape = 1;
-}
-
-static void cal_focal_law ()
-{
-	gint i,j,g,h;
-    gint G_delay[20];////////
-    gdouble Row,Column;
-	PARAMETER_P p;
-	
-    PROBEF        probe_p;
-    WEDGEF        wedge_p;
-	WEDGEF        wedge_r;
-    BEAM_ANGLE   beam_angle;
-    SPECIMEN     specimen;
-    FOCAL_POINT  focal_point;
-    ELEMENT_SEL  element_sel;
-
-    p = (PARAMETER_P)g_malloc0(sizeof(PARAMETER));
-    p->probe_p	= &probe_p;
-	p->wedge_p	= &wedge_p;
-	p->wedge_r	= &wedge_r;
-	p->beam_angle = &beam_angle;
-	p->specimen	= &specimen;
-	p->focal_point = &focal_point;
-	p->element_sel = &element_sel;
-	p->k = 0 ;	            
-    
-	g_print("begin\n");
-	setup_para(p);
-    Row      =  p->element_sel->sec_axis_ape  ;                  // element y direction numble
-    Column   =  p->element_sel->pri_axis_ape;
-    
-	focal_law(p, G_delay);
-
-
-	/*打印出聚焦法则*/
-	for (i = 0 ; i < p->k+1; i++)
-	{
-        g = i*Row*Column ;
-        g_print ("\nG_delay[%d]=%d\n",g,G_delay[g]);
-        for(j=1;j< Row*Column+1;j++)
-        {
-            h = i*Row*Column+j ;
-            g_print ("  ElementTimeDelay[%d]=%d\n",h,G_delay[h]);
-        }
-            
-    }
-    	
-	return ;
-}
 
 gboolean data_function0 (GtkWidget *widget,	GdkEventButton *event,	gpointer       data);
 gboolean data_function1 (GtkWidget *widget,	GdkEventButton *event,	gpointer       data);
@@ -409,6 +260,192 @@ gboolean eventbox2_function4 (GtkWidget *widget, GdkEventButton *event,	gpointer
 
 /*   */
 static inline void data_process(guchar *data, guint pa);
+
+
+static void setup_para(PARAMETER_P p)
+{
+	/* 探头 */
+	p->probe_p->D1_D2 = 0;			/* 0 1d 1 2d*/
+	p->probe_p->Pitch_Catch = !GROUP_VAL(tx_rxmode);	/* 0 PE 1 PT 与我的相反 */
+	p->probe_p->transmi_trans_longi = 0;	/* 1 SW 横波慢 0 LW 纵波快 */
+	p->probe_p->recev_trans_longi	= 0;	/* */
+	p->probe_p->pb_skew_angle	= GROUP_VAL(skew) / 100.0;	/* ffff*/
+	p->probe_p->pb_frequency	= GROUP_VAL(frequency) / 1000.0;	/* ffff*/
+	p->probe_p->ele_num_pri = GROUP_VAL(probe.Elem_qty);	/* */
+	p->probe_p->ele_num_sec = 1;	/* 2D 时候就不为1了 */
+	p->probe_p->pri_axis_pitch = GROUP_VAL(probe.Pitch) / 1000.0;	/* */
+	p->probe_p->sec_axis_pitch = 0;	/* 2D时候有效 */
+	p->probe_p->pri_ele_size = 1;	/* ffff*/
+	p->probe_p->sec_ele_size = 0;	/* 2D 时候有效 */
+
+//	p->probe_p->pb_skew_angle_r = 0;	/*ffff */
+//	p->probe_p->pb_frequency = 5.0;	/*ffff */
+	p->probe_p->ele_num_pri_r = GROUP_VAL(probe.Elem_qty);	/* */
+	p->probe_p->ele_num_sec_r = 1;	/* */
+	p->probe_p->pri_axis_pitch_r = GROUP_VAL(probe.Pitch) / 1000.0;	/* */
+	p->probe_p->sec_axis_pitch_r = 0;	/* */
+	p->probe_p->pri_ele_size_r = 1;	/*ffff */
+	p->probe_p->sec_ele_size_r = 0;	/*ffff */
+
+	/* 楔块 */
+    p->wedge_p->wg_wedge_angle = GROUP_VAL (wedge.Angle) / 10.0; /* 楔块角 度 */
+    p->wedge_p->wg_roof_angle	= 0;	/* 顶角 度 还没有找到对应的 */
+    p->wedge_p->wg_lon_vel		= GROUP_VAL (wedge.Velocity_PA) / 1000.0;		/*纵波声速m/s*/
+    p->wedge_p->wg_trans_vel	= 0;
+    p->wedge_p->wg_density= 7.8;/* 密度 */
+    p->wedge_p->wg_heigh_fir	= GROUP_VAL(wedge.Height) / 1000.0;	/*第一阵元高度mm*/
+    p->wedge_p->wg_pri_elem_offset_fir = 0;/*第一主轴阵元偏移mm*/
+    p->wedge_p->wg_sec_elem_offset_fir = 0;/*第一次轴阵元偏移mm*/
+    p->wedge_p->wg_pri_axis_reference = 0;/*主轴楔块参考位置mm*/
+    p->wedge_p->wg_sec_axis_reference = 0;/*次轴楔块参考位置mm*/
+    p->wedge_p->wg_length = 1;/*楔块长度mm*/
+    p->wedge_p->wg_width = 1;/*楔块宽度mm*/
+    p->wedge_p->wg_height = 1;/*楔块高mm*/
+	p->wedge_p->wg_separation = 0;
+
+    p->wedge_r->wg_wedge_angle = GROUP_VAL(wedge.Angle) / 10.0; /* 楔块角 度 */
+    p->wedge_r->wg_roof_angle=0;/* 顶角 度*/
+    p->wedge_r->wg_lon_vel = 3230;/*纵波声速m/s*/
+    p->wedge_r->wg_trans_vel = 3230;/*横波声速m/s*/
+//    p->wedge_r->wg_density= 7.8;/* 密度 */
+    p->wedge_r->wg_heigh_fir	= GROUP_VAL(wedge.Height) / 1000.0;	/*第一阵元高度mm*/
+    p->wedge_r->wg_pri_elem_offset_fir = 0;/*第一主轴阵元偏移mm*/
+    p->wedge_r->wg_sec_elem_offset_fir = 0;/*第一次轴阵元偏移mm*/
+    p->wedge_r->wg_pri_axis_reference = 0;/*主轴楔块参考位置mm*/
+    p->wedge_r->wg_sec_axis_reference = 0;/*次轴楔块参考位置mm*/
+    p->wedge_r->wg_length = 1;/*楔块长度mm*/
+    p->wedge_r->wg_width = 1;/*楔块宽度mm*/
+    p->wedge_r->wg_height = 1;/*楔块高度mm*/
+	p->wedge_r->wg_separation = 0;
+	
+	/* BEAM */
+    p->beam_angle->beam_pri_steer_angle_start = 0 ;
+    p->beam_angle->beam_pri_steer_angle_stop = 0;
+    p->beam_angle->beam_pri_steer_angle_resolution = 0;
+    //
+    p->beam_angle->beam_sec_steer_angle_start = 0;
+	p->beam_angle->beam_sec_steer_angle_stop = 0;
+    p->beam_angle->beam_sec_steer_angle_resolution = 0;
+    //
+    p->beam_angle->beam_refrac_angle_start = LAW_VAL (Angle_start) / 100.0;  
+    p->beam_angle->beam_refrac_angle_stop = LAW_VAL (Angle_end) / 100.0;
+    p->beam_angle->beam_refrac_angle_resolution = LAW_VAL (Angle_step) / 100.0; 
+    // 
+    p->beam_angle->beam_skew_angle_start = 0;  
+    p->beam_angle->beam_skew_angle_stop = 0;
+    p->beam_angle->beam_skew_angle_resolution = 0;
+
+    p->beam_angle->beam_type = 0;
+    p->beam_angle->beam_angle_sel = 0;
+
+	/* 样本 */
+    p->specimen->speci_longitudinal_wave	= GROUP_VAL(velocity) / 100.0;	/*样本纵波声速 */  
+    p->specimen->speci_transverse_wave		= GROUP_VAL(velocity) / 100.0;	/*样本横波声速 */
+    //
+//    p->specimen->speci_length_flat = 0;
+//    p->specimen->speci_height_flat = 0;
+//    p->specimen->speci_width_flat = 0;  
+    //
+    p->specimen->speci_inside_cylindrical = 0;
+    p->specimen->speci_outside_cylindrical = 0;
+//    p->specimen->speci_length_cylindrical = 0; 
+    p->specimen->flat_cylindrical = 0;
+    //
+    p->specimen->Inspection_od_id[0] = 0;  
+    p->specimen->Inspection_od_id[1] = 1;  
+
+	/* 聚焦点 */
+    p->focal_point->focal_focus_type = 1;	/* 0 half path 1 TURE DEPTH */
+    p->focal_point->focal_focus_point_start = LAW_VAL(Focus_depth) / 1000.0;	/* type =0 是 声程 type =1 是深度 */
+    p->focal_point->focal_focus_point_stop = 0; 
+    p->focal_point->focal_focus_point_resolution = 0; 
+    
+    p->element_sel->pri_axis_ape = LAW_VAL(Elem_qty);
+    p->element_sel->sec_axis_ape = 1;
+}
+
+static void save_cal_law(gint offset, gint group, PARAMETER_P p)
+{
+	gint i, j;
+	for (i = 0; i < TMP(beam_qty[group]); i++)
+	{
+		CFG(focal_law_all_beam[offset + i]).N_ActiveElements	= LAW_VAL (Elem_qty);
+		CFG(focal_law_all_beam[offset + i]).frequency		= GROUP_VAL (frequency);
+		CFG(focal_law_all_beam[offset + i]).cycle			= 1; 
+		CFG(focal_law_all_beam[offset + i]).sumgain			= GROUP_VAL (sum_gain) / 100;
+		CFG(focal_law_all_beam[offset + i]).mode			= !GROUP_VAL (tx_rxmode);
+		CFG(focal_law_all_beam[offset + i]).filter			= GROUP_VAL (filter); 
+		CFG(focal_law_all_beam[offset + i]).R_angle			= (LAW_VAL (Angle_start) + 
+				LAW_VAL(Angle_step) * i) / 100.0;
+		CFG(focal_law_all_beam[offset + i]).S_angle			= GROUP_VAL (skew) / 100.0; 
+		CFG(focal_law_all_beam[offset + i]).T_first			= LAW_VAL (First_tx_elem);
+		CFG(focal_law_all_beam[offset + i]).R_first			= LAW_VAL (First_rx_elem);
+		CFG(focal_law_all_beam[offset + i]).Scan_offset		= GROUP_VAL (scan_offset) * 100;
+		CFG(focal_law_all_beam[offset + i]).Index_offset	= GROUP_VAL (index_offset) * 100;
+		CFG(focal_law_all_beam[offset + i]).G_delay			= 
+			GROUP_VAL (wedge_delay)
+			+	GROUP_VAL (wedge.Probe_delay) + p->G_Time[i];
+		CFG(focal_law_all_beam[offset + i]).F_depth			= LAW_VAL (Focus_depth);
+		CFG(focal_law_all_beam[offset + i]).M_velocity		= GROUP_VAL (velocity) / 100;
+
+
+		for (j = 0; j < CFG(focal_law_all_beam[offset + i]).N_ActiveElements; j++)
+		{
+			CFG(focal_law_all_elem[offset + i][j]).E_number = j + 1;
+			CFG(focal_law_all_elem[offset + i][j]).FL_gain	= GROUP_VAL (gain) / 100;
+			CFG(focal_law_all_elem[offset + i][j]).T_delay	= p->timedelay[i][j];
+			CFG(focal_law_all_elem[offset + i][j]).R_delay	= p->timedelay[i][j];
+			CFG(focal_law_all_elem[offset + i][j]).Amplitude = CFG (voltage_pa); 
+			CFG(focal_law_all_elem[offset + i][j]).P_width	= GROUP_VAL (pulser_width) / 100; 
+		} 
+
+	} 
+}
+
+static void cal_focal_law ()
+{
+	gint G_Delay[256*32];
+	gint offset, k;
+	PARAMETER_P p;
+	
+	p = (PARAMETER_P)g_malloc0(sizeof(PARAMETER));
+//	p = (PARAMETER_P)malloc(sizeof(PARAMETER));
+    PROBEF        probe_p;
+    WEDGEF        wedge_p;
+	WEDGEF        wedge_r;
+    BEAM_ANGLE   beam_angle;
+    SPECIMEN     specimen;
+    FOCAL_POINT  focal_point;
+    ELEMENT_SEL  element_sel;
+
+    p->probe_p	= &probe_p;
+	p->wedge_p	= &wedge_p;
+	p->wedge_r	= &wedge_r;
+	p->beam_angle = &beam_angle;
+	p->specimen	= &specimen;
+	p->focal_point = &focal_point;
+	p->element_sel = &element_sel;
+	p->k = 0 ;	            
+    
+	g_print("begin\n");
+	setup_para(p);
+	g_print("begin set\n");
+    
+	focal_law(p, G_Delay);
+
+	
+	/* 把聚集法则信息保存起来 */
+	for (offset = 0, k = 0 ; k < CFG(groupId); k++)
+		offset += TMP(beam_qty[k]);
+	g_print("offset = %d group=%d beam_qty = %d\n", 
+			offset, CFG(groupId), TMP(beam_qty[CFG(groupId)]));
+	save_cal_law (offset, CFG(groupId), p);
+
+	g_free (p);
+	return ;
+}
+
+
 
 /*三级菜单6个按钮的回调函数*/
 
@@ -1283,9 +1320,10 @@ void b3_fun3(gpointer p)
 			switch (pp->pos1[6])
 			{
 				case 3:
-					temp_beam = (guint)((LAW_VAL(Angle_end) - LAW_VAL(Angle_start))) /
+					temp_beam = (guint)(LAW_VAL(Angle_end) - LAW_VAL(Angle_start)) /
 						LAW_VAL(Angle_step) + 1;
 					TMP(beam_qty[CFG(groupId)])	= temp_beam;
+
 					cal_focal_law ();
 					break;  /* 计算聚焦法则 P633 */
 				default:break;
@@ -3370,7 +3408,7 @@ void data_622 (GtkSpinButton *spinbutton, gpointer data) /* Angle Step P622 */
 
 void data_623 (GtkSpinButton *spinbutton, gpointer data) /* focus_depth P623*/
 {
-	LAW_VAL(Focus_depth) =  (guint) (gtk_spin_button_get_value (spinbutton) * 100.0);
+	LAW_VAL(Focus_depth) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
 }
 
 void data_700 (GtkMenuItem *menuitem, gpointer data) /* Encoder */

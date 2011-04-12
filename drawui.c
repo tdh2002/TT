@@ -3926,7 +3926,7 @@ void draw3_data0(DRAW_UI_P p)
 					draw3_popdown (menu_content[OFF_ON + CFG(fft)], 0, 0);
 					break;
 
-				case 3:/*Probe/Part -> Parts -> Geometry  p530 */
+				case 3: /* 被检则工件的几何形状  P530 */
 					pp->x_pos = 608, pp->y_pos = 118-YOFFSET;
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 						draw3_pop_tt (data_530, NULL, 
@@ -3935,7 +3935,6 @@ void draw3_data0(DRAW_UI_P p)
 					else 
 						draw3_popdown (menu_content[GEOMETRY + CFG(part.Geometry_pos)], 0, 0);
 					break;
-
 				case 4:
 					if ( !con2_p[5][4][0] )
 						gtk_widget_hide (pp->eventbox30[0]);
@@ -8441,7 +8440,7 @@ void draw3_data3(DRAW_UI_P p)
 					{
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 						{
-							cur_value = LAW_VAL(Focus_depth)/100.0;
+							cur_value = LAW_VAL(Focus_depth) / 1000.0;
 							lower = 0.10;
 							upper = 100.00;
 							step = tmpf;
@@ -8453,7 +8452,7 @@ void draw3_data3(DRAW_UI_P p)
 						}
 						else 
 						{
-							cur_value = LAW_VAL(Focus_depth)/100.0;
+							cur_value = LAW_VAL(Focus_depth) / 1000.0;
 							digit = 1;
 							pos = 3;
 							unit = UNIT_MM;
@@ -8462,7 +8461,7 @@ void draw3_data3(DRAW_UI_P p)
 					}
 					else
 					{
-						cur_value = LAW_VAL(Focus_depth)/100.0;
+						cur_value = LAW_VAL(Focus_depth) / 1000.0;
 						digit = 1;
 						pos = 3;
 						unit = UNIT_DEG;

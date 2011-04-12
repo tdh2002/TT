@@ -16,8 +16,8 @@ typedef struct ProbeF
 	gint      Pitch_Catch;
 	gint      transmi_trans_longi;//设置发送探头 横波 OR 纵波 、
 	gint      recev_trans_longi;//设置接收探头 横波 OR 纵波  
-	//	gdouble   pb_skew_angle;
-	//	gdouble   pb_frequency;
+	gdouble   pb_skew_angle;
+	gdouble   pb_frequency;
 	gint      ele_num_pri;//主轴阵元数
 	gint      ele_num_sec;//副轴阵元数 
 	gdouble   pri_axis_pitch;//主轴间距
@@ -25,8 +25,8 @@ typedef struct ProbeF
 	gdouble   pri_ele_size;
 	gdouble   sec_ele_size;
 	/*receiver*/ 
-	//    gdouble   pb_skew_angle_r;
-	//	gdouble   pb_frequency_r;
+	gdouble   pb_skew_angle_r;
+	gdouble   pb_frequency_r;
 	gint      ele_num_pri_r;//阵元数
 	gint      ele_num_sec_r;
 	gdouble   pri_axis_pitch_r;//主轴间距
@@ -42,7 +42,7 @@ typedef struct WedgeF
 	gdouble   wg_roof_angle;/* 顶角 */
 	gdouble   wg_lon_vel;/*纵波声速*/
 	gdouble   wg_trans_vel;/*横波声速*/
-	//    gint      wg_density;/* 密度 */
+	gint      wg_density;/* 密度 */
 	gdouble   wg_heigh_fir;/*第一阵元高度*/
 	gdouble   wg_pri_elem_offset_fir;/*第一主轴阵元偏移*/
 	gdouble   wg_sec_elem_offset_fir;/*第一次轴阵元偏移*/
