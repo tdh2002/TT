@@ -3440,9 +3440,12 @@ void data_533 (GtkMenuItem *menuitem, gpointer data) /* Probe/Part -> Parts -> M
 	draw_3_menu(0, NULL);
 }
 
-void data_600 (GtkMenuItem *menuitem, gpointer data) /* Focal law -> Configuration -> Law Config. */
+/* 聚焦法则类型 P600 */
+void data_600 (GtkMenuItem *menuitem, gpointer data) 
 {
 	LAW_VAL(Focal_type) = (guchar) (GPOINTER_TO_UINT (data));
+	if (LAW_VAL(Focal_type) == ANGLE_SCAN)
+		LAW_VAL (Last_tx_elem) = (guchar) (LAW_VAL (First_tx_elem) + LAW_VAL (Elem_qty)) - 1;
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
 }
@@ -3451,24 +3454,29 @@ void data_601 (GtkSpinButton *spinbutton, gpointer data) /* connection_P P601 */
 {
 }
 
-void data_610 (GtkSpinButton *spinbutton, gpointer data) /*element_qty*/
+/* element_qty 聚集 法则一次激发的阵元数量 P620 */
+void data_610 (GtkSpinButton *spinbutton, gpointer data) 
 {
-	LAW_VAL(Elem_qty) =  (guchar) (gtk_spin_button_get_value (spinbutton));
+	LAW_VAL (Elem_qty) = (guchar) (gtk_spin_button_get_value (spinbutton));
+	LAW_VAL (Last_tx_elem) = (guchar) (LAW_VAL (First_tx_elem) + LAW_VAL (Elem_qty)) - 1;
 }
 
-void data_611 (GtkSpinButton *spinbutton, gpointer data) /*first_element*/
+/* first_element 第一个接收阵元 */
+void data_611 (GtkSpinButton *spinbutton, gpointer data) 
 {
 	LAW_VAL(First_tx_elem) =  (guchar) (gtk_spin_button_get_value (spinbutton));
+	LAW_VAL (Last_tx_elem) = (guchar) (LAW_VAL (First_tx_elem) + LAW_VAL (Elem_qty)) - 1;
 }
 
-void data_612 (GtkSpinButton *spinbutton, gpointer data) /*last_element*/
+/* last_element 最后一个阵元编号 */
+void data_612 (GtkSpinButton *spinbutton, gpointer data) 
 {
-	GROUP_VAL(last_element) =  (guchar) (gtk_spin_button_get_value (spinbutton));
+	LAW_VAL(Last_tx_elem) =  (guchar) (gtk_spin_button_get_value (spinbutton));
 }
 
 void data_613 (GtkSpinButton *spinbutton, gpointer data) /*element_step*/
 {
-	GROUP_VAL(element_step) =  (guchar) (gtk_spin_button_get_value (spinbutton));
+	LAW_VAL(Elem_step) =  (guchar) (gtk_spin_button_get_value (spinbutton));
 }
 
 void data_614 (GtkMenuItem *menuitem, gpointer data) /* 纵横波  P614 */

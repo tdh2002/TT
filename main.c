@@ -184,10 +184,10 @@ static void set_config (guint groupid)
 	CFG(fft_color)=0;/* 0 Yellow*/
 
 
-	LAW_VAL(Elem_qty)		=	1;
-	LAW_VAL(First_tx_elem)	=	1;
-	GROUP_VAL(last_element)=1;
-	GROUP_VAL(element_step)=1;
+	LAW_VAL (Elem_qty)		=	1;
+	LAW_VAL (First_tx_elem)	=	1;
+	LAW_VAL (Last_tx_elem)	=	2;
+	LAW_VAL (Elem_step)		=	1;
 	LAW_VAL (Wave_type)		=	LONGITUDINAL_WAVE;
 	LAW_VAL (Angle_start)	=	0.0;
 	LAW_VAL (Angle_end)		=	0.0;

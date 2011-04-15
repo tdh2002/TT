@@ -386,8 +386,7 @@ typedef struct Group {
 	gint	agate_start;
 	guint	agate_width;
 
-	guchar	last_element;                   /* 最后一个阵元 (线扫时候可以设置) */
-	guchar	element_step;                   /* 阵元间隔 (线扫时候可以设置) */
+//	guchar	element_step;                   /* 阵元间隔 (线扫时候可以设置) */
 } GROUP, *GROUP_P;
 
 /*配置信息 (CONFIG)*/

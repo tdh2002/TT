@@ -565,6 +565,18 @@ static gint gtk_entry_digit_only_keypress_event(GtkWidget *widget, GdkEventKey *
 	return FALSE;
 }
 
+static gint gtk_entry_full_screen_keypress_event(GtkWidget *widget, GdkEventKey *event)
+{
+	gpointer data = NULL;
+	if (0)
+	{
+		return key_press_handler (widget, event, data);
+	}
+	else
+		return window_keypress_event_orig (widget, event); 
+	return FALSE;
+}
+
 /* Probe 选择探头2个按键的处理 一个是确认 一个是取消 */
 static void da_call_probe (GtkDialog *dialog, gint response_id, gpointer user_data)      
 {
@@ -2257,7 +2269,7 @@ static void draw_law_save ()
 	gtk_widget_set_size_request(GTK_WIDGET (dialog), 800, 600);
 	widget_window_class->key_press_event = window_keypress_event_orig;
 	widget_window_class1 = GTK_WIDGET_GET_CLASS (((GtkObject*)(dialog))); 
-	widget_window_class1->key_press_event = gtk_entry_digit_only_keypress_event;
+	widget_window_class1->key_press_event = gtk_entry_full_screen_keypress_event;
 	/* 这里处理按键 */
 
 
@@ -2416,7 +2428,7 @@ static void draw_law_read ()
 	gtk_widget_set_size_request(GTK_WIDGET (dialog), 800, 600);
 	widget_window_class->key_press_event = window_keypress_event_orig;
 	widget_window_class1 = GTK_WIDGET_GET_CLASS (((GtkObject*)(dialog))); 
-	widget_window_class1->key_press_event = gtk_entry_digit_only_keypress_event;
+	widget_window_class1->key_press_event = gtk_entry_full_screen_keypress_event;
 	/* 这里处理按键 */
 
 
@@ -7358,8 +7370,7 @@ void draw3_data2(DRAW_UI_P p)
 					}
 					g_free(str);
 					break;
-				case 1:/* Focal Law -> aperture -> last element P612 */
-					/* 当前步进 */
+				case 1:/* 最后一个发射阵元 P612 */
 					switch (TMP(last_element_reg))
 					{
 						case 0:	tmpf = 1.0; break;
@@ -7367,14 +7378,16 @@ void draw3_data2(DRAW_UI_P p)
 						case 2:	tmpf = 100.0; break;
 						default:break;
 					}
-
-					if ( LAW_VAL(Focal_type)==1)/*Law Config 为 Linear 时，Last Element可调*/
+						/* 聚焦法则自动计算开启时  */
+					if ((CFG(auto_program) == AUTO_FOCAL_ON) &&
+						(LAW_VAL(Focal_type) == LINEAR_SCAN))
 					{
+						/*Law Config 为 Linear 时，Last Element可调*/
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 						{
-							cur_value = GROUP_VAL(last_element);
-							lower = 32.0;
-							upper = 128.0;
+							cur_value = LAW_VAL (Last_tx_elem);
+							lower = LAW_VAL (First_tx_elem) + LAW_VAL (Elem_qty) - 1; 
+							upper = GROUP_VAL (probe.Elem_qty) - LAW_VAL (Elem_step);
 							step = tmpf;
 							digit = 0;
 							pos = 2;
@@ -7383,39 +7396,23 @@ void draw3_data2(DRAW_UI_P p)
 						}
 						else 
 						{
-							cur_value = GROUP_VAL(last_element);
+							cur_value = LAW_VAL(Last_tx_elem);
 							digit = 0;
 							pos = 2;
 							unit = UNIT_NONE;
 							draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 						}
 					}
-
 					else /*Law Config 不为 Linear 时，Last Element  Unsensitive*/
 					{
-						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
-						{
-							cur_value = GROUP_VAL(last_element);
-							lower = 32.0;
-							upper = 128.0;
-							step = tmpf;
-							digit = 0;
-							pos = 2;
-							unit = UNIT_NONE;
-							draw3_digit_pressed (data_612, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
-						}
-						else 
-						{
-							cur_value = GROUP_VAL(last_element);
-							digit = 0;
-							pos = 2;
-							unit = UNIT_NONE;
-							draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
-						}
+						cur_value = LAW_VAL(Last_tx_elem);
+						digit = 0;
+						pos = 2;
+						unit = UNIT_NONE;
+						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 						gtk_widget_set_sensitive(pp->eventbox30[2],FALSE);
 						gtk_widget_set_sensitive(pp->eventbox31[2],FALSE);
 					}
-
 					break;
 				case 2:/* 角度扫查的步进 P622 */
 					switch (pp->p_tmp_config->angle_step_reg)
@@ -8982,8 +8979,7 @@ void draw3_data3(DRAW_UI_P p)
 						gtk_widget_hide (pp->eventbox30[3]);
 					gtk_widget_hide (pp->eventbox31[3]);
 					break;
-				case 1:/*Focal Law -> aperture -> element step p613*/
-					/* 当前步进 */
+				case 1:/* 阵元步进 线扫时候用 P613 */
 					switch (pp->p_tmp_config->element_step_reg)
 					{
 						case 0:	tmpf = 1.0; break;
@@ -8991,14 +8987,14 @@ void draw3_data3(DRAW_UI_P p)
 						case 2:	tmpf = 100.0; break;
 						default:break;
 					}
-
-					if (LAW_VAL(Focal_type)==1)/*Law Config 为 Linear 时，Element Step 可调*/
+					if ((CFG(auto_program) == AUTO_FOCAL_ON) &&
+						(LAW_VAL(Focal_type) == LINEAR_SCAN))
 					{
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 						{
-							cur_value = GROUP_VAL(element_step);
-							lower = 0.5;
-							upper = 96.0;
+							cur_value = LAW_VAL(Elem_step);
+							lower = 1.0;
+							upper = GROUP_VAL (probe.Elem_qty) - LAW_VAL (Last_tx_elem);
 							step = tmpf;
 							digit = 1;
 							pos = 3;
@@ -9007,7 +9003,7 @@ void draw3_data3(DRAW_UI_P p)
 						}
 						else 
 						{
-							cur_value = GROUP_VAL(element_step);
+							cur_value = LAW_VAL(Elem_step);
 							digit = 1;
 							pos = 3;
 							unit = UNIT_NONE;
@@ -9016,25 +9012,11 @@ void draw3_data3(DRAW_UI_P p)
 					}
 					else /*Law Config 不为 Linear 时，Element Step  Unsensitive*/
 					{
-						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
-						{
-							cur_value = GROUP_VAL(element_step);
-							lower = 0.5;
-							upper = 96.0;
-							step = tmpf;
-							digit = 1;
-							pos = 3;
-							unit = UNIT_NONE;
-							draw3_digit_pressed (data_613, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
-						}
-						else 
-						{
-							cur_value = GROUP_VAL(element_step);
-							digit = 1;
-							pos = 3;
-							unit = UNIT_NONE;
-							draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
-						}
+						cur_value = LAW_VAL(Elem_step);
+						digit = 1;
+						pos = 3;
+						unit = UNIT_NONE;
+						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 						gtk_widget_set_sensitive(pp->eventbox30[3],FALSE);
 						gtk_widget_set_sensitive(pp->eventbox31[3],FALSE);
 					}
@@ -9047,8 +9029,7 @@ void draw3_data3(DRAW_UI_P p)
 						case 2:	tmpf = 10.0; break;
 						default:break;
 					}
-					if ((LAW_VAL(Focal_type) == ANGLE_SCAN) &&
-							(CFG(auto_program) == AUTO_FOCAL_ON))
+					if ((CFG(auto_program) == AUTO_FOCAL_ON))
 						/* 自动计算聚焦法则时候可以调节 */
 					{
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
@@ -10345,6 +10326,7 @@ void draw3_data4(DRAW_UI_P p)
 					gtk_widget_hide (pp->eventbox31[4]);
 					break;
 				case 1: /* 选择纵波还是横波 P614 */
+#if 0
 					pp->x_pos = 544, pp->y_pos = 456-YOFFSET;
 					if(CFG(auto_program) == AUTO_FOCAL_ON)
 						/* 聚焦法则自动计算开启时, 纵横才可以调节 */
@@ -10363,6 +10345,7 @@ void draw3_data4(DRAW_UI_P p)
 						gtk_widget_set_sensitive(pp->eventbox31[4],FALSE);
 					}
 					break;
+#endif
 				case 2:
 					if ( !con2_p[6][2][4] )
 						gtk_widget_hide (pp->eventbox30[4]);
