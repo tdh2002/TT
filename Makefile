@@ -19,7 +19,7 @@ LDFLAGS=`pkg-config --libs ${LIBS}` -Wall
 
 all: ${PROG_NAME}
 
-${PROG_NAME}:${OBJS}
+${PROG_NAME}:${OBJS} focallaw.o
 	${CC} -o ${PROG_NAME} ${OBJS} ${LDFLAGS} focallaw.o
 #注意：上边”${CC}" 的前边有一个TAB键，而不是空格
 

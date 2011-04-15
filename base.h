@@ -157,7 +157,7 @@ typedef struct law_elem
 	gushort	T_delay;		/* 0-25560 单位 ns 65535不活动状态 */
 	gushort	P_width;			/* 50-500 单位ns*/
 	gushort TT_TT;
-} LAW_ELEM, *LAW_ELEM_P;
+}LAW_ELEM, *LAW_ELEM_P;
 
 /* 一条beam的聚焦信息 */
 typedef struct law_beam
@@ -183,7 +183,7 @@ typedef struct law_beam
 	gint beam_delay;			/* 单位ns Law Delay */
 	gint F_depth;				/* 单位 微粒 */
 	guint M_velocity;			/* 单位 m/s */
-} LAW_BEAM, *LAW_BEAM_P;
+}LAW_BEAM, *LAW_BEAM_P;
 
 typedef struct law_focal
 {
@@ -215,6 +215,7 @@ typedef struct law_info
 	gushort law_index_end;		/*  */
 } LAW_INFO, *LAW_INFO_P;
 
+/*  */
 typedef struct element_law
 {
 	guchar	e_number;

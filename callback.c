@@ -404,7 +404,7 @@ static void save_cal_law(gint offset, gint group, PARAMETER_P p)
 
 static void cal_focal_law ()
 {
-	gint G_Delay[256*32];
+	gint G_Delay[256*33];
 	gint offset, k;
 	PARAMETER_P p;
 	

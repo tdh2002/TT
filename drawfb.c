@@ -15,10 +15,10 @@
 
 #define COLOR_STEP 32     //    4  8  16  32  64
 #define COLOR_SHIFT 5     //    2  3   4   5   6
-static gchar* pDraw     ;          // 是否扇形区域 
-static guchar* pAngleZoom; // 处于哪个角度区间 
-static guchar* pDrawRate ; // 填充比例 
-static gint*  pDataNo; // 数据在数组中的列号 
+static gchar* pDraw  = NULL;          // 是否扇形区域 
+static guchar* pAngleZoom = NULL; // 处于哪个角度区间 
+static guchar* pDrawRate = NULL; // 填充比例 
+static gint*  pDataNo = NULL; // 数据在数组中的列号 
 
 gfloat	HEIGHT_TABLE[256]=
 {
@@ -298,6 +298,17 @@ int CalcFanScan(gdouble startAngle, gdouble endAngle,
        gdouble tAngle ;
        int iAngle ;
        // 为全局指针分配内在
+	   if (pDraw)
+	   {
+		   free(pDraw);
+		   free(pAngleZoom);
+		   free(pDrawRate);
+		   free(pDataNo);
+		   pDraw = NULL;
+		   pAngleZoom = NULL;
+		   pDrawRate = NULL;
+		   pDataNo = NULL;
+	   }
        pDraw      = (char*)malloc(width*height);
        pAngleZoom = (unsigned char*)malloc(width*height);
        pDrawRate  = (unsigned char*)malloc(width*height);
@@ -572,7 +583,7 @@ int DrawPixbuff(gushort *p,
              for(j = 0; j < width; j++)
              {
                       pointer = i*width +j ;
-//                      if(pDraw[pointer] != 0)
+                      if(pDraw[pointer] != 0)
                       { 
                            pointer2 = (int)(pAngleZoom[pointer] * waveLength + pDataNo[pointer]);
                            tempData = (int)(WaveData[pointer2] * (COLOR_STEP - pDrawRate[pointer]) +
@@ -625,24 +636,29 @@ void draw_s_scan (gushort *p, guint width, guint height, DOT_TYPE *data, DOT_TYP
 				}
 				break;
 		case  UT_UNIT_TRUE_DEPTH:
-				if (width > TMP(beam_qty[groupId]))
+				if ((!pp->sscan_mark) && pDraw)
 				{
-					DrawPixbuff(p, xoffset, yoffset, width, width, height,
-					0, TMP(a_scan_dot_qty),  data1);
+					if (width > TMP(beam_qty[groupId]))
+					{
+
+						//					DrawPixbuff(p, 0, 0,  200, 200, 200, 0, 200, data1);
+						DrawPixbuff(p, xoffset, yoffset, width, width, height,
+								0, TMP(a_scan_dot_qty),  data1);
 
 #if 0				
-					/* 拉伸 */
-					for (i = 0; i < TMP(beam_qty[groupId]); i++)
-						for (j = 0; j <= width / TMP(beam_qty[groupId]); j++)
-							for (k = 0; k < height - 1; k++)
-								fbdot (p, 
-										xoffset + i * width / TMP(beam_qty[groupId]) + j,
-										yoffset + k,
-										TMP(color_amp[data1[height * i + k]]));
+						/* 拉伸 */
+						for (i = 0; i < TMP(beam_qty[groupId]); i++)
+							for (j = 0; j <= width / TMP(beam_qty[groupId]); j++)
+								for (k = 0; k < height - 1; k++)
+									fbdot (p, 
+											xoffset + i * width / TMP(beam_qty[groupId]) + j,
+											yoffset + k,
+											TMP(color_amp[data1[height * i + k]]));
 #endif
 
+					}
 				}
-			break;
+				break;
 		default:break;
 	}
 	return ;
