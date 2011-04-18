@@ -733,8 +733,8 @@ typedef struct Draw_interface {
 	guchar			menu2_qty;          /*  */
 
 	gchar			*file_path;	/* 帮助文档的路径 */
-	WebKitWebView*		web_view;
-	WebKitWebView*		web_view_tmp;
+	WebKitWebView	*web_view;
+	WebKitWebView	*web_view_tmp;
 	GtkAdjustment	*adj;
 	GSList			*group;
 
@@ -791,6 +791,7 @@ typedef struct Draw_interface {
 	GtkWidget		*menu_item3[30];
 
 	GtkWidget		*window;
+	GtkWidget		*win_keyboard;
 
 	GtkWidget		*dialog;
 	/* scale 快速调节数值 */

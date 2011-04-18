@@ -10,7 +10,7 @@ SRCS=callback.c content_en.c drawfb.c drawui.c file_op.c main.c
 OBJS=${SRCS:.c=.o}
 
 #编译GTK程序时要用到的库
-LIBS=webkit-1.0 libxml-2.0
+LIBS=webkit-1.0 libxml-2.0 libfakekey
 #---- 用户修改区域 结束
 
 # -O2

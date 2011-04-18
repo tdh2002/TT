@@ -46,6 +46,8 @@ gushort	all_col_16[] =
 };
 
 DRAW_UI_P	pp;					
+Display *disp ;
+FakeKey *fk;
 
 /* 测试用的初始值 */
 static void set_config (guint groupid)
@@ -285,6 +287,11 @@ int main (int argc, char *argv[])
 	gtk_widget_modify_bg (window, GTK_STATE_NORMAL, &color_black);	/*黑色背景*/
 	g_signal_connect (G_OBJECT(window), "delete_event",
 			G_CALLBACK(gtk_main_quit), NULL);			/**/
+
+	disp = XOpenDisplay(NULL);
+	if( disp == NULL )
+		return 1;
+	fk = fakekey_init(disp);
 
 	p_ui->p_config		= p_config;
 	p_ui->p_tmp_config	= p_tmp_config;

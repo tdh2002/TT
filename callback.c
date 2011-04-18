@@ -1342,9 +1342,10 @@ void b3_fun3(gpointer p)
 			switch (pp->pos1[6])
 			{
 				case 3:
-					temp_beam = (guint)(LAW_VAL(Angle_end) - LAW_VAL(Angle_start)) /
+					temp_beam = (LAW_VAL(Angle_end) - LAW_VAL(Angle_start)) /
 						LAW_VAL(Angle_step) + 1;
 					TMP(beam_qty[CFG(groupId)])	= temp_beam;
+					TMP(beam_num[CFG(groupId)]) = 0;
 
 					cal_focal_law ();
 					break;  /* 计算聚焦法则 P633 */
@@ -1793,9 +1794,9 @@ static void handler_key(guint keyval, gpointer data)
 	switch (keyval) 
 	{
 		case GDK_KP_0:
-			(TMP(beam_num[CFG(groupId)])	< (TMP(beam_qty[CFG(groupId)]) - 1))	?
+			(TMP(beam_num[CFG(groupId)]) < (TMP(beam_qty[CFG(groupId)]) - 1))	?
 				(TMP(beam_num[CFG(groupId)]) += 1)	:	
-			(TMP(beam_num[CFG(groupId)])	= (TMP(beam_qty[CFG(groupId)]) - 1));
+			(TMP(beam_num[CFG(groupId)]) = 0);
 			g_print("beam num =%d\n", TMP(beam_num[CFG(groupId)]));
 			break;
 		case GDK_Super_L:

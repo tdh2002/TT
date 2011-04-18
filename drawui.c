@@ -14,16 +14,27 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <glib/gprintf.h>
-#include <gdk/gdkkeysyms.h>
 #include <fcntl.h>
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
 #include <assert.h>
 #include <webkit/webkit.h>
+#include <gdk/gdkkeysyms.h>
 
 #define EVENT_METHOD(i, x) GTK_WIDGET_GET_CLASS((GtkObject*)(i))->x
 #define YOFFSET  26
+
+
+static char *keyboard_display[] = 
+{
+	"A\0", "B\0", "C\0", "D\0", "E\0", "F\0", "G\0"
+};
+
+static gushort keyboard_send[] = 
+{
+	XK_A, XK_B, XK_C, XK_D, XK_E, XK_F, XK_G
+};
 
 
 enum
@@ -1227,7 +1238,7 @@ static void draw_remark ()
 
 
 	dialog = gtk_dialog_new_with_buttons("Dialog_Remark", win,
-			GTK_DIALOG_MODAL |	GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_NO_SEPARATOR,
+			GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_NO_SEPARATOR,
 			GTK_STOCK_OK, GTK_RESPONSE_OK,
 			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 			NULL);
@@ -12009,6 +12020,54 @@ static void draw_scan(guchar scan_num, guchar scan_type, guchar group,
 	return ;
 }
 
+gboolean bt_release (GtkWidget *widget, GdkEventButton *event,
+		gpointer user_data) 
+{
+	gint i = GPOINTER_TO_UINT(user_data);
+	fakekey_press_keysym(fk, keyboard_send[i], 0);
+    fakekey_release(fk);
+
+	return TRUE;
+}
+
+void draw_keyboard (GtkWidget *widget, GdkEventButton *event,	gpointer data)
+{
+	if (pp->win_keyboard) 
+	{
+		gtk_widget_destroy (pp->win_keyboard);
+		pp->win_keyboard = NULL;
+	}
+	else 
+	{
+		gint i, j;
+		GtkWidget *button1;
+		GtkWidget *vbox = gtk_vbox_new(FALSE, 5);
+		GtkWidget *hbox;
+
+		pp->win_keyboard = gtk_window_new (GTK_WINDOW_POPUP);
+
+		for ( i = 0 ; i < 7; i++) 
+		{
+			hbox = gtk_hbox_new(FALSE, 5);
+			for (j = 0 ; j < 7; j++ ) {
+				button1 = gtk_button_new_with_label (keyboard_display[j]);
+				gtk_box_pack_start_defaults(GTK_BOX(hbox), button1);
+				g_signal_connect(G_OBJECT(button1), "button-release-event",
+						G_CALLBACK(bt_release), GUINT_TO_POINTER (j));
+			}
+			gtk_box_pack_start_defaults(GTK_BOX(vbox), hbox);
+		}
+
+		gtk_container_add(GTK_CONTAINER(pp->win_keyboard), vbox);
+
+		gtk_window_move (GTK_WINDOW (pp->win_keyboard), 200, 200); /* 设置窗口位置 */
+		//	gtk_window_set_position (win, GTK_WIN_POS_CENTER);
+		gtk_widget_show_all(pp->win_keyboard);
+
+	}
+	g_print ("draw keyboard\n");
+//	gtk_main_quit();
+}
 
 /*   */
 static gboolean time_handler2(GtkWidget *widget)
@@ -12082,12 +12141,10 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 {
 	gint i;
 	gchar buf[128];
-	//GtkWidget *drawing_area;
 	GtkWidget *window = p->window;
+	gchar *markup;
 	pp->pos_pos = MENU3_STOP;
 	pp->menu2_qty = 5;
-	gchar *markup;
-	//WebKitWebView* web_view;
 
 	for (i = 0; i < 512; i++) 
 	{
@@ -12287,13 +12344,15 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 	gtk_box_pack_start (GTK_BOX (pp->vbox12), pp->drawing_area, FALSE, FALSE, 0);
 	gtk_widget_set_size_request (GTK_WIDGET(pp->drawing_area), 115, 65); 
 	g_signal_connect (G_OBJECT (pp->drawing_area), "expose_event",
-			G_CALLBACK (draw_other_info), NULL);
+			G_CALLBACK (draw_other_info), NULL);		/* 电池信息 */
 
 
 	gtk_box_pack_start (GTK_BOX (pp->vbox12), pp->hbox121, FALSE, FALSE, 0);
 	gtk_box_pack_start (GTK_BOX (pp->hbox121), pp->event[17], FALSE, FALSE, 0);
 	gtk_widget_set_size_request (GTK_WIDGET(pp->event[17]), 40, 25);
 	update_widget_bg(pp->event[17], backpic[12]); 
+	g_signal_connect (G_OBJECT (pp->event[17]), "button-press-event", 
+			G_CALLBACK (draw_keyboard), NULL);		/* 虚拟键盘 */
 	gtk_box_pack_start (GTK_BOX (pp->hbox121), pp->event[18], FALSE, FALSE, 0);
 	gtk_widget_set_size_request (GTK_WIDGET(pp->event[18]), 70, 25); 
 	gtk_widget_modify_bg(pp->event[18], GTK_STATE_NORMAL, &color_black);

@@ -7,6 +7,8 @@
 #define	__DRAW_UI_H_
 #include "base.h"
 #include "language.h"
+#include <fakekey/fakekey.h>
+#include <X11/keysym.h>
 
 
 /* 扫查模式 */
@@ -313,6 +315,8 @@ extern gint my_keypress_event(GtkWidget *widget, GdkEventKey *event);
 extern GtkWidgetClass *widget_window_class;
 
 extern DRAW_UI_P pp;					
+extern Display *disp ;
+extern FakeKey *fk;
 
 //extern guint address[];
 extern guint get_beam_qty();
