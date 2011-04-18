@@ -709,14 +709,15 @@ typedef struct Measure_data {
 /*画图区域*/
 typedef struct draw_area {
 	GtkWidget *vbox;			/*  */
-	GtkWidget *hbox;
-	GtkWidget *table;			/* 3个刻度尺 1个画图区 */
 	GtkWidget *ebox;			/* 存放标题 */
 	GtkWidget *label;			/* 窗口名字 */
-	GtkWidget *hruler;
-	GtkWidget *vruler1;
-	GtkWidget *vruler2;
 	GtkWidget *drawing_area;             /*波形显示区*/
+	gint	hmin1;
+	gint	hmin2;
+	gint	hmax1;
+	gint	hmax2;
+	gint	wmin1;
+	gint	wmax1;
 	guchar	scan_type;
 } DRAW_AREA, *DRAW_AREA_P;
 
