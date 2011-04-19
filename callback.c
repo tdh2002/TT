@@ -740,8 +740,8 @@ void b3_fun0(gpointer p)
 		case 6:
 			switch (pp->pos1[6])
 			{
-				case 3: 
-					CFG(auto_program) = !CFG(auto_program); /* P630 */
+				case 4: 
+					CFG(auto_program) = !CFG(auto_program); /* P640 */
 					break; 
 
 				default:break;
@@ -1341,14 +1341,14 @@ void b3_fun3(gpointer p)
 		case 6:
 			switch (pp->pos1[6])
 			{
-				case 3:
+				case 4:
 					temp_beam = (LAW_VAL(Angle_end) - LAW_VAL(Angle_start)) /
 						LAW_VAL(Angle_step) + 1;
 					TMP(beam_qty[CFG(groupId)])	= temp_beam;
 					TMP(beam_num[CFG(groupId)]) = 0;
 
 					cal_focal_law ();
-					break;  /* 计算聚焦法则 P633 */
+					break;  /* 计算聚焦法则 P634 */
 				default:break;
 			}
 			break;
@@ -3445,7 +3445,7 @@ void data_533 (GtkMenuItem *menuitem, gpointer data) /* Probe/Part -> Parts -> M
 void data_600 (GtkMenuItem *menuitem, gpointer data) 
 {
 	LAW_VAL(Focal_type) = (guchar) (GPOINTER_TO_UINT (data));
-	if (LAW_VAL(Focal_type) == ANGLE_SCAN)
+	if (LAW_VAL(Focal_type) != LINEAR_SCAN)
 		LAW_VAL (Last_tx_elem) = (guchar) (LAW_VAL (First_tx_elem) + LAW_VAL (Elem_qty)) - 1;
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
@@ -3490,7 +3490,7 @@ void data_614 (GtkMenuItem *menuitem, gpointer data) /* 纵横波  P614 */
 void data_620 (GtkSpinButton *spinbutton, gpointer data) /* min_angle P620*/
 {
 
-	if (LAW_VAL(Focal_type) == ANGLE_SCAN)
+	if (LAW_VAL(Focal_type) == AZIMUTHAL_SCAN)
 	{
 		LAW_VAL(Angle_start) =  (gshort) (gtk_spin_button_get_value (spinbutton) * 100.0);
 		/*
@@ -3506,7 +3506,7 @@ void data_620 (GtkSpinButton *spinbutton, gpointer data) /* min_angle P620*/
 void data_621 (GtkSpinButton *spinbutton, gpointer data) /* max_angle P621 */
 {
 
-	if (LAW_VAL(Focal_type) == ANGLE_SCAN)
+	if (LAW_VAL(Focal_type) == AZIMUTHAL_SCAN)
 	{
 		LAW_VAL(Angle_end) =  (gshort) (gtk_spin_button_get_value (spinbutton) * 100.0);
 		/*

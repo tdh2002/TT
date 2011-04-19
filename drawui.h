@@ -79,9 +79,11 @@
 #define GATE_II       1
 #define GATE_AA	      2
 
-/* focal law 类型 定义*/
-#define	ANGLE_SCAN	0
+/* focallaw 类型定义*/
+#define	AZIMUTHAL_SCAN	0
 #define LINEAR_SCAN	1
+#define	DEPTH_SCAN	2
+#define	STATIC_SCAN	3
 
 /* 0纵波 1横波 */
 #define LONGITUDINAL_WAVE	0
@@ -209,7 +211,9 @@
 #define MATERIAL	(GEOMETRY + 3)
 #define LAW_CONFIG	(MATERIAL + 7)
 #define L_CONFIG	(LAW_CONFIG + 4)
-#define WAVE_TYPE	(L_CONFIG + 4)
+#define FOCAL_POINT_TYPE	(L_CONFIG + 4)
+#define FOCAL_POINT_TYPE1	(FOCAL_POINT_TYPE + 4)
+#define WAVE_TYPE	(FOCAL_POINT_TYPE1 + 4)
 #define W_TYPE		(WAVE_TYPE + 3)
 #define ENCODER		(W_TYPE + 3)
 #define POLARITY	(ENCODER + 2)

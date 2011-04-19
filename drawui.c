@@ -3248,6 +3248,57 @@ static gboolean draw_other_info (GtkWidget *widget, GdkEventExpose *event, gpoin
 	return TRUE;
 }
 
+gboolean progress_button_release (GtkWidget *progress, GdkEvent *event, gpointer data)
+{
+	GdkEventButton *eb = (GdkEventButton *)event;
+	GtkAllocation allocation;
+	gint pressed;
+
+	pressed = (gint)g_object_get_data (G_OBJECT(progress), "pressed");
+#if GTK_MINOR_VERSION >= 18
+	gtk_widget_get_allocation (progress, &allocation);
+#else
+	allocation = progress->allocation;
+#endif
+	if (pressed)
+		gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR(progress), eb->x / (allocation.width * 1.0));
+
+	g_object_set_data (G_OBJECT(progress), "pressed", (gpointer)0);
+	return FALSE;
+}
+
+gboolean progress_button_press (GtkWidget *progress, GdkEvent *event, gpointer data)
+{
+	g_object_set_data (G_OBJECT(progress), "pressed", (gpointer)1);
+	return FALSE;
+}
+
+gboolean progress_motion_notify (GtkWidget *progress, GdkEvent *event, gpointer data)
+{
+	gint x, y, tmp;
+	guint tmp2;
+	gint pressed;
+	Window fromroot, tmpwin;
+	Window root;
+	root = DefaultRootWindow(disp);
+	XQueryPointer(disp, root, &fromroot, &tmpwin, &x, &y, &tmp, &tmp, &tmp2);
+
+//	if (y == 300)
+//		g_print("%d  move a move %d\n", x, y);
+//	return TRUE;
+
+	pressed = (gint)g_object_get_data (G_OBJECT(progress), "pressed");
+//	g_print("%d  move a%d move %d\n", x, pressed, y);
+	if (pressed)
+	{
+		GROUP_GATE_POS(height) = (390 - (y - 115)) / 3.90 ;
+		g_print("%d  move a%d move %d\n", x, GROUP_GATE_POS(height), y);
+		gtk_widget_queue_draw (progress);
+	}
+
+	return FALSE;
+}
+
 static void draw_area(GtkWidget *parent_box, DRAW_AREA *draw_area, guint width, guint height,
 		const gchar *title, gdouble v1s, gdouble v1e, gdouble v2s, gdouble v2e, 
 		gdouble h1s, gdouble h1e, gpointer *other)
@@ -3268,8 +3319,22 @@ static void draw_area(GtkWidget *parent_box, DRAW_AREA *draw_area, guint width, 
 	gtk_widget_modify_bg (draw_area->drawing_area, GTK_STATE_NORMAL, &color_black1);
 	gtk_box_pack_start (GTK_BOX (draw_area->vbox), draw_area->drawing_area, FALSE, FALSE, 0);
 	/* 调用 draw_info 函数 */
-	g_signal_connect (G_OBJECT (draw_area->drawing_area), "expose_event",
+	g_signal_connect (G_OBJECT (draw_area->drawing_area), "expose-event",
 			G_CALLBACK (draw_info), (gpointer)(draw_area));
+//	gtk_widget_set_events (draw_area->drawing_area, GDK_POINTER_MOTION_MASK |
+//			GDK_POINTER_MOTION_HINT_MASK);
+	gtk_widget_add_events (draw_area->drawing_area, GDK_BUTTON_RELEASE_MASK | 
+			GDK_BUTTON_PRESS_MASK   |
+			GDK_POINTER_MOTION_MASK );
+//	g_signal_connect_swapped ((draw_area->drawing_area), "motion-notify-event",
+//			G_CALLBACK (EVENT_METHOD ((draw_area->vruler1), motion_notify_event)),
+//			draw_area->vruler1);
+	g_signal_connect ((draw_area->drawing_area), "button-release-event", 
+			G_CALLBACK (progress_button_release), NULL);
+	g_signal_connect ((draw_area->drawing_area), "button-press-event", 
+			G_CALLBACK (progress_button_press), NULL);
+	g_signal_connect ((draw_area->drawing_area), "motion-notify-event", 
+			G_CALLBACK (progress_motion_notify), NULL);
 
 	gtk_widget_show_all(draw_area->vbox);
 
@@ -3388,7 +3453,7 @@ void draw_area_all()
 					gtk_widget_show (pp->vbox_area[0]);
 					set_scan_config (0, S_SCAN, 615, 615, 390, 0, 0, CFG(groupId));
 				}
-				else if (LAW_VAL(Focal_type) == ANGLE_SCAN)
+				else if (LAW_VAL(Focal_type) == AZIMUTHAL_SCAN)
 				{
 					pp->draw_area[0].scan_type	=	S_SCAN_A;
 					gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
@@ -3397,7 +3462,7 @@ void draw_area_all()
 					gtk_widget_show (pp->vbox_area[0]);
 					set_scan_config (0, S_SCAN_A, 615, 615, 390, 0, 0, CFG(groupId));
 				}
-				else if (LAW_VAL(Focal_type) == ANGLE_SCAN)
+				else if (LAW_VAL(Focal_type) == AZIMUTHAL_SCAN)
 				{
 					pp->draw_area[0].scan_type	=	S_SCAN_L;
 					gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
@@ -3487,7 +3552,7 @@ void draw_area_all()
 					}
 					else if (GROUP_VAL(ut_unit) == UT_UNIT_TRUE_DEPTH)
 					{
-						if (LAW_VAL(Focal_type) == ANGLE_SCAN)
+						if (LAW_VAL(Focal_type) == AZIMUTHAL_SCAN)
 						{
 							pp->draw_area[0].scan_type	=	A_SCAN_R;
 							pp->draw_area[1].scan_type	=	S_SCAN_A;
@@ -4132,12 +4197,13 @@ void draw3_data0(DRAW_UI_P p)
 		case 6:
 			switch (pp->pos1[6])
 			{
-				case 0:/* 聚焦法则类型 线性扫查 角度(扇形)扫查 P600 TAN1 */
-					pp->x_pos = 394, pp->y_pos = 116 - YOFFSET;
+				case 0:/* 聚焦法则类型 线性扫查 角度(扇形)扫查
+						  深度扫查 静态扫查  P600 TAN1 */
+					pp->x_pos = 450, pp->y_pos = 116 - YOFFSET;
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 						draw3_pop_tt (data_600, NULL, 
 								menu_content[L_CONFIG + LAW_VAL(Focal_type)],
-								menu_content+LAW_CONFIG, 4, 0, LAW_VAL(Focal_type), 0x0c);
+								menu_content+LAW_CONFIG, 4, 0, LAW_VAL(Focal_type), 0x0);
 					else 
 						draw3_popdown (menu_content[L_CONFIG + LAW_VAL(Focal_type)], 0, 0);
 					break;
@@ -4233,14 +4299,18 @@ void draw3_data0(DRAW_UI_P p)
 						gtk_widget_set_sensitive(pp->eventbox31[0],FALSE);
 					}
 					break;
-				case 3:/* 自动计算聚焦法则 P630 */
-					draw3_popdown (menu_content[OFF_ON + CFG(auto_program)], 0, 0);
+				case 3:/* 聚焦点的计算方式 0halfpath 1truedepth 2projection 3focalplane P630 */
+					pp->x_pos = 555, pp->y_pos = 116 - YOFFSET;
+					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
+						draw3_pop_tt (data_600, NULL, 
+								menu_content[FOCAL_POINT_TYPE1 + LAW_VAL(Focal_type)],
+								menu_content+ FOCAL_POINT_TYPE, 4, 0, LAW_VAL(Focal_type), 0x0);
+					else 
+						draw3_popdown (menu_content[FOCAL_POINT_TYPE1 + LAW_VAL(Focal_type)], 0, 0);
 					break;
 
-				case 4:
-					if ( !con2_p[6][4][0] )
-						gtk_widget_hide (pp->eventbox30[0]);
-					gtk_widget_hide (pp->eventbox31[0]);
+				case 4:/* 自动计算聚焦法则 P640 */
+					draw3_popdown (menu_content[OFF_ON + CFG(auto_program)], 0, 0);
 					break;
 				default:break;
 			}
@@ -5679,7 +5749,7 @@ void draw3_data1(DRAW_UI_P p)
 						case 2:	tmpf = 10.0; break;
 						default:break;
 					}
-					if( (LAW_VAL(Focal_type) == ANGLE_SCAN) &&
+					if( (LAW_VAL(Focal_type) == AZIMUTHAL_SCAN) &&
 							(CFG(auto_program) == AUTO_FOCAL_ON))
 						/* 聚焦法则自动计算开启时并且是角度扫查, Max Angle 才可调节 */
 					{
@@ -5736,10 +5806,22 @@ void draw3_data1(DRAW_UI_P p)
 							draw3_popdown(NULL, 1, 1);
 					}
 					break;
-				case 4:
-					if ( !con2_p[6][4][1] )
-						gtk_widget_hide (pp->eventbox30[1]);
-					gtk_widget_hide (pp->eventbox31[1]);
+				case 4:/* 读取聚集法则 P641*/
+					if (CFG(auto_program) == AUTO_FOCAL_ON )
+					{
+						draw3_popdown(NULL, 1, 1);
+						gtk_widget_set_sensitive(pp->eventbox30[1],FALSE);
+						gtk_widget_set_sensitive(pp->eventbox31[1],FALSE);
+					}
+					else
+					{
+						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
+						{
+							draw_dialog_all (DIALOG_LAW_READ);
+						}
+						else
+							draw3_popdown(NULL, 1, 1);
+					}
 					break;
 				default:break;
 			}
@@ -6173,7 +6255,7 @@ void draw3_data2(DRAW_UI_P p)
 						/* 计算当前beam的角度 */
 						switch (LAW_VAL(Focal_type))
 						{
-							case ANGLE_SCAN:
+							case AZIMUTHAL_SCAN:
 								cur_value = 0.0;break;
 							case LINEAR_SCAN:
 								cur_value = 0.0;break;
@@ -7570,7 +7652,7 @@ void draw3_data2(DRAW_UI_P p)
 						case 2:	tmpf = 10.0; break;
 						default:break;
 					}
-					if (( LAW_VAL(Focal_type) == ANGLE_SCAN) &&
+					if (( LAW_VAL(Focal_type) == AZIMUTHAL_SCAN) &&
 							(CFG(auto_program) == AUTO_FOCAL_ON))
 						/* 角度扫查时开始自动计算聚焦法则时候可以调节 */
 					{
@@ -7616,10 +7698,11 @@ void draw3_data2(DRAW_UI_P p)
 					else
 						draw3_popdown(NULL, 2, 1);
 					break;
-				case 4:
-					if ( !con2_p[6][4][2] )
-						gtk_widget_hide (pp->eventbox30[2]);
-					gtk_widget_hide (pp->eventbox31[2]);
+				case 4:/* 保存聚焦法则 P642 */
+					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
+						draw_dialog_all (DIALOG_LAW_SAVE);
+					else
+						draw3_popdown(NULL, 2, 1);
 					break;
 				default:break;
 			}
@@ -9255,10 +9338,13 @@ void draw3_data3(DRAW_UI_P p)
 						gtk_widget_set_sensitive(pp->eventbox31[3],FALSE);
 					}
 					break;
-				case 4:
-					if ( !con2_p[6][4][3] )
-						gtk_widget_hide (pp->eventbox30[3]);
-					gtk_widget_hide (pp->eventbox31[3]);
+				case 4: /* 计算聚焦法则 P634 */
+					draw3_popdown (NULL, 3, 1);
+					if (CFG(auto_program) == AUTO_FOCAL_OFF)
+					{
+						gtk_widget_set_sensitive(pp->eventbox30[3],FALSE);
+						gtk_widget_set_sensitive(pp->eventbox31[3],FALSE);
+					}
 					break;
 				default:break;
 			}

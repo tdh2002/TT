@@ -44,7 +44,7 @@ static const gchar *content_en25[] = {
 
 static const gchar *content_en26[] = {
 	/* 二级菜单第6页 */
-	"Configuration", "Aperture", "Beam", "Laws", NULL
+	"Configuration", "Aperture", "Beam Angle", "Focal Point", "Laws"
 };
 
 static const gchar *content_en27[] = {
@@ -241,7 +241,7 @@ static const gchar *content_en254[] = {
 
 static const gchar *content_en260[] = {
 	/* 二级菜单第6页下的第0页三级菜单 */
-	"Law Config.", "Connection P", "Connection R", NULL, NULL, NULL
+	"Law Type", "Connection P", "Connection R", NULL, NULL, NULL
 };
 
 static const gchar *content_en261[] = {
@@ -256,12 +256,12 @@ static const gchar *content_en262[] = {
 
 static const gchar *content_en263[] = {
 	/* 二级菜单第6页下的第3页三级菜单 */
-	"Auto Program", "Load Law File", "Save Law File",  "Cal Focallaw", NULL, NULL
+	"Type.", "Load Law File", "Save Law File",  "Cal Focallaw", NULL, NULL
 };
 
 static const gchar *content_en264[] = {
 	/* 二级菜单第6页下的第4页三级菜单 */
-	NULL, NULL, NULL, NULL, NULL, NULL
+	"Auto Program", "Load Law File", "Save Law File",  "Cal Focallaw", NULL, NULL
 };
 
 
@@ -483,10 +483,12 @@ const gchar *all_menu_content_en[] =
 	"0.0", "90.0", "180.0", "270.0", "UserDef",							/* 391 Skew  */
 	"Plate", "OD", "ID",										/* 396 Geometry */
 	"AL OXIDE", "ALUMINUM", "BERYLIUM", "BRASS", "CADMIUM", "COPPER", "STEEL.MILD",			/* 399 Material */
-	"Sectorial  Angular sector", "Linear  Linear sector", "Linear at 0  Linear sector with overlap",
-	 "Custom  Law file",										/* 406 Law config*/
-	"Sectorial", "Linear", "Linear at 0", "Custom",							/* 410 Law config*/
-	"LW  5890.0m/s", "SW  3240.0m/s"," ",								/* 414 Wave Type*/
+	"Azimuthal Angular sector", "Linear  Linear sector", 
+	"Depth Depth sector", "Static Static sector",				
+	"Sectorial", "Linear", "Depth", "Static",				/* 410 Law config*/
+	"Half Path", "True Dpeth", "Projection ", "Focal Plane",
+	"Half Path", "True Dpeth", "Projection ", "Focal Plane",	/*  focalpoint type */
+	"LW  5890.0m/s", "SW  3240.0m/s"," ",						/* 414 Wave Type*/
 	"LW", "SW", " "	,										/* 417 Wave Type*/
 	"1", "2",											/* 420 Encoder*/
 	"Normal", "Inverse",										/* 422 Polarity */

@@ -221,7 +221,7 @@ static void set_config (guint groupid)
 	GROUP_VAL(probe.Elem_qty)	= 32; /*  */
 	/*	memcpy (GROUP_VAL(probe.Name), "5L64-A2", 8);*/ /* 探头名字 */
 	/* 聚焦法则信息 */
-	LAW_VAL(Focal_type)	= ANGLE_SCAN;
+	LAW_VAL(Focal_type)	= AZIMUTHAL_SCAN;
 	LAW_VAL(Tx_connect)	= 1;
 	LAW_VAL(Rx_connect)	= 1;
 	LAW_VAL(Elem_qty)	= 16;
