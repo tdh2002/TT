@@ -207,9 +207,12 @@ typedef struct law_info
 	guchar	Last_rx_elem;		/* 法则使用的最后一个接收阵元 */
 	guchar	Elem_step;		/* 线扫时候可以设置阵元间隔 */
 	guchar	Wave_type;		/* 纵波 或者 横波 */
-	gshort	Angle_start;	/* PA 时候是开始角度 UT时候记录探头角度 */
-	gshort	Angle_end;		/* 扇扫时候可以设置的角度 0.01度为单位 */
+	gshort	Angle_min;	/* PA 时候是开始角度 UT时候记录探头角度 */
+	gshort	Angle_max;		/* 扇扫时候可以设置的角度 0.01度为单位 */
 	gushort	Angle_step;		/* 扇扫时候可以设置的角度步进 */
+	gshort	Angle_beam_skew_min;		
+	gshort	Angle_beam_skew_max;		
+	gushort	Angle_beam_skew_step;	/* 2D的时候beam skew angle */
 	guint	Focus_depth;		/* 扇扫时候为声程 线扫是深度 0.001mm为单位 */
 	gushort	law_index_start;	/* 聚焦法则索引 计算出来的 */
 	gushort law_index_end;		/*  */
@@ -628,10 +631,13 @@ typedef struct tmp_config {
 	guchar   element_step_reg;	/* Focal_Law -> aperture -> element_step*/
 
 
-	guchar   min_angle_reg;		/* Focal Law -> Beam -> Min_angle*/
-	guchar   max_angle_reg;		/* Focal Law -> Beam -> Max_angle*/
+	guchar   min_angle_reg;		
+	guchar   max_angle_reg;		
+	guchar   angle_step_reg;
+	guchar   beam_skew_min_angle_reg;
+	guchar   beam_skew_max_angle_reg;
+	guchar   beam_skew_angle_step_reg;	
 	guchar   focus_depth_reg;	/* Focal Law -> Beam -> focus_depth*/
-	guchar   angle_step_reg;	/* Focal_Law -> Beam -> angle_step*/
 
 
 	guchar	  encoder_resolution_reg;	/* Scan -> Encoder -> resolution  */
@@ -676,6 +682,8 @@ typedef struct tmp_config {
 
 	guint	beam_num[MAX_GROUP_QTY];		/* Group显示的beam编号 */
 	guint	beam_qty[MAX_GROUP_QTY];		/* Group beam总数量	*/
+	guint	angle_num;						/* 几个angle */
+	guint	beam_skew_num;					/* 几个beam_skew */
 
 	/* 各种扫描窗口的大小, 位置 */
 	guint	a_scan_dot_qty;		/*  */
@@ -870,6 +878,12 @@ typedef struct _MY_SIGNAL_TMP {
 	GtkTreeSelection *target_selection;
 	GtkWidget *target_list;
 } MY_SIGNAL,*MY_SIGNAL_P;
+
+typedef struct _PREVIEW_TMP
+{
+    GtkWidget *list;
+    GtkWidget *sw;
+}PREVIEW,*PREVIEW_P;
 
 
 /* 315 Data Link 止 20110212*/

@@ -429,6 +429,7 @@ gboolean Copy_File(GtkWidget *widget,	GdkEventButton *event,	gpointer       data
             value = system(command); 
               
             Scan_Target_File(target_list,target_model,value_name);
+			value = gtk_tree_model_iter_next(source_model,&source_iter); 
  
             g_free(value_name);
 

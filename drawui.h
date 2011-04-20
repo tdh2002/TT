@@ -79,11 +79,13 @@
 #define GATE_II       1
 #define GATE_AA	      2
 
-/* focallaw 类型定义*/
+/* focallaw beam 类型定义*/
 #define	AZIMUTHAL_SCAN	0
 #define LINEAR_SCAN	1
 #define	DEPTH_SCAN	2
 #define	STATIC_SCAN	3
+/* focalpoint 聚焦点计算方法 */
+
 
 /* 0纵波 1横波 */
 #define LONGITUDINAL_WAVE	0
@@ -141,6 +143,7 @@
 #define DIALOG_PROBE	1
 #define DIALOG_WEDGE	2
 #define DIALOG_FILE_OPEN	6
+#define DIALOG_SAVE_SETUP_AS	7
 
 #define DIALOG_SYSTEM_INFO	8
 
@@ -570,6 +573,6 @@ extern void draw3_pressed1(gfloat step, guint digit);
 extern void da_call_remark (GtkDialog *dialog, gint response_id, gpointer user_data);
 
 extern void dialog_destroy(GtkWidget *widget,	GdkEventButton *event,	gpointer       data);
-
+extern int on_changed_config_file(GtkTreeSelection *selection,	gpointer       data);
 extern void add_to_list(GtkWidget *list, const gchar *str, guint count);
 #endif

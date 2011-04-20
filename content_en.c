@@ -44,7 +44,7 @@ static const gchar *content_en25[] = {
 
 static const gchar *content_en26[] = {
 	/* 二级菜单第6页 */
-	"Configuration", "Aperture", "Beam Angle", "Focal Point", "Laws"
+	"Configuration", "Beam Angle", "Focal Point", "Aperture", "Laws"
 };
 
 static const gchar *content_en27[] = {
@@ -246,17 +246,17 @@ static const gchar *content_en260[] = {
 
 static const gchar *content_en261[] = {
 	/* 二级菜单第6页下的第1页三级菜单 */
-	"Element Qty.", "First Element", "Last Element", "Element Step", "Wave Type", NULL
+	"Min.Angle", "Max.Angle", "Angle Step", "Min.Beamskew", "Max.Beamskew", "BeamskewStep"
 };
 
 static const gchar *content_en262[] = {
 	/* 二级菜单第6页下的第2页三级菜单 */
-	"Min.Angle", "Max.Angle", "Angle Step", "Focus Depth", NULL, NULL
+	"Type.", "Load Law File", "Save Law File",  "Cal Focallaw", NULL, NULL
 };
 
 static const gchar *content_en263[] = {
 	/* 二级菜单第6页下的第3页三级菜单 */
-	"Type.", "Load Law File", "Save Law File",  "Cal Focallaw", NULL, NULL
+	"Element Qty.", "First Element", "Last Element", "Element Step", "Wave Type", NULL
 };
 
 static const gchar *content_en264[] = {
@@ -485,7 +485,7 @@ const gchar *all_menu_content_en[] =
 	"AL OXIDE", "ALUMINUM", "BERYLIUM", "BRASS", "CADMIUM", "COPPER", "STEEL.MILD",			/* 399 Material */
 	"Azimuthal Angular sector", "Linear  Linear sector", 
 	"Depth Depth sector", "Static Static sector",				
-	"Sectorial", "Linear", "Depth", "Static",				/* 410 Law config*/
+	"Azimuthal", "Linear", "Depth", "Static",				/* 410 Law config*/
 	"Half Path", "True Dpeth", "Projection ", "Focal Plane",
 	"Half Path", "True Dpeth", "Projection ", "Focal Plane",	/*  focalpoint type */
 	"LW  5890.0m/s", "SW  3240.0m/s"," ",						/* 414 Wave Type*/

@@ -191,10 +191,13 @@ static void set_config (guint groupid)
 	LAW_VAL (Last_tx_elem)	=	2;
 	LAW_VAL (Elem_step)		=	1;
 	LAW_VAL (Wave_type)		=	LONGITUDINAL_WAVE;
-	LAW_VAL (Angle_start)	=	0.0;
-	LAW_VAL (Angle_end)		=	0.0;
-	LAW_VAL	(Angle_step)	=	100.0;
-	LAW_VAL (Focus_depth)	=	5000.0;
+	LAW_VAL (Angle_min)		=	0;
+	LAW_VAL (Angle_max)		=	0;
+	LAW_VAL	(Angle_step)	=	100;
+	LAW_VAL (Angle_beam_skew_min)		=	0;
+	LAW_VAL (Angle_beam_skew_max)		=	0;
+	LAW_VAL	(Angle_beam_skew_step)		=	100;
+	LAW_VAL (Focus_depth)	=	5000;
 
 	CFG(polarity)=0;  /* 0 Normal */
 	CFG(e_type)=0;  /* 0 Clock/Dir */
@@ -230,8 +233,6 @@ static void set_config (guint groupid)
 	LAW_VAL(Last_tx_elem)	= 17;
 	LAW_VAL(Last_rx_elem)	= 17;
 	LAW_VAL(Elem_step)	= 1;
-	LAW_VAL(Angle_start)	= 0;
-	LAW_VAL(Angle_end)	= 0;
 	LAW_VAL(Angle_step)	= 100;
 	LAW_VAL(Focus_depth)	= 50000;
 	LAW_VAL(law_index_start)= 0;

@@ -327,8 +327,8 @@ static void setup_para(PARAMETER_P p)
 	p->beam_angle->beam_sec_steer_angle_stop = 0;
     p->beam_angle->beam_sec_steer_angle_resolution = 0;
     //
-    p->beam_angle->beam_refrac_angle_start = LAW_VAL (Angle_start) / 100.0;  
-    p->beam_angle->beam_refrac_angle_stop = LAW_VAL (Angle_end) / 100.0;
+    p->beam_angle->beam_refrac_angle_start = LAW_VAL (Angle_min) / 100.0;  
+    p->beam_angle->beam_refrac_angle_stop = LAW_VAL (Angle_max) / 100.0;
     p->beam_angle->beam_refrac_angle_resolution = LAW_VAL (Angle_step) / 100.0; 
     // 
     p->beam_angle->beam_skew_angle_start = 0;  
@@ -375,7 +375,7 @@ static void save_cal_law(gint offset, gint group, PARAMETER_P p)
 		CFG(focal_law_all_beam[offset + i]).sumgain			= GROUP_VAL (sum_gain) / 100;
 		CFG(focal_law_all_beam[offset + i]).mode			= !GROUP_VAL (tx_rxmode);
 		CFG(focal_law_all_beam[offset + i]).filter			= GROUP_VAL (filter); 
-		CFG(focal_law_all_beam[offset + i]).R_angle			= (LAW_VAL (Angle_start) + 
+		CFG(focal_law_all_beam[offset + i]).R_angle			= (LAW_VAL (Angle_min) + 
 				LAW_VAL(Angle_step) * i) / 100.0;
 		CFG(focal_law_all_beam[offset + i]).S_angle			= GROUP_VAL (skew) / 100.0; 
 		CFG(focal_law_all_beam[offset + i]).T_first			= LAW_VAL (First_tx_elem);
@@ -816,8 +816,8 @@ void b3_fun0(gpointer p)
 				switch (pp->pos1[6])
 				{
 					case 0: break; /*   */
-					case 1: data_process (&(pp->p_tmp_config->element_qty_reg), 2);  break; /*610 */
-					case 2: data_process (&(pp->p_tmp_config->min_angle_reg), 2);  break;   /*620  */
+					case 1: data_process (&(pp->p_tmp_config->min_angle_reg), 2);  break;   /*610  */
+					case 2: data_process (&(pp->p_tmp_config->element_qty_reg), 2);  break; /*620 */
 					case 3: break; /*630*/ 
 					default:break;
 				}
@@ -1039,8 +1039,8 @@ void b3_fun1(gpointer p)
 				   switch (pp->pos1[6])
 				   {
 					   case 0: data_process (&(pp->p_tmp_config->connection_P_reg), 3);  break;  /*601 */
-					   case 1: data_process (&(pp->p_tmp_config->first_element_reg), 2);  break; /*611 */
-					   case 2: data_process (&(pp->p_tmp_config->max_angle_reg), 2);  break;     /*621 */
+					   case 1: data_process (&(pp->p_tmp_config->max_angle_reg), 2);  break;     /*611 */
+					   case 2: data_process (&(pp->p_tmp_config->first_element_reg), 2);  break; /*621 */
 					   case 3: break; 
 					   default:break;
 				   }
@@ -1269,9 +1269,9 @@ void b3_fun2(gpointer p)
 			case 6:
 				   switch (pp->pos1[6])
 				   {
-					   case 0: data_process(&(TMP(connection_R_reg)), 2); break;  /*602*/
-					   case 1: data_process(&(TMP(last_element_reg)), 2);  break; /*612 */ 
-					   case 2: data_process(&(TMP(angle_step_reg)), 2); break;  /*622*/
+					   case 0: data_process(&(TMP(connection_R_reg)), 2); break;	/*602*/
+					   case 1: data_process(&(TMP(angle_step_reg)), 2); break;		/*612*/
+					   case 2: data_process(&(TMP(last_element_reg)), 2);  break;	/*622 */ 
 					   case 3: break;  /*632*/
 					   case 4: break;
 					   default:break;
@@ -1312,6 +1312,7 @@ void b3_fun2(gpointer p)
 
 void b3_fun3(gpointer p)
 {
+	gint	i, j;
 	guint temp_beam;
 	/* 之前的位置 */
 	pp->pos_last2 = pp->pos2[pp->pos][pp->pos1[pp->pos]];
@@ -1342,13 +1343,25 @@ void b3_fun3(gpointer p)
 			switch (pp->pos1[6])
 			{
 				case 4:
-					temp_beam = (LAW_VAL(Angle_end) - LAW_VAL(Angle_start)) /
-						LAW_VAL(Angle_step) + 1;
+					temp_beam = 1;
+					if (LAW_VAL (Focal_type) == AZIMUTHAL_SCAN)
+					{
+						i = (LAW_VAL(Angle_max) - LAW_VAL(Angle_min)) /
+							LAW_VAL(Angle_step) + 1;
+						j = (LAW_VAL(Angle_beam_skew_min) - LAW_VAL(Angle_beam_skew_max)) /
+							LAW_VAL(Angle_beam_skew_step) + 1;
+						temp_beam = i * j;
+					}
+					else  
+					{
+
+					}
+
 					TMP(beam_qty[CFG(groupId)])	= temp_beam;
 					TMP(beam_num[CFG(groupId)]) = 0;
 
 					cal_focal_law ();
-					break;  /* 计算聚焦法则 P634 */
+					break;  /* 计算聚焦法则 P644 */
 				default:break;
 			}
 			break;
@@ -1474,7 +1487,8 @@ void b3_fun3(gpointer p)
 				   switch (pp->pos1[6])
 				   {
 					   case 0: break;
-					   case 1: data_process(&(pp->p_tmp_config->element_step_reg), 2);  break; /*613 */
+//					   case 1: data_process(&(pp->p_tmp_config->element_step_reg), 2);  break; /*613 */
+					   case 1: data_process(&TMP(beam_skew_min_angle_reg), 2);  break; /*613 */
 					   case 2: data_process(&(pp->p_tmp_config->focus_depth_reg), 2);  break;  /*623*/
 					   case 3: break;  
 					   case 4: break; 
@@ -1622,7 +1636,16 @@ void b3_fun4(gpointer p)
 					   default:break;
 				   }
 				   break;
-
+			case 6:
+				   switch (pp->pos1[6])
+				   {
+					   case 0:break;
+					   case 1: data_process(&TMP(beam_skew_max_angle_reg), 2);  break; /*614 */
+					   case 2:break;
+					   case 3:break; 
+					   case 4:break; 
+					   default:break;
+				   }
 			case 7:
 				   switch (pp->pos1[7])
 				   {
@@ -1735,7 +1758,6 @@ void b3_fun5(gpointer p)
 					   default:break;
 				   }
 				   break;
-
 			case 4:
 				   switch (pp->pos1[4])
 				   {
@@ -1763,7 +1785,16 @@ void b3_fun5(gpointer p)
 					   default:break;
 				   }
 				   break;
-
+			case 6:
+				   switch (pp->pos1[6])
+				   {
+					   case 0:break;
+					   case 1: data_process(&TMP(beam_skew_angle_step_reg), 2);  break; /*615*/
+					   case 2:break;
+					   case 3:break; 
+					   case 4:break; 
+					   default:break;
+				   }
 			case 7:
 				   switch (pp->pos1[7])
 				   {
@@ -2464,7 +2495,7 @@ void data_131 (GtkSpinButton *spinbutton, gpointer data) /*scan offset */
 
 void data_132 (GtkSpinButton *spinbutton, gpointer data) /*scan offset */
 {
-	LAW_VAL(Angle_start) =  (gint) (gtk_spin_button_get_value (spinbutton) * 100.0);
+	LAW_VAL(Angle_min) =  (gint) (gtk_spin_button_get_value (spinbutton) * 100.0);
 }
 
 void data_134 (GtkSpinButton *spinbutton, gpointer data) /*scan offset */
@@ -3455,30 +3486,65 @@ void data_601 (GtkSpinButton *spinbutton, gpointer data) /* connection_P P601 */
 {
 }
 
+/* min_angle P610 */
+void data_610 (GtkSpinButton *spinbutton, gpointer data)
+{
+	LAW_VAL(Angle_min) = (gshort) (gtk_spin_button_get_value (spinbutton) * 100.0);
+}
+
+#if 0
 /* element_qty 聚集 法则一次激发的阵元数量 P620 */
 void data_610 (GtkSpinButton *spinbutton, gpointer data) 
 {
 	LAW_VAL (Elem_qty) = (guchar) (gtk_spin_button_get_value (spinbutton));
 	LAW_VAL (Last_tx_elem) = (guchar) (LAW_VAL (First_tx_elem) + LAW_VAL (Elem_qty)) - 1;
 }
+#endif
 
+/* max_angle P611 */
+void data_611 (GtkSpinButton *spinbutton, gpointer data) 
+{
+	if (LAW_VAL(Focal_type) == AZIMUTHAL_SCAN)
+	{
+		LAW_VAL(Angle_max) = (gshort) (gtk_spin_button_get_value (spinbutton) * 100.0);
+		pp->sscan_mark = 1;		/* 计算sscan查找表 */
+	}
+}
+
+#if 0
 /* first_element 第一个接收阵元 */
 void data_611 (GtkSpinButton *spinbutton, gpointer data) 
 {
 	LAW_VAL(First_tx_elem) =  (guchar) (gtk_spin_button_get_value (spinbutton));
 	LAW_VAL (Last_tx_elem) = (guchar) (LAW_VAL (First_tx_elem) + LAW_VAL (Elem_qty)) - 1;
 }
+#endif
 
+/* Angle Step P612 */
+void data_612 (GtkSpinButton *spinbutton, gpointer data) 
+{
+	LAW_VAL(Angle_step) = (gushort) (gtk_spin_button_get_value (spinbutton) * 100.0);
+}
+
+#if 0
 /* last_element 最后一个阵元编号 */
 void data_612 (GtkSpinButton *spinbutton, gpointer data) 
 {
 	LAW_VAL(Last_tx_elem) =  (guchar) (gtk_spin_button_get_value (spinbutton));
 }
+#endif
 
+/* beam skew min 2D 的偏斜角min */
+void data_613 (GtkSpinButton *spinbutton, gpointer data) 
+{
+	LAW_VAL(Angle_beam_skew_min) = (gshort) (gtk_spin_button_get_value (spinbutton) * 100.0);
+}
+#if 0
 void data_613 (GtkSpinButton *spinbutton, gpointer data) /*element_step*/
 {
 	LAW_VAL(Elem_step) =  (guchar) (gtk_spin_button_get_value (spinbutton));
 }
+#endif
 
 void data_614 (GtkMenuItem *menuitem, gpointer data) /* 纵横波  P614 */
 {
@@ -3492,15 +3558,15 @@ void data_620 (GtkSpinButton *spinbutton, gpointer data) /* min_angle P620*/
 
 	if (LAW_VAL(Focal_type) == AZIMUTHAL_SCAN)
 	{
-		LAW_VAL(Angle_start) =  (gshort) (gtk_spin_button_get_value (spinbutton) * 100.0);
+		LAW_VAL(Angle_min) =  (gshort) (gtk_spin_button_get_value (spinbutton) * 100.0);
 		/*
-		temp_beam = (guint)((LAW_VAL(Angle_end) - LAW_VAL(Angle_start))) /
+		temp_beam = (guint)((LAW_VAL(Angle_max) - LAW_VAL(Angle_min))) /
 			LAW_VAL(Angle_step) + 1;
 		TMP(beam_qty[CFG(groupId)])	= temp_beam;
 		*/
 	}
 	else if (LAW_VAL(Focal_type) == LINEAR_SCAN)
-		LAW_VAL(Angle_start) =  (gshort) (gtk_spin_button_get_value (spinbutton) * 100.0);
+		LAW_VAL(Angle_min) =  (gshort) (gtk_spin_button_get_value (spinbutton) * 100.0);
 }
 
 void data_621 (GtkSpinButton *spinbutton, gpointer data) /* max_angle P621 */
@@ -3508,9 +3574,9 @@ void data_621 (GtkSpinButton *spinbutton, gpointer data) /* max_angle P621 */
 
 	if (LAW_VAL(Focal_type) == AZIMUTHAL_SCAN)
 	{
-		LAW_VAL(Angle_end) =  (gshort) (gtk_spin_button_get_value (spinbutton) * 100.0);
+		LAW_VAL(Angle_max) =  (gshort) (gtk_spin_button_get_value (spinbutton) * 100.0);
 		/*
-		temp_beam = (guint) (LAW_VAL(Angle_end) - LAW_VAL(Angle_start)) /
+		temp_beam = (guint) (LAW_VAL(Angle_max) - LAW_VAL(Angle_min)) /
 			LAW_VAL(Angle_step) + 1;
 		TMP(beam_qty[CFG(groupId)])	= temp_beam;
 		*/
@@ -3523,7 +3589,7 @@ void data_622 (GtkSpinButton *spinbutton, gpointer data) /* Angle Step P622 */
 
 	LAW_VAL(Angle_step) =  (gushort) (gtk_spin_button_get_value (spinbutton) * 100.0);
 	/*
-	temp_beam = (guint) (LAW_VAL(Angle_end) - LAW_VAL(Angle_start)) /
+	temp_beam = (guint) (LAW_VAL(Angle_max) - LAW_VAL(Angle_min)) /
 		LAW_VAL(Angle_step) + 1;
 	TMP(beam_qty[CFG(groupId)])	= temp_beam;
 	*/
