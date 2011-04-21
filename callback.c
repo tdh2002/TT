@@ -205,9 +205,9 @@ void data_610 (GtkSpinButton *spinbutton, gpointer data);
 void data_611 (GtkSpinButton *spinbutton, gpointer data);
 void data_612 (GtkSpinButton *spinbutton, gpointer data);
 void data_613 (GtkSpinButton *spinbutton, gpointer data);
-void data_614(GtkMenuItem *menuitem, gpointer data);
+void data_614 (GtkSpinButton *spinbutton, gpointer data);
 
-void data_620 (GtkSpinButton *spinbutton, gpointer data);
+void data_620 (GtkMenuItem *menuitem, gpointer data);
 void data_621 (GtkSpinButton *spinbutton, gpointer data);
 void data_622 (GtkSpinButton *spinbutton, gpointer data);
 void data_623 (GtkSpinButton *spinbutton, gpointer data);
@@ -3486,7 +3486,14 @@ void data_600 (GtkMenuItem *menuitem, gpointer data)
 {
 	LAW_VAL(Focal_type) = (guchar) (GPOINTER_TO_UINT (data));
 	if (LAW_VAL(Focal_type) != LINEAR_SCAN)
+	{
 		LAW_VAL (Last_tx_elem) = (guchar) (LAW_VAL (First_tx_elem) + LAW_VAL (Elem_qty)) - 1;
+	}
+	if (LAW_VAL(Focal_type) != DEPTH_SCAN)
+	{
+		LAW_VAL (Focal_point_type) = HALFPATH_P;
+
+	}
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
 }
@@ -3543,7 +3550,7 @@ void data_612 (GtkSpinButton *spinbutton, gpointer data)
 }
 #endif
 
-/* beam skew min 2D 的偏斜角min */
+/* beam skew min 2D 的偏斜角min P613 */
 void data_613 (GtkSpinButton *spinbutton, gpointer data) 
 {
 	LAW_VAL(Angle_beam_skew_min) = (gshort) (gtk_spin_button_get_value (spinbutton) * 100.0);
@@ -3555,27 +3562,26 @@ void data_613 (GtkSpinButton *spinbutton, gpointer data) /*element_step*/
 }
 #endif
 
+/* beam skew max 2D 的偏斜角min P614 */
+void data_614 (GtkSpinButton *spinbutton, gpointer data) 
+{
+	LAW_VAL(Angle_beam_skew_max) = (gshort) (gtk_spin_button_get_value (spinbutton) * 100.0);
+}
+#if 0
 void data_614 (GtkMenuItem *menuitem, gpointer data) /* 纵横波  P614 */
 {
 	LAW_VAL(Wave_type) = (guchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
 }
+#endif
 
-void data_620 (GtkSpinButton *spinbutton, gpointer data) /* min_angle P620*/
+/* focalpoint 聚焦点计算方法 P620 */
+void data_620 (GtkMenuItem *menuitem, gpointer data) 
 {
-
-	if (LAW_VAL(Focal_type) == AZIMUTHAL_SCAN)
-	{
-		LAW_VAL(Angle_min) =  (gshort) (gtk_spin_button_get_value (spinbutton) * 100.0);
-		/*
-		temp_beam = (guint)((LAW_VAL(Angle_max) - LAW_VAL(Angle_min))) /
-			LAW_VAL(Angle_step) + 1;
-		TMP(beam_qty[CFG(groupId)])	= temp_beam;
-		*/
-	}
-	else if (LAW_VAL(Focal_type) == LINEAR_SCAN)
-		LAW_VAL(Angle_min) =  (gshort) (gtk_spin_button_get_value (spinbutton) * 100.0);
+	LAW_VAL(Focal_point_type) = (guchar) (GPOINTER_TO_UINT (data));
+	pp->pos_pos = MENU3_STOP;
+	draw_3_menu(0, NULL);
 }
 
 void data_621 (GtkSpinButton *spinbutton, gpointer data) /* max_angle P621 */

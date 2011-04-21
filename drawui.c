@@ -25,16 +25,29 @@
 #define EVENT_METHOD(i, x) GTK_WIDGET_GET_CLASS((GtkObject*)(i))->x
 #define YOFFSET  26
 
-
+#if 0
 static char *keyboard_display[] = 
 {
-	"1\0", "2\0", "3\0", "4\0", "5\0", "6\0", "7\0", "8\0", "9\0", "0\0", "-\0", "=\0", "BackSpace\0", "Tab\0", "Q\0", "W\0", "E\0", "R\0", "T\0","Y\0", "U\0", "I\0", "O\0", "P\0", "[\0", "]\0","Caps Lock\0","A\0", "S\0", "D\0", "F\0", "G\0","H\0", "J\0", "K\0", "L\0", ";\0","'\0","Enter\0", "Shift       \0", "Z\0", "X\0", "C\0", "V\0", "B\0","N\0", "M\0", ",\0", ".\0", "↑\0", "/\0", "Delete\0","SuperKey\0","Alt\0", "          Space            \0", "←\0", "↓\0", "→\0"
+	"1\0", "2\0", "3\0", "4\0", "5\0", "6\0", "7\0", "8\0", "9\0", "0\0", 
+	"-\0", "=\0", "BackSpace\0", "Tab\0", "Q\0", "W\0", "E\0", "R\0", "T\0",
+	"Y\0", "U\0", "I\0", "O\0", "P\0", "[\0", "]\0","Caps Lock\0","A\0", "S\0", 
+	"D\0", "F\0", "G\0","H\0", "J\0", "K\0", "L\0", ";\0","'\0","Enter\0", 
+	"Shift       \0", "Z\0", "X\0", "C\0", "V\0", "B\0","N\0", "M\0", ",\0", 
+	".\0", "↑\0", "/\0", "Delete\0","SuperKey\0","Alt\0", 
+	"          Space            \0", "←\0", "↓\0", "→\0"
 };
 
 static gushort keyboard_send[] = 
 {
-	XK_1, XK_2, XK_3, XK_4, XK_5, XK_6,XK_7, XK_8, XK_9, XK_0, XK_minus, XK_equal, XK_BackSpace, XK_Tab, XK_Q, XK_W, XK_E, XK_R, XK_T, XK_Y, XK_U, XK_I, XK_O, XK_P, XK_bracketleft, XK_bracketright, XK_Caps_Lock, XK_A, XK_S, XK_D,XK_F, XK_G, XK_H, XK_J, XK_K, XK_L,XK_semicolon, XK_quotedbl, XK_Return,  XK_Shift_L, XK_Z, XK_X, XK_C, XK_V, XK_B,XK_N, XK_M, XK_comma, XK_period, XK_Up, XK_slash,XK_Delete, XK_Super_L, XK_Alt_L, XK_space,XK_Left, XK_Down, XK_Right
+	XK_1, XK_2, XK_3, XK_4, XK_5, XK_6,XK_7, XK_8, XK_9, XK_0, XK_minus, 
+	XK_equal, XK_BackSpace, XK_Tab, XK_Q, XK_W, XK_E, XK_R, XK_T, XK_Y, 
+	XK_U, XK_I, XK_O, XK_P, XK_bracketleft, XK_bracketright, XK_Caps_Lock, 
+	XK_A, XK_S, XK_D,XK_F, XK_G, XK_H, XK_J, XK_K, XK_L,XK_semicolon, 
+	XK_quotedbl, XK_Return,  XK_Shift_L, XK_Z, XK_X, XK_C, XK_V, XK_B,XK_N, 
+	XK_M, XK_comma, XK_period, XK_Up, XK_slash,XK_Delete, XK_Super_L, XK_Alt_L,
+	XK_space,XK_Left, XK_Down, XK_Right
 };
+#endif
 
 
 static char *numkeyboard_display[]=
@@ -4633,54 +4646,26 @@ void draw3_data0(DRAW_UI_P p)
 						gtk_widget_set_sensitive(pp->eventbox31[0],FALSE);
 					}
 					break;
-				case 2:
-					/* beam的最小角度 线性扫描就只有一个角度
-					 * 方位(角度)扫差时候需可设置多个角度  P620 
-					 **/
-					switch (TMP(min_angle_reg))
+				case 2:/* 聚焦点的计算方式 0halfpath 1truedepth 2projection 3focalplane P620 */
+					pp->x_pos = 555, pp->y_pos = 116 - YOFFSET;
+					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 					{
-						case 0:	tmpf = 0.1; break;
-						case 1:	tmpf = 1.0; break;
-						case 2:	tmpf = 10.0; break;
-						default:break;
-					}
-					if(CFG(auto_program) == AUTO_FOCAL_ON)
-						/* 聚焦法则自动计算开启时, Min Angle 才可调节 */
-					{
-						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
+						if (LAW_VAL (Focal_type) == DEPTH_SCAN)
 						{
-							/* 最大不能超过最大Angle_max */
-							cur_value = LAW_VAL (Angle_min) / 100.0;
-							/* 计算lower为妙 */
-							temp_beam = LAW_MAX_QTY - get_beam_qty() + TMP(beam_qty[CFG(groupId)]);
-							lower = MAX (((gint)(LAW_VAL (Angle_max)) - 
-										(gint)(temp_beam * LAW_VAL(Angle_step))) / 100.0, -89.9);
-							upper = LAW_VAL (Angle_max) / 100.0;
-							step = tmpf;
-							digit = 1;
-							pos = 0;
-							unit = UNIT_DEG;
-							draw3_digit_pressed (data_620, units[unit], cur_value , lower, 
-									upper, step, digit, p, pos, 0);
+							menu_status = 0xc;
 						}
-						else 
+						else
 						{
-							cur_value = LAW_VAL (Angle_min) / 100.0;
-							digit = 1;
-							pos = 0;
-							unit = UNIT_DEG;
-							draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
+							menu_status = 0x0;
 						}
+
+						draw3_pop_tt (data_620, NULL, 
+								menu_content[FOCAL_POINT_TYPE1 + LAW_VAL(Focal_point_type)],
+								menu_content+ FOCAL_POINT_TYPE, 4, 0, LAW_VAL(Focal_point_type), menu_status);
 					}
-					else /* 聚焦法则自动计算为OFF, Min.Angle 不可调节 */
+					else 
 					{
-						cur_value = LAW_VAL (Angle_min) / 100.0;
-						digit = 1;
-						pos = 0;
-						unit = UNIT_DEG;
-						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
-						gtk_widget_set_sensitive(pp->eventbox30[0],FALSE);
-						gtk_widget_set_sensitive(pp->eventbox31[0],FALSE);
+						draw3_popdown (menu_content[FOCAL_POINT_TYPE1 + LAW_VAL(Focal_point_type)], 0, 0);
 					}
 					break;
 				case 3:/* 聚焦 阵元数量 P630 */
@@ -4727,17 +4712,6 @@ void draw3_data0(DRAW_UI_P p)
 						gtk_widget_set_sensitive(pp->eventbox31[0],FALSE);
 					}
 					break;
-#if 0
-				case 3:/* 聚焦点的计算方式 0halfpath 1truedepth 2projection 3focalplane P630 */
-					pp->x_pos = 555, pp->y_pos = 116 - YOFFSET;
-					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
-						draw3_pop_tt (data_600, NULL, 
-								menu_content[FOCAL_POINT_TYPE1 + LAW_VAL(Focal_type)],
-								menu_content+ FOCAL_POINT_TYPE, 4, 0, LAW_VAL(Focal_type), 0x0);
-					else 
-						draw3_popdown (menu_content[FOCAL_POINT_TYPE1 + LAW_VAL(Focal_type)], 0, 0);
-					break;
-#endif
 				case 4:/* 自动计算聚焦法则 P640 */
 					draw3_popdown (menu_content[OFF_ON + CFG(auto_program)], 0, 0);
 					break;
@@ -10195,7 +10169,7 @@ void draw3_data4(DRAW_UI_P p)
 	gchar *str;
 
 	gfloat cur_value, lower, upper, step;
-	guint digit, pos, unit, content_pos;
+	guint digit, pos, unit, content_pos, temp_beam;
 
 	switch (pp->pos) 
 	{
@@ -11118,7 +11092,7 @@ void draw3_data4(DRAW_UI_P p)
 						gtk_widget_hide (pp->eventbox30[4]);
 					gtk_widget_hide (pp->eventbox31[4]);
 					break;
-				case 1: /* 选择纵波还是横波 P614 */
+				case 1: /* beam skew angle max 2D时候可以用 P614 */
 #if 0
 					pp->x_pos = 544, pp->y_pos = 456-YOFFSET;
 					if(CFG(auto_program) == AUTO_FOCAL_ON)
@@ -11139,6 +11113,58 @@ void draw3_data4(DRAW_UI_P p)
 					}
 					break;
 #endif
+					switch (TMP(beam_skew_max_angle_reg))
+					{
+						case 0:	tmpf = 0.1; break;
+						case 1:	tmpf = 1.0; break;
+						case 2:	tmpf = 10.0; break;
+						default:break;
+					}
+					if ((LAW_VAL(Focal_type) == AZIMUTHAL_SCAN) &&
+							(CFG(auto_program) == AUTO_FOCAL_ON) 
+							&& (GROUP_VAL(probe.PA_probe_type) == 9)
+								/* 如何判断2D探头 */
+							)
+						/* 聚焦法则自动计算开启时, Min Angle 才可调节 */
+					{
+						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
+						{
+							/* 最大不能超过最大Angle_beam_skew_max */
+							cur_value = LAW_VAL (Angle_beam_skew_max) / 100.0;
+							/* 计算lower为妙 */
+							temp_beam = LAW_MAX_QTY - get_beam_qty() + TMP(beam_qty[CFG(groupId)]);
+							TMP(angle_num)	= (LAW_VAL(Angle_max) - LAW_VAL(Angle_min)) /
+							LAW_VAL(Angle_step) + 1;
+							temp_beam = temp_beam / TMP(angle_num);
+							lower = LAW_VAL (Angle_beam_skew_min) / 100.0;
+							upper = MIN (((gint)(LAW_VAL (Angle_beam_skew_min)) + 
+										(gint)(temp_beam * LAW_VAL(Angle_beam_skew_step))) / 100.0, 89.9);
+							step = tmpf;
+							digit = 1;
+							pos = 4;
+							unit = UNIT_DEG;
+							draw3_digit_pressed (data_614, units[unit], cur_value , lower, 
+									upper, step, digit, p, pos, 0);
+						}
+						else 
+						{
+							cur_value = LAW_VAL (Angle_beam_skew_max) / 100.0;
+							digit = 1;
+							pos = 4;
+							unit = UNIT_DEG;
+							draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
+						}
+					}
+					else /* 聚焦法则自动计算为OFF, Max.Angle 不可调节 */
+					{
+						cur_value = LAW_VAL (Angle_beam_skew_min) / 100.0;
+						digit = 1;
+						pos = 4;
+						unit = UNIT_DEG;
+						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
+						gtk_widget_set_sensitive(pp->eventbox30[4],FALSE);
+						gtk_widget_set_sensitive(pp->eventbox31[4],FALSE);
+					}
 					break;
 				case 2:
 					if ( !con2_p[6][2][4] )
@@ -11441,7 +11467,7 @@ void draw3_data5(DRAW_UI_P p)
 	guint menu_status  = 0;
 
 	gfloat cur_value, lower, upper, step;
-	guint digit, pos, unit, content_pos;
+	guint digit, pos, unit, content_pos, temp_beam;
 
 	switch (pp->pos) 
 	{
@@ -12197,10 +12223,60 @@ void draw3_data5(DRAW_UI_P p)
 						gtk_widget_hide (pp->eventbox30[5]);
 					gtk_widget_hide (pp->eventbox31[5]);
 					break;
-				case 1:
-					if ( !con2_p[6][1][5] )
-						gtk_widget_hide (pp->eventbox30[5]);
-					gtk_widget_hide (pp->eventbox31[5]);
+				case 1:/* beam skew angle step P615 */
+					switch (TMP(beam_skew_angle_step_reg))
+					{
+						case 0:	tmpf = 0.1; break;
+						case 1:	tmpf = 1.0; break;
+						case 2:	tmpf = 10.0; break;
+						default:break;
+					}
+					if ((LAW_VAL(Focal_type) == AZIMUTHAL_SCAN) &&
+							(CFG(auto_program) == AUTO_FOCAL_ON) 
+							&& (GROUP_VAL(probe.PA_probe_type) == 9)
+								/* 如何判断2D探头 */
+							)
+						/* 聚焦法则自动计算开启时, Min Angle 才可调节 */
+					{
+						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
+						{
+							/* 最大不能超过最大Angle_beam_skew_max */
+							cur_value = LAW_VAL (Angle_beam_skew_step) / 100.0;
+							/* 计算lower为妙 */
+							temp_beam = LAW_MAX_QTY - get_beam_qty() + TMP(beam_qty[CFG(groupId)]);
+							TMP(angle_num)	= (LAW_VAL(Angle_max) - LAW_VAL(Angle_min)) /
+							LAW_VAL(Angle_step) + 1;
+							temp_beam = temp_beam / TMP(angle_num);
+							lower = MAX (((gint)(LAW_VAL (Angle_beam_skew_max)) - 
+										(gint)(LAW_VAL (Angle_beam_skew_min))) 
+									/ (100.0 * temp_beam), 0.1);
+							upper = 89.9;
+							step = tmpf;
+							digit = 1;
+							pos = 5;
+							unit = UNIT_DEG;
+							draw3_digit_pressed (data_614, units[unit], cur_value , lower, 
+									upper, step, digit, p, pos, 0);
+						}
+						else 
+						{
+							cur_value = LAW_VAL (Angle_beam_skew_max) / 100.0;
+							digit = 1;
+							pos = 5;
+							unit = UNIT_DEG;
+							draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
+						}
+					}
+					else /* 聚焦法则自动计算为OFF, Max.Angle 不可调节 */
+					{
+						cur_value = LAW_VAL (Angle_beam_skew_min) / 100.0;
+						digit = 1;
+						pos = 5;
+						unit = UNIT_DEG;
+						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
+						gtk_widget_set_sensitive(pp->eventbox30[5],FALSE);
+						gtk_widget_set_sensitive(pp->eventbox31[5],FALSE);
+					}
 					break;
 				case 2:
 					if ( !con2_p[6][2][5] )
@@ -12672,6 +12748,7 @@ static void draw_scan(guchar scan_num, guchar scan_type, guchar group,
 	return ;
 }
 
+#if 0
 gboolean bt_release (GtkWidget *widget, GdkEventButton *event,
 		gpointer user_data) 
 {
@@ -12681,6 +12758,7 @@ gboolean bt_release (GtkWidget *widget, GdkEventButton *event,
 
 	return TRUE;
 }
+#endif
 
 gboolean numbt_release (GtkWidget *widget, GdkEventButton *event,
 		gpointer user_data) 
@@ -12769,7 +12847,7 @@ void draw_keyboard (GtkWidget *widget, GdkEventButton *event,	gpointer data)
 	else 
 	{
 
-		gint i, j;
+		gint j;
 		GtkWidget *button[5];
 		GtkWidget *vbox = gtk_vbox_new(FALSE, 5);
 		GtkWidget *hbox[5];

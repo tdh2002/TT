@@ -25,6 +25,7 @@ GdkColor	color_red       = {0x0, 0x0, 0x0, 0xffff};
 GdkColor	color_text_base = {0x0, 0x1300, 0x4900, 0x7600};
 GdkColor	color_rule      = {0x0, 0xc300, 0xf000, 0x1d00};
 
+#if 0
 GdkColor	all_col[] = 
 {
 	{0x0, 0x0, 0x0, 0xffff},	/* blue */
@@ -34,6 +35,7 @@ GdkColor	all_col[] =
 	{0x0, 0x0, 0x0, 0x0},	/* black */
 	{0x0, 0xffff, 0xffff, 0xffff} /* white */
 };
+#endif
 
 gushort	all_col_16[] =
 {
@@ -225,6 +227,7 @@ static void set_config (guint groupid)
 	/*	memcpy (GROUP_VAL(probe.Name), "5L64-A2", 8);*/ /* 探头名字 */
 	/* 聚焦法则信息 */
 	LAW_VAL(Focal_type)	= AZIMUTHAL_SCAN;
+	LAW_VAL(Focal_point_type)	= HALFPATH_P;
 	LAW_VAL(Tx_connect)	= 1;
 	LAW_VAL(Rx_connect)	= 1;
 	LAW_VAL(Elem_qty)	= 16;

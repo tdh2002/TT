@@ -61,8 +61,6 @@ extern GdkColor	color_red;
 extern GdkColor	color_text_base;
 extern GdkColor color_rule;
 
-
-extern GdkColor	all_col[];
 extern gushort	all_col_16[];
 
 #define	COLOR_BLACK	4
@@ -194,10 +192,11 @@ typedef struct law_focal
 } LAW_FOCAL, *LAW_FOCAL_P;
 
 
-/*聚焦法则信息(law_info) 28byte*/
+/* 聚焦法则信息(law_info) */
 typedef struct law_info
 {
 	guchar	Focal_type;		/* 聚焦类型 */
+	guchar	Focal_point_type;		/* 聚焦类型 */
 	guchar	Tx_connect;		/* pulser该法则的探头发射第一个阵元其连接口的编号 */
 	guchar	Rx_connect;		/* receiver */
 	guchar	Elem_qty;		/* 聚焦阵元数 */
@@ -207,15 +206,16 @@ typedef struct law_info
 	guchar	Last_rx_elem;		/* 法则使用的最后一个接收阵元 */
 	guchar	Elem_step;		/* 线扫时候可以设置阵元间隔 */
 	guchar	Wave_type;		/* 纵波 或者 横波 */
+	guchar	res1;
 	gshort	Angle_min;	/* PA 时候是开始角度 UT时候记录探头角度 */
 	gshort	Angle_max;		/* 扇扫时候可以设置的角度 0.01度为单位 */
 	gushort	Angle_step;		/* 扇扫时候可以设置的角度步进 */
 	gshort	Angle_beam_skew_min;		
 	gshort	Angle_beam_skew_max;		
 	gushort	Angle_beam_skew_step;	/* 2D的时候beam skew angle */
-	guint	Focus_depth;		/* 扇扫时候为声程 线扫是深度 0.001mm为单位 */
 	gushort	law_index_start;	/* 聚焦法则索引 计算出来的 */
 	gushort law_index_end;		/*  */
+	guint	Focus_depth;		/* 扇扫时候为声程 线扫是深度 0.001mm为单位 */
 } LAW_INFO, *LAW_INFO_P;
 
 /*  */

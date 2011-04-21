@@ -85,6 +85,10 @@
 #define	DEPTH_SCAN	2
 #define	STATIC_SCAN	3
 /* focalpoint 聚焦点计算方法 */
+#define HALFPATH_P		0
+#define DEPTH_P			1
+#define	PROJECTION_P	2
+#define FOCALPLANE_P	3
 
 
 /* 0纵波 1横波 */
@@ -512,9 +516,9 @@ extern void data_610 (GtkSpinButton *spinbutton, gpointer data);	/*610*/
 extern void data_611 (GtkSpinButton *spinbutton, gpointer data);	/*611*/
 extern void data_612 (GtkSpinButton *spinbutton, gpointer data);	/*612*/
 extern void data_613 (GtkSpinButton *spinbutton, gpointer data);	/*613*/
-extern void data_614 (GtkMenuItem *menuitem, gpointer data);
+extern void data_614 (GtkSpinButton *spinbutton, gpointer data);	/*614*/
 
-extern void data_620 (GtkSpinButton *spinbutton, gpointer data);	/*620*/
+extern void data_620 (GtkMenuItem *menuitem, gpointer data);		/*620*/
 extern void data_621 (GtkSpinButton *spinbutton, gpointer data);
 extern void data_622 (GtkSpinButton *spinbutton, gpointer data);
 extern void data_623 (GtkSpinButton *spinbutton, gpointer data);	/*623*/
