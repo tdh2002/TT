@@ -2070,9 +2070,9 @@ static void handler_key(guint keyval, gpointer data)
 			}
 			else if((MENU31_PRESS == data1)||(MENU32_PRESS == data1)||(MENU33_PRESS == data1)||(MENU34_PRESS == data1)||(MENU35_PRESS == data1)||(MENU36_PRESS == data1))/*当三级菜单中有弹出菜单选项时*/
 			{
-				menu3_pop(MENU3_UP);/*被选中的三级菜单向上切换*/
+				menu3_pop(MENU3_UP);/*被选中的三级菜单向上切换选项*/
 			}
-			else/*当主菜单条处于收回状态时*/
+			else/*当主菜单条处于收回状态 且 没有三级菜单弹出选项 时*/
 			{
 				switch (pp->pos_pos)
 				{
@@ -2084,22 +2084,32 @@ static void handler_key(guint keyval, gpointer data)
 						break;
 					case MENU2_PRESSED:
 						break;
-					case MENU3_STOP:
-						if(CUR_POS > 0)
-						{
-							CUR_POS--;
-						}
 
-						else if(CUR_POS == 0)
+
+					case MENU3_STOP:	/*向上轮流切换三级菜单*/
+						if(pp->menu3_amount != 0)  /*当三级菜单不全为黑时*/
 						{
-							pp->menu3_amount = 5;
-							while(!(gtk_widget_get_visible(pp->eventbox30[pp->menu3_amount])))
-								pp->menu3_amount--;
-							g_print("\n menu3_amount = %d \n",pp->menu3_amount);
-							CUR_POS = pp->menu3_amount;
+							pp->menu3_start = 0;
+							while(!(gtk_widget_get_sensitive(pp->eventbox30[pp->menu3_start])))
+								pp->menu3_start++;	/*找出第一个可选的三级菜单位置*/
+
+							if(CUR_POS > pp->menu3_start)
+							{
+								CUR_POS--;
+								while(!(gtk_widget_get_sensitive(pp->eventbox30[CUR_POS])))
+									CUR_POS--;
+							}
+
+							else if(CUR_POS == pp->menu3_start)
+							{
+								CUR_POS = pp->menu3_amount-1;
+							}
+							draw_3_menu(1, NULL);
 						}
-						draw_3_menu(1, NULL);
+						else if(pp->menu3_amount == 0)	/*当三级菜单全部为黑掉时*/
+							break;
 						break;
+
 					case MENU3_PRESSED:
 						break;
 				}
@@ -2127,25 +2137,30 @@ static void handler_key(guint keyval, gpointer data)
 						break;
 					case MENU2_PRESSED:
 						break;
-					case MENU3_STOP:
-						if(CUR_POS == 5)
+					case MENU3_STOP:	/*向下轮流切换三级菜单*/
+						if(pp->menu3_amount != 0)  /*当三级菜单不全为黑时*/
 						{
-							CUR_POS=0;
-						}
+							pp->menu3_start = 0;
+							while(!(gtk_widget_get_sensitive(pp->eventbox30[pp->menu3_start])))
+								pp->menu3_start++;	/*找出第一个可选的三级菜单位置*/
 
-						else if(CUR_POS < 5)
-						{
-							pp->menu3_amount = CUR_POS;
-							if(gtk_widget_get_visible(pp->eventbox30[pp->menu3_amount+1]))
+							if(CUR_POS < pp->menu3_amount - 1)
 							{
 								CUR_POS++;
-								g_print("\n menu3_amount = %d \n",CUR_POS);
+								while(!(gtk_widget_get_sensitive(pp->eventbox30[CUR_POS])))
+									CUR_POS++;
 							}
-							else
-								CUR_POS=0;
+
+							else if(CUR_POS == pp->menu3_amount - 1)
+							{
+								CUR_POS = pp->menu3_start;
+							}
+							draw_3_menu(1, NULL);
 						}
-						draw_3_menu(1, NULL);
+						else if (pp->menu3_amount == 0)	/*当三级菜单全部为黑掉时*/
+							break;
 						break;
+
 					case MENU3_PRESSED:
 						break;
 				}
@@ -2153,14 +2168,8 @@ static void handler_key(guint keyval, gpointer data)
 			break;
 		default:break;
 	}
-//	if ((tmp != pp->pos_pos) || (tmp1 != pp->mark_pop_change))
-//	{
-//		draw_2_menu(0);
-//		draw_3_menu(0, NULL);
-//	}
 
 	return ;
-
 }
 
 /* 快捷键处理函数 */

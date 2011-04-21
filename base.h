@@ -719,7 +719,7 @@ typedef struct draw_area {
 	GtkWidget *vbox;			/*  */
 	GtkWidget *ebox;			/* 存放标题 */
 	GtkWidget *label;			/* 窗口名字 */
-	GtkWidget *drawing_area;             /*波形显示区*/
+	GtkWidget *drawing_area;                /* 波形显示区 */
 	gint	hmin1;
 	gint	hmin2;
 	gint	hmax1;
@@ -727,6 +727,9 @@ typedef struct draw_area {
 	gint	wmin1;
 	gint	wmax1;
 	guchar	scan_type;
+	gint	vrule1_copies;		/* 将vruler1分成多少份 */
+	gint	vrule2_copies;		/* 将vruler2分成多少份 */
+	gint	hrule_copies;		/* 将hruler分成多少份 */
 } DRAW_AREA, *DRAW_AREA_P;
 
 /*画界面结构体*/
@@ -835,7 +838,7 @@ typedef struct Draw_interface {
 	guchar	tag;		/* 大类选择状态 */
 
 	guchar			main_menu_pop_status; /* 0 down 1 up */
-	guchar			mark_pop_change;    /*  */
+	guchar			mark_pop_change;      /*  */
 	guchar			markreturn;
 	guchar			mark3;
 
@@ -858,6 +861,8 @@ typedef struct Draw_interface {
 	guchar  menu3_amount;	/* 三级菜单的个数 */
 	guchar  menu3_s;	/* 正数第一个可以选的三级菜单选项的位置*/
 	guchar  menu3_e;	/* 倒数第一个可以选的三级菜单选项的位置*/
+	guchar  menu3_start;	/* 正数第一个可以选的三级菜单的位置*/
+	guchar  menu3_end;	/* 倒数第一个可以选的三级菜单的位置*/
 
 	gpointer probe_dialog;
 

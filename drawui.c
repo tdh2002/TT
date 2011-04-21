@@ -28,12 +28,23 @@
 
 static char *keyboard_display[] = 
 {
-	"A\0", "B\0", "C\0", "D\0", "E\0", "F\0", "G\0"
+	"1\0", "2\0", "3\0", "4\0", "5\0", "6\0", "7\0", "8\0", "9\0", "0\0", "-\0", "=\0", "BackSpace\0", "Tab\0", "Q\0", "W\0", "E\0", "R\0", "T\0","Y\0", "U\0", "I\0", "O\0", "P\0", "[\0", "]\0","Caps Lock\0","A\0", "S\0", "D\0", "F\0", "G\0","H\0", "J\0", "K\0", "L\0", ";\0","'\0","Enter\0", "Shift       \0", "Z\0", "X\0", "C\0", "V\0", "B\0","N\0", "M\0", ",\0", ".\0", "↑\0", "/\0", "Delete\0","SuperKey\0","Alt\0", "          Space            \0", "←\0", "↓\0", "→\0"
 };
 
 static gushort keyboard_send[] = 
 {
-	XK_A, XK_B, XK_C, XK_D, XK_E, XK_F, XK_G
+	XK_1, XK_2, XK_3, XK_4, XK_5, XK_6,XK_7, XK_8, XK_9, XK_0, XK_minus, XK_equal, XK_BackSpace, XK_Tab, XK_Q, XK_W, XK_E, XK_R, XK_T, XK_Y, XK_U, XK_I, XK_O, XK_P, XK_bracketleft, XK_bracketright, XK_Caps_Lock, XK_A, XK_S, XK_D,XK_F, XK_G, XK_H, XK_J, XK_K, XK_L,XK_semicolon, XK_quotedbl, XK_Return,  XK_Shift_L, XK_Z, XK_X, XK_C, XK_V, XK_B,XK_N, XK_M, XK_comma, XK_period, XK_Up, XK_slash,XK_Delete, XK_Super_L, XK_Alt_L, XK_space,XK_Left, XK_Down, XK_Right
+};
+
+
+static char *numkeyboard_display[]=
+{
+	"1\0", "2\0", "3\0", "+","4\0", "5\0", "6\0","-", "7\0", "8\0", "9\0", ".", "0\0",  "←\0", "→\0", "Backspace\0", "Delete\0", "Enter\0"
+};
+
+static gushort numkeyboard_send[] = 
+{
+	XK_1, XK_2, XK_3, XK_plus, XK_4, XK_5, XK_6, XK_minus, XK_7, XK_8,  XK_9, XK_period, XK_0,  XK_Left, XK_Right, XK_BackSpace, XK_Delete, XK_Return
 };
 
 
@@ -12517,6 +12528,18 @@ void draw_3_menu(gint pa, gpointer p)
 		default:break;
 	}
 
+
+	pp->menu3_amount = 6;
+	while(!(gtk_widget_get_visible(pp->eventbox30[pp->menu3_amount - 1])))
+		pp->menu3_amount--;
+	while(!(gtk_widget_get_sensitive(pp->eventbox30[pp->menu3_amount - 1])))
+		{
+		if(pp->menu3_amount > 1)
+			pp->menu3_amount--;
+		else
+			pp->menu3_amount = 0;
+		}
+	//g_print("menu3_amount = %d\n", pp->menu3_amount);
 	return ;
 }
 
@@ -12654,7 +12677,17 @@ gboolean bt_release (GtkWidget *widget, GdkEventButton *event,
 {
 	gint i = GPOINTER_TO_UINT(user_data);
 	fakekey_press_keysym(fk, keyboard_send[i], 0);
-    fakekey_release(fk);
+    	fakekey_release(fk);
+
+	return TRUE;
+}
+
+gboolean numbt_release (GtkWidget *widget, GdkEventButton *event,
+		gpointer user_data) 
+{
+	gint i = GPOINTER_TO_UINT(user_data);
+	fakekey_press_keysym(fk, numkeyboard_send[i], 0);
+   	fakekey_release(fk);
 
 	return TRUE;
 }
@@ -12666,34 +12699,136 @@ void draw_keyboard (GtkWidget *widget, GdkEventButton *event,	gpointer data)
 		gtk_widget_destroy (pp->win_keyboard);
 		pp->win_keyboard = NULL;
 	}
+# if 0
 	else 
 	{
+
 		gint i, j;
-		GtkWidget *button1;
+		GtkWidget *button[5];
 		GtkWidget *vbox = gtk_vbox_new(FALSE, 5);
-		GtkWidget *hbox;
+		GtkWidget *hbox[5];
 
 		pp->win_keyboard = gtk_window_new (GTK_WINDOW_POPUP);
 
-		for ( i = 0 ; i < 7; i++) 
-		{
-			hbox = gtk_hbox_new(FALSE, 5);
-			for (j = 0 ; j < 7; j++ ) {
-				button1 = gtk_button_new_with_label (keyboard_display[j]);
-				gtk_box_pack_start_defaults(GTK_BOX(hbox), button1);
-				g_signal_connect(G_OBJECT(button1), "button-release-event",
+		//for ( i = 0 ; i < 3; i++) 
+		//{
+			hbox[0] = gtk_hbox_new(FALSE, 5);
+			for (j = 0 ; j < 13; j++ ) {
+				button[0] = gtk_button_new_with_label (keyboard_display[j]);
+				gtk_box_pack_start_defaults(GTK_BOX(hbox[0]), button[0]);
+				g_signal_connect(G_OBJECT(button[0]), "button-release-event",
 						G_CALLBACK(bt_release), GUINT_TO_POINTER (j));
 			}
-			gtk_box_pack_start_defaults(GTK_BOX(vbox), hbox);
-		}
+			gtk_box_pack_start_defaults(GTK_BOX(vbox), hbox[0]);
 
+			hbox[1] = gtk_hbox_new(FALSE, 5);
+			for (j = 13 ; j < 26; j++ ) {
+				button[1] = gtk_button_new_with_label (keyboard_display[j]);
+				gtk_box_pack_start_defaults(GTK_BOX(hbox[1]), button[1]);
+				g_signal_connect(G_OBJECT(button[1]), "button-release-event",
+						G_CALLBACK(bt_release), GUINT_TO_POINTER (j));
+			}
+			gtk_box_pack_start_defaults(GTK_BOX(vbox), hbox[1]);
+
+			hbox[2] = gtk_hbox_new(FALSE, 5);
+			for (j = 26 ; j < 39; j++ ) {
+				button[2] = gtk_button_new_with_label (keyboard_display[j]);
+				gtk_box_pack_start_defaults(GTK_BOX(hbox[2]), button[2]);
+				g_signal_connect(G_OBJECT(button[2]), "button-release-event",
+						G_CALLBACK(bt_release), GUINT_TO_POINTER (j));
+			}
+			gtk_box_pack_start_defaults(GTK_BOX(vbox), hbox[2]);
+
+			hbox[3] = gtk_hbox_new(FALSE, 5);
+			for (j = 39 ; j < 51; j++ ) {
+				button[3] = gtk_button_new_with_label (keyboard_display[j]);
+				gtk_box_pack_start_defaults(GTK_BOX(hbox[3]), button[3]);
+				g_signal_connect(G_OBJECT(button[3]), "button-release-event",
+						G_CALLBACK(bt_release), GUINT_TO_POINTER (j));
+			}
+			gtk_box_pack_start_defaults(GTK_BOX(vbox), hbox[3]);
+
+			hbox[4] = gtk_hbox_new(FALSE, 5);
+			for (j = 51 ; j < 58; j++ ) {
+				button[4] = gtk_button_new_with_label (keyboard_display[j]);
+				gtk_box_pack_start_defaults(GTK_BOX(hbox[4]), button[4]);
+				g_signal_connect(G_OBJECT(button[4]), "button-release-event",
+						G_CALLBACK(bt_release), GUINT_TO_POINTER (j));
+			}
+			gtk_box_pack_start_defaults(GTK_BOX(vbox), hbox[4]);
+
+		//}
 		gtk_container_add(GTK_CONTAINER(pp->win_keyboard), vbox);
-
-		gtk_window_move (GTK_WINDOW (pp->win_keyboard), 200, 200); /* 设置窗口位置 */
+		gtk_window_move (GTK_WINDOW (pp->win_keyboard), 215, 155); /* 设置窗口位置 */
 		//	gtk_window_set_position (win, GTK_WIN_POS_CENTER);
 		gtk_widget_show_all(pp->win_keyboard);
 
 	}
+#endif
+
+	else 
+	{
+
+		gint i, j;
+		GtkWidget *button[5];
+		GtkWidget *vbox = gtk_vbox_new(FALSE, 5);
+		GtkWidget *hbox[5];
+
+		pp->win_keyboard = gtk_window_new (GTK_WINDOW_POPUP);
+
+		hbox[0] = gtk_hbox_new(TRUE, 5);
+		for (j = 0 ; j < 4; j++ ) {
+			button[0] = gtk_button_new_with_label (numkeyboard_display[j]);
+			gtk_box_pack_start_defaults(GTK_BOX(hbox[0]), button[0]);
+			g_signal_connect(G_OBJECT(button[0]), "button-release-event",
+					G_CALLBACK(numbt_release), GUINT_TO_POINTER (j));
+		}
+		gtk_box_pack_start_defaults(GTK_BOX(vbox), hbox[0]);
+
+		hbox[1] = gtk_hbox_new(TRUE, 5);
+		for (j = 4 ; j < 8; j++ ) {
+			button[1] = gtk_button_new_with_label (numkeyboard_display[j]);
+			gtk_box_pack_start_defaults(GTK_BOX(hbox[1]), button[1]);
+			g_signal_connect(G_OBJECT(button[1]), "button-release-event",
+					G_CALLBACK(numbt_release), GUINT_TO_POINTER (j));
+		}
+		gtk_box_pack_start_defaults(GTK_BOX(vbox), hbox[1]);
+
+		hbox[2] = gtk_hbox_new(TRUE, 5);
+		for (j = 8 ; j < 12; j++ ) {
+			button[2] = gtk_button_new_with_label (numkeyboard_display[j]);
+			gtk_box_pack_start_defaults(GTK_BOX(hbox[2]), button[2]);
+			g_signal_connect(G_OBJECT(button[2]), "button-release-event",
+					G_CALLBACK(numbt_release), GUINT_TO_POINTER (j));
+		}
+		gtk_box_pack_start_defaults(GTK_BOX(vbox), hbox[2]);
+
+		hbox[3] = gtk_hbox_new(TRUE, 5);
+		for (j = 12 ; j < 15; j++ ) {
+			button[3] = gtk_button_new_with_label (numkeyboard_display[j]);
+			gtk_box_pack_start_defaults(GTK_BOX(hbox[3]), button[3]);
+			g_signal_connect(G_OBJECT(button[3]), "button-release-event",
+					G_CALLBACK(numbt_release), GUINT_TO_POINTER (j));
+		}
+		gtk_box_pack_start_defaults(GTK_BOX(vbox), hbox[3]);
+
+		hbox[4] = gtk_hbox_new(TRUE, 5);
+		for (j = 15 ; j < 18; j++ ) {
+			button[4] = gtk_button_new_with_label (numkeyboard_display[j]);
+			gtk_box_pack_start_defaults(GTK_BOX(hbox[4]), button[4]);
+			g_signal_connect(G_OBJECT(button[4]), "button-release-event",
+					G_CALLBACK(numbt_release), GUINT_TO_POINTER (j));
+		}
+		gtk_box_pack_start_defaults(GTK_BOX(vbox), hbox[4]);
+
+		gtk_container_add(GTK_CONTAINER(pp->win_keyboard), vbox);
+		gtk_window_move (GTK_WINDOW (pp->win_keyboard), 450, 155); /* 设置窗口位置 */
+		gtk_widget_set_size_request (GTK_WIDGET (pp->win_keyboard), 200, 200); /* 设置窗口大小 */
+		//	gtk_window_set_position (win, GTK_WIN_POS_CENTER);
+		gtk_widget_show_all(pp->win_keyboard);
+
+	}
+
 	g_print ("draw keyboard\n");
 //	gtk_main_quit();
 }
