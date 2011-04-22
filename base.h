@@ -884,12 +884,6 @@ typedef struct _MY_SIGNAL_TMP {
 	GtkWidget *target_list;
 } MY_SIGNAL,*MY_SIGNAL_P;
 
-typedef struct _PREVIEW_TMP
-{
-    GtkWidget *list;
-    GtkWidget *sw;
-}PREVIEW,*PREVIEW_P;
-
 
 /* 315 Data Link 止 20110212*/
 /* 522\523 与 A闸门时的 202\203 相同，未实现 */

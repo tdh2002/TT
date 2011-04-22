@@ -71,8 +71,6 @@ static char buffer[32];
 static guchar dot_temp[800];
 static gushort dot_temp1[FB_WIDTH*400];
 
-PREVIEW preview;
-
 gint (*window_keypress_event_orig)(GtkWidget *widget, GdkEventKey *event);/* window 原始的按键处理 */
 gint my_keypress_event(GtkWidget *widget, GdkEventKey *event);			/* 自己的按键处理*/
 GtkWidgetClass *widget_window_class;									/* 原始widnow class */
@@ -1607,6 +1605,8 @@ int open_config_file(GtkWidget *widget,	GdkEventButton *event,	gpointer       da
      
             temp = fread(pp->p_config, sizeof(CONFIG),1,fp);
                     
+            fclose(fp);
+
             gtk_tree_selection_unselect_iter(source_selection,&source_iter);
             
             g_free(value_name);
@@ -1806,15 +1806,11 @@ static void draw_file_open_main()
 
     gtk_container_add(GTK_CONTAINER(hbox_first), hbox);
 
-    preview.list = source_list;
-
-    preview.sw = sw_1_1_1_1_2;
-
     g_signal_connect(G_OBJECT (vbox_2_1_1[2]), "button-press-event",G_CALLBACK(dialog_destroy), dialog);
 
     g_signal_connect(G_OBJECT (hbox_1_1_2_1_1[0]), "button-press-event",G_CALLBACK(open_config_file), (gpointer)source_list);
 
-    g_signal_connect (G_OBJECT (source_selection), "changed", G_CALLBACK(on_changed_config_file), (gpointer)&preview);
+    g_signal_connect (G_OBJECT (source_selection), "changed", G_CALLBACK(on_changed_config_file), (gpointer)source_list);
 
     gtk_widget_show_all(dialog);
 
@@ -1824,10 +1820,6 @@ static void draw_file_open_main()
 
 int on_changed_config_file(GtkTreeSelection *selection,	gpointer       data)
 {
-    PREVIEW *preview = (PREVIEW *)data;
-
-    //WebKitWebView* web_view;
-
     FILE *fp;
 
     char *file_path = USER_CFG_PATH;
@@ -1844,17 +1836,13 @@ int on_changed_config_file(GtkTreeSelection *selection,	gpointer       data)
 
     GtkWidget *source_list;
 
-    GtkWidget *sw;
-
     int value;
 
     char *value_name;
 
     int temp;
 
-    source_list = preview->list;
-
-    sw = preview->sw;
+    source_list = (GtkWidget *)data;
 
     source_model = gtk_tree_view_get_model(GTK_TREE_VIEW(source_list));
  
@@ -2007,7 +1995,7 @@ static void draw_save_setup_as()
     GtkTreeViewColumn *column;
     GtkListStore *store;
 
-    //PREVIEW preview;
+    
 
    	dialog = gtk_dialog_new_with_buttons ("Dialog_Wedge", window,
 			GTK_DIALOG_MODAL |	GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_NO_SEPARATOR,
@@ -2145,19 +2133,11 @@ static void draw_save_setup_as()
 
     gtk_container_add(GTK_CONTAINER(hbox_first), hbox);
 
-    preview.list = source_list;
-
-    preview.sw = sw_1_1_1_1_2;
-
     g_signal_connect(G_OBJECT (vbox_2_1_1[2]), "button-press-event",G_CALLBACK(dialog_destroy), dialog);
 
     g_signal_connect(G_OBJECT (hbox_1_1_2_1_1[1]), "button-press-event",G_CALLBACK(save_config_file), (gpointer)source_list);
 
-    g_signal_connect (G_OBJECT (source_selection), "changed", G_CALLBACK(on_changed_config_file), (gpointer)&preview);
-
-    //g_signal_connect (G_OBJECT (entry_save_file_name), "changed", G_CALLBACK(on_change_entry_save_file_name), (gpointer)&preview);
-
-
+    g_signal_connect (G_OBJECT (source_selection), "changed", G_CALLBACK(on_changed_config_file), (gpointer)source_list);
 
     gtk_widget_show_all(dialog);
 
