@@ -3489,7 +3489,7 @@ void data_600 (GtkMenuItem *menuitem, gpointer data)
 	{
 		LAW_VAL (Last_tx_elem) = (guchar) (LAW_VAL (First_tx_elem) + LAW_VAL (Elem_qty)) - 1;
 	}
-	if (LAW_VAL(Focal_type) != DEPTH_SCAN)
+	if (LAW_VAL(Focal_type) == DEPTH_SCAN)
 	{
 		LAW_VAL (Focal_point_type) = HALFPATH_P;
 
