@@ -4626,22 +4626,25 @@ void draw3_data0(DRAW_UI_P p)
 						gtk_widget_set_sensitive(pp->eventbox31[0],FALSE);
 					}
 					break;
-				case 2:/* 聚焦点的计算方式 0halfpath 1truedepth 2projection 3focalplane P620 */
+				case 2:/* 聚焦点的计算方式 0halfpath 1truedepth 2projection 3focalplane 4automatic P620 */
 					pp->x_pos = 555, pp->y_pos = 116 - YOFFSET;
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 					{
-						if (LAW_VAL (Focal_type) == DEPTH_SCAN)
+						if (GROUP_VAL (tx_rxmode) == PITCH_CATCH)
 						{
-							menu_status = 0xc;
+							menu_status = 0x0c;
+						} else if (LAW_VAL (Focal_type) == DEPTH_SCAN)
+						{
+							menu_status = 0x1c;
 						}
 						else
 						{
-							menu_status = 0x0;
+							menu_status = 0x10;
 						}
 
 						draw3_pop_tt (data_620, NULL, 
 								menu_content[FOCAL_POINT_TYPE1 + LAW_VAL(Focal_point_type)],
-								menu_content+ FOCAL_POINT_TYPE, 4, 0, LAW_VAL(Focal_point_type), menu_status);
+								menu_content+ FOCAL_POINT_TYPE, 5, 0, LAW_VAL(Focal_point_type), menu_status);
 					}
 					else 
 					{
@@ -6133,7 +6136,12 @@ void draw3_data1(DRAW_UI_P p)
 						gtk_widget_set_sensitive(pp->eventbox31[1],FALSE);
 					}
 					break;
-				case 2:/* 角度扫查的最大角度 P621 */
+				case 2: /* P621
+						   0 Halfpath  时候 这里设置positon start
+						   1 TrueDepth 时候 这里设置positon start
+						   2 Halfpath  时候 这里设置offset  start
+						   3 Halfpath  时候 这里设置offset  start
+						   4 Automatic 时候 不能设置 */
 					switch (TMP(max_angle_reg))
 					{
 						case 0:	tmpf = 0.1; break;
@@ -13397,5 +13405,6 @@ void save_config (GtkWidget *widget, GdkEventButton *event,	gpointer data)
 	gint i;
 	i	=	lseek (TMP(fd_config), 0, SEEK_SET);
 	i	=	write (TMP(fd_config), pp->p_config, sizeof(CONFIG));
+	close (TMP(fd_config));
 	gtk_main_quit();
 }

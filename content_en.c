@@ -486,8 +486,8 @@ const gchar *all_menu_content_en[] =
 	"Azimuthal Angular sector", "Linear  Linear sector", 
 	"Depth Depth sector", "Static Static sector",				
 	"Azimuthal", "Linear", "Depth", "Static",				/* 410 Law config*/
-	"Half Path", "True Dpeth", "Projection ", "Focal Plane",
-	"Half Path", "True Dpeth", "Projection ", "Focal Plane",	/*  focalpoint type */
+	"Half Path", "True Dpeth", "Projection ", "Focal Plane", "Automatic",
+	"Half Path", "True Dpeth", "Projection ", "Focal Plane", "Automatic"	/*  focalpoint type */
 	"LW  5890.0m/s", "SW  3240.0m/s"," ",						/* 414 Wave Type*/
 	"LW", "SW", " "	,										/* 417 Wave Type*/
 	"1", "2",											/* 420 Encoder*/

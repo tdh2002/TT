@@ -216,6 +216,13 @@ typedef struct law_info
 	gushort	law_index_start;	/* 聚焦法则索引 计算出来的 */
 	gushort law_index_end;		/*  */
 	guint	Focus_depth;		/* 扇扫时候为声程 线扫是深度 0.001mm为单位 */
+	gint	Position_start;
+	gint	Position_end;
+	guint	Position_step;
+	gint	Offset_start;
+	gint	Depth_start;
+	gint	Offset_stop;
+	gint	Depth_stop;
 } LAW_INFO, *LAW_INFO_P;
 
 /*  */
