@@ -37,16 +37,6 @@ GdkColor	all_col[] =
 };
 #endif
 
-gushort	all_col_16[] =
-{
-	0x001f,
-	0x03e0,
-	0xf800,
-	0xffe0,
-	0x0000,
-	0xffff
-};
-
 DRAW_UI_P	pp;					
 Display *disp ;
 FakeKey *fk;
@@ -200,6 +190,12 @@ static void set_config (guint groupid)
 	LAW_VAL (Angle_beam_skew_max)		=	0;
 	LAW_VAL	(Angle_beam_skew_step)		=	100;
 	LAW_VAL (Focus_depth)	=	5000;
+	LAW_VAL (Position_start)	=	5000;
+	LAW_VAL (Position_end)	=	5000;
+	LAW_VAL (Offset_start)	=	2000;
+	LAW_VAL (Offset_end)	=	2000;
+	LAW_VAL (Depth_start)	=	2000;
+	LAW_VAL (Depth_end)	=	2000;
 
 	CFG(polarity)=0;  /* 0 Normal */
 	CFG(e_type)=0;  /* 0 Clock/Dir */
@@ -321,9 +317,9 @@ int main (int argc, char *argv[])
 
 	/*	write(p_ui->p_tmp_config->fd_config, (void*)(p_ui->p_config), sizeof(CONFIG));*/
 
-	TMP(a_scan_width) = 615;
-	TMP(a_scan_dot_qty) = 615;
-	TMP(a_scan_height) = 120;
+	TMP(a_scan_width)	= 615;
+	TMP(a_scan_dot_qty)	= 615;
+	TMP(a_scan_height)	= 120;
 
 	for (i = 0; i < 20480; i++)
 	{
@@ -356,13 +352,11 @@ int main (int argc, char *argv[])
 
 	gtk_widget_show (window);
 
-	g_print("float = %d, double= %d\n", sizeof(gfloat), sizeof(gdouble));
-
 	/*
 	   g_signal_connect (G_OBJECT (window), "key-press-event",
 	   G_CALLBACK (key_press_handler), NULL);
 	   */
-
+#if 0
 	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) NULL, NULL);
 	gtk_accel_group_connect(accel, GDK_F1, 0, GTK_ACCEL_VISIBLE, closure);
 	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) NULL, NULL);
@@ -394,6 +388,7 @@ int main (int argc, char *argv[])
 	gtk_accel_group_connect(accel, GDK_Escape, 0, GTK_ACCEL_VISIBLE, closure);
 
 	gtk_window_add_accel_group(GTK_WINDOW(window), accel);
+#endif
 
 	gdk_threads_enter();
 	gtk_main();

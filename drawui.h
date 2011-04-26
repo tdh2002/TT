@@ -249,6 +249,17 @@
 #define ASSIGN_K_P	(ASSIGN_K + 16)
 #define MOUSE		(ASSIGN_K_P + 5)
 
+/* 当前按键响应窗口类型 */
+#define KEYPRESS_MAIN				0x00
+#define KEYPRESS_MAIN_SPINBUTTON	0x01
+#define KEYPRESS_MAIN_ENTRY			0x02
+#define KEYPRESS_DIALOG				0x10
+#define KEYPRESS_DIALOG_SPINBUTTON	0x11
+#define KEYPRESS_DIALOG_ENTRY		0x12
+#define KEYPRESS_WARNING			0x20
+
+#define	KEYPRESS_MENUITEM			0x40
+
 /* 按键是由那个window发出 */
 #define MENU_POP		0
 #define MENU_HIDE		1 /*disappear*/
@@ -324,6 +335,8 @@
 extern gint (*window_keypress_event_orig)(GtkWidget *widget, GdkEventKey *event);
 extern gint my_keypress_event(GtkWidget *widget, GdkEventKey *event);
 extern GtkWidgetClass *widget_window_class;
+extern GtkWidgetClass *dialog_window_class;									/* 主windows class */
+extern void change_keypress_event(gint window_type);
 
 extern DRAW_UI_P pp;					
 extern Display *disp ;
@@ -520,8 +533,16 @@ extern void data_614 (GtkSpinButton *spinbutton, gpointer data);	/*614*/
 
 extern void data_620 (GtkMenuItem *menuitem, gpointer data);		/*620*/
 extern void data_621 (GtkSpinButton *spinbutton, gpointer data);
+extern void data_6211 (GtkSpinButton *spinbutton, gpointer data);
 extern void data_622 (GtkSpinButton *spinbutton, gpointer data);
+extern void data_6221 (GtkSpinButton *spinbutton, gpointer data);
 extern void data_623 (GtkSpinButton *spinbutton, gpointer data);	/*623*/
+extern void data_6231 (GtkSpinButton *spinbutton, gpointer data);	/*623*/
+extern void data_624 (GtkSpinButton *spinbutton, gpointer data);
+extern void data_630 (GtkSpinButton *spinbutton, gpointer data);
+extern void data_631 (GtkSpinButton *spinbutton, gpointer data);
+extern void data_632 (GtkSpinButton *spinbutton, gpointer data);
+extern void data_633 (GtkSpinButton *spinbutton, gpointer data);
 
 extern void data_700 (GtkMenuItem *menuitem, gpointer data);
 extern void data_701 (GtkMenuItem *menuitem, gpointer data);

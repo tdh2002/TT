@@ -251,12 +251,12 @@ static const gchar *content_en261[] = {
 
 static const gchar *content_en262[] = {
 	/* 二级菜单第6页下的第2页三级菜单 */
-	"Type.", "Load Law File", "Save Law File",  "Cal Focallaw", NULL, NULL
+	"Type.", "Position Start", "Position End",  "Position Step", "Depth End", NULL, "Offset Start", "Offset End","Depth Start"
 };
 
 static const gchar *content_en263[] = {
 	/* 二级菜单第6页下的第3页三级菜单 */
-	"Element Qty.", "First Element", "Last Element", "Element Step", "Wave Type", NULL
+	"Element Qty.", "First Element", "Last Element", "Element Step", NULL, NULL
 };
 
 static const gchar *content_en264[] = {
@@ -486,8 +486,8 @@ const gchar *all_menu_content_en[] =
 	"Azimuthal Angular sector", "Linear  Linear sector", 
 	"Depth Depth sector", "Static Static sector",				
 	"Azimuthal", "Linear", "Depth", "Static",				/* 410 Law config*/
-	"Half Path", "True Dpeth", "Projection ", "Focal Plane", "Automatic",
-	"Half Path", "True Dpeth", "Projection ", "Focal Plane", "Automatic"	/*  focalpoint type */
+	"Half Path", "True Depth", "Projection ", "Focal Plane", "Automatic",
+	"Half Path", "True Depth", "Projection ", "Focal Plane", "Automatic",	/*  focalpoint type */
 	"LW  5890.0m/s", "SW  3240.0m/s"," ",						/* 414 Wave Type*/
 	"LW", "SW", " "	,										/* 417 Wave Type*/
 	"1", "2",											/* 420 Encoder*/

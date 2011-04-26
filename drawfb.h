@@ -11,7 +11,7 @@
 
 #define FB_WIDTH 768
 
-extern gfloat HEIGHT_TABLE[];
+/*extern gfloat HEIGHT_TABLE[];*/
 
 extern void init_fb();
 extern void fbdot(gushort *p, gint x, gint y, gushort col);

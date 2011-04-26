@@ -72,10 +72,11 @@ static guchar dot_temp[800];
 static gushort dot_temp1[FB_WIDTH*400];
 
 gint (*window_keypress_event_orig)(GtkWidget *widget, GdkEventKey *event);/* window 原始的按键处理 */
+gint (*dialog_keypress_event_orig)(GtkWidget *widget, GdkEventKey *event);/* window 原始的按键处理 */
 gint my_keypress_event(GtkWidget *widget, GdkEventKey *event);			/* 自己的按键处理*/
-GtkWidgetClass *widget_window_class;									/* 原始widnow class */
-//GtkWidgetClass *widget_window_class1;
-GdkPoint a[512] = {{0,0}, {240,200}, {400,200}};
+
+GtkWidgetClass *widget_window_class;									/* 主windows class */
+GtkWidgetClass *dialog_window_class;									/* 主windows class */
 
 const gchar *backpic[] = 
 {
@@ -470,7 +471,7 @@ void menuitem6_function(GtkMenuItem *menuitem, gpointer data)
 			gtk_menu_item_get_label(menuitem));
 	pp->pos_last = pp->pos;
 	p->pos = 6;
-	pp->menu2_qty = 4;
+	pp->menu2_qty = 5;
 	MENU_STATUS = MENU3_STOP; /* */
 	draw_2_menu(1);
 	draw_3_menu(1, NULL);
@@ -585,31 +586,6 @@ void draw_2_menu(gint pa)
 		gtk_widget_set_sensitive(pp->eventbox2[4],TRUE);
 
 	return ;
-}
-
-static gint gtk_entry_digit_only_keypress_event(GtkWidget *widget, GdkEventKey *event)
-{
-	gpointer data = NULL;
-	if (event->keyval == GDK_F12)
-	{
-		g_print("F12\n");
-		return key_press_handler (widget, event, data);
-	}
-	else
-		return window_keypress_event_orig (widget, event); 
-	return FALSE;
-}
-
-static gint gtk_entry_full_screen_keypress_event(GtkWidget *widget, GdkEventKey *event)
-{
-	gpointer data = NULL;
-	if (0)
-	{
-		return key_press_handler (widget, event, data);
-	}
-	else
-		return window_keypress_event_orig (widget, event); 
-	return FALSE;
 }
 
 /* Probe 选择探头2个按键的处理 一个是确认 一个是取消 */
@@ -1257,7 +1233,7 @@ static void draw_remark ()
 	GtkWidget *sw;		/* 第一个scroll 备注只要一个sw */
 	GtkWidget *view;
 	GtkTextBuffer *TextBuffer;
-	GtkWidgetClass *widget_window_class1;
+//	GtkWidgetClass *widget_window_class1;
 	const gchar *buf = (const gchar *)(CFG(remark_info));
 
 
@@ -1267,8 +1243,8 @@ static void draw_remark ()
 			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 			NULL);
 	gtk_window_set_decorated (GTK_WINDOW (dialog), FALSE);			/*不可以装饰*/
-	widget_window_class1 = GTK_WIDGET_GET_CLASS (((GtkObject*)(dialog))); 
-	widget_window_class1->key_press_event = gtk_entry_digit_only_keypress_event; /* 指定哪些字符输入 */
+//	widget_window_class1 = GTK_WIDGET_GET_CLASS (((GtkObject*)(dialog))); 
+//	widget_window_class1->key_press_event = gtk_entry_digit_only_keypress_event; /* 指定哪些字符输入 */
 
 	gtk_widget_set_size_request(GTK_WIDGET (dialog), 300, 300);
 	vbox1 = GTK_WIDGET (GTK_DIALOG(dialog)->vbox);
@@ -1683,6 +1659,7 @@ static void draw_file_open_main()
 
     gtk_window_set_decorated (GTK_WINDOW (dialog), FALSE);			/*不可以装饰*/
     gtk_widget_set_size_request(GTK_WIDGET (dialog), 800, 600);
+	gtk_widget_modify_bg(GTK_WIDGET (dialog), GTK_STATE_NORMAL, &color_black);	/*黑色背景*/
 
     hbox_first = GTK_WIDGET (GTK_DIALOG(dialog)->vbox);
     
@@ -1977,9 +1954,18 @@ static void draw_save_setup_as()
 
     GtkWidget *hbox_1_1_2_1;
 
-    GtkWidget *hbox_1_1_2_1_1[6];
-    GtkWidget *label_1_1_2_1_1[6];
-    char *char_1_1_2_1_1[6] = {"","Save","File name","Setup lock","",""};
+//    GtkWidget *hbox_1_1_2_1_1[6];
+ //   GtkWidget *label_1_1_2_1_1[6];
+  //  char *char_1_1_2_1_1[6] = {"","Save","File name","Setup lock","",""};
+
+//	GtkWidget *drawing_area;
+	GtkWidget *eventbox_save;
+	GtkWidget *label[3];
+	GtkWidget *vbox_filename;
+	GtkWidget *eventbox_filename;
+//	GtkWidget *eventbox_entry;
+	GtkWidget *vbox_lock;
+	GtkWidget *eventbox_lock1;
 
     GtkWidget *entry_save_file_name;
 
@@ -2005,6 +1991,7 @@ static void draw_save_setup_as()
 
     gtk_window_set_decorated (GTK_WINDOW (dialog), FALSE);			/*不可以装饰*/
     gtk_widget_set_size_request(GTK_WIDGET (dialog), 800, 600);
+	gtk_widget_modify_bg(GTK_WIDGET (dialog), GTK_STATE_NORMAL, &color_black);	/*黑色背景*/
 
     hbox_first = GTK_WIDGET (GTK_DIALOG(dialog)->vbox);
     
@@ -2072,7 +2059,7 @@ static void draw_save_setup_as()
 
 
 
-    for(i=0;i<6;i++)
+ /*   for(i=0;i<6;i++)
     {
         if ( (i==1) || (i==3)  )
         { 
@@ -2085,16 +2072,53 @@ static void draw_save_setup_as()
 	     gtk_widget_set_size_request(GTK_WIDGET(hbox_1_1_2_1_1[i]),114,85);
             update_widget_bg(hbox_1_1_2_1_1[i], backpic[1]);
 	     label_1_1_2_1_1[i] = gtk_label_new(char_1_1_2_1_1[i]);
-	     gtk_widget_modify_fg (label_1_1_2_1_1[i], GTK_STATE_NORMAL, &color_black);
+	     gtk_widget_modify_fg (label_1_1_2_1_1[i], GTK_STATE_NORMAL, &color_white);
 	     gtk_label_set_justify(GTK_LABEL(label_1_1_2_1_1[i]), GTK_JUSTIFY_CENTER);
 	     gtk_box_pack_start(GTK_BOX(hbox_1_1_2_1),hbox_1_1_2_1_1[i],FALSE,FALSE,0); 
             gtk_container_add(GTK_CONTAINER(hbox_1_1_2_1_1[i]), label_1_1_2_1_1[i]);
 
-    }
+    }*/
 
+/*	drawing_area = gtk_drawing_area_new();
+	gtk_widget_set_size_request (GTK_WIDGET(drawing_area), 114, 85); 
+	gtk_widget_modify_bg(GTK_WIDGET(drawing_area), GTK_STATE_NORMAL, &color_black);
+	gtk_box_pack_start (GTK_BOX (hbox_1_1_2_1), drawing_area, FALSE, FALSE, 0);*/
+
+	eventbox_save = gtk_event_box_new();
+	gtk_widget_set_size_request (GTK_WIDGET(eventbox_save), 114, 85);
+	update_widget_bg(eventbox_save, backpic[1]);
+	label[0] = gtk_label_new("Save");
+	gtk_container_add(GTK_CONTAINER(eventbox_save),label[0]);
+	gtk_box_pack_start (GTK_BOX (hbox_1_1_2_1), eventbox_save, FALSE, FALSE, 0);
+
+	vbox_filename = gtk_vbox_new(FALSE, 0);
+	gtk_widget_set_size_request (GTK_WIDGET(vbox_filename), 342, 85);
+	eventbox_filename = gtk_event_box_new();
+	gtk_widget_set_size_request (GTK_WIDGET(eventbox_filename), 342, 57);
+	update_widget_bg(eventbox_filename, backpic[1]);
+	label[1] = gtk_label_new("File name");
+	gtk_container_add(GTK_CONTAINER(eventbox_filename),label[1]);
+	gtk_box_pack_start (GTK_BOX (vbox_filename), eventbox_filename, FALSE, FALSE, 0);
     entry_save_file_name = gtk_entry_new();
+	gtk_widget_set_size_request (GTK_WIDGET(entry_save_file_name), 342, 28);
+    gtk_box_pack_start(GTK_BOX(vbox_filename),entry_save_file_name,FALSE,FALSE,0);
+	gtk_widget_modify_base(GTK_WIDGET (entry_save_file_name), GTK_STATE_NORMAL, &color_text_base);
+	gtk_widget_modify_text(GTK_WIDGET (entry_save_file_name), GTK_STATE_NORMAL, &color_yellow);
 
-    gtk_box_pack_start(GTK_BOX(hbox_1_1_2_1_1[2]),entry_save_file_name,FALSE,FALSE,0);
+	gtk_box_pack_start (GTK_BOX (hbox_1_1_2_1), vbox_filename, FALSE, FALSE, 0);
+
+	vbox_lock = gtk_vbox_new(FALSE, 0);
+	gtk_widget_set_size_request (GTK_WIDGET(vbox_lock), 114, 85);
+	eventbox_lock1 = gtk_event_box_new();
+	gtk_widget_set_size_request (GTK_WIDGET(eventbox_lock1), 114, 85);
+	update_widget_bg(eventbox_lock1, backpic[1]);
+	label[2] = gtk_label_new("Setup Lock");
+	gtk_container_add(GTK_CONTAINER(eventbox_lock1),label[2]);
+	gtk_box_pack_start (GTK_BOX (vbox_lock), eventbox_lock1, FALSE, FALSE, 0);
+/*	eventbox_lock2 = gtk_event_box_new();
+	gtk_widget_set_size_request (GTK_WIDGET(eventbox_lock2), 114, 28);
+	gtk_box_pack_start (GTK_BOX (vbox_lock), eventbox_lock2, FALSE, FALSE, 0);*/
+	gtk_box_pack_start (GTK_BOX (hbox_1_1_2_1), vbox_lock, FALSE, FALSE, 0);
 
     Set_Source_File_Path(USER_CFG_PATH);
 
@@ -2135,7 +2159,7 @@ static void draw_save_setup_as()
 
     g_signal_connect(G_OBJECT (vbox_2_1_1[2]), "button-press-event",G_CALLBACK(dialog_destroy), dialog);
 
-    g_signal_connect(G_OBJECT (hbox_1_1_2_1_1[1]), "button-press-event",G_CALLBACK(save_config_file), (gpointer)source_list);
+    g_signal_connect(G_OBJECT (eventbox_save), "button-press-event",G_CALLBACK(save_config_file), (gpointer)source_list);
 
     g_signal_connect (G_OBJECT (source_selection), "changed", G_CALLBACK(on_changed_config_file), (gpointer)source_list);
 
@@ -2192,6 +2216,7 @@ static void draw_system_info ()
     vbox_first = GTK_WIDGET (GTK_DIALOG(dialog)->vbox);
 
     gtk_widget_set_size_request(GTK_WIDGET (dialog), 800, 600);
+	gtk_widget_modify_bg(GTK_WIDGET (dialog), GTK_STATE_NORMAL, &color_black);	/*黑色背景*/
 
     vbox = gtk_vbox_new(FALSE,0); 
 
@@ -2386,6 +2411,7 @@ static void draw_file_manage ()
 
 	gtk_window_set_decorated (GTK_WINDOW (dialog), FALSE);			/*不可以装饰*/
 	gtk_widget_set_size_request(GTK_WIDGET (dialog), 800, 600);
+	gtk_widget_modify_bg(GTK_WIDGET (dialog), GTK_STATE_NORMAL, &color_black);	/*黑色背景*/
 
 	hbox_first = GTK_WIDGET (GTK_DIALOG(dialog)->vbox);
 
@@ -2590,7 +2616,7 @@ gboolean law_save (GtkWidget *widget, GdkEventButton *event, gpointer data)
 		offset += TMP(beam_qty[k]);
 	save_law_file(file_path, offset, CFG(groupId));
 	g_free (file_path);
-	widget_window_class->key_press_event = my_keypress_event;
+//	widget_window_class->key_press_event = my_keypress_event;
 	gtk_widget_destroy (gtk_widget_get_parent 
 			(gtk_widget_get_parent
 			 (gtk_widget_get_parent (widget))));
@@ -2599,7 +2625,7 @@ gboolean law_save (GtkWidget *widget, GdkEventButton *event, gpointer data)
 
 gboolean law_close (GtkWidget *widget, GdkEventButton *event,	gpointer data)
 {
-	widget_window_class->key_press_event = my_keypress_event;
+//	widget_window_class->key_press_event = my_keypress_event;
 	gtk_widget_destroy (GTK_WIDGET (data));
 	return TRUE;
 }
@@ -2615,7 +2641,7 @@ gboolean law_name (GtkWidget *widget, GdkEventButton *event,	gpointer data)
 static void draw_law_save ()
 {
 	GtkWindow *win = GTK_WINDOW (pp->window);
-	GtkWidgetClass *widget_window_class1;
+//	GtkWidgetClass *widget_window_class1;
 	GtkWidget *dialog;
 	GtkWidget *vbox1;
 
@@ -2645,17 +2671,20 @@ static void draw_law_save ()
 
 	gtk_window_set_decorated (GTK_WINDOW (dialog), FALSE);			/*不可以装饰*/
 	gtk_widget_set_size_request(GTK_WIDGET (dialog), 800, 600);
-	widget_window_class->key_press_event = window_keypress_event_orig;
-	widget_window_class1 = GTK_WIDGET_GET_CLASS (((GtkObject*)(dialog))); 
-	widget_window_class1->key_press_event = gtk_entry_full_screen_keypress_event;
+	gtk_widget_modify_bg (GTK_WIDGET (dialog), GTK_STATE_NORMAL, &color_black);	/*黑色背景*/
+//	widget_window_class->key_press_event = window_keypress_event_orig;
+//	widget_window_class1 = GTK_WIDGET_GET_CLASS (((GtkObject*)(dialog))); 
+//	widget_window_class1->key_press_event = gtk_entry_full_screen_keypress_event;
 	/* 这里处理按键 */
 
 
 	vbox1	= GTK_WIDGET (GTK_DIALOG(dialog)->vbox);
 	ebox_save	= gtk_event_box_new();
 	label_save	= gtk_label_new("Save");
+	update_widget_bg(ebox_save, backpic[7]);
 	ebox_close	= gtk_event_box_new();
 	label_close	= gtk_label_new("Close");
+	update_widget_bg(ebox_close, backpic[7]);
 	entry_name	= gtk_entry_new();
 	vbox_name	= gtk_vbox_new(FALSE, 0);
 	ebox_name	= gtk_event_box_new();
@@ -2768,7 +2797,7 @@ gboolean law_read (GtkWidget *widget, GdkEventButton *event, gpointer data)
 	}
 
 	g_free (file_path);
-	widget_window_class->key_press_event = my_keypress_event;
+//	widget_window_class->key_press_event = my_keypress_event;
 	gtk_widget_destroy (gtk_widget_get_parent 
 			(gtk_widget_get_parent
 			 (gtk_widget_get_parent (widget))));
@@ -2779,7 +2808,7 @@ gboolean law_read (GtkWidget *widget, GdkEventButton *event, gpointer data)
 static void draw_law_read ()
 {
 	GtkWindow *win = GTK_WINDOW (pp->window);
-	GtkWidgetClass *widget_window_class1;
+//	GtkWidgetClass *widget_window_class1;
 	GtkWidget *dialog;
 	GtkWidget *vbox1;
 
@@ -2804,17 +2833,24 @@ static void draw_law_read ()
 
 	gtk_window_set_decorated (GTK_WINDOW (dialog), FALSE);			/*不可以装饰*/
 	gtk_widget_set_size_request(GTK_WIDGET (dialog), 800, 600);
-	widget_window_class->key_press_event = window_keypress_event_orig;
-	widget_window_class1 = GTK_WIDGET_GET_CLASS (((GtkObject*)(dialog))); 
-	widget_window_class1->key_press_event = gtk_entry_full_screen_keypress_event;
+	gtk_widget_modify_bg (GTK_WIDGET (dialog), GTK_STATE_NORMAL, &color_black);	/*黑色背景*/
+//	widget_window_class->key_press_event = window_keypress_event_orig;
+//	widget_window_class1 = GTK_WIDGET_GET_CLASS (((GtkObject*)(dialog))); 
+//	widget_window_class1->key_press_event = gtk_entry_full_screen_keypress_event;
 	/* 这里处理按键 */
 
 
 	vbox1	= GTK_WIDGET (GTK_DIALOG(dialog)->vbox);
 	ebox_read	= gtk_event_box_new();
 	label_read	= gtk_label_new("Read");
+	gtk_widget_set_size_request(GTK_WIDGET (ebox_read), 115, 85);
+	//gtk_widget_modify_bg(GTK_WIDGET (ebox_read), GTK_STATE_NORMAL, &color_blue);
+	update_widget_bg(ebox_read, backpic[7]);
 	ebox_close	= gtk_event_box_new();
 	label_close	= gtk_label_new("Close");
+	gtk_widget_set_size_request(GTK_WIDGET (ebox_close), 115, 85);
+	//gtk_widget_modify_bg(GTK_WIDGET (ebox_close), GTK_STATE_NORMAL, &color_blue);
+	update_widget_bg(ebox_close, backpic[7]);
 
 	gtk_container_add (GTK_CONTAINER (ebox_read), label_read);
 	gtk_container_add (GTK_CONTAINER (ebox_close), label_close);
@@ -2828,7 +2864,7 @@ static void draw_law_read ()
 	sw		= gtk_scrolled_window_new(NULL, NULL);
 	sw1		= gtk_scrolled_window_new(NULL, NULL);
 	/* 文件的名字 */
-	gtk_widget_set_size_request(sw, 200, 640);
+	gtk_widget_set_size_request(sw, 200, 600);
 	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW(sw),
 			GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw),
@@ -2848,7 +2884,7 @@ static void draw_law_read ()
 	g_object_unref(store);
 
 	/* 文件的内容 */
-	gtk_widget_set_size_request(sw1, 400, 640);
+	gtk_widget_set_size_request(sw1, 400, 600);
 	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW(sw1),
 			GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw1),
@@ -2912,6 +2948,8 @@ static void draw_law_read ()
  */
 static void draw_dialog_all (guint type)
 {
+
+	change_keypress_event (KEYPRESS_DIALOG);
 	switch (type)
 	{
 		case DIALOG_REMARK: draw_remark(); break;
@@ -3000,6 +3038,7 @@ static void draw3_pop_tt (void (*fun)(GtkMenuItem*, gpointer),
 	gtk_widget_hide (pp->button_add);
 	gtk_widget_hide (pp->button_sub);
 	gtk_widget_hide (pp->vscale);
+	gtk_widget_hide (GTK_WIDGET (pp->entry));
 
 	pp->menu3_qty = qty;
 	pp->menu3_poppos = pop_pos;
@@ -3086,6 +3125,7 @@ static void draw3_pop_tt_on (void (*fun)(GtkMenuItem*, gpointer),
 	gtk_widget_hide (pp->button_add);
 	gtk_widget_hide (pp->button_sub);
 	gtk_widget_hide (pp->vscale);
+	gtk_widget_hide (GTK_WIDGET (pp->entry));
 
 	pp->menu3_qty = qty;
 	pp->menu3_poppos = pop_pos;
@@ -3160,6 +3200,12 @@ static void draw3_popdown (const gchar *cur_value, guint pos, guint big_menu)
 	gtk_widget_hide (pp->button_add);
 	gtk_widget_hide (pp->button_sub);
 	gtk_widget_hide (pp->vscale);
+	gtk_widget_hide (GTK_WIDGET (pp->entry));
+
+
+	change_keypress_event (KEYPRESS_MAIN);
+
+	return ;
 }
 
 /*
@@ -3177,7 +3223,6 @@ static void draw3_popdown (const gchar *cur_value, guint pos, guint big_menu)
  * p 预留
  * 
  */
-
 static void draw3_digit_pressed (void (*fun)(GtkSpinButton*, gpointer), const gchar *unit, 
 		gfloat cur_value, gfloat lower, gfloat upper, gfloat step, 
 		guint digit, gpointer p, guint pos, guint content_pos)
@@ -3197,7 +3242,7 @@ static void draw3_digit_pressed (void (*fun)(GtkSpinButton*, gpointer), const gc
 
 	gtk_label_set_text (GTK_LABEL (pp->label3[z]), str);
 	update_widget_bg(pp->eventbox30[z], backpic[6]);
-	widget_window_class->key_press_event = window_keypress_event_orig;
+//	widget_window_class->key_press_event = window_keypress_event_orig;
 	/* 一个信号能对应多个回调函数，所以先把对应的回调函数取消 */
 	if (g_signal_handler_is_connected (G_OBJECT (pp->sbutton[z]), pp->signal_id))
 		g_signal_handler_disconnect (G_OBJECT (pp->sbutton[z]), pp->signal_id);
@@ -3220,9 +3265,13 @@ static void draw3_digit_pressed (void (*fun)(GtkSpinButton*, gpointer), const gc
 	gtk_widget_show (pp->button_add);
 	gtk_widget_show (pp->button_sub);
 	gtk_widget_show (pp->vscale);
+	gtk_widget_hide (GTK_WIDGET (pp->entry));
 
 	if (str)
 		g_free(str);
+
+	change_keypress_event (KEYPRESS_MAIN_SPINBUTTON);
+	return ;
 }
 
 /* 
@@ -3266,7 +3315,7 @@ static void draw3_digit_stop(gfloat cur_value, const gchar *unit,
 	/*	gtk_label_set_text (GTK_LABEL (pp->label[1]), str);*/
 	if (str)
 		g_free(str);
-	widget_window_class->key_press_event = my_keypress_event;
+//	widget_window_class->key_press_event = my_keypress_event;
 	/* 显示和隐藏控件 */
 	gtk_widget_show (pp->eventbox30[z]);
 	gtk_widget_show (pp->eventbox31[z]);
@@ -3280,7 +3329,11 @@ static void draw3_digit_stop(gfloat cur_value, const gchar *unit,
 	gtk_widget_hide (pp->button_add);
 	gtk_widget_hide (pp->button_sub);
 	gtk_widget_hide (pp->vscale);
+	gtk_widget_hide (GTK_WIDGET (pp->entry));
 
+	change_keypress_event (KEYPRESS_MAIN);
+
+	return ;
 	/*						gtk_widget_grab_focus (pp->button);*/
 }
 
@@ -4628,27 +4681,36 @@ void draw3_data0(DRAW_UI_P p)
 					break;
 				case 2:/* 聚焦点的计算方式 0halfpath 1truedepth 2projection 3focalplane 4automatic P620 */
 					pp->x_pos = 555, pp->y_pos = 116 - YOFFSET;
-					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
+					if(CFG(auto_program) == AUTO_FOCAL_ON)
 					{
-						if (GROUP_VAL (tx_rxmode) == PITCH_CATCH)
+						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 						{
-							menu_status = 0x0c;
-						} else if (LAW_VAL (Focal_type) == DEPTH_SCAN)
-						{
-							menu_status = 0x1c;
-						}
-						else
-						{
-							menu_status = 0x10;
-						}
+							if (GROUP_VAL (tx_rxmode) == PITCH_CATCH)
+							{
+								menu_status = 0x0c;
+							} else if (LAW_VAL (Focal_type) == DEPTH_SCAN)
+							{
+								menu_status = 0x1c;
+							}
+							else
+							{
+								menu_status = 0x10;
+							}
 
-						draw3_pop_tt (data_620, NULL, 
-								menu_content[FOCAL_POINT_TYPE1 + LAW_VAL(Focal_point_type)],
-								menu_content+ FOCAL_POINT_TYPE, 5, 0, LAW_VAL(Focal_point_type), menu_status);
+							draw3_pop_tt (data_620, NULL, 
+									menu_content[FOCAL_POINT_TYPE1 + LAW_VAL(Focal_point_type)],
+									menu_content+ FOCAL_POINT_TYPE, 5, 0, LAW_VAL(Focal_point_type), menu_status);
+						}
+						else 
+						{
+							draw3_popdown (menu_content[FOCAL_POINT_TYPE1 + LAW_VAL(Focal_point_type)], 0, 0);
+						}
 					}
-					else 
+					else
 					{
-						draw3_popdown (menu_content[FOCAL_POINT_TYPE1 + LAW_VAL(Focal_point_type)], 0, 0);
+							draw3_popdown (menu_content[FOCAL_POINT_TYPE1 + LAW_VAL(Focal_point_type)], 0, 0);
+							gtk_widget_set_sensitive(pp->eventbox30[0],FALSE);
+							gtk_widget_set_sensitive(pp->eventbox31[0],FALSE);
 					}
 					break;
 				case 3:/* 聚焦 阵元数量 P630 */
@@ -4672,7 +4734,7 @@ void draw3_data0(DRAW_UI_P p)
 							digit = 0;
 							pos = 0;
 							unit = UNIT_NONE;
-							draw3_digit_pressed (data_610, units[unit], cur_value , lower,
+							draw3_digit_pressed (data_630, units[unit], cur_value , lower,
 									upper, step, digit, p, pos, 0);
 						}
 						else 
@@ -6142,48 +6204,118 @@ void draw3_data1(DRAW_UI_P p)
 						   2 Halfpath  时候 这里设置offset  start
 						   3 Halfpath  时候 这里设置offset  start
 						   4 Automatic 时候 不能设置 */
-					switch (TMP(max_angle_reg))
-					{
-						case 0:	tmpf = 0.1; break;
-						case 1:	tmpf = 1.0; break;
-						case 2:	tmpf = 10.0; break;
-						default:break;
-					}
-					if( (LAW_VAL(Focal_type) == AZIMUTHAL_SCAN) &&
-							(CFG(auto_program) == AUTO_FOCAL_ON))
-						/* 聚焦法则自动计算开启时并且是角度扫查, Max Angle 才可调节 */
+
+					if(CFG(auto_program) == AUTO_FOCAL_ON)
+						/* 聚焦法则自动计算开启时, Max Angle 才可调节 */
 					{
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 						{
-							/* 计算lower为妙 */
-							cur_value = LAW_VAL(Angle_max) / 100.0;
-							temp_beam = LAW_MAX_QTY - get_beam_qty() + TMP(beam_qty[CFG(groupId)]);
-							lower = LAW_VAL (Angle_min) / 100.0;
-							upper = MIN ((gint)(LAW_VAL (Angle_min) +
-										(gint)(temp_beam * LAW_VAL(Angle_step))) / 100.0, 89.9);
-							step = tmpf;
-							digit = 1;
-							pos = 1;
-							unit = UNIT_DEG;
-							draw3_digit_pressed (data_621, units[unit], cur_value , lower, upper,
+							if((LAW_VAL(Focal_point_type)==HALFPATH_P)||(LAW_VAL(Focal_point_type)==DEPTH_P))
+								/*type为half path 或 true depth 时*/
+							{
+								switch (TMP(positions_reg))
+								{
+									case 0:	tmpf = 0.1; break;
+									case 1:	tmpf = 1.0; break;
+									case 2:	tmpf = 10.0; break;
+									default:break;
+								}
+								cur_value = LAW_VAL(Position_start) / 1000.0;
+								lower = 0.1;
+								upper = 10000.0;
+								step = tmpf;
+								digit = 2;
+								pos = 1;
+								unit = UNIT_MM;
+
+								draw3_digit_pressed (data_621, units[unit], cur_value , lower, upper,
 									step, digit, p, pos, 0);
+							}
+							else if((LAW_VAL(Focal_point_type)==PROJECTION_P)||(LAW_VAL(Focal_point_type)==FOCALPLANE_P))
+								/*type 为 projection  或 focal plane 时*/
+							{
+								switch (TMP(offsets_reg))
+								{
+									case 0:	tmpf = 0.5; break;
+									case 1:	tmpf = 5.0; break;
+									case 2:	tmpf = 50.0; break;
+									default:break;
+								}
+								cur_value = LAW_VAL(Offset_start) / 1000.0;
+								lower = 0.1;
+								upper = 10000.0;
+								step = tmpf;
+								digit = 2;
+								pos = 1;
+								unit = UNIT_MM;
+
+								draw3_digit_pressed (data_6211, units[unit], cur_value , lower, upper,
+									step, digit, p, pos, 6);
+							}
+							else
+							{
+								cur_value = LAW_VAL(Position_start) / 1000.0;
+								digit = 2;
+								pos = 1;
+								unit = UNIT_MM;
+								draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
+
+								gtk_widget_set_sensitive(pp->eventbox30[1],FALSE);
+								gtk_widget_set_sensitive(pp->eventbox31[1],FALSE);
+							}
+
 						}
 						else 
 						{
-							cur_value = LAW_VAL(Angle_max) / 100.0;
-							digit = 1;
-							pos = 1;
-							unit = UNIT_DEG;
-							draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
+							if((LAW_VAL(Focal_point_type)==HALFPATH_P)||(LAW_VAL(Focal_point_type)==DEPTH_P))
+								/*type为half path 或 true depth 时*/
+							{
+								cur_value = LAW_VAL(Position_start) / 1000.0;
+								digit = 2;
+								pos = 1;
+								unit = UNIT_MM;
+								draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
+							}
+							else if((LAW_VAL(Focal_point_type)==PROJECTION_P)||(LAW_VAL(Focal_point_type)==FOCALPLANE_P))
+								/*type 为 projection  或 focal plane 时*/
+							{
+								cur_value = LAW_VAL(Offset_start) / 1000.0;
+								digit = 2;
+								pos = 1;
+								unit = UNIT_MM;
+								draw3_digit_stop (cur_value, units[unit], digit, pos, 6);
+							}
+							else
+							{
+								cur_value = LAW_VAL(Position_start) / 1000.0;
+								digit = 2;
+								pos = 1;
+								unit = UNIT_MM;
+								draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
+
+								gtk_widget_set_sensitive(pp->eventbox30[1],FALSE);
+								gtk_widget_set_sensitive(pp->eventbox31[1],FALSE);
+							}
 						}
 					}
 					else
 					{
-						cur_value = LAW_VAL(Angle_max) / 100.0;
-						digit = 1;
-						pos = 1;
-						unit = UNIT_DEG;
-						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
+						if((LAW_VAL(Focal_point_type)==HALFPATH_P)||(LAW_VAL(Focal_point_type)==DEPTH_P))
+						{
+							cur_value = LAW_VAL(Position_start) / 1000.0;
+							digit = 2;
+							pos = 1;
+							unit = UNIT_MM;
+							draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
+						}
+						else if((LAW_VAL(Focal_point_type)==PROJECTION_P)||(LAW_VAL(Focal_point_type)==FOCALPLANE_P))
+						{
+							cur_value = LAW_VAL(Offset_start) / 1000.0;
+							digit = 2;
+							pos = 1;
+							unit = UNIT_MM;
+							draw3_digit_stop (cur_value, units[unit], digit, pos, 6);
+						}
 						gtk_widget_set_sensitive(pp->eventbox30[1],FALSE);
 						gtk_widget_set_sensitive(pp->eventbox31[1],FALSE);
 					}
@@ -6208,7 +6340,7 @@ void draw3_data1(DRAW_UI_P p)
 							digit = 0;
 							pos = 1;
 							unit = UNIT_NONE;
-							draw3_digit_pressed (data_611, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
+							draw3_digit_pressed (data_631, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 						}
 						else 
 						{
@@ -6219,7 +6351,7 @@ void draw3_data1(DRAW_UI_P p)
 							draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 						}
 					}
-					else /* 聚焦法则自动计算为off时, Firest Element 不可以调节 */
+					else /* 聚焦法则自动计算为off时, First Element 不可以调节 */
 					{
 						cur_value = LAW_VAL(First_tx_elem);
 						digit = 0;
@@ -6387,6 +6519,42 @@ void draw3_data1(DRAW_UI_P p)
 						draw_dialog_all (DIALOG_FILE_OPEN);
 					draw3_popdown(NULL,1,1);
 					break;
+
+				case 1:/*File -> report -> file name p811 */
+					/* 格式化字符串 */
+					g_sprintf (temp,"%s", con2_p[8][1][1]);
+					gtk_label_set_text (GTK_LABEL (pp->label3[1]), temp);
+
+					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
+						update_widget_bg(pp->eventbox30[1], backpic[6]);
+					else
+					{
+						update_widget_bg(pp->eventbox30[1], backpic[7]);
+					}
+
+					gtk_widget_set_size_request (GTK_WIDGET(pp->entry), 115, 29);
+   					gtk_box_pack_start(GTK_BOX (pp->vbox221[1]),pp->entry,FALSE,FALSE,0);
+					gtk_widget_modify_base(GTK_WIDGET (pp->entry), GTK_STATE_NORMAL, &color_text_base);
+					//gtk_widget_modify_text(GTK_WIDGET (pp->entry), GTK_STATE_NORMAL, &color_yellow);
+					gtk_widget_modify_fg(GTK_WIDGET (pp->entry), GTK_STATE_NORMAL, &color_white);
+
+
+
+					//gtk_widget_modify_bg (pp->eventbox30[1], GTK_STATE_NORMAL, &color_button1);
+					//gtk_label_set_text (GTK_LABEL (pp->data3[1]), "Report####");
+					//gtk_widget_modify_bg (pp->eventbox31[1], GTK_STATE_NORMAL, &color_button1);
+
+					/* 显示和隐藏控件 */
+					gtk_widget_show (pp->eventbox30[1]);
+					gtk_widget_hide (pp->eventbox31[1]);
+					gtk_widget_show (GTK_WIDGET (pp->entry));
+					//gtk_widget_show (pp->data3[1]);
+					break;
+
+				case 2:/*File -> format -> probe  p821 */
+					draw3_popdown (menu_content[OFF_ON + CFG(format_probe)], 1, 0);
+					break;
+
 				case 3:/*File -> user field -> enable  p831 */
 					draw3_popdown (menu_content[OFF_ON + CFG(enable)], 1, 0);
 					break;
@@ -8076,47 +8244,106 @@ void draw3_data2(DRAW_UI_P p)
 					}
 					break;
 				case 2:/* 角度扫查的步进 P622 */
-					switch (pp->p_tmp_config->angle_step_reg)
-					{
-						case 0:	tmpf = 0.1; break;
-						case 1:	tmpf = 1.0; break;
-						case 2:	tmpf = 10.0; break;
-						default:break;
-					}
-					if (( LAW_VAL(Focal_type) == AZIMUTHAL_SCAN) &&
-							(CFG(auto_program) == AUTO_FOCAL_ON))
-						/* 角度扫查时开始自动计算聚焦法则时候可以调节 */
+					if(CFG(auto_program) == AUTO_FOCAL_ON)
+						/* 聚焦法则自动计算开启时, Max Angle 才可调节 */
 					{
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 						{
-							cur_value = LAW_VAL (Angle_step) / 100.0;
-							temp_beam = LAW_MAX_QTY - get_beam_qty() + TMP(beam_qty[CFG(groupId)]);
-							lower = MAX (((gint)(LAW_VAL (Angle_max)) - 
-										(gint)(LAW_VAL (Angle_min))) 
-									/ (100.0 * temp_beam), 0.1);
-							upper = 89.9;
-							step = tmpf;
-							digit = 1;
-							pos = 2;
-							unit = UNIT_DEG;
-							draw3_digit_pressed (data_622, units[unit], cur_value,
-									lower, upper, step, digit, p, pos, 0);
+							//if((LAW_VAL(Focal_point_type)==HALFPATH_P)||(LAW_VAL(Focal_point_type)==DEPTH_P))
+							if(LAW_VAL(Focal_type) == 2)
+								/*law type 为 depth sector 时*/
+							{
+								switch (TMP(positione_reg))
+								{
+									case 0:	tmpf = 0.1; break;
+									case 1:	tmpf = 1.0; break;
+									case 2:	tmpf = 10.0; break;
+									default:break;
+								}
+								cur_value = LAW_VAL(Position_end) / 1000.0;
+								lower = 0.1;
+								upper = 10000.0;
+								step = tmpf;
+								digit = 2;
+								pos = 2;
+								unit = UNIT_MM;
+
+								draw3_digit_pressed (data_622, units[unit], cur_value , lower, upper,
+									step, digit, p, pos, 0);
+							}
+							else if(LAW_VAL(Focal_point_type)==FOCALPLANE_P)
+								/*type 为 focal plane 时*/
+							{
+								switch (TMP(offsete_reg))
+								{
+									case 0:	tmpf = 0.5; break;
+									case 1:	tmpf = 5.0; break;
+									case 2:	tmpf = 50.0; break;
+									default:break;
+								}
+								cur_value = LAW_VAL(Offset_end) / 1000.0;
+								lower = 0.1;
+								upper = 10000.0;
+								step = tmpf;
+								digit = 2;
+								pos = 2;
+								unit = UNIT_MM;
+
+								draw3_digit_pressed (data_6221, units[unit], cur_value , lower, upper,
+									step, digit, p, pos, 7);
+							}
+							else
+							{
+								cur_value = LAW_VAL(Position_end) / 1000.0;
+								digit = 2;
+								pos = 2;
+								unit = UNIT_MM;
+								draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
+
+								gtk_widget_set_sensitive(pp->eventbox30[2],FALSE);
+								gtk_widget_set_sensitive(pp->eventbox31[2],FALSE);
+							}
+
 						}
 						else 
 						{
-							cur_value = LAW_VAL (Angle_step) / 100.0;
-							digit = 1;
-							pos = 2;
-							unit = UNIT_DEG;
-							draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
+							if(LAW_VAL(Focal_type) == 2)
+								/*law type 为 depth sector 时*/
+							{
+								cur_value = LAW_VAL(Position_end) / 1000.0;
+								digit = 2;
+								pos = 2;
+								unit = UNIT_MM;
+								draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
+							}
+							else if(LAW_VAL(Focal_point_type)==FOCALPLANE_P)
+								/*type 为 focal plane 时*/
+							{
+								cur_value = LAW_VAL(Offset_end) / 1000.0;
+								digit = 2;
+								pos = 2;
+								unit = UNIT_MM;
+								draw3_digit_stop (cur_value, units[unit], digit, pos, 7);
+							}
+							else
+							{
+								cur_value = LAW_VAL(Position_end) / 1000.0;
+								digit = 2;
+								pos = 2;
+								unit = UNIT_MM;
+								draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
+
+								gtk_widget_set_sensitive(pp->eventbox30[2],FALSE);
+								gtk_widget_set_sensitive(pp->eventbox31[2],FALSE);
+							}
 						}
 					}
 					else
 					{
-						cur_value = LAW_VAL (Angle_step) / 100.0;
-						digit = 1;
+						cur_value = LAW_VAL(Position_end) / 1000.0;
+						digit = 2;
 						pos = 2;
-						unit = UNIT_DEG;
+						unit = UNIT_MM;
 						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 						gtk_widget_set_sensitive(pp->eventbox30[2],FALSE);
 						gtk_widget_set_sensitive(pp->eventbox31[2],FALSE);
@@ -8140,12 +8367,12 @@ void draw3_data2(DRAW_UI_P p)
 						{
 							cur_value = LAW_VAL (Last_tx_elem);
 							lower = LAW_VAL (First_tx_elem) + LAW_VAL (Elem_qty) - 1; 
-							upper = GROUP_VAL (probe.Elem_qty) - LAW_VAL (Elem_step);
+							upper = GROUP_VAL (probe.Elem_qty);
 							step = tmpf;
 							digit = 0;
 							pos = 2;
 							unit = UNIT_NONE;
-							draw3_digit_pressed (data_612, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
+							draw3_digit_pressed (data_632, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 						}
 						else 
 						{
@@ -9736,6 +9963,115 @@ void draw3_data3(DRAW_UI_P p)
 					}
 					break;
 				case 2:/* 聚焦深度 线扫   聚焦声程 角度扫查 P623 */
+					if(CFG(auto_program) == AUTO_FOCAL_ON)
+						/* 聚焦法则自动计算开启时, Max Angle 才可调节 */
+					{
+						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
+						{
+							if(LAW_VAL(Focal_type) == 2)
+								/*law type 为 depth sector 时*/
+							{
+								switch (TMP(positionstep_reg))
+								{
+									case 0:	tmpf = 0.1; break;
+									case 1:	tmpf = 1.0; break;
+									case 2:	tmpf = 10.0; break;
+									default:break;
+								}
+								cur_value = LAW_VAL(Position_step) / 1000.0;
+								lower = 0.1;
+								upper = 10000.0;
+								step = tmpf;
+								digit = 2;
+								pos = 3;
+								unit = UNIT_MM;
+
+								draw3_digit_pressed (data_623, units[unit], cur_value , lower, upper,
+									step, digit, p, pos, 0);
+							}
+							else if(LAW_VAL(Focal_point_type)==FOCALPLANE_P)
+								/*type 为 focal plane 时*/
+							{
+								switch (TMP(depths_reg))
+								{
+									case 0:	tmpf = 0.5; break;
+									case 1:	tmpf = 5.0; break;
+									case 2:	tmpf = 50.0;break;
+									default:break;
+								}
+								cur_value = LAW_VAL(Depth_start) / 1000.0;
+								lower = 0.1;
+								upper = 10000.0;
+								step = tmpf;
+								digit = 2;
+								pos = 3;
+								unit = UNIT_MM;
+
+								draw3_digit_pressed (data_6231, units[unit], cur_value , lower, upper,
+									step, digit, p, pos, 8);
+							}
+							else
+							{
+								cur_value = LAW_VAL(Position_step) / 1000.0;
+								digit = 2;
+								pos = 3;
+								unit = UNIT_MM;
+								draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
+
+								gtk_widget_set_sensitive(pp->eventbox30[3],FALSE);
+								gtk_widget_set_sensitive(pp->eventbox31[3],FALSE);
+							}
+						}
+						else
+						{
+							if(LAW_VAL(Focal_type) == 2)
+								/*law type 为 depth sector 时*/
+							{
+								cur_value = LAW_VAL(Position_step) / 1000.0;
+								digit = 2;
+								pos = 3;
+								unit = UNIT_MM;
+								draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
+							}
+							else if(LAW_VAL(Focal_point_type)==FOCALPLANE_P)
+								/*type 为 focal plane 时*/
+							{
+								cur_value = LAW_VAL(Depth_start) / 1000.0;
+								lower = 0.1;
+								upper = 10000.0;
+								step = tmpf;
+								digit = 2;
+								pos = 3;
+								unit = UNIT_MM;
+								draw3_digit_stop (cur_value, units[unit], digit, pos, 8);
+							}
+							else
+							{
+								cur_value = LAW_VAL(Position_step) / 1000.0;
+								digit = 2;
+								pos = 3;
+								unit = UNIT_MM;
+								draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
+
+								gtk_widget_set_sensitive(pp->eventbox30[3],FALSE);
+								gtk_widget_set_sensitive(pp->eventbox31[3],FALSE);
+							}
+						}
+					}
+					else
+					{
+							cur_value = LAW_VAL(Position_step) / 1000.0;
+							digit = 2;
+							pos = 3;
+							unit = UNIT_MM;
+							draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
+
+							gtk_widget_set_sensitive(pp->eventbox30[3],FALSE);
+							gtk_widget_set_sensitive(pp->eventbox31[3],FALSE);
+					}
+					break;
+
+# if 0
 					switch (TMP(focus_depth_reg))
 					{
 						case 0:	tmpf = 0.1; break;
@@ -9811,6 +10147,7 @@ void draw3_data3(DRAW_UI_P p)
 						gtk_widget_set_sensitive(pp->eventbox31[3],FALSE);
 					}
 					break;
+#endif
 				case 3:/* 阵元步进 线扫时候用 P633 */
 					switch (pp->p_tmp_config->element_step_reg)
 					{
@@ -9831,7 +10168,7 @@ void draw3_data3(DRAW_UI_P p)
 							digit = 1;
 							pos = 3;
 							unit = UNIT_NONE;
-							draw3_digit_pressed (data_613, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
+							draw3_digit_pressed (data_633, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 						}
 						else 
 						{
@@ -9853,7 +10190,7 @@ void draw3_data3(DRAW_UI_P p)
 						gtk_widget_set_sensitive(pp->eventbox31[3],FALSE);
 					}
 					break;
-				case 4: /* 计算聚焦法则 P634 */
+				case 4: /* 计算聚焦法则 P643 */
 					draw3_popdown (NULL, 3, 1);
 					if (CFG(auto_program) == AUTO_FOCAL_OFF)
 					{
@@ -11154,10 +11491,57 @@ void draw3_data4(DRAW_UI_P p)
 						gtk_widget_set_sensitive(pp->eventbox31[4],FALSE);
 					}
 					break;
-				case 2:
-					if ( !con2_p[6][2][4] )
-						gtk_widget_hide (pp->eventbox30[4]);
-					gtk_widget_hide (pp->eventbox31[4]);
+				case 2:	/*p624*/
+					switch (TMP(depthe_reg))
+					{
+						case 0:	tmpf = 0.5; break;
+						case 1:	tmpf = 5.0; break;
+						case 2:	tmpf = 50.0; break;
+						default:break;
+					}
+					if((LAW_VAL(Focal_point_type)==HALFPATH_P)||(LAW_VAL(Focal_point_type)==DEPTH_P))
+					{
+						gtk_widget_hide(pp->eventbox30[4]);
+						gtk_widget_hide(pp->eventbox31[4]);
+					}
+					else
+					{
+						if ((CFG(auto_program) == AUTO_FOCAL_ON)&&(LAW_VAL(Focal_point_type)==FOCALPLANE_P))
+						{
+							if((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
+							{
+								cur_value = LAW_VAL(Depth_end) / 1000.0;
+								lower = 0.1;
+								upper = 10000.0;
+								step = tmpf;
+								digit = 2;
+								pos = 4;
+								unit = UNIT_MM;
+
+								draw3_digit_pressed (data_624, units[unit], cur_value , lower, upper,
+														step, digit, p, pos, 0);
+							}
+							else
+							{
+								cur_value = LAW_VAL(Depth_end) / 1000.0;
+								digit = 2;
+								pos = 4;
+								unit = UNIT_MM;
+								draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
+							}
+						}
+						else
+						{
+								cur_value = LAW_VAL(Depth_end) / 1000.0;
+								digit = 2;
+								pos = 4;
+								unit = UNIT_MM;
+								draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
+								gtk_widget_set_sensitive(pp->eventbox30[4],FALSE);
+								gtk_widget_set_sensitive(pp->eventbox31[4],FALSE);
+						}
+
+					}
 					break;
 				case 3:
 					if ( !con2_p[6][3][4] )
@@ -12579,6 +12963,7 @@ void draw_3_menu(gint pa, gpointer p)
 		gtk_widget_hide (pp->button_add);
 		gtk_widget_hide (pp->button_sub);
 		gtk_widget_hide (pp->vscale);
+		gtk_widget_hide (GTK_WIDGET (pp->entry));
 		//gtk_widget_set_size_request (GTK_WIDGET(pp->drawing_area), 658, 390);
 	}
 	switch (CUR_POS)
@@ -12970,17 +13355,10 @@ static gboolean time_handler2(GtkWidget *widget)
 void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 {
 	gint i;
-	gchar buf[128];
 	GtkWidget *window = p->window;
 	gchar *markup;
 	pp->pos_pos = MENU3_STOP;
 	pp->menu2_qty = 5;
-
-	for (i = 0; i < 512; i++) 
-	{
-		a[i].x =  i;
-		a[i].y =  i;
-	}
 
 	/* New a window */
 	p->pos	= 1;
@@ -12993,9 +13371,9 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 	p->vbox12		= gtk_vbox_new(FALSE, 0);
 	p->hbox121		= gtk_hbox_new(FALSE, 0);	
 	p->hbox111		= gtk_hbox_new(FALSE, 0);	
-	p->vbox1111[0]	        = gtk_vbox_new(FALSE, 0);	
-	p->vbox1111[1]   	= gtk_vbox_new(FALSE, 0);	
-	p->vbox1111[2]  	= gtk_vbox_new(FALSE, 0);	
+	p->vbox1111[0]	= gtk_vbox_new(FALSE, 0);	
+	p->vbox1111[1]  = gtk_vbox_new(FALSE, 0);	
+	p->vbox1111[2]  = gtk_vbox_new(FALSE, 0);	
 	p->hbox112		= gtk_hbox_new(FALSE, 0);	
 
 	p->hbox2		= gtk_hbox_new(FALSE, 0);	
@@ -13003,6 +13381,7 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 	p->hbox211		= gtk_hbox_new(FALSE, 0);
 	p->vboxtable            = gtk_vbox_new(FALSE, 0);
 	p->sw			= gtk_scrolled_window_new(NULL, NULL);
+	pp->entry 		= gtk_entry_new();
 
 
 	//	p->vbox2111		= gtk_vbox_new(FALSE, 0);	
@@ -13021,10 +13400,6 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 		gtk_container_add(GTK_CONTAINER(p->event[i]), p->label[i]);
 		gtk_container_set_border_width( GTK_CONTAINER(pp->event[i]), 0);     /*设置边框大小，这个地方使用图片*/
 	}
-
-	widget_window_class = GTK_WIDGET_GET_CLASS (((GtkObject*)(pp->window))); 
-	// 取代原來的處理函式
-	window_keypress_event_orig = widget_window_class->key_press_event; 
 
 	/*
 	   pp->button = gtk_button_new_with_label(" ");
@@ -13054,8 +13429,10 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(p->menuitem_main), p->menu);/*最后把菜单menu1粘到菜单项menuitem1上*/
 	gtk_box_pack_start(GTK_BOX(p->hbox212), p->menubar, FALSE, FALSE, 0);
 	/*g_object_set (p->menubar, "pack-direction", GTK_PACK_DIRECTION_LTR, NULL); */
+
 	g_signal_connect (pp->menu, "key-press-event", 
 			G_CALLBACK(key_press_handler), (gpointer) (MAIN_MENU_PRESS));
+
 	g_signal_connect (pp->menuitem_main, "button-press-event", 
 			G_CALLBACK(main_menu_press), NULL);
 	gtk_widget_show(p->menubar);
@@ -13093,6 +13470,7 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 		pp->adj = (GtkAdjustment *) gtk_adjustment_new (10.0, 0.0, 74.0, 0.1, 10.0, 0.0);
 		pp->sbutton[i] = gtk_spin_button_new (pp->adj, 0, 1);
 
+
 		gtk_widget_set_size_request(GTK_WIDGET(p->eventbox30[i]), 114, 60);           /* 配置名称*/
 		gtk_widget_set_size_request(GTK_WIDGET(p->eventbox31[i]), 114, 25);           /* 标签 */
 		gtk_widget_set_size_request(GTK_WIDGET(p->sbutton[i]), 114, 25);           /* 标签 */
@@ -13129,30 +13507,9 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 		g_signal_connect (pp->menu33[i], "key-press-event", 
 				G_CALLBACK(key_press_handler) ,(gpointer)(i + 2));
 	}
+
 	for ( i = 0; i < 30; i++)
 		pp->menu_item3[i] = NULL;
-
-	for ( i = 0; i < 4; i++)
-	{
-		sprintf (buf, "Test-doppler- %d", i);
-
-		pp->menu_item3[i] = gtk_menu_item_new_with_label(buf);
-
-		gtk_menu_shell_append (GTK_MENU_SHELL (pp->menu3), pp->menu_item3[i]);
-
-		//		g_signal_connect_swapped (menu_items[i], "activate", 
-		//				G_CALLBACK(menuitem_respnse), (gpointer) g_strdu(buf));
-		gtk_widget_show(pp->menu_item3[i]);
-	}
-	pp->root_menu3 = gtk_menu_item_new_with_label ("TAN");
-
-	gtk_menu_item_set_submenu (GTK_MENU_ITEM (pp->root_menu3), pp->menu3);
-//	g_signal_connect (pp->menu3, "key-press-event", 
-//			G_CALLBACK(key_press_handler) ,(gpointer)(MENU3_PRESS));
-
-	pp->menu_bar3 = gtk_menu_bar_new ();
-	gtk_menu_shell_append (GTK_MENU_SHELL (pp->menu_bar3) , pp->root_menu3);
-
 
 	/* 各box的包含关系*/
 	gtk_container_add(GTK_CONTAINER(window), p->vbox);
@@ -13325,6 +13682,9 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 	draw_area_all ();
 	gtk_widget_show_all (p->hbox2); /* 画图区域 及 button 的显示 */
 
+	widget_window_class = GTK_WIDGET_GET_CLASS (((GtkObject*)(pp->window))); 
+	window_keypress_event_orig = widget_window_class->key_press_event; 
+
 	/* 弹出菜单 是否透明 waiting */
 	pp->dialog = gtk_dialog_new_with_buttons("TanDenghua", GTK_WINDOW (pp->window),
 			/*			GTK_DIALOG_MODAL| */  /* 独占窗口 */
@@ -13332,18 +13692,14 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 			GTK_DIALOG_NO_SEPARATOR,
 			GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
 
-//	widget_window_class1 = GTK_WIDGET_GET_CLASS (((GtkObject*)(pp->dialog))); 
-//	widget_window_class1->key_press_event =	my_keypress_event;
-
-//	widget_window_class1 = GTK_WIDGET_GET_CLASS (((GtkObject*)(pp->dialog))); 
-//	widget_window_class1->key_press_event = gtk_entry_digit_only_keypress_event; /* 指定哪些字符输入 */
+	dialog_window_class = GTK_WIDGET_GET_CLASS (((GtkObject*)(pp->dialog))); 
+	dialog_keypress_event_orig = dialog_window_class->key_press_event; 
 
 	gtk_window_set_decorated (GTK_WINDOW (pp->dialog), FALSE);			/*不可以装饰*/
 	gtk_container_set_border_width( GTK_CONTAINER (GTK_DIALOG(pp->dialog)->vbox), 0);     /* */
 	gtk_widget_show (GTK_DIALOG(pp->dialog)->vbox);
 	//	gtk_widget_show (pp->dialog);
 	gtk_widget_hide (GTK_DIALOG(pp->dialog)->action_area);
-
 
 	/* scale 上面的透明条 */
 	pp->scale_drawarea = gtk_drawing_area_new();
@@ -13388,6 +13744,8 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 		gtk_box_pack_start (GTK_BOX (p->vbox22), p->vbox221[i], FALSE, FALSE, 0);
 		gtk_widget_show(p->vbox221[i]);
 	}
+
+	change_keypress_event (KEYPRESS_MAIN);
 
 	draw_1_menu(p);
 	draw_2_menu(1);

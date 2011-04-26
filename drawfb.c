@@ -15,12 +15,22 @@
 
 #define COLOR_STEP 32     //    4  8  16  32  64
 #define COLOR_SHIFT 5     //    2  3   4   5   6
-static gchar* pDraw  = NULL;          // 是否扇形区域 
-static guchar* pAngleZoom = NULL; // 处于哪个角度区间 
-static guchar* pDrawRate = NULL; // 填充比例 
-static gint*  pDataNo = NULL; // 数据在数组中的列号 
+static gchar*	pDraw  = NULL;          // 是否扇形区域 
+static guchar*	pAngleZoom = NULL; // 处于哪个角度区间 
+static guchar*	pDrawRate = NULL; // 填充比例 
+static gint*	pDataNo = NULL; // 数据在数组中的列号 
 
-gfloat	HEIGHT_TABLE[256]=
+static gushort all_col_16[] =
+{
+	0x001f,				/* 蓝色 */
+	0x03e0,				/* 绿色 */
+	0xf800,				/* 红色 */
+	0xffe0,				/* 黄色 */
+	0x0000,				/* 黑色 */
+	0xffff				/* 白色 */		
+};
+
+static gfloat HEIGHT_TABLE[256]=
 {
 	1.000000,0.996078,0.992157,0.988235,0.984314,0.980392,0.976471,0.972549,
 	0.968627,0.964706,0.960784,0.956863,0.952941,0.949020,0.945098,0.941176,

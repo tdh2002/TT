@@ -61,8 +61,6 @@ extern GdkColor	color_red;
 extern GdkColor	color_text_base;
 extern GdkColor color_rule;
 
-extern gushort	all_col_16[];
-
 #define	COLOR_BLACK	4
 #define	COLOR_WHITE	5
 #define	COLOR_YELLOW	3
@@ -216,13 +214,13 @@ typedef struct law_info
 	gushort	law_index_start;	/* 聚焦法则索引 计算出来的 */
 	gushort law_index_end;		/*  */
 	guint	Focus_depth;		/* 扇扫时候为声程 线扫是深度 0.001mm为单位 */
-	gint	Position_start;
-	gint	Position_end;
+	guint	Position_start;
+	guint	Position_end;
 	guint	Position_step;
-	gint	Offset_start;
-	gint	Depth_start;
-	gint	Offset_stop;
-	gint	Depth_stop;
+	guint	Offset_start;
+	guint	Depth_start;
+	guint	Offset_end;
+	guint	Depth_end;
 } LAW_INFO, *LAW_INFO_P;
 
 /*  */
@@ -639,7 +637,14 @@ typedef struct tmp_config {
 
 
 	guchar   min_angle_reg;		
-	guchar   max_angle_reg;		
+	guchar   max_angle_reg;	
+	guchar   positions_reg;	
+	guchar   offsets_reg;
+	guchar   positione_reg;	
+	guchar	 positionstep_reg;
+	guchar	 depths_reg;
+	guchar	 depthe_reg;
+	guchar   offsete_reg;		
 	guchar   angle_step_reg;
 	guchar   beam_skew_min_angle_reg;
 	guchar   beam_skew_max_angle_reg;
@@ -797,6 +802,7 @@ typedef struct Draw_interface {
 
 	GtkWidget		*eventbox30[6];                 /* */
 	GtkWidget		*eventbox31[6];     /* 三级菜单 二个 eventbox + 一个lable + 一个data + 一个 spinbutton data和spinbutton同时只能有一个显示*/
+	GtkWidget		*entry;
 	GtkWidget		*label3[6];         /* data 是lable   */
 	GtkWidget		*data3[6];			/* */
 	GtkWidget		*eventbox32[6];                 /* */
