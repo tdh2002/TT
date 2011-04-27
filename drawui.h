@@ -333,6 +333,7 @@
 #define POINT_POS_DSP		0x3025
 
 extern gint (*window_keypress_event_orig)(GtkWidget *widget, GdkEventKey *event);
+extern gint (*dialog_keypress_event_orig)(GtkWidget *widget, GdkEventKey *event);
 extern gint my_keypress_event(GtkWidget *widget, GdkEventKey *event);
 extern GtkWidgetClass *widget_window_class;
 extern GtkWidgetClass *dialog_window_class;									/* 主windows class */

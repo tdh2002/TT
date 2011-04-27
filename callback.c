@@ -30,9 +30,11 @@ guint get_pw ();
 guint get_prf ();
 guint get_filter ();
 
+/* 输入数字时候的其他快捷键 */
 static guint key_fast_map[] =
 {
-	GDK_Return, GDK_Escape, GDK_F1
+	GDK_Return, GDK_Escape, GDK_F1, GDK_F2, GDK_F2, GDK_F3, GDK_F4, GDK_F5, GDK_F6, 
+	GDK_F7, GDK_F8, GDK_F9, GDK_F10, GDK_F11, GDK_F12, GDK_Super_L
 };
 
 gboolean data_function0 (GtkWidget *widget,	GdkEventButton *event,	gpointer       data);
@@ -1879,6 +1881,7 @@ static gint keypress_event_main_entry(GtkWidget *widget, GdkEventKey *event)			/
 static gint keypress_event_dialog(GtkWidget *widget, GdkEventKey *event)			/* 自己的按键处理*/
 {
 	g_print("dialog press\n");
+	return dialog_keypress_event_orig (widget, event); 
 	return 0;
 }
 

@@ -675,9 +675,9 @@ static void da_call_wedge (GtkDialog *dialog, gint response_id, gpointer user_da
 		}
 		else
 		{
-			if (pp->tag == 0)/*探头大类选择Unknow时*/
+			if (pp->tag == 0)/* 楔块大类选择Unknow时*/
 			{
-				strcpy(GROUP_VAL(probe.Model), " Unknown");
+				strcpy(GROUP_VAL(wedge.Model), " Unknown");
 				gtk_label_set_text (GTK_LABEL (pp->data3[4]), GROUP_VAL(wedge.Model));
 				gtk_widget_destroy (GTK_WIDGET (dialog));			
 			}
