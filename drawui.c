@@ -4533,11 +4533,11 @@ void draw3_data0(DRAW_UI_P p)
 							default:break;
 						}
 						draw3_pop_tt (data_500, NULL, 
-								menu_content[GROUP_P + CFG(group_pos)],
-								menu_content + GROUP_P, 10, 0, CFG(group_pos), menu_status);
+								menu_content[GROUP_P + CFG(groupId) + 1],
+								menu_content + GROUP_P, 10, 0, CFG(groupId) + 1, menu_status);
 					}
 					else 
-						draw3_popdown (menu_content[GROUP_P + CFG(group_pos)], 0, 0);
+						draw3_popdown (menu_content[GROUP_P + CFG(groupId) + 1], 0, 0);
 					break;
 				case 1:/* Scan Offset  P510 */
 					switch (TMP(scanoffset_reg))
@@ -9877,20 +9877,14 @@ void draw3_data3(DRAW_UI_P p)
 							draw3_digit_stop (cur_value , units[unit], digit, pos, 0);
 						}
 					break;
-
-
-				case 3:/*Probe/Part -> parts -> material  p533 */
-					pp->x_pos = 563, pp->y_pos = 370-YOFFSET;
+				case 3:/* 选择被测材料类型 P533 */
+					pp->x_pos = 520, pp->y_pos = 140 - YOFFSET;
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 						draw3_pop_tt (data_533, NULL, 
-								menu_content[MATERIAL + CFG(part.Material)],
-								menu_content+MATERIAL, 7, 3, CFG(part.Material), 0);
+								menu_content[MATERIAL + CFG(part.Material_pos)],
+								menu_content+MATERIAL, 24, 3, CFG(part.Material_pos), 0);
 					else 
-						draw3_popdown (menu_content[MATERIAL + CFG(part.Material)], 3, 0);
-
-					gtk_widget_set_sensitive(pp->eventbox30[3],FALSE);
-					gtk_widget_set_sensitive(pp->eventbox31[3],FALSE);
-
+						draw3_popdown (menu_content[MATERIAL + CFG(part.Material_pos)], 3, 0);
 					break;
 				case 4:
 					if ( !con2_p[5][4][3] )

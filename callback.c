@@ -5,6 +5,7 @@
 
 #include "drawui.h"
 #include "drawuif.h"		/* 计算聚焦法则的头文件 */
+#include "base_config.h"
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
@@ -481,7 +482,7 @@ gboolean (*eventbox2_fun[5])(GtkWidget *widget, GdkEventButton *event, gpointer 
 guint	get_beam_qty()
 {
 	guint i, beam_qty = 0;
-	for (i = 0; i < MAX_GROUP_QTY; i++)
+	for (i = 0; i < setup_MAX_GROUP_QTY; i++)
 		beam_qty += TMP(beam_qty[i]);
 	return beam_qty;
 }
@@ -3487,7 +3488,6 @@ void data_500 (GtkMenuItem *menuitem, gpointer data) /* 增加删除选择group 
 		case 6:
 		case 7:
 		case 8:
-			   CFG(group_pos) = temp;
 			   /* 把参数切换到当前选择的group 未完成 */
 			   CFG(groupId)	= temp - 1;
 			   break;
@@ -3595,7 +3595,7 @@ void data_532 (GtkSpinButton *spinbutton, gpointer data) /*part_thickness*/
 
 void data_533 (GtkMenuItem *menuitem, gpointer data) /* Probe/Part -> Parts -> Material 533 */
 {
-	CFG(part.Material) = (guchar) (GPOINTER_TO_UINT (data));
+	CFG(part.Material_pos) = (guchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
 }

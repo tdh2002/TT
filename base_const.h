@@ -14,6 +14,25 @@
 #ifndef __BASE_const_H_
 #define __BASE_const_H_
 
+/* language choose 语言选择 */
+#define ENGLISH_	0
+#define CHINESE_	1
+
+/* version 版本信息 */
+#define VERSION "DP1.0.0.0"
+
+/* GROUP qty 数量 */
+#define setup_MAX_GROUP_QTY	8
+
+
+
+
+
+
+
+
+
+
 /* Range of availage voltage (sPulseVoltagePA). 相控发射电压 */
 #define setup_VOLTAGE_MIN_PA   0x100 
 #define	setup_VOLTAGE_MED_PA   0x101 

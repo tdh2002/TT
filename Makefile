@@ -2,9 +2,9 @@
 CC=gcc
 PROG_NAME=main
 INCS=base_const.h callback.h drawfb.h file_op.h main.h \
-base.h content_en.h drawui.h language.h
+base.h content_en.h drawui.h language.h	base_config.h
 
-SRCS=callback.c content_en.c drawfb.c drawui.c file_op.c main.c
+SRCS=callback.c content_en.c drawfb.c drawui.c file_op.c main.c base_config.c
 
 # 从xx.c 文件得到 xx.o 文件
 OBJS=${SRCS:.c=.o}

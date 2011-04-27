@@ -76,7 +76,7 @@ void init_fb ()
 	}
 	
 	TMP(fb1_addr) = (gushort *)
-		mmap(NULL, 10 * 1024 * 1024, PROT_READ | PROT_WRITE, MAP_SHARED, fd_fb, 0);
+		mmap(NULL, 2 * 1024 * 1024, PROT_READ | PROT_WRITE, MAP_SHARED, fd_fb, 0);
 
 	g_print ("fb1 video addr:%p %p", TMP(fb1_addr), TMP(virtual_add));
 	return ;

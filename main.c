@@ -38,15 +38,14 @@ GdkColor	all_col[] =
 #endif
 
 DRAW_UI_P	pp;					
-Display *disp ;
-FakeKey *fk;
+Display		*disp ;
+FakeKey		*fk;
 
 /* 测试用的初始值 */
 static void set_config (guint groupid)
 {
 	CFG(groupQty)	= 1;
 	CFG(groupId)	= groupid;
-	CFG(group_pos)	= 1;
 	GROUP_VAL(group_mode) = PA_SCAN;
 	CFG(probe_select)=0;
 	GROUP_VAL(scan_offset)=0;
