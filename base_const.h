@@ -24,8 +24,8 @@
 /* GROUP qty 数量 */
 #define setup_MAX_GROUP_QTY	8
 
-
-
+/* velocity of materials 各种材料的速度 */
+#define VELOCITY_AL	6400	/* 铝的速度 */
 
 
 

@@ -227,6 +227,7 @@ void data_630 (GtkSpinButton *spinbutton, gpointer data);
 void data_631 (GtkSpinButton *spinbutton, gpointer data);
 void data_632 (GtkSpinButton *spinbutton, gpointer data);
 void data_633 (GtkSpinButton *spinbutton, gpointer data);
+void data_634 (GtkMenuItem *menuitem, gpointer data);
 
 void data_700 (GtkMenuItem *menuitem, gpointer data);
 void data_701 (GtkMenuItem *menuitem, gpointer data);
@@ -3596,6 +3597,7 @@ void data_532 (GtkSpinButton *spinbutton, gpointer data) /*part_thickness*/
 void data_533 (GtkMenuItem *menuitem, gpointer data) /* Probe/Part -> Parts -> Material 533 */
 {
 	CFG(part.Material_pos) = (guchar) (GPOINTER_TO_UINT (data));
+	parse_material_info (CFG(part.Material_pos), &(CFG (part.Material)));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
 }
@@ -3736,9 +3738,22 @@ void data_632 (GtkSpinButton *spinbutton, gpointer data)
 {
 	LAW_VAL(Last_tx_elem) =  (guchar) (gtk_spin_button_get_value (spinbutton));
 }
+
 void data_633 (GtkSpinButton *spinbutton, gpointer data) /*element_step*/
 {
 	LAW_VAL(Elem_step) =  (guchar) (gtk_spin_button_get_value (spinbutton));
+}
+
+/* focalpoint 聚焦点计算方法 P620 */
+void data_634 (GtkMenuItem *menuitem, gpointer data) 
+{
+	guint temp = (guchar) (GPOINTER_TO_UINT (data));
+	if (temp == 0)
+		GROUP_VAL (velocity) = get_material_lw (&(CFG (part.Material)));
+	else if (temp == 1) 
+		GROUP_VAL (velocity) = get_material_sw (&(CFG (part.Material)));
+	pp->pos_pos = MENU3_STOP;
+	draw_3_menu(0, NULL);
 }
 
 void data_700 (GtkMenuItem *menuitem, gpointer data) /* Encoder */

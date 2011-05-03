@@ -256,7 +256,7 @@ static const gchar *content_en262[] = {
 
 static const gchar *content_en263[] = {
 	/* 二级菜单第6页下的第3页三级菜单 */
-	"Element Qty.", "First Element", "Last Element", "Element Step", NULL, NULL
+	"Element Qty.", "First Element", "Last Element", "Element Step", "Wave Type", NULL
 };
 
 static const gchar *content_en264[] = {

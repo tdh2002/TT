@@ -236,6 +236,14 @@ static void set_config (guint groupid)
 	LAW_VAL(law_index_start)= 0;
 	LAW_VAL(law_index_end)	= 1;
 
+	/* 材料 */
+
+	parse_material_info(0, &CFG(part.Material));
+
+
+	TMP(velocity_data_p[0]) =  TMP(velocity_data[0]);
+	TMP(velocity_data_p[1]) =  TMP(velocity_data[1]);
+	TMP(velocity_data_p[2]) =  TMP(velocity_data[2]);
 }
 
 /* You have to start somewhere */
@@ -315,6 +323,8 @@ int main (int argc, char *argv[])
 	}
 
 	/*	write(p_ui->p_tmp_config->fd_config, (void*)(p_ui->p_config), sizeof(CONFIG));*/
+
+	print_material_info (&CFG(part.Material));
 
 	TMP(a_scan_width)	= 615;
 	TMP(a_scan_dot_qty)	= 615;

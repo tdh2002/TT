@@ -225,6 +225,8 @@ typedef struct tmp_config
 	guint	scan_xpos[16];
 	guint	scan_ypos[16];
 
+	gchar	velocity_data[3][20];
+	gchar	*velocity_data_p[3];
 
 	gint	fd_config;
 } TMP_CONFIG, *TMP_CONFIG_P;

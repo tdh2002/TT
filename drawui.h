@@ -544,6 +544,7 @@ extern void data_630 (GtkSpinButton *spinbutton, gpointer data);
 extern void data_631 (GtkSpinButton *spinbutton, gpointer data);
 extern void data_632 (GtkSpinButton *spinbutton, gpointer data);
 extern void data_633 (GtkSpinButton *spinbutton, gpointer data);
+extern void data_634 (GtkMenuItem *menuitem, gpointer data);
 
 extern void data_700 (GtkMenuItem *menuitem, gpointer data);
 extern void data_701 (GtkMenuItem *menuitem, gpointer data);
