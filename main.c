@@ -238,7 +238,7 @@ static void set_config (guint groupid)
 
 	/* 材料 */
 
-	parse_material_info(0, &CFG(part.Material));
+	parse_material_info(pp->p_config);
 
 
 	TMP(velocity_data_p[0]) =  TMP(velocity_data[0]);
@@ -324,7 +324,7 @@ int main (int argc, char *argv[])
 
 	/*	write(p_ui->p_tmp_config->fd_config, (void*)(p_ui->p_config), sizeof(CONFIG));*/
 
-	print_material_info (&CFG(part.Material));
+	print_material_info (&(pp->p_config));
 
 	TMP(a_scan_width)	= 615;
 	TMP(a_scan_dot_qty)	= 615;

@@ -1912,6 +1912,11 @@ void b3_fun5(gpointer p)
 	return ;
 }
 
+static gint keypress_event_main_bak(GtkWidget *widget, GdkEventKey *event)			/* 自己的按键处理*/
+{
+	return window_keypress_event_orig (widget, event); 
+}
+
 static gint keypress_event_main(GtkWidget *widget, GdkEventKey *event)			/* 自己的按键处理*/
 {
 	g_print("main press\n");
@@ -1947,6 +1952,17 @@ static gint keypress_event_main_entry(GtkWidget *widget, GdkEventKey *event)			/
 static gint keypress_event_dialog(GtkWidget *widget, GdkEventKey *event)			/* 自己的按键处理*/
 {
 	g_print("dialog press\n");
+	guint i, keyval = event->keyval;
+
+	switch (keyval)
+	{
+		case GDK_Return:
+			gtk_dialog_response (GTK_DIALOG(widget), GTK_RESPONSE_OK);
+			return 0;
+			break;
+		default:break;
+	}
+
 	return dialog_keypress_event_orig (widget, event); 
 	return 0;
 }
@@ -1985,6 +2001,7 @@ void change_keypress_event(gint window_type)
 			widget_window_class->key_press_event = keypress_event_main_entry;
 			break;
 		case KEYPRESS_DIALOG:
+			widget_window_class->key_press_event = keypress_event_main_bak;
 			dialog_window_class->key_press_event = keypress_event_dialog;
 			break;
 		case KEYPRESS_DIALOG_SPINBUTTON:
@@ -3674,10 +3691,11 @@ void data_532 (GtkSpinButton *spinbutton, gpointer data) /*part_thickness*/
 		CFG(part.Diameter) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 / 0.03937 );
 }
 
-void data_533 (GtkMenuItem *menuitem, gpointer data) /* Probe/Part -> Parts -> Material 533 */
+/* P533 选择被测物的材料 */
+void data_533 (GtkMenuItem *menuitem, gpointer data) 
 {
 	CFG(part.Material_pos) = (guchar) (GPOINTER_TO_UINT (data));
-	parse_material_info (CFG(part.Material_pos), &(CFG (part.Material)));
+	parse_material_info (pp->p_config);
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
 }
@@ -3830,9 +3848,9 @@ void data_634 (GtkMenuItem *menuitem, gpointer data)
 {
 	guint temp = (guchar) (GPOINTER_TO_UINT (data));
 	if (temp == 0)
-		GROUP_VAL (velocity) = get_material_lw (&(CFG (part.Material)));
+		GROUP_VAL (velocity) = get_material_lw (pp->p_config);
 	else if (temp == 1) 
-		GROUP_VAL (velocity) = get_material_sw (&(CFG (part.Material)));
+		GROUP_VAL (velocity) = get_material_sw (pp->p_config);
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
 }

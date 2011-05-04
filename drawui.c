@@ -623,6 +623,7 @@ static void da_call_probe (GtkDialog *dialog, gint response_id, gpointer user_da
 			gtk_label_set_text (GTK_LABEL (pp->data3[3]), GROUP_VAL(probe.Model));
 
 			gtk_widget_destroy (GTK_WIDGET (dialog));
+			change_keypress_event (KEYPRESS_MAIN);
 		}
 		else
 		{
@@ -641,18 +642,29 @@ static void da_call_probe (GtkDialog *dialog, gint response_id, gpointer user_da
 				gtk_label_set_text (GTK_LABEL (pp->data3[3]), GROUP_VAL(probe.Model));
 
 				gtk_widget_destroy (GTK_WIDGET (dialog));			
+				change_keypress_event (KEYPRESS_MAIN);
 			}
 			else 
 			{	
 				if (gtk_tree_model_get_iter_first (model, &iter))/*用model中的第一项初始化iter*/
+				{
 					gtk_tree_selection_select_iter(pp->selection1, &iter);/*选择&iter指定的那项*/
-				else
+					gtk_widget_grab_focus (pp->sw1);
+				}
+				else 
+				{
 					gtk_widget_destroy (GTK_WIDGET (dialog));
+					change_keypress_event (KEYPRESS_MAIN);
+				}
 			}
 		}
 	}
 	else if (GTK_RESPONSE_CANCEL == response_id) /* 取消 */
+	{
 		gtk_widget_destroy (GTK_WIDGET (dialog));
+		change_keypress_event (KEYPRESS_MAIN);
+	}
+
 }
 
 /* Wedge 选择楔块2个按键的处理 一个是确认 一个是取消 */
@@ -1307,6 +1319,9 @@ static void draw_probe ()
 
 	sw = gtk_scrolled_window_new (NULL, NULL);
 	sw1 = gtk_scrolled_window_new ( NULL, NULL);
+	pp->sw11 = sw;
+	pp->sw1 = sw1;
+
 	/* 目录名字 探头大类 */
 	gtk_widget_set_size_request (sw, 200, 230);
 	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW(sw),
@@ -3074,6 +3089,7 @@ static void draw_dialog_all (guint type)
 {
 
 	change_keypress_event (KEYPRESS_DIALOG);
+	pp->dialog_pos = type;
 	switch (type)
 	{
 		case DIALOG_REMARK: draw_remark(); break;
@@ -3090,7 +3106,7 @@ static void draw_dialog_all (guint type)
 		case DIALOG_FILE_MANAGE:	draw_file_manage(); break;
 		case DIALOG_LAW_SAVE:	draw_law_save();break;
 		case DIALOG_LAW_READ:	draw_law_read();break;
-                case DIALOG_IP:		draw_ip();break;
+		case DIALOG_IP:		draw_ip();break;
 		default:break;
 	}
 }
@@ -10442,11 +10458,11 @@ void draw3_data3(DRAW_UI_P p)
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 						draw3_pop_tt (data_533, NULL, 
 								//								menu_content[MATERIAL + CFG(part.Material_pos)],
-								get_material_name(&CFG (part.Material)),
+								get_material_name(pp->p_config),
 								menu_content + MATERIAL, 24, 3, CFG(part.Material_pos), 0);
 					else 
 						//						draw3_popdown (menu_content[MATERIAL + CFG(part.Material_pos)], 3, 0);
-						draw3_popdown (get_material_name(&CFG (part.Material)), 3, 0);
+						draw3_popdown (get_material_name(pp->p_config), 3, 0);
 					break;
 				case 4:
 					if ( !con2_p[5][4][3] )
@@ -12220,16 +12236,16 @@ void draw3_data4(DRAW_UI_P p)
 					break;
 				case 3:	/* P634 */
 					pp->x_pos = 555, pp->y_pos = 400;
-					g_sprintf (TMP (velocity_data[0]), "LW:%dm/s", get_material_lw(&(CFG(part.Material))) / 100);
-					g_sprintf (TMP (velocity_data[1]), "SW:%dm/s", get_material_sw(&(CFG(part.Material))) / 100);
+					g_sprintf (TMP (velocity_data[0]), "LW:%dm/s", get_material_lw(pp->p_config) / 100);
+					g_sprintf (TMP (velocity_data[1]), "SW:%dm/s", get_material_sw(pp->p_config) / 100);
 					g_sprintf (TMP (velocity_data[2]), "%d m/s", GROUP_VAL(velocity) / 100);
-					const gchar **tp = TMP(velocity_data_p);
-					if (GROUP_VAL (velocity) == get_material_lw(&(CFG (part.Material)))) 
+					gchar **tp = TMP(velocity_data_p);
+					if (GROUP_VAL (velocity) == get_material_lw(pp->p_config)) 
 					{
 						temp_pos = 0;
 						temp_qty = 2;
 					}
-					else if (GROUP_VAL (velocity) == get_material_sw(&(CFG (part.Material))))
+					else if (GROUP_VAL (velocity) == get_material_sw(pp->p_config))
 					{
 						temp_pos = 1;
 						temp_qty = 2;
@@ -12245,7 +12261,7 @@ void draw3_data4(DRAW_UI_P p)
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
 						{
 
-							if (get_material_sw(&(CFG (part.Material))) == 0)
+							if (get_material_sw(pp->p_config) == 0)
 								menu_status = 0x02;
 
 							draw3_pop_tt (data_634, NULL, 
@@ -14397,7 +14413,7 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 	draw_area_all ();
 	gtk_widget_show_all (p->hbox2); /* 画图区域 及 button 的显示 */
 
-	widget_window_class = GTK_WIDGET_GET_CLASS (((GtkObject*)(pp->window))); 
+	widget_window_class = GTK_WIDGET_GET_CLASS ((GtkObject*)(pp->window)); 
 	window_keypress_event_orig = widget_window_class->key_press_event; 
 
 	/* 弹出菜单 是否透明 waiting */
@@ -14407,7 +14423,7 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 			GTK_DIALOG_NO_SEPARATOR,
 			GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
 
-	dialog_window_class = GTK_WIDGET_GET_CLASS (((GtkObject*)(pp->dialog))); 
+	dialog_window_class = GTK_WIDGET_GET_CLASS ((GtkObject*)(pp->dialog)); 
 	dialog_keypress_event_orig = dialog_window_class->key_press_event; 
 
 	gtk_window_set_decorated (GTK_WINDOW (pp->dialog), FALSE);			/*不可以装饰*/

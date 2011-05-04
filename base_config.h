@@ -136,13 +136,17 @@ typedef struct _Wedge
 	gint	A6[107];
 } WEDGE, *WEDGE_P;
 
-/* 材料 (Material) */
-typedef struct _Material 
+struct _Material;
+typedef struct _Material st_MATERIAL;
+typedef struct _Material *st_MATERIAL_P;
+
+/* 材料 (Material) 28Byte OK */
+struct _Material 
 {
 	guint	Velocity_LW;	/* 声速 单位 0.01m/s 纵波 快点 */
 	guint	Velocity_SW;	/* 声速 单位 0.01m/s 横波 慢点 */
 	gchar	Name[20];		/* 材料名字 */
-} st_MATERIAL, *st_MATERIAL_P;
+};
 
 /* 工件 (Part) */
 typedef struct _Part
@@ -488,10 +492,10 @@ typedef	struct _Config
 } CONFIG, *CONFIG_P;
 
 /*  */
-extern gint	parse_material_info (gint pos, st_MATERIAL_P p);
-extern void	print_material_info (st_MATERIAL_P p);
-extern gchar *get_material_name (st_MATERIAL_P p);
-extern guint get_material_lw (st_MATERIAL_P p);
-extern guint get_material_sw (st_MATERIAL_P p);
+extern gint	parse_material_info (CONFIG_P p);
+extern void	print_material_info (CONFIG_P p);
+extern gchar *get_material_name (CONFIG_P p);
+extern guint get_material_lw (CONFIG_P p);
+extern guint get_material_sw (CONFIG_P p);
 
 #endif

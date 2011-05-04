@@ -387,7 +387,9 @@ typedef struct Draw_interface
 
 	gpointer probe_dialog;
 
+	guint	dialog_pos;		/* 弹出dialog的类型 */
 	GtkWidget *sw;		/* 第一个scroll 备注只要一个sw */
+	GtkWidget *sw11;
 	GtkWidget *sw1;		/* 第二个scroll 探头 楔块 聚焦法则 setup 等需要2个sw */
 
 	guchar  iter_qty;       /* treeview 中 iter 的个数 */
