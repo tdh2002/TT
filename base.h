@@ -411,6 +411,19 @@ typedef struct _MY_SIGNAL_TMP
 	GtkWidget *target_list;
 } MY_SIGNAL,*MY_SIGNAL_P;
 
+typedef struct __my_ip_get 
+{
+    unsigned char system_b1;
+    unsigned char system_b2;
+    unsigned char system_b3;
+    unsigned char system_b4;
+}_my_ip_get,*_my_ip_get_p;
+
+typedef struct __my_ip_set
+{
+    GtkWidget *entry[4];
+}_my_ip_set,*_my_ip_set_p;
+
 #define CUR_POS (pp->pos2[pp->pos][pp->pos1[pp->pos]])      /* 0,1,2,3,4,5 */
 #define CFG(a)	(pp->p_config->a)
 

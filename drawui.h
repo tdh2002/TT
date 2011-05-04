@@ -155,6 +155,7 @@
 #define DIALOG_FILE_MANAGE		12
 #define DIALOG_LAW_SAVE			13
 #define DIALOG_LAW_READ			14
+#define DIALOG_IP				15
 
 /* 各个menu 弹出菜单的偏移量 */
 #define TX_RX_MODE	0

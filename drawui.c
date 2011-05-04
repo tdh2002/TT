@@ -21,9 +21,17 @@
 #include <assert.h>
 #include <webkit/webkit.h>
 #include <gdk/gdkkeysyms.h>
+#include <sys/socket.h>
+#include <sys/ioctl.h>
+#include <net/if.h>
+#include <stdio.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 
 #define EVENT_METHOD(i, x) GTK_WIDGET_GET_CLASS((GtkObject*)(i))->x
 #define YOFFSET  26
+
+//_my_ip_set entry_ip;
 
 #if 0
 static char *keyboard_display[] = 
@@ -1795,6 +1803,7 @@ static void draw_file_open_main()
 
 }
 
+
 int on_changed_config_file(GtkTreeSelection *selection,	gpointer       data)
 {
 	FILE *fp;
@@ -2926,6 +2935,121 @@ static void draw_law_read ()
 	gtk_widget_hide (GTK_DIALOG(dialog)->action_area);
 }
 
+static void da_call_ip (GtkDialog *dialog, gint response_id, gpointer user_data)
+{
+
+
+	char ifconfig_buf[64] = "sudo ifconfig eth0 ";
+        _my_ip_get tmp_ip;        
+        _my_ip_set_p entry_ip_p = (_my_ip_set_p)user_data;
+        int i;
+        unsigned char *tmp;
+        char ip_string[256] = {0};
+        struct in_addr addr;
+
+	if (GTK_RESPONSE_OK == response_id)
+        {  
+                tmp = (unsigned char *)&tmp_ip;
+                
+                for(i=0;i<4;i++)
+                {
+                    *tmp = gtk_spin_button_get_value(entry_ip_p->entry[i]);
+		    //*tmp = gtk_spin_button_get_value(entry_ip.entry[i]);
+                    g_printf("%d\n",*tmp);    
+                    tmp++;
+                }
+
+		memcpy(&addr,&tmp_ip,sizeof(tmp_ip));
+                sprintf(ip_string,"%s\n", inet_ntoa(addr));
+                gtk_label_set_text (GTK_LABEL (pp->data3[0]), ip_string);
+  
+                strcat(ifconfig_buf,ip_string);
+		system(ifconfig_buf);
+
+		gtk_widget_destroy (GTK_WIDGET (dialog));
+	}
+        else if(GTK_RESPONSE_CANCEL == response_id)
+        {
+            gtk_widget_destroy (GTK_WIDGET (dialog));
+        }
+
+
+    printf("response\n");
+}
+
+static void draw_ip()
+{
+	GtkWindow *win = GTK_WINDOW (pp->window);
+	GtkWidget *dialog;
+        
+        GtkWidget *entry[5];
+	GtkObject *adjustment[5];
+        GtkWidget *label[5];
+        char *char_label[5] = {"IP Address","","","",""};
+
+	GtkWidget *hbox1;
+	GtkWidget *hbox2;
+	GtkWidget *hbox3;
+
+	GtkWidget *vbox_first;	/* 指向dialog的vbox */
+
+        int inet_sock;
+        struct ifreq ifr;
+        struct in_addr addr;
+        _my_ip_get tmp_ip;
+        _my_ip_set entry_ip;
+        unsigned char *tmp;
+        int i;
+
+        inet_sock = socket(AF_INET, SOCK_DGRAM, 0);
+        strcpy(ifr.ifr_name, "eth0");
+        if (ioctl(inet_sock, SIOCGIFADDR, &ifr) < 0)
+                perror("ioctl");
+
+        memcpy(&tmp_ip,&((struct sockaddr_in*)&(ifr.ifr_addr))->sin_addr.s_addr,sizeof(tmp_ip));
+
+	dialog = gtk_dialog_new_with_buttons ("Dialog_Ip", win,
+			GTK_DIALOG_MODAL |	GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_NO_SEPARATOR,
+			GTK_STOCK_OK, GTK_RESPONSE_OK,
+			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+			NULL);
+
+	gtk_window_set_decorated (GTK_WINDOW (dialog), FALSE);			/*不可以装饰*/
+	gtk_widget_set_size_request(GTK_WIDGET (dialog), 300, 140);
+	
+        vbox_first = GTK_WIDGET (GTK_DIALOG(dialog)->vbox);
+
+	hbox1 = gtk_hbox_new(TRUE, 0);
+	hbox2 = gtk_hbox_new(FALSE, 0);
+	hbox3 = gtk_hbox_new(FALSE, 0);
+
+	gtk_box_pack_start(GTK_BOX(vbox_first), hbox3, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox_first), hbox1, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox_first), hbox2, FALSE, FALSE, 5);
+	
+	label[0] = gtk_label_new(char_label[0]);
+	gtk_box_pack_start(GTK_BOX(hbox3), label[0], TRUE, TRUE, 5);
+
+        tmp = (unsigned char *)&tmp_ip;
+        
+
+        for (i=1;i<5;i++)
+        {
+            label[i] = gtk_label_new(char_label[i]);
+	    gtk_box_pack_start(GTK_BOX(hbox1), label[i], FALSE, FALSE, 15);
+	    adjustment[i] = gtk_adjustment_new(0.0,0.0,255.0,1.0,0.0,0.0);
+	    entry_ip.entry[i-1] = gtk_spin_button_new(GTK_ADJUSTMENT(adjustment[i]),0.01,0);
+	    gtk_spin_button_set_value(entry_ip.entry[i-1],*tmp);
+	    gtk_box_pack_start(GTK_BOX(hbox2), entry_ip.entry[i-1], TRUE, TRUE, 1);
+            tmp++;
+        }
+
+	g_signal_connect (G_OBJECT(dialog), "response",
+			G_CALLBACK(da_call_ip), &entry_ip);/*确定 or 取消*/
+
+	gtk_widget_show_all(dialog);
+}
+
 /*
  * 弹出的dialog
  * 0 记事本 备注等等
@@ -2944,7 +3068,7 @@ static void draw_law_read ()
  * 12 文件管理
  * 13 聚集法则的保存
  * 14 聚集法则的读入
- *
+ * 15 
  */
 static void draw_dialog_all (guint type)
 {
@@ -2956,12 +3080,17 @@ static void draw_dialog_all (guint type)
 		case DIALOG_PROBE:  draw_probe(); break;
 		case DIALOG_WEDGE:  draw_wedge(); break;
 		case DIALOG_FILE_OPEN:  draw_file_open_main(); break;
+
 		case DIALOG_SAVE_SETUP_AS:  draw_save_setup_as(); break;
+
+
+
 		case DIALOG_SYSTEM_INFO:  draw_system_info(); break;
 		case DIALOG_COLOR_PALETTE:  draw_color_palette(); break;
 		case DIALOG_FILE_MANAGE:	draw_file_manage(); break;
 		case DIALOG_LAW_SAVE:	draw_law_save();break;
 		case DIALOG_LAW_READ:	draw_law_read();break;
+                case DIALOG_IP:		draw_ip();break;
 		default:break;
 	}
 }
@@ -4213,6 +4342,10 @@ void draw3_data0(DRAW_UI_P p)
 
 	guint menu_on=0, i, temp_beam;
 
+        int inet_sock;
+        struct ifreq ifr;
+        static char ip_temp[256];
+
 	p = NULL;
 
 	switch (pp->pos) 
@@ -5070,19 +5203,33 @@ void draw3_data0(DRAW_UI_P p)
 
 				case 4:/*Preferences -> network -> IP Address  p940*/
 					/* 格式化字符串 */
+					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
+                                        {
+					    draw_dialog_all (DIALOG_IP);
+                                            //gtk_label_set_text (GTK_LABEL (pp->data3[0]), "192.168.1.95");
+					}
+                                        else
+                                        {
+                                            inet_sock = socket(AF_INET, SOCK_DGRAM, 0);
+                                            strcpy(ifr.ifr_name, "eth0");
+                                            ioctl(inet_sock, SIOCGIFADDR, &ifr);
+                                            sprintf(ip_temp,"%s\n", inet_ntoa(((struct sockaddr_in*)&(ifr.ifr_addr))->sin_addr));
+                                            gtk_label_set_text (GTK_LABEL (pp->data3[0]), ip_temp);
+                                        }
+
 					g_sprintf (temp,"%s", con2_p[9][4][0]);
 
 					/* 设置label */
 					gtk_label_set_text (GTK_LABEL (pp->label3[0]), temp);
-					gtk_label_set_text (GTK_LABEL (pp->data3[0]), "192.168.1.2");
+					//gtk_label_set_text (GTK_LABEL (pp->data3[0]), ip_temp);
 
 					/* 显示和隐藏控件 */
 					gtk_widget_show (pp->eventbox30[0]);
 					gtk_widget_show (pp->eventbox31[0]);
 					gtk_widget_show (pp->data3[0]);
 
-					gtk_widget_set_sensitive(pp->eventbox30[0],FALSE);
-					gtk_widget_set_sensitive(pp->eventbox31[0],FALSE);
+					//gtk_widget_set_sensitive(pp->eventbox30[0],FALSE);
+					//gtk_widget_set_sensitive(pp->eventbox31[0],FALSE);
 					break;
 				default:break;
 			}
@@ -8765,11 +8912,14 @@ void draw3_data2(DRAW_UI_P p)
 			switch (pp->pos1[8])
 			{
 				case 0:/* File -> File -> save setup as  p802 */
+
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 						draw_dialog_all (DIALOG_SAVE_SETUP_AS);
 					else
 						draw3_popdown(NULL,2,1);
+
 					break;
+
 				case 1:/*File -> report -> paper size  p812 */
 					pp->x_pos = 605, pp->y_pos = 287-YOFFSET;
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
