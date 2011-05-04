@@ -4242,3 +4242,4 @@ void dialog_destroy(GtkWidget *widget,	GdkEventButton *event,	gpointer       dat
 	gtk_widget_destroy (GTK_WIDGET(data));
 }
 
+

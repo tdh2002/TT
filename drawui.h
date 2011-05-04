@@ -609,3 +609,4 @@ extern void dialog_destroy(GtkWidget *widget,	GdkEventButton *event,	gpointer   
 extern int on_changed_config_file(GtkTreeSelection *selection,	gpointer       data);
 extern void add_to_list(GtkWidget *list, const gchar *str, guint count);
 #endif
+

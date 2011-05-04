@@ -14331,3 +14331,4 @@ void save_config (GtkWidget *widget, GdkEventButton *event,	gpointer data)
 	close (TMP(fd_config));
 	gtk_main_quit();
 }
+

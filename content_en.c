@@ -543,3 +543,4 @@ const gchar *field_en[]		= {"A%", "AdBA", "AdBr", "B%"};
 const gchar *warning_info_en[] = {
 	"max laws is 256!"
 };
+
