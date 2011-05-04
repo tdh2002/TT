@@ -3208,6 +3208,82 @@ static void draw3_popdown (const gchar *cur_value, guint pos, guint big_menu)
 	return ;
 }
 
+/* 
+ * 三级菜单只做显示时函数
+ * cur_value 为当前值 
+ * pos 表示第几个位置
+ * big_menu 表示当前栏没有数值 只有菜单 像set Ref set 80%..
+ * content_pos 表示一个菜单有多种名字的情况 与 pos不是一个值 为零时候不起作用
+ */
+
+static void draw3_popdown_offset (const gchar *cur_value, guint pos, guint big_menu, guint content_pos)
+{
+	gint  x, y, z;       /* xyz 分别为123级菜单位置 */
+	gchar *str = NULL;
+
+	x = pp->pos;
+	y = pp->pos1[x];
+	z = pos;
+
+//	gtk_menu_popdown( GTK_MENU (pp->menu3));
+	gtk_menu_popdown( GTK_MENU (pp->menu33[pos]));
+
+	if (big_menu)
+		str = g_strdup_printf ("\n\n%s", con2_p[x][y][content_pos ? content_pos : pos]);	
+	else
+		str = g_strdup_printf ("%s", con2_p[x][y][content_pos ? content_pos : pos]);	
+
+	gtk_label_set_text (GTK_LABEL (pp->label3[z]), str);
+	if ((CUR_POS == z) && (pp->pos_pos == MENU3_PRESSED))
+	{
+		update_widget_bg(pp->eventbox30[z], backpic[6]);
+		if (big_menu)
+		{
+			update_widget_bg (pp->eventbox30[z], backpic[8]);
+			update_widget_bg (pp->eventbox31[z], backpic[14]);
+		}
+		else
+			update_widget_bg (pp->eventbox31[z], backpic[11]);
+	}
+	else if ((CUR_POS == z) && (pp->pos_pos == MENU3_STOP))
+	{
+		update_widget_bg (pp->eventbox30[z], backpic[8]);
+		if (big_menu)
+			update_widget_bg (pp->eventbox31[z], backpic[14]);
+		else
+			update_widget_bg (pp->eventbox31[z], backpic[11]);
+	}
+	else
+	{
+		update_widget_bg (pp->eventbox30[z], backpic[7]);
+		if (big_menu)
+			update_widget_bg (pp->eventbox31[z], backpic[13]);
+		else 
+			update_widget_bg (pp->eventbox31[z], backpic[10]);
+	}
+	gtk_label_set_text (GTK_LABEL (pp->data3[z]), cur_value);
+	if (str)
+		g_free(str);
+	/* 显示和隐藏控件 */
+	gtk_widget_show (pp->eventbox30[z]);
+	gtk_widget_show (pp->eventbox31[z]);
+	gtk_widget_show (pp->data3[z]);
+	gtk_widget_hide (pp->sbutton[z]);
+	gtk_widget_hide (pp->dialog);
+	//	gtk_widget_show (pp->vscalebox);
+	gtk_widget_show (pp->scale_drawarea);
+	gtk_widget_hide (pp->button_add);
+	gtk_widget_hide (pp->button_sub);
+	gtk_widget_hide (pp->vscale);
+	gtk_widget_hide (GTK_WIDGET (pp->entry));
+
+
+	change_keypress_event (KEYPRESS_MAIN);
+
+	return ;
+}
+
+
 /*
  * 
  * 弹出scale触摸条的函数
@@ -4144,38 +4220,34 @@ void draw3_data0(DRAW_UI_P p)
 		case 0:
 			switch (pp->pos1[0])
 			{
-				case 0:/*Wizard -> Group -> Back*/
-					g_sprintf (temp,"%s", con2_p[0][0][0]);
-					/* 设置label */
-					gtk_label_set_text (GTK_LABEL (pp->label3[0]), temp);
-					gtk_label_set_text (GTK_LABEL (pp->data3[0]), "Group Wizard");
-
-					/* 显示和隐藏控件 */
-					gtk_widget_show (pp->eventbox30[0]);
-					gtk_widget_show (pp->eventbox31[0]);
-					gtk_widget_show (pp->data3[0]);
+				case 0:/*Wizard -> Group -> Back P000 */
+					draw3_popdown (NULL, 0, 1);
+					if ((pp->start_qty == 0)||(pp->start_qty == 1)||(pp->start_qty == 9))
+					{
+						gtk_widget_set_sensitive(pp->eventbox30[0], FALSE);
+						gtk_widget_set_sensitive(pp->eventbox31[0], FALSE);
+					}
+					else
+					{
+						gtk_widget_set_sensitive(pp->eventbox30[0], TRUE);
+						gtk_widget_set_sensitive(pp->eventbox31[0], TRUE);
+					}
 					break;
-				case 1:/*Wizard -> Focal Law -> Back*/
-					g_sprintf (temp,"%s", con2_p[0][1][0]);
-					/* 设置label */
-					gtk_label_set_text (GTK_LABEL (pp->label3[0]), temp);
-					gtk_label_set_text (GTK_LABEL (pp->data3[0]), "Law Wizard");
-
-					/* 显示和隐藏控件 */
-					gtk_widget_show (pp->eventbox30[0]);
-					gtk_widget_show (pp->eventbox31[0]);
-					gtk_widget_show (pp->data3[0]);
+				case 1:/*Wizard -> Focal Law -> Back p010 */
+					draw3_popdown (NULL, 0, 1);
+					if ((pp->fstart_qty == 0)||(pp->fstart_qty == 1)||(pp->fstart_qty == 5))
+					{
+						gtk_widget_set_sensitive(pp->eventbox30[0], FALSE);
+						gtk_widget_set_sensitive(pp->eventbox31[0], FALSE);
+					}
+					else
+					{
+						gtk_widget_set_sensitive(pp->eventbox30[0], TRUE);
+						gtk_widget_set_sensitive(pp->eventbox31[0], TRUE);
+					}
 					break;
 				case 2:/*Wizard -> Calibration -> Back*/
-					g_sprintf (temp,"%s", con2_p[0][2][0]);
-					/* 设置label */
-					gtk_label_set_text (GTK_LABEL (pp->label3[0]), temp);
-					gtk_label_set_text (GTK_LABEL (pp->data3[0]), "Select Calibration");
-
-					/* 显示和隐藏控件 */
-					gtk_widget_show (pp->eventbox30[0]);
-					gtk_widget_show (pp->eventbox31[0]);
-					gtk_widget_show (pp->data3[0]);
+					draw3_popdown (NULL, 0, 1);
 					break;
 				case 3:
 					if ( !con2_p[0][3][0] )
@@ -4203,6 +4275,7 @@ void draw3_data0(DRAW_UI_P p)
 						case 4:	tmpf = 6.0; break;
 						default:break;
 					}
+					g_print("db_reg = %d \n",pp->p_tmp_config->db_reg);
 					if (GROUP_VAL(db_ref))
 						content_pos = 6;
 					else
@@ -5034,39 +5107,26 @@ void draw3_data1(DRAW_UI_P p)
 		case 0:
 			switch (pp->pos1[0])
 			{
-				case 0:/*Wizard -> Group -> start*/
-					g_sprintf (temp,"%s", con2_p[0][0][1]);
-					/* 设置label */
-					gtk_label_set_text (GTK_LABEL (pp->label3[1]), temp);
-					gtk_label_set_text (GTK_LABEL (pp->data3[1]), "Group Wizard");
-
-					/* 显示和隐藏控件 */
-					gtk_widget_show (pp->eventbox30[1]);
-					gtk_widget_show (pp->eventbox31[1]);
-					gtk_widget_show (pp->data3[1]);
+				case 0:/*Wizard -> Group -> start  p001 */
+					draw3_popdown (NULL, 1, 1);
+					g_print("start_qty = %d\n",pp->start_qty);
+					if( (pp->start_qty >0) && (pp->start_qty < 8) )
+						draw3_popdown_offset (NULL, 1, 1, 6 );
+					else if (pp->start_qty == 8)
+						draw3_popdown_offset (NULL, 1, 1, 14 );
 					break;
-				case 1:/*Wizard -> Focal Law -> start*/
-					g_sprintf (temp,"%s", con2_p[0][1][1]);
-					/* 设置label */
-					gtk_label_set_text (GTK_LABEL (pp->label3[1]), temp);
-					gtk_label_set_text (GTK_LABEL (pp->data3[1]), "Law Wizard");
 
-					/* 显示和隐藏控件 */
-					gtk_widget_show (pp->eventbox30[1]);
-					gtk_widget_show (pp->eventbox31[1]);
-					gtk_widget_show (pp->data3[1]);
+				case 1:/*Wizard -> Focal Law -> start p011 */
+					draw3_popdown (NULL, 1, 1);
+					g_print("fstart_qty = %d\n",pp->fstart_qty);
+					if( (pp->fstart_qty >0) && (pp->fstart_qty < 5) )
+						draw3_popdown_offset (NULL, 1, 1, 6 );
 					break;
+
 				case 2:/*Wizard -> Calibration -> start*/
-					g_sprintf (temp,"%s", con2_p[0][2][1]);
-					/* 设置label */
-					gtk_label_set_text (GTK_LABEL (pp->label3[1]), temp);
-					gtk_label_set_text (GTK_LABEL (pp->data3[1]), "Select Calibration");
-
-					/* 显示和隐藏控件 */
-					gtk_widget_show (pp->eventbox30[1]);
-					gtk_widget_show (pp->eventbox31[1]);
-					gtk_widget_show (pp->data3[1]);
+					draw3_popdown (NULL, 1, 1);
 					break;
+
 				case 3:
 					if ( !con2_p[0][3][1] )
 						gtk_widget_hide (pp->eventbox30[1]);
@@ -6670,18 +6730,192 @@ void draw3_data2(DRAW_UI_P p)
 		case 0:
 			switch (pp->pos1[0])
 			{
-				case 0:
-					if ( !con2_p[0][0][2] )
+				case 0:	/* p002 */
+					pp->x_pos = 590, pp->y_pos = 330;
+					if ( pp->start_qty == 1 )
+					{
+						if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 2))
+							draw3_pop_tt (data_002, NULL, 
+									menu_content[OPERATION + pp->operation_pos],
+									menu_content + OPERATION, 2, 2, pp->operation_pos, 0);
+						else 
+							draw3_popdown (menu_content[OPERATION + pp->operation_pos], 2, 0);
+					}
+					else if ( pp->start_qty == 2 )
+					{
+						if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 2))
+							draw3_pop_tt (data_0021, NULL, 
+									menu_content[WGROUP + pp->wgroup_pos],
+									menu_content + WGROUP, 3, 2, pp->wgroup_pos, 0);
+						else 
+							draw3_popdown (menu_content[WGROUP + pp->wgroup_pos], 2, 0);
+
+						str = g_strdup_printf ("%s", con2_p[0][0][7]);	
+						gtk_label_set_text (GTK_LABEL (pp->label3[2]), str);
+						if (str)
+							g_free (str);
+					}
+					else if ( pp->start_qty == 3 )
+					{
+						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
+							draw3_pop_tt (data_501, NULL, 
+									menu_content[GROUP_MODE_P + GROUP_VAL(group_mode)],
+									menu_content + GROUP_MODE, 2, 2, GROUP_VAL(group_mode), 0);
+						else 
+							draw3_popdown (menu_content[GROUP_MODE_P + GROUP_VAL(group_mode)], 2, 0);
+
+						str = g_strdup_printf ("%s", con2_p[0][0][8]);	
+						gtk_label_set_text (GTK_LABEL (pp->label3[2]), str);
+						if (str)
+							g_free (str);
+					}
+					else if (pp->start_qty == 4)
+					{
+						if(GROUP_VAL(group_mode) == PA_SCAN)
+						{
+							switch (TMP(connection_P_reg))
+							{
+								case 0:	tmpf = 1.0; break;
+								case 1:	tmpf = 10.0; break;
+								case 2:	tmpf = 100.0; break;
+								default:break;
+							}
+							upper = (gfloat) (128 + 1 - LAW_VAL(Last_tx_elem));
+							if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 2))
+							{
+								cur_value = (gfloat) (GROUP_VAL(pulser));
+								lower = 1.0;
+								step = tmpf;
+								digit = 0;
+								pos = 2;
+								str = g_strdup_printf ("( 1 to %d)", (guint)(upper));
+								draw3_digit_pressed (data_110, str, cur_value , lower, upper, step, digit, p, pos, 9);
+							}
+							else 
+							{
+								cur_value = (gfloat) (GROUP_VAL(pulser));
+								digit = 0;
+								pos = 2;
+								str = g_strdup_printf ("( 1 to %d)", (guint)(upper));
+								draw3_digit_stop (cur_value, str, digit, pos, 9);
+							}
+							g_free (str);
+						}
+						else
+						{
+
+							pp->x_pos = 478, pp->y_pos = 203-YOFFSET; 	
+							if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
+							{
+								/* PA时候如何能够选择 TT PC */
+								if (GROUP_VAL (group_mode) == PA_SCAN)
+									draw3_pop_tt (data_111, NULL, 
+											menu_content[TX_RX_MODE + 4 + GROUP_VAL(tx_rxmode)],
+											menu_content + TX_RX_MODE, 3, 2, GROUP_VAL(tx_rxmode), 0x05);
+								else if (GROUP_VAL (group_mode) == UT_SCAN)
+									draw3_pop_tt (data_111, NULL, 
+											menu_content[TX_RX_MODE + 4 + GROUP_VAL(tx_rxmode)],
+											menu_content + TX_RX_MODE, 4, 2, GROUP_VAL(tx_rxmode), 0x00);
+							}
+							else 
+								draw3_popdown (menu_content[TX_RX_MODE + 4 + GROUP_VAL(tx_rxmode)], 2, 0);
+
+							str = g_strdup_printf ("%s", con2_p[0][0][16]);	
+							gtk_label_set_text (GTK_LABEL (pp->label3[2]), str);
+							if (str)
+								g_free (str);							
+						}
+					}
+					else if (( pp->start_qty == 5 )||( pp->start_qty == 6 ))
+					{
+						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
+							draw3_pop_tt (data_502, NULL, 
+									menu_content[PROB_SELECT + CFG(probe_select)],
+									menu_content + PROB_SELECT, 2, 2, CFG(probe_select), 0);
+						else 
+							draw3_popdown (menu_content[PROB_SELECT + CFG(probe_select)], 2, 0);
+
+						str = g_strdup_printf ("%s", con2_p[0][0][10]);	
+						gtk_label_set_text (GTK_LABEL (pp->label3[2]), str);
+						if (str)
+							g_free (str);
+					}
+
+					else if (pp->start_qty == 7)
+					{
+						switch (TMP(scanoffset_reg))
+						{
+							case 0:	tmpf = 0.1; break;
+							case 1:	tmpf = 1.0; break;
+							case 2:	tmpf = 5.0; break;
+							default:break;
+						}
+						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
+						{
+							cur_value = GROUP_VAL(scan_offset)/10.0;
+							lower = -100000.0;
+							upper = 9999999.0;
+							step = tmpf;
+							digit = 1;
+							pos = 2;
+							unit = UNIT_MM;
+							draw3_digit_pressed (data_510, units[unit], cur_value , lower, upper, step, digit, p, pos, 11);
+						}
+						else 
+						{
+							cur_value = GROUP_VAL(scan_offset)/10.0;
+							digit = 1;
+							pos = 2;
+							unit = UNIT_MM;
+							draw3_digit_stop (cur_value, units[unit], digit, pos, 11);
+						}
+					}
+					else if (pp->start_qty == 8)
+					{
+						draw3_popdown_offset (NULL, 2, 1, 15 );
+					}
+					else
+					{
 						gtk_widget_hide (pp->eventbox30[2]);
-					gtk_widget_hide (pp->eventbox31[2]);
+						gtk_widget_hide (pp->eventbox31[2]);
+					}
+
 					break;
-				case 1:
-					if ( !con2_p[0][1][2] )
+				case 1: /* p012 */
+					pp->x_pos = 480, pp->y_pos = 300;
+					if (pp->fstart_qty == 1)
+					{
+						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
+							draw3_pop_tt (data_600, NULL, 
+									menu_content[L_CONFIG + LAW_VAL(Focal_type)],
+									menu_content+LAW_CONFIG, 4, 2, LAW_VAL(Focal_type), 0x0);
+						else 
+							draw3_popdown (menu_content[L_CONFIG + LAW_VAL(Focal_type)], 2, 0);
+					}
+					else if (pp->fstart_qty == 2)
+					{
+#if 0
+						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
+							draw3_pop_tt (data_614, NULL, 
+									menu_content[W_TYPE + LAW_VAL(Wave_type)],
+									menu_content+WAVE_TYPE, 2, 2, LAW_VAL(Wave_type), 0);
+						else 
+							draw3_popdown (menu_content[W_TYPE + LAW_VAL(Wave_type)], 2, 0);
+
+						str = g_strdup_printf ("%s", con2_p[0][1][7]);	
+						gtk_label_set_text (GTK_LABEL (pp->label3[2]), str);
+						if (str)
+							g_free (str);
+#endif
+					}
+					else
+					{
 						gtk_widget_hide (pp->eventbox30[2]);
-					gtk_widget_hide (pp->eventbox31[2]);
+						gtk_widget_hide (pp->eventbox31[2]);
+					}
 					break;
 
-				case 2:/*Wizard -> Calibration -> Type  022 */
+				case 2:/*Wizard -> Calibration -> Type  p022 */
 					pp->x_pos = 570, pp->y_pos = 295;
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 						draw3_pop_tt (data_022, NULL, 
@@ -7916,8 +8150,6 @@ void draw3_data2(DRAW_UI_P p)
 								menu_content + PROB_SELECT, 2, 2, CFG(probe_select), 0);
 					else 
 						draw3_popdown (menu_content[PROB_SELECT + CFG(probe_select)], 2, 0);
-
-
 					break;
 
 				case 1:/* skew angle P512 */
@@ -8631,10 +8863,188 @@ void draw3_data3(DRAW_UI_P p)
 		case 0:
 			switch (pp->pos1[0])
 			{
-				case 0:
-					if ( !con2_p[0][0][3] )
+				case 0:/* p003 */
+
+					if (pp->start_qty == 4)
+					{
+						if(GROUP_VAL(group_mode) == PA_SCAN)
+						{
+							switch (TMP(receiver_reg))
+							{
+								case 0:	tmpf = 1.0; break;
+								case 1:	tmpf = 10.0; break;
+								case 2:	tmpf = 100.0; break;
+								default:break;
+							}
+							upper = (gfloat) (128 + 1 - LAW_VAL(Last_rx_elem));
+							if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 3))
+							{
+								cur_value = (gfloat) (GROUP_VAL(receiver));
+								lower = 1.0;
+								step = tmpf;
+								digit = 0;
+								pos = 3;
+								str = g_strdup_printf ("( 1 to %d)", (guint)(upper));
+								draw3_digit_pressed (data_120, str, cur_value , lower, upper, step, digit, p, pos, 19);
+							}
+							else 
+							{
+								cur_value = (gfloat) (GROUP_VAL(receiver));
+								digit = 0;
+								pos = 3;
+								str = g_strdup_printf ("( 1 to %d)", (guint)(upper));
+								draw3_digit_stop (cur_value, str, digit, pos, 19);
+							}
+							gtk_widget_set_sensitive (pp->eventbox30[3], FALSE);
+							gtk_widget_set_sensitive (pp->eventbox31[3], FALSE);
+							g_free(str);
+
+						}
+						else
+						{
+							switch (TMP(pulser_reg))
+							{
+								case 0:	tmpf = 1.0; break;
+								case 1:	tmpf = 10.0; break;
+								case 2:	tmpf = 100.0; break;
+								default:break;
+							}
+							upper = (gfloat) (128 + 1 - LAW_VAL(Last_tx_elem));
+							if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 3))
+							{
+								cur_value = (gfloat) (GROUP_VAL(pulser));
+								lower = 1.0;
+								step = tmpf;
+								digit = 0;
+								pos = 3;
+								str = g_strdup_printf ("( 1 to %d)", (guint)(upper));
+								draw3_digit_pressed (data_110, str, cur_value , lower, upper, step, digit, p, pos, 17);
+							}
+							else 
+							{
+								cur_value = (gfloat) (GROUP_VAL(pulser));
+								digit = 0;
+								pos = 3;
+								str = g_strdup_printf ("( 1 to %d)", (guint)(upper));
+								draw3_digit_stop (cur_value, str, digit, pos, 17);
+							}
+							g_free(str);
+						}
+					}
+
+					else if ( pp->start_qty == 5 )
+					{
+						if(CFG(auto_detect))
+						{
+							if(CFG(probe_select)==0)
+							{
+								if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
+								{
+									draw_dialog_all (DIALOG_PROBE);
+								}
+								else
+									draw3_popdown(GROUP_VAL(probe.Model), 3,0);
+
+								g_sprintf (temp,"%s", con2_p[5][0][3]);
+								gtk_label_set_text (GTK_LABEL (pp->label3[3]), temp);
+							}
+							else if(CFG(probe_select)==1)
+							{
+								draw3_popdown(NULL,3,1);
+								g_sprintf (temp,"%s", con2_p[5][0][6]);
+								gtk_label_set_text (GTK_LABEL (pp->label3[3]), temp);
+							}
+
+							gtk_widget_set_sensitive(pp->eventbox30[3],FALSE);
+							gtk_widget_set_sensitive(pp->eventbox31[3],FALSE);
+						}
+						else
+						{
+							if(CFG(probe_select)==0)
+							{
+								if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
+								{
+									draw_dialog_all (DIALOG_PROBE);
+								}
+								else
+									draw3_popdown(GROUP_VAL(probe.Model), 3, 0);
+
+								g_sprintf (temp,"%s", con2_p[5][0][3]);
+								gtk_label_set_text (GTK_LABEL (pp->label3[3]), temp);
+								gtk_label_set_text (GTK_LABEL (pp->data3[3]), GROUP_VAL(probe.Model));
+							}
+							else if( CFG(probe_select)==1 )
+							{
+								draw3_popdown(NULL,3,1);
+								g_sprintf (temp,"%s", con2_p[5][0][6]);
+								gtk_label_set_text (GTK_LABEL (pp->label3[3]), temp);
+							}
+						}
+						if( GROUP_VAL(group_mode) && CFG(auto_detect))	/* 自动检测开启时同时又在PA模式时，探头不可选 */
+						{
+							gtk_widget_set_sensitive(pp->eventbox30[3],FALSE);
+							gtk_widget_set_sensitive(pp->eventbox31[3],FALSE);
+						}
+						else
+						{
+							gtk_widget_set_sensitive(pp->eventbox30[3],TRUE);
+							gtk_widget_set_sensitive(pp->eventbox31[3],TRUE);
+						}
+
+					}
+					else if( pp->start_qty == 6 )
+					{
+						if (CFG(probe_select)==0)
+						{
+							if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
+								draw_dialog_all (DIALOG_WEDGE);
+							else
+								draw3_popdown(GROUP_VAL(wedge.Model), 3, 0);
+
+							g_sprintf (temp,"%s", con2_p[5][0][4]);
+							gtk_label_set_text (GTK_LABEL (pp->label3[3]), temp);
+						}
+						else if(CFG(probe_select)==1)
+						{
+							draw3_popdown(NULL,3,1);
+							g_sprintf (temp,"%s", con2_p[5][0][7]);
+							gtk_label_set_text (GTK_LABEL (pp->label3[3]), temp);
+						}
+					}
+					else if( pp->start_qty == 7 )
+					{
+						switch (TMP(indexoffset_reg))
+						{
+							case 0:	tmpf = 0.1; break;
+							case 1:	tmpf = 1.0; break;
+							case 2:	tmpf = 5.0; break;
+							default:break;
+						}
+						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
+						{
+							cur_value = GROUP_VAL(index_offset)/10.0;
+							lower = -1000000.0;
+							upper =  9999999.0;
+							step = tmpf;
+							digit = 1;
+							pos = 3;
+							unit = UNIT_MM;
+							draw3_digit_pressed (data_511, units[unit], cur_value , lower, upper, step, digit, p, pos, 12);
+						}
+						else 
+						{
+							cur_value =GROUP_VAL(index_offset)/10.0;
+							digit = 1;
+							pos = 3;
+							unit = UNIT_MM;
+							draw3_digit_stop (cur_value, units[unit], digit, pos, 12);
+						}
+					}
+					else
+					{
 						gtk_widget_hide (pp->eventbox30[3]);
-					gtk_widget_hide (pp->eventbox31[3]);
+						gtk_widget_hide (pp->eventbox31[3]);
+					}
 					break;
 				case 1:
 					if ( !con2_p[0][1][3] )
@@ -10498,10 +10908,128 @@ void draw3_data4(DRAW_UI_P p)
 		case 0:
 			switch (pp->pos1[0])
 			{
-				case 0:
-					if ( !con2_p[0][0][4] )
+				case 0: /* p004 */
+					if (pp->start_qty == 4)
+					{
+						if(GROUP_VAL(group_mode) == PA_SCAN)
+						{
+							switch (TMP(receiver_reg))
+							{
+								case 0:	tmpf = 1.0; break;
+								case 1:	tmpf = 10.0; break;
+								case 2:	tmpf = 100.0; break;
+								default:break;
+							}
+							upper = (gfloat) (128 + 1 - LAW_VAL(Last_rx_elem));
+							if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 4))
+							{
+								cur_value = (gfloat) (GROUP_VAL(receiver));
+								lower = 1.0;
+								step = tmpf;
+								digit = 0;
+								pos = 4;
+								str = g_strdup_printf ("( 1 to %d)", (guint)(upper));
+								draw3_digit_pressed (data_120, str, cur_value , lower, upper, step, digit, p, pos, 18);
+							}
+							else 
+							{
+								cur_value = (gfloat) (GROUP_VAL(receiver));
+								digit = 0;
+								pos = 4;
+								str = g_strdup_printf ("( 1 to %d)", (guint)(upper));
+								draw3_digit_stop (cur_value, str, digit, pos, 18);
+							}
+							gtk_widget_set_sensitive (pp->eventbox30[4], FALSE);
+							gtk_widget_set_sensitive (pp->eventbox31[4], FALSE);
+							g_free(str);
+						}
+						else
+						{
+							switch (TMP(receiver_reg))
+							{
+								case 0:	tmpf = 1.0; break;
+								case 1:	tmpf = 10.0; break;
+								case 2:	tmpf = 100.0; break;
+								default:break;
+							}
+							if (GROUP_VAL(tx_rxmode) == PULSE_ECHO)	/* 脉冲回波模式不可以调节 */
+							{
+								gtk_widget_set_sensitive (pp->eventbox30[4], FALSE);
+								gtk_widget_set_sensitive (pp->eventbox31[4], FALSE);
+							}
+							upper = (gfloat) (128 + 1 - LAW_VAL(Last_rx_elem));
+							if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 4))
+							{
+								cur_value = (gfloat) (GROUP_VAL(receiver));
+								lower = 1.0;
+								step = tmpf;
+								digit = 0;
+								pos = 4;
+								str = g_strdup_printf ("( 1 to %d)", (guint)(upper));
+								draw3_digit_pressed (data_120, str, cur_value , lower, upper, step, digit, p, pos, 18);
+							}
+							else 
+							{
+								cur_value = (gfloat) (GROUP_VAL(receiver));
+								digit = 0;
+								pos = 4;
+								str = g_strdup_printf ("( 1 to %d)", (guint)(upper));
+								draw3_digit_stop (cur_value, str, digit, pos, 18);
+							}
+							g_free(str);
+						}
+					}
+
+					else if (( pp->start_qty == 5 )&&(GROUP_VAL(group_mode)==1))/*PA模式时才有Auto Detect键*/
+					{
+						draw3_popdown (menu_content[OFF_ON + CFG(auto_detect)], 4, 0);
+					}
+					else if(pp->start_qty == 7)
+					{
+						switch (TMP(skew_reg))
+						{
+							case 0:	tmpf = 1.0; break;
+							case 1:	tmpf = 10.0; break;
+							case 2:	tmpf = 100.0; break;						
+							default:break;
+						}
+						if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 4))
+						{
+							if (pp->mark_pop_change)
+							{
+								cur_value = GROUP_VAL(skew)/100.0 ;
+								lower =	0.0;
+								upper =	359.9;
+								step = tmpf;
+								digit = 1;
+								pos = 4;
+								unit = UNIT_NULL;
+								draw3_digit_pressed (data_5121, units[unit], cur_value , lower, upper, step, digit, p, pos, 13);
+							}
+							else
+							{
+								str = g_strdup_printf ("%.1f", GROUP_VAL(skew)/100.0);
+								draw3_pop_tt (data_512, NULL, 
+											str, menu_content+PROB_SKEW, 5, 4, GROUP_VAL(skew_pos), 0);
+								g_sprintf (temp,"%s", con2_p[0][0][13]);
+								gtk_label_set_text (GTK_LABEL (pp->label3[4]), temp);
+								g_free(str);
+							}
+						}
+						else 
+						{
+							cur_value = GROUP_VAL(skew)/100.0 ;
+							unit = UNIT_NULL;
+							pos = 4;
+							digit = 1;
+							draw3_digit_stop (cur_value , units[unit], digit, pos, 13);
+						}
+					}
+					else
+					{
 						gtk_widget_hide (pp->eventbox30[4]);
-					gtk_widget_hide (pp->eventbox31[4]);
+						gtk_widget_hide (pp->eventbox31[4]);
+					}
 					break;
 				case 1:
 					if ( !con2_p[0][1][4] )

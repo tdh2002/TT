@@ -248,6 +248,10 @@
 #define ASSIGN_K	(SELECT_K + 9)
 #define ASSIGN_K_P	(ASSIGN_K + 16)
 #define MOUSE		(ASSIGN_K_P + 5)
+#define OPERATION	(MOUSE + 3)
+#define WGROUP		(OPERATION + 2)
+//#define LAW_CONFIG	(WGROUP + 3)
+//#define L_CONFIG	(LAW_CONFIG + 4)
 
 /* 当前按键响应窗口类型 */
 #define KEYPRESS_MAIN				0x00
@@ -365,6 +369,8 @@ extern void send_dsp_data (guint data_type, guint value);
 extern gboolean (*data_fun[6])(GtkWidget *widget, GdkEventButton *event, gpointer user_data);
 extern gboolean (*eventbox2_fun[5])(GtkWidget *widget, GdkEventButton *event, gpointer data);
 
+extern void data_002 (GtkMenuItem *menuitem, gpointer data);
+extern void data_0021 (GtkMenuItem *menuitem, gpointer data);
 extern void data_022 (GtkMenuItem *menuitem, gpointer data);
 extern void data_023 (GtkMenuItem *menuitem, gpointer data);
 extern void data_100 (GtkSpinButton *spinbutton, gpointer data);	/* 100 gain增益 */

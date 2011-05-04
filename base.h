@@ -229,6 +229,7 @@ typedef struct tmp_config
 	gchar	*velocity_data_p[3];
 
 	gint	fd_config;
+
 } TMP_CONFIG, *TMP_CONFIG_P;
 
 /*画图区域*/
@@ -391,6 +392,11 @@ typedef struct Draw_interface
 
 	guchar  iter_qty;       /* treeview 中 iter 的个数 */
 	guchar  iter_pos;	/* treeview 中 iter 的位置 */
+
+	guchar	start_qty;  /* wizard 中 group -> start 被点击的次数 */
+	guchar	operation_pos;
+	guchar	wgroup_pos;
+	guchar	fstart_qty;  /* wizard 中 focal law -> start 被点击的次数 */
 
 } DRAW_UI, *DRAW_UI_P;
 

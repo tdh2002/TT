@@ -72,12 +72,12 @@ static const gchar *content_en29[] = {
 
 static const gchar *content_en200[] = {
 	/* 二级菜单第0页下的第0页三级菜单 */
-	"Back", "Start", NULL, NULL, NULL, NULL
+	"Back", "Start", "Operation", "Probe","Auto Detect", NULL,"Next","Group", "Group Mode","Connection P", "Select","Scan Offset","Index Offet", "Skew(°)", "Finish", "Continue", "Tx/Rx mode","Pulser","Receiver","Connection R"
 };
 
 static const gchar *content_en201[] = {
 	/* 二级菜单第0页下的第1页三级菜单 */
-	"Back", "Start", NULL, NULL, NULL, NULL
+	"Back", "Start", "Law Type", "Material", NULL, NULL, "Next","Wave Type"
 };
 
 static const gchar *content_en202[] = {
@@ -521,6 +521,9 @@ const gchar *all_menu_content_en[] =
 	"Gain", "Range", "Start", "Start/Stop", "Pause/Resume", "Calibrate", "Report", "Save Setup As", "Zoom", "Add Entry", "Display", "Context Select", "Gate", "User Field", "Buzzer", "Notes",						/* 515 Assign Key */
 	"None", "Preset Encoder 2", "Pause/Resume", "Save Data", "Clear All",				/* 531 Assign Key */
 	"Off", "Mouse", "Control Area",									/* 536 Mouse */
+	"Add", "Modify",				/* Wizard->Group->Operation  OPERATION */
+	"Group 1", "Group 2", "Group 3",	/* Wizard->Group->Group  WGROUP */
+
 	""																		
 };
 

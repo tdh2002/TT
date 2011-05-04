@@ -34,7 +34,7 @@ guint get_filter ();
 /* 输入数字时候的其他快捷键 */
 static guint key_fast_map[] =
 {
-	GDK_Return, GDK_Escape, GDK_F1, GDK_F2, GDK_F2, GDK_F3, GDK_F4, GDK_F5, GDK_F6, 
+	GDK_Return, GDK_Escape, GDK_F1, GDK_F2, GDK_F3, GDK_F4, GDK_F5, GDK_F6, 
 	GDK_F7, GDK_F8, GDK_F9, GDK_F10, GDK_F11, GDK_F12, GDK_Super_L
 };
 
@@ -45,6 +45,8 @@ gboolean data_function3 (GtkWidget *widget,	GdkEventButton *event,	gpointer     
 gboolean data_function4 (GtkWidget *widget,	GdkEventButton *event,	gpointer       data);
 gboolean data_function5 (GtkWidget *widget,	GdkEventButton *event,	gpointer       data);
 
+void data_002 (GtkMenuItem *menuitem, gpointer data);
+void data_0021 (GtkMenuItem *menuitem, gpointer data);
 void data_022 (GtkMenuItem *menuitem, gpointer data);
 void data_023 (GtkMenuItem *menuitem, gpointer data); 
 
@@ -725,6 +727,16 @@ void b3_fun0(gpointer p)
 
 	switch (pp->pos)
 	{
+		case 0: /* Wizard */
+			switch (pp->pos1[0])
+			{
+					case 0:((pp->start_qty) > 0) ? (pp->start_qty) -- : ((pp->start_qty) = 9); break;
+					case 1:((pp->fstart_qty) > 0) ? (pp->fstart_qty) -- : ((pp->fstart_qty) = 5);break;
+					case 2:break;
+					case 3:break;
+					default:break;
+			}
+			break;
 		case 1: /* UT Settings*/
 			switch (pp->pos1[1])
 			{
@@ -785,7 +797,7 @@ void b3_fun0(gpointer p)
 		switch (pp->pos) 
 		{
 			case 0: /* Wizard */
-				break;
+					break;
 			case 1: /* UT Settings*/
 				switch (pp->pos1[1])
 				{
@@ -884,6 +896,16 @@ void b3_fun1(gpointer p)
 	/* 一次点击处理 */
 	switch (pp->pos)
 	{
+		case 0:
+			switch (pp->pos1[0])
+			{
+					case 0:((pp->start_qty) < 9) ? (pp->start_qty) ++ : ((pp->start_qty) = 1); break;
+					case 1:((pp->fstart_qty) < 5) ? (pp->fstart_qty) ++ : ((pp->fstart_qty) = 1); break;
+					case 2:break;
+					case 3:break;
+					default:break;
+			}
+			break;
 		case 1:
 			switch (pp->pos1[1])
 			{
@@ -961,7 +983,8 @@ void b3_fun1(gpointer p)
 	{
 		switch (pp->pos) 
 		{
-			case 0:break;
+			case 0:
+					break;
 			case 1:
 				   switch (pp->pos1[1])
 				   {
@@ -1180,7 +1203,21 @@ void b3_fun2(gpointer p)
 	{
 		switch (pp->pos) 
 		{
-			case 0:break;
+			case 0:
+					switch (pp->pos1[0])
+					{
+						case 0:	/* 002 */
+ 							   if ( pp->start_qty == 4 )
+ 							   		data_process(&(TMP(connection_P_reg)), 2);
+ 							   if ( pp->start_qty == 7 )
+									data_process (&(pp->p_tmp_config->scanoffset_reg), 2);
+ 							   break;
+						case 1:break;
+						case 2:break;
+						case 3:break;
+						default:break;
+					}
+					break;
 			case 1:
 				   switch (pp->pos1[1])
 				   {
@@ -1410,7 +1447,19 @@ void b3_fun3(gpointer p)
 	{
 		switch (pp->pos) 
 		{
-			case 0:break;
+			case 0:
+					switch (pp->pos1[0])
+					{
+						case 0:	/* 003 */
+ 							   if ( pp->start_qty == 7 )
+									data_process (&(pp->p_tmp_config->indexoffset_reg), 2);
+ 							   break;
+						case 1:break;
+						case 2:break;
+						case 3:break;
+						default:break;
+					}
+					break;
 			case 1:
 				   switch (pp->pos1[1])
 				   {
@@ -1577,6 +1626,21 @@ void b3_fun4(gpointer p)
 
 	switch (pp->pos)
 	{
+		case 0:
+			switch (pp->pos1[0])
+			{
+				case 0:	/* p004 */
+ 						if ( pp->start_qty == 5 )
+ 							CFG(auto_detect) = !CFG(auto_detect);
+ 						if ( pp->start_qty == 7 )
+							data_process(&(TMP(skew_reg)), 2); 
+ 						break;
+				case 1:break;
+				case 2:break;
+				case 3:break;
+				default:break;
+			}
+			break;
 		case 4:
 			switch (pp->pos1[4])
 			{
@@ -2346,9 +2410,25 @@ gboolean data_function5 (GtkWidget *widget,	GdkEventButton *event,	gpointer     
 	return TRUE;
 }
 
+
+void data_002 (GtkMenuItem *menuitem, gpointer data) /* Wizard -> Group -> Operation */
+{
+	pp->operation_pos = (guchar) (GPOINTER_TO_UINT (data));
+	pp->pos_pos = MENU3_STOP;
+	draw_3_menu(0, NULL);
+	/* 发送给硬件 */
+}
+void data_0021 (GtkMenuItem *menuitem, gpointer data) /* Wizard -> Group -> Group */
+{
+	pp->wgroup_pos = (guchar) (GPOINTER_TO_UINT (data));
+	pp->pos_pos = MENU3_STOP;
+	draw_3_menu(0, NULL);
+	/* 发送给硬件 */
+}
+
 void data_022 (GtkMenuItem *menuitem, gpointer data) /* Wizard -> Calibration -> Type */
 {
-	pp->p_config->type = (gchar) (GPOINTER_TO_UINT (data));
+	pp->p_config->type = (guchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
 	/* 发送给硬件 */
@@ -2356,7 +2436,7 @@ void data_022 (GtkMenuItem *menuitem, gpointer data) /* Wizard -> Calibration ->
 
 void data_023 (GtkMenuItem *menuitem, gpointer data) /* Wizard -> Calibration -> Mode */
 {
-	pp->p_config->calibration_mode = (gchar) (GPOINTER_TO_UINT (data));
+	pp->p_config->calibration_mode = (guchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
 	/* 发送给硬件 */
@@ -3659,14 +3739,15 @@ void data_614 (GtkSpinButton *spinbutton, gpointer data)
 {
 	LAW_VAL(Angle_beam_skew_max) = (gshort) (gtk_spin_button_get_value (spinbutton) * 100.0);
 }
-#if 0
-void data_614 (GtkMenuItem *menuitem, gpointer data) /* 纵横波  P614 */
+# if 0
+void data_6141 (GtkMenuItem *menuitem, gpointer data) /* 纵横波  P614 */
 {
 	LAW_VAL(Wave_type) = (guchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
 }
 #endif
+
 
 /* focalpoint 聚焦点计算方法 P620 */
 void data_620 (GtkMenuItem *menuitem, gpointer data) 
