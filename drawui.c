@@ -2968,7 +2968,7 @@ static void da_call_ip (GtkDialog *dialog, gint response_id, gpointer user_data)
                 
                 for(i=0;i<4;i++)
                 {
-                    *tmp = gtk_spin_button_get_value(entry_ip_p->entry[i]);
+                    *tmp = gtk_spin_button_get_value(GTK_SPIN_BUTTON(entry_ip_p->entry[i]));
 		    //*tmp = gtk_spin_button_get_value(entry_ip.entry[i]);
                     g_printf("%d\n",*tmp);    
                     tmp++;
@@ -2979,7 +2979,7 @@ static void da_call_ip (GtkDialog *dialog, gint response_id, gpointer user_data)
                 gtk_label_set_text (GTK_LABEL (pp->data3[0]), ip_string);
   
                 strcat(ifconfig_buf,ip_string);
-		system(ifconfig_buf);
+		i =	system(ifconfig_buf);
 
 		gtk_widget_destroy (GTK_WIDGET (dialog));
 	}
@@ -2997,7 +2997,6 @@ static void draw_ip()
 	GtkWindow *win = GTK_WINDOW (pp->window);
 	GtkWidget *dialog;
         
-        GtkWidget *entry[5];
 	GtkObject *adjustment[5];
         GtkWidget *label[5];
         char *char_label[5] = {"IP Address","","","",""};
@@ -3010,7 +3009,6 @@ static void draw_ip()
 
         int inet_sock;
         struct ifreq ifr;
-        struct in_addr addr;
         _my_ip_get tmp_ip;
         _my_ip_set entry_ip;
         unsigned char *tmp;
@@ -3054,7 +3052,7 @@ static void draw_ip()
 	    gtk_box_pack_start(GTK_BOX(hbox1), label[i], FALSE, FALSE, 15);
 	    adjustment[i] = gtk_adjustment_new(0.0,0.0,255.0,1.0,0.0,0.0);
 	    entry_ip.entry[i-1] = gtk_spin_button_new(GTK_ADJUSTMENT(adjustment[i]),0.01,0);
-	    gtk_spin_button_set_value(entry_ip.entry[i-1],*tmp);
+	    gtk_spin_button_set_value( GTK_SPIN_BUTTON(entry_ip.entry[i-1]), *tmp);
 	    gtk_box_pack_start(GTK_BOX(hbox2), entry_ip.entry[i-1], TRUE, TRUE, 1);
             tmp++;
         }
@@ -4358,9 +4356,9 @@ void draw3_data0(DRAW_UI_P p)
 
 	guint menu_on=0, i, temp_beam;
 
-        int inet_sock;
-        struct ifreq ifr;
-        static char ip_temp[256];
+	int inet_sock;
+	struct ifreq ifr;
+	char ip_temp[256];
 
 	p = NULL;
 
@@ -4821,10 +4819,10 @@ void draw3_data0(DRAW_UI_P p)
 					pp->x_pos = 608, pp->y_pos = 118-YOFFSET;
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 						draw3_pop_tt (data_530, NULL, 
-								menu_content[GEOMETRY + CFG(part.Geometry_pos)],
-								menu_content+GEOMETRY, 3, 0, CFG(part.Geometry_pos), 0);
+								menu_content[GEOMETRY + get_part_geometry(pp->p_config)],
+								menu_content+GEOMETRY, 3, 0, get_part_geometry(pp->p_config), 0);
 					else 
-						draw3_popdown (menu_content[GEOMETRY + CFG(part.Geometry_pos)], 0, 0);
+						draw3_popdown (menu_content[GEOMETRY + get_part_geometry(pp->p_config)], 0, 0);
 					break;
 				case 4:
 					if ( !con2_p[5][4][0] )
@@ -5220,18 +5218,21 @@ void draw3_data0(DRAW_UI_P p)
 				case 4:/*Preferences -> network -> IP Address  p940*/
 					/* 格式化字符串 */
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
-                                        {
-					    draw_dialog_all (DIALOG_IP);
-                                            //gtk_label_set_text (GTK_LABEL (pp->data3[0]), "192.168.1.95");
+					{
+						draw_dialog_all (DIALOG_IP);
+						//gtk_label_set_text (GTK_LABEL (pp->data3[0]), "192.168.1.95");
 					}
-                                        else
-                                        {
-                                            inet_sock = socket(AF_INET, SOCK_DGRAM, 0);
-                                            strcpy(ifr.ifr_name, "eth0");
-                                            ioctl(inet_sock, SIOCGIFADDR, &ifr);
-                                            sprintf(ip_temp,"%s\n", inet_ntoa(((struct sockaddr_in*)&(ifr.ifr_addr))->sin_addr));
-                                            gtk_label_set_text (GTK_LABEL (pp->data3[0]), ip_temp);
-                                        }
+					else
+					{
+						inet_sock = socket(AF_INET, SOCK_DGRAM, 0);
+						strcpy(ifr.ifr_name, "eth1");
+						ioctl(inet_sock, SIOCGIFADDR, &ifr);
+						memset(ip_temp, 0x0, sizeof(ip_temp));
+//						sprintf(ip_temp, "%s\n", inet_ntoa(((struct sockaddr_in*)&(ifr.ifr_addr))->sin_addr));
+						strcpy(ip_temp, 
+								inet_ntoa(((struct sockaddr_in*)(&(ifr.ifr_addr)))->sin_addr));
+						gtk_label_set_text (GTK_LABEL (pp->data3[0]), ip_temp);
+					}
 
 					g_sprintf (temp,"%s", con2_p[9][4][0]);
 
@@ -8464,7 +8465,7 @@ void draw3_data2(DRAW_UI_P p)
 					break;
 
 				case 3:/*Probe/Part -> Parts -> diameter p532 */
-					switch(CFG(part.Geometry_pos))
+					switch(get_part_geometry(pp->p_config))
 					{
 						case 0:
 							if(UNIT_MM == CFG(unit))
@@ -11062,7 +11063,6 @@ void draw3_data3(DRAW_UI_P p)
 void draw3_data4(DRAW_UI_P p) 
 {
 	gchar temp[52];
-	gchar	temp1[3][20];
 	gfloat tmpf = 0.0;
 	gchar *str;
 
@@ -12265,7 +12265,7 @@ void draw3_data4(DRAW_UI_P p)
 								menu_status = 0x02;
 
 							draw3_pop_tt (data_634, NULL, 
-									tp[temp_pos],	tp,	temp_qty, 4, temp_pos, menu_status);
+									tp[temp_pos],	(const gchar **)tp,	temp_qty, 4, temp_pos, menu_status);
 						}
 						else 
 						{

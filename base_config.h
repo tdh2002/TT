@@ -136,28 +136,19 @@ typedef struct _Wedge
 	gint	A6[107];
 } WEDGE, *WEDGE_P;
 
-struct _Material;
-typedef struct _Material st_MATERIAL;
-typedef struct _Material *st_MATERIAL_P;
 
-/* 材料 (Material) 28Byte OK */
-struct _Material 
-{
-	guint	Velocity_LW;	/* 声速 单位 0.01m/s 纵波 快点 */
-	guint	Velocity_SW;	/* 声速 单位 0.01m/s 横波 慢点 */
-	gchar	Name[20];		/* 材料名字 */
-};
+struct _Part;
+typedef struct _Part st_PART;
 
 /* 工件 (Part) */
-typedef struct _Part
+struct _Part
 {
-	guchar	Geometry_pos;	/* 几何形状 FLAT/ID/OD/BALL */
+	guchar	Geometry;	/* 几何形状 FLAT/ID/OD/BALL */
 	guchar	Material_pos;	/* 材料 */
 	guchar	tt[2];			/* 保留 */
 	guint	Thickness;		/* 厚度 */
 	guint	Diameter;		/* 直径 */
-	st_MATERIAL	Material;	/* 材料信息 */
-} st_PART, *st_PART_P;
+};
 
 /* 一个阵元的聚焦信息*/
 typedef struct _law_elem
@@ -385,7 +376,7 @@ typedef	struct _Config
 
 	GROUP	group[setup_MAX_GROUP_QTY];			/* 前3个都接前面的128的接口 */
 
-	st_PART	part;				/* 被检测工件... */
+	st_PART	part;				/* 被检测工件	*/
 	/* 所有聚焦法则的信息在这里 */
 	LAW_FOCAL	focal_law_all_info[setup_MAX_GROUP_QTY];
 	LAW_BEAM	focal_law_all_beam[setup_MAX_LAW_QTY];
@@ -491,11 +482,23 @@ typedef	struct _Config
 	guchar	remark_info[256];
 } CONFIG, *CONFIG_P;
 
-/*  */
-extern gint	parse_material_info (CONFIG_P p);
-extern void	print_material_info (CONFIG_P p);
-extern gchar *get_material_name (CONFIG_P p);
-extern guint get_material_lw (CONFIG_P p);
-extern guint get_material_sw (CONFIG_P p);
+/* fetch material info of current config 获取当前配置中材料的信息 */
+extern gint	 parse_material_info (CONFIG *p);
+extern void  print_material_info (CONFIG *p);
+extern gchar *get_material_name (CONFIG *p);
+extern guint get_material_lw (CONFIG *p);
+extern guint get_material_sw (CONFIG *p);
+
+/* part operations 工件的操作 */
+extern guint get_part_geometry (CONFIG *p);
+extern void set_part_geometry (CONFIG *p, gpointer data);
+extern gint get_part_material (CONFIG *p);
+extern void set_part_material (CONFIG *p, gint data);
+extern gint get_part_thickness (CONFIG *p);
+extern void set_part_thickness (CONFIG *p, gint data);
+extern gint get_part_diameter (CONFIG *p);
+extern void set_part_diameter (CONFIG *p, gint data);
+
+
 
 #endif

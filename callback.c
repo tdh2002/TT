@@ -1952,7 +1952,7 @@ static gint keypress_event_main_entry(GtkWidget *widget, GdkEventKey *event)			/
 static gint keypress_event_dialog(GtkWidget *widget, GdkEventKey *event)			/* 自己的按键处理*/
 {
 	g_print("dialog press\n");
-	guint i, keyval = event->keyval;
+	guint keyval = event->keyval;
 
 	switch (keyval)
 	{
@@ -3671,7 +3671,7 @@ void data_523 (GtkSpinButton *spinbutton, gpointer data) /*agate_width */
 
 void data_530 (GtkMenuItem *menuitem, gpointer data) /* Probe/Part -> Parts -> Geometry 530 */
 {
-	CFG(part.Geometry_pos) = (guchar) (GPOINTER_TO_UINT (data));
+	set_part_geometry (pp->p_config, data);
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
 }
@@ -3695,7 +3695,6 @@ void data_532 (GtkSpinButton *spinbutton, gpointer data) /*part_thickness*/
 void data_533 (GtkMenuItem *menuitem, gpointer data) 
 {
 	CFG(part.Material_pos) = (guchar) (GPOINTER_TO_UINT (data));
-	parse_material_info (pp->p_config);
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
 }
