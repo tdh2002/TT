@@ -230,6 +230,22 @@ typedef struct tmp_config
 
 	gint	fd_config;
 
+	guchar	radius1_reg;
+	guchar	depth1_reg;
+	guchar	radius2_reg;
+	guchar	depth2_reg;
+	guchar	thickness1_reg;
+	guchar	thickness2_reg;
+	guchar	cstart_reg;
+	guchar	cwidth_reg;
+	guchar	cheight_reg;
+	guchar	radiusa_reg;
+	guchar	deptha_reg;
+	guchar	thicknessa_reg;
+	guchar	tolerance_reg;
+	guchar	first_angle_reg;
+	guchar	last_angle_reg;
+
 } TMP_CONFIG, *TMP_CONFIG_P;
 
 /*画图区域*/
@@ -399,6 +415,23 @@ typedef struct Draw_interface
 	guchar	operation_pos;
 	guchar	wgroup_pos;
 	guchar	fstart_qty;  /* wizard 中 focal law -> start 被点击的次数 */
+	guchar	cstart_qty;
+	guchar  ctype_pos;
+	guchar	cmode_pos;
+	guchar	scode_pos;
+	guchar	echotype_pos;
+	gint	radius1;
+	gint	radius2;
+	gint	depth1;
+	gint	depth2;
+	gint	thickness1;
+	gint	thickness2;
+	gint	radiusa;
+	gint	deptha;
+	gint	thicknessa;
+	gint	tolerance;
+	gshort	first_angle;
+	gshort	last_angle;
 
 } DRAW_UI, *DRAW_UI_P;
 
@@ -425,6 +458,14 @@ typedef struct __my_ip_set
 {
     GtkWidget *entry[4];
 }_my_ip_set,*_my_ip_set_p;
+
+//typedef __my_ip_get __my_mask_get;
+typedef _my_ip_get _my_mask_get;
+typedef _my_ip_get_p _my_mask_get_p;
+
+//typedef __my_ip_set __my_mask_set;
+typedef _my_ip_set _my_mask_set;
+typedef _my_ip_set_p _my_mask_set_p;
 
 #define CUR_POS (pp->pos2[pp->pos][pp->pos1[pp->pos]])      /* 0,1,2,3,4,5 */
 #define CFG(a)	(pp->p_config->a)

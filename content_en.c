@@ -77,12 +77,12 @@ static const gchar *content_en200[] = {
 
 static const gchar *content_en201[] = {
 	/* 二级菜单第0页下的第1页三级菜单 */
-	"Back", "Start", "Law Type", "Material", NULL, NULL, "Next","Wave Type"
+	"Back", "Start", "Law Type", "Material", "Last Element", "Element Step", "Next","Wave Type","Element Qty.", "First Element", "Min.Angle", "Max.Angle", "Angle Step"
 };
 
 static const gchar *content_en202[] = {
 	/* 二级菜单第0页下的第2页三级菜单 */
-	"Back", "Start", "Type", "Mode", NULL, "Clear Calib"
+	"Back", "Start", "Type", "Mode", NULL, "Clear Calib", "Select Code","Reset All", "Angle","Gain", "Start", "Range", "Echo Type", "Radius 1", "Radius 2", "Depth 1", "Depth 2", "Thickness 1", "Thickness 2",	"Next", "Width", "Threshold","Get Position","Radius A", "Depth A", "Thickness A", "Tolerance","First Angle", "Last Angle"
 };
 
 static const gchar *content_en203[] = {
@@ -523,13 +523,16 @@ const gchar *all_menu_content_en[] =
 	"Off", "Mouse", "Control Area",									/* 536 Mouse */
 	"Add", "Modify",				/* Wizard->Group->Operation  OPERATION */
 	"Group 1", "Group 2", "Group 3",	/* Wizard->Group->Group  WGROUP */
-
+	"Encoder", "Ultrasound", "Code",	/* Wizard->Calibration->Type */
+	"Velocity", "Wedge Delay", "Sensitivity", "TCG",	/* Wizard->Calibration->Mode */
+	"API-DL", "AWS-D1.5",				/* Select Code */
+	"Radius", "Depth", "Thickness",
 	""																		
 };
 
 /*  0  */
-const gchar *type_en[] = {"Encoder", "Ultrasound", "Code"};
-const gchar *calibration_mode_en[] = {"Velocity", "Wedge Delay", "Sensitivity", "TCG"};
+//const gchar *type_en[] = {"Encoder", "Ultrasound", "Code"};
+//const gchar *calibration_mode_en[] = {"Velocity", "Wedge Delay", "Sensitivity", "TCG"};
 
 /*  3  */
 const gchar *list_en[]		= {"1 Manual Weld 1: A%. DA^. PA^. SA^", "2 Auto. Weld 1: A%. DA^. ViA^. VsA^"};

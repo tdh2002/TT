@@ -242,6 +242,7 @@ static void set_config (guint groupid)
 
 	set_part_geometry (pp->p_config, GUINT_TO_POINTER (PLATE_PART)	);
 
+	pp->ctype_pos = 1;
 }
 
 /* You have to start somewhere */

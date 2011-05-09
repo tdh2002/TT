@@ -156,6 +156,7 @@
 #define DIALOG_LAW_SAVE			13
 #define DIALOG_LAW_READ			14
 #define DIALOG_IP				15
+#define DIALOG_MASK				16
 
 /* 各个menu 弹出菜单的偏移量 */
 #define TX_RX_MODE	0
@@ -251,6 +252,10 @@
 #define MOUSE		(ASSIGN_K_P + 5)
 #define OPERATION	(MOUSE + 3)
 #define WGROUP		(OPERATION + 2)
+#define CTYPE		(WGROUP + 3)
+#define CMODE		(CTYPE + 3)
+#define SCODE		(CMODE + 4)
+#define ECHOTYPE	(SCODE + 2)
 //#define LAW_CONFIG	(WGROUP + 3)
 //#define L_CONFIG	(LAW_CONFIG + 4)
 
@@ -373,7 +378,21 @@ extern gboolean (*eventbox2_fun[5])(GtkWidget *widget, GdkEventButton *event, gp
 extern void data_002 (GtkMenuItem *menuitem, gpointer data);
 extern void data_0021 (GtkMenuItem *menuitem, gpointer data);
 extern void data_022 (GtkMenuItem *menuitem, gpointer data);
+extern void data_0221 (GtkMenuItem *menuitem, gpointer data);
+extern void data_0222 (GtkSpinButton *spinbutton, gpointer data);
 extern void data_023 (GtkMenuItem *menuitem, gpointer data);
+extern void data_0231 (GtkMenuItem *menuitem, gpointer data);
+extern void data_0232 (GtkSpinButton *spinbutton, gpointer data);
+extern void data_0233 (GtkSpinButton *spinbutton, gpointer data);
+extern void data_0234 (GtkSpinButton *spinbutton, gpointer data);
+extern void data_0235 (GtkSpinButton *spinbutton, gpointer data);
+extern void data_0236 (GtkSpinButton *spinbutton, gpointer data);
+extern void data_0237 (GtkSpinButton *spinbutton, gpointer data);
+extern void data_0238 (GtkSpinButton *spinbutton, gpointer data);
+extern void data_024 (GtkSpinButton *spinbutton, gpointer data);
+extern void data_0241 (GtkSpinButton *spinbutton, gpointer data);
+extern void data_0242 (GtkSpinButton *spinbutton, gpointer data);
+extern void data_0243 (GtkSpinButton *spinbutton, gpointer data);
 extern void data_100 (GtkSpinButton *spinbutton, gpointer data);	/* 100 gain增益 */
 extern void data_101 (GtkSpinButton *spinbutton, gpointer data);	/* 101 start 扫描延时 */
 extern void data_102 (GtkSpinButton *spinbutton, gpointer data);	/* 102 range 范围 */

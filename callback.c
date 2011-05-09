@@ -48,7 +48,21 @@ gboolean data_function5 (GtkWidget *widget,	GdkEventButton *event,	gpointer     
 void data_002 (GtkMenuItem *menuitem, gpointer data);
 void data_0021 (GtkMenuItem *menuitem, gpointer data);
 void data_022 (GtkMenuItem *menuitem, gpointer data);
+void data_0221 (GtkMenuItem *menuitem, gpointer data);
+void data_0222 (GtkSpinButton *spinbutton, gpointer data);
 void data_023 (GtkMenuItem *menuitem, gpointer data); 
+void data_0231 (GtkMenuItem *menuitem, gpointer data); 
+void data_0232 (GtkSpinButton *spinbutton, gpointer data);
+void data_0233 (GtkSpinButton *spinbutton, gpointer data);
+void data_0234 (GtkSpinButton *spinbutton, gpointer data);
+void data_0235 (GtkSpinButton *spinbutton, gpointer data);
+void data_0236 (GtkSpinButton *spinbutton, gpointer data);
+void data_0237 (GtkSpinButton *spinbutton, gpointer data);
+void data_0238 (GtkSpinButton *spinbutton, gpointer data);
+void data_024 (GtkSpinButton *spinbutton, gpointer data);
+void data_0241 (GtkSpinButton *spinbutton, gpointer data);
+void data_0242 (GtkSpinButton *spinbutton, gpointer data);
+void data_0243 (GtkSpinButton *spinbutton, gpointer data);
 
 void data_100 (GtkSpinButton *spinbutton, gpointer data);
 void data_101 (GtkSpinButton *spinbutton, gpointer data);
@@ -732,7 +746,7 @@ void b3_fun0(gpointer p)
 			{
 					case 0:((pp->start_qty) > 0) ? (pp->start_qty) -- : ((pp->start_qty) = 9); break;
 					case 1:((pp->fstart_qty) > 0) ? (pp->fstart_qty) -- : ((pp->fstart_qty) = 5);break;
-					case 2:break;
+					case 2:((pp->cstart_qty) > 0) ? (pp->cstart_qty) -- : ((pp->cstart_qty) = 4);break;
 					case 3:break;
 					default:break;
 			}
@@ -901,7 +915,7 @@ void b3_fun1(gpointer p)
 			{
 					case 0:((pp->start_qty) < 9) ? (pp->start_qty) ++ : ((pp->start_qty) = 1); break;
 					case 1:((pp->fstart_qty) < 5) ? (pp->fstart_qty) ++ : ((pp->fstart_qty) = 1); break;
-					case 2:break;
+					case 2:((pp->cstart_qty) < 4) ? (pp->cstart_qty) ++ : ((pp->cstart_qty) = 1); break;
 					case 3:break;
 					default:break;
 			}
@@ -1212,8 +1226,16 @@ void b3_fun2(gpointer p)
  							   if ( pp->start_qty == 7 )
 									data_process (&(pp->p_tmp_config->scanoffset_reg), 2);
  							   break;
-						case 1:break;
-						case 2:break;
+						case 1: /* 012 */
+ 							   if ( pp->fstart_qty == 3 )
+ 							   		data_process(&(TMP(element_qty_reg)), 2);
+ 							   else if ( pp->fstart_qty == 4 )
+ 							   		data_process(&(TMP(min_angle_reg)), 2);
+ 							   break;
+						case 2:	/* 022 */
+ 							   if ( pp->cstart_qty == 4 )
+ 							   		data_process(&(TMP(cstart_reg)), 3);
+ 							   break;
 						case 3:break;
 						default:break;
 					}
@@ -1452,10 +1474,58 @@ void b3_fun3(gpointer p)
 					{
 						case 0:	/* 003 */
  							   if ( pp->start_qty == 7 )
-									data_process (&(pp->p_tmp_config->indexoffset_reg), 2);
+									data_process (&(TMP(indexoffset_reg)), 2);
  							   break;
-						case 1:break;
-						case 2:break;
+						case 1: /* 013 */
+ 							   if ( pp->fstart_qty == 3 )
+ 							   		data_process(&(TMP(first_element_reg)), 2);
+ 							   else if ( pp->fstart_qty == 4 )
+									data_process (&(TMP(max_angle_reg)), 2);
+ 							   break;
+						case 2:	/* 023 */
+ 							   if(pp->cstart_qty == 2)
+ 							   {
+								 if ((pp->ctype_pos == 1) && (pp->cmode_pos == 1))
+								 {
+									if(pp->echotype_pos == 0)
+									{
+										data_process (&(TMP(radiusa_reg)), 3);
+									}
+									else if(pp->echotype_pos == 1)
+									{
+										data_process (&(TMP(deptha_reg)), 3);
+									}
+									else
+									{
+										data_process (&(TMP(thicknessa_reg)), 3);
+									}
+								 }
+ 							   }
+ 							   else if(pp->cstart_qty == 3)
+ 							   {
+								 if ((pp->ctype_pos == 1) && (pp->cmode_pos == 0))
+								 {
+									if(pp->echotype_pos == 0)
+									{
+										data_process (&(TMP(radius1_reg)), 3);
+									}
+									else if(pp->echotype_pos == 1)
+									{
+										data_process (&(TMP(depth1_reg)), 3);
+									}
+									else
+									{
+										data_process (&(TMP(thickness1_reg)), 3);
+									}
+								 }
+								 else if ((pp->ctype_pos == 1) && (pp->cmode_pos == 1))
+								 {
+									data_process (&(TMP(last_angle_reg)), 2);
+								 }
+ 							   }
+ 							   else if ( pp->cstart_qty == 4 )
+ 							   		data_process(&(TMP(cwidth_reg)), 3);	
+ 							   break;
 						case 3:break;
 						default:break;
 					}
@@ -1632,8 +1702,6 @@ void b3_fun4(gpointer p)
 				case 0:	/* p004 */
  						if ( pp->start_qty == 5 )
  							CFG(auto_detect) = !CFG(auto_detect);
- 						if ( pp->start_qty == 7 )
-							data_process(&(TMP(skew_reg)), 2); 
  						break;
 				case 1:break;
 				case 2:break;
@@ -1659,7 +1727,53 @@ void b3_fun4(gpointer p)
 	{
 		switch (pp->pos) 
 		{
-			case 0:break;
+			case 0:
+					switch (pp->pos1[0])
+					{
+						case 0:	/* 004 */
+ 								if ( pp->start_qty == 7 )
+									data_process(&(TMP(skew_reg)), 2); 
+ 							    break;
+						case 1: /* 014 */
+ 							   if ( pp->fstart_qty == 3 )
+ 							   		data_process(&(TMP(last_element_reg)), 2);
+ 							   else if ( pp->fstart_qty == 4 )
+ 							   		data_process(&(TMP(angle_step_reg)), 2);
+ 							   break;
+						case 2: /* 024 */
+ 							   if(pp->cstart_qty == 2)
+ 							   {
+								if ((pp->ctype_pos == 1) && (pp->cmode_pos == 1))
+								{
+									data_process (&(TMP(tolerance_reg)), 3);
+								}
+ 							   }
+
+ 							   else if(pp->cstart_qty == 3)
+ 							   {
+								if ((pp->ctype_pos == 1) && (pp->cmode_pos == 0))
+								{
+									if(pp->echotype_pos == 0)
+									{
+										data_process (&(TMP(radius2_reg)), 3);
+									}
+									else if(pp->echotype_pos == 1)
+									{
+										data_process (&(TMP(depth2_reg)), 3);
+									}
+									else
+									{
+										data_process (&(TMP(thickness2_reg)), 3);
+									}
+								}
+ 							   }
+ 							   else if(pp->cstart_qty == 4)
+									data_process (&(TMP(cheight_reg)), 1);
+ 							   break;
+						case 3:break;
+						default:break;
+					}
+					break;
 			case 1:
 				   switch (pp->pos1[1])
 				   {
@@ -1800,7 +1914,20 @@ void b3_fun5(gpointer p)
 	{
 		switch (pp->pos) 
 		{
-			case 0:break;
+			case 0:
+					switch (pp->pos1[0])
+					{
+						case 0:	/* 005 */
+ 							   break;
+						case 1: /* 015 */
+ 							   if ( pp->fstart_qty == 3 )
+ 							   		data_process(&(TMP(element_step_reg)), 2);
+ 							   break;
+						case 2:break;
+						case 3:break;
+						default:break;
+					}
+					break;
 			case 1:
 				   switch (pp->pos1[1])
 				   {
@@ -2445,18 +2572,93 @@ void data_0021 (GtkMenuItem *menuitem, gpointer data) /* Wizard -> Group -> Grou
 
 void data_022 (GtkMenuItem *menuitem, gpointer data) /* Wizard -> Calibration -> Type */
 {
-	pp->p_config->type = (guchar) (GPOINTER_TO_UINT (data));
+	pp->ctype_pos = (guchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
 	/* 发送给硬件 */
 }
 
-void data_023 (GtkMenuItem *menuitem, gpointer data) /* Wizard -> Calibration -> Mode */
+void data_0221 (GtkMenuItem *menuitem, gpointer data) /* Wizard -> Calibration -> Echo Type */
 {
-	pp->p_config->calibration_mode = (guchar) (GPOINTER_TO_UINT (data));
+	pp->echotype_pos = (guchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
 	/* 发送给硬件 */
+}
+void data_0222 (GtkSpinButton *spinbutton, gpointer data) /* wizard  First Angle  */
+{
+	pp->first_angle =  (gshort) (gtk_spin_button_get_value (spinbutton) * 100.0);
+}
+
+void data_023 (GtkMenuItem *menuitem, gpointer data) /* Wizard -> Calibration -> Mode */
+{
+	pp->cmode_pos = (guchar) (GPOINTER_TO_UINT (data));
+	pp->pos_pos = MENU3_STOP;
+	draw_3_menu(0, NULL);
+	/* 发送给硬件 */
+}
+
+void data_0231 (GtkMenuItem *menuitem, gpointer data) /* Wizard -> Calibration -> Select code */
+{
+	pp->scode_pos = (guchar) (GPOINTER_TO_UINT (data));
+	pp->pos_pos = MENU3_STOP;
+	draw_3_menu(0, NULL);
+	/* 发送给硬件 */
+}
+
+void data_0232 (GtkSpinButton *spinbutton, gpointer data) /* wizard  Radius 1 */
+{
+	pp->radius1 =  (gint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
+}
+void data_0233 (GtkSpinButton *spinbutton, gpointer data) /* wizard  depth 1 */
+{
+	pp->depth1 =  (gint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
+}
+void data_0234 (GtkSpinButton *spinbutton, gpointer data) /* wizard  thickness 1 */
+{
+	pp->thickness1 =  (gint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
+}
+
+void data_0235 (GtkSpinButton *spinbutton, gpointer data) /* wizard  Radius A */
+{
+	pp->radiusa =  (gint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
+}
+void data_0236 (GtkSpinButton *spinbutton, gpointer data) /* wizard  depth A */
+{
+	pp->deptha =  (gint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
+}
+void data_0237 (GtkSpinButton *spinbutton, gpointer data) /* wizard  thickness A */
+{
+	pp->thicknessa =  (gint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
+}
+void data_0238 (GtkSpinButton *spinbutton, gpointer data) /* wizard  thickness A */
+{
+	pp->last_angle =  (gint) (gtk_spin_button_get_value (spinbutton) * 100.0);
+}
+
+
+
+void data_024 (GtkSpinButton *spinbutton, gpointer data) /* wizard  Radius 2 */
+{
+	pp->radius2 =  (gint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
+
+	/*发送给硬件*/
+}
+
+void data_0241 (GtkSpinButton *spinbutton, gpointer data) /* wizard  depth 2 */
+{
+	pp->depth2 =  (gint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
+
+	/*发送给硬件*/
+}
+
+void data_0242 (GtkSpinButton *spinbutton, gpointer data) /* wizard  thickness 2 */
+{
+	pp->thickness2 =  (gint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
+}
+void data_0243 (GtkSpinButton *spinbutton, gpointer data) /* wizard  tolerance  */
+{
+	pp->tolerance =  (gint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
 }
 
 void data_100 (GtkSpinButton *spinbutton, gpointer data) /* 增益Gain P100 */

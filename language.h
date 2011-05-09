@@ -16,8 +16,8 @@ extern const gchar ***content2_en[];
 extern const gchar *units_en[];
 extern const gchar *all_menu_content_en[];
 
-extern const gchar *type_en[];
-extern const gchar *calibration_mode_en[];
+//extern const gchar *type_en[];
+//extern const gchar *calibration_mode_en[];
 
 extern const gchar *list_en[];
 extern const gchar *list1_en[];
