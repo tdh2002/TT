@@ -82,7 +82,7 @@ static const gchar *content_en201[] = {
 
 static const gchar *content_en202[] = {
 	/* 二级菜单第0页下的第2页三级菜单 */
-	"Back", "Start", "Type", "Mode", NULL, "Clear Calib", "Select Code","Reset All", "Angle","Gain", "Start", "Range", "Echo Type", "Radius 1", "Radius 2", "Depth 1", "Depth 2", "Thickness 1", "Thickness 2",	"Next", "Width", "Threshold","Get Position","Radius A", "Depth A", "Thickness A", "Tolerance","First Angle", "Last Angle"
+	"Back", "Start", "Type", "Mode", NULL, "Clear Calib", "Select Code","Reset All", "Angle","Gain", "Start", "Range", "Echo Type", "Radius 1", "Radius 2", "Depth 1", "Depth 2", "Thickness 1", "Thickness 2",	"Next", "Width", "Threshold","Get Position","Radius A", "Depth A", "Thickness A", "Tolerance","First Angle", "Last Angle", "Clear Env.", "Calibrate", "Restart", "Accept", "Ref.Amplitude", "Comp.Gain", "Apply", "Amplitude", "Add Point", "Weld Type", "Thickness"
 };
 
 static const gchar *content_en203[] = {
@@ -526,8 +526,9 @@ const gchar *all_menu_content_en[] =
 	"Encoder", "Ultrasound", "Code",	/* Wizard->Calibration->Type */
 	"Velocity", "Wedge Delay", "Sensitivity", "TCG",	/* Wizard->Calibration->Mode */
 	"API-DL", "AWS-D1.5",				/* Select Code */
-	"Radius", "Depth", "Thickness",
-	""																		
+	"Radius", "Depth", "Thickness",		/* Echo type */
+	"Compressive", "Tensile",			/* Weld type */
+	""
 };
 
 /*  0  */

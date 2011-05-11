@@ -245,10 +245,14 @@ typedef struct tmp_config
 	guchar	cheight_reg;
 	guchar	radiusa_reg;
 	guchar	deptha_reg;
-	guchar	thicknessa_reg;
+	guchar	thickness_reg;
 	guchar	tolerance_reg;
 	guchar	first_angle_reg;
 	guchar	last_angle_reg;
+	guchar	ref_amplitude_reg;
+	guchar	tolerance_t_reg;
+	guchar	compdb_reg;
+
 
 } TMP_CONFIG, *TMP_CONFIG_P;
 
@@ -432,10 +436,14 @@ typedef struct Draw_interface
 	gint	thickness2;
 	gint	radiusa;
 	gint	deptha;
-	gint	thicknessa;
+	gint	thickness;
 	gint	tolerance;
 	gshort	first_angle;
 	gshort	last_angle;
+	gushort	ref_amplitude;
+	guint	tolerance_t;
+	gushort	comp_gain;
+	guchar	weldtype_pos;
 
 } DRAW_UI, *DRAW_UI_P;
 

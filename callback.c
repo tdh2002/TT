@@ -50,6 +50,9 @@ void data_0021 (GtkMenuItem *menuitem, gpointer data);
 void data_022 (GtkMenuItem *menuitem, gpointer data);
 void data_0221 (GtkMenuItem *menuitem, gpointer data);
 void data_0222 (GtkSpinButton *spinbutton, gpointer data);
+void data_0223 (GtkSpinButton *spinbutton, gpointer data);
+void data_0224 (GtkSpinButton *spinbutton, gpointer data);
+void data_0225 (GtkMenuItem *menuitem, gpointer data);
 void data_023 (GtkMenuItem *menuitem, gpointer data); 
 void data_0231 (GtkMenuItem *menuitem, gpointer data); 
 void data_0232 (GtkSpinButton *spinbutton, gpointer data);
@@ -59,6 +62,7 @@ void data_0235 (GtkSpinButton *spinbutton, gpointer data);
 void data_0236 (GtkSpinButton *spinbutton, gpointer data);
 void data_0237 (GtkSpinButton *spinbutton, gpointer data);
 void data_0238 (GtkSpinButton *spinbutton, gpointer data);
+void data_0239 (GtkSpinButton *spinbutton, gpointer data);
 void data_024 (GtkSpinButton *spinbutton, gpointer data);
 void data_0241 (GtkSpinButton *spinbutton, gpointer data);
 void data_0242 (GtkSpinButton *spinbutton, gpointer data);
@@ -744,9 +748,20 @@ void b3_fun0(gpointer p)
 		case 0: /* Wizard */
 			switch (pp->pos1[0])
 			{
-					case 0:((pp->start_qty) > 0) ? (pp->start_qty) -- : ((pp->start_qty) = 9); break;
-					case 1:((pp->fstart_qty) > 0) ? (pp->fstart_qty) -- : ((pp->fstart_qty) = 5);break;
-					case 2:((pp->cstart_qty) > 0) ? (pp->cstart_qty) -- : ((pp->cstart_qty) = 4);break;
+					case 0:((pp->start_qty) > 1) ? (pp->start_qty) -- : ((pp->start_qty) = 9); break;
+					case 1:((pp->fstart_qty) > 1) ? (pp->fstart_qty) -- : ((pp->fstart_qty) = 5);break;
+					case 2:
+							if((pp->ctype_pos == 1) && (pp->cmode_pos == 0))
+								((pp->cstart_qty) > 1) ? (pp->cstart_qty) -- : ((pp->cstart_qty) = 4);
+							else if((pp->ctype_pos == 1) && (pp->cmode_pos == 1))
+								((pp->cstart_qty) > 1) ? (pp->cstart_qty) -- : ((pp->cstart_qty) = 5);
+							else if((pp->ctype_pos == 1) && (pp->cmode_pos == 2))
+								((pp->cstart_qty) > 1) ? (pp->cstart_qty) -- : ((pp->cstart_qty) = 6);
+							else if((pp->ctype_pos == 1) && (pp->cmode_pos == 3))
+								((pp->cstart_qty) > 1) ? (pp->cstart_qty) -- : ((pp->cstart_qty) = 5);
+							else if(pp->ctype_pos == 2)
+								((pp->cstart_qty) > 1) ? (pp->cstart_qty) -- : ((pp->cstart_qty) = 5);
+							break;
 					case 3:break;
 					default:break;
 			}
@@ -915,7 +930,18 @@ void b3_fun1(gpointer p)
 			{
 					case 0:((pp->start_qty) < 9) ? (pp->start_qty) ++ : ((pp->start_qty) = 1); break;
 					case 1:((pp->fstart_qty) < 5) ? (pp->fstart_qty) ++ : ((pp->fstart_qty) = 1); break;
-					case 2:((pp->cstart_qty) < 4) ? (pp->cstart_qty) ++ : ((pp->cstart_qty) = 1); break;
+					case 2:
+							if((pp->ctype_pos == 1) && (pp->cmode_pos == 0))
+								((pp->cstart_qty) < 4) ? (pp->cstart_qty) ++ : ((pp->cstart_qty) = 1);
+							else if((pp->ctype_pos == 1) && (pp->cmode_pos == 1))
+								((pp->cstart_qty) < 5) ? (pp->cstart_qty) ++ : ((pp->cstart_qty) = 1);
+							else if((pp->ctype_pos == 1) && (pp->cmode_pos == 2))
+								((pp->cstart_qty) < 6) ? (pp->cstart_qty) ++ : ((pp->cstart_qty) = 1);
+							else if((pp->ctype_pos == 1) && (pp->cmode_pos == 3))
+								((pp->cstart_qty) < 5) ? (pp->cstart_qty) ++ : ((pp->cstart_qty) = 1);
+							else if(pp->ctype_pos == 2)
+								((pp->cstart_qty) < 5) ? (pp->cstart_qty) ++ : ((pp->cstart_qty) = 1);
+							break;
 					case 3:break;
 					default:break;
 			}
@@ -1233,8 +1259,18 @@ void b3_fun2(gpointer p)
  							   		data_process(&(TMP(min_angle_reg)), 2);
  							   break;
 						case 2:	/* 022 */
- 							   if ( pp->cstart_qty == 4 )
+ 							   if ( pp->cstart_qty == 2 )
+ 							   {
+ 							   		if((pp->ctype_pos == 1) && (pp->cmode_pos == 2))
+ 							   			data_process(&(TMP(ref_amplitude_reg)), 2);
+ 							   }
+ 							   else if ( pp->cstart_qty == 4 )
  							   		data_process(&(TMP(cstart_reg)), 3);
+ 							   else if ( pp->cstart_qty == 5 )
+ 							   {
+ 							   		if((pp->ctype_pos == 1) && (pp->cmode_pos == 2))
+ 							   			data_process(&(TMP(compdb_reg)), 1);
+ 							   }
  							   break;
 						case 3:break;
 						default:break;
@@ -1483,49 +1519,56 @@ void b3_fun3(gpointer p)
 									data_process (&(TMP(max_angle_reg)), 2);
  							   break;
 						case 2:	/* 023 */
- 							   if(pp->cstart_qty == 2)
- 							   {
-								 if ((pp->ctype_pos == 1) && (pp->cmode_pos == 1))
-								 {
-									if(pp->echotype_pos == 0)
-									{
-										data_process (&(TMP(radiusa_reg)), 3);
-									}
-									else if(pp->echotype_pos == 1)
-									{
-										data_process (&(TMP(deptha_reg)), 3);
-									}
-									else
-									{
-										data_process (&(TMP(thicknessa_reg)), 3);
-									}
-								 }
- 							   }
- 							   else if(pp->cstart_qty == 3)
- 							   {
-								 if ((pp->ctype_pos == 1) && (pp->cmode_pos == 0))
-								 {
-									if(pp->echotype_pos == 0)
-									{
-										data_process (&(TMP(radius1_reg)), 3);
-									}
-									else if(pp->echotype_pos == 1)
-									{
-										data_process (&(TMP(depth1_reg)), 3);
-									}
-									else
-									{
-										data_process (&(TMP(thickness1_reg)), 3);
-									}
-								 }
-								 else if ((pp->ctype_pos == 1) && (pp->cmode_pos == 1))
-								 {
-									data_process (&(TMP(last_angle_reg)), 2);
-								 }
- 							   }
- 							   else if ( pp->cstart_qty == 4 )
- 							   		data_process(&(TMP(cwidth_reg)), 3);	
- 							   break;
+							switch(pp->cstart_qty)
+							{
+ 							   case 2:
+									 if ((pp->ctype_pos == 1) && (pp->cmode_pos == 1))
+									 {
+											if(pp->echotype_pos == 0)
+											{
+												data_process (&(TMP(radiusa_reg)), 3);
+											}
+											else if(pp->echotype_pos == 1)
+											{
+												data_process (&(TMP(deptha_reg)), 3);
+											}
+											else
+											{
+												data_process (&(TMP(thickness1_reg)), 3);
+											}
+								 	 }
+								 	 if ((pp->ctype_pos == 1) && (pp->cmode_pos == 2))
+								 	 {
+											data_process (&(TMP(tolerance_t_reg)), 2);
+								 	 }
+ 							  		 break;
+ 							   case 3:
+								 	 if ((pp->ctype_pos == 1) && (pp->cmode_pos == 0))
+									 {
+											if(pp->echotype_pos == 0)
+											{
+												data_process (&(TMP(radius1_reg)), 3);
+											}
+											else if(pp->echotype_pos == 1)
+											{
+												data_process (&(TMP(depth1_reg)), 3);
+											}
+											else
+											{
+												data_process (&(TMP(thickness1_reg)), 3);
+											}
+								 	 }
+								 	 else if ((pp->ctype_pos == 1) && (pp->cmode_pos == 1))
+								 	 {
+											data_process (&(TMP(last_angle_reg)), 2);
+									 }
+ 							   		 break;
+ 							   case 4:
+ 							   			data_process(&(TMP(cwidth_reg)), 3);
+ 							  			break;
+ 							   default: break;
+							}
+ 							break;
 						case 3:break;
 						default:break;
 					}
@@ -1768,7 +1811,12 @@ void b3_fun4(gpointer p)
 								}
  							   }
  							   else if(pp->cstart_qty == 4)
-									data_process (&(TMP(cheight_reg)), 1);
+ 							   {
+									if(pp->ctype_pos == 1)
+										data_process (&(TMP(cheight_reg)), 1);
+									else if(pp->ctype_pos == 2)
+										data_process (&(TMP(thickness_reg)), 3);
+ 							   }
  							   break;
 						case 3:break;
 						default:break;
@@ -1923,7 +1971,43 @@ void b3_fun5(gpointer p)
  							   if ( pp->fstart_qty == 3 )
  							   		data_process(&(TMP(element_step_reg)), 2);
  							   break;
-						case 2:break;
+						case 2: /* 025 */
+ 							   if(pp->cstart_qty == 4)
+ 							   {
+								 if ((pp->ctype_pos == 1) && (pp->cmode_pos == 1))
+								 {
+									if(pp->echotype_pos == 0)
+									{
+										data_process (&(TMP(radiusa_reg)), 3);
+									}
+									else if(pp->echotype_pos == 1)
+									{
+										data_process (&(TMP(deptha_reg)), 3);
+									}
+									else
+									{
+										data_process (&(TMP(thickness1_reg)), 3);
+									}
+								 }
+
+								 else if ((pp->ctype_pos == 1) && (pp->cmode_pos == 0))
+								 {
+									if(pp->echotype_pos == 0)
+									{
+										data_process (&(TMP(radius1_reg)), 3);
+									}
+									else if(pp->echotype_pos == 1)
+									{
+										data_process (&(TMP(depth1_reg)), 3);
+									}
+									else
+									{
+										data_process (&(TMP(thickness1_reg)), 3);
+									}
+								 }
+ 							   }
+
+ 							   break;
 						case 3:break;
 						default:break;
 					}
@@ -2589,6 +2673,20 @@ void data_0222 (GtkSpinButton *spinbutton, gpointer data) /* wizard  First Angle
 {
 	pp->first_angle =  (gshort) (gtk_spin_button_get_value (spinbutton) * 100.0);
 }
+void data_0223 (GtkSpinButton *spinbutton, gpointer data) /* wizard  Ref.Amplitude  */
+{
+	pp->ref_amplitude =  (gushort) (gtk_spin_button_get_value (spinbutton) * 100.0);
+}
+void data_0224 (GtkSpinButton *spinbutton, gpointer data) /* wizard  Comp Gain  */
+{
+	pp->comp_gain =  (gushort) (gtk_spin_button_get_value (spinbutton) * 100.0);
+}
+void data_0225 (GtkMenuItem *menuitem, gpointer data) /* wizard  Weld Type  */
+{
+	pp->weldtype_pos = (guchar) (GPOINTER_TO_UINT (data));
+	pp->pos_pos = MENU3_STOP;
+	draw_3_menu(0, NULL);
+}
 
 void data_023 (GtkMenuItem *menuitem, gpointer data) /* Wizard -> Calibration -> Mode */
 {
@@ -2627,13 +2725,19 @@ void data_0236 (GtkSpinButton *spinbutton, gpointer data) /* wizard  depth A */
 {
 	pp->deptha =  (gint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
 }
-void data_0237 (GtkSpinButton *spinbutton, gpointer data) /* wizard  thickness A */
+
+void data_0237 (GtkSpinButton *spinbutton, gpointer data) /* wizard  thickness */
 {
-	pp->thicknessa =  (gint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
+	pp->thickness =  (gint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
 }
+
 void data_0238 (GtkSpinButton *spinbutton, gpointer data) /* wizard  thickness A */
 {
 	pp->last_angle =  (gint) (gtk_spin_button_get_value (spinbutton) * 100.0);
+}
+void data_0239 (GtkSpinButton *spinbutton, gpointer data) /* wizard  Tolerance*/
+{
+	pp->tolerance_t =  (gushort) (gtk_spin_button_get_value (spinbutton) * 100.0);
 }
 
 
@@ -2658,7 +2762,7 @@ void data_0242 (GtkSpinButton *spinbutton, gpointer data) /* wizard  thickness 2
 }
 void data_0243 (GtkSpinButton *spinbutton, gpointer data) /* wizard  tolerance  */
 {
-	pp->tolerance =  (gint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
+	pp->tolerance =  (gint) (gtk_spin_button_get_value (spinbutton) * 100.0);
 }
 
 void data_100 (GtkSpinButton *spinbutton, gpointer data) /* 增益Gain P100 */

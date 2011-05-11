@@ -256,6 +256,7 @@
 #define CMODE		(CTYPE + 3)
 #define SCODE		(CMODE + 4)
 #define ECHOTYPE	(SCODE + 2)
+#define WELDTYPE	(ECHOTYPE + 3)
 //#define LAW_CONFIG	(WGROUP + 3)
 //#define L_CONFIG	(LAW_CONFIG + 4)
 
@@ -380,6 +381,9 @@ extern void data_0021 (GtkMenuItem *menuitem, gpointer data);
 extern void data_022 (GtkMenuItem *menuitem, gpointer data);
 extern void data_0221 (GtkMenuItem *menuitem, gpointer data);
 extern void data_0222 (GtkSpinButton *spinbutton, gpointer data);
+extern void data_0223 (GtkSpinButton *spinbutton, gpointer data);
+extern void data_0224 (GtkSpinButton *spinbutton, gpointer data);
+extern void data_0225 (GtkMenuItem *menuitem, gpointer data);
 extern void data_023 (GtkMenuItem *menuitem, gpointer data);
 extern void data_0231 (GtkMenuItem *menuitem, gpointer data);
 extern void data_0232 (GtkSpinButton *spinbutton, gpointer data);
@@ -389,6 +393,7 @@ extern void data_0235 (GtkSpinButton *spinbutton, gpointer data);
 extern void data_0236 (GtkSpinButton *spinbutton, gpointer data);
 extern void data_0237 (GtkSpinButton *spinbutton, gpointer data);
 extern void data_0238 (GtkSpinButton *spinbutton, gpointer data);
+extern void data_0239 (GtkSpinButton *spinbutton, gpointer data);
 extern void data_024 (GtkSpinButton *spinbutton, gpointer data);
 extern void data_0241 (GtkSpinButton *spinbutton, gpointer data);
 extern void data_0242 (GtkSpinButton *spinbutton, gpointer data);

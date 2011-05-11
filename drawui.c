@@ -5353,17 +5353,47 @@ void draw3_data1(DRAW_UI_P p)
 				case 2:/*Wizard -> Calibration -> start p021 */
 					//draw3_popdown (NULL, 1, 1);
 					g_print("cstart_qty = %d\n",pp->cstart_qty);
-					if( (pp->cstart_qty >0) && (pp->cstart_qty < 4) )
+				if(pp->ctype_pos == 1)
+				{
+					if( (pp->cstart_qty >1) && (pp->cstart_qty < 4) )
 						draw3_popdown_offset (NULL, 1, 1, 19 );
 					else if (pp->cstart_qty == 4)
-						{
-							if ((pp->ctype_pos == 1) && (pp->cmode_pos == 0))
-							{
-								draw3_popdown_offset (NULL, 1, 1, 22 );
-							}
-						}
+					{
+						if (pp->cmode_pos == 0)
+							draw3_popdown_offset (NULL, 1, 1, 22 );
+						else
+							draw3_popdown_offset (NULL, 1, 1, 19 );
+					}
+					else if (pp->cstart_qty == 5)
+					{
+						if (pp->cmode_pos == 1)
+							draw3_popdown_offset (NULL, 1, 1, 32 );
+						else if (pp->cmode_pos == 3)
+							draw3_popdown_offset (NULL, 1, 1, 37 );
+						else
+							draw3_popdown_offset (NULL, 1, 1, 19 );
+					}
+					else if (pp->cstart_qty == 6)
+					{
+						if (pp->cmode_pos == 2)
+							draw3_popdown_offset (NULL, 1, 1, 32 );
+						else
+							draw3_popdown_offset (NULL, 1, 1, 19 );
+					}
 					else
 						draw3_popdown (NULL, 1, 1);
+				}
+				else if(pp->ctype_pos == 2)
+				{
+					if (pp->cstart_qty == 1)
+						draw3_popdown (NULL, 1, 1);
+					else if (pp->cstart_qty == 4)
+						draw3_popdown_offset (NULL, 1, 1, 30 );
+					else if (pp->cstart_qty == 5)
+						draw3_popdown_offset (NULL, 1, 1, 32 );
+					else
+						draw3_popdown_offset (NULL, 1, 1, 19 );
+				}
 					break;
 
 				case 3:
@@ -7343,6 +7373,78 @@ void draw3_data2(DRAW_UI_P p)
 									draw3_popdown (menu_content[ECHOTYPE + pp->echotype_pos], 2, 0);
 								str = g_strdup_printf ("%s", con2_p[0][2][12]);	
 								gtk_label_set_text (GTK_LABEL (pp->label3[2]), str);
+								g_free (str);
+							}
+							else if ((pp->ctype_pos == 1) && (pp->cmode_pos == 2))
+							{
+								switch (TMP(ref_amplitude_reg))
+								{
+									case 0:	tmpf = 0.1; break;
+									case 1:	tmpf = 1.0; break;
+									case 2:	tmpf = 10.0; break;
+									default:break;
+								}
+								if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 2))
+								{
+									cur_value = pp->ref_amplitude/100.0 ;
+									lower =	0.0;
+									upper =	100.0;
+									step = tmpf;
+									digit = 1;
+									pos = 2;
+									unit = UNIT_BFH;
+									draw3_digit_pressed (data_0223, units[unit], cur_value,
+											lower, upper, step, digit, p, pos, 33);
+								}
+								else 
+								{
+									cur_value = pp->ref_amplitude/100.0 ;
+									unit = UNIT_BFH;
+									pos = 2;
+									digit = 1;
+									draw3_digit_stop (cur_value , units[unit], digit, pos, 33);
+								}
+							}
+							else if ((pp->ctype_pos == 1) && (pp->cmode_pos == 3))
+							{
+								switch (pp->p_tmp_config->ref_ampl_reg)
+								{
+									case 0:	tmpf = 0.1; break;
+									case 1:	tmpf = 1.0; break;
+									case 2:	tmpf = 10.0; break;
+									default:break;
+								}
+								if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
+								{
+									cur_value =GROUP_VAL(ref_ampl)/100.0;
+									lower = 0.0;
+									upper = 100.0;
+									step = tmpf;
+									digit = 1;
+									pos = 2;
+									unit = UNIT_BFH;
+									draw3_digit_pressed (data_232, units[unit], cur_value , lower, upper, step, digit, p, pos, 36);
+								}
+								else 
+								{
+									cur_value = GROUP_VAL(ref_ampl)/100.0;
+									digit = 1;
+									pos = 2;
+									unit = UNIT_BFH;
+									draw3_digit_stop (cur_value, units[unit], digit, pos, 36);
+								} 
+							}
+							else if ((pp->ctype_pos == 2)&&(pp->scode_pos == 1))
+							{
+								if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
+									draw3_pop_tt (data_0225, NULL, 
+											menu_content[WELDTYPE + pp->weldtype_pos],
+											menu_content+WELDTYPE, 2, 2, pp->weldtype_pos, 0x0);
+								else 
+									draw3_popdown (menu_content[WELDTYPE + pp->weldtype_pos], 2, 0);
+
+								str = g_strdup_printf ("%s", con2_p[0][2][38]);	
+								gtk_label_set_text (GTK_LABEL (pp->label3[2]), str);
 							}
 
 							break;
@@ -7358,8 +7460,7 @@ void draw3_data2(DRAW_UI_P p)
 								str = g_strdup_printf ("%s", con2_p[0][2][12]);	
 								gtk_label_set_text (GTK_LABEL (pp->label3[2]), str);
 							}
-
-							else if ((pp->ctype_pos == 1) && (pp->cmode_pos == 1))
+							else if ((pp->ctype_pos == 1) && ((pp->cmode_pos == 1)||(pp->cmode_pos == 2)||(pp->cmode_pos == 3)))
 							{
 								switch (TMP(first_angle_reg))
 								{
@@ -7391,19 +7492,16 @@ void draw3_data2(DRAW_UI_P p)
 								gtk_widget_set_sensitive(pp->eventbox30[2],FALSE);	
 								gtk_widget_set_sensitive(pp->eventbox31[2],FALSE);
 							}
-							break;
-						case 4:
-							switch (TMP(cstart_reg))
+							else if((pp->ctype_pos == 2)&&(pp->scode_pos == 1))
 							{
-								case 0:	tmpf = 0.01; break;
-								case 1:	tmpf = 0.1; break;
-								case 2:	tmpf = 1.0; break;
-								case 3:	tmpf = 10.0; break;
-								default:break;
-							}
-
-							if ((pp->ctype_pos == 1) && ((pp->cmode_pos == 0)||(pp->cmode_pos == 1)))
-							{
+								switch (TMP(cstart_reg))
+								{
+									case 0:	tmpf = 0.01; break;
+									case 1:	tmpf = 0.1; break;
+									case 2:	tmpf = 1.0; break;
+									case 3:	tmpf = 10.0; break;
+									default:break;
+								}
 								if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 								{
 									if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
@@ -7454,7 +7552,203 @@ void draw3_data2(DRAW_UI_P p)
 								}
 							}
 							break;
+						case 4:
+							switch (TMP(cstart_reg))
+							{
+								case 0:	tmpf = 0.01; break;
+								case 1:	tmpf = 0.1; break;
+								case 2:	tmpf = 1.0; break;
+								case 3:	tmpf = 10.0; break;
+								default:break;
+							}
 
+							if ((pp->ctype_pos == 1) && ((pp->cmode_pos == 0)||(pp->cmode_pos == 1)||(pp->cmode_pos == 2)||(pp->cmode_pos == 3)))
+							{
+								if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
+								{
+									if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
+									{
+										if (UNIT_MM == CFG(unit)) 
+										{
+											cur_value = (GROUP_VAL(gate[0].start) / 1000.0) * (GROUP_VAL(velocity) / 200000.0);   /* 当前显示的起位数值mm */
+											lower = (BEAM_INFO(0,beam_delay) /1000.0) * (GROUP_VAL(velocity) / 200000.0);
+											upper =	(MAX_RANGE_US - GROUP_GATE_POS(width) / 1000.0) * (GROUP_VAL(velocity) / 200000.0);
+											step = tmpf * (GROUP_VAL(velocity) / 200000.0);
+											digit = 2;
+											pos = 2;
+											unit = UNIT_MM;
+										}
+										else 
+										{
+											cur_value = (GROUP_VAL(gate[0].start) / 1000.0) * 0.03937 * (GROUP_VAL(velocity) / 200000.0); /* 当前显示的范围inch */
+											lower = (BEAM_INFO(0,beam_delay) / 1000.0) * 0.03937 * GROUP_VAL(velocity) / 200000.0;
+											upper =	(MAX_RANGE_US - GROUP_GATE_POS(width) / 1000.0 ) * 0.03937 * GROUP_VAL(velocity) / 200000.0;
+											step = tmpf * 0.03937 * GROUP_VAL(velocity) / 200000.0;
+											digit = 3;
+											pos = 2;
+											unit = UNIT_INCH;
+										}
+									}
+									draw3_digit_pressed (data_202, units[unit], cur_value , lower, upper, step, digit, p, pos, 10);
+								}
+								else 
+								{
+									if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
+									{
+										if (UNIT_MM == CFG(unit))
+										{
+											cur_value = (GROUP_VAL(gate[0].start) / 1000.0) * (GROUP_VAL(velocity) / 200000.0);   /* 当前显示的范围数值mm */
+											unit = UNIT_MM;
+											digit = 2;
+											pos = 2;
+										}
+										else
+										{
+											cur_value = (GROUP_VAL(gate[0].start) / 1000.0) * 0.03937 * (GROUP_VAL(velocity) / 200000.0); /* 当前显示的范围inch */
+											unit = UNIT_INCH;
+											digit = 3;
+											pos = 2;
+										}
+									}
+									draw3_digit_stop (cur_value , units[unit], digit, pos, 10);
+								}
+							}
+							else if((pp->ctype_pos == 2)&&(pp->scode_pos == 1))
+							{
+								switch (TMP(db_reg))
+								{
+									case 0:	tmpf = 0.1; break;
+									case 1:	tmpf = 0.5; break;
+									case 2:	tmpf = 1.0; break;
+									case 3:	tmpf = 2.0; break;
+									case 4:	tmpf = 6.0; break;
+									default:break;
+								}
+								if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
+								{
+									cur_value = (GROUP_VAL(gain) - GROUP_VAL(gainr) * GROUP_VAL(db_ref)) / 100.0; 
+									lower = 0.0 - GROUP_VAL(gainr) * GROUP_VAL(db_ref) / 100.0 ;
+									upper = GAIN_MAX - GROUP_VAL(gainr) * GROUP_VAL(db_ref) / 100.0 ;
+									step = tmpf;
+									digit = 1;
+									pos = 2;
+									unit = UNIT_DB;
+									draw3_digit_pressed (data_100, units[unit], cur_value ,
+											lower, upper, step, digit, p, pos, 9);
+								}
+								else 
+								{
+									cur_value = (GROUP_VAL(gain) - GROUP_VAL(gainr) * GROUP_VAL(db_ref)) / 100.0; 
+									digit = 1;
+									pos = 2;
+									unit = UNIT_DB;
+									draw3_digit_stop (cur_value, units[unit], digit, pos, 9);
+								}
+							}
+							break;
+							case 5:
+							  if ((pp->ctype_pos == 1) && ((pp->cmode_pos == 1)||(pp->cmode_pos == 3)) )
+							  {
+								switch (TMP(db_reg))
+								{
+									case 0:	tmpf = 0.1; break;
+									case 1:	tmpf = 0.5; break;
+									case 2:	tmpf = 1.0; break;
+									case 3:	tmpf = 2.0; break;
+									case 4:	tmpf = 6.0; break;
+									default:break;
+								}
+								if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
+								{
+									cur_value = (GROUP_VAL(gain) - GROUP_VAL(gainr) * GROUP_VAL(db_ref)) / 100.0; 
+									lower = 0.0 - GROUP_VAL(gainr) * GROUP_VAL(db_ref) / 100.0 ;
+									upper = GAIN_MAX - GROUP_VAL(gainr) * GROUP_VAL(db_ref) / 100.0 ;
+									step = tmpf;
+									digit = 1;
+									pos = 2;
+									unit = UNIT_DB;
+									draw3_digit_pressed (data_100, units[unit], cur_value ,
+											lower, upper, step, digit, p, pos, 9);
+								}
+								else 
+								{
+									cur_value = (GROUP_VAL(gain) - GROUP_VAL(gainr) * GROUP_VAL(db_ref)) / 100.0; 
+									digit = 1;
+									pos = 2;
+									unit = UNIT_DB;
+									draw3_digit_stop (cur_value, units[unit], digit, pos, 9);
+								}
+							  }
+							  else if ((pp->ctype_pos == 1) && (pp->cmode_pos == 2))
+							  {
+								switch (TMP(compdb_reg))
+								{
+									case 0:	tmpf = 0.1; break;
+									case 1:	tmpf = 1.0; break;
+									default:break;
+								}
+								if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
+								{
+									cur_value = pp->comp_gain / 100.0; 
+									lower = 0.0;
+									upper = 10.0;
+									step = tmpf;
+									digit = 1;
+									pos = 2;
+									unit = UNIT_DB_US;
+									draw3_digit_pressed (data_0224, units[unit], cur_value ,
+											lower, upper, step, digit, p, pos, 34);
+								}
+								else 
+								{
+									cur_value = pp->comp_gain / 100.0; 
+									digit = 1;
+									pos = 2;
+									unit = UNIT_DB_US;
+									draw3_digit_stop (cur_value, units[unit], digit, pos, 34);
+								}
+
+							  }
+							  else
+							  {
+									gtk_widget_hide (pp->eventbox30[2]);
+									gtk_widget_hide (pp->eventbox31[2]);
+							  }
+								break;
+							case 6:
+							  if ((pp->ctype_pos == 1) && (pp->cmode_pos == 2))
+							  {
+								switch (TMP(db_reg))
+								{
+									case 0:	tmpf = 0.1; break;
+									case 1:	tmpf = 0.5; break;
+									case 2:	tmpf = 1.0; break;
+									case 3:	tmpf = 2.0; break;
+									case 4:	tmpf = 6.0; break;
+									default:break;
+								}
+								if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
+								{
+									cur_value = (GROUP_VAL(gain) - GROUP_VAL(gainr) * GROUP_VAL(db_ref)) / 100.0; 
+									lower = 0.0 - GROUP_VAL(gainr) * GROUP_VAL(db_ref) / 100.0 ;
+									upper = GAIN_MAX - GROUP_VAL(gainr) * GROUP_VAL(db_ref) / 100.0 ;
+									step = tmpf;
+									digit = 1;
+									pos = 2;
+									unit = UNIT_DB;
+									draw3_digit_pressed (data_100, units[unit], cur_value ,
+											lower, upper, step, digit, p, pos, 9);
+								}
+								else 
+								{
+									cur_value = (GROUP_VAL(gain) - GROUP_VAL(gainr) * GROUP_VAL(db_ref)) / 100.0; 
+									digit = 1;
+									pos = 2;
+									unit = UNIT_DB;
+									draw3_digit_stop (cur_value, units[unit], digit, pos, 9);
+								}
+							  }
+							  break;
 					}
 					break;
 
@@ -9697,7 +9991,7 @@ void draw3_data3(DRAW_UI_P p)
 					pp->x_pos = 560, pp->y_pos = 380;
 					switch(pp->cstart_qty)
 					{
-					case 1:
+						case 1:
 							if(pp->ctype_pos == 0)
 							{
 								gtk_widget_set_sensitive(pp->eventbox30[3],FALSE);
@@ -9726,7 +10020,7 @@ void draw3_data3(DRAW_UI_P p)
 							}
 							break;
 
-					case 2:
+						case 2:
 							if ((pp->ctype_pos == 1) && (pp->cmode_pos == 0))
 							{
 								if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
@@ -9815,7 +10109,7 @@ void draw3_data3(DRAW_UI_P p)
 								}
 								else
 								{
-									switch (TMP(thicknessa_reg))
+									switch (TMP(thickness1_reg))
 									{
 										case 0:	tmpf = 0.01; break;
 										case 1:	tmpf = 0.1; break;
@@ -9825,25 +10119,58 @@ void draw3_data3(DRAW_UI_P p)
 									}
 									if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 									{
-										cur_value = pp->thicknessa / 1000.0;
+										cur_value = pp->thickness1 / 1000.0;
 										lower = 0.0;
 										upper = 1000.0;
 										step = tmpf;
 										digit = 2;
 										pos = 3;
 										unit = UNIT_MM;
-										draw3_digit_pressed (data_0237, units[unit], cur_value , lower, upper, step, digit, p, pos, 25);
+										draw3_digit_pressed (data_0234, units[unit], cur_value , lower, upper, step, digit, p, pos, 25);
 									}
 									else 
 									{
-										cur_value = pp->thicknessa / 1000.0;
+										cur_value = pp->thickness1 / 1000.0;
 										digit = 2;
 										pos = 3;
 										unit = UNIT_MM;
 										draw3_digit_stop (cur_value, units[unit], digit, pos, 25);
 									}
-
 								}
+							}
+							else if (((pp->ctype_pos == 1) && (pp->cmode_pos == 2))||((pp->ctype_pos == 1) && (pp->cmode_pos == 3)))
+							{
+								switch(TMP(tolerance_t_reg))
+								{
+									case 0:	tmpf = 0.1; break;
+									case 1:	tmpf = 1.0; break;
+									case 2:	tmpf = 10.0; break;
+									default:break;
+								}
+								if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
+								{
+								cur_value = pp->tolerance_t / 100.0 ;
+								lower = 0.0; 
+								upper = 50.0;
+								step = tmpf;
+								digit = 1;
+								pos = 3;
+								unit = UNIT_BFH;
+								draw3_digit_pressed (data_0239, units[unit], cur_value , lower, upper, step, digit, p, pos, 26);
+								}
+								else 
+								{
+								cur_value = pp->tolerance_t / 100.0 ;
+								digit = 1;
+								pos = 3;
+								unit = UNIT_BFH;
+								draw3_digit_stop (cur_value, units[unit], digit, pos, 26);
+								}
+							}
+							else
+							{
+								gtk_widget_hide (pp->eventbox30[3]);
+								gtk_widget_hide (pp->eventbox31[3]);
 							}
 							break;
 					case 3:
@@ -9942,9 +10269,8 @@ void draw3_data3(DRAW_UI_P p)
 
 								}
 							}
-							else if ((pp->ctype_pos == 1) && (pp->cmode_pos == 1))
-							{
-							
+							else if ((pp->ctype_pos == 1) && ((pp->cmode_pos == 1)||(pp->cmode_pos == 2)||(pp->cmode_pos == 3)))
+							{							
 								switch (TMP(last_angle_reg))
 								{
 									case 0:	tmpf = 0.1; break;
@@ -9973,14 +10299,7 @@ void draw3_data3(DRAW_UI_P p)
 									draw3_digit_stop (cur_value , units[unit], digit, pos, 28);
 								}
 							}
-							else
-							{
-								gtk_widget_hide (pp->eventbox30[3]);
-								gtk_widget_hide (pp->eventbox31[3]);
-							}
-							break;
-					case 4:
-							if ((pp->ctype_pos == 1) && ((pp->cmode_pos == 0)||(pp->cmode_pos == 1)))
+							else if((pp->ctype_pos == 2)&&(pp->scode_pos == 1))
 							{
 								switch (pp->p_tmp_config->cwidth_reg)
 								{
@@ -10040,6 +10359,99 @@ void draw3_data3(DRAW_UI_P p)
 									}
 									draw3_digit_stop (cur_value , units[unit], digit, pos, 20);
 								}
+							}
+							else
+							{
+								gtk_widget_hide (pp->eventbox30[3]);
+								gtk_widget_hide (pp->eventbox31[3]);
+							}
+							break;
+					case 4:
+							if ((pp->ctype_pos == 1) && ((pp->cmode_pos == 0)||(pp->cmode_pos == 1)||(pp->cmode_pos == 2)||(pp->cmode_pos == 3)))
+							{
+								switch (pp->p_tmp_config->cwidth_reg)
+								{
+									case 0:	tmpf = 3.2; break;
+									case 1:	tmpf = 16.0; break;
+									case 2:	tmpf = 32.0; break;
+									case 3:	tmpf = 64.0; break;
+									default:break;
+								}
+								if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
+								{
+									if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
+									{
+										if (UNIT_MM == CFG(unit))
+										{
+											cur_value = (GROUP_GATE_POS(width) / 1000.0) * (GROUP_VAL(velocity) / 200000.0);   /* 当前显示的范围数值mm */
+											lower = 3.2 * GROUP_VAL(velocity) / 200000.0;
+											upper = ((MAX_RANGE_US - GROUP_GATE_POS(start) / 1000.0) > 6400.0 ? 6400.0 : 
+													(MAX_RANGE_US - GROUP_GATE_POS(start) / 1000.0)) * (GROUP_VAL(velocity) / 200000.0);
+											step = tmpf * (GROUP_VAL(velocity) / 200000.0);
+											digit = 2;
+											pos = 3;
+											unit = UNIT_MM;
+										}
+										else
+										{
+											cur_value = (GROUP_GATE_POS(width) / 1000.0) * 0.03937 * (GROUP_VAL(velocity) / 200000.0); /* 当前显示的范围inch */
+											lower =	3.2 * 0.03937 * GROUP_VAL(velocity) / 200000.0;
+											upper =	((MAX_RANGE_US - GROUP_GATE_POS(start) / 1000.0) > 6400.0 ? 6400.0 :
+													(MAX_RANGE_US - GROUP_GATE_POS(start) / 1000.0)) * 0.03937 * (GROUP_VAL(velocity) / 200000.0);
+											step = tmpf * 0.03937 * GROUP_VAL(velocity) / 200000.0;
+											digit = 3;
+											pos = 3;
+											unit = UNIT_INCH;
+										}
+									}
+									draw3_digit_pressed (data_203, units[unit], cur_value , lower, upper, step, digit, p, pos, 20);
+								}
+								else 
+								{
+									if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
+									{
+										if (UNIT_MM == CFG(unit))
+										{
+											cur_value = (GROUP_GATE_POS(width) / 1000.0) * (GROUP_VAL(velocity) / 200000.0);   /* 当前显示的范围数值mm */
+											unit = UNIT_MM;
+											digit = 2;
+											pos = 3;
+										}
+										else
+										{
+											cur_value = (GROUP_GATE_POS(width) / 1000.0) * 0.03937 * (GROUP_VAL(velocity) / 200000.0); /* 当前显示的范围inch */
+											unit = UNIT_INCH;
+											digit = 3;
+											pos = 3;
+										}
+									}
+									draw3_digit_stop (cur_value , units[unit], digit, pos, 20);
+								}
+							}
+							else if((pp->ctype_pos == 2)&&(pp->scode_pos == 1))
+							{
+								draw3_popdown_offset(NULL, 3,1,29);
+							}
+							break;
+					case 5:
+							if ((pp->ctype_pos == 1) && ((pp->cmode_pos == 1)||(pp->cmode_pos == 3)) )
+							{
+								draw3_popdown_offset(NULL, 3,1,29);
+							}
+							else if ((pp->ctype_pos == 1) && (pp->cmode_pos == 2))
+							{
+								draw3_popdown_offset(NULL, 3,1,35);
+							}
+							else
+							{
+								gtk_widget_hide (pp->eventbox30[3]);
+								gtk_widget_hide (pp->eventbox31[3]);
+							}
+							break;
+					case 6:
+							if ((pp->ctype_pos == 1) && (pp->cmode_pos == 2))
+							{
+								draw3_popdown_offset(NULL, 3,1,29);
 							}
 							break;
 
@@ -12151,6 +12563,11 @@ void draw3_data4(DRAW_UI_P p)
 								draw3_digit_stop (cur_value, units[unit], digit, pos, 26);
 							}
 						}
+						else
+						{
+							gtk_widget_hide (pp->eventbox30[4]);
+							gtk_widget_hide (pp->eventbox31[4]);
+						}
 					}
 					else if(pp->cstart_qty == 3)
 					{
@@ -12248,6 +12665,36 @@ void draw3_data4(DRAW_UI_P p)
 									}
 								}
 							}
+							else if((pp->ctype_pos == 2)&&(pp->scode_pos == 1))
+							{
+								switch (TMP(cheight_reg))
+								{
+									case 0:	tmpf = 1.0; break;
+									case 1:	tmpf = 10.0; break;						
+									default:break;
+								}
+								if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
+								{
+									cur_value = GROUP_VAL(gate[0].height);
+									lower = 0.0;
+									upper = 98.0;
+									step = tmpf;
+									digit = 0;
+									pos = 4;
+									unit = UNIT_BFH;
+									draw3_digit_pressed (data_204, units[unit], cur_value,
+											lower, upper, step, digit, p, pos, 21);
+								}
+								else 
+								{
+									cur_value =GROUP_VAL(gate[0].height);
+									digit = 0;
+									pos = 4;
+									unit = UNIT_BFH;
+									draw3_digit_stop (cur_value, units[unit], digit, pos, 21);
+								}	
+
+							}
 							else
 							{
 								gtk_widget_hide (pp->eventbox30[4]);
@@ -12256,14 +12703,16 @@ void draw3_data4(DRAW_UI_P p)
 					}
 					else if (pp->cstart_qty == 4)
 					{
-						switch (TMP(cheight_reg))
+						if(pp->ctype_pos == 1)
 						{
+							switch (TMP(cheight_reg))
+							{
 							case 0:	tmpf = 1.0; break;
 							case 1:	tmpf = 10.0; break;						
 							default:break;
-						}
-						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
-						{
+							}
+							if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
+							{
 							cur_value = GROUP_VAL(gate[0].height);
 							lower = 0.0;
 							upper = 98.0;
@@ -12273,15 +12722,97 @@ void draw3_data4(DRAW_UI_P p)
 							unit = UNIT_BFH;
 							draw3_digit_pressed (data_204, units[unit], cur_value,
 									lower, upper, step, digit, p, pos, 21);
-						}
-						else 
-						{
+							}
+							else 
+							{
 							cur_value =GROUP_VAL(gate[0].height);
 							digit = 0;
 							pos = 4;
 							unit = UNIT_BFH;
 							draw3_digit_stop (cur_value, units[unit], digit, pos, 21);
-						}						
+							}	
+						}
+						else if(pp->ctype_pos == 2)
+						{
+									switch (TMP(thickness_reg))
+									{
+										case 0:	tmpf = 0.01; break;
+										case 1:	tmpf = 0.1; break;
+										case 2:	tmpf = 1.0; break;
+										case 3:	tmpf = 10.0; break;						
+										default:break;
+									}
+									if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
+									{
+										cur_value = pp->thickness / 1000.0;
+										lower = 0.0;
+										upper = 1000.0;
+										step = tmpf;
+										digit = 2;
+										pos = 4;
+										unit = UNIT_MM;
+										draw3_digit_pressed (data_0237, units[unit], cur_value , lower, upper, step, digit, p, pos, 39);
+									}
+									else 
+									{
+										cur_value = pp->thickness / 1000.0;
+										digit = 2;
+										pos = 4;
+										unit = UNIT_MM;
+										draw3_digit_stop (cur_value, units[unit], digit, pos, 39);
+									}
+						}				
+					}
+					else if (pp->cstart_qty == 5)
+					{
+						if ((pp->ctype_pos == 1) && (pp->cmode_pos == 1))
+						{
+							draw3_popdown_offset(NULL, 4,1,30);
+						}
+						else if ((pp->ctype_pos == 1) && (pp->cmode_pos == 2))
+						{
+								switch (TMP(db_reg))
+								{
+									case 0:	tmpf = 0.1; break;
+									case 1:	tmpf = 0.5; break;
+									case 2:	tmpf = 1.0; break;
+									case 3:	tmpf = 2.0; break;
+									case 4:	tmpf = 6.0; break;
+									default:break;
+								}
+								if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
+								{
+									cur_value = (GROUP_VAL(gain) - GROUP_VAL(gainr) * GROUP_VAL(db_ref)) / 100.0; 
+									lower = 0.0 - GROUP_VAL(gainr) * GROUP_VAL(db_ref) / 100.0 ;
+									upper = GAIN_MAX - GROUP_VAL(gainr) * GROUP_VAL(db_ref) / 100.0 ;
+									step = tmpf;
+									digit = 1;
+									pos = 4;
+									unit = UNIT_DB;
+									draw3_digit_pressed (data_100, units[unit], cur_value ,
+											lower, upper, step, digit, p, pos, 9);
+								}
+								else 
+								{
+									cur_value = (GROUP_VAL(gain) - GROUP_VAL(gainr) * GROUP_VAL(db_ref)) / 100.0; 
+									digit = 1;
+									pos = 4;
+									unit = UNIT_DB;
+									draw3_digit_stop (cur_value, units[unit], digit, pos, 9);
+								}
+						}
+						else
+						{
+							gtk_widget_hide (pp->eventbox30[4]);
+							gtk_widget_hide (pp->eventbox31[4]);							
+						}
+					}
+					else if (pp->cstart_qty == 6)
+					{
+						if ((pp->ctype_pos == 1) && (pp->cmode_pos == 2))
+						{
+							draw3_popdown_offset(NULL, 4,1,30);
+						}
 					}
 					else
 					{
@@ -13726,14 +14257,97 @@ void draw3_data5(DRAW_UI_P p)
 								{
 									draw3_popdown_offset(NULL, 5,1,7);
 								}
+								else
+								{
+									gtk_widget_hide (pp->eventbox30[5]);
+									gtk_widget_hide (pp->eventbox31[5]);
+								}
 								break;
 						case 2:
+								if ((pp->ctype_pos == 1)&&(pp->cmode_pos == 2))
+								{
+									draw3_popdown(NULL, 5,1);
+								}
+								else
+								{
+									gtk_widget_hide (pp->eventbox30[5]);
+									gtk_widget_hide (pp->eventbox31[5]);
+								}
+								break;
 						case 3:
 								gtk_widget_hide (pp->eventbox30[5]);
 								gtk_widget_hide (pp->eventbox31[5]);
 								break;
 						case 4:
-							if ((pp->ctype_pos == 1) && (pp->cmode_pos == 1))
+							if ((pp->ctype_pos == 1) && (pp->cmode_pos == 0))
+							{
+								if(pp->echotype_pos == 0)
+								{
+									switch (TMP(radius1_reg))
+									{
+										case 0:	tmpf = 0.01; break;
+										case 1:	tmpf = 0.1; break;
+										case 2:	tmpf = 1.0; break;
+										case 3:	tmpf = 10.0; break;						
+										default:break;
+									}
+									if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 5))
+									{
+										cur_value = pp->radius1 / 1000.0;
+										lower = 0.0;
+										upper = 1000.0;
+										step = tmpf;
+										digit = 2;
+										pos = 5;
+										unit = UNIT_MM;
+										draw3_digit_pressed (data_0232, units[unit], cur_value , lower, upper, step, digit, p, pos, 13);
+									}
+									else 
+									{
+										cur_value = pp->radius1 / 1000.0;
+										digit = 2;
+										pos = 5;
+										unit = UNIT_MM;
+										draw3_digit_stop (cur_value, units[unit], digit, pos, 13);
+									}
+
+								}
+								else if(pp->echotype_pos == 1)
+								{
+									draw3_popdown_offset(NULL, 5, 1, 29);
+								}
+								else
+								{
+									switch (TMP(thickness1_reg))
+									{
+										case 0:	tmpf = 0.01; break;
+										case 1:	tmpf = 0.1; break;
+										case 2:	tmpf = 1.0; break;
+										case 3:	tmpf = 10.0; break;						
+										default:break;
+									}
+									if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 5))
+									{
+										cur_value = pp->thickness1 / 1000.0;
+										lower = 0.0;
+										upper = 1000.0;
+										step = tmpf;
+										digit = 2;
+										pos = 5;
+										unit = UNIT_MM;
+										draw3_digit_pressed (data_0234, units[unit], cur_value , lower, upper, step, digit, p, pos, 17);
+									}
+									else 
+									{
+										cur_value = pp->thickness1 / 1000.0;
+										digit = 2;
+										pos = 5;
+										unit = UNIT_MM;
+										draw3_digit_stop (cur_value, units[unit], digit, pos, 17);
+									}
+								}
+							}
+							else if ((pp->ctype_pos == 1) && (pp->cmode_pos == 1))
 							{
 								if(pp->echotype_pos == 0)
 								{
@@ -13745,14 +14359,14 @@ void draw3_data5(DRAW_UI_P p)
 										case 3:	tmpf = 10.0; break;						
 										default:break;
 									}
-									if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
+									if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 5))
 									{
 										cur_value = pp->radiusa / 1000.0;
 										lower = 0.0;
 										upper = 1000.0;
 										step = tmpf;
 										digit = 2;
-										pos = 3;
+										pos = 5;
 										unit = UNIT_MM;
 										draw3_digit_pressed (data_0235, units[unit], cur_value , lower, upper, step, digit, p, pos, 23);
 									}
@@ -13760,11 +14374,10 @@ void draw3_data5(DRAW_UI_P p)
 									{
 										cur_value = pp->radiusa / 1000.0;
 										digit = 2;
-										pos = 3;
+										pos = 5;
 										unit = UNIT_MM;
 										draw3_digit_stop (cur_value, units[unit], digit, pos, 23);
 									}
-
 								}
 								else if(pp->echotype_pos == 1)
 								{
@@ -13776,14 +14389,14 @@ void draw3_data5(DRAW_UI_P p)
 										case 3:	tmpf = 10.0; break;						
 										default:break;
 									}
-									if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
+									if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 5))
 									{
 										cur_value = pp->deptha / 1000.0;
 										lower = 0.0;
 										upper = 1000.0;
 										step = tmpf;
 										digit = 2;
-										pos = 3;
+										pos = 5;
 										unit = UNIT_MM;
 										draw3_digit_pressed (data_0236, units[unit], cur_value , lower, upper, step, digit, p, pos, 24);
 									}
@@ -13791,13 +14404,14 @@ void draw3_data5(DRAW_UI_P p)
 									{
 										cur_value = pp->deptha / 1000.0;
 										digit = 2;
-										pos = 3;
+										pos = 5;
 										unit = UNIT_MM;
 										draw3_digit_stop (cur_value, units[unit], digit, pos, 24);
 									}
 								}
 								else
 								{
+#if 0
 									switch (TMP(thicknessa_reg))
 									{
 										case 0:	tmpf = 0.01; break;
@@ -13806,14 +14420,14 @@ void draw3_data5(DRAW_UI_P p)
 										case 3:	tmpf = 10.0; break;						
 										default:break;
 									}
-									if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
+									if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 5))
 									{
 										cur_value = pp->thicknessa / 1000.0;
 										lower = 0.0;
 										upper = 1000.0;
 										step = tmpf;
 										digit = 2;
-										pos = 3;
+										pos = 5;
 										unit = UNIT_MM;
 										draw3_digit_pressed (data_0237, units[unit], cur_value , lower, upper, step, digit, p, pos, 25);
 									}
@@ -13821,12 +14435,104 @@ void draw3_data5(DRAW_UI_P p)
 									{
 										cur_value = pp->thicknessa / 1000.0;
 										digit = 2;
-										pos = 3;
+										pos = 5;
+										unit = UNIT_MM;
+										draw3_digit_stop (cur_value, units[unit], digit, pos, 25);
+									}
+#endif
+									switch (TMP(thickness1_reg))
+									{
+										case 0:	tmpf = 0.01; break;
+										case 1:	tmpf = 0.1; break;
+										case 2:	tmpf = 1.0; break;
+										case 3:	tmpf = 10.0; break;						
+										default:break;
+									}
+									if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 5))
+									{
+										cur_value = pp->thickness1 / 1000.0;
+										lower = 0.0;
+										upper = 1000.0;
+										step = tmpf;
+										digit = 2;
+										pos = 5;
+										unit = UNIT_MM;
+										draw3_digit_pressed (data_0234, units[unit], cur_value , lower, upper, step, digit, p, pos, 25);
+									}
+									else 
+									{
+										cur_value = pp->thickness1 / 1000.0;
+										digit = 2;
+										pos = 5;
 										unit = UNIT_MM;
 										draw3_digit_stop (cur_value, units[unit], digit, pos, 25);
 									}
 
 								}
+							}
+							else
+							{
+								gtk_widget_hide (pp->eventbox30[5]);
+								gtk_widget_hide (pp->eventbox31[5]);
+							}
+							break;
+
+						case 5:
+							if ((pp->ctype_pos == 1) && (pp->cmode_pos == 1))
+							{
+								draw3_popdown_offset(NULL, 5,1,31);
+							}
+							else if ((pp->ctype_pos == 1) && (pp->cmode_pos == 2))
+							{
+								draw3_popdown_offset(NULL, 5,1,29);
+							}
+							else if (pp->ctype_pos == 2)
+							{
+								draw3_popdown_offset(NULL, 5,1,31);
+							}
+							else
+							{
+								gtk_widget_hide (pp->eventbox30[5]);
+								gtk_widget_hide (pp->eventbox31[5]);
+							}
+
+# if 0
+							else if ((pp->ctype_pos == 1) && (pp->cmode_pos == 1))
+							{							
+								switch (TMP(last_angle_reg))
+								{
+									case 0:	tmpf = 0.1; break;
+									case 1:	tmpf = 1.0; break;
+									case 2:	tmpf = 10.0; break;
+									default:break;
+								}
+								if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 5))
+								{
+									cur_value = pp->last_angle/100.0 ;
+									lower =	0.0;
+									upper =	89.9;
+									step = tmpf;
+									digit = 1;
+									pos = 5;
+									unit = UNIT_DEG;
+									draw3_digit_pressed (data_0238, units[unit], cur_value,
+											lower, upper, step, digit, p, pos, 28);
+								}
+								else 
+								{
+									cur_value = pp->last_angle/100.0 ;
+									unit = UNIT_DEG;
+									pos = 5;
+									digit = 1;
+									draw3_digit_stop (cur_value , units[unit], digit, pos, 28);
+								}
+							}
+#endif
+							break;
+					case 6:
+							if ((pp->ctype_pos == 1) && (pp->cmode_pos == 2))
+							{
+								draw3_popdown_offset(NULL, 5,1,31);
 							}
 							break;
 
