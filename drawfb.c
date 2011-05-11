@@ -13,6 +13,8 @@
 #include <sys/ioctl.h>
 #include <sys/mman.h>
 
+#define MEM_DEVICE "/dev/mem"
+
 #define COLOR_STEP 32     //    4  8  16  32  64
 #define COLOR_SHIFT 5     //    2  3   4   5   6
 static gchar*	pDraw  = NULL;          // 是否扇形区域 
@@ -79,6 +81,26 @@ void init_fb ()
 		mmap(NULL, 2 * 1024 * 1024, PROT_READ | PROT_WRITE, MAP_SHARED, fd_fb, 0);
 
 	g_print ("fb1 video addr:%p %p", TMP(fb1_addr), TMP(virtual_add));
+	return ;
+}
+
+void init_mem ()
+{
+	int fd_mem;
+	if ((fd_mem = open(MEM_DEVICE, O_RDWR | O_SYNC)) == -1) 
+	{
+		perror (MEM_DEVICE);
+		return ;
+	}
+	
+	TMP(kernel_config_add) = (unsigned long int)
+		mmap(0, 1024 * 1024, PROT_READ | PROT_WRITE, MAP_SHARED, fd_mem, 0x8DF00000);
+	TMP(dma_data_add1) = (unsigned long int)
+		mmap(0, 16 * 1024 * 1024, PROT_READ | PROT_WRITE, MAP_SHARED, fd_mem, 0x8E000000);
+	TMP(dma_data_add2) = (unsigned long int)
+		mmap(0, 16 * 1024 * 1024, PROT_READ | PROT_WRITE, MAP_SHARED, fd_mem, 0x8F000000);
+
+	g_print ("mem init\n");
 	return ;
 }
 

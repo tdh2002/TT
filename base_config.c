@@ -29,7 +29,7 @@ static const st_MATERIAL data[] =
 	{360700, 0, "Silver"},					/* 8 */
 	{325100, 0, "Gold"},					/* 8 */
 	{421600, 0, "Zinc"},					/* 10 */
-	{609600, 0, "Titanium"},				/* 11*/
+	{609600, 0, "Titanium"},				/* 11 */
 	{332700, 0, "Tin"},						/* 12 */
 	{254000, 110000, "Epoxy resin"},		/* 13 */
 	{398800, 0, "Ice"},						/* 14 */
@@ -46,7 +46,7 @@ static const st_MATERIAL data[] =
 
 gchar *get_material_name(CONFIG *p)
 {
-	return data[p->part.Material_pos].Name;
+	return (gchar *)(data[p->part.Material_pos].Name);
 }
 
 guint get_material_lw (CONFIG *p)
@@ -69,6 +69,35 @@ void set_part_geometry (CONFIG *p, gpointer data)
 	p->part.Geometry = (guchar)(GPOINTER_TO_UINT (data));
 }
 
+guint get_part_material (CONFIG *p)
+{
+	return p->part.Material_pos;
+}
+
+void set_part_material (CONFIG *p, gpointer data)
+{
+	p->part.Material_pos = (guchar)(GPOINTER_TO_UINT (data));
+}
+
+guint get_part_thickness (CONFIG *p)
+{
+	return p->part.Thickness;
+}
+
+void set_part_thickness (CONFIG *p, gpointer data)
+{
+	p->part.Thickness = (guint)(GPOINTER_TO_UINT (data));
+}
+
+guint get_part_diameter (CONFIG *p)
+{
+	return p->part.Diameter;
+}
+
+void set_part_diameter (CONFIG *p, gpointer data)
+{
+	p->part.Thickness = (guint)(GPOINTER_TO_UINT (data));
+}
 
 
 

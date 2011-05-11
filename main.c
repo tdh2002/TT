@@ -280,8 +280,6 @@ int main (int argc, char *argv[])
 	g_print("DRAW_UI's size:%d xx = %d\n", sizeof(DRAW_UI), p_ui->mark3);
 	g_print("CONFIG's size:%d xx = %d\n", sizeof(CONFIG), p_config->time);
 
-	p_ui->p_beam_data = (guint)malloc(MAX_DOT_QTY * 2);		/* FPGA过来的数据 */
-	for (i = 0; i < 4; i++);
 
 	/*	window = gtk_window_new (GTK_WINDOW_POPUP);*/
 	window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
@@ -327,16 +325,6 @@ int main (int argc, char *argv[])
 	TMP(a_scan_dot_qty)	= 615;
 	TMP(a_scan_height)	= 120;
 
-	for (i = 0; i < 20480; i++)
-	{
-		tt = i % 511;
-		if ( tt > 255)
-			*(DOT_TYPE *)(pp->p_beam_data + i) = 511 - tt;
-		else 
-			*(DOT_TYPE *)(pp->p_beam_data + i) = tt;
-//		g_print ("%d = %d\n", i, 
-//				*(DOT_TYPE *)(pp->p_beam_data + i));
-	}
 	memset (TMP(scan_type), 0xff, 16);
 	TMP(beam_qty[0]) = 1;
 	TMP(beam_qty[1]) = 1;
@@ -353,6 +341,8 @@ int main (int argc, char *argv[])
 	TMP(beam_num[3]) = 0;
 #if ARM
 	init_fb (); /* 初始化fb1 */
+	init_mem (); /* 初始化MEM */
+	p_ui->p_beam_data = TMP(dma_data_add1);		/* FPGA过来的数据 */
 #endif
 	init_ui (p_ui);
 

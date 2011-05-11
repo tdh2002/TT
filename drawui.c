@@ -107,6 +107,10 @@ void draw_area_all();
 
 void save_config (GtkWidget *widget, GdkEventButton *event,	gpointer data);
 
+void draw3_data0(DRAW_UI_P p);
+void draw3_data1(DRAW_UI_P p);
+void draw3_data2(DRAW_UI_P p);
+
 /**/
 const gchar **con0_p	 = content_en10;
 const gchar ***con1_p	 = content1_en;
@@ -6362,9 +6366,12 @@ void draw3_data1(DRAW_UI_P p)
 					{
 						if(UNIT_MM == CFG(unit))
 						{
-							cur_value = CFG(part.Thickness)/1000.0;
+							cur_value = get_part_thickness(pp->p_config) / 1000.0;
 							lower = 0.05;
-							upper = CFG(part.Diameter)/2000.0;
+							if (get_part_geometry(pp->p_config) == PLATE_PART)
+								upper = 1000.0;
+							else
+								upper = CFG(part.Diameter)/2000.0;
 							step = tmpf;
 							digit = 2;
 							pos = 1;
@@ -6372,9 +6379,9 @@ void draw3_data1(DRAW_UI_P p)
 						}
 						else
 						{
-							cur_value = CFG(part.Thickness)/1000.0*0.03937;
+							cur_value = get_part_thickness(pp->p_config) / 1000.0*0.03937;
 							lower = 0.002;
-							upper = CFG(part.Diameter)/2000.0*0.03937;
+							upper = CFG(part.Diameter) / 2000.0*0.03937;
 							step = tmpf*0.03937;
 							digit = 3;
 							pos = 1;
@@ -6386,14 +6393,14 @@ void draw3_data1(DRAW_UI_P p)
 					{
 						if(UNIT_MM == CFG(unit))
 						{
-							cur_value = CFG(part.Thickness)/1000.0;
+							cur_value = get_part_thickness(pp->p_config) / 1000.0;
 							digit = 2;
 							pos = 1;
 							unit = UNIT_MM;
 						}
 						else
 						{
-							cur_value = CFG(part.Thickness)/1000.0*0.03937;
+							cur_value = get_part_thickness(pp->p_config) / 1000.0*0.03937;
 							digit = 3;
 							pos = 1;
 							unit = UNIT_INCH;
@@ -8863,7 +8870,7 @@ void draw3_data2(DRAW_UI_P p)
 								if(UNIT_MM == CFG(unit))
 								{
 									cur_value = CFG(part.Diameter)/1000.0;
-									lower = 2.0 * CFG(part.Thickness) / 1000.0;
+									lower = 2.0 * get_part_thickness(pp->p_config) / 1000.0;
 									upper = 1000000.00;
 									step = tmpf;
 									digit = 2;
@@ -8873,7 +8880,7 @@ void draw3_data2(DRAW_UI_P p)
 								else
 								{
 									cur_value = CFG(part.Diameter)/1000.0 * 0.03937;
-									lower = 2.0 * CFG(part.Thickness) / 1000.0*0.03937;
+									lower = 2.0 * get_part_thickness(pp->p_config) / 1000.0*0.03937;
 									upper = 1000000.00 * 0.03937;
 									step = tmpf;
 									digit = 3;
@@ -15244,15 +15251,12 @@ void draw_keyboard (GtkWidget *widget, GdkEventButton *event,	gpointer data)
 	//	gtk_main_quit();
 }
 
+#if 0
 /*   */
 static gboolean time_handler2(GtkWidget *widget)
 {
 	gint i, j, k, prf_count, offset;
 	pp->scan_count++;
-
-	/* 第一个GROUP */
-	//	(GROUP_VAL(prf) > 500) ? (prf_count = 50) : (prf_count = (GROUP_VAL(prf) / 10));
-	//	prf_count = 50 / prf_count;
 
 	for (i = 0 ; i < CFG(groupQty); i++)
 	{
@@ -15293,6 +15297,69 @@ static gboolean time_handler2(GtkWidget *widget)
 							TMP(scan_xpos[k]), TMP(scan_ypos[k]));
 			}
 		} 
+	}
+
+
+	//	for (i = 0; (i < 16) && (TMP(scan_type[i]) != 0xff); i++)
+	//	{
+	//		draw_scan(i, TMP(scan_type[i]), TMP(scan_group[i]), TMP(scan_xpos[i]), TMP(scan_ypos[i]));
+	//	}
+
+	/* 复制波形到显存 */
+	if (pp->refresh_mark ) 
+	{
+		memcpy (TMP(fb1_addr), dot_temp1, FB_WIDTH*400*2);	/* 如果用dma更快啊 */
+		pp->refresh_mark = 0;
+	}
+
+	return TRUE;
+}
+#endif
+
+static gboolean time_handler2(GtkWidget *widget)
+{
+	gint i, j, k, prf_count, offset;
+	guint *temp = TMP(kernel_config_add);
+	pp->scan_count++;
+
+	if (temp[0])
+	{
+		temp[0] = 0;
+	}
+
+	for (i = 0 ; i < CFG(groupQty); i++)
+	{
+		pp->refresh_mark = 1;
+		/* 获取数据 */
+		/* 这里需要压缩数据 或者 插值数据 这里只有一个beam 同时最多处理256beam */
+		for	(j = 0 ; j < TMP(beam_qty[i]); j++)
+		{  
+			for (offset = 0, k = 0 ; k < i; k++)
+				offset += 8192 * TMP(beam_qty[k]);
+			if (GROUP_VAL_POS(i, point_qty) <= TMP(a_scan_dot_qty))
+			{
+				interpolation_data (
+						(DOT_TYPE *)(pp->p_beam_data + offset +
+							GROUP_VAL_POS(i, point_qty) * j),
+						TMP(scan_data[i] + TMP(a_scan_dot_qty) * j), 
+						GROUP_VAL_POS(i, point_qty),
+						TMP(a_scan_dot_qty));
+			}
+			else if (GROUP_VAL_POS(i, point_qty) > TMP(a_scan_dot_qty))
+				compress_data (
+						(DOT_TYPE *)(pp->p_beam_data + offset +
+							GROUP_VAL_POS(i, point_qty) * j),
+						TMP(scan_data[i] + TMP(a_scan_dot_qty) * j), 
+						GROUP_VAL_POS(i, point_qty),
+						TMP(a_scan_dot_qty), 
+						GROUP_VAL_POS(i, rectifier));
+		}
+		for (k = 0; ((k < 16) && (TMP(scan_type[k]) != 0xff)); k++)
+		{
+			if (TMP(scan_group[k]) == i)
+				draw_scan(k, TMP(scan_type[k]), TMP(scan_group[k]), 
+						TMP(scan_xpos[k]), TMP(scan_ypos[k]));
+		}
 	}
 
 
@@ -15712,7 +15779,7 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 	draw_3_menu(1, NULL);
 
 #if ARM
-	g_timeout_add(20, (GSourceFunc) time_handler2, NULL);
+	g_timeout_add(50, (GSourceFunc) time_handler2, NULL);
 #endif
 	g_timeout_add(1000, (GSourceFunc) time_handler1, NULL);
 	//	g_thread_create((GThreadFunc)(time_handler), (gpointer) (pp->drawing_area), FALSE, NULL);

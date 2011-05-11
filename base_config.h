@@ -143,7 +143,7 @@ typedef struct _Part st_PART;
 /* 工件 (Part) */
 struct _Part
 {
-	guchar	Geometry;	/* 几何形状 FLAT/ID/OD/BALL */
+	guchar	Geometry;		/* 几何形状 FLAT/ID/OD/BALL */
 	guchar	Material_pos;	/* 材料 */
 	guchar	tt[2];			/* 保留 */
 	guint	Thickness;		/* 厚度 */
@@ -492,12 +492,12 @@ extern guint get_material_sw (CONFIG *p);
 /* part operations 工件的操作 */
 extern guint get_part_geometry (CONFIG *p);
 extern void set_part_geometry (CONFIG *p, gpointer data);
-extern gint get_part_material (CONFIG *p);
-extern void set_part_material (CONFIG *p, gint data);
-extern gint get_part_thickness (CONFIG *p);
-extern void set_part_thickness (CONFIG *p, gint data);
-extern gint get_part_diameter (CONFIG *p);
-extern void set_part_diameter (CONFIG *p, gint data);
+extern guint get_part_material (CONFIG *p);
+extern void set_part_material (CONFIG *p, gpointer data);
+extern guint get_part_thickness (CONFIG *p);
+extern void set_part_thickness (CONFIG *p, gpointer data);
+extern guint get_part_diameter (CONFIG *p);
+extern void set_part_diameter (CONFIG *p, gpointer data);
 
 
 
