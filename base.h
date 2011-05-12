@@ -252,7 +252,7 @@ typedef struct tmp_config
 	guchar	ref_amplitude_reg;
 	guchar	tolerance_t_reg;
 	guchar	compdb_reg;
-
+	guchar	cangle_reg;
 
 } TMP_CONFIG, *TMP_CONFIG_P;
 
@@ -445,6 +445,7 @@ typedef struct Draw_interface
 	guint	tolerance_t;
 	gushort	comp_gain;
 	guchar	weldtype_pos;
+	guchar	cangle;
 
 } DRAW_UI, *DRAW_UI_P;
 

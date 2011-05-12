@@ -79,8 +79,8 @@ enum
 };
 
 static char buffer[32];
-static guchar dot_temp[800];
-static gushort dot_temp1[FB_WIDTH*400];
+//static guchar dot_temp[800];
+//static gushort dot_temp1[FB_WIDTH*400];
 
 gint (*window_keypress_event_orig)(GtkWidget *widget, GdkEventKey *event);/* window 原始的按键处理 */
 gint (*dialog_keypress_event_orig)(GtkWidget *widget, GdkEventKey *event);/* window 原始的按键处理 */
@@ -4398,7 +4398,7 @@ void draw3_data0(DRAW_UI_P p)
 	int time_min;/*分*/
 	int time_sec;/*秒*/
 
-	gchar date_temp[52];  /*日期存储*/
+//	gchar date_temp[52];  /*日期存储*/
 	gchar time_temp[52];  /*时间存储*/
 	p = NULL;
 
@@ -7343,24 +7343,30 @@ void draw3_data2(DRAW_UI_P p)
 						case 2:
 							if ((pp->ctype_pos == 1) && (pp->cmode_pos == 0))
 							{
+								switch (TMP(cangle_reg))
+								{
+									case 0:	tmpf = 1.0; break;
+									case 1:	tmpf = 10.0; break;
+									default:break;
+								}
 								if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 2))
 								{
-									cur_value = LAW_VAL(Angle_min)/100.0 ;
+									cur_value = pp->cangle ;
 									lower =	0.0;
 									upper =	89.9;
 									step = tmpf;
-									digit = 1;
+									digit = 0;
 									pos = 2;
 									unit = UNIT_DEG;
-									draw3_digit_pressed (data_132, units[unit], cur_value,
+									draw3_digit_pressed (data_0226, units[unit], cur_value,
 											lower, upper, step, digit, p, pos, 8);
 								}
 								else 
 								{
-									cur_value = LAW_VAL(Angle_min)/100.0 ;
+									cur_value = pp->cangle ;
 									unit = UNIT_DEG;
 									pos = 2;
-									digit = 1;
+									digit = 0;
 									draw3_digit_stop (cur_value , units[unit], digit, pos, 8);
 								}
 							}
@@ -7750,6 +7756,7 @@ void draw3_data2(DRAW_UI_P p)
 								}
 							  }
 							  break;
+
 					}
 					break;
 
@@ -9688,6 +9695,7 @@ void draw3_data3(DRAW_UI_P p)
 	gfloat cur_value=0.0, lower, upper, step;
 	guint digit, pos, unit, content_pos, menu_status = 0, temp_beam, temp_beam1;
 
+
 	switch (pp->pos) 
 	{
 		case 0:
@@ -10024,25 +10032,35 @@ void draw3_data3(DRAW_UI_P p)
 						case 2:
 							if ((pp->ctype_pos == 1) && (pp->cmode_pos == 0))
 							{
+								switch (TMP(db_reg))
+								{
+									case 0:	tmpf = 0.1; break;
+									case 1:	tmpf = 0.5; break;
+									case 2:	tmpf = 1.0; break;
+									case 3:	tmpf = 2.0; break;
+									case 4:	tmpf = 6.0; break;
+									default:break;
+								}
+
 								if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 								{
-								cur_value = (GROUP_VAL(gain) - GROUP_VAL(gainr) * GROUP_VAL(db_ref)) / 100.0; 
-								lower = 0.0 - GROUP_VAL(gainr) * GROUP_VAL(db_ref) / 100.0 ;
-								upper = GAIN_MAX - GROUP_VAL(gainr) * GROUP_VAL(db_ref) / 100.0 ;
-								step = tmpf;
-								digit = 1;
-								pos = 3;
-								unit = UNIT_DB;
-								draw3_digit_pressed (data_100, units[unit], cur_value ,
-										lower, upper, step, digit, p, pos, 9);
+									cur_value = (GROUP_VAL(gain) - GROUP_VAL(gainr) * GROUP_VAL(db_ref)) / 100.0; 
+									lower = 0.0 - GROUP_VAL(gainr) * GROUP_VAL(db_ref) / 100.0 ;
+									upper = GAIN_MAX - GROUP_VAL(gainr) * GROUP_VAL(db_ref) / 100.0 ;
+									step = tmpf;
+									digit = 1;
+									pos = 3;
+									unit = UNIT_DB;
+									draw3_digit_pressed (data_100, units[unit], cur_value ,
+											lower, upper, step, digit, p, pos, 9);
 								}
 								else 
 								{
-								cur_value = (GROUP_VAL(gain) - GROUP_VAL(gainr) * GROUP_VAL(db_ref)) / 100.0; 
-								digit = 1;
-								pos = 3;
-								unit = UNIT_DB;
-								draw3_digit_stop (cur_value, units[unit], digit, pos, 9);
+									cur_value = (GROUP_VAL(gain) - GROUP_VAL(gainr) * GROUP_VAL(db_ref)) / 100.0; 
+									digit = 1;
+									pos = 3;
+									unit = UNIT_DB;
+									draw3_digit_stop (cur_value, units[unit], digit, pos, 9);
 								}
 							}
 							else if ((pp->ctype_pos == 1) && (pp->cmode_pos == 1))
@@ -10139,7 +10157,7 @@ void draw3_data3(DRAW_UI_P p)
 									}
 								}
 							}
-							else if (((pp->ctype_pos == 1) && (pp->cmode_pos == 2))||((pp->ctype_pos == 1) && (pp->cmode_pos == 3)))
+							else if ((pp->ctype_pos == 1) && ((pp->cmode_pos == 2)||(pp->cmode_pos == 3)))
 							{
 								switch(TMP(tolerance_t_reg))
 								{
@@ -15683,7 +15701,7 @@ static gboolean time_handler1(GtkWidget *widget)
 
 	return TRUE;
 }
-
+#if 0
 static void	compress_data (DOT_TYPE *source_data, DOT_TYPE *target_data,
 		gint qty1, gint qty2, guint	rectify)
 {
@@ -15794,7 +15812,7 @@ static void draw_scan(guchar scan_num, guchar scan_type, guchar group,
 	}
 	return ;
 }
-
+#endif
 #if 0
 gboolean bt_release (GtkWidget *widget, GdkEventButton *event,
 		gpointer user_data) 
@@ -16023,6 +16041,9 @@ static gboolean time_handler2(GtkWidget *widget)
 }
 #endif
 
+
+
+#if 0
 static gboolean time_handler2(GtkWidget *widget)
 {
 	gchar key = 0;
@@ -16090,6 +16111,7 @@ static gboolean time_handler2(GtkWidget *widget)
 
 	return TRUE;
 }
+#endif
 
 /*  */
 void init_ui(DRAW_UI_P p)				/*初始化界面,*/

@@ -53,6 +53,7 @@ void data_0222 (GtkSpinButton *spinbutton, gpointer data);
 void data_0223 (GtkSpinButton *spinbutton, gpointer data);
 void data_0224 (GtkSpinButton *spinbutton, gpointer data);
 void data_0225 (GtkMenuItem *menuitem, gpointer data);
+void data_0226 (GtkSpinButton *spinbutton, gpointer data);
 void data_023 (GtkMenuItem *menuitem, gpointer data); 
 void data_0231 (GtkMenuItem *menuitem, gpointer data); 
 void data_0232 (GtkSpinButton *spinbutton, gpointer data);
@@ -1261,15 +1262,36 @@ void b3_fun2(gpointer p)
 						case 2:	/* 022 */
  							   if ( pp->cstart_qty == 2 )
  							   {
- 							   		if((pp->ctype_pos == 1) && (pp->cmode_pos == 2))
+									if ((pp->ctype_pos == 1) && (pp->cmode_pos == 0))
+ 							   			data_process(&(TMP(cangle_reg)), 1);
+ 							   		else if((pp->ctype_pos == 1) && (pp->cmode_pos == 2))
  							   			data_process(&(TMP(ref_amplitude_reg)), 2);
+									else if ((pp->ctype_pos == 1) && (pp->cmode_pos == 3))
+ 							   			data_process(&(TMP(ref_ampl_reg)), 2);
+ 							   }
+ 							   else if ( pp->cstart_qty == 3 )
+ 							   {
+									if((pp->ctype_pos == 2)&&(pp->scode_pos == 1))
+ 							   			data_process(&(TMP(cstart_reg)), 3);
  							   }
  							   else if ( pp->cstart_qty == 4 )
- 							   		data_process(&(TMP(cstart_reg)), 3);
+ 							   {
+									if((pp->ctype_pos == 2)&&(pp->scode_pos == 1))
+ 							   			data_process(&(TMP(db_reg)), 4);
+									else
+ 							   			data_process(&(TMP(cstart_reg)), 3);
+ 							   }
  							   else if ( pp->cstart_qty == 5 )
  							   {
  							   		if((pp->ctype_pos == 1) && (pp->cmode_pos == 2))
  							   			data_process(&(TMP(compdb_reg)), 1);
+							  		else if ((pp->ctype_pos == 1) && ((pp->cmode_pos == 1)||(pp->cmode_pos == 3)) )
+ 							   			data_process(&(TMP(db_reg)), 4);
+ 							   }
+ 							   else if(pp->cstart_qty == 6)
+ 							   {
+									if ((pp->ctype_pos == 1) && (pp->cmode_pos == 2))
+										data_process (&(TMP(db_reg)), 4);
  							   }
  							   break;
 						case 3:break;
@@ -1537,10 +1559,14 @@ void b3_fun3(gpointer p)
 												data_process (&(TMP(thickness1_reg)), 3);
 											}
 								 	 }
-								 	 if ((pp->ctype_pos == 1) && (pp->cmode_pos == 2))
-								 	 {
+									 else if ((pp->ctype_pos == 1) && ((pp->cmode_pos == 2)||(pp->cmode_pos == 3)))
 											data_process (&(TMP(tolerance_t_reg)), 2);
+
+									 else if ((pp->ctype_pos == 1) && (pp->cmode_pos == 0))
+									 {
+											data_process (&(TMP(db_reg)), 4);
 								 	 }
+
  							  		 break;
  							   case 3:
 								 	 if ((pp->ctype_pos == 1) && (pp->cmode_pos == 0))
@@ -1558,9 +1584,13 @@ void b3_fun3(gpointer p)
 												data_process (&(TMP(thickness1_reg)), 3);
 											}
 								 	 }
-								 	 else if ((pp->ctype_pos == 1) && (pp->cmode_pos == 1))
+								 	 else if ((pp->ctype_pos == 1) && ((pp->cmode_pos == 1)||(pp->cmode_pos == 2)||(pp->cmode_pos == 3)))
 								 	 {
 											data_process (&(TMP(last_angle_reg)), 2);
+									 }
+								 	 else if ((pp->ctype_pos == 2) && (pp->scode_pos == 1))
+								 	 {
+											data_process (&(TMP(cwidth_reg)), 3);
 									 }
  							   		 break;
  							   case 4:
@@ -1809,6 +1839,10 @@ void b3_fun4(gpointer p)
 										data_process (&(TMP(thickness2_reg)), 3);
 									}
 								}
+								else if(pp->ctype_pos == 2)
+								{
+										data_process (&(TMP(cheight_reg)), 1);
+								}
  							   }
  							   else if(pp->cstart_qty == 4)
  							   {
@@ -1817,6 +1851,12 @@ void b3_fun4(gpointer p)
 									else if(pp->ctype_pos == 2)
 										data_process (&(TMP(thickness_reg)), 3);
  							   }
+ 							   else if(pp->cstart_qty == 5)
+ 							   {
+									if ((pp->ctype_pos == 1) && (pp->cmode_pos == 2))
+										data_process (&(TMP(db_reg)), 4);
+ 							   }
+
  							   break;
 						case 3:break;
 						default:break;
@@ -2686,6 +2726,10 @@ void data_0225 (GtkMenuItem *menuitem, gpointer data) /* wizard  Weld Type  */
 	pp->weldtype_pos = (guchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_3_menu(0, NULL);
+}
+void data_0226 (GtkSpinButton *spinbutton, gpointer data) /* wizard  Comp Gain  */
+{
+	pp->cangle =  (guchar) (gtk_spin_button_get_value (spinbutton));
 }
 
 void data_023 (GtkMenuItem *menuitem, gpointer data) /* Wizard -> Calibration -> Mode */
