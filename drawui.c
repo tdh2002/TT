@@ -110,6 +110,7 @@ void save_config (GtkWidget *widget, GdkEventButton *event,	gpointer data);
 void draw3_data0(DRAW_UI_P p);
 void draw3_data1(DRAW_UI_P p);
 void draw3_data2(DRAW_UI_P p);
+void draw3_data3(DRAW_UI_P p);
 
 /**/
 const gchar **con0_p	 = content_en10;
@@ -6401,7 +6402,7 @@ void draw3_data1(DRAW_UI_P p)
 							if (get_part_geometry(pp->p_config) == PLATE_PART)
 								upper = 1000.0;
 							else
-								upper = CFG(part.Diameter)/2000.0;
+								upper = get_part_diameter (pp->p_config) / 2000.0;
 							step = tmpf;
 							digit = 2;
 							pos = 1;
@@ -6411,7 +6412,7 @@ void draw3_data1(DRAW_UI_P p)
 						{
 							cur_value = get_part_thickness(pp->p_config) / 1000.0*0.03937;
 							lower = 0.002;
-							upper = CFG(part.Diameter) / 2000.0*0.03937;
+							upper = get_part_diameter(pp->p_config) / 2000.0*0.03937;
 							step = tmpf*0.03937;
 							digit = 3;
 							pos = 1;
@@ -7002,7 +7003,7 @@ void draw3_data2(DRAW_UI_P p)
 	gchar *str = NULL;
 	guint menu_status = 0;
 
-	gfloat cur_value=0.0, lower, upper, step, max_tmp, max_tmp1, temp_beam;
+	gfloat cur_value=0.0, lower=0, upper=0, step=0, max_tmp=0, max_tmp1=0, temp_beam=0;
 	guint digit, pos, unit, temp_qty =0, temp_pos = 0;
 
 	//	p = NULL;
@@ -7179,7 +7180,7 @@ void draw3_data2(DRAW_UI_P p)
 						g_sprintf (TMP (velocity_data[0]), "LW:%dm/s", get_material_lw(pp->p_config) / 100);
 						g_sprintf (TMP (velocity_data[1]), "SW:%dm/s", get_material_sw(pp->p_config) / 100);
 						g_sprintf (TMP (velocity_data[2]), "%d m/s", GROUP_VAL(velocity) / 100);
-						const gchar **tp = TMP(velocity_data_p);
+						const gchar **tp = (const gchar **)(TMP(velocity_data_p));
 						if (GROUP_VAL (velocity) == get_material_lw(pp->p_config )) 
 						{
 							temp_pos = 0;
@@ -9132,14 +9133,14 @@ void draw3_data2(DRAW_UI_P p)
 						case 0:
 							if(UNIT_MM == CFG(unit))
 							{
-								cur_value = pp->p_config->part.Diameter/1000.0;
+								cur_value = get_part_diameter(pp->p_config) / 1000.0;
 								digit = 2;
 								pos = 2;
 								unit = UNIT_MM;
 							}
 							else
 							{
-								cur_value = pp->p_config->part.Diameter/1000.0 * 0.03937;
+								cur_value = get_part_diameter (pp->p_config) / 1000.0 * 0.03937;
 								digit = 3;
 								pos = 2;
 								unit = UNIT_INCH;
@@ -9163,7 +9164,7 @@ void draw3_data2(DRAW_UI_P p)
 							{
 								if(UNIT_MM == CFG(unit))
 								{
-									cur_value = CFG(part.Diameter)/1000.0;
+									cur_value = get_part_diameter(pp->p_config) / 1000.0;
 									lower = 2.0 * get_part_thickness(pp->p_config) / 1000.0;
 									upper = 1000000.00;
 									step = tmpf;
@@ -9173,7 +9174,7 @@ void draw3_data2(DRAW_UI_P p)
 								}
 								else
 								{
-									cur_value = CFG(part.Diameter)/1000.0 * 0.03937;
+									cur_value = get_part_diameter(pp->p_config) / 1000.0 * 0.03937;
 									lower = 2.0 * get_part_thickness(pp->p_config) / 1000.0*0.03937;
 									upper = 1000000.00 * 0.03937;
 									step = tmpf;
@@ -9187,14 +9188,14 @@ void draw3_data2(DRAW_UI_P p)
 							{
 								if(UNIT_MM == CFG(unit))
 								{
-									cur_value = CFG(part.Diameter)/1000.0;
+									cur_value = get_part_diameter(pp->p_config) / 1000.0;
 									digit = 2;
 									pos = 2;
 									unit = UNIT_MM;
 								}
 								else
 								{
-									cur_value = CFG(part.Diameter)/1000.0 * 0.03937;
+									cur_value = get_part_diameter(pp->p_config) / 1000.0 * 0.03937;
 									digit = 3;
 									pos = 2;
 									unit = UNIT_INCH;
@@ -16024,9 +16025,15 @@ static gboolean time_handler2(GtkWidget *widget)
 
 static gboolean time_handler2(GtkWidget *widget)
 {
+	gchar key = 0;
 	gint i, j, k, prf_count, offset;
-	guint *temp = TMP(kernel_config_add);
+	guint *temp = (guint *)(TMP(kernel_config_add));
+
 	pp->scan_count++;
+
+	if (read(pp->fd_key, &key, 1) > 0 ) {	
+		process_key_press (key)	;
+	}
 
 	if (temp[0])
 	{
@@ -16041,7 +16048,7 @@ static gboolean time_handler2(GtkWidget *widget)
 		for	(j = 0 ; j < TMP(beam_qty[i]); j++)
 		{  
 			for (offset = 0, k = 0 ; k < i; k++)
-				offset += 8192 * TMP(beam_qty[k]);
+				offset += GROUP_VAL_POS(k, point_qty) * TMP(beam_qty[k]);
 			if (GROUP_VAL_POS(i, point_qty) <= TMP(a_scan_dot_qty))
 			{
 				interpolation_data (

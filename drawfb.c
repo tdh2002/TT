@@ -6,6 +6,7 @@
 #include "base.h"
 #include "drawui.h"
 #include "drawfb.h"
+#include <termios.h>	//串口头文件 
 #include <fcntl.h>
 #include <stdlib.h>
 #include <math.h>
@@ -14,6 +15,7 @@
 #include <sys/mman.h>
 
 #define MEM_DEVICE "/dev/mem"
+#define TTY_DEVICE	"/dev/ttyS1"
 
 #define COLOR_STEP 32     //    4  8  16  32  64
 #define COLOR_SHIFT 5     //    2  3   4   5   6
@@ -101,6 +103,28 @@ void init_mem ()
 		mmap(0, 16 * 1024 * 1024, PROT_READ | PROT_WRITE, MAP_SHARED, fd_mem, 0x8F000000);
 
 	g_print ("mem init\n");
+	return ;
+}
+
+void init_serial ()
+{
+	struct termios newtermios;
+	pp->fd_key = open(TTY_DEVICE, O_RDWR | O_NOCTTY );
+	if (pp->fd_key < 0) {
+		perror(TTY_DEVICE); 
+		return ;
+	}
+	bzero(&newtermios, sizeof(newtermios)); /* 清除结构体以放入新的序列埠设定值 */
+	tcgetattr(pp->fd_key, &newtermios);
+	newtermios.c_cc[VMIN] = 0;
+	newtermios.c_iflag = 0;
+	newtermios.c_oflag = 0;
+	newtermios.c_lflag = 0; 
+	newtermios.c_cflag	= B115200 | CS8 | PARENB | CLOCAL | CREAD;
+	if (tcsetattr(pp->fd_key, TCSANOW, &newtermios)) {
+		perror("tcsetattr   error");  
+		exit(1);  
+	}
 	return ;
 }
 

@@ -96,7 +96,7 @@ guint get_part_diameter (CONFIG *p)
 
 void set_part_diameter (CONFIG *p, gpointer data)
 {
-	p->part.Thickness = (guint)(GPOINTER_TO_UINT (data));
+	p->part.Diameter = (guint)(GPOINTER_TO_UINT (data));
 }
 
 

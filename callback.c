@@ -3991,12 +3991,15 @@ void data_531 (GtkSpinButton *spinbutton, gpointer data) /*part_thickness*/
 		set_part_thickness (pp->p_config, (GUINT_TO_POINTER
 					((guint) (gtk_spin_button_get_value (spinbutton) * 1000.0/ 0.03937 ))));
 }
+
 void data_532 (GtkSpinButton *spinbutton, gpointer data) /*part_thickness*/
 {
 	if(UNIT_MM == CFG(unit))
-		CFG(part.Diameter) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
+		set_part_diameter (pp->p_config, (GUINT_TO_POINTER
+					((guint) (gtk_spin_button_get_value (spinbutton) * 1000.0))));
 	else
-		CFG(part.Diameter) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 / 0.03937 );
+		set_part_diameter (pp->p_config, (GUINT_TO_POINTER
+					((guint) (gtk_spin_button_get_value (spinbutton) * 1000.0/ 0.03937 ))));
 }
 
 /* P533 选择被测物的材料 */

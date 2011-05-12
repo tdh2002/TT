@@ -415,6 +415,7 @@ typedef struct Draw_interface
 	GtkWidget *sw;		/* 第一个scroll 备注只要一个sw */
 	GtkWidget *sw11;
 	GtkWidget *sw1;		/* 第二个scroll 探头 楔块 聚焦法则 setup 等需要2个sw */
+	int		fd_key;		/* 串口设备 */
 
 	guchar  iter_qty;       /* treeview 中 iter 的个数 */
 	guchar  iter_pos;	/* treeview 中 iter 的位置 */
