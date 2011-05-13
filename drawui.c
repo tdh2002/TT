@@ -79,8 +79,8 @@ enum
 };
 
 static char buffer[32];
-//static guchar dot_temp[800];
-//static gushort dot_temp1[FB_WIDTH*400];
+static guchar dot_temp[800];
+static gushort dot_temp1[FB_WIDTH*400];
 
 gint (*window_keypress_event_orig)(GtkWidget *widget, GdkEventKey *event);/* window 原始的按键处理 */
 gint (*dialog_keypress_event_orig)(GtkWidget *widget, GdkEventKey *event);/* window 原始的按键处理 */
@@ -15701,7 +15701,8 @@ static gboolean time_handler1(GtkWidget *widget)
 
 	return TRUE;
 }
-#if 0
+
+#if ARM
 static void	compress_data (DOT_TYPE *source_data, DOT_TYPE *target_data,
 		gint qty1, gint qty2, guint	rectify)
 {
@@ -15744,6 +15745,16 @@ static void interpolation_data (DOT_TYPE *source_data, DOT_TYPE *target_data,
 						(j - t1) * ((gint)(source_data[i + 1]) - (gint)(source_data[i])) / (qty2 / qty1));
 			}
 		}
+	}
+}
+
+static void interpolation_data1 (DOT_TYPE *source_data, DOT_TYPE *target_data,
+		gint qty1, gint qty2)
+{
+	gint i;
+	for (i = 0 ; i < qty1 ; i++)
+	{
+		target_data[i] = 0x80;
 	}
 }
 
@@ -16043,7 +16054,11 @@ static gboolean time_handler2(GtkWidget *widget)
 
 
 
-#if 0
+#if ARM
+void 		process_key_press (gchar key)	
+{
+}
+
 static gboolean time_handler2(GtkWidget *widget)
 {
 	gchar key = 0;
@@ -16052,9 +16067,11 @@ static gboolean time_handler2(GtkWidget *widget)
 
 	pp->scan_count++;
 
+#if 0
 	if (read(pp->fd_key, &key, 1) > 0 ) {	
 		process_key_press (key)	;
 	}
+#endif
 
 	if (temp[0])
 	{
