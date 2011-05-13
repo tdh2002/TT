@@ -16052,11 +16052,131 @@ static gboolean time_handler2(GtkWidget *widget)
 }
 #endif
 
-
-
 #if ARM
-void 		process_key_press (gchar key)	
+void process_key_press (gchar key)	
 {
+	switch(key)
+	{
+		case 0xd0:
+					fakekey_press_keysym(fk, XK_Up, 0);
+					fakekey_release(fk);
+					break;
+		case 0xd8:
+					fakekey_press_keysym(fk, XK_Down, 0);
+					fakekey_release(fk);
+					break;
+		case 0xd1:
+					fakekey_press_keysym(fk, XK_Left, 0);
+					fakekey_release(fk);
+					break;
+		case 0xd7:
+					fakekey_press_keysym(fk, XK_Right, 0);
+					fakekey_release(fk);
+					break;
+		case 0xd6:
+					fakekey_press_keysym(fk, XK_Return, 0);
+					fakekey_release(fk);
+					break;
+		case 0xf1:
+					fakekey_press_keysym(fk, XK_Return, 0);
+					fakekey_release(fk);
+					break;
+		case 0xd2:
+					fakekey_press_keysym(fk, XK_Super_L, 0);
+					fakekey_release(fk);
+					break;
+		case 0xd9:
+					fakekey_press_keysym(fk, XK_BackSpace, 0);
+					fakekey_release(fk);
+					break;
+		case 0xef:
+					fakekey_press_keysym(fk, XK_BackSpace, 0);
+					fakekey_release(fk);
+					break;
+	/*
+		case 0xd3:
+					fakekey_press_keysym(fk, XK_80%, 0);
+					fakekey_release(fk);
+					break;
+		case 0xda:
+					fakekey_press_keysym(fk, XK_DISP, 0);
+					fakekey_release(fk);
+					break;
+		case 0xd4:
+					fakekey_press_keysym(fk, XK_Repeat, 0);
+					fakekey_release(fk);
+					break;
+		case 0xdb:
+					fakekey_press_keysym(fk, XK_Save, 0);
+					fakekey_release(fk);
+					break;
+		case 0xd5:
+					fakekey_press_keysym(fk, XK_Open, 0);
+					fakekey_release(fk);
+					break;
+		case 0xdc:
+					fakekey_press_keysym(fk, XK_GATE, 0);
+					fakekey_release(fk);
+					break;
+		case 0xde:
+					fakekey_press_keysym(fk, XK_DB, 0);
+					fakekey_release(fk);
+					break;
+		case 0xe0:
+					fakekey_press_keysym(fk, XK_Freeze, 0);
+					fakekey_release(fk);
+					break;
+		case 0xe9:
+					fakekey_press_keysym(fk, XK_Help, 0);
+					fakekey_release(fk);
+					break;
+	*/
+		case 0xe4:
+					fakekey_press_keysym(fk, XK_F2, 0);
+					fakekey_release(fk);
+					break;
+		case 0xe5:
+					fakekey_press_keysym(fk, XK_F3, 0);
+					fakekey_release(fk);
+					break;
+		case 0xe6:
+					fakekey_press_keysym(fk, XK_F4, 0);
+					fakekey_release(fk);
+					break;
+		case 0xe7:
+					fakekey_press_keysym(fk, XK_F5, 0);
+					fakekey_release(fk);
+					break;
+		case 0xe8:
+					fakekey_press_keysym(fk, XK_F6, 0);
+					fakekey_release(fk);
+					break;
+		case 0xea:
+					fakekey_press_keysym(fk, XK_F7, 0);
+					fakekey_release(fk);
+					break;
+		case 0xeb:
+					fakekey_press_keysym(fk, XK_F8, 0);
+					fakekey_release(fk);
+					break;
+		case 0xec:
+					fakekey_press_keysym(fk, XK_F9, 0);
+					fakekey_release(fk);
+					break;
+		case 0xed:
+					fakekey_press_keysym(fk, XK_F10, 0);
+					fakekey_release(fk);
+					break;
+		case 0xee:
+					fakekey_press_keysym(fk, XK_F11, 0);
+					fakekey_release(fk);
+					break;
+		case 0xf2:
+					fakekey_press_keysym(fk, XK_F12, 0);
+					fakekey_release(fk);
+					break;
+
+	}
 }
 
 static gboolean time_handler2(GtkWidget *widget)
@@ -16128,6 +16248,16 @@ static gboolean time_handler2(GtkWidget *widget)
 
 	return TRUE;
 }
+
+gpointer signal_thread(gpointer arg) 
+{
+	gchar key;
+	if (read(pp->fd_key, &key, 1) > 0 ) 
+	{	
+		process_key_press (key)	;
+	}
+}
+
 #endif
 
 /*  */
@@ -16530,7 +16660,14 @@ void init_ui(DRAW_UI_P p)				/*初始化界面,*/
 	draw_2_menu(1);
 	draw_3_menu(1, NULL);
 
+	if(!g_thread_supported()) {
+		g_thread_init(NULL);
+	}
+
+
 #if ARM
+	g_thread_create(signal_thread, NULL, FALSE, NULL);
+
 	g_timeout_add(50, (GSourceFunc) time_handler2, NULL);
 #endif
 	g_timeout_add(1000, (GSourceFunc) time_handler1, NULL);
