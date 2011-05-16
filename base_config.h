@@ -159,7 +159,7 @@ typedef struct _law_elem
 	gushort	R_delay;		/*  */
 	gushort	T_delay;		/* 0-25560 单位 ns 65535不活动状态 */
 	gushort	P_width;		/* 50-500 单位ns*/
-	gchar	tt[2];
+	guchar	tt[2];
 }LAW_ELEM, *LAW_ELEM_P;
 
 /* 一条beam的聚焦信息 */

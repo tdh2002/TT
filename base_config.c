@@ -6,15 +6,13 @@
 #include "base_config.h"
 #include <string.h>
 
-struct _Material;
-typedef struct _Material st_MATERIAL;
 /* 材料 (Material) 28Byte OK */
-struct _Material 
+typedef struct _Material 
 {
 	guint	Velocity_LW;	/* 声速 单位 0.01m/s 纵波 快点 */
 	guint	Velocity_SW;	/* 声速 单位 0.01m/s 横波 慢点 */
 	gchar	Name[20];		/* 材料名字 */
-};
+} st_MATERIAL;
 
 static const st_MATERIAL data[] =
 {

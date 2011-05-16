@@ -15,7 +15,7 @@
 #include <sys/mman.h>
 
 #define MEM_DEVICE "/dev/mem"
-#define TTY_DEVICE	"/dev/ttyS1"
+#define TTY_DEVICE"/dev/ttyS1"
 
 #define COLOR_STEP 32     //    4  8  16  32  64
 #define COLOR_SHIFT 5     //    2  3   4   5   6
@@ -127,6 +127,7 @@ void init_serial ()
 	}
 	return ;
 }
+
 
 /* draw a dot on coordinate (x,y) 在 (x,y) 画点 */
 void fbdot(gushort *p, gint x, gint y, gushort col)

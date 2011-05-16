@@ -2960,73 +2960,74 @@ static void draw_law_read ()
 
 static void da_call_ip (GtkDialog *dialog, gint response_id, gpointer user_data)
 {
-	char ifconfig_buf[64] = "sudo ifconfig eth0 ";
-        _my_ip_get tmp_ip;        
-        _my_ip_set *entry_ip_p = (_my_ip_set *)user_data;
-        int i;
-        unsigned char *tmp;
-        char ip_string[256] = {0};
-        struct in_addr addr;
-        int inet_sock;
-        struct ifreq ifr;
+	char ifconfig_buf[64] = "ifconfig eth0 ";
+	_my_ip_get tmp_ip;        
+	_my_ip_set *entry_ip_p = (_my_ip_set *)user_data;
+	int i;
+	unsigned char *tmp;
+	char ip_string[256] = {0};
+	struct in_addr addr;
+	int inet_sock;
+	struct ifreq ifr;
+	int system_value;
 
-        //用户点击了确认按钮
+	//用户点击了确认按钮
 	if (GTK_RESPONSE_OK == response_id)
-        {  
-                tmp = (unsigned char *)&tmp_ip;
+	{  
+		tmp = (unsigned char *)&tmp_ip;
 
-                //读取输入框里面的数据
-                for(i=0;i<4;i++)
-                {  
-                    *tmp = gtk_spin_button_get_value(entry_ip_p->entry[i]);
-                    g_printf("%d\n",*tmp);    
-                    tmp++;
-                }
+		//读取输入框里面的数据
+		for(i=0;i<4;i++)
+		{  
+			*tmp = gtk_spin_button_get_value((GtkSpinButton *)entry_ip_p->entry[i]);
+			g_printf("%d\n",*tmp);    
+			tmp++;
+		}
 
-                //设置ip地址
+		//设置ip地址
 		memcpy(&addr,&tmp_ip,sizeof(tmp_ip));
-                sprintf(ip_string,"%s\n", inet_ntoa(addr));
-  
-                strcat(ifconfig_buf,ip_string);
-		system(ifconfig_buf);
+		sprintf(ip_string,"%s\n", inet_ntoa(addr));
 
-                //重新读取ip地址，并显示出来，因为有可能设置失败，所以要重新读取
-                inet_sock = socket(AF_INET, SOCK_DGRAM, 0);
-                strcpy(ifr.ifr_name, "eth0");
-                if (ioctl(inet_sock, SIOCGIFADDR, &ifr) < 0)
-                    perror("ioctl");
+		strcat(ifconfig_buf,ip_string);
+		system_value = system(ifconfig_buf);
 
-                memcpy(&tmp_ip,&((struct sockaddr_in*)&(ifr.ifr_addr))->sin_addr.s_addr,sizeof(tmp_ip));  
+		//重新读取ip地址，并显示出来，因为有可能设置失败，所以要重新读取
+		inet_sock = socket(AF_INET, SOCK_DGRAM, 0);
+		strcpy(ifr.ifr_name, "eth0");
+		if (ioctl(inet_sock, SIOCGIFADDR, &ifr) < 0)
+			perror("ioctl");
+
+		memcpy(&tmp_ip,&((struct sockaddr_in*)&(ifr.ifr_addr))->sin_addr.s_addr,sizeof(tmp_ip));  
 
 		memcpy(&addr,&tmp_ip,sizeof(tmp_ip));
-                sprintf(ip_string,"%s\n", inet_ntoa(addr));
+		sprintf(ip_string,"%s\n", inet_ntoa(addr));
 
-                gtk_label_set_text (GTK_LABEL (pp->data3[0]), ip_string);
+		gtk_label_set_text (GTK_LABEL (pp->data3[0]), ip_string);
 
-                //重算子网掩码，并重画
-                draw3_data1(pp);
-                
-                //关闭窗口
+		//重算子网掩码，并重画
+		draw3_data1(pp);
+
+		//关闭窗口
 		gtk_widget_destroy (GTK_WIDGET (dialog));
 	}
-        else if(GTK_RESPONSE_CANCEL == response_id)
-        {
-            //关闭窗口
-            gtk_widget_destroy (GTK_WIDGET (dialog));
-        }
+	else if(GTK_RESPONSE_CANCEL == response_id)
+	{
+		//关闭窗口
+		gtk_widget_destroy (GTK_WIDGET (dialog));
+	}
 
 
-    printf("response\n");
+	printf("response\n");
 }
 
 static void draw_ip()
 {
 	GtkWindow *win = GTK_WINDOW (pp->window);
 	GtkWidget *dialog;
-        
+
 	GtkObject *adjustment[5];
-        GtkWidget *label[5];
-        char *char_label[5] = {"IP Address","","","",""};
+	GtkWidget *label[5];
+	char *char_label[5] = {"IP Address","","","",""};
 
 	GtkWidget *hbox1;
 	GtkWidget *hbox2;
@@ -3034,22 +3035,22 @@ static void draw_ip()
 
 	GtkWidget *vbox_first;	/* 指向dialog的vbox */
 
-        int inet_sock;
-        struct ifreq ifr;
-        _my_ip_get tmp_ip;
-        //_my_ip_set entry_ip;
-        unsigned char *tmp;
-        int i;
+	int inet_sock;
+	struct ifreq ifr;
+	_my_ip_get tmp_ip;
+	//_my_ip_set entry_ip;
+	unsigned char *tmp;
+	int i;
 
-        //读取eth0 ip地址
-        inet_sock = socket(AF_INET, SOCK_DGRAM, 0);
-        strcpy(ifr.ifr_name, "eth0");
-        if (ioctl(inet_sock, SIOCGIFADDR, &ifr) < 0)
-                perror("ioctl");
+	//读取eth0 ip地址
+	inet_sock = socket(AF_INET, SOCK_DGRAM, 0);
+	strcpy(ifr.ifr_name, "eth0");
+	if (ioctl(inet_sock, SIOCGIFADDR, &ifr) < 0)
+		perror("ioctl");
 
-        memcpy(&tmp_ip,&((struct sockaddr_in*)&(ifr.ifr_addr))->sin_addr.s_addr,sizeof(tmp_ip));
-        
-        //新建对话框
+	memcpy(&tmp_ip,&((struct sockaddr_in*)&(ifr.ifr_addr))->sin_addr.s_addr,sizeof(tmp_ip));
+
+	//新建对话框
 	dialog = gtk_dialog_new_with_buttons ("Dialog_Ip", win,
 			GTK_DIALOG_MODAL |	GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_NO_SEPARATOR,
 			GTK_STOCK_OK, GTK_RESPONSE_OK,
@@ -3058,8 +3059,8 @@ static void draw_ip()
 
 	gtk_window_set_decorated (GTK_WINDOW (dialog), FALSE);			/*不可以装饰*/
 	gtk_widget_set_size_request(GTK_WIDGET (dialog), 300, 140);
-	
-        vbox_first = GTK_WIDGET (GTK_DIALOG(dialog)->vbox);
+
+	vbox_first = GTK_WIDGET (GTK_DIALOG(dialog)->vbox);
 
 	hbox1 = gtk_hbox_new(TRUE, 0);
 	hbox2 = gtk_hbox_new(FALSE, 0);
@@ -3068,27 +3069,159 @@ static void draw_ip()
 	gtk_box_pack_start(GTK_BOX(vbox_first), hbox3, FALSE, FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox_first), hbox1, FALSE, FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox_first), hbox2, FALSE, FALSE, 5);
-	
+
 	label[0] = gtk_label_new(char_label[0]);
 	gtk_box_pack_start(GTK_BOX(hbox3), label[0], TRUE, TRUE, 5);
 
-        tmp = (unsigned char *)&tmp_ip;
-        
-        //把ip在输入框那里显示出来
-        for (i=1;i<5;i++)
-        {
-            label[i] = gtk_label_new(char_label[i]);
-	    gtk_box_pack_start(GTK_BOX(hbox1), label[i], FALSE, FALSE, 15);
-	    adjustment[i] = gtk_adjustment_new(0.0,0.0,255.0,1.0,0.0,0.0);
-	    entry_ip.entry[i-1] = gtk_spin_button_new(GTK_ADJUSTMENT(adjustment[i]),0.01,0);
-	    gtk_spin_button_set_value(entry_ip.entry[i-1],*tmp);
-	    gtk_box_pack_start(GTK_BOX(hbox2), entry_ip.entry[i-1], TRUE, TRUE, 1);
-            tmp++;
-        }
+	tmp = (unsigned char *)&tmp_ip;
 
-        //用户点击对话上面的按钮
+	//把ip在输入框那里显示出来
+	for (i=1;i<5;i++)
+	{
+		label[i] = gtk_label_new(char_label[i]);
+		gtk_box_pack_start(GTK_BOX(hbox1), label[i], FALSE, FALSE, 15);
+		adjustment[i] = gtk_adjustment_new(0.0,0.0,255.0,1.0,0.0,0.0);
+		entry_ip.entry[i-1] = gtk_spin_button_new(GTK_ADJUSTMENT(adjustment[i]),0.01,0);
+		gtk_spin_button_set_value((GtkSpinButton *)entry_ip.entry[i-1],*tmp);
+		gtk_box_pack_start(GTK_BOX(hbox2), entry_ip.entry[i-1], TRUE, TRUE, 1);
+		tmp++;
+	}
+
+	//用户点击对话上面的按钮
 	g_signal_connect (G_OBJECT(dialog), "response",
 			G_CALLBACK(da_call_ip), (gpointer)&entry_ip);/*确定 or 取消*/
+
+	gtk_widget_show_all(dialog);
+}
+
+static void da_call_mask (GtkDialog *dialog, gint response_id, gpointer user_data)
+{
+	char ifconfig_buf[64] = "ifconfig eth0 netmask ";
+	_my_mask_get tmp_mask;        
+	_my_mask_set *entry_mask_p = (_my_mask_set *)user_data;
+	int i;
+	unsigned char *tmp;
+	char mask_string[256] = {0};
+	struct in_addr addr;
+	int inet_sock;
+	struct ifreq ifr;
+	int system_value;
+	//用户点击了确认按钮
+	if (GTK_RESPONSE_OK == response_id)
+	{  
+		tmp = (unsigned char *)&tmp_mask;
+
+		//读取输入框里面的数据
+		for(i=0;i<4;i++)
+		{  
+			*tmp = gtk_spin_button_get_value((GtkSpinButton *)entry_mask_p->entry[i]);
+			g_printf("%d\n",*tmp);    
+			tmp++;
+		}
+
+		//设置mask地址
+		memcpy(&addr,&tmp_mask,sizeof(tmp_mask));
+		sprintf(mask_string,"%s\n", inet_ntoa(addr));
+
+		strcat(ifconfig_buf,mask_string);
+		system_value = system(ifconfig_buf);
+
+		//重新读取mask地址，并显示出来，因为有可能设置失败，所以要重新读取
+		inet_sock = socket(AF_INET, SOCK_DGRAM, 0);
+		strcpy(ifr.ifr_name, "eth0");
+		if (ioctl(inet_sock, SIOCGIFNETMASK, &ifr) < 0)
+			perror("ioctl");
+
+		memcpy(&tmp_mask,&((struct sockaddr_in*)&(ifr.ifr_addr))->sin_addr.s_addr,sizeof(tmp_mask));  
+
+		memcpy(&addr,&tmp_mask,sizeof(tmp_mask));
+		sprintf(mask_string,"%s\n", inet_ntoa(addr));
+
+		gtk_label_set_text (GTK_LABEL (pp->data3[1]), mask_string);
+
+		//关闭窗口
+		gtk_widget_destroy (GTK_WIDGET (dialog));
+	}
+	else if(GTK_RESPONSE_CANCEL == response_id)
+	{
+		//关闭窗口
+		gtk_widget_destroy (GTK_WIDGET (dialog));
+	}
+
+
+	printf("response\n");
+}
+
+static void draw_mask()
+{
+	GtkWindow *win = GTK_WINDOW (pp->window);
+	GtkWidget *dialog;
+
+	GtkObject *adjustment[5];
+	GtkWidget *label[5];
+	char *char_label[5] = {"MASK Address","","","",""};
+
+	GtkWidget *hbox1;
+	GtkWidget *hbox2;
+	GtkWidget *hbox3;
+
+	GtkWidget *vbox_first;	/* 指向dialog的vbox */
+
+	int inet_sock;
+	struct ifreq ifr;
+	_my_mask_get tmp_mask;
+	//_my_mask_set entry_mask;
+	unsigned char *tmp;
+	int i;
+
+	//读取eth0 mask 地址
+	inet_sock = socket(AF_INET, SOCK_DGRAM, 0);
+	strcpy(ifr.ifr_name, "eth0");
+	if (ioctl(inet_sock, SIOCGIFNETMASK, &ifr) < 0)
+		perror("ioctl");
+
+	memcpy(&tmp_mask,&((struct sockaddr_in*)&(ifr.ifr_addr))->sin_addr.s_addr,sizeof(tmp_mask));
+
+	//新建对话框
+	dialog = gtk_dialog_new_with_buttons ("Dialog_MASK", win,
+			GTK_DIALOG_MODAL |	GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_NO_SEPARATOR,
+			GTK_STOCK_OK, GTK_RESPONSE_OK,
+			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+			NULL);
+
+	gtk_window_set_decorated (GTK_WINDOW (dialog), FALSE);			/*不可以装饰*/
+	gtk_widget_set_size_request(GTK_WIDGET (dialog), 300, 140);
+
+	vbox_first = GTK_WIDGET (GTK_DIALOG(dialog)->vbox);
+
+	hbox1 = gtk_hbox_new(TRUE, 0);
+	hbox2 = gtk_hbox_new(FALSE, 0);
+	hbox3 = gtk_hbox_new(FALSE, 0);
+
+	gtk_box_pack_start(GTK_BOX(vbox_first), hbox3, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox_first), hbox1, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox_first), hbox2, FALSE, FALSE, 5);
+
+	label[0] = gtk_label_new(char_label[0]);
+	gtk_box_pack_start(GTK_BOX(hbox3), label[0], TRUE, TRUE, 5);
+
+	tmp = (unsigned char *)&tmp_mask;
+
+	//把ip在输入框那里显示出来
+	for (i=1;i<5;i++)
+	{
+		label[i] = gtk_label_new(char_label[i]);
+		gtk_box_pack_start(GTK_BOX(hbox1), label[i], FALSE, FALSE, 15);
+		adjustment[i] = gtk_adjustment_new(0.0,0.0,255.0,1.0,0.0,0.0);
+		entry_mask.entry[i-1] = gtk_spin_button_new(GTK_ADJUSTMENT(adjustment[i]),0.01,0);
+		gtk_spin_button_set_value((GtkSpinButton *)entry_mask.entry[i-1],*tmp);
+		gtk_box_pack_start(GTK_BOX(hbox2), entry_mask.entry[i-1], TRUE, TRUE, 1);
+		tmp++;
+	}
+
+	//用户点击对话上面的按钮
+	g_signal_connect (G_OBJECT(dialog), "response",
+			G_CALLBACK(da_call_mask), (gpointer)&entry_mask);/*确定 or 取消*/
 
 	gtk_widget_show_all(dialog);
 }
@@ -3135,6 +3268,7 @@ static void draw_dialog_all (guint type)
 		case DIALOG_LAW_SAVE:	draw_law_save();break;
 		case DIALOG_LAW_READ:	draw_law_read();break;
 		case DIALOG_IP:		draw_ip();break;
+		case DIALOG_MASK:	draw_mask();break;
 		default:break;
 	}
 }
@@ -3398,7 +3532,7 @@ static void draw3_popdown_offset (const gchar *cur_value, guint pos, guint big_m
 	y = pp->pos1[x];
 	z = pos;
 
-//	gtk_menu_popdown( GTK_MENU (pp->menu3));
+	//	gtk_menu_popdown( GTK_MENU (pp->menu3));
 	gtk_menu_popdown( GTK_MENU (pp->menu33[pos]));
 
 	if (big_menu)
@@ -4398,7 +4532,7 @@ void draw3_data0(DRAW_UI_P p)
 	int time_min;/*分*/
 	int time_sec;/*秒*/
 
-//	gchar date_temp[52];  /*日期存储*/
+	//	gchar date_temp[52];  /*日期存储*/
 	gchar time_temp[52];  /*时间存储*/
 	p = NULL;
 
@@ -5224,26 +5358,26 @@ void draw3_data0(DRAW_UI_P p)
 				case 1:/*Preferences -> system -> clock set p910*/
 					/* 格式化字符串 */
 					g_sprintf (temp,"%s\n(HH:MM:SS)", con2_p[9][1][0]);
-//					gtk_widget_set_sensitive(pp->eventbox30[0],FALSE);
-//					gtk_widget_set_sensitive(pp->eventbox31[0],FALSE);
+					//					gtk_widget_set_sensitive(pp->eventbox30[0],FALSE);
+					//					gtk_widget_set_sensitive(pp->eventbox31[0],FALSE);
 					/* 设置label */
 					gtk_label_set_text (GTK_LABEL (pp->label3[0]), temp);
 					//gtk_label_set_text (GTK_LABEL (pp->data3[0]), "02:55:06 PM");
-                                        
-                                         /***********/
+
+					/***********/
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0)){
-							//draw_dialog_all (DIALOG_TIME);
+						//draw_dialog_all (DIALOG_TIME);
 					}else{
-							time(&timep);
-							q = localtime(&timep);
-							time_hour = q->tm_hour;
-							time_min = q->tm_min;
-							time_sec = q->tm_sec;
-							memset(time_temp, 0, sizeof(time_temp));
-							g_print("%d\n",time_hour);
-							g_sprintf(time_temp,"%d:%d:%d",time_hour,time_min,time_sec);
-							draw3_popdown(time_temp, 0, 0);
-							gtk_label_set_text (GTK_LABEL (pp->label3[0]), temp);
+						time(&timep);
+						q = localtime(&timep);
+						time_hour = q->tm_hour;
+						time_min = q->tm_min;
+						time_sec = q->tm_sec;
+						memset(time_temp, 0, sizeof(time_temp));
+						g_print("%d\n",time_hour);
+						g_sprintf(time_temp,"%d:%d:%d",time_hour,time_min,time_sec);
+						draw3_popdown(time_temp, 0, 0);
+						gtk_label_set_text (GTK_LABEL (pp->label3[0]), temp);
 
 
 					}
@@ -5324,9 +5458,9 @@ void draw3_data1(DRAW_UI_P p)
 	gfloat cur_value=0.0, lower, upper, step;
 	guint digit, pos, unit, content_pos, menu_status = 0, temp_beam;
 
-        int inet_sock;
-        struct ifreq ifr;
-        static char mask_temp[256];
+	int inet_sock;
+	struct ifreq ifr;
+	static char mask_temp[256];
 
 	p = NULL;
 
@@ -5354,47 +5488,47 @@ void draw3_data1(DRAW_UI_P p)
 				case 2:/*Wizard -> Calibration -> start p021 */
 					//draw3_popdown (NULL, 1, 1);
 					g_print("cstart_qty = %d\n",pp->cstart_qty);
-				if(pp->ctype_pos == 1)
-				{
-					if( (pp->cstart_qty >1) && (pp->cstart_qty < 4) )
-						draw3_popdown_offset (NULL, 1, 1, 19 );
-					else if (pp->cstart_qty == 4)
+					if(pp->ctype_pos == 1)
 					{
-						if (pp->cmode_pos == 0)
-							draw3_popdown_offset (NULL, 1, 1, 22 );
-						else
+						if( (pp->cstart_qty >1) && (pp->cstart_qty < 4) )
 							draw3_popdown_offset (NULL, 1, 1, 19 );
+						else if (pp->cstart_qty == 4)
+						{
+							if (pp->cmode_pos == 0)
+								draw3_popdown_offset (NULL, 1, 1, 22 );
+							else
+								draw3_popdown_offset (NULL, 1, 1, 19 );
+						}
+						else if (pp->cstart_qty == 5)
+						{
+							if (pp->cmode_pos == 1)
+								draw3_popdown_offset (NULL, 1, 1, 32 );
+							else if (pp->cmode_pos == 3)
+								draw3_popdown_offset (NULL, 1, 1, 37 );
+							else
+								draw3_popdown_offset (NULL, 1, 1, 19 );
+						}
+						else if (pp->cstart_qty == 6)
+						{
+							if (pp->cmode_pos == 2)
+								draw3_popdown_offset (NULL, 1, 1, 32 );
+							else
+								draw3_popdown_offset (NULL, 1, 1, 19 );
+						}
+						else
+							draw3_popdown (NULL, 1, 1);
 					}
-					else if (pp->cstart_qty == 5)
+					else if(pp->ctype_pos == 2)
 					{
-						if (pp->cmode_pos == 1)
+						if (pp->cstart_qty == 1)
+							draw3_popdown (NULL, 1, 1);
+						else if (pp->cstart_qty == 4)
+							draw3_popdown_offset (NULL, 1, 1, 30 );
+						else if (pp->cstart_qty == 5)
 							draw3_popdown_offset (NULL, 1, 1, 32 );
-						else if (pp->cmode_pos == 3)
-							draw3_popdown_offset (NULL, 1, 1, 37 );
 						else
 							draw3_popdown_offset (NULL, 1, 1, 19 );
 					}
-					else if (pp->cstart_qty == 6)
-					{
-						if (pp->cmode_pos == 2)
-							draw3_popdown_offset (NULL, 1, 1, 32 );
-						else
-							draw3_popdown_offset (NULL, 1, 1, 19 );
-					}
-					else
-						draw3_popdown (NULL, 1, 1);
-				}
-				else if(pp->ctype_pos == 2)
-				{
-					if (pp->cstart_qty == 1)
-						draw3_popdown (NULL, 1, 1);
-					else if (pp->cstart_qty == 4)
-						draw3_popdown_offset (NULL, 1, 1, 30 );
-					else if (pp->cstart_qty == 5)
-						draw3_popdown_offset (NULL, 1, 1, 32 );
-					else
-						draw3_popdown_offset (NULL, 1, 1, 19 );
-				}
 					break;
 
 				case 3:
@@ -7653,9 +7787,9 @@ void draw3_data2(DRAW_UI_P p)
 								}
 							}
 							break;
-							case 5:
-							  if ((pp->ctype_pos == 1) && ((pp->cmode_pos == 1)||(pp->cmode_pos == 3)) )
-							  {
+						case 5:
+							if ((pp->ctype_pos == 1) && ((pp->cmode_pos == 1)||(pp->cmode_pos == 3)) )
+							{
 								switch (TMP(db_reg))
 								{
 									case 0:	tmpf = 0.1; break;
@@ -7685,9 +7819,9 @@ void draw3_data2(DRAW_UI_P p)
 									unit = UNIT_DB;
 									draw3_digit_stop (cur_value, units[unit], digit, pos, 9);
 								}
-							  }
-							  else if ((pp->ctype_pos == 1) && (pp->cmode_pos == 2))
-							  {
+							}
+							else if ((pp->ctype_pos == 1) && (pp->cmode_pos == 2))
+							{
 								switch (TMP(compdb_reg))
 								{
 									case 0:	tmpf = 0.1; break;
@@ -7715,16 +7849,16 @@ void draw3_data2(DRAW_UI_P p)
 									draw3_digit_stop (cur_value, units[unit], digit, pos, 34);
 								}
 
-							  }
-							  else
-							  {
-									gtk_widget_hide (pp->eventbox30[2]);
-									gtk_widget_hide (pp->eventbox31[2]);
-							  }
-								break;
-							case 6:
-							  if ((pp->ctype_pos == 1) && (pp->cmode_pos == 2))
-							  {
+							}
+							else
+							{
+								gtk_widget_hide (pp->eventbox30[2]);
+								gtk_widget_hide (pp->eventbox31[2]);
+							}
+							break;
+						case 6:
+							if ((pp->ctype_pos == 1) && (pp->cmode_pos == 2))
+							{
 								switch (TMP(db_reg))
 								{
 									case 0:	tmpf = 0.1; break;
@@ -7754,8 +7888,8 @@ void draw3_data2(DRAW_UI_P p)
 									unit = UNIT_DB;
 									draw3_digit_stop (cur_value, units[unit], digit, pos, 9);
 								}
-							  }
-							  break;
+							}
+							break;
 
 					}
 					break;
@@ -10168,22 +10302,22 @@ void draw3_data3(DRAW_UI_P p)
 								}
 								if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 								{
-								cur_value = pp->tolerance_t / 100.0 ;
-								lower = 0.0; 
-								upper = 50.0;
-								step = tmpf;
-								digit = 1;
-								pos = 3;
-								unit = UNIT_BFH;
-								draw3_digit_pressed (data_0239, units[unit], cur_value , lower, upper, step, digit, p, pos, 26);
+									cur_value = pp->tolerance_t / 100.0 ;
+									lower = 0.0; 
+									upper = 50.0;
+									step = tmpf;
+									digit = 1;
+									pos = 3;
+									unit = UNIT_BFH;
+									draw3_digit_pressed (data_0239, units[unit], cur_value , lower, upper, step, digit, p, pos, 26);
 								}
 								else 
 								{
-								cur_value = pp->tolerance_t / 100.0 ;
-								digit = 1;
-								pos = 3;
-								unit = UNIT_BFH;
-								draw3_digit_stop (cur_value, units[unit], digit, pos, 26);
+									cur_value = pp->tolerance_t / 100.0 ;
+									digit = 1;
+									pos = 3;
+									unit = UNIT_BFH;
+									draw3_digit_stop (cur_value, units[unit], digit, pos, 26);
 								}
 							}
 							else
@@ -10192,7 +10326,7 @@ void draw3_data3(DRAW_UI_P p)
 								gtk_widget_hide (pp->eventbox31[3]);
 							}
 							break;
-					case 3:
+						case 3:
 							if ((pp->ctype_pos == 1) && (pp->cmode_pos == 0))
 							{
 								if(pp->echotype_pos == 0)
@@ -10385,7 +10519,7 @@ void draw3_data3(DRAW_UI_P p)
 								gtk_widget_hide (pp->eventbox31[3]);
 							}
 							break;
-					case 4:
+						case 4:
 							if ((pp->ctype_pos == 1) && ((pp->cmode_pos == 0)||(pp->cmode_pos == 1)||(pp->cmode_pos == 2)||(pp->cmode_pos == 3)))
 							{
 								switch (pp->p_tmp_config->cwidth_reg)
@@ -10452,7 +10586,7 @@ void draw3_data3(DRAW_UI_P p)
 								draw3_popdown_offset(NULL, 3,1,29);
 							}
 							break;
-					case 5:
+						case 5:
 							if ((pp->ctype_pos == 1) && ((pp->cmode_pos == 1)||(pp->cmode_pos == 3)) )
 							{
 								draw3_popdown_offset(NULL, 3,1,29);
@@ -10467,7 +10601,7 @@ void draw3_data3(DRAW_UI_P p)
 								gtk_widget_hide (pp->eventbox31[3]);
 							}
 							break;
-					case 6:
+						case 6:
 							if ((pp->ctype_pos == 1) && (pp->cmode_pos == 2))
 							{
 								draw3_popdown_offset(NULL, 3,1,29);
@@ -12424,7 +12558,7 @@ void draw3_data4(DRAW_UI_P p)
 							{
 								str = g_strdup_printf ("%.1f", GROUP_VAL(skew)/100.0);
 								draw3_pop_tt (data_512, NULL, 
-											str, menu_content+PROB_SKEW, 5, 4, GROUP_VAL(skew_pos), 0);
+										str, menu_content+PROB_SKEW, 5, 4, GROUP_VAL(skew_pos), 0);
 								g_sprintf (temp,"%s", con2_p[0][0][13]);
 								gtk_label_set_text (GTK_LABEL (pp->label3[4]), temp);
 								g_free(str);
@@ -12590,135 +12724,135 @@ void draw3_data4(DRAW_UI_P p)
 					}
 					else if(pp->cstart_qty == 3)
 					{
-							if ((pp->ctype_pos == 1) && (pp->cmode_pos == 0))
+						if ((pp->ctype_pos == 1) && (pp->cmode_pos == 0))
+						{
+							if(pp->echotype_pos == 0)
 							{
-								if(pp->echotype_pos == 0)
+								switch (TMP(radius2_reg))
 								{
-									switch (TMP(radius2_reg))
-									{
-										case 0:	tmpf = 0.01; break;
-										case 1:	tmpf = 0.1; break;
-										case 2:	tmpf = 1.0; break;
-										case 3:	tmpf = 10.0; break;						
-										default:break;
-									}
-									if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
-									{
-										cur_value = pp->radius2 / 1000.0;
-										lower = 0.0;
-										upper = 1000.0;
-										step = tmpf;
-										digit = 2;
-										pos = 4;
-										unit = UNIT_MM;
-										draw3_digit_pressed (data_024, units[unit], cur_value , lower, upper, step, digit, p, pos, 14);
-									}
-									else 
-									{
-										cur_value = pp->radius2 / 1000.0;
-										digit = 2;
-										pos = 4;
-										unit = UNIT_MM;
-										draw3_digit_stop (cur_value, units[unit], digit, pos, 14);
-									}
-
-								}
-								else if(pp->echotype_pos == 1)
-								{
-									switch (TMP(depth2_reg))
-									{
-										case 0:	tmpf = 0.01; break;
-										case 1:	tmpf = 0.1; break;
-										case 2:	tmpf = 1.0; break;
-										case 3:	tmpf = 10.0; break;						
-										default:break;
-									}
-									if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
-									{
-										cur_value = pp->depth2 / 1000.0;
-										lower = 0.0;
-										upper = 1000.0;
-										step = tmpf;
-										digit = 2;
-										pos = 4;
-										unit = UNIT_MM;
-										draw3_digit_pressed (data_0241, units[unit], cur_value , lower, upper, step, digit, p, pos, 16);
-									}
-									else 
-									{
-										cur_value = pp->depth2 / 1000.0;
-										digit = 2;
-										pos = 4;
-										unit = UNIT_MM;
-										draw3_digit_stop (cur_value, units[unit], digit, pos, 16);
-									}
-								}
-								else
-								{
-									switch (TMP(thickness2_reg))
-									{
-										case 0:	tmpf = 0.01; break;
-										case 1:	tmpf = 0.1; break;
-										case 2:	tmpf = 1.0; break;
-										case 3:	tmpf = 10.0; break;						
-										default:break;
-									}
-									if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
-									{
-										cur_value = pp->thickness2 / 1000.0;
-										lower = 0.0;
-										upper = 1000.0;
-										step = tmpf;
-										digit = 2;
-										pos = 4;
-										unit = UNIT_MM;
-										draw3_digit_pressed (data_0242, units[unit], cur_value , lower, upper, step, digit, p, pos, 18);
-									}
-									else 
-									{
-										cur_value = pp->thickness2 / 1000.0;
-										digit = 2;
-										pos = 4;
-										unit = UNIT_MM;
-										draw3_digit_stop (cur_value, units[unit], digit, pos, 18);
-									}
-								}
-							}
-							else if((pp->ctype_pos == 2)&&(pp->scode_pos == 1))
-							{
-								switch (TMP(cheight_reg))
-								{
-									case 0:	tmpf = 1.0; break;
-									case 1:	tmpf = 10.0; break;						
+									case 0:	tmpf = 0.01; break;
+									case 1:	tmpf = 0.1; break;
+									case 2:	tmpf = 1.0; break;
+									case 3:	tmpf = 10.0; break;						
 									default:break;
 								}
 								if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
 								{
-									cur_value = GROUP_VAL(gate[0].height);
+									cur_value = pp->radius2 / 1000.0;
 									lower = 0.0;
-									upper = 98.0;
+									upper = 1000.0;
 									step = tmpf;
-									digit = 0;
+									digit = 2;
 									pos = 4;
-									unit = UNIT_BFH;
-									draw3_digit_pressed (data_204, units[unit], cur_value,
-											lower, upper, step, digit, p, pos, 21);
+									unit = UNIT_MM;
+									draw3_digit_pressed (data_024, units[unit], cur_value , lower, upper, step, digit, p, pos, 14);
 								}
 								else 
 								{
-									cur_value =GROUP_VAL(gate[0].height);
-									digit = 0;
+									cur_value = pp->radius2 / 1000.0;
+									digit = 2;
 									pos = 4;
-									unit = UNIT_BFH;
-									draw3_digit_stop (cur_value, units[unit], digit, pos, 21);
-								}	
+									unit = UNIT_MM;
+									draw3_digit_stop (cur_value, units[unit], digit, pos, 14);
+								}
 
+							}
+							else if(pp->echotype_pos == 1)
+							{
+								switch (TMP(depth2_reg))
+								{
+									case 0:	tmpf = 0.01; break;
+									case 1:	tmpf = 0.1; break;
+									case 2:	tmpf = 1.0; break;
+									case 3:	tmpf = 10.0; break;						
+									default:break;
+								}
+								if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
+								{
+									cur_value = pp->depth2 / 1000.0;
+									lower = 0.0;
+									upper = 1000.0;
+									step = tmpf;
+									digit = 2;
+									pos = 4;
+									unit = UNIT_MM;
+									draw3_digit_pressed (data_0241, units[unit], cur_value , lower, upper, step, digit, p, pos, 16);
+								}
+								else 
+								{
+									cur_value = pp->depth2 / 1000.0;
+									digit = 2;
+									pos = 4;
+									unit = UNIT_MM;
+									draw3_digit_stop (cur_value, units[unit], digit, pos, 16);
+								}
 							}
 							else
 							{
-								gtk_widget_hide (pp->eventbox30[4]);
-								gtk_widget_hide (pp->eventbox31[4]);
+								switch (TMP(thickness2_reg))
+								{
+									case 0:	tmpf = 0.01; break;
+									case 1:	tmpf = 0.1; break;
+									case 2:	tmpf = 1.0; break;
+									case 3:	tmpf = 10.0; break;						
+									default:break;
+								}
+								if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
+								{
+									cur_value = pp->thickness2 / 1000.0;
+									lower = 0.0;
+									upper = 1000.0;
+									step = tmpf;
+									digit = 2;
+									pos = 4;
+									unit = UNIT_MM;
+									draw3_digit_pressed (data_0242, units[unit], cur_value , lower, upper, step, digit, p, pos, 18);
+								}
+								else 
+								{
+									cur_value = pp->thickness2 / 1000.0;
+									digit = 2;
+									pos = 4;
+									unit = UNIT_MM;
+									draw3_digit_stop (cur_value, units[unit], digit, pos, 18);
+								}
 							}
+						}
+						else if((pp->ctype_pos == 2)&&(pp->scode_pos == 1))
+						{
+							switch (TMP(cheight_reg))
+							{
+								case 0:	tmpf = 1.0; break;
+								case 1:	tmpf = 10.0; break;						
+								default:break;
+							}
+							if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
+							{
+								cur_value = GROUP_VAL(gate[0].height);
+								lower = 0.0;
+								upper = 98.0;
+								step = tmpf;
+								digit = 0;
+								pos = 4;
+								unit = UNIT_BFH;
+								draw3_digit_pressed (data_204, units[unit], cur_value,
+										lower, upper, step, digit, p, pos, 21);
+							}
+							else 
+							{
+								cur_value =GROUP_VAL(gate[0].height);
+								digit = 0;
+								pos = 4;
+								unit = UNIT_BFH;
+								draw3_digit_stop (cur_value, units[unit], digit, pos, 21);
+							}	
+
+						}
+						else
+						{
+							gtk_widget_hide (pp->eventbox30[4]);
+							gtk_widget_hide (pp->eventbox31[4]);
+						}
 					}
 					else if (pp->cstart_qty == 4)
 					{
@@ -12726,60 +12860,60 @@ void draw3_data4(DRAW_UI_P p)
 						{
 							switch (TMP(cheight_reg))
 							{
-							case 0:	tmpf = 1.0; break;
-							case 1:	tmpf = 10.0; break;						
-							default:break;
+								case 0:	tmpf = 1.0; break;
+								case 1:	tmpf = 10.0; break;						
+								default:break;
 							}
 							if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
 							{
-							cur_value = GROUP_VAL(gate[0].height);
-							lower = 0.0;
-							upper = 98.0;
-							step = tmpf;
-							digit = 0;
-							pos = 4;
-							unit = UNIT_BFH;
-							draw3_digit_pressed (data_204, units[unit], cur_value,
-									lower, upper, step, digit, p, pos, 21);
+								cur_value = GROUP_VAL(gate[0].height);
+								lower = 0.0;
+								upper = 98.0;
+								step = tmpf;
+								digit = 0;
+								pos = 4;
+								unit = UNIT_BFH;
+								draw3_digit_pressed (data_204, units[unit], cur_value,
+										lower, upper, step, digit, p, pos, 21);
 							}
 							else 
 							{
-							cur_value =GROUP_VAL(gate[0].height);
-							digit = 0;
-							pos = 4;
-							unit = UNIT_BFH;
-							draw3_digit_stop (cur_value, units[unit], digit, pos, 21);
+								cur_value =GROUP_VAL(gate[0].height);
+								digit = 0;
+								pos = 4;
+								unit = UNIT_BFH;
+								draw3_digit_stop (cur_value, units[unit], digit, pos, 21);
 							}	
 						}
 						else if(pp->ctype_pos == 2)
 						{
-									switch (TMP(thickness_reg))
-									{
-										case 0:	tmpf = 0.01; break;
-										case 1:	tmpf = 0.1; break;
-										case 2:	tmpf = 1.0; break;
-										case 3:	tmpf = 10.0; break;						
-										default:break;
-									}
-									if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
-									{
-										cur_value = pp->thickness / 1000.0;
-										lower = 0.0;
-										upper = 1000.0;
-										step = tmpf;
-										digit = 2;
-										pos = 4;
-										unit = UNIT_MM;
-										draw3_digit_pressed (data_0237, units[unit], cur_value , lower, upper, step, digit, p, pos, 39);
-									}
-									else 
-									{
-										cur_value = pp->thickness / 1000.0;
-										digit = 2;
-										pos = 4;
-										unit = UNIT_MM;
-										draw3_digit_stop (cur_value, units[unit], digit, pos, 39);
-									}
+							switch (TMP(thickness_reg))
+							{
+								case 0:	tmpf = 0.01; break;
+								case 1:	tmpf = 0.1; break;
+								case 2:	tmpf = 1.0; break;
+								case 3:	tmpf = 10.0; break;						
+								default:break;
+							}
+							if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
+							{
+								cur_value = pp->thickness / 1000.0;
+								lower = 0.0;
+								upper = 1000.0;
+								step = tmpf;
+								digit = 2;
+								pos = 4;
+								unit = UNIT_MM;
+								draw3_digit_pressed (data_0237, units[unit], cur_value , lower, upper, step, digit, p, pos, 39);
+							}
+							else 
+							{
+								cur_value = pp->thickness / 1000.0;
+								digit = 2;
+								pos = 4;
+								unit = UNIT_MM;
+								draw3_digit_stop (cur_value, units[unit], digit, pos, 39);
+							}
 						}				
 					}
 					else if (pp->cstart_qty == 5)
@@ -12790,35 +12924,35 @@ void draw3_data4(DRAW_UI_P p)
 						}
 						else if ((pp->ctype_pos == 1) && (pp->cmode_pos == 2))
 						{
-								switch (TMP(db_reg))
-								{
-									case 0:	tmpf = 0.1; break;
-									case 1:	tmpf = 0.5; break;
-									case 2:	tmpf = 1.0; break;
-									case 3:	tmpf = 2.0; break;
-									case 4:	tmpf = 6.0; break;
-									default:break;
-								}
-								if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
-								{
-									cur_value = (GROUP_VAL(gain) - GROUP_VAL(gainr) * GROUP_VAL(db_ref)) / 100.0; 
-									lower = 0.0 - GROUP_VAL(gainr) * GROUP_VAL(db_ref) / 100.0 ;
-									upper = GAIN_MAX - GROUP_VAL(gainr) * GROUP_VAL(db_ref) / 100.0 ;
-									step = tmpf;
-									digit = 1;
-									pos = 4;
-									unit = UNIT_DB;
-									draw3_digit_pressed (data_100, units[unit], cur_value ,
-											lower, upper, step, digit, p, pos, 9);
-								}
-								else 
-								{
-									cur_value = (GROUP_VAL(gain) - GROUP_VAL(gainr) * GROUP_VAL(db_ref)) / 100.0; 
-									digit = 1;
-									pos = 4;
-									unit = UNIT_DB;
-									draw3_digit_stop (cur_value, units[unit], digit, pos, 9);
-								}
+							switch (TMP(db_reg))
+							{
+								case 0:	tmpf = 0.1; break;
+								case 1:	tmpf = 0.5; break;
+								case 2:	tmpf = 1.0; break;
+								case 3:	tmpf = 2.0; break;
+								case 4:	tmpf = 6.0; break;
+								default:break;
+							}
+							if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
+							{
+								cur_value = (GROUP_VAL(gain) - GROUP_VAL(gainr) * GROUP_VAL(db_ref)) / 100.0; 
+								lower = 0.0 - GROUP_VAL(gainr) * GROUP_VAL(db_ref) / 100.0 ;
+								upper = GAIN_MAX - GROUP_VAL(gainr) * GROUP_VAL(db_ref) / 100.0 ;
+								step = tmpf;
+								digit = 1;
+								pos = 4;
+								unit = UNIT_DB;
+								draw3_digit_pressed (data_100, units[unit], cur_value ,
+										lower, upper, step, digit, p, pos, 9);
+							}
+							else 
+							{
+								cur_value = (GROUP_VAL(gain) - GROUP_VAL(gainr) * GROUP_VAL(db_ref)) / 100.0; 
+								digit = 1;
+								pos = 4;
+								unit = UNIT_DB;
+								draw3_digit_stop (cur_value, units[unit], digit, pos, 9);
+							}
 						}
 						else
 						{
@@ -14268,35 +14402,35 @@ void draw3_data5(DRAW_UI_P p)
 					switch(pp->cstart_qty)
 					{
 						case 1:
-								if ((pp->ctype_pos == 1)&&(pp->cmode_pos == 2))
-								{
-									draw3_popdown(NULL, 5,1);
-								}
-								else if ((pp->ctype_pos == 1)&&(pp->cmode_pos == 3))
-								{
-									draw3_popdown_offset(NULL, 5,1,7);
-								}
-								else
-								{
-									gtk_widget_hide (pp->eventbox30[5]);
-									gtk_widget_hide (pp->eventbox31[5]);
-								}
-								break;
-						case 2:
-								if ((pp->ctype_pos == 1)&&(pp->cmode_pos == 2))
-								{
-									draw3_popdown(NULL, 5,1);
-								}
-								else
-								{
-									gtk_widget_hide (pp->eventbox30[5]);
-									gtk_widget_hide (pp->eventbox31[5]);
-								}
-								break;
-						case 3:
+							if ((pp->ctype_pos == 1)&&(pp->cmode_pos == 2))
+							{
+								draw3_popdown(NULL, 5,1);
+							}
+							else if ((pp->ctype_pos == 1)&&(pp->cmode_pos == 3))
+							{
+								draw3_popdown_offset(NULL, 5,1,7);
+							}
+							else
+							{
 								gtk_widget_hide (pp->eventbox30[5]);
 								gtk_widget_hide (pp->eventbox31[5]);
-								break;
+							}
+							break;
+						case 2:
+							if ((pp->ctype_pos == 1)&&(pp->cmode_pos == 2))
+							{
+								draw3_popdown(NULL, 5,1);
+							}
+							else
+							{
+								gtk_widget_hide (pp->eventbox30[5]);
+								gtk_widget_hide (pp->eventbox31[5]);
+							}
+							break;
+						case 3:
+							gtk_widget_hide (pp->eventbox30[5]);
+							gtk_widget_hide (pp->eventbox31[5]);
+							break;
 						case 4:
 							if ((pp->ctype_pos == 1) && (pp->cmode_pos == 0))
 							{
@@ -14548,7 +14682,7 @@ void draw3_data5(DRAW_UI_P p)
 							}
 #endif
 							break;
-					case 6:
+						case 6:
 							if ((pp->ctype_pos == 1) && (pp->cmode_pos == 2))
 							{
 								draw3_popdown_offset(NULL, 5,1,31);
@@ -16058,123 +16192,123 @@ void process_key_press (gchar key)
 	switch(key)
 	{
 		case 0xd0:
-					fakekey_press_keysym(fk, XK_Up, 0);
-					fakekey_release(fk);
-					break;
+			fakekey_press_keysym(fk, XK_Up, 0);
+			fakekey_release(fk);
+			break;
 		case 0xd8:
-					fakekey_press_keysym(fk, XK_Down, 0);
-					fakekey_release(fk);
-					break;
+			fakekey_press_keysym(fk, XK_Down, 0);
+			fakekey_release(fk);
+			break;
 		case 0xd1:
-					fakekey_press_keysym(fk, XK_Left, 0);
-					fakekey_release(fk);
-					break;
+			fakekey_press_keysym(fk, XK_Left, 0);
+			fakekey_release(fk);
+			break;
 		case 0xd7:
-					fakekey_press_keysym(fk, XK_Right, 0);
-					fakekey_release(fk);
-					break;
+			fakekey_press_keysym(fk, XK_Right, 0);
+			fakekey_release(fk);
+			break;
 		case 0xd6:
-					fakekey_press_keysym(fk, XK_Return, 0);
-					fakekey_release(fk);
-					break;
+			fakekey_press_keysym(fk, XK_Return, 0);
+			fakekey_release(fk);
+			break;
 		case 0xf1:
-					fakekey_press_keysym(fk, XK_Return, 0);
-					fakekey_release(fk);
-					break;
+			fakekey_press_keysym(fk, XK_Return, 0);
+			fakekey_release(fk);
+			break;
 		case 0xd2:
-					fakekey_press_keysym(fk, XK_Super_L, 0);
-					fakekey_release(fk);
-					break;
+			fakekey_press_keysym(fk, XK_Super_L, 0);
+			fakekey_release(fk);
+			break;
 		case 0xd9:
-					fakekey_press_keysym(fk, XK_BackSpace, 0);
-					fakekey_release(fk);
-					break;
+			fakekey_press_keysym(fk, XK_BackSpace, 0);
+			fakekey_release(fk);
+			break;
 		case 0xef:
-					fakekey_press_keysym(fk, XK_BackSpace, 0);
-					fakekey_release(fk);
-					break;
-	/*
-		case 0xd3:
-					fakekey_press_keysym(fk, XK_80%, 0);
-					fakekey_release(fk);
-					break;
-		case 0xda:
-					fakekey_press_keysym(fk, XK_DISP, 0);
-					fakekey_release(fk);
-					break;
-		case 0xd4:
-					fakekey_press_keysym(fk, XK_Repeat, 0);
-					fakekey_release(fk);
-					break;
-		case 0xdb:
-					fakekey_press_keysym(fk, XK_Save, 0);
-					fakekey_release(fk);
-					break;
-		case 0xd5:
-					fakekey_press_keysym(fk, XK_Open, 0);
-					fakekey_release(fk);
-					break;
-		case 0xdc:
-					fakekey_press_keysym(fk, XK_GATE, 0);
-					fakekey_release(fk);
-					break;
-		case 0xde:
-					fakekey_press_keysym(fk, XK_DB, 0);
-					fakekey_release(fk);
-					break;
-		case 0xe0:
-					fakekey_press_keysym(fk, XK_Freeze, 0);
-					fakekey_release(fk);
-					break;
-		case 0xe9:
-					fakekey_press_keysym(fk, XK_Help, 0);
-					fakekey_release(fk);
-					break;
-	*/
+			fakekey_press_keysym(fk, XK_BackSpace, 0);
+			fakekey_release(fk);
+			break;
+			/*
+			   case 0xd3:
+			   fakekey_press_keysym(fk, XK_80%, 0);
+			   fakekey_release(fk);
+			   break;
+			   case 0xda:
+			   fakekey_press_keysym(fk, XK_DISP, 0);
+			   fakekey_release(fk);
+			   break;
+			   case 0xd4:
+			   fakekey_press_keysym(fk, XK_Repeat, 0);
+			   fakekey_release(fk);
+			   break;
+			   case 0xdb:
+			   fakekey_press_keysym(fk, XK_Save, 0);
+			   fakekey_release(fk);
+			   break;
+			   case 0xd5:
+			   fakekey_press_keysym(fk, XK_Open, 0);
+			   fakekey_release(fk);
+			   break;
+			   case 0xdc:
+			   fakekey_press_keysym(fk, XK_GATE, 0);
+			   fakekey_release(fk);
+			   break;
+			   case 0xde:
+			   fakekey_press_keysym(fk, XK_DB, 0);
+			   fakekey_release(fk);
+			   break;
+			   case 0xe0:
+			   fakekey_press_keysym(fk, XK_Freeze, 0);
+			   fakekey_release(fk);
+			   break;
+			   case 0xe9:
+			   fakekey_press_keysym(fk, XK_Help, 0);
+			   fakekey_release(fk);
+			   break;
+			   */
 		case 0xe4:
-					fakekey_press_keysym(fk, XK_F2, 0);
-					fakekey_release(fk);
-					break;
+			fakekey_press_keysym(fk, XK_F2, 0);
+			fakekey_release(fk);
+			break;
 		case 0xe5:
-					fakekey_press_keysym(fk, XK_F3, 0);
-					fakekey_release(fk);
-					break;
+			fakekey_press_keysym(fk, XK_F3, 0);
+			fakekey_release(fk);
+			break;
 		case 0xe6:
-					fakekey_press_keysym(fk, XK_F4, 0);
-					fakekey_release(fk);
-					break;
+			fakekey_press_keysym(fk, XK_F4, 0);
+			fakekey_release(fk);
+			break;
 		case 0xe7:
-					fakekey_press_keysym(fk, XK_F5, 0);
-					fakekey_release(fk);
-					break;
+			fakekey_press_keysym(fk, XK_F5, 0);
+			fakekey_release(fk);
+			break;
 		case 0xe8:
-					fakekey_press_keysym(fk, XK_F6, 0);
-					fakekey_release(fk);
-					break;
+			fakekey_press_keysym(fk, XK_F6, 0);
+			fakekey_release(fk);
+			break;
 		case 0xea:
-					fakekey_press_keysym(fk, XK_F7, 0);
-					fakekey_release(fk);
-					break;
+			fakekey_press_keysym(fk, XK_F7, 0);
+			fakekey_release(fk);
+			break;
 		case 0xeb:
-					fakekey_press_keysym(fk, XK_F8, 0);
-					fakekey_release(fk);
-					break;
+			fakekey_press_keysym(fk, XK_F8, 0);
+			fakekey_release(fk);
+			break;
 		case 0xec:
-					fakekey_press_keysym(fk, XK_F9, 0);
-					fakekey_release(fk);
-					break;
+			fakekey_press_keysym(fk, XK_F9, 0);
+			fakekey_release(fk);
+			break;
 		case 0xed:
-					fakekey_press_keysym(fk, XK_F10, 0);
-					fakekey_release(fk);
-					break;
+			fakekey_press_keysym(fk, XK_F10, 0);
+			fakekey_release(fk);
+			break;
 		case 0xee:
-					fakekey_press_keysym(fk, XK_F11, 0);
-					fakekey_release(fk);
-					break;
+			fakekey_press_keysym(fk, XK_F11, 0);
+			fakekey_release(fk);
+			break;
 		case 0xf2:
-					fakekey_press_keysym(fk, XK_F12, 0);
-					fakekey_release(fk);
-					break;
+			fakekey_press_keysym(fk, XK_F12, 0);
+			fakekey_release(fk);
+			break;
 
 	}
 }
