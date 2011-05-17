@@ -15,6 +15,8 @@
 #include "base_config.h"
 #include <gtk/gtk.h>
 #include <webkit/webkit.h>
+#include <fakekey/fakekey.h>
+#include <X11/keysym.h>
 
 #define X86_DEPTH	24
 #define ARM_DEPTH	16
@@ -348,6 +350,9 @@ typedef struct Draw_interface
 
 	GtkWidget		*window;
 	GtkWidget		*win_keyboard;
+	Display			*disp;
+	FakeKey			*fk;
+
 
 	GtkWidget		*dialog;
 	/* scale 快速调节数值 */
@@ -357,13 +362,18 @@ typedef struct Draw_interface
 	GtkWidget		*scale_drawarea;
 	GtkWidget		*vscale;
 
+
 	/* 画图区域 */
-//	GtkWidget	*table;
-//	GtkWidget	*vrule1;
-//	GtkWidget	*vrule2;
-//	GtkWidget	*hrule;
-//	GtkWidget	*title;
-//	GtkWidget	*drawlabel;
+	const gchar **con0_p;
+	const gchar ***con1_p;
+	const gchar ****con2_p;
+	const gchar **units;
+	const gchar **menu_content;
+
+	const gchar **list;
+	const gchar **list1;
+	const gchar **field1;
+	const gchar **field;
 
 	CONFIG_P		p_config;			/**/
 	TMP_CONFIG_P	p_tmp_config;		/**/

@@ -689,7 +689,7 @@ void b2_fun0(DRAW_UI_P p, gint pos)
 		p->pos_last1 = p->pos1[p->pos];
 		p->pos1[p->pos] = pos;
 		pp->pos_pos = MENU3_STOP;
-		draw_2_menu(0);
+		draw_menu2(0);
 		draw_3_menu(0, NULL);
 	}
 }
@@ -909,7 +909,7 @@ void b3_fun0(gpointer p)
 	}
 
 	pp->pos_pos = MENU3_PRESSED;
-	draw_2_menu (0);
+	draw_menu2 (0);
 	draw_3_menu (0, p);                          /**/
 
 	return ;
@@ -1166,7 +1166,7 @@ void b3_fun1(gpointer p)
 	}
 
 	pp->pos_pos = MENU3_PRESSED;
-	draw_2_menu(0);
+	draw_menu2(0);
 	draw_3_menu(0, NULL);                          /**/
 
 	return ;
@@ -1448,7 +1448,7 @@ void b3_fun2(gpointer p)
 	}
 
 	pp->pos_pos = MENU3_PRESSED;
-	draw_2_menu(0);
+	draw_menu2(0);
 	draw_3_menu(0, NULL);                          /**/
 
 	return ;
@@ -1755,7 +1755,7 @@ void b3_fun3(gpointer p)
 	}
 
 	pp->pos_pos = MENU3_PRESSED;
-	draw_2_menu(0);
+	draw_menu2(0);
 	draw_3_menu(0, NULL);                          /**/
 
 	return ;
@@ -1961,7 +1961,7 @@ void b3_fun4(gpointer p)
 	}
 
 	pp->pos_pos = MENU3_PRESSED;
-	draw_2_menu(0);
+	draw_menu2(0);
 	draw_3_menu(0, NULL);                          /**/
 
 	return ;
@@ -2157,7 +2157,7 @@ void b3_fun5(gpointer p)
 	}
 
 	pp->pos_pos = MENU3_PRESSED;
-	draw_2_menu(0);
+	draw_menu2(0);
 	draw_3_menu(0, NULL);                          /**/
 
 	return ;
@@ -2294,7 +2294,7 @@ static int handler_key(guint keyval, gpointer data)
 				main_menu_pop(MENU_POP);/*弹出主菜单条并选中当前选项*/
 				if ((tmp != pp->pos_pos) || (tmp1 != pp->mark_pop_change))
 				{
-					draw_2_menu(0);
+					draw_menu2(0);
 					draw_3_menu(0, NULL);
 				}
 			}
@@ -2333,7 +2333,7 @@ static int handler_key(guint keyval, gpointer data)
 				}
 				if ((tmp != pp->pos_pos) || (tmp1 != pp->mark_pop_change))
 				{
-					draw_2_menu(0);
+					draw_menu2(0);
 					draw_3_menu(0, NULL);
 				}
 			}
@@ -2374,7 +2374,7 @@ static int handler_key(guint keyval, gpointer data)
 				}
 				if ((tmp != pp->pos_pos) || (tmp1 != pp->mark_pop_change))
 				{
-					draw_2_menu(0);
+					draw_menu2(0);
 					draw_3_menu(0, NULL);
 				}
 			}
@@ -2532,7 +2532,7 @@ static int handler_key(guint keyval, gpointer data)
 					case MENU2_STOP:
 						pp->pos_last1 = pp->pos1[pp->pos];
 						pp->pos1[pp->pos] > 0 ? pp->pos1[pp->pos]-- :  (pp->pos1[pp->pos] = (pp->menu2_qty - 1));
-						draw_2_menu(0);
+						draw_menu2(0);
 						draw_3_menu(1, NULL);
 						break;
 					case MENU2_PRESSED:
@@ -2585,7 +2585,7 @@ static int handler_key(guint keyval, gpointer data)
 					case MENU2_STOP:
 						pp->pos_last1 = pp->pos1[pp->pos];
 						pp->pos1[pp->pos] < (pp->menu2_qty - 1) ? pp->pos1[pp->pos]++ :  (pp->pos1[pp->pos] = 0);
-						draw_2_menu(0);
+						draw_menu2(0);
 						draw_3_menu(1, NULL);
 						break;
 					case MENU2_PRESSED:

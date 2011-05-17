@@ -15,29 +15,8 @@
 #include <sys/types.h>
 #include <gdk/gdkkeysyms.h>
 
-GdkColor	color_black     = {0x0, 0x0, 0x0, 0x0};
-GdkColor	color_black1    = {0x0, 0x0, 0x0, 0x0800};
-GdkColor	color_white     = {0x0, 0xffff, 0xffff, 0xffff};
-GdkColor	color_yellow    = {0x0, 0xffff, 0xffff, 0x0};
-GdkColor	color_green     = {0x0, 0x0, 0xffff, 0x0};
-GdkColor	color_blue      = {0x0, 0x0, 0x0, 0xffff};
-GdkColor	color_red       = {0x0, 0x0, 0x0, 0xffff};
-GdkColor	color_text_base = {0x0, 0x1300, 0x4900, 0x7600};
-GdkColor	color_rule      = {0x0, 0xc300, 0xf000, 0x1d00};
-
-#if 0
-GdkColor	all_col[] = 
-{
-	{0x0, 0x0, 0x0, 0xffff},	/* blue */
-	{0x0, 0x0, 0xffff, 0x0}, /* green*/
-	{0x0, 0xffff, 0x0, 0x0},		/* red */
-	{0x0, 0xffff, 0xffff, 0x0}, /* yellow */
-	{0x0, 0x0, 0x0, 0x0},	/* black */
-	{0x0, 0xffff, 0xffff, 0xffff} /* white */
-};
-#endif
-
-DRAW_UI_P	pp;					
+DRAW_UI_P	pp;
+/* 用来模拟按键等待封装 */
 Display		*disp ;
 FakeKey		*fk;
 
@@ -245,17 +224,13 @@ static void set_config (guint groupid)
 	pp->ctype_pos = 1;
 }
 
-/* You have to start somewhere */
 int main (int argc, char *argv[])
 {
 	DRAW_UI_P		p_ui;					
 	CONFIG_P		p_config;				
 	TMP_CONFIG_P	p_tmp_config;					
 	GtkWidget		*window;
-	GtkAccelGroup	*accel;
-	GClosure		*closure;
 	gint			i;
-	gint			tt;
 
 	g_thread_init(NULL);
 	gdk_threads_init();
@@ -263,8 +238,6 @@ int main (int argc, char *argv[])
 
 	g_type_class_unref (g_type_class_ref (GTK_TYPE_IMAGE_MENU_ITEM));
 	g_object_set (gtk_settings_get_default (), "gtk-menu-bar-accel", NULL, NULL); 
-
-	accel = gtk_accel_group_new();
 
 	p_ui		= (DRAW_UI_P)malloc(sizeof(DRAW_UI));
 	p_config	= (CONFIG_P)malloc(sizeof(CONFIG));
@@ -277,11 +250,9 @@ int main (int argc, char *argv[])
 	memset (p_ui, 0x0, sizeof(DRAW_UI));
 	memset (p_config, 0x0, sizeof(CONFIG));
 	memset (p_tmp_config, 0x0, sizeof(TMP_CONFIG));
-	g_print("DRAW_UI's size:%d xx = %d\n", sizeof(DRAW_UI), p_ui->mark3);
-	g_print("CONFIG's size:%d xx = %d\n", sizeof(CONFIG), p_config->time);
+	g_print ("DRAW_UI's size:%d xx = %d\n", sizeof(DRAW_UI), p_ui->mark3);
+	g_print ("CONFIG's size:%d xx = %d\n", sizeof(CONFIG), p_config->time);
 
-
-	/*	window = gtk_window_new (GTK_WINDOW_POPUP);*/
 	window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_decorated (GTK_WINDOW (window), FALSE);			/*不可以装饰*/
 	gtk_window_set_default_size (GTK_WINDOW(window), 800, 600);		/*设置窗口大小*/
@@ -290,10 +261,10 @@ int main (int argc, char *argv[])
 #endif
 	gtk_widget_modify_bg (window, GTK_STATE_NORMAL, &color_black);	/*黑色背景*/
 	g_signal_connect (G_OBJECT(window), "delete_event",
-			G_CALLBACK(gtk_main_quit), NULL);			/**/
+			G_CALLBACK(gtk_main_quit), NULL);			
 
 	disp = XOpenDisplay(NULL);
-	if( disp == NULL )
+	if (disp == NULL)
 		return 1;
 	fk = fakekey_init(disp);
 
@@ -319,80 +290,22 @@ int main (int argc, char *argv[])
 		}
 	}
 
-	/*	write(p_ui->p_tmp_config->fd_config, (void*)(p_ui->p_config), sizeof(CONFIG));*/
-
-	TMP(a_scan_width)	= 615;
-	TMP(a_scan_dot_qty)	= 615;
-	TMP(a_scan_height)	= 120;
-
 	memset (TMP(scan_type), 0xff, 16);
 	TMP(beam_qty[0]) = 1;
-	TMP(beam_qty[1]) = 1;
-	TMP(beam_qty[2]) = 1;
-	TMP(beam_qty[3]) = 1;
-	TMP(beam_qty[4]) = 0;
-	TMP(beam_qty[5]) = 0;
-	TMP(beam_qty[6]) = 0;
-	TMP(beam_qty[7]) = 0;
-	TMP(beam_qty[3]) = 1;
-	TMP(beam_num[0]) = 0;
-	TMP(beam_num[1]) = 0;
-	TMP(beam_num[2]) = 0;
-	TMP(beam_num[3]) = 0;
+
 #if ARM
-	init_fb (); /* 初始化fb1 */
-	init_mem (); /* 初始化MEM */
+	init_fb ();					
+	init_mem ();			
 	p_ui->p_beam_data = TMP(dma_data_add1);		/* FPGA过来的数据 */
 #endif
+
 	init_ui (p_ui);
 
 	gtk_widget_show (window);
 
-	/*
-	   g_signal_connect (G_OBJECT (window), "key-press-event",
-	   G_CALLBACK (key_press_handler), NULL);
-	   */
-#if 0
-	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) NULL, NULL);
-	gtk_accel_group_connect(accel, GDK_F1, 0, GTK_ACCEL_VISIBLE, closure);
-	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) NULL, NULL);
-	gtk_accel_group_connect(accel, GDK_F2, 0, GTK_ACCEL_VISIBLE, closure);
-	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) NULL, NULL);
-	gtk_accel_group_connect(accel, GDK_F3, 0, GTK_ACCEL_VISIBLE, closure);
-	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) NULL, NULL);
-	gtk_accel_group_connect(accel, GDK_F4, 0, GTK_ACCEL_VISIBLE, closure);
-	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) NULL, NULL);
-	gtk_accel_group_connect(accel, GDK_F5, 0, GTK_ACCEL_VISIBLE, closure);
-	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) NULL, NULL);
-	gtk_accel_group_connect(accel, GDK_F6, 0, GTK_ACCEL_VISIBLE, closure);
-	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) NULL, NULL);
-	gtk_accel_group_connect(accel, GDK_F7, 0, GTK_ACCEL_VISIBLE, closure);
-	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) NULL, NULL);
-	gtk_accel_group_connect(accel, GDK_F8, 0, GTK_ACCEL_VISIBLE, closure);
-	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) NULL, NULL);
-	gtk_accel_group_connect(accel, GDK_F9, 0, GTK_ACCEL_VISIBLE, closure);
-	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) NULL, NULL);
-	gtk_accel_group_connect(accel, GDK_F10, 0, GTK_ACCEL_VISIBLE, closure);
-	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) NULL, NULL);
-	gtk_accel_group_connect(accel, GDK_F11, 0, GTK_ACCEL_VISIBLE, closure);
-	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) NULL, NULL);
-	gtk_accel_group_connect(accel, GDK_F12, 0, GTK_ACCEL_VISIBLE, closure);
-	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) NULL, NULL);
-	gtk_accel_group_connect(accel, GDK_Return, 0, GTK_ACCEL_VISIBLE, closure);
-
-	closure = g_cclosure_new(G_CALLBACK(foo), (gpointer) NULL, NULL);
-	gtk_accel_group_connect(accel, GDK_Escape, 0, GTK_ACCEL_VISIBLE, closure);
-
-	gtk_window_add_accel_group(GTK_WINDOW(window), accel);
-#endif
-
 	gdk_threads_enter();
 	gtk_main();
 	gdk_threads_leave();
-
-#if 0	
-	draw_area_init(&tan1, vbox30, 0, 0, 400,426);
-#endif
 
 	return 0;
 }
