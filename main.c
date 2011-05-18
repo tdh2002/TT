@@ -16,9 +16,6 @@
 #include <gdk/gdkkeysyms.h>
 
 DRAW_UI_P	pp;
-/* 用来模拟按键等待封装 */
-Display		*disp ;
-FakeKey		*fk;
 
 /* 测试用的初始值 */
 static void set_config (guint groupid)
@@ -263,10 +260,10 @@ int main (int argc, char *argv[])
 	g_signal_connect (G_OBJECT(window), "delete_event",
 			G_CALLBACK(gtk_main_quit), NULL);			
 
-	disp = XOpenDisplay(NULL);
-	if (disp == NULL)
+	p_ui->disp = XOpenDisplay(NULL);
+	if (p_ui->disp == NULL)
 		return 1;
-	fk = fakekey_init(disp);
+	p_ui->fk = fakekey_init(p_ui->disp);
 
 	p_ui->p_config		= p_config;
 	p_ui->p_tmp_config	= p_tmp_config;

@@ -15,7 +15,7 @@
 #include <sys/mman.h>
 
 #define MEM_DEVICE "/dev/mem"
-#define TTY_DEVICE"/dev/ttyS1"
+#define TTY_DEVICE "/dev/ttyS1"
 
 #define COLOR_STEP 32     //    4  8  16  32  64
 #define COLOR_SHIFT 5     //    2  3   4   5   6
@@ -69,6 +69,24 @@ static gfloat HEIGHT_TABLE[256]=
 	0.058824,0.054902,0.050980,0.047059,0.043137,0.039216,0.035294,0.031373,
 	0.027451,0.023529,0.019608,0.015686,0.011765,0.007843,0.003922,0.000000
 };
+
+/*  */
+void draw_a_scan (gushort *p, guint width, guint height, 
+		DOT_TYPE *data, DOT_TYPE *data1, DOT_TYPE *data2,
+		guint xoffset, guint yoffset, guchar groupId);
+void draw_a_scan_r (gushort *p, guint width, guint height, 
+		DOT_TYPE *data, DOT_TYPE *data1, DOT_TYPE *data2,
+		guint xoffset, guint yoffset, guchar groupId);
+/* */
+void draw_b_scan (gushort *p, guint width, guint height, DOT_TYPE *data, DOT_TYPE *data1,
+		guint xoffset, guint yoffset, guchar groupId, guchar mark);
+int CalcFanScan(gdouble startAngle, gdouble endAngle,
+		gdouble stepAngle, gint startWave, gint endWave,
+		gint widstep, gint width, gint height);
+void draw_s_scan (gushort *p, guint width, guint height, DOT_TYPE *data, DOT_TYPE *data1,
+		guint xoffset, guint yoffset, guchar groupId, guchar ut_unit);
+void draw_scan(guchar scan_num, guchar scan_type, guchar group,
+		guint xoff, guint yoff, guchar *dot_temp, gushort *dot_temp1);
 
 void init_fb ()
 {
@@ -767,4 +785,69 @@ void draw_s_scan_r (gushort *p, guint width, guint height, DOT_TYPE *data, DOT_T
 	return ;
 }
 
+
+void draw_scan(guchar scan_num, guchar scan_type, guchar group,
+		guint xoff, guint yoff, guchar *dot_temp, gushort *dot_temp1)
+{
+	switch (scan_type)
+	{
+		case A_SCAN:
+			draw_a_scan(dot_temp1, TMP(a_scan_width), TMP(a_scan_height),
+					TMP(scan_data[group]) + TMP(a_scan_width) * TMP(beam_num[group]),
+					dot_temp, dot_temp, 
+					xoff, yoff, group);
+			break;
+		case A_SCAN_R:
+			draw_a_scan_r(dot_temp1, TMP(a_scan_width), TMP(a_scan_height),
+					TMP(scan_data[group]) + TMP(a_scan_width) * TMP(beam_num[group]),
+					dot_temp, dot_temp, 
+					xoff, yoff, group);
+			break;
+		case B_SCAN:
+			if (pp->bscan_mark)
+			{
+				draw_b_scan(dot_temp1, TMP(b_scan_width), TMP(b_scan_height),dot_temp,
+						TMP(scan_data[group]) + TMP(a_scan_width) * TMP(beam_num[group]),
+						xoff, yoff, group, 1);
+				pp->bscan_mark = 0;	/* mark 的时候把画图区清空 */
+			}
+			else
+				draw_b_scan(dot_temp1, TMP(b_scan_width), TMP(b_scan_height),dot_temp,
+						TMP(scan_data[group]) + TMP(a_scan_width) * TMP(beam_num[group]),
+						xoff, yoff, group, 0);
+			break;
+		case S_SCAN:
+			draw_s_scan(dot_temp1, TMP(s_scan_width), TMP(s_scan_height),dot_temp,
+					TMP(scan_data[group]),
+					xoff, yoff, group, GROUP_VAL_POS(group, ut_unit));
+			break;
+		case S_SCAN_L:
+			draw_s_scan(dot_temp1, TMP(s_scan_width), TMP(s_scan_height),dot_temp,
+					TMP(scan_data[group]),
+					xoff, yoff, group, GROUP_VAL_POS(group, ut_unit));
+			break;
+		case S_SCAN_A:
+			/* 计算查找表 */
+			if ((GROUP_VAL_POS(group, ut_unit) == UT_UNIT_TRUE_DEPTH) &&
+					pp->sscan_mark)
+			{
+				/* 初始化扇型查找表 */
+				CalcFanScan (
+						LAW_VAL(Angle_min) / 100.0,
+						LAW_VAL(Angle_max) /100.0,	/*  */
+
+						LAW_VAL(Angle_step) / 100.0, 0, TMP(a_scan_dot_qty),
+						TMP(s_scan_width), TMP(s_scan_width), TMP(s_scan_height));
+				pp->sscan_mark = 0;
+			}
+			draw_s_scan(dot_temp1, TMP(s_scan_width), TMP(s_scan_height), dot_temp,
+					TMP(scan_data[group]),
+					xoff, yoff, group, GROUP_VAL_POS(group, ut_unit));
+			break;
+		case C_SCAN:
+			break;
+		default:break;
+	}
+	return ;
+}
 

@@ -362,7 +362,6 @@ typedef struct Draw_interface
 	GtkWidget		*scale_drawarea;
 	GtkWidget		*vscale;
 
-
 	/* 画图区域 */
 	const gchar **con0_p;
 	const gchar ***con1_p;
@@ -492,6 +491,7 @@ typedef _my_ip_set _my_mask_set;
 typedef _my_ip_set_p _my_mask_set_p;
 
 #define CUR_POS (pp->pos2[pp->pos][pp->pos1[pp->pos]])      /* 0,1,2,3,4,5 */
+#define CUR_POS_P(p) (p->pos2[p->pos][p->pos1[p->pos]])      /* 0,1,2,3,4,5 */
 #define CFG(a)	(pp->p_config->a)
 
 #define GROUP_VAL_POS(a, b)	(CFG(group[a].b))				/* a表示哪个group b是返回哪个值 */

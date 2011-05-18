@@ -112,7 +112,7 @@ const gchar *backpic[] =
 void change_language(guint lang, DRAW_UI_P p);
 void draw_menu1();
 void draw_menu2(gint pa);
-void draw_3_menu(gint pa, gpointer p);
+void draw_menu3(gint pa, gpointer p);
 void init_ui(DRAW_UI_P p);				/* 初始化界面 */
 void draw_area_all();
 
@@ -122,6 +122,19 @@ void draw3_data0(DRAW_UI_P p);
 void draw3_data1(DRAW_UI_P p);
 void draw3_data2(DRAW_UI_P p);
 void draw3_data3(DRAW_UI_P p);
+void draw3_data4(DRAW_UI_P p);
+void draw3_data5(DRAW_UI_P p);
+
+void (*draw_data3[6])(DRAW_UI_P p) =
+{
+	draw3_data0,
+	draw3_data1,
+	draw3_data2,
+	draw3_data3,
+	draw3_data4,
+	draw3_data5
+};
+
 
 /* 显示各个菜单图标的名称 */
 const gchar **con0_p;
@@ -307,7 +320,7 @@ void menu3_pop(guint action)
 		gtk_menu_item_activate (GTK_MENU_ITEM (pp->menu_item3[pp->menu3_poppos]));
 		for(i=0;i<6;i++)
 			gtk_menu_popdown( GTK_MENU (pp->menu33[i]));
-		draw_3_menu(1, NULL);
+		draw_menu3(1, NULL);
 	}
 	else if (MENU3_HIDE == action) 		/* 收回三级菜单选项 */
 	{
@@ -391,18 +404,39 @@ void sub_click (GtkButton *button, gpointer data)
 }
 
 /*1级菜单 回调函数*/
-void menuitem_function(GtkMenuItem *menuitem, gpointer data)
+void menuitem_function (GtkMenuItem *menuitem, gpointer data)
 {
-	guint p = GPOINTER_TO_UINT(data);
-	gtk_menu_item_set_label(GTK_MENU_ITEM (pp->menuitem_main), 
+	DRAW_UI_P p = p_drawui_c;
+	guint num = GPOINTER_TO_UINT(data);
+
+	gtk_menu_item_set_label(GTK_MENU_ITEM (p->menuitem_main), 
 			gtk_menu_item_get_label(menuitem));	/*  */
-	pp->pos_last = pp->pos; /*  */
-	pp->pos = p;
+	p->pos_last = pp->pos; /*  */
+	p->pos = num;
 	/* 根据p的值来确定有几个么menu2_qty	*/
-	pp->menu2_qty = 5;
+	switch (num)
+	{
+		case 1:
+		case 3:
+		case 4:
+		case 6:
+		case 7:
+		case 8:
+		case 9:
+			p->menu2_qty = 5;
+			break;
+		case 0:
+			p->menu2_qty = 3;
+			break;
+		case 2:
+		case 5:
+			p->menu2_qty = 3;
+			break;
+		default:break;
+	}
 	MENU_STATUS = MENU3_STOP; /* */
 	draw_menu2(1);
-	draw_3_menu(1, NULL);
+	draw_menu3(1, NULL);
 }
 
 /* 画一级菜单*/
@@ -416,57 +450,79 @@ void draw_menu1 ()
 	return ;
 }
 
-/* 二级菜单 */
-void draw_menu2(gint pa)
+/* 画二级菜单 pa的作用未曾体现，用来表示菜单名子的位置 6 6 6 6 6 */
+void draw_menu2 (gint pa)
 {
+	GdkColor	yellow    = {0x0, 0xffff, 0xffff, 0x0};
+	GdkColor	white     = {0x0, 0xffff, 0xffff, 0xffff};
+	DRAW_UI_P p = p_drawui_c;
 	gint i;
+#if 0
+	gint a = 0, b = 0, c = 0, d = 0, e = 0;
+	a = (pa >> 0) & 0x3f ;
+	b = (pa >> 6) & 0x3f ;
+	c = (pa >> 12) & 0x3f ;
+	d = (pa >> 18) & 0x3f ;
+	e = (pa >> 24) & 0x3f ;
+#endif
 
-	if (pp->pos_pos != MENU3_PRESSED)
-		pp->mark_pop_change = 0;
-	for ( i = 0 ; i < 5 ; i++ )   /* 5个二级菜单 */
+	if (p->pos_pos != MENU3_PRESSED)
+		p->mark_pop_change = 0;
+	for (i = 0 ; i < 5 ; i++) 
 	{
-		/* 
-		 * 情况1 1级菜单改变了,所有2级菜单更新 
-		 * 情况2 1级菜单没改变,只更新改变了的2级菜单
-		 * 情况3 pa 不为0强制刷新
-		 * */
-		if ( (pp->pos_last != pp->pos) || 
-				(( pp->pos_last1 == i ) || ( pp->pos1[pp->pos] == i )) || pa )
-		{
-			/*
-			 * 如果二级菜单存在,就显示出来
-			 * 不存在就隐藏
-			 * */
-			if ( con1_p[pp->pos][i] )
+			if (p->con1_p[p->pos][i])
 			{
-				gtk_label_set_text (GTK_LABEL (pp->label2[i]), con1_p[pp->pos][i]);
-				update_widget_bg(pp->eventbox2[i], backpic[1]);
-				gtk_widget_modify_fg(pp->label2[i], GTK_STATE_NORMAL, &color_white);
-				gtk_widget_show (pp->eventbox2[i]);
+				gtk_label_set_text (GTK_LABEL (p->label2[i]), p->con1_p[p->pos][i]);
+				update_widget_bg (p->eventbox2[i], backpic[1]);
+				gtk_widget_modify_fg (p->label2[i], GTK_STATE_NORMAL, &white);
+				gtk_widget_show (p->eventbox2[i]);
 			}
 			else
 			{
-				gtk_label_set_text (GTK_LABEL (pp->label2[i]), " ");
-				gtk_widget_hide (pp->eventbox2[i]);
+				gtk_label_set_text (GTK_LABEL (p->label2[i]), " ");
+				gtk_widget_hide (p->eventbox2[i]);
 			}
-		}
 	}
 	/* 当前二级菜单不是停留就是按下 */
-	if (pp->pos_pos == 0)
-		update_widget_bg(pp->eventbox2[pp->pos1[pp->pos]], backpic[2]);
+	if (p->pos_pos == 0)
+		update_widget_bg(p->eventbox2[p->pos1[p->pos]], backpic[2]);
 	else 
-		update_widget_bg(pp->eventbox2[pp->pos1[pp->pos]], backpic[0]);
+		update_widget_bg(p->eventbox2[p->pos1[p->pos]], backpic[0]);
 
-	gtk_widget_modify_fg(pp->label2[pp->pos1[pp->pos]], GTK_STATE_NORMAL, &color_yellow);
+	gtk_widget_modify_fg(p->label2[p->pos1[p->pos]], GTK_STATE_NORMAL, &yellow);
 
-	if ((pp->pos == 4)||(pp->pos == 3))
-		gtk_widget_set_sensitive(pp->eventbox2[2],FALSE);
-	else
-		gtk_widget_set_sensitive(pp->eventbox2[2],TRUE);
-	if (pp->pos == 3)
-		gtk_widget_set_sensitive(pp->eventbox2[4],FALSE);
-	else
-		gtk_widget_set_sensitive(pp->eventbox2[4],TRUE);
+	return ;
+}
+
+/* 画三级菜单*/
+void draw_menu3 (gint pa, gpointer pt)
+{
+	DRAW_UI_P p = p_drawui_c;
+	gint i;
+
+	for (i = 0 ; i < 6 ; i++) 
+	{
+		gtk_widget_set_sensitive (p->eventbox30[i], TRUE);
+		gtk_widget_set_sensitive (p->eventbox31[i], TRUE);
+
+		if (CUR_POS_P(p) != i)
+		{
+			draw_data3[i](p);
+		}
+	}
+	draw_data3[CUR_POS_P(p)](p);
+
+	p->menu3_amount = 6;
+	/* 计算当前3级菜单活动的数量 */
+	while (!(gtk_widget_get_visible(p->eventbox30[p->menu3_amount - 1])))
+		p->menu3_amount--;
+	while (!(gtk_widget_get_sensitive(p->eventbox30[p->menu3_amount - 1])))
+	{
+		if (p->menu3_amount > 1)
+			p->menu3_amount--;
+		else
+			p->menu3_amount = 0;
+	}
 
 	return ;
 }
@@ -3948,8 +4004,8 @@ gboolean progress_motion_notify (GtkWidget *progress, GdkEvent *event, gpointer 
 	gint pressed;
 	Window fromroot, tmpwin;
 	Window root;
-	root = DefaultRootWindow(disp);
-	XQueryPointer(disp, root, &fromroot, &tmpwin, &x, &y, &tmp, &tmp, &tmp2);
+	root = DefaultRootWindow(pp->disp);
+	XQueryPointer(pp->disp, root, &fromroot, &tmpwin, &x, &y, &tmp, &tmp, &tmp2);
 
 	//	if (y == 300)
 	//		g_print("%d  move a move %d\n", x, y);
@@ -15598,95 +15654,8 @@ void draw3_data5(DRAW_UI_P p)
 
 }
 
-/* 三级菜单*/
-void draw_3_menu(gint pa, gpointer p)
-{
-	gint i;
-
-	for (i = 0 ; i < 6 ; i++) 
-	{
-		/*
-		 * 情况1 一级或者二级菜单改变时候, 更新所有三级菜单
-		 * 情况2 一二 级菜单都不改变的时候, 更新 改变的三级菜单 
-		 * 情况3 pa 强制全部更新
-		 *
-		 * */
-		if ( (pp->pos_last != pp->pos) || 
-				( pp->pos_last1 != pp->pos1[pp->pos] ) ||
-				(pp->pos_last2 == i) || (CUR_POS == i) || pa) 
-		{
-			gtk_widget_set_sensitive (pp->eventbox30[i], TRUE);
-			gtk_widget_set_sensitive (pp->eventbox31[i], TRUE);
-			gtk_widget_set_size_request(GTK_WIDGET(pp->eventbox30[i]), 114, 60);            /* */
-
-
-			/*
-			 * 如果三级菜单存在, 显示出来, 并显示 选项或者数值
-			 * 不存在就隐藏
-			 * */
-			//if ( con2_p[pp->pos][pp->pos1[pp->pos]][i] ) 
-			//{
-			if (CUR_POS != i) {
-				/* 0-5 表示6个3三级菜单 */
-				switch (i)
-				{
-					case 0:	draw3_data0(pp);break;
-					case 1:	draw3_data1(pp);break;
-					case 2:	draw3_data2(pp);break;
-					case 3:	draw3_data3(pp);break;
-					case 4:	draw3_data4(pp);break;
-					case 5:	draw3_data5(pp);break;
-					default:break;
-				}
-			}
-			//}
-			//else
-			//{
-			//	gtk_label_set_text (GTK_LABEL (pp->label3[i]), " ");
-			//	gtk_widget_hide (pp->eventbox30[i]);	/**/
-			//	gtk_widget_hide (pp->eventbox31[i]);	/**/
-			//	gtk_widget_hide (pp->sbutton[i]);	/**/
-			//}
-
-		}
-		gtk_widget_hide (pp->sbutton[i]);
-		//gtk_widget_hide (pp->vscalebox);
-		//		gtk_widget_show (pp->vscalebox);
-		gtk_widget_show (pp->scale_drawarea);
-		gtk_widget_hide (pp->button_add);
-		gtk_widget_hide (pp->button_sub);
-		gtk_widget_hide (pp->vscale);
-		gtk_widget_hide (GTK_WIDGET (pp->entry));
-		//gtk_widget_set_size_request (GTK_WIDGET(pp->drawing_area), 658, 390);
-	}
-	switch (CUR_POS)
-	{
-		case 0:	draw3_data0(pp);break;
-		case 1:	draw3_data1(pp);break;
-		case 2:	draw3_data2(pp);break;
-		case 3:	draw3_data3(pp);break;
-		case 4:	draw3_data4(pp);break;
-		case 5:	draw3_data5(pp);break;
-		default:break;
-	}
-
-
-	pp->menu3_amount = 6;
-	while(!(gtk_widget_get_visible(pp->eventbox30[pp->menu3_amount - 1])))
-		pp->menu3_amount--;
-	while(!(gtk_widget_get_sensitive(pp->eventbox30[pp->menu3_amount - 1])))
-	{
-		if(pp->menu3_amount > 1)
-			pp->menu3_amount--;
-		else
-			pp->menu3_amount = 0;
-	}
-	//g_print("menu3_amount = %d\n", pp->menu3_amount);
-	return ;
-}
-
-/*  */
-static gboolean time_handler1(GtkWidget *widget)
+/* 显示系统时间 */
+static gboolean time_handler1 (GtkWidget *widget)
 {
 	time_t curtime;
 	struct tm *loctime;
@@ -15694,8 +15663,8 @@ static gboolean time_handler1(GtkWidget *widget)
 
 	curtime = time(NULL);
 	loctime = localtime(&curtime);
-	strftime(buffer, 32, "%F %T", loctime);
-	markup=g_markup_printf_escaped("<span foreground='white' font_desc='10'>%s</span>", buffer);
+	strftime (buffer, 32, "%F %T", loctime);
+	markup=g_markup_printf_escaped ("<span foreground='white' font_desc='10'>%s</span>", buffer);
 	gtk_label_set_markup (GTK_LABEL(pp->label[4]),markup);
 
 	g_free (markup);
@@ -15759,79 +15728,15 @@ static void interpolation_data1 (DOT_TYPE *source_data, DOT_TYPE *target_data,
 	}
 }
 
-/*  */
-static void draw_scan(guchar scan_num, guchar scan_type, guchar group,
-		guint xoff, guint yoff)
-{
-	switch (scan_type)
-	{
-		case A_SCAN:
-			draw_a_scan(dot_temp1, TMP(a_scan_width), TMP(a_scan_height),
-					TMP(scan_data[group]) + TMP(a_scan_width) * TMP(beam_num[group]),
-					dot_temp, dot_temp, 
-					xoff, yoff, group);
-			break;
-		case A_SCAN_R:
-			draw_a_scan_r(dot_temp1, TMP(a_scan_width), TMP(a_scan_height),
-					TMP(scan_data[group]) + TMP(a_scan_width) * TMP(beam_num[group]),
-					dot_temp, dot_temp, 
-					xoff, yoff, group);
-			break;
-		case B_SCAN:
-			if (pp->bscan_mark)
-			{
-				draw_b_scan(dot_temp1, TMP(b_scan_width), TMP(b_scan_height),dot_temp,
-						TMP(scan_data[group]) + TMP(a_scan_width) * TMP(beam_num[group]),
-						xoff, yoff, group, 1);
-				pp->bscan_mark = 0;	/* mark 的时候把画图区清空 */
-			}
-			else
-				draw_b_scan(dot_temp1, TMP(b_scan_width), TMP(b_scan_height),dot_temp,
-						TMP(scan_data[group]) + TMP(a_scan_width) * TMP(beam_num[group]),
-						xoff, yoff, group, 0);
-			break;
-		case S_SCAN:
-			draw_s_scan(dot_temp1, TMP(s_scan_width), TMP(s_scan_height),dot_temp,
-					TMP(scan_data[group]),
-					xoff, yoff, group, GROUP_VAL_POS(group, ut_unit));
-			break;
-		case S_SCAN_L:
-			draw_s_scan(dot_temp1, TMP(s_scan_width), TMP(s_scan_height),dot_temp,
-					TMP(scan_data[group]),
-					xoff, yoff, group, GROUP_VAL_POS(group, ut_unit));
-			break;
-		case S_SCAN_A:
-			/* 计算查找表 */
-			if ((GROUP_VAL_POS(group, ut_unit) == UT_UNIT_TRUE_DEPTH) &&
-					pp->sscan_mark)
-			{
-				/* 初始化扇型查找表 */
-				CalcFanScan (
-						LAW_VAL(Angle_min) / 100.0,
-						LAW_VAL(Angle_max) /100.0,	/*  */
-
-						LAW_VAL(Angle_step) / 100.0, 0, TMP(a_scan_dot_qty),
-						TMP(s_scan_width), TMP(s_scan_width), TMP(s_scan_height));
-				pp->sscan_mark = 0;
-			}
-			draw_s_scan(dot_temp1, TMP(s_scan_width), TMP(s_scan_height), dot_temp,
-					TMP(scan_data[group]),
-					xoff, yoff, group, GROUP_VAL_POS(group, ut_unit));
-			break;
-		case C_SCAN:
-			break;
-		default:break;
-	}
-	return ;
-}
 #endif
+
 #if 0
 gboolean bt_release (GtkWidget *widget, GdkEventButton *event,
 		gpointer user_data) 
 {
 	gint i = GPOINTER_TO_UINT(user_data);
-	fakekey_press_keysym(fk, keyboard_send[i], 0);
-	fakekey_release(fk);
+	fakekey_press_keysym(pp->fk, keyboard_send[i], 0);
+	fakekey_release(pp->fk);
 
 	return TRUE;
 }
@@ -15841,8 +15746,8 @@ gboolean numbt_release (GtkWidget *widget, GdkEventButton *event,
 		gpointer user_data) 
 {
 	gint i = GPOINTER_TO_UINT(user_data);
-	fakekey_press_keysym(fk, numkeyboard_send[i], 0);
-	fakekey_release(fk);
+	fakekey_press_keysym(pp->fk, numkeyboard_send[i], 0);
+	fakekey_release(pp->fk);
 
 	return TRUE;
 }
@@ -15988,211 +15893,140 @@ void draw_keyboard (GtkWidget *widget, GdkEventButton *event,	gpointer data)
 	//	gtk_main_quit();
 }
 
-#if 0
-/*   */
-static gboolean time_handler2(GtkWidget *widget)
-{
-	gint i, j, k, prf_count, offset;
-	pp->scan_count++;
-
-	for (i = 0 ; i < CFG(groupQty); i++)
-	{
-		(GROUP_VAL_POS(i, prf) > 500) ? 
-			(prf_count = 50) : (prf_count = (GROUP_VAL_POS(i, prf) / 10));
-		prf_count = 50 / prf_count;
-		if ((pp->scan_count % prf_count) == 0)
-		{
-			pp->refresh_mark = 1;
-			/* 获取数据 */
-			/* 这里需要压缩数据 或者 插值数据 这里只有一个beam 同时最多处理256beam */
-			for	(j = 0 ; j < TMP(beam_qty[i]); j++)
-			{  
-				for (offset = 0, k = 0 ; k < i; k++)
-					offset += GROUP_VAL_POS((k), point_qty) * TMP(beam_qty[k]);
-				if (GROUP_VAL_POS(i, point_qty) <= TMP(a_scan_dot_qty))
-				{
-					interpolation_data (
-							(DOT_TYPE *)(pp->p_beam_data + offset +
-								GROUP_VAL_POS(i, point_qty) * j),
-							TMP(scan_data[i] + TMP(a_scan_dot_qty) * j), 
-							GROUP_VAL_POS(i, point_qty),
-							TMP(a_scan_dot_qty));
-				}
-				else if (GROUP_VAL_POS(i, point_qty) > TMP(a_scan_dot_qty))
-					compress_data (
-							(DOT_TYPE *)(pp->p_beam_data + offset +
-								GROUP_VAL_POS(i, point_qty) * j),
-							TMP(scan_data[i] + TMP(a_scan_dot_qty) * j), 
-							GROUP_VAL_POS(i, point_qty),
-							TMP(a_scan_dot_qty), 
-							GROUP_VAL_POS(i, rectifier));
-			}
-			for (k = 0; ((k < 16) && (TMP(scan_type[k]) != 0xff)); k++)
-			{
-				if (TMP(scan_group[k]) == i)
-					draw_scan(k, TMP(scan_type[k]), TMP(scan_group[k]), 
-							TMP(scan_xpos[k]), TMP(scan_ypos[k]));
-			}
-		} 
-	}
-
-
-	//	for (i = 0; (i < 16) && (TMP(scan_type[i]) != 0xff); i++)
-	//	{
-	//		draw_scan(i, TMP(scan_type[i]), TMP(scan_group[i]), TMP(scan_xpos[i]), TMP(scan_ypos[i]));
-	//	}
-
-	/* 复制波形到显存 */
-	if (pp->refresh_mark ) 
-	{
-		memcpy (TMP(fb1_addr), dot_temp1, FB_WIDTH*400*2);	/* 如果用dma更快啊 */
-		pp->refresh_mark = 0;
-	}
-
-	return TRUE;
-}
-#endif
-
 #if ARM
 void process_key_press (gchar key)	
 {
 	switch(key)
 	{
 		case 0xd0:
-			fakekey_press_keysym(fk, XK_Up, 0);
-			fakekey_release(fk);
+			fakekey_press_keysym(pp->fk, XK_Up, 0);
+			fakekey_release(pp->fk);
 			break;
 		case 0xd8:
-			fakekey_press_keysym(fk, XK_Down, 0);
-			fakekey_release(fk);
+			fakekey_press_keysym(pp->fk, XK_Down, 0);
+			fakekey_release(pp->fk);
 			break;
 		case 0xd1:
-			fakekey_press_keysym(fk, XK_Left, 0);
-			fakekey_release(fk);
+			fakekey_press_keysym(pp->fk, XK_Left, 0);
+			fakekey_release(pp->fk);
 			break;
 		case 0xd7:
-			fakekey_press_keysym(fk, XK_Right, 0);
-			fakekey_release(fk);
+			fakekey_press_keysym(pp->fk, XK_Right, 0);
+			fakekey_release(pp->fk);
 			break;
 		case 0xd6:
-			fakekey_press_keysym(fk, XK_Return, 0);
-			fakekey_release(fk);
+			fakekey_press_keysym(pp->fk, XK_Return, 0);
+			fakekey_release(pp->fk);
 			break;
 		case 0xf1:
-			fakekey_press_keysym(fk, XK_Return, 0);
-			fakekey_release(fk);
+			fakekey_press_keysym(pp->fk, XK_Return, 0);
+			fakekey_release(pp->fk);
 			break;
 		case 0xd2:
-			fakekey_press_keysym(fk, XK_Super_L, 0);
-			fakekey_release(fk);
+			fakekey_press_keysym(pp->fk, XK_Super_L, 0);
+			fakekey_release(pp->fk);
 			break;
 		case 0xd9:
-			fakekey_press_keysym(fk, XK_BackSpace, 0);
-			fakekey_release(fk);
+			fakekey_press_keysym(pp->fk, XK_BackSpace, 0);
+			fakekey_release(pp->fk);
 			break;
 		case 0xef:
-			fakekey_press_keysym(fk, XK_BackSpace, 0);
-			fakekey_release(fk);
+			fakekey_press_keysym(pp->fk, XK_BackSpace, 0);
+			fakekey_release(pp->fk);
 			break;
 			/*
 			   case 0xd3:
-			   fakekey_press_keysym(fk, XK_80%, 0);
-			   fakekey_release(fk);
+			   fakekey_press_keysym(pp->fk, XK_80%, 0);
+			   fakekey_release(pp->fk);
 			   break;
 			   case 0xda:
-			   fakekey_press_keysym(fk, XK_DISP, 0);
-			   fakekey_release(fk);
+			   fakekey_press_keysym(pp->fk, XK_DISP, 0);
+			   fakekey_release(pp->fk);
 			   break;
 			   case 0xd4:
-			   fakekey_press_keysym(fk, XK_Repeat, 0);
-			   fakekey_release(fk);
+			   fakekey_press_keysym(pp->fk, XK_Repeat, 0);
+			   fakekey_release(pp->fk);
 			   break;
 			   case 0xdb:
-			   fakekey_press_keysym(fk, XK_Save, 0);
-			   fakekey_release(fk);
+			   fakekey_press_keysym(pp->fk, XK_Save, 0);
+			   fakekey_release(pp->fk);
 			   break;
 			   case 0xd5:
-			   fakekey_press_keysym(fk, XK_Open, 0);
-			   fakekey_release(fk);
+			   fakekey_press_keysym(pp->fk, XK_Open, 0);
+			   fakekey_release(pp->fk);
 			   break;
 			   case 0xdc:
-			   fakekey_press_keysym(fk, XK_GATE, 0);
-			   fakekey_release(fk);
+			   fakekey_press_keysym(pp->fk, XK_GATE, 0);
+			   fakekey_release(pp->fk);
 			   break;
 			   case 0xde:
-			   fakekey_press_keysym(fk, XK_DB, 0);
-			   fakekey_release(fk);
+			   fakekey_press_keysym(pp->fk, XK_DB, 0);
+			   fakekey_release(pp->fk);
 			   break;
 			   case 0xe0:
-			   fakekey_press_keysym(fk, XK_Freeze, 0);
-			   fakekey_release(fk);
+			   fakekey_press_keysym(pp->fk, XK_Freeze, 0);
+			   fakekey_release(pp->fk);
 			   break;
 			   case 0xe9:
-			   fakekey_press_keysym(fk, XK_Help, 0);
-			   fakekey_release(fk);
+			   fakekey_press_keysym(pp->fk, XK_Help, 0);
+			   fakekey_release(pp->fk);
 			   break;
 			   */
 		case 0xe4:
-			fakekey_press_keysym(fk, XK_F2, 0);
-			fakekey_release(fk);
+			fakekey_press_keysym(pp->fk, XK_F2, 0);
+			fakekey_release(pp->fk);
 			break;
 		case 0xe5:
-			fakekey_press_keysym(fk, XK_F3, 0);
-			fakekey_release(fk);
+			fakekey_press_keysym(pp->fk, XK_F3, 0);
+			fakekey_release(pp->fk);
 			break;
 		case 0xe6:
-			fakekey_press_keysym(fk, XK_F4, 0);
-			fakekey_release(fk);
+			fakekey_press_keysym(pp->fk, XK_F4, 0);
+			fakekey_release(pp->fk);
 			break;
 		case 0xe7:
-			fakekey_press_keysym(fk, XK_F5, 0);
-			fakekey_release(fk);
+			fakekey_press_keysym(pp->fk, XK_F5, 0);
+			fakekey_release(pp->fk);
 			break;
 		case 0xe8:
-			fakekey_press_keysym(fk, XK_F6, 0);
-			fakekey_release(fk);
+			fakekey_press_keysym(pp->fk, XK_F6, 0);
+			fakekey_release(pp->fk);
 			break;
 		case 0xea:
-			fakekey_press_keysym(fk, XK_F7, 0);
-			fakekey_release(fk);
+			fakekey_press_keysym(pp->fk, XK_F7, 0);
+			fakekey_release(pp->fk);
 			break;
 		case 0xeb:
-			fakekey_press_keysym(fk, XK_F8, 0);
-			fakekey_release(fk);
+			fakekey_press_keysym(pp->fk, XK_F8, 0);
+			fakekey_release(pp->fk);
 			break;
 		case 0xec:
-			fakekey_press_keysym(fk, XK_F9, 0);
-			fakekey_release(fk);
+			fakekey_press_keysym(pp->fk, XK_F9, 0);
+			fakekey_release(pp->fk);
 			break;
 		case 0xed:
-			fakekey_press_keysym(fk, XK_F10, 0);
-			fakekey_release(fk);
+			fakekey_press_keysym(pp->fk, XK_F10, 0);
+			fakekey_release(pp->fk);
 			break;
 		case 0xee:
-			fakekey_press_keysym(fk, XK_F11, 0);
-			fakekey_release(fk);
+			fakekey_press_keysym(pp->fk, XK_F11, 0);
+			fakekey_release(pp->fk);
 			break;
 		case 0xf2:
-			fakekey_press_keysym(fk, XK_F12, 0);
-			fakekey_release(fk);
+			fakekey_press_keysym(pp->fk, XK_F12, 0);
+			fakekey_release(pp->fk);
 			break;
 
 	}
 }
 
-static gboolean time_handler2(GtkWidget *widget)
+/* 读取波形数据 并画出来 */
+static gboolean time_handler2 (GtkWidget *widget)
 {
 	gchar key = 0;
 	gint i, j, k, prf_count, offset;
 	guint *temp = (guint *)(TMP(kernel_config_add));
-
-	pp->scan_count++;
-
-#if 0
-	if (read(pp->fd_key, &key, 1) > 0 ) {	
-		process_key_press (key)	;
-	}
-#endif
+	DRAW_UI_P p = p_drawui_c;
 
 	if (temp[0])
 	{
@@ -16201,7 +16035,7 @@ static gboolean time_handler2(GtkWidget *widget)
 
 	for (i = 0 ; i < CFG(groupQty); i++)
 	{
-		pp->refresh_mark = 1;
+		p->refresh_mark = 1;
 		/* 获取数据 */
 		/* 这里需要压缩数据 或者 插值数据 这里只有一个beam 同时最多处理256beam */
 		for	(j = 0 ; j < TMP(beam_qty[i]); j++)
@@ -16230,18 +16064,12 @@ static gboolean time_handler2(GtkWidget *widget)
 		{
 			if (TMP(scan_group[k]) == i)
 				draw_scan(k, TMP(scan_type[k]), TMP(scan_group[k]), 
-						TMP(scan_xpos[k]), TMP(scan_ypos[k]));
+						TMP(scan_xpos[k]), TMP(scan_ypos[k]), dot_temp, NULL);
 		}
 	}
 
-
-	//	for (i = 0; (i < 16) && (TMP(scan_type[i]) != 0xff); i++)
-	//	{
-	//		draw_scan(i, TMP(scan_type[i]), TMP(scan_group[i]), TMP(scan_xpos[i]), TMP(scan_ypos[i]));
-	//	}
-
 	/* 复制波形到显存 */
-	if (pp->refresh_mark ) 
+	if (p->refresh_mark )
 	{
 		memcpy (TMP(fb1_addr), dot_temp1, FB_WIDTH*400*2);	/* 如果用dma更快啊 */
 		pp->refresh_mark = 0;
@@ -16384,7 +16212,7 @@ void init_ui(DRAW_UI_P p)
 		update_widget_bg(p->eventbox2[i], backpic[1]);
 		gtk_widget_modify_fg(p->label2[i], GTK_STATE_NORMAL, &color_white);
 		g_signal_connect(G_OBJECT(p->eventbox2[i]), "button-press-event", 
-				G_CALLBACK(eventbox2_fun[i]), (gpointer) (p));
+				G_CALLBACK(eventbox2_function0), GUINT_TO_POINTER (i));
 
 		gtk_box_pack_start(GTK_BOX(p->hbox212), p->eventbox2[i], FALSE, FALSE, 0);
 		gtk_widget_show(p->eventbox2[i]);
@@ -16420,9 +16248,9 @@ void init_ui(DRAW_UI_P p)
 		gtk_widget_modify_fg(p->label3[i], GTK_STATE_NORMAL, &color_white);
 		gtk_widget_modify_fg(p->data3[i], GTK_STATE_NORMAL, &color_white);
 		g_signal_connect(G_OBJECT(p->eventbox30[i]), "button-press-event", 
-				G_CALLBACK(data_fun[i]), (GUINT_TO_POINTER (i)));
+				G_CALLBACK(data_function0), (GUINT_TO_POINTER (i)));
 		g_signal_connect(G_OBJECT(p->eventbox31[i]), "button-press-event", 
-				G_CALLBACK(data_fun[i]), (GUINT_TO_POINTER (i)));
+				G_CALLBACK(data_function0), (GUINT_TO_POINTER (i)));
 		gtk_widget_show(p->eventbox30[i]);
 		gtk_widget_show(p->eventbox31[i]);
 		gtk_widget_show(p->label3[i]);
@@ -16646,7 +16474,7 @@ void init_ui(DRAW_UI_P p)
 	gtk_widget_modify_bg(pp->scale_drawarea, GTK_STATE_NORMAL, &color_black);
 
 	/* scale 快速调节数值 */
-	pp->button_add = gtk_button_new_with_label ("+");    /* 加减数值 */
+	pp->button_add = gtk_button_new_with_label ("+");    /* 加减数值这里功能数值加减会出现不准的时候 */
 	g_signal_connect (pp->button_add, "clicked", 
 			G_CALLBACK(add_click), NULL);
 	pp->button_sub = gtk_button_new_with_label ("-");    
@@ -16681,7 +16509,7 @@ void init_ui(DRAW_UI_P p)
 
 	draw_menu1 ();
 	draw_menu2 (1);
-	draw_3_menu (1, NULL);
+	draw_menu3 (1, NULL);
 
 	if (!g_thread_supported()) 
 	{
@@ -16689,11 +16517,11 @@ void init_ui(DRAW_UI_P p)
 	}
 
 #if ARM
-	g_thread_create(signal_thread, NULL, FALSE, NULL);
-	g_timeout_add(50, (GSourceFunc) time_handler2, NULL);
+	g_thread_create (signal_thread, NULL, FALSE, NULL);
+	g_timeout_add (50, (GSourceFunc) time_handler2, NULL);
 #endif
 
-	g_timeout_add(1000, (GSourceFunc) time_handler1, NULL);
+	g_timeout_add (1000, (GSourceFunc) time_handler1, NULL);
 }
 
 void save_config (GtkWidget *widget, GdkEventButton *event,	gpointer data)
@@ -16704,4 +16532,3 @@ void save_config (GtkWidget *widget, GdkEventButton *event,	gpointer data)
 	close (TMP(fd_config));
 	gtk_main_quit();
 }
-

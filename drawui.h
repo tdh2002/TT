@@ -7,9 +7,6 @@
 #define	__DRAW_UI_H_
 #include "base.h"
 #include "language.h"
-#include <fakekey/fakekey.h>
-#include <X11/keysym.h>
-
 
 /* 扫查模式 */
 #define UT_SCAN		0
@@ -351,10 +348,7 @@ extern GtkWidgetClass *dialog_window_class;									/* 主windows class */
 extern void change_keypress_event(gint window_type);
 
 extern DRAW_UI_P pp;					
-extern Display *disp ;
-extern FakeKey *fk;
 
-//extern guint address[];
 extern guint get_beam_qty();
 extern guint get_freq ();
 extern guint get_pw ();
@@ -368,13 +362,13 @@ extern void tt_label_show_float (GtkWidget *label, const gchar *s1, gfloat value
 
 extern void change_language();										/* 选择语言 */
 extern void draw_menu2(gint pa);									/* 更新二级菜单 */
-extern void draw_3_menu(gint pa, gpointer p);					    /* 更新三级菜单 */
+extern void draw_menu3(gint pa, gpointer pt);					    /* 更新三级菜单 */
 extern void init_ui(DRAW_UI_P p);									/* 初始化界面 */
 extern void draw_area_all();
 
 extern void send_dsp_data (guint data_type, guint value);
-extern gboolean (*data_fun[6])(GtkWidget *widget, GdkEventButton *event, gpointer user_data);
-extern gboolean (*eventbox2_fun[5])(GtkWidget *widget, GdkEventButton *event, gpointer data);
+extern gboolean data_function0 (GtkWidget *widget,	GdkEventButton *event,	gpointer       data);
+extern gboolean eventbox2_function0 (GtkWidget *widget, GdkEventButton *event,	gpointer data);
 
 extern void data_002 (GtkMenuItem *menuitem, gpointer data);
 extern void data_0021 (GtkMenuItem *menuitem, gpointer data);

@@ -20,19 +20,7 @@ extern void fbliney(gushort *p, gint x, gint y1, gint y2, gushort col);
 extern void fblinex(gushort *p, gint y, gint x1, gint x2, gushort col);
 extern void fbline(gushort *p, gint x1, gint y1, gint x2, gint y2, gushort col);
 
-/*  */
-extern void draw_a_scan (gushort *p, guint width, guint height, 
-		DOT_TYPE *data, DOT_TYPE *data1, DOT_TYPE *data2,
-		guint xoffset, guint yoffset, guchar groupId);
-extern void draw_a_scan_r (gushort *p, guint width, guint height, 
-		DOT_TYPE *data, DOT_TYPE *data1, DOT_TYPE *data2,
-		guint xoffset, guint yoffset, guchar groupId);
-/* */
-extern void draw_b_scan (gushort *p, guint width, guint height, DOT_TYPE *data, DOT_TYPE *data1,
-		guint xoffset, guint yoffset, guchar groupId, guchar mark);
-extern int CalcFanScan(gdouble startAngle, gdouble endAngle,
-		gdouble stepAngle, gint startWave, gint endWave,
-		gint widstep, gint width, gint height);
-extern void draw_s_scan (gushort *p, guint width, guint height, DOT_TYPE *data, DOT_TYPE *data1,
-		guint xoffset, guint yoffset, guchar groupId, guchar ut_unit);
+extern void draw_scan(guchar scan_num, guchar scan_type, guchar group,
+		guint xoff, guint yoff, guchar *dot_temp, gushort *dot_temp1);
+
 #endif
