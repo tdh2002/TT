@@ -16020,22 +16020,33 @@ void process_key_press (gchar key)
 	}
 }
 
+/* 用来用户按键信息 */
+gpointer signal_thread(gpointer arg) 
+{
+	gchar key;
+	if (read(pp->fd_key, &key, 1) > 0 ) 
+	{	
+		process_key_press (key);
+	}
+	return NULL;
+}
+
 /* 读取波形数据 并画出来 */
 static gboolean time_handler2 (GtkWidget *widget)
 {
-	gchar key = 0;
 	gint i, j, k, prf_count, offset;
-	guint *temp = (guint *)(TMP(kernel_config_add));
+	guchar *temp1 = (guchar *)(pp->p_beam_data + 0x100000);
 	DRAW_UI_P p = p_drawui_c;
 
-	if (temp[0])
+	g_thread_create (signal_thread, NULL, FALSE, NULL);
+	if (temp1[0])
 	{
-		temp[0] = 0;
+		temp1[0] = 0;
 	}
 
 	for (i = 0 ; i < CFG(groupQty); i++)
 	{
-		p->refresh_mark = 1;
+		pp->refresh_mark = 1;
 		/* 获取数据 */
 		/* 这里需要压缩数据 或者 插值数据 这里只有一个beam 同时最多处理256beam */
 		for	(j = 0 ; j < TMP(beam_qty[i]); j++)
@@ -16052,6 +16063,7 @@ static gboolean time_handler2 (GtkWidget *widget)
 						TMP(a_scan_dot_qty));
 			}
 			else if (GROUP_VAL_POS(i, point_qty) > TMP(a_scan_dot_qty))
+			{
 				compress_data (
 						(DOT_TYPE *)(pp->p_beam_data + offset +
 							GROUP_VAL_POS(i, point_qty) * j),
@@ -16059,33 +16071,24 @@ static gboolean time_handler2 (GtkWidget *widget)
 						GROUP_VAL_POS(i, point_qty),
 						TMP(a_scan_dot_qty), 
 						GROUP_VAL_POS(i, rectifier));
+			}
 		}
 		for (k = 0; ((k < 16) && (TMP(scan_type[k]) != 0xff)); k++)
 		{
 			if (TMP(scan_group[k]) == i)
 				draw_scan(k, TMP(scan_type[k]), TMP(scan_group[k]), 
-						TMP(scan_xpos[k]), TMP(scan_ypos[k]), dot_temp, NULL);
+						TMP(scan_xpos[k]), TMP(scan_ypos[k]), dot_temp, dot_temp1);
 		}
 	}
 
 	/* 复制波形到显存 */
-	if (p->refresh_mark )
+	if (pp->refresh_mark )
 	{
 		memcpy (TMP(fb1_addr), dot_temp1, FB_WIDTH*400*2);	/* 如果用dma更快啊 */
 		pp->refresh_mark = 0;
 	}
 
 	return TRUE;
-}
-
-/* 用来用户按键信息 */
-gpointer signal_thread(gpointer arg) 
-{
-	gchar key;
-	if (read(pp->fd_key, &key, 1) > 0 ) 
-	{	
-		process_key_press (key);
-	}
 }
 
 #endif
@@ -16517,7 +16520,7 @@ void init_ui(DRAW_UI_P p)
 	}
 
 #if ARM
-	g_thread_create (signal_thread, NULL, FALSE, NULL);
+/*	g_thread_create (signal_thread, NULL, FALSE, NULL);*/
 	g_timeout_add (50, (GSourceFunc) time_handler2, NULL);
 #endif
 

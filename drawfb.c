@@ -70,24 +70,6 @@ static gfloat HEIGHT_TABLE[256]=
 	0.027451,0.023529,0.019608,0.015686,0.011765,0.007843,0.003922,0.000000
 };
 
-/*  */
-void draw_a_scan (gushort *p, guint width, guint height, 
-		DOT_TYPE *data, DOT_TYPE *data1, DOT_TYPE *data2,
-		guint xoffset, guint yoffset, guchar groupId);
-void draw_a_scan_r (gushort *p, guint width, guint height, 
-		DOT_TYPE *data, DOT_TYPE *data1, DOT_TYPE *data2,
-		guint xoffset, guint yoffset, guchar groupId);
-/* */
-void draw_b_scan (gushort *p, guint width, guint height, DOT_TYPE *data, DOT_TYPE *data1,
-		guint xoffset, guint yoffset, guchar groupId, guchar mark);
-int CalcFanScan(gdouble startAngle, gdouble endAngle,
-		gdouble stepAngle, gint startWave, gint endWave,
-		gint widstep, gint width, gint height);
-void draw_s_scan (gushort *p, guint width, guint height, DOT_TYPE *data, DOT_TYPE *data1,
-		guint xoffset, guint yoffset, guchar groupId, guchar ut_unit);
-void draw_scan(guchar scan_num, guchar scan_type, guchar group,
-		guint xoff, guint yoff, guchar *dot_temp, gushort *dot_temp1);
-
 void init_fb ()
 {
 	int fd_fb;
@@ -113,11 +95,7 @@ void init_mem ()
 		return ;
 	}
 	
-	TMP(kernel_config_add) = (unsigned long int)
-		mmap(0, 1024 * 1024, PROT_READ | PROT_WRITE, MAP_SHARED, fd_mem, 0x8DF00000);
-	TMP(dma_data_add1) = (unsigned long int)
-		mmap(0, 16 * 1024 * 1024, PROT_READ | PROT_WRITE, MAP_SHARED, fd_mem, 0x8E000000);
-	TMP(dma_data_add2) = (unsigned long int)
+	TMP(dma_data_add) = (unsigned long int)
 		mmap(0, 16 * 1024 * 1024, PROT_READ | PROT_WRITE, MAP_SHARED, fd_mem, 0x8F000000);
 
 	g_print ("mem init\n");
@@ -713,25 +691,8 @@ void draw_s_scan (gushort *p, guint width, guint height, DOT_TYPE *data, DOT_TYP
 		case  UT_UNIT_TRUE_DEPTH:
 				if ((!pp->sscan_mark) && pDraw)
 				{
-					if (width > TMP(beam_qty[groupId]))
-					{
-
-						//					DrawPixbuff(p, 0, 0,  200, 200, 200, 0, 200, data1);
-						DrawPixbuff(p, xoffset, yoffset, width, width, height,
-								0, TMP(a_scan_dot_qty),  data1);
-
-#if 0				
-						/* 拉伸 */
-						for (i = 0; i < TMP(beam_qty[groupId]); i++)
-							for (j = 0; j <= width / TMP(beam_qty[groupId]); j++)
-								for (k = 0; k < height - 1; k++)
-									fbdot (p, 
-											xoffset + i * width / TMP(beam_qty[groupId]) + j,
-											yoffset + k,
-											TMP(color_amp[data1[height * i + k]]));
-#endif
-
-					}
+					DrawPixbuff(p, xoffset, yoffset, width, width, height,
+							0, TMP(a_scan_dot_qty),  data1);
 				}
 				break;
 		default:break;
@@ -835,7 +796,6 @@ void draw_scan(guchar scan_num, guchar scan_type, guchar group,
 				CalcFanScan (
 						LAW_VAL(Angle_min) / 100.0,
 						LAW_VAL(Angle_max) /100.0,	/*  */
-
 						LAW_VAL(Angle_step) / 100.0, 0, TMP(a_scan_dot_qty),
 						TMP(s_scan_width), TMP(s_scan_width), TMP(s_scan_height));
 				pp->sscan_mark = 0;

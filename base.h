@@ -230,9 +230,7 @@ typedef struct tmp_config
 	gchar	velocity_data[3][20];
 	gchar	*velocity_data_p[3];
 	
-	guint	kernel_config_add;
-	guint	dma_data_add1;
-	guint	dma_data_add2;
+	guint	dma_data_add;
 
 	gint	fd_config;
 

@@ -10,7 +10,6 @@
 #define ARRAY_DEVICE	"/dev/spidev0.1"
 #define NORMAL_DEVICE	"/dev/spidev3.1"
 
-#include "twm_spi.h"
 #include "spi_d.h"
 
 #define write_spi   0
@@ -74,7 +73,22 @@ void init_spi ()
 	return ;
 }
 
-void write_array_data ()
+void write_group_data (int offset, int val)
+{
+	/*
+	write (fd, (unsigned char *)fpga_reg_p, sizeof(fpga_reg));
+	*/
+}
+
+void write_focal_data ( )
+{
+}
+
+void write_tgc_data ()
+{
+}
+
+void write_fir_data ()
 {
 }
 

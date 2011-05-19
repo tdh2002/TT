@@ -57,7 +57,7 @@ static void set_config (guint groupid)
 	GROUP_VAL(rectifier)	= FULL_WAVE;	/* 检波 */
 	GROUP_VAL(averaging)	= 1;	        /* 位置1 值为2*/
 	GROUP_VAL(video_filter)	= VIDEO_FILTER_OFF;
-	GROUP_VAL(point_qty)	= 160;			/* 0是Auto */
+	GROUP_VAL(point_qty)	= 615;			/* 0是Auto */
 	GROUP_VAL(sum_gain)	= 10;			/* 0是Auto */
 	GROUP_VAL(gate_pos)	= GATE_A;		  
 	GROUP_VAL(gate[GROUP_VAL(gate_pos)].start) = 0;  
@@ -289,11 +289,18 @@ int main (int argc, char *argv[])
 
 	memset (TMP(scan_type), 0xff, 16);
 	TMP(beam_qty[0]) = 1;
+	TMP(beam_qty[1]) = 0;
+	TMP(beam_qty[2]) = 0;
+	TMP(beam_qty[3]) = 0;
+	TMP(beam_qty[4]) = 0;
+	TMP(beam_qty[5]) = 0;
+	TMP(beam_qty[6]) = 0;
+	TMP(beam_qty[7]) = 0;
 
 #if ARM
 	init_fb ();					
 	init_mem ();			
-	p_ui->p_beam_data = TMP(dma_data_add1);		/* FPGA过来的数据 */
+	p_ui->p_beam_data = TMP(dma_data_add);		/* FPGA过来的数据 */
 #endif
 
 	init_ui (p_ui);
