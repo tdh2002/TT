@@ -13,6 +13,7 @@
 #include <string.h>
 #include <sys/ioctl.h>
 #include <sys/mman.h>
+#include <linux/fb.h>
 
 #define MEM_DEVICE "/dev/mem"
 #define TTY_DEVICE "/dev/ttyS1"
@@ -23,6 +24,8 @@ static gchar*	pDraw  = NULL;          // 是否扇形区域
 static guchar*	pAngleZoom = NULL; // 处于哪个角度区间 
 static guchar*	pDrawRate = NULL; // 填充比例 
 static gint*	pDataNo = NULL; // 数据在数组中的列号 
+static int fd_fb;
+struct fb_var_screeninfo vinfo;
 
 static gushort all_col_16[] =
 {
@@ -72,17 +75,39 @@ static gfloat HEIGHT_TABLE[256]=
 
 void init_fb ()
 {
-	int fd_fb;
+	gint i;
+
 	if ((fd_fb = open(FB_DEVICE, O_RDWR)) == -1)
 	{
 		perror (FB_DEVICE);
 		return ;
 	}
-	
+
 	TMP(fb1_addr) = (gushort *)
 		mmap(NULL, 2 * 1024 * 1024, PROT_READ | PROT_WRITE, MAP_SHARED, fd_fb, 0);
 
 	g_print ("fb1 video addr:%p %p", TMP(fb1_addr), TMP(virtual_add));
+
+	if (ioctl(fd_fb, FBIOGET_VSCREENINFO, &vinfo))
+	{
+		printf("Error reading variable information\n");
+		exit(3);
+	}
+
+	return ;
+}
+
+void change_fb ()
+{
+	if (!vinfo.yoffset)
+		vinfo.yoffset = 400;
+	else
+		vinfo.yoffset = 0;
+
+	if (ioctl(fd_fb, FBIOPAN_DISPLAY, &vinfo) < 0)
+	{
+		printf("Error oppandisplay \n");
+	}
 	return ;
 }
 
@@ -750,6 +775,7 @@ void draw_s_scan_r (gushort *p, guint width, guint height, DOT_TYPE *data, DOT_T
 void draw_scan(guchar scan_num, guchar scan_type, guchar group,
 		guint xoff, guint yoff, guchar *dot_temp, gushort *dot_temp1)
 {
+	gint i;
 	switch (scan_type)
 	{
 		case A_SCAN:
@@ -799,6 +825,9 @@ void draw_scan(guchar scan_num, guchar scan_type, guchar group,
 						LAW_VAL(Angle_step) / 100.0, 0, TMP(a_scan_dot_qty),
 						TMP(s_scan_width), TMP(s_scan_width), TMP(s_scan_height));
 				pp->sscan_mark = 0;
+				/* 清空这块显示区 背景暂定黑色 可以全部一起清空 */
+				for (i = 0; i < TMP(s_scan_height); i++)
+					memset (dot_temp1 + FB_WIDTH * (i + yoff) + xoff, 0x0, TMP(s_scan_width) * 2 );
 			}
 			draw_s_scan(dot_temp1, TMP(s_scan_width), TMP(s_scan_height), dot_temp,
 					TMP(scan_data[group]),

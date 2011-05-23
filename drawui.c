@@ -509,6 +509,7 @@ void draw_menu3 (gint pa, gpointer pt)
 		{
 			draw_data3[i](p);
 		}
+		gtk_widget_hide (pp->sbutton[i]);
 	}
 	draw_data3[CUR_POS_P(p)](p);
 
@@ -3643,7 +3644,7 @@ static void draw3_digit_stop(gfloat cur_value, const gchar *unit,
 	/*						gtk_widget_grab_focus (pp->button);*/
 }
 
-/* 画栅格线 */
+/*  */
 static gboolean draw_info(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
 	gfloat color_r = 0, color_g = 0, color_b = 0;
@@ -3655,6 +3656,7 @@ static gboolean draw_info(GtkWidget *widget, GdkEventExpose *event, gpointer dat
 	gtk_widget_get_size_request (widget, &w, &h);
 	g_print("w=%d, h=%d\n",w,h);
 	cr = gdk_cairo_create(widget->window);
+	/* 网格 */
 	cairo_set_line_width(cr, 1);
 	switch(CFG(grid))
 	{
@@ -3692,6 +3694,7 @@ static gboolean draw_info(GtkWidget *widget, GdkEventExpose *event, gpointer dat
 			}
 		}
 	}
+
 
 	/* 调色条信息 */
 	cairo_set_source_rgba (cr, 1.0, 1.0, 1.0, 1.0);
@@ -3769,8 +3772,8 @@ static gboolean draw_info(GtkWidget *widget, GdkEventExpose *event, gpointer dat
 		cairo_line_to(cr, (GROUP_VAL(gate[2].start) / 1000.0) * (GROUP_VAL(velocity) / 200000.0)+(GROUP_VAL(gate[2].width) / 1000.0) * (GROUP_VAL(velocity) / 200000.0)  ,(1.0-GROUP_VAL(gate[2].height) / 100.0)*(h-20) );
 
 		cairo_stroke(cr);
-
 	}
+
 
 	/* 画ruler */
 	cairo_set_source_rgba(cr,0.72,0.94,0.1,1.0);    /* ruler颜色为绿色 */
@@ -4111,10 +4114,51 @@ static inline void set_scan_config (guchar scan_num,guchar scan_type, guint aw, 
 
 /*
  * 修改波形区的 刻度尺 标签的信息 
+ * mask 后面3为是表示左右下3个方向的刻度尺 存在否
  *
  */
-void set_drawarea_property()
+void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 {
+	gint angle = 0, num = 0;
+	switch (LAW_VAL(Focal_type))
+	{
+		case AZIMUTHAL_SCAN:
+			num = TMP(beam_num[CFG(groupId)]);
+			angle = LAW_VAL (Angle_min) + LAW_VAL (Angle_step)*num;
+			break;
+		case LINEAR_SCAN:
+		case DEPTH_SCAN:
+		case STATIC_SCAN:
+			angle = LAW_VAL (Angle_min);
+			num = TMP(beam_num[CFG(groupId)]);
+		default:break;
+	}
+	switch (type)
+	{
+		case A_SCAN:
+			p->hmin1 = 0;
+			p->hmin2 = 0;
+			p->hmax1 = 100;
+			p->hmax2 = 100;
+			p->wmin1 = GROUP_VAL(start);
+			p->wmax1 = GROUP_VAL(range);
+			p->scan_type = A_SCAN;
+
+			g_sprintf (p->title, "A scan|Gr %d|CH %0.1f|SK%0.1f|L%d", 
+					CFG(groupId) + 1, angle / 100.0, GROUP_VAL(skew) / 100.0, num + 1);
+			break;
+		case A_SCAN_R:
+			break;
+		case B_SCAN:
+			break;
+		case C_SCAN:
+			break;
+		case S_SCAN:
+		case S_SCAN_A:
+		case S_SCAN_L:
+			break;
+		default:break;
+	}
 
 }
 
@@ -4122,6 +4166,7 @@ void set_drawarea_property()
 void draw_area_all()
 {
 	gint i;
+	gchar *str = NULL;
 
 	/* 把之前的区域释放 */
 	for (i = 0; i < 4; i ++)
@@ -4146,7 +4191,10 @@ void draw_area_all()
 			case A_SCAN:
 				pp->draw_area[0].scan_type	=	A_SCAN;
 				gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
-				draw_area (pp->vbox_area[0], &(pp->draw_area[0]), 655, 425, "A-scan", 
+				set_drawarea_property (&(pp->draw_area[0]), A_SCAN, 0);
+				draw_area (pp->vbox_area[0], &(pp->draw_area[0]), 
+						655, 425, pp->draw_area[0].title,
+//						"A-scan", 
 						0.0, 100.0, 0.0, 100.0, 0.0, 100.0, NULL);
 				gtk_widget_show (pp->vbox_area[0]);
 				set_scan_config (0, A_SCAN, 615, 615, 390, 0, 0, CFG(groupId));
@@ -4200,12 +4248,12 @@ void draw_area_all()
 				pp->draw_area[0].scan_type	=	A_SCAN;
 				pp->draw_area[1].scan_type	=	B_SCAN;
 				gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
-				draw_area(pp->vbox_area[0], &(pp->draw_area[0]), 655, 150, "A-scan", 0.0, 100.0,
+				draw_area(pp->vbox_area[0], &(pp->draw_area[0]), 655, 130, "A-scan", 0.0, 100.0,
 						0.0, 100.0, 0.0, 0.0, NULL);
 				draw_area(pp->vbox_area[0], &(pp->draw_area[1]), 655, 295, "B-scan", 0.0, 100.0,
 						0.0, 100.0, 0.0, 100.0, NULL);
 				gtk_widget_show (pp->vbox_area[0]);
-				set_scan_config (0, A_SCAN, 615, 615, 115, 0, 0, CFG(groupId));
+				set_scan_config (0, A_SCAN, 615, 615, 100, 0, 0, CFG(groupId));
 				set_scan_config (1, B_SCAN, 615, 615, 260, 0, 130, CFG(groupId));
 				break;
 			case A_B_C_SCAN:
@@ -4428,6 +4476,10 @@ void draw_area_all()
 			}
 		}
 
+	if (str)
+	{
+		g_free(str);
+	}
 	return ;
 }
 
@@ -4519,7 +4571,6 @@ void draw3_data0(DRAW_UI_P p)
 						case 4:	tmpf = 6.0; break;
 						default:break;
 					}
-					g_print("db_reg = %d \n",pp->p_tmp_config->db_reg);
 					if (GROUP_VAL(db_ref))
 						content_pos = 6;
 					else
@@ -16031,14 +16082,83 @@ gpointer signal_thread(gpointer arg)
 	return NULL;
 }
 
-/* 读取波形数据 并画出来 */
-static gboolean time_handler2 (GtkWidget *widget)
+gpointer signal_thread1(gpointer arg) 
 {
 	gint i, j, k, prf_count, offset;
 	guchar *temp1 = (guchar *)(pp->p_beam_data + 0x100000);
 	DRAW_UI_P p = p_drawui_c;
+	pp->scan_count = !pp->scan_count;
+	pp->mark3 = 0;
+
+	/*	g_thread_create (signal_thread, NULL, FALSE, NULL);*/
+	if (temp1[0])
+	{
+		temp1[0] = 0;
+	}
+
+	for (i = 0 ; i < CFG(groupQty); i++)
+	{
+		pp->refresh_mark = 1;
+		/* 获取数据 */
+		/* 这里需要压缩数据 或者 插值数据 这里只有一个beam 同时最多处理256beam */
+		for	(j = 0 ; j < TMP(beam_qty[i]); j++)
+		{  
+			for (offset = 0, k = 0 ; k < i; k++)
+				offset += GROUP_VAL_POS(k, point_qty) * TMP(beam_qty[k]);
+			if (GROUP_VAL_POS(i, point_qty) <= TMP(a_scan_dot_qty))
+			{
+				/* 只插值当前显示的A扫描 其余不插值 */
+				interpolation_data (
+						(DOT_TYPE *)(pp->p_beam_data + offset +
+							GROUP_VAL_POS(i, point_qty) * j),
+						TMP(scan_data[i] + TMP(a_scan_dot_qty) * j), 
+						GROUP_VAL_POS(i, point_qty),
+						TMP(a_scan_dot_qty));
+			}
+			else if (GROUP_VAL_POS(i, point_qty) > TMP(a_scan_dot_qty))
+			{
+				compress_data (
+						(DOT_TYPE *)(pp->p_beam_data + offset +
+							GROUP_VAL_POS(i, point_qty) * j),
+						TMP(scan_data[i] + TMP(a_scan_dot_qty) * j), 
+						GROUP_VAL_POS(i, point_qty),
+						TMP(a_scan_dot_qty), 
+						GROUP_VAL_POS(i, rectifier));
+			}
+		}
+		for (k = 0; ((k < 16) && (TMP(scan_type[k]) != 0xff)); k++)
+		{
+			if (TMP(scan_group[k]) == i)
+				draw_scan(k, TMP(scan_type[k]), TMP(scan_group[k]), 
+						TMP(scan_xpos[k]), TMP(scan_ypos[k]), dot_temp, 
+/*						TMP(fb1_addr) + pp->scan_count*768*400);*/
+						dot_temp1);
+		}
+	}
+
+	/* 复制波形到显存 */
+	if (pp->refresh_mark )
+	{
+		memcpy (TMP(fb1_addr), dot_temp1, FB_WIDTH*400*2);	/* 如果用dma更快啊 */
+		pp->refresh_mark = 0;
+	}
+
+/*	change_fb();*/
+	return NULL;
+}
+
+/* 读取波形数据 并画出来 */
+static gboolean time_handler2 (GtkWidget *widget)
+{
+//	if (pp->mark3)
+//	{
+		g_thread_create (signal_thread1, NULL, FALSE, NULL);
+//	}
 
 	g_thread_create (signal_thread, NULL, FALSE, NULL);
+	return TRUE;
+
+#if 0
 	if (temp1[0])
 	{
 		temp1[0] = 0;
@@ -16089,6 +16209,7 @@ static gboolean time_handler2 (GtkWidget *widget)
 	}
 
 	return TRUE;
+#endif
 }
 
 #endif
@@ -16519,8 +16640,11 @@ void init_ui(DRAW_UI_P p)
 		g_thread_init (NULL);
 	}
 
+	pp->mark3 = 1;
+	pp->scan_count = 1;
 #if ARM
 /*	g_thread_create (signal_thread, NULL, FALSE, NULL);*/
+/*	g_thread_create (signal_thread1, NULL, FALSE, NULL);*/
 	g_timeout_add (50, (GSourceFunc) time_handler2, NULL);
 #endif
 

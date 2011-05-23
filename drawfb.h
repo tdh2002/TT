@@ -13,7 +13,8 @@
 
 /*extern gfloat HEIGHT_TABLE[];*/
 
-extern void init_fb();
+extern void init_fb ();
+/*extern void change_fb ();*/
 extern void init_mem ();
 extern void fbdot(gushort *p, gint x, gint y, gushort col);
 extern void fbliney(gushort *p, gint x, gint y1, gint y2, gushort col);

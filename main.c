@@ -5,6 +5,7 @@
 
 #include "drawui.h"
 #include "drawfb.h"
+#include "spi_d.h"
 
 #include <time.h>
 #include <stdio.h>
@@ -16,6 +17,7 @@
 #include <gdk/gdkkeysyms.h>
 
 DRAW_UI_P	pp;
+void init_group_spi (guint group);
 
 /* 测试用的初始值 */
 static void set_config (guint groupid)
@@ -38,7 +40,7 @@ static void set_config (guint groupid)
 	CFG(voltage_ut) = 0;
 	/* UT settings */
 	GROUP_VAL(velocity)	= 592000;	/* 5920m/s */ 
-	GROUP_VAL(gain)         = 0;
+	GROUP_VAL(gain)         = 10;
 	GROUP_VAL(gainr)        = 0;
 	GROUP_VAL(db_ref)	= GAINR_OFF;
 	GROUP_VAL(wedge_delay)  = 0;	/*  */
@@ -299,9 +301,22 @@ int main (int argc, char *argv[])
 
 #if ARM
 	init_fb ();					
-	init_mem ();			
+	g_print ("fb inited\n");
+	init_mem ();
+	g_print ("mem inited\n");
+	init_spi ();
+	g_print ("spi inited\n");
 	p_ui->p_beam_data = TMP(dma_data_add);		/* FPGA过来的数据 */
+
+	/* 初始化要冲送给fpga的值 */
+	for (i = CFG(groupQty) ; i != 0; i--)
+	{
+		init_group_spi (i - 1);
+		write_group_data (&TMP(group_spi[i - 1]), i - 1);
+		g_print ("group %d config init complete\n", i);
+	}
 #endif
+
 
 	init_ui (p_ui);
 
@@ -312,4 +327,92 @@ int main (int argc, char *argv[])
 	gdk_threads_leave();
 
 	return 0;
+}
+
+void init_group_spi (guint group)
+{
+	gint tmp = 0;
+	if (GROUP_VAL_POS(group, filter) == 1)
+		TMP(group_spi[group]).freq_band	= 0;
+	else
+		TMP(group_spi[group]).freq_band	= GROUP_VAL_POS(group, filter);
+	TMP(group_spi[group]).video_filter	= GROUP_VAL_POS(group, video_filter);
+	TMP(group_spi[group]).rectifier		= GROUP_VAL_POS(group, rectifier);
+	TMP(group_spi[group]).compress_rato	=
+		((GROUP_VAL_POS(group, range) / 10.0) / GROUP_VAL_POS(group, point_qty)) > 1 ? 
+		((GROUP_VAL_POS(group, range) / 10.0) / GROUP_VAL_POS(group, point_qty)) : 1;
+	TMP(group_spi[group]).gain			= GROUP_VAL_POS(group, gain) / 10;
+	g_print ("gain=%d\n", TMP(group_spi[group]).gain);
+
+	TMP(group_spi[group]).tcg_point_qty	= 0;		/* 未完成 */
+	TMP(group_spi[group]).tcg_en		= 0;		/* 未完成 */
+	TMP(group_spi[group]).UT2			= 0;		/* 未完成 */
+	TMP(group_spi[group]).UT1			= 0;		/* 未完成 */
+	TMP(group_spi[group]).PA			= GROUP_VAL_POS (group, group_mode);		
+	TMP(group_spi[group]).sample_start	= 0;		/* 未完成 */
+
+	TMP(group_spi[group]).sum_gain		= GROUP_VAL_POS (group, sum_gain);	
+	TMP(group_spi[group]).sample_range	= 0;
+
+	TMP(group_spi[group]).beam_qty		= TMP (beam_qty[group]);	
+	TMP(group_spi[group]).sample_offset	= 0;
+
+	TMP(group_spi[group]).rx_time		= 0;
+	TMP(group_spi[group]).gain1			= 0;
+
+	TMP(group_spi[group]).idel_time		= 0;
+
+	TMP(group_spi[group]).gate_a_height	= GROUP_VAL_POS(group, gate[0].height);
+	TMP(group_spi[group]).gate_a_start	= GROUP_VAL_POS(group, gate[0].start) / 10;
+	
+	if (GROUP_VAL_POS(group, gate[0].synchro) == 0)
+		tmp = (tmp & 0xfffffffc) | 0x00;
+	else if (GROUP_VAL_POS(group, gate[0].synchro) == 1)
+		tmp = (tmp & 0xfffffffc) | 0x03;
+
+	if (GROUP_VAL_POS(group, gate[0].measure) == 0)
+		tmp = (tmp & 0xfffffffb) | 0x00;
+	else if (GROUP_VAL_POS(group, gate[0].measure) == 1)
+		tmp = (tmp & 0xfffffffb) | 0x04;
+
+	TMP(group_spi[group]).gate_a_logic	= tmp;	
+	/* 0-1 表示同步选择 00 pulse 01 A 10 B 11 I 
+	 * 2 表示测量选择 0 Peak 1 Edge  其余预留 
+	 * */
+	TMP(group_spi[group]).gate_a_end	= (GROUP_VAL_POS(group, gate[0].start) + 
+		GROUP_VAL_POS (group, gate[0].width)) / 10;
+
+	TMP(group_spi[group]).gate_b_height	= GROUP_VAL_POS(group, gate[1].height);
+	TMP(group_spi[group]).gate_b_start	= GROUP_VAL_POS(group, gate[1].start) / 10;
+
+	if (GROUP_VAL_POS(group, gate[1].synchro) == 0)
+		tmp = (tmp & 0xfffffffc) | 0x00;
+	else if (GROUP_VAL_POS(group, gate[1].synchro) == 1)
+		tmp = (tmp & 0xfffffffc) | 0x03;
+	else if (GROUP_VAL_POS(group, gate[1].synchro) == 2)
+		tmp = (tmp & 0xfffffffc) | 0x01;
+
+	if (GROUP_VAL_POS(group, gate[1].measure) == 0)
+		tmp = (tmp & 0xfffffffb) | 0x00;
+	else if (GROUP_VAL_POS(group, gate[1].measure) == 1)
+		tmp = (tmp & 0xfffffffb) | 0x04;
+
+	TMP(group_spi[group]).gate_b_logic	= tmp;
+	TMP(group_spi[group]).gate_b_end	= (GROUP_VAL_POS(group, gate[1].start) + 
+		GROUP_VAL_POS (group, gate[1].width)) / 10;
+
+	TMP(group_spi[group]).gate_c_height	= GROUP_VAL_POS(group, gate[2].height);
+	TMP(group_spi[group]).gate_c_start	= GROUP_VAL_POS(group, gate[2].start) / 10;
+
+	if (GROUP_VAL_POS(group, gate[2].synchro) == 0)
+		tmp = (tmp & 0xfffffffc) | 0x00;
+
+	if (GROUP_VAL_POS(group, gate[2].measure) == 0)
+		tmp = (tmp & 0xfffffffb) | 0x00;
+	else if (GROUP_VAL_POS(group, gate[2].measure) == 1)
+		tmp = (tmp & 0xfffffffb) | 0x04;
+
+	TMP(group_spi[group]).gate_c_logic	= tmp;	
+	TMP(group_spi[group]).gate_c_end	= (GROUP_VAL_POS(group, gate[2].start) + 
+		GROUP_VAL_POS (group, gate[2].width)) / 10;
 }

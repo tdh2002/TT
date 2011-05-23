@@ -13,6 +13,7 @@
 
 #include "base_const.h"
 #include "base_config.h"
+#include "spi_d.h"
 #include <gtk/gtk.h>
 #include <webkit/webkit.h>
 #include <fakekey/fakekey.h>
@@ -183,10 +184,12 @@ typedef struct tmp_config
 
 	guchar	bright_reg;		/*preferences -> pref. -> bright*/
 
+#if 0
 	DOT_TYPE	envelope_max[setup_MAX_GROUP_QTY][640];	/**/
 	DOT_TYPE	envelope_min[setup_MAX_GROUP_QTY][640];	/**/
 	DOT_TYPE	a_scan_data[setup_MAX_GROUP_QTY][640];	/**/
 	DOT_TYPE	s_scan_data[640*400];		/**/
+#endif
 
 	DOT_TYPE	scan_data[setup_MAX_GROUP_QTY][640*400];
 
@@ -234,6 +237,8 @@ typedef struct tmp_config
 
 	gint	fd_config;
 
+	group_data_spi	group_spi[setup_MAX_GROUP_QTY];
+
 	guchar	radius1_reg;
 	guchar	depth1_reg;
 	guchar	radius2_reg;
@@ -257,7 +262,7 @@ typedef struct tmp_config
 } TMP_CONFIG, *TMP_CONFIG_P;
 
 /*画图区域*/
-typedef struct draw_area 
+typedef struct _draw_area 
 {
 	GtkWidget *vbox;			/*  */
 	GtkWidget *ebox;			/* 存放标题 */
@@ -265,14 +270,18 @@ typedef struct draw_area
 	GtkWidget *drawing_area;                /* 波形显示区 */
 	gint	hmin1;
 	gint	hmin2;
+	gint	h1_unit;
 	gint	hmax1;
 	gint	hmax2;
+	gint	h2_unit;
 	gint	wmin1;
 	gint	wmax1;
+	gint	w_unit;
 	guchar	scan_type;
 	gint	vrule1_copies;		/* 将vruler1分成多少份 */
 	gint	vrule2_copies;		/* 将vruler2分成多少份 */
 	gint	hrule_copies;		/* 将hruler分成多少份 */
+	gchar	title[64];
 } DRAW_AREA, *DRAW_AREA_P;
 
 /*画界面结构体*/

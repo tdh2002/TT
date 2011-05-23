@@ -652,7 +652,7 @@ void tt_label_show_float (GtkWidget *label, const gchar *s1, gfloat value, guint
 }
 
 /*二级菜单按钮的回调函数*/
-void b2_fun0(DRAW_UI_P p, gint pos)
+void b2_fun0(DRAW_UI_P p, guint pos)
 {
 	if(gtk_widget_get_visible(p->eventbox2[pos]))
 	{
@@ -2130,6 +2130,7 @@ static gint keypress_event_main_spinbutton(GtkWidget *widget, GdkEventKey *event
 	}
 	if (!i)
 	{
+		g_print("main spinbutton press 1234567890\n");
 		return window_keypress_event_orig (widget, event); 
 	}
 
@@ -2216,7 +2217,7 @@ static int handler_key(guint keyval, gpointer data)
 {
 	guchar tmp = pp->pos_pos;
 	guchar tmp1 = pp->mark_pop_change;
-	guint data1 = (GPOINTER_TO_UINT (data));
+	guint	data1 = (GPOINTER_TO_UINT (data));
 	switch (keyval) 
 	{
 		case GDK_KP_0:
@@ -2224,6 +2225,7 @@ static int handler_key(guint keyval, gpointer data)
 				(TMP(beam_num[CFG(groupId)]) += 1)	:	
 			(TMP(beam_num[CFG(groupId)]) = 0);
 			g_print("beam num =%d\n", TMP(beam_num[CFG(groupId)]));
+			draw_area_all ();
 			break;
 		case GDK_Super_L:
 			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
@@ -2734,6 +2736,7 @@ void data_0243 (GtkSpinButton *spinbutton, gpointer data) /* wizard  tolerance  
 void data_100 (GtkSpinButton *spinbutton, gpointer data) /* 增益Gain P100 */
 {
 	gchar *markup;
+	gint grp = CFG(groupId);
 	if (GROUP_VAL(db_ref))
 		GROUP_VAL(gain) = (gushort) (gtk_spin_button_get_value (spinbutton) * 100 + GROUP_VAL(gainr));
 	else
@@ -2749,6 +2752,9 @@ void data_100 (GtkSpinButton *spinbutton, gpointer data) /* 增益Gain P100 */
 	gtk_label_set_markup (GTK_LABEL(pp->label[GAIN_VALUE]),markup);
 
 	g_free(markup);
+	TMP(group_spi[grp]).gain = GROUP_VAL (gain) / 10;
+	write_group_data (&TMP(group_spi[grp]), grp);
+
 	/* 发送给硬件 */
 }
 
