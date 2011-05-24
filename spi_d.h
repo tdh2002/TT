@@ -25,7 +25,8 @@ unsigned int	freq_band:4;			/* bit:0-3 频带选择 */
 unsigned int	video_filter:1;			/* bit:4   视频滤波 */
 unsigned int	rectifier:2;			/* bit:5-6 检波		*/
 unsigned int	compress_rato:12;		/* bit:7-18  压缩比	*/
-unsigned int	gain:13;				/* bit:19-31 Gain	*/
+unsigned int	TT9:3;					/*  */
+unsigned int	gain:10;				/* bit:22-31 Gain	*/
 
 /* s_group_reg (1) */
 unsigned int	tcg_point_qty:8;			/* bit:0-7 TCG点个数 */

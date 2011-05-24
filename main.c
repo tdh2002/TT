@@ -332,10 +332,37 @@ int main (int argc, char *argv[])
 void init_group_spi (guint group)
 {
 	gint tmp = 0;
-	if (GROUP_VAL_POS(group, filter) == 1)
+	if (GROUP_VAL_POS(group, filter) == 0)
+	{
 		TMP(group_spi[group]).freq_band	= 0;
+	}
+	if (GROUP_VAL_POS(group, filter) == 1)
+	{
+		if (GROUP_VAL_POS(group, frequency) < 1250)
+			TMP(group_spi[group]).freq_band	= 1;
+		else if (GROUP_VAL_POS(group, frequency) < 1750)
+			TMP(group_spi[group]).freq_band	= 2;
+		else if (GROUP_VAL_POS(group, frequency) < 2125)
+			TMP(group_spi[group]).freq_band	= 3;
+		else if (GROUP_VAL_POS(group, frequency) < 3125)
+			TMP(group_spi[group]).freq_band	= 4;
+		else if (GROUP_VAL_POS(group, frequency) < 4500)
+			TMP(group_spi[group]).freq_band	= 5;
+		else if (GROUP_VAL_POS(group, frequency) < 6250)
+			TMP(group_spi[group]).freq_band	= 6;
+		else if (GROUP_VAL_POS(group, frequency) < 8750)
+			TMP(group_spi[group]).freq_band	= 7;
+		else if (GROUP_VAL_POS(group, frequency) < 11000)
+			TMP(group_spi[group]).freq_band	= 8;
+		else if (GROUP_VAL_POS(group, frequency) < 13500)
+			TMP(group_spi[group]).freq_band	= 9;
+		else if (GROUP_VAL_POS(group, frequency) < 17500)
+			TMP(group_spi[group]).freq_band	= 10;
+		else 
+			TMP(group_spi[group]).freq_band	= 11;
+	}
 	else
-		TMP(group_spi[group]).freq_band	= GROUP_VAL_POS(group, filter);
+		TMP(group_spi[group]).freq_band	= GROUP_VAL_POS(group, filter) - 1;
 	TMP(group_spi[group]).video_filter	= GROUP_VAL_POS(group, video_filter);
 	TMP(group_spi[group]).rectifier		= GROUP_VAL_POS(group, rectifier);
 	TMP(group_spi[group]).compress_rato	=
@@ -366,14 +393,14 @@ void init_group_spi (guint group)
 	TMP(group_spi[group]).gate_a_start	= GROUP_VAL_POS(group, gate[0].start) / 10;
 	
 	if (GROUP_VAL_POS(group, gate[0].synchro) == 0)
-		tmp = (tmp & 0xfffffffc) | 0x00;
+		tmp = (tmp & 0xfffffff3) | 0x00;
 	else if (GROUP_VAL_POS(group, gate[0].synchro) == 1)
-		tmp = (tmp & 0xfffffffc) | 0x03;
+		tmp = (tmp & 0xfffffff3) | 0x0c;
 
 	if (GROUP_VAL_POS(group, gate[0].measure) == 0)
-		tmp = (tmp & 0xfffffffb) | 0x00;
+		tmp = (tmp & 0xfffffffc) | 0x01;
 	else if (GROUP_VAL_POS(group, gate[0].measure) == 1)
-		tmp = (tmp & 0xfffffffb) | 0x04;
+		tmp = (tmp & 0xfffffffc) | 0x00;
 
 	TMP(group_spi[group]).gate_a_logic	= tmp;	
 	/* 0-1 表示同步选择 00 pulse 01 A 10 B 11 I 
@@ -382,20 +409,20 @@ void init_group_spi (guint group)
 	TMP(group_spi[group]).gate_a_end	= (GROUP_VAL_POS(group, gate[0].start) + 
 		GROUP_VAL_POS (group, gate[0].width)) / 10;
 
-	TMP(group_spi[group]).gate_b_height	= GROUP_VAL_POS(group, gate[1].height);
+	TMP(group_spi[group]).gate_b_height	= GROUP_VAL_POS(group, gate[1].height) * 40.96;
 	TMP(group_spi[group]).gate_b_start	= GROUP_VAL_POS(group, gate[1].start) / 10;
 
 	if (GROUP_VAL_POS(group, gate[1].synchro) == 0)
-		tmp = (tmp & 0xfffffffc) | 0x00;
+		tmp = (tmp & 0xfffffff3) | 0x00;
 	else if (GROUP_VAL_POS(group, gate[1].synchro) == 1)
-		tmp = (tmp & 0xfffffffc) | 0x03;
+		tmp = (tmp & 0xfffffff3) | 0x0c;
 	else if (GROUP_VAL_POS(group, gate[1].synchro) == 2)
-		tmp = (tmp & 0xfffffffc) | 0x01;
+		tmp = (tmp & 0xfffffff3) | 0x04;
 
 	if (GROUP_VAL_POS(group, gate[1].measure) == 0)
-		tmp = (tmp & 0xfffffffb) | 0x00;
+		tmp = (tmp & 0xfffffffc) | 0x01;
 	else if (GROUP_VAL_POS(group, gate[1].measure) == 1)
-		tmp = (tmp & 0xfffffffb) | 0x04;
+		tmp = (tmp & 0xfffffffc) | 0x00;
 
 	TMP(group_spi[group]).gate_b_logic	= tmp;
 	TMP(group_spi[group]).gate_b_end	= (GROUP_VAL_POS(group, gate[1].start) + 
@@ -405,12 +432,12 @@ void init_group_spi (guint group)
 	TMP(group_spi[group]).gate_c_start	= GROUP_VAL_POS(group, gate[2].start) / 10;
 
 	if (GROUP_VAL_POS(group, gate[2].synchro) == 0)
-		tmp = (tmp & 0xfffffffc) | 0x00;
+		tmp = (tmp & 0xfffffff3) | 0x00;
 
 	if (GROUP_VAL_POS(group, gate[2].measure) == 0)
-		tmp = (tmp & 0xfffffffb) | 0x00;
+		tmp = (tmp & 0xfffffffc) | 0x01;
 	else if (GROUP_VAL_POS(group, gate[2].measure) == 1)
-		tmp = (tmp & 0xfffffffb) | 0x04;
+		tmp = (tmp & 0xfffffffc) | 0x00;
 
 	TMP(group_spi[group]).gate_c_logic	= tmp;	
 	TMP(group_spi[group]).gate_c_end	= (GROUP_VAL_POS(group, gate[2].start) + 

@@ -1855,10 +1855,24 @@ int on_changed_config_file(GtkTreeSelection *selection,	gpointer       data)
 int save_config_file(GtkWidget *widget,	GdkEventButton *event,	gpointer       data)
 {
 	char *dir_path = USER_CFG_PATH;
-	char *file_name = "tt.cfg";
+	const gchar *file_name;
 	char path[256];
 	FILE *fp;
 	int temp;
+    GtkWidget *entry_name;
+    GtkWidget *list;
+    GtkListStore *store;
+    _save_file_name_struct_p save_file_name_struct_p;
+
+	save_file_name_struct_p = (_save_file_name_struct_p)data;
+
+	entry_name = (GtkWidget *)save_file_name_struct_p->file_name;
+
+	list = (GtkWidget *)save_file_name_struct_p->list;
+
+	store = (GtkListStore *)save_file_name_struct_p->store;
+
+	file_name = gtk_entry_get_text(GTK_ENTRY(entry_name));
 
 	strcpy(path,dir_path);
 
@@ -1867,12 +1881,19 @@ int save_config_file(GtkWidget *widget,	GdkEventButton *event,	gpointer       da
 	fp = fopen(path, "wb+");
 
 	if (fp < 0)
+	{
+		g_printf("in save_config_file function, can't open file\n");
 		return -1;
+    }
 
 	temp = fwrite(pp->p_config, sizeof(CONFIG),1,fp);
 
 	fclose(fp);
 
+	gtk_list_store_clear(store);
+
+	selection_file_type(list, USER_CFG_PATH,	".cfg");
+	
 	return 0;
 }
 
@@ -1937,7 +1958,7 @@ static void draw_save_setup_as()
 	GtkTreeViewColumn *column;
 	GtkListStore *store;
 
-
+    static _save_file_name_struct save_file_name_struct;
 
 	dialog = gtk_dialog_new_with_buttons ("Dialog_Wedge", window,
 			GTK_DIALOG_MODAL |	GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_NO_SEPARATOR,
@@ -2113,9 +2134,13 @@ static void draw_save_setup_as()
 
 	gtk_container_add(GTK_CONTAINER(hbox_first), hbox);
 
+	save_file_name_struct.list = source_list;
+	save_file_name_struct.file_name = entry_save_file_name;
+    save_file_name_struct.store = store;
+
 	g_signal_connect(G_OBJECT (vbox_2_1_1[2]), "button-press-event",G_CALLBACK(dialog_destroy), dialog);
 
-	g_signal_connect(G_OBJECT (eventbox_save), "button-press-event",G_CALLBACK(save_config_file), (gpointer)source_list);
+	g_signal_connect(G_OBJECT (eventbox_save), "button-press-event",G_CALLBACK(save_config_file), (gpointer)&save_file_name_struct);
 
 	g_signal_connect (G_OBJECT (source_selection), "changed", G_CALLBACK(on_changed_config_file), (gpointer)source_list);
 
@@ -2884,7 +2909,7 @@ static void draw_law_read ()
 
 static void da_call_ip (GtkDialog *dialog, gint response_id, gpointer user_data)
 {
-	char ifconfig_buf[64] = "ifconfig eth0 ";
+	char ifconfig_buf[64] = "ifconfig usb0 ";
 	_my_ip_get tmp_ip;        
 	_my_ip_set *entry_ip_p = (_my_ip_set *)user_data;
 	int i;
@@ -2917,7 +2942,7 @@ static void da_call_ip (GtkDialog *dialog, gint response_id, gpointer user_data)
 
 		//重新读取ip地址，并显示出来，因为有可能设置失败，所以要重新读取
 		inet_sock = socket(AF_INET, SOCK_DGRAM, 0);
-		strcpy(ifr.ifr_name, "eth0");
+		strcpy(ifr.ifr_name, "usb0");
 		if (ioctl(inet_sock, SIOCGIFADDR, &ifr) < 0)
 			perror("ioctl");
 
@@ -2966,9 +2991,9 @@ static void draw_ip()
 	unsigned char *tmp;
 	int i;
 
-	//读取eth0 ip地址
+	//读取usb0 ip地址
 	inet_sock = socket(AF_INET, SOCK_DGRAM, 0);
-	strcpy(ifr.ifr_name, "eth0");
+	strcpy(ifr.ifr_name, "usb0");
 	if (ioctl(inet_sock, SIOCGIFADDR, &ifr) < 0)
 		perror("ioctl");
 
@@ -3020,7 +3045,7 @@ static void draw_ip()
 
 static void da_call_mask (GtkDialog *dialog, gint response_id, gpointer user_data)
 {
-	char ifconfig_buf[64] = "ifconfig eth0 netmask ";
+	char ifconfig_buf[64] = "ifconfig usb0 netmask ";
 	_my_mask_get tmp_mask;        
 	_my_mask_set *entry_mask_p = (_my_mask_set *)user_data;
 	int i;
@@ -3052,7 +3077,7 @@ static void da_call_mask (GtkDialog *dialog, gint response_id, gpointer user_dat
 
 		//重新读取mask地址，并显示出来，因为有可能设置失败，所以要重新读取
 		inet_sock = socket(AF_INET, SOCK_DGRAM, 0);
-		strcpy(ifr.ifr_name, "eth0");
+		strcpy(ifr.ifr_name, "usb0");
 		if (ioctl(inet_sock, SIOCGIFNETMASK, &ifr) < 0)
 			perror("ioctl");
 
@@ -3098,9 +3123,9 @@ static void draw_mask()
 	unsigned char *tmp;
 	int i;
 
-	//读取eth0 mask 地址
+	//读取usb0 mask 地址
 	inet_sock = socket(AF_INET, SOCK_DGRAM, 0);
-	strcpy(ifr.ifr_name, "eth0");
+	strcpy(ifr.ifr_name, "usb0");
 	if (ioctl(inet_sock, SIOCGIFNETMASK, &ifr) < 0)
 		perror("ioctl");
 
@@ -3150,6 +3175,364 @@ static void draw_mask()
 	gtk_widget_show_all(dialog);
 }
 
+static void da_call_time (GtkDialog *dialog, gint response_id, gpointer user_data)
+{
+    _my_time_set_p entry_time_p;
+
+	_my_time_get tmp_time;        
+
+	int i;
+
+	unsigned char *tmp;
+    
+	char command[256] = "date -s ";   
+
+    //*time_cmos = "clock -w";
+
+    int system_value;   
+ 
+    entry_time_p = (struct __my_time_set *)user_data;
+
+    //点击了确认
+    if (GTK_RESPONSE_OK == response_id)
+    {
+		tmp = (unsigned char *)&tmp_time;
+
+		//读取输入框里面的数据
+		for(i=0;i<3;i++)
+		{  
+			*tmp = gtk_spin_button_get_value( (GtkSpinButton *)entry_time_p->entry[i] );
+			g_printf("%d\n",*tmp);    
+			tmp++;
+		}
+        //生成命令
+        g_sprintf(command + strlen(command)	,"%d:%d:%d" ,tmp_time.hour,tmp_time.minute,tmp_time.second);   
+        //执行命令，修改时间
+        system_value = system(command);
+
+        //system_value = system(time_cmos);
+		
+        //关闭对话框
+        gtk_widget_destroy (GTK_WIDGET (dialog));
+
+    }
+    //点击了取消按钮
+    else if (GTK_RESPONSE_CANCEL == response_id)
+    {
+        //关闭对话框
+		gtk_widget_destroy (GTK_WIDGET (dialog));
+    }
+}
+
+void draw_time()
+{
+	GtkWindow *win = GTK_WINDOW (pp->window);
+	GtkWidget *dialog;
+
+	GtkWidget *vbox_first;	/* 指向dialog的vbox */
+
+    static _my_time_set entry_time;
+
+	time_t timep;
+	struct tm *q;
+
+    int time_tmp[3];
+
+    int i;
+
+	GtkObject *adjustment[4];
+	GtkWidget *label[4];
+	char *char_label[4] = {"Time","","",""};
+	
+	GtkWidget *hbox1;
+	GtkWidget *hbox2;
+	GtkWidget *hbox3;
+    
+    //新建对话框
+	dialog = gtk_dialog_new_with_buttons ("Dialog_TIME", win,
+			GTK_DIALOG_MODAL |	GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_NO_SEPARATOR,
+			GTK_STOCK_OK, GTK_RESPONSE_OK,
+			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+			NULL);
+
+	gtk_window_set_decorated (GTK_WINDOW (dialog), FALSE);			/*不可以装饰*/
+	gtk_widget_set_size_request(GTK_WIDGET (dialog), 300, 140);
+
+	vbox_first = GTK_WIDGET (GTK_DIALOG(dialog)->vbox);
+
+	hbox1 = gtk_hbox_new(TRUE, 0);
+	hbox2 = gtk_hbox_new(FALSE, 0);
+	hbox3 = gtk_hbox_new(FALSE, 0);
+
+	gtk_box_pack_start(GTK_BOX(vbox_first), hbox3, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox_first), hbox1, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox_first), hbox2, FALSE, FALSE, 5);
+
+	label[0] = gtk_label_new(char_label[0]);
+	gtk_box_pack_start(GTK_BOX(hbox3), label[0], TRUE, TRUE, 5);
+	
+    time(&timep);
+	q = localtime(&timep);
+	time_tmp[0] = q->tm_hour;
+	time_tmp[1] = q->tm_min;
+	time_tmp[2] = q->tm_sec;
+
+	for (i=1;i<4;i++)
+	{
+		label[i] = gtk_label_new(char_label[i]);
+		gtk_box_pack_start(GTK_BOX(hbox1), label[i], FALSE, FALSE, 15);
+
+        if ( i == 1 )
+		    adjustment[i] = gtk_adjustment_new(0.0,0.0,23.0,1.0,0.0,0.0);
+        else
+		    adjustment[i] = gtk_adjustment_new(0.0,0.0,59.0,1.0,0.0,0.0);
+
+		entry_time.entry[i-1] = gtk_spin_button_new(GTK_ADJUSTMENT(adjustment[i]),0.01,0);
+		gtk_spin_button_set_value((GtkSpinButton *)entry_time.entry[i-1],time_tmp[i-1]);
+		gtk_box_pack_start(GTK_BOX(hbox2), entry_time.entry[i-1], TRUE, TRUE, 1);
+	}
+
+    g_signal_connect (G_OBJECT(dialog), "response",
+			G_CALLBACK(da_call_time), (gpointer)&entry_time);/*确定 or 取消*/
+
+    gtk_widget_show_all(dialog);
+}
+
+/*闰年函数*/
+int is_leap_year(int year)
+{
+    //计算是否指定的年份是否闰年,返回值为1则为闰年，返回值为0则为非闰年
+    if (year % 4 == 0)
+    {
+        if (year % 100 != 0)
+        {
+            return 1;
+        }
+        else
+        {
+            if (year % 400 ==0)
+            {
+                return 1;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+void year_mon_changed(GtkAdjustment *adjustment,gpointer user_data)
+{
+    int mon = 0;
+
+    int upper;
+
+    int tmp_mday;
+
+    int year;
+
+    _year_mon_day_change_p change_information_p;
+
+    gdouble mday_leap_year[12] = {31.0,29.0,31.0,30.0,31.0,30.0,31.0,31.0,30.0,31.0,30.0,31.0};
+
+    gdouble mday_non_leap_year[12] = {31.0,28.0,31.0,30.0,31.0,30.0,31.0,31.0,30.0,31.0,30.0,31.0};
+
+    change_information_p = (_year_mon_day_change_p)user_data;
+
+    year = gtk_adjustment_get_value( change_information_p->year );
+
+    mon = gtk_adjustment_get_value( change_information_p->mon );
+
+    tmp_mday = gtk_adjustment_get_value( change_information_p->day );
+
+    if (0 == is_leap_year(year))
+        upper = mday_non_leap_year[mon-1];
+    else
+        upper = mday_leap_year[mon-1];
+
+    gtk_adjustment_configure(change_information_p->day,0.0,1.0,upper,1.0,0.0,0.0);
+
+    if (tmp_mday > upper)
+        gtk_adjustment_set_value(change_information_p->day,upper);
+    else   
+        gtk_adjustment_set_value(change_information_p->day,tmp_mday);
+}
+
+static void da_call_date (GtkDialog *dialog, gint response_id, gpointer user_data)
+{
+    _my_date_set_p entry_date_p;
+
+	_my_date_get tmp_date;        
+
+	int i;
+
+	unsigned int *tmp;
+    
+	char command[256] = "date -s ";   
+
+    //char *time_cmos = "clock -w";
+ 
+	time_t timep;
+	struct tm *q;
+
+    int system_value;
+
+    entry_date_p = (struct __my_date_set *)user_data;
+
+    if (GTK_RESPONSE_OK == response_id)
+    {
+		tmp = (unsigned int *)&tmp_date;
+
+		//读取输入框里面的数据，就是年月日
+		for(i=0;i<3;i++)
+		{  
+			*tmp = gtk_spin_button_get_value( (GtkSpinButton *)entry_date_p->entry[i] );
+			g_printf("%d\n",*tmp);    
+			tmp++;
+		}
+        
+        g_sprintf(command + strlen(command),"\"");
+
+        //年，假设是2000 ~ 2099 。设置为1900年以前的，应该会出错
+        if ( tmp_date.year >= 2000 )
+            g_sprintf(command + strlen(command),"%d",tmp_date.year);
+        else
+            g_sprintf(command + strlen(command),"%2d",tmp_date.year - 1900);
+
+        //月，假设为1~12
+        if ( tmp_date.mon >= 10 )
+            g_sprintf(command + strlen(command),"-%2d",tmp_date.mon);
+        else
+            g_sprintf(command + strlen(command),"-0%d",tmp_date.mon);
+
+        //日，假设为1~31
+        if ( tmp_date.mday >= 10 )
+            g_sprintf(command + strlen(command),"-%2d ",tmp_date.mday);
+        else
+            g_sprintf(command + strlen(command),"-0%d ",tmp_date.mday);
+
+        //重读时间，得到时分秒
+        time(&timep);
+	    q = localtime(&timep);
+        //时
+        g_sprintf(command + strlen(command),"%d:",q->tm_hour);
+        //分
+        g_sprintf(command + strlen(command),"%d:",q->tm_min);
+        //秒
+        g_sprintf(command + strlen(command),"%d",q->tm_sec);
+
+        g_sprintf(command + strlen(command),"\"");
+
+        //执行命令,更改日期，不改时间
+        system_value = system(command);
+
+        //system_value = system(time_cmos);
+
+	    //关闭对话框	
+        gtk_widget_destroy (GTK_WIDGET (dialog));
+
+    }
+    else if (GTK_RESPONSE_CANCEL == response_id)
+    {
+        //关闭对话框
+		gtk_widget_destroy (GTK_WIDGET (dialog));
+    }
+}
+
+//设置日期的对话框
+void draw_date()
+{
+	GtkWindow *win = GTK_WINDOW (pp->window);
+	GtkWidget *dialog;
+
+	GtkWidget *vbox_first;	/* 指向dialog的vbox */
+
+    static _my_date_set entry_date;
+
+	time_t timep;
+	struct tm *q;
+
+    int date_tmp[3];
+
+    int i;
+
+	GtkObject *adjustment[4];
+	GtkWidget *label[4];
+	char *char_label[4] = {"DATE","","",""};
+	
+	GtkWidget *hbox1;
+	GtkWidget *hbox2;
+	GtkWidget *hbox3;
+
+    static _year_mon_day_change change_information;   
+ 
+    //新建对话框
+	dialog = gtk_dialog_new_with_buttons ("Dialog_DATE", win,
+			GTK_DIALOG_MODAL |	GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_NO_SEPARATOR,
+			GTK_STOCK_OK, GTK_RESPONSE_OK,
+			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+			NULL);
+
+	gtk_window_set_decorated (GTK_WINDOW (dialog), FALSE);			/*不可以装饰*/
+	gtk_widget_set_size_request(GTK_WIDGET (dialog), 300, 140);
+
+	vbox_first = GTK_WIDGET (GTK_DIALOG(dialog)->vbox);
+
+	hbox1 = gtk_hbox_new(TRUE, 0);
+	hbox2 = gtk_hbox_new(FALSE, 0);
+	hbox3 = gtk_hbox_new(FALSE, 0);
+
+	gtk_box_pack_start(GTK_BOX(vbox_first), hbox3, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox_first), hbox1, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox_first), hbox2, FALSE, FALSE, 5);
+
+	label[0] = gtk_label_new(char_label[0]);
+	gtk_box_pack_start(GTK_BOX(hbox3), label[0], TRUE, TRUE, 5);
+	
+    time(&timep);
+	q = localtime(&timep);
+	date_tmp[0] = q->tm_year + 1900;
+	date_tmp[1] = q->tm_mon + 1;
+	date_tmp[2] = q->tm_mday;
+
+	for (i=1;i<4;i++)
+	{
+		label[i] = gtk_label_new(char_label[i]);
+		gtk_box_pack_start(GTK_BOX(hbox1), label[i], FALSE, FALSE, 15);
+
+        if ( i == 1 ) //年
+		    adjustment[i] = gtk_adjustment_new(0.0,2011.0,2099.0,1.0,0.0,0.0);
+        else if (i == 2)  //月
+		    adjustment[i] = gtk_adjustment_new(0.0,1.0,12.0,1.0,0.0,0.0);
+        else if (i == 3)  //日
+		    adjustment[i] = gtk_adjustment_new(0.0,1.0,31.0,1.0,0.0,0.0);
+
+		entry_date.entry[i-1] = gtk_spin_button_new(GTK_ADJUSTMENT(adjustment[i]),0.01,0);
+		gtk_spin_button_set_value((GtkSpinButton *)entry_date.entry[i-1],date_tmp[i-1]);
+		gtk_box_pack_start(GTK_BOX(hbox2), entry_date.entry[i-1], TRUE, TRUE, 1);
+	}
+
+    change_information.year = GTK_ADJUSTMENT(adjustment[1]);
+    change_information.mon = GTK_ADJUSTMENT(adjustment[2]);
+    change_information.day = GTK_ADJUSTMENT(adjustment[3]);
+
+    g_signal_connect (G_OBJECT(dialog), "response",
+			G_CALLBACK(da_call_date), (gpointer)&entry_date);/*确定 or 取消*/
+
+    g_signal_connect (G_OBJECT(adjustment[2]), "value_changed",
+			G_CALLBACK(year_mon_changed), (gpointer)(&change_information));/**/
+    
+    g_signal_connect (G_OBJECT(adjustment[1]), "value_changed",
+			G_CALLBACK(year_mon_changed), (gpointer)(&change_information));/*调节*/
+    
+    gtk_widget_show_all(dialog);
+}
+
 /*
  * 弹出的dialog
  * 0 记事本 备注等等
@@ -3193,6 +3576,8 @@ static void draw_dialog_all (guint type)
 		case DIALOG_LAW_READ:	draw_law_read();break;
 		case DIALOG_IP:		draw_ip();break;
 		case DIALOG_MASK:	draw_mask();break;
+        case DIALOG_TIME:	draw_time();break;
+        case DIALOG_DATE:	draw_date();break;
 		default:break;
 	}
 }
@@ -5340,7 +5725,7 @@ void draw3_data0(DRAW_UI_P p)
 
 					/***********/
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0)){
-						//draw_dialog_all (DIALOG_TIME);
+						draw_dialog_all (DIALOG_TIME);
 					}else{
 						time(&timep);
 						q = localtime(&timep);
@@ -5360,7 +5745,7 @@ void draw3_data0(DRAW_UI_P p)
 
 					/* 设置label */
 					gtk_label_set_text (GTK_LABEL (pp->label3[0]), temp);
-					gtk_label_set_text (GTK_LABEL (pp->data3[0]), "02:55:06 PM");
+//					gtk_label_set_text (GTK_LABEL (pp->data3[0]), "02:55:06 PM");
 
 					/* 显示和隐藏控件 */
 					gtk_widget_show (pp->eventbox30[0]);
@@ -5396,7 +5781,7 @@ void draw3_data0(DRAW_UI_P p)
 					else
 					{
 						inet_sock = socket(AF_INET, SOCK_DGRAM, 0);
-						strcpy(ifr.ifr_name, "eth0");
+						strcpy(ifr.ifr_name, "usb0");
 						ioctl(inet_sock, SIOCGIFADDR, &ifr);
 						sprintf(ip_temp,"%s\n", inet_ntoa(((struct sockaddr_in*)&(ifr.ifr_addr))->sin_addr));
 						gtk_label_set_text (GTK_LABEL (pp->data3[0]), ip_temp);
@@ -5436,6 +5821,15 @@ void draw3_data1(DRAW_UI_P p)
 	struct ifreq ifr;
 	static char mask_temp[256];
 
+	time_t timep;
+	struct tm *q;
+	
+	int date_year;/*时*/
+	int date_mon;/*分*/
+	int date_mday;/*秒*/
+
+	//	gchar date_temp[52];  /*日期存储*/
+	gchar date_temp[52];  /*时间存储*/
 	p = NULL;
 
 	switch (pp->pos) 
@@ -7047,13 +7441,26 @@ void draw3_data1(DRAW_UI_P p)
 				case 1:/*Preferences -> system -> data set p911*/
 					/* 格式化字符串 */
 					g_sprintf (temp,"%s\n(YYYY/MM/DD)", con2_p[9][1][1]);
-					gtk_widget_set_sensitive(pp->eventbox30[1],FALSE);
-					gtk_widget_set_sensitive(pp->eventbox31[1],FALSE);
+					//gtk_widget_set_sensitive(pp->eventbox30[1],FALSE);
+					//gtk_widget_set_sensitive(pp->eventbox31[1],FALSE);
 
 					/* 设置label */
 					gtk_label_set_text (GTK_LABEL (pp->label3[1]), temp);
-					gtk_label_set_text (GTK_LABEL (pp->data3[1]), "2010/12/09");
+					//gtk_label_set_text (GTK_LABEL (pp->data3[1]), "2010/12/09");
 
+					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1)){
+						draw_dialog_all (DIALOG_DATE);
+					}else{
+						time(&timep);
+						q = localtime(&timep);
+						date_year = q->tm_year + 1900;
+						date_mon = q->tm_mon + 1;
+						date_mday = q->tm_mday;
+						memset(date_temp, 0, sizeof(date_temp));
+						g_sprintf(date_temp,"%d-%d-%d",date_year,date_mon,date_mday);
+						draw3_popdown(date_temp, 1, 0);
+						gtk_label_set_text (GTK_LABEL (pp->label3[1]), temp);
+                    }
 					/* 显示和隐藏控件 */
 					gtk_widget_show (pp->eventbox30[1]);
 					gtk_widget_show (pp->eventbox31[1]);
@@ -7081,7 +7488,7 @@ void draw3_data1(DRAW_UI_P p)
 					else
 					{
 						inet_sock = socket(AF_INET, SOCK_DGRAM, 0);
-						strcpy(ifr.ifr_name, "eth0");
+						strcpy(ifr.ifr_name, "usb0");
 						ioctl(inet_sock, SIOCGIFNETMASK, &ifr);
 						sprintf(mask_temp,"%s\n", inet_ntoa(((struct sockaddr_in*)&(ifr.ifr_addr))->sin_addr));
 						gtk_label_set_text (GTK_LABEL (pp->data3[1]), mask_temp);

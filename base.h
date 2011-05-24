@@ -497,6 +497,44 @@ typedef _my_ip_get_p _my_mask_get_p;
 typedef _my_ip_set _my_mask_set;
 typedef _my_ip_set_p _my_mask_set_p;
 
+typedef struct __my_time_set
+{
+    GtkWidget *entry[3];
+}_my_time_set,*_my_time_set_p;
+
+typedef struct __my_time_get 
+{
+    unsigned char hour;
+    unsigned char minute;
+    unsigned char second;
+}_my_time_get,* _my_time_get_p;
+
+typedef struct __my_date_set
+{
+    GtkWidget *entry[3];
+}_my_date_set,* _my_date_set_p;
+
+typedef struct __my_date_get
+{
+    unsigned int year;
+    unsigned int mon;
+    unsigned int mday;
+}_my_date_get,* _my_date_get_p;
+
+typedef struct __year_mon_day_change
+{
+    GtkAdjustment *year;
+    GtkAdjustment *mon;
+    GtkAdjustment *day;
+}_year_mon_day_change,* _year_mon_day_change_p;
+
+typedef struct __save_file_name_struct
+{
+    GtkWidget *list;
+	GtkListStore *store;
+    GtkWidget *file_name;
+}_save_file_name_struct,* _save_file_name_struct_p;
+
 #define CUR_POS (pp->pos2[pp->pos][pp->pos1[pp->pos]])      /* 0,1,2,3,4,5 */
 #define CUR_POS_P(p) (p->pos2[p->pos][p->pos1[p->pos]])      /* 0,1,2,3,4,5 */
 #define CFG(a)	(pp->p_config->a)

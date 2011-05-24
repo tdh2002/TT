@@ -154,6 +154,8 @@
 #define DIALOG_LAW_READ			14
 #define DIALOG_IP				15
 #define DIALOG_MASK				16
+#define DIALOG_TIME				17
+#define DIALOG_DATE				18
 
 /* 各个menu 弹出菜单的偏移量 */
 #define TX_RX_MODE	0

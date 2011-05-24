@@ -12,7 +12,7 @@
 #define NORMAL_DEVICE	"/dev/spidev3.1"
 
 #include "spi_d.h"
-#define DEBUG 1
+#define DEBUG 0
 
 static int fd_array, fd_normal;
 
