@@ -145,19 +145,20 @@ void init_serial ()
 		perror("tcsetattr   error");  
 		exit(1);  
 	}
+
 	pp->fd_key1 = open(TTY_DEVICE1, O_RDWR | O_NOCTTY );
 	if (pp->fd_key1 < 0) {
 		perror(TTY_DEVICE1); 
 		return ;
 	}
 	bzero(&newtermios, sizeof(newtermios)); /* 清除结构体以放入新的序列埠设定值 */
-	tcgetattr(pp->fd_key, &newtermios);
+	tcgetattr(pp->fd_key1, &newtermios);
 	newtermios.c_cc[VMIN] = 0;
 	newtermios.c_iflag = 0;
 	newtermios.c_oflag = 0;
 	newtermios.c_lflag = 0; 
 	newtermios.c_cflag	= B115200 | CS8 | PARENB | CLOCAL | CREAD;
-	if (tcsetattr(pp->fd_key, TCSANOW, &newtermios)) {
+	if (tcsetattr(pp->fd_key1, TCSANOW, &newtermios)) {
 		perror("tcsetattr   error");  
 		exit(1);  
 	}
@@ -344,14 +345,17 @@ void draw_b_scan (gushort *p, guint width, guint height, DOT_TYPE *data, DOT_TYP
 		return ;
 	}
 
-//	for (i = 0; i < height - 1; i++)
-//		memcpy(p + (i + yoffset) * FB_WIDTH, p + (i + yoffset + 1) * FB_WIDTH, FB_WIDTH * 2);
+	for (i = 0; i < height - 1; i++)
+		memcpy(p + (i + yoffset) * FB_WIDTH + xoffset, p + (i + yoffset + 1) * FB_WIDTH + xoffset, width * 2);
 
 	/* 编码器同步的时候怎么画 */
-	memcpy(p + (yoffset) * FB_WIDTH, p + (yoffset + 1) * FB_WIDTH, FB_WIDTH * (height - 1) * 2);
+/*	memcpy(p + (yoffset) * FB_WIDTH, p + (yoffset + 1) * FB_WIDTH, FB_WIDTH * (height - 1) * 2);*/
 
 	for (j = 0; j < width - 1; j++)
 		fbdot (p, xoffset + j, yoffset + height - 1, TMP(color_amp[data1[j]]));
+
+//	g_print ("xoffset = %d yoffset = %d width =%d height =%d \n",
+//			xoffset, yoffset, width, height);
 #if 0
 	for (i = 0; i < height - 1; i++)
 		for (j = 0; j < width - 1; j++)
@@ -363,7 +367,7 @@ void draw_b_scan (gushort *p, guint width, guint height, DOT_TYPE *data, DOT_TYP
 
 /* 画C扫描 */
 void draw_c_scan (gushort *p, guint width, guint height, DOT_TYPE *data, DOT_TYPE *data1,
-		guint xoffset, guint yoffset, guchar groupId, guchar mark)
+		guint xoffset, guint yoffset, guchar groupId, guchar mark, guchar source)
 {
 	gint i, j, k, offset;
 	gint beam_qty = TMP(beam_qty[groupId]);
@@ -397,14 +401,14 @@ void draw_c_scan (gushort *p, guint width, guint height, DOT_TYPE *data, DOT_TYP
 		for (i = 0 ; i < height ; i++)		
 			{
 				fbdot (p, xoffset, yoffset + i,
-						TMP(color_amp[(int)((TMP(measure_data[offset + i * beam_qty / height][1]) >> 24) / 40.95)]));
+						TMP(color_amp[(int)((TMP(measure_data[offset + i * beam_qty / height][source + 1]) >> 24) / 40.95)]));
 			}
 	}
 	else if (height == beam_qty)
 	{
 		for (i = 0; i < beam_qty; i++)
 				fbdot (p, xoffset, yoffset + i,
-						TMP(color_amp[(int)((TMP(measure_data[offset + i][1]) >> 24) / 40.95)]));
+						TMP(color_amp[(int)((TMP(measure_data[offset + i][source + 1]) >> 24) / 40.95)]));
 	}
 	else if (height > beam_qty)
 	{
@@ -413,15 +417,9 @@ void draw_c_scan (gushort *p, guint width, guint height, DOT_TYPE *data, DOT_TYP
 			for (j = 0; j <= height / beam_qty; j++)
 				fbdot (p, xoffset, yoffset + 
 						i * height / beam_qty + j,
-						TMP(color_amp[(int)((TMP(measure_data[offset + i][1]) >> 24) / 40.95)]));
+						TMP(color_amp[(int)((TMP(measure_data[offset + i][source + 1]) >> 24) / 40.95)]));
 
 	}
-#if 0
-	for (i = 0; i < height - 1; i++)
-		for (j = 0; j < width - 1; j++)
-			fbdot (p, xoffset + j, yoffset + i,
-					TMP(color_amp[data[i * width + j]]));
-#endif
 
 }
 
@@ -856,7 +854,7 @@ void draw_s_scan_r (gushort *p, guint width, guint height, DOT_TYPE *data, DOT_T
 
 
 void draw_scan(guchar scan_num, guchar scan_type, guchar group,
-		guint xoff, guint yoff, guchar *dot_temp, gushort *dot_temp1)
+		guint xoff, guint yoff, guchar *dot_temp, gushort *dot_temp1 )
 {
 	gint i;
 	switch (scan_type)
@@ -921,13 +919,26 @@ void draw_scan(guchar scan_num, guchar scan_type, guchar group,
 			{
 				draw_c_scan(dot_temp1, TMP(c_scan_width), TMP(c_scan_height), dot_temp,
 						TMP(scan_data[group]) + TMP(a_scan_width) * TMP(beam_num[group]),
-						xoff, yoff, group, 1);
+						xoff, yoff, group, 1, CFG(c_scan1));
 				pp->cscan_mark = 0;	/* mark 的时候把画图区清空 */
 			}
 			else
 				draw_c_scan(dot_temp1, TMP(c_scan_width), TMP(c_scan_height),dot_temp,
 						TMP(scan_data[group]) + TMP(a_scan_width) * TMP(beam_num[group]),
-						xoff, yoff, group, 0);
+						xoff, yoff, group, 0, CFG(c_scan1));
+			break;
+		case CC_SCAN:
+			if (pp->cscan_mark)
+			{
+				draw_c_scan(dot_temp1, TMP(c_scan_width), TMP(c_scan_height), dot_temp,
+						TMP(scan_data[group]) + TMP(a_scan_width) * TMP(beam_num[group]),
+						xoff, yoff, group, 1, CFG(c_scan1));
+				pp->cscan_mark = 0;	/* mark 的时候把画图区清空 */
+			}
+			else
+			draw_c_scan(dot_temp1, TMP(c_scan_width), TMP(c_scan_height),dot_temp,
+					TMP(scan_data[group]) + TMP(a_scan_width) * TMP(beam_num[group]),
+					xoff, yoff, group, 0, CFG(c_scan2));
 			break;
 		default:break;
 	}

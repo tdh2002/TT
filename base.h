@@ -230,6 +230,7 @@ typedef struct tmp_config
 	guchar	scan_group[16];	/* 16个窗口对应的group */
 	guint	scan_xpos[16];
 	guint	scan_ypos[16];
+	gint	ctype[16];
 
 	gchar	velocity_data[3][20];
 	gchar	*velocity_data_p[3];
@@ -269,6 +270,8 @@ typedef struct _draw_area
 	GtkWidget *ebox;			/* 存放标题 */
 	GtkWidget *label;			/* 窗口名字 */
 	GtkWidget *drawing_area;                /* 波形显示区 */
+	guint	width;
+	guint	height;
 	gint	hmin1;
 	gint	hmin2;
 	gint	h1_unit;

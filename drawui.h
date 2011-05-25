@@ -107,6 +107,8 @@
 #define A_SCAN_R		0x20
 #define B_SCAN	     1
 #define C_SCAN	     2
+#define CC_SCAN		0x22
+#define CCC_SCAN	0x32
 #define S_SCAN	     3			/*  */
 #define S_SCAN_A		0x23	/* truedepath 的角度扫查 */
 #define S_SCAN_L		0x33	/* truedepth 的线扫 */

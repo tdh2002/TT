@@ -16,6 +16,7 @@
 extern void init_fb ();
 /*extern void change_fb ();*/
 extern void init_mem ();
+extern void init_serial ();
 extern void fbdot(gushort *p, gint x, gint y, gushort col);
 extern void fbliney(gushort *p, gint x, gint y1, gint y2, gushort col);
 extern void fblinex(gushort *p, gint y, gint x1, gint x2, gushort col);

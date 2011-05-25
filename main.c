@@ -307,6 +307,8 @@ int main (int argc, char *argv[])
 	g_print ("mem inited\n");
 	init_spi ();
 	g_print ("spi inited\n");
+	init_serial ();
+	g_print ("serial inited\n");
 	p_ui->p_beam_data = TMP(dma_data_add);		/* FPGA过来的数据 */
 
 	/* 初始化要冲送给fpga的值 */

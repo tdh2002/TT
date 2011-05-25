@@ -3709,15 +3709,40 @@ void data_400 (GtkMenuItem *menuitem, gpointer data) /* Display -> Selection -> 
 	pp->pos_pos = MENU3_STOP;
 	switch (CFG(display))
 	{
-		case A_SCAN:break;
+		case A_SCAN:
+			break;
 		case B_SCAN:
-		case A_B_SCAN:
-					CFG(display_group) = DISPLAY_CURRENT_GROUP;
-					pp->bscan_mark = 1;
-					break;
+			CFG(display_group) = DISPLAY_CURRENT_GROUP;
+			pp->bscan_mark = 1;
+			break;
 		case C_SCAN:
-					pp->cscan_mark = 1;
-					break;
+			CFG(display_group) = DISPLAY_CURRENT_GROUP;
+			pp->cscan_mark = 1;
+			break;
+		case S_SCAN:
+			pp->sscan_mark = 1;
+			break;
+		case A_B_SCAN:
+			CFG(display_group) = DISPLAY_CURRENT_GROUP;
+			pp->bscan_mark = 1;
+			break;
+		case A_B_C_SCAN:
+			CFG(display_group) = DISPLAY_CURRENT_GROUP;
+			pp->bscan_mark = 1;
+			pp->cscan_mark = 1;
+			break;
+		case A_B_S_SCAN:
+			CFG(display_group) = DISPLAY_CURRENT_GROUP;
+			pp->bscan_mark = 1;
+			pp->sscan_mark = 1;
+			break;
+		case A_C_CC_SCAN:
+			pp->cscan_mark = 1;
+			break;
+		case A_S_CC_SCAN:
+			pp->cscan_mark = 1;
+			pp->sscan_mark = 1;
+			break;
 		default:break;
 	}
 	draw_menu3 (0, NULL);
