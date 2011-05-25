@@ -17,6 +17,7 @@
 
 #define MEM_DEVICE "/dev/mem"
 #define TTY_DEVICE "/dev/ttyS1"
+#define TTY_DEVICE1 "/dev/ttyS0"
 
 #define COLOR_STEP 32     //    4  8  16  32  64
 #define COLOR_SHIFT 5     //    2  3   4   5   6
@@ -75,8 +76,6 @@ static gfloat HEIGHT_TABLE[256]=
 
 void init_fb ()
 {
-	gint i;
-
 	if ((fd_fb = open(FB_DEVICE, O_RDWR)) == -1)
 	{
 		perror (FB_DEVICE);
@@ -146,6 +145,23 @@ void init_serial ()
 		perror("tcsetattr   error");  
 		exit(1);  
 	}
+	pp->fd_key1 = open(TTY_DEVICE1, O_RDWR | O_NOCTTY );
+	if (pp->fd_key1 < 0) {
+		perror(TTY_DEVICE1); 
+		return ;
+	}
+	bzero(&newtermios, sizeof(newtermios)); /* 清除结构体以放入新的序列埠设定值 */
+	tcgetattr(pp->fd_key, &newtermios);
+	newtermios.c_cc[VMIN] = 0;
+	newtermios.c_iflag = 0;
+	newtermios.c_oflag = 0;
+	newtermios.c_lflag = 0; 
+	newtermios.c_cflag	= B115200 | CS8 | PARENB | CLOCAL | CREAD;
+	if (tcsetattr(pp->fd_key, TCSANOW, &newtermios)) {
+		perror("tcsetattr   error");  
+		exit(1);  
+	}
+
 	return ;
 }
 
@@ -331,6 +347,7 @@ void draw_b_scan (gushort *p, guint width, guint height, DOT_TYPE *data, DOT_TYP
 //	for (i = 0; i < height - 1; i++)
 //		memcpy(p + (i + yoffset) * FB_WIDTH, p + (i + yoffset + 1) * FB_WIDTH, FB_WIDTH * 2);
 
+	/* 编码器同步的时候怎么画 */
 	memcpy(p + (yoffset) * FB_WIDTH, p + (yoffset + 1) * FB_WIDTH, FB_WIDTH * (height - 1) * 2);
 
 	for (j = 0; j < width - 1; j++)
@@ -343,6 +360,72 @@ void draw_b_scan (gushort *p, guint width, guint height, DOT_TYPE *data, DOT_TYP
 #endif
 
 }
+
+/* 画C扫描 */
+void draw_c_scan (gushort *p, guint width, guint height, DOT_TYPE *data, DOT_TYPE *data1,
+		guint xoffset, guint yoffset, guchar groupId, guchar mark)
+{
+	gint i, j, k, offset;
+	gint beam_qty = TMP(beam_qty[groupId]);
+	if (mark)
+	{
+		for (i = 0; i < height; i++)
+			memset (p + FB_WIDTH * (i + yoffset) + xoffset, 0x0, width * 2);
+		return ;
+	}
+
+//	for (i = 0; i < height - 1; i++)
+//		memcpy(p + (i + yoffset) * FB_WIDTH, p + (i + yoffset + 1) * FB_WIDTH, FB_WIDTH * 2);
+
+	/* 编码器同步的时候怎么画 */
+/*	memcpy(p + (yoffset) * FB_WIDTH, p + (yoffset + 1) * FB_WIDTH, FB_WIDTH * (height - 1) * 2);*/
+	for (i = 0; i < height; i++)
+		for (j = width - 1; j > 0; j--)
+		{
+			*((p + (i + yoffset) * FB_WIDTH) + xoffset + j) = 
+				*((p + (i + yoffset) * FB_WIDTH) + xoffset + j -1);
+		}
+
+
+	for (offset = 0, k = 0 ; k < CFG(groupId); k++)
+		offset += TMP(beam_qty[k]);
+
+	/* 不同的C-source measure_data 后面取值不一样  */
+	if (height < beam_qty)
+	{
+		/* 压缩C扫描 */
+		for (i = 0 ; i < height ; i++)		
+			{
+				fbdot (p, xoffset, yoffset + i,
+						TMP(color_amp[(int)((TMP(measure_data[offset + i * beam_qty / height][1]) >> 24) / 40.95)]));
+			}
+	}
+	else if (height == beam_qty)
+	{
+		for (i = 0; i < beam_qty; i++)
+				fbdot (p, xoffset, yoffset + i,
+						TMP(color_amp[(int)((TMP(measure_data[offset + i][1]) >> 24) / 40.95)]));
+	}
+	else if (height > beam_qty)
+	{
+		/* 拉伸 */
+		for (i = 0; i < beam_qty; i++)
+			for (j = 0; j <= height / beam_qty; j++)
+				fbdot (p, xoffset, yoffset + 
+						i * height / beam_qty + j,
+						TMP(color_amp[(int)((TMP(measure_data[offset + i][1]) >> 24) / 40.95)]));
+
+	}
+#if 0
+	for (i = 0; i < height - 1; i++)
+		for (j = 0; j < width - 1; j++)
+			fbdot (p, xoffset + j, yoffset + i,
+					TMP(color_amp[data[i * width + j]]));
+#endif
+
+}
+
+
 
 int CalcFanScan(gdouble startAngle, gdouble endAngle,
 		gdouble stepAngle, gint startWave, gint endWave,
@@ -834,6 +917,17 @@ void draw_scan(guchar scan_num, guchar scan_type, guchar group,
 					xoff, yoff, group, GROUP_VAL_POS(group, ut_unit));
 			break;
 		case C_SCAN:
+			if (pp->cscan_mark)
+			{
+				draw_c_scan(dot_temp1, TMP(c_scan_width), TMP(c_scan_height), dot_temp,
+						TMP(scan_data[group]) + TMP(a_scan_width) * TMP(beam_num[group]),
+						xoff, yoff, group, 1);
+				pp->cscan_mark = 0;	/* mark 的时候把画图区清空 */
+			}
+			else
+				draw_c_scan(dot_temp1, TMP(c_scan_width), TMP(c_scan_height),dot_temp,
+						TMP(scan_data[group]) + TMP(a_scan_width) * TMP(beam_num[group]),
+						xoff, yoff, group, 0);
 			break;
 		default:break;
 	}

@@ -538,8 +538,62 @@ const gchar *all_menu_content_en[] =
 /*  3  */
 const gchar *list_en[]		= {"1 Manual Weld 1: A%. DA^. PA^. SA^", "2 Auto. Weld 1: A%. DA^. ViA^. VsA^"};
 const gchar *list1_en[]		= {"1", "2"};
-const gchar *field1_en[]	= {"A%  Peak amplitude in gate A", "AdBA  Signal in gate minus gate level for gate A", "AdBr  Diff.between signal and reference in gate A","B%  Peak amplitude in gate B"};
-const gchar *field_en[]		= {"A%", "AdBA", "AdBr", "B%"};
+const gchar *field1_en[]	= 
+{
+	"A%  Peak amplitude in gate A", "AdBA  Signal in gate minus gate level for gate A", 
+	"AdBr  Diff. between signal and reference in gate A", "B%  Peak amplitude in gate B",
+	"BdBB Signal in gate minus gate level for gate B", "BdBr  Diff. between signal and reference in gate B", 
+	"A^  Position in gate A", "B^  Position in gate B", "I/  Position in gate I", "I(w)/  Position in gate I in water", 
+	"T(A^)  Thickness", "ML  Percentage of material loss", "%(r)  Amplitude value for the reference cursor",
+	"%(m)  Amplitude value of the measurement cursor", "%(m-r)  Amplitude (measurement cursor - reference cursor)", 
+	"U(r)  Ultrasonic position of the reference cursor", "U(m)  Ultrasonic position of the measurement cursor", 
+	"U(m-r)  Ultrasonic axis (measurement cursor - reference cursor)", "P(r)  Probe position of the reference cursor", 
+	"P(m)  Probe position of the measurement cursor", "P(m-r)  Probe (measurement cursor - reference cursor)", 
+	"S(r)  Scan position of the reference cursor", "S(m)  Scan position of the measurement cursor", 
+	"S(m-r) Scan axis (measurement cursor - reference cursor)", "I(r)  Index position of the reference cursor",
+	"I(m)  Index position of the measurement cursor", "I(m-r)  Index axis (measurement cursor - reference cursor)", 
+	"RA^  Reference point to the indication in gate A", "RB^  Reference point to the indication in gate B",
+	"PA^  Probe front face to the indication in gate A", "PB^  Probe front face to the indication in gate B", 
+	"DA^  Depth of the indication in gate A", "DB^  Depth of the indication in gate B", 
+	"SA^  Sound path of the indication in gate A", "SB^  Sound path of the indication in gate B",
+	"ViA^  Volumetric position in gate A on the index axis", "ViB^  Volumetric position in gate B on the index axis",
+	"VsA^  Volumetric position in gate A on the scan axis", "VsB^  Volumetric position in gate B on the scan axis",
+	"LA^  Leg (skip) of the indication in gate A", "LB^  Leg (skip) of the indication in gate B", 
+	"E%  Peak amplitude of the envelope in gate A", "E^  Position of envelop in gate A", "E-3dB  Envelop signal at -3 dB in gate A",
+	"E-6dB  Envelop signal at -6 dB in gate A", "E-12dB  Envelop signal at -12 dB in gate A", 
+	"E-20dB  Envelop signal at -20 dB in gate A", "API-DL  Defect length extension according to API code", 
+	"API-HW  Half-wave width according to API code", "AWS-D A  Indication level for AWS-D1.5 A", 
+	"AWS-D B  Zero reference level for AWS-D1.5 B", "AWS-D C  Attenuation factor for AWS-D1.5 C", 
+	"AWS-D D  Indication rating for AWS-D1.5 D", "AWS-D 45  Discontinuity Severity Class for AWS-D1.5 45", 
+	"AWS-D 60  Discontinuity Severity Class for AWS-D1.5 60", "AWS-D 70  Discontinuity Severity Class for AWS-D1.5 70", 
+	"AWS-D CL  Discontinuity Severity Class for AWS-D1.5", "Scale  Scale factor", 
+	"%(U(r))  Signal amplitude at reference ultrasonic cursor position", 
+	"%(U(m))  Signal amplitude at measurement ultrasonic cursor position"		  /* 203 Field */
+};
+/*{"A%  Peak amplitude in gate A", "AdBA  Signal in gate minus gate level for gate A", "AdBr  Diff.between signal and reference in gate A","B%  Peak amplitude in gate B"};
+ */
+const gchar *field_en[]		=
+{
+	"A%", "AdBA", "AdBr", "B%", "BdBB", "BdBr", "A^", "B^", "I/", "I(w)/", 
+	"T(A^)", "ML", "%(r)", "%(m)", "%(m-r)", 
+	"U(r)", "U(m)", "U(m-r)", "P(r)", "P(m)", "P(m-r)", "S(r)", "S(m)", 
+	"S(m-r)", "I(r)", "I(m)", "I(m-r)", "RA^", "RB^", "PA^", "PB^", 
+	"DA^", "DB^", "SA^", "SB^", "ViA^", "ViB^",	"VsA^", "VsB^",	"LA^", "LB^", 
+	"E%", "E^", "E-3dB", "E-6dB", "E-12dB", "E-20dB", "API-DL", 
+	"API-HW", "AWS-D A", "AWS-D B", "AWS-D C", "AWS-D D", "AWS-D 45", 
+	"AWS-D 60", "AWS-D 70", "AWS-D CL", "Scale", "%(U(r))", "%(U(m))"
+};
+const gchar *field_unit_en[]		=
+{
+	"%", "dB", "dB", "%", "dB", "dB", "%", "%", "%", "%", 
+	"%", "dB", "dB", "%", "dB", "dB", "%", "%", "%", "%", 
+	"%", "dB", "dB", "%", "dB", "dB", "%", "%", "%", "%", 
+	"%", "dB", "dB", "%", "dB", "dB", "%", "%", "%", "%", 
+	"%", "dB", "dB", "%", "dB", "dB", "%", "%", "%", "%", 
+	"%", "dB", "dB", "%", "dB", "dB", "%", "%", "%", "%" 
+};
+/*{"A%", "AdBA", "AdBr", "B%"};
+ * */
 //const gchar *selection_en[] = {"A-scan", "B-scan", "C-scan", "Strip Chart", "S-scan", "R and M", "Reference", "Measure", "Data"};
 //const gchar *source_en[] = {"A^", "A^-I^", "A^-I/", "B^", "B^-I^", "B^-I/", "B^-A^", "I^", "I/"};
 

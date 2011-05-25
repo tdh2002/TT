@@ -23,6 +23,7 @@ extern const gchar *list_en[];
 extern const gchar *list1_en[];
 extern const gchar *field1_en[];
 extern const gchar *field_en[];
+extern const gchar *field_unit_en[];
 
 extern const gchar *mouse_en[];
 

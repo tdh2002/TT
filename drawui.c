@@ -125,6 +125,8 @@ void draw3_data3(DRAW_UI_P p);
 void draw3_data4(DRAW_UI_P p);
 void draw3_data5(DRAW_UI_P p);
 
+void draw_field_name ();
+
 void (*draw_data3[6])(DRAW_UI_P p) =
 {
 	draw3_data0,
@@ -147,6 +149,7 @@ const gchar **list;
 const gchar **list1;
 const gchar **field1;
 const gchar **field;
+const gchar **field_unit;
 
 void menuitem0_function(GtkMenuItem *menuitem, gpointer data);
 
@@ -206,7 +209,7 @@ void update_widget_bg(GtkWidget *widget, const gchar *img_file)
 void main_menu_pop(guint action)
 {
 	int i;
-	pp->x_pos = 0, pp->y_pos = 200;
+	pp->x_pos = 0, pp->y_pos = 160;
 	if (MENU_POP == action)	/*弹出主菜单*/
 	{
 		gtk_menu_popup ( GTK_MENU (pp->menu), NULL, NULL, 
@@ -3606,7 +3609,7 @@ static void draw3_pop_tt (void (*fun)(GtkMenuItem*, gpointer),
 	z = pos;
 
 	update_widget_bg(pp->eventbox30[z], backpic[6]);
-	for (i = 0; i < 30; i++) 
+	for (i = 0; i < 64; i++) 
 	{
 		if (pp->menu_item3[i]) 
 		{
@@ -3689,7 +3692,7 @@ static void draw3_pop_tt_on (void (*fun)(GtkMenuItem*, gpointer),
 	z = pos;
 
 	update_widget_bg(pp->eventbox30[z], backpic[6]);
-	for (i = 0; i < 30; i++) 
+	for (i = 0; i < 64; i++) 
 	{
 		if (pp->menu_item3[i]) 
 		{
@@ -4037,6 +4040,494 @@ static gboolean draw_info(GtkWidget *widget, GdkEventExpose *event, gpointer dat
 	cairo_t *cr; 
 	gfloat k;
 	gchar *str = NULL;
+    DRAW_AREA_P prule = (DRAW_AREA_P)(data) ;
+
+	gtk_widget_get_size_request (widget, &w, &h);
+	g_print("w=%d, h=%d\n",w,h);
+
+	if(h>400)
+	{
+		prule->vrule1_copies = 100;
+		prule->vrule2_copies = 100;
+	}
+	else if ((h>300) && (h<400))
+	{
+		prule->vrule1_copies = 80;
+		prule->vrule2_copies = 80;
+	}
+	else if ((h>250) && (h<300))
+	{
+		prule->vrule1_copies = 70;
+		prule->vrule2_copies = 70;
+	}
+	else if ((h>150) && (h<250))
+	{
+		prule->vrule1_copies = 50;
+		prule->vrule2_copies = 50;
+	}
+	else if ((h>100) && (h<150))
+	{
+		prule->vrule1_copies = 30;
+		prule->vrule2_copies = 30;
+	}
+	else
+	{
+		prule->vrule1_copies = 0;
+		prule->vrule2_copies = 0;
+	}
+
+	if(w>600)
+		prule->hrule_copies = 100;
+	else if((w>299)&&(w<400))
+		prule->hrule_copies = 50;
+	else if ((w>100)&&(w<200))
+		prule->hrule_copies = 25;
+	else 
+		prule->hrule_copies = 0;
+
+
+
+
+
+	cr = gdk_cairo_create(widget->window);
+	/* 网格 */
+	cairo_set_line_width(cr, 1);
+	switch(CFG(grid))
+	{
+		case 0:
+			cairo_set_source_rgba(cr,0.0,0.5,0.5,1.0);break;
+		case 1:
+			cairo_set_source_rgba(cr,0.3,0.5,0.0,1.0);break;
+		case 2:
+			cairo_set_source_rgba(cr,0.5,0.0,0.0,1.0);break;
+		case 3:
+			cairo_set_source_rgba(cr,0.5,0.5,0.0,1.0);break;
+		case 4:
+			cairo_set_source_rgba(cr,0.0,0.0,0.0,1.0);break;
+		default:break;
+	}
+
+	if (CFG(grid) != 5) 
+	{
+		for (j = 0; j < h; j += (h / 10.0))
+		{
+			for  (m = 0; m < w; m += (w / 50.0))
+			{
+				cairo_move_to (cr, (int)(m) , (int)(j) + 0.5);
+				cairo_line_to (cr, (int)(m) +1 , (int)(j) + 0.5);
+				cairo_stroke (cr);
+			}
+		}
+		for ( i = 0; i < w; i += (w /10.0))
+		{
+			for (n = 0; n < h; n += (h / 50.0))
+			{
+				cairo_move_to (cr, (int)(i) , (int)(n) + 0.5);
+				cairo_line_to (cr, (int)(i) +1 , (int)(n) + 0.5);
+				cairo_stroke(cr);
+			}
+		}
+	}
+
+
+	/* 调色条信息 */
+	cairo_set_source_rgba (cr, 1.0, 1.0, 1.0, 1.0);
+	cairo_rectangle (cr, w-30, 0, 10, h-20);
+	cairo_fill (cr);
+	for ( i = 1; i < h - 21; i++ )
+	{
+		switch (((DRAW_AREA_P)(data))->scan_type)
+		{
+			case	A_SCAN:
+			case	A_SCAN_R:
+			case	B_SCAN:
+			case	S_SCAN:
+			case	S_SCAN_A:
+				color_r = ((TMP(color_amp[i * 256 / h]) >> 11)) / 32.0;
+				color_g = ((TMP(color_amp[i * 256 / h]) & 0x07e0) >> 5) / 64.0;
+				color_b = ((TMP(color_amp[i * 256 / h]) & 0x1f)) /  32.0;
+				break;
+			case	C_SCAN:
+				break;
+			default:break;
+		}
+		cairo_set_source_rgba (cr, color_r, color_g, color_b, 1.0);
+		cairo_move_to (cr, w - 29, i);
+		cairo_line_to (cr, w - 21, i);
+		cairo_stroke (cr);
+	}
+
+	/* 画cursor */
+	if( CFG(overlay_cursor)==1 )
+	{
+		//cairo_set_line_width(cr, 1.0);
+		cairo_set_source_rgba(cr,1.0,0.5,0.5,1.0);
+		cairo_move_to (cr, 20, (h-20)*(1.0-GROUP_VAL(per_reference)/10000.0));
+		cairo_line_to (cr, w-30, (h-20)*(1.0-GROUP_VAL(per_reference)/10000.0));
+		cairo_stroke (cr);
+		cairo_move_to (cr, 20+(w-50)*GROUP_VAL(u_reference)/(GROUP_VAL(velocity)*10.0/20.85), 0);
+		cairo_line_to (cr, 20+(w-50)*GROUP_VAL(u_reference)/(GROUP_VAL(velocity)*10.0/20.85), h-20);
+		cairo_stroke (cr);
+
+		cairo_set_source_rgba(cr,0.5,1.0,0.5,1.0);
+		cairo_move_to (cr, 20, (h-20)*(1.0-GROUP_VAL(per_measure)/10000.0));
+		cairo_line_to (cr, w-30, (h-20)*(1.0-GROUP_VAL(per_measure)/10000.0));
+		cairo_stroke (cr);
+		cairo_move_to (cr, 20+(w-50)*GROUP_VAL(u_measure)/(GROUP_VAL(velocity)*10.0/20.85), 0);
+		/* 当前值除以最大值再乘以窗口宽度，即为百分比 */
+		cairo_line_to (cr, 20+(w-50)*GROUP_VAL(u_measure)/(GROUP_VAL(velocity)*10.0/20.85), h-20);
+		cairo_stroke (cr);
+	}
+
+	/* 画闸门 gate */
+	if(CFG(overlay_gate)==1)
+	{
+		cairo_set_source_rgba(cr,1.0,0.0,0.0,1.0);	/* A闸门为红色 */
+		cairo_move_to(cr, (GROUP_VAL(gate[0].start) / 1000.0) * (GROUP_VAL(velocity) / 200000.0), 
+				(1.0-GROUP_VAL(gate[0].height) / 100.0)*(h-20) );
+
+		cairo_line_to(cr, (GROUP_VAL(gate[0].start) / 1000.0) * (GROUP_VAL(velocity) / 200000.0)+(GROUP_VAL(gate[0].width) / 1000.0) * (GROUP_VAL(velocity) / 200000.0)  ,(1.0-GROUP_VAL(gate[0].height) / 100.0)*(h-20) );
+
+		cairo_stroke(cr);
+		g_printf("A gate start = %f\n",(GROUP_VAL(gate[0].start) / 1000.0) * (GROUP_VAL(velocity) / 200000.0));
+		g_printf("A gate width = %f\n",(GROUP_VAL(gate[0].width) / 1000.0) * (GROUP_VAL(velocity) / 200000.0));
+
+		cairo_set_source_rgba(cr,0.0,1.0,0.0,1.0);	/* B闸门为绿色 */
+		cairo_move_to(cr, (GROUP_VAL(gate[1].start) / 1000.0) * (GROUP_VAL(velocity) / 200000.0), 
+				(1.0-GROUP_VAL(gate[1].height) / 100.0)*(h-20) );
+
+		cairo_line_to(cr, (GROUP_VAL(gate[1].start) / 1000.0) * (GROUP_VAL(velocity) / 200000.0)+(GROUP_VAL(gate[1].width) / 1000.0) * (GROUP_VAL(velocity) / 200000.0)  ,(1.0-GROUP_VAL(gate[1].height) / 100.0)*(h-20) );
+		cairo_stroke(cr);
+
+		cairo_set_source_rgba(cr,1.0,1.0,0.0,1.0);	/* C闸门为黄色 */
+		cairo_move_to(cr, (GROUP_VAL(gate[2].start) / 1000.0) * (GROUP_VAL(velocity) / 200000.0), 
+				(1.0-GROUP_VAL(gate[2].height) / 100.0)*(h-20) );
+
+		cairo_line_to(cr, (GROUP_VAL(gate[2].start) / 1000.0) * (GROUP_VAL(velocity) / 200000.0)+(GROUP_VAL(gate[2].width) / 1000.0) * (GROUP_VAL(velocity) / 200000.0)  ,(1.0-GROUP_VAL(gate[2].height) / 100.0)*(h-20) );
+
+		cairo_stroke(cr);
+	}
+
+#if 0
+	/* 画ruler */
+	cairo_set_source_rgba(cr,0.72,0.94,0.1,1.0);    /* ruler颜色为绿色 */
+	cairo_rectangle(cr,0.0,0.0,20.0,h-20);		/* vruler1 */
+	cairo_fill (cr);
+	cairo_rectangle(cr,w-20.0,0.0,20.0,h-20.0);	/* vruler2 */
+	cairo_fill (cr);
+	cairo_rectangle(cr,20.0,h-20,w-40,20.0);	/* hruler */
+	cairo_fill (cr);
+	cairo_stroke(cr);
+
+	cairo_set_source_rgba(cr,0.0,0.0,0.0,1.0);	/* 标尺及单位颜色为黑色 */
+	cairo_set_font_size(cr,8);
+
+	cairo_save (cr);				/* 保存当前画笔 */
+	cairo_move_to (cr, 12, (h-30));	/*vruler1 单位 ％*/
+	cairo_rotate (cr, G_PI * 3/2);
+	cairo_show_text (cr, "%");
+	cairo_restore (cr);				/* 恢复当前保存的画笔 */
+
+	cairo_save(cr);
+	cairo_move_to(cr,(w-5),(h-30));/*vruler2 单位 ％*/
+	cairo_rotate(cr, G_PI*3/2);
+	cairo_show_text(cr,"%");
+	cairo_restore(cr);
+
+	cairo_move_to(cr,30,(h-5));/*hruler 单位 ％*/
+	cairo_show_text(cr,"mm");
+
+	i=0;
+	for( k=0;k<(h-20.0);k=k+(h-20.0)/100.0)	/* vruler1 标尺 */
+	{
+		if(i%10 == 0)
+		{
+			cairo_save(cr);
+			cairo_move_to(cr,5,(int)k+0.5);
+			cairo_line_to(cr,20,(int)k+0.5);
+			cairo_stroke(cr);
+			cairo_move_to(cr,12,(int)k-2.5);
+			//		cairo_set_font_size(cr, 7);		/*设置字体大小*/
+			//		cairo_translate(cr,250,0);		/*平移*/
+			cairo_rotate(cr, G_PI * 3/2);		/*旋转270度*/
+			str=g_strdup_printf("%d",(100-i));
+			cairo_show_text(cr,str);   		/*标签*/
+			cairo_restore(cr);
+		}
+		else if(i%5 == 0)
+		{
+
+			cairo_move_to(cr,10,(int)k+0.5);
+			cairo_line_to(cr,20,(int)k+0.5);
+			cairo_stroke(cr);
+		}
+		else
+		{
+			cairo_move_to(cr,15,(int)k+0.5);
+			cairo_line_to(cr,20,(int)k+0.5);
+			cairo_stroke(cr);
+		}
+
+		i++;
+	}
+	i=0;
+	for( k=0;k<w-50;k=k+(w-50.0)/100.0 )	/* hruler 标尺 */
+	{
+
+		if(i%10 == 0)
+		{
+			cairo_move_to(cr,20+(int)k+0.5,h-20);
+			cairo_line_to(cr,20+(int)k+0.5,h-5);
+			cairo_stroke(cr);
+			cairo_move_to(cr,23.5+(int)k,h-5);
+			//		cairo_set_font_size(cr, 7);		/*设置字体大小*/
+			//		cairo_translate(cr,250,0);		/*平移*/
+			//		cairo_rotate(cr, G_PI*3/2);		/*旋转270度*/
+			str=g_strdup_printf("%d",i);
+			cairo_show_text(cr,str);   		/*标签*/
+			//		cairo_show_text(cr,"mm");   		/*标签*/
+		}
+		else if(i%5 == 0)
+		{
+			cairo_move_to(cr,20+(int)k+0.5,h-20);
+			cairo_line_to(cr,20+(int)k+0.5,h-10);
+			cairo_stroke(cr);
+		}
+		else
+		{
+			cairo_move_to(cr,20+(int)k+0.5,h-20);
+			cairo_line_to(cr,20+(int)k+0.5,h-15);
+			cairo_stroke(cr);
+		}
+		i++;
+	}
+	i=0;
+	for( k=0;k<h-20;k=k+(h-20.0)/100.0 )	/* vruler2 标尺 */
+	{
+
+		if(i%10 == 0)
+		{
+			cairo_save(cr);
+			cairo_move_to(cr,w-20,(int)k+0.5);
+			cairo_line_to(cr,w-5,(int)k+0.5);
+			cairo_stroke(cr);
+			cairo_move_to(cr,w-7,(int)k-2.5);
+			//		cairo_set_font_size(cr, 7);		/*设置字体大小*/
+			//		cairo_translate(cr,250,0);		/*平移*/
+			cairo_rotate(cr, G_PI * 3/2);		/*旋转270度*/
+			//		cairo_show_text(cr,"mm");   		/*标签*/
+			str=g_strdup_printf("%d",(100-i));
+			cairo_show_text(cr,str);   		/*标签*/
+			cairo_restore(cr);
+		}
+		else if(i%5 == 0)
+		{
+			cairo_move_to(cr,w-20,(int)k+0.5);
+			cairo_line_to(cr,w-10,(int)k+0.5);
+			cairo_stroke(cr);
+		}
+		else
+		{
+			cairo_move_to(cr,w-20,(int)k+0.5);
+			cairo_line_to(cr,w-15,(int)k+0.5);
+			cairo_stroke(cr);
+		}
+		i++;
+	}
+#endif
+	/* 画ruler */
+#if 0
+	cairo_set_source_rgba(cr,0.72,0.94,0.1,1.0);    /* ruler颜色为绿色 */
+	cairo_rectangle(cr,0.0,0.0,20.0,h-20);		/* vruler1 */
+	cairo_fill (cr);
+	cairo_rectangle(cr,w-20.0,0.0,20.0,h-20.0);	/* vruler2 */
+	cairo_fill (cr);
+	cairo_rectangle(cr,20.0,h-20,w-40,20.0);	/* hruler */
+	cairo_fill (cr);
+	cairo_stroke(cr);
+
+	cairo_set_source_rgba(cr,0.0,0.0,0.0,1.0);	/* 标尺及单位颜色为黑色 */
+	cairo_set_font_size(cr,8);
+
+	cairo_save (cr);				/* 保存当前画笔 */
+	cairo_move_to (cr, 12, (h-30));	/*vruler1 单位 ％*/
+	cairo_rotate (cr, G_PI * 3/2);
+	cairo_show_text (cr, data->h1_unit);
+	cairo_restore (cr);				/* 恢复当前保存的画笔 */
+
+	cairo_save(cr);
+	cairo_move_to(cr,(w-5),(h-30));/*vruler2 单位 ％*/
+	cairo_rotate(cr, G_PI*3/2);
+	cairo_show_text(cr,data->h2_unit);
+	cairo_restore(cr);
+
+	cairo_move_to(cr,30,(h-5));/*hruler 单位 ％*/
+	cairo_show_text(cr,data->w_unit);
+#endif
+
+	if(!(prule->hmin1 == prule->hmax1))
+	{
+	cairo_set_source_rgba(cr,0.72,0.94,0.1,1.0);    /* vruler1颜色为绿色 */
+	cairo_rectangle(cr,0.0,0.0,20.0,h-20);		/* vruler1 */
+	cairo_fill (cr);
+	cairo_stroke(cr);
+	cairo_set_source_rgba(cr,0.0,0.0,0.0,1.0);	/* 标尺及单位颜色为黑色 */
+	cairo_set_font_size(cr,8);
+	cairo_save (cr);				/* 保存当前画笔 */
+	cairo_move_to (cr, 12, (h-30));	/*vruler1 单位 ％*/
+	cairo_rotate (cr, G_PI * 3/2);
+	cairo_show_text (cr, units[prule->h1_unit]);
+	//cairo_show_text (cr, "%");
+	cairo_restore (cr);
+
+	i=0;
+	for( k=0;k<(h-20.0);k=k+(h-20.0)/prule->vrule1_copies)	/* vruler1 标尺 */
+	{
+		if(i%10 == 0)
+		{
+			cairo_save(cr);
+			cairo_move_to(cr,5,(int)k+0.5);
+			cairo_line_to(cr,20,(int)k+0.5);
+			cairo_stroke(cr);
+			cairo_move_to(cr,12,(int)k-2.5);
+			//		cairo_set_font_size(cr, 7);		/*设置字体大小*/
+			//		cairo_translate(cr,250,0);		/*平移*/
+			cairo_rotate(cr, G_PI * 3/2);		/*旋转270度*/
+			str=g_strdup_printf("%.0f",prule->hmax1 - (float)(prule->hmax1-prule->hmin1)*i/(prule->vrule1_copies));
+			cairo_show_text(cr,str);   		/*标签*/
+			cairo_restore(cr);
+		}
+		else if(i%5 == 0)
+		{
+
+			cairo_move_to(cr,10,(int)k+0.5);
+			cairo_line_to(cr,20,(int)k+0.5);
+			cairo_stroke(cr);
+		}
+		else
+		{
+			cairo_move_to(cr,15,(int)k+0.5);
+			cairo_line_to(cr,20,(int)k+0.5);
+			cairo_stroke(cr);
+		}
+
+		i++;
+	}
+	}
+
+
+
+	if(!(prule->wmin1 == prule->wmax1))
+	{
+	cairo_set_source_rgba(cr,0.72,0.94,0.1,1.0);    /* hruler颜色为绿色 */
+	cairo_rectangle(cr,20.0,h-20,w-40,20.0);	/* hruler */
+	cairo_fill (cr);
+	cairo_stroke(cr);
+	cairo_set_source_rgba(cr,0.0,0.0,0.0,1.0);	/* 标尺及单位颜色为黑色 */
+	cairo_set_font_size(cr,8);
+	cairo_move_to(cr,50,(h-5));/*hruler 单位 mm*/
+	//cairo_show_text(cr,data->w_unit);
+	//cairo_show_text(cr,"mm");
+	cairo_show_text(cr,units[prule->w_unit]);
+
+	i=0;
+	for( k=0;k<w-50;k=k+(w-50.0)/prule->hrule_copies )	/* hruler 标尺 */
+	{
+
+		if(i%10 == 0)
+		{
+			cairo_move_to(cr,20+(int)k+0.5,h-20);
+			cairo_line_to(cr,20+(int)k+0.5,h-5);
+			cairo_stroke(cr);
+			cairo_move_to(cr,23.5+(int)k,h-5);
+			//		cairo_set_font_size(cr, 7);		/*设置字体大小*/
+			//		cairo_translate(cr,250,0);		/*平移*/
+			//		cairo_rotate(cr, G_PI*3/2);		/*旋转270度*/
+			//str=g_strdup_printf("%d",prule->wmin1 + i);
+			str=g_strdup_printf("%.2f",prule->wmin1 + (float)(prule->wmax1-prule->wmin1)*i/(prule->hrule_copies));
+			cairo_show_text(cr,str);   		/*标签*/
+			//		cairo_show_text(cr,"mm");   		/*标签*/
+		}
+		else if(i%5 == 0)
+		{
+			cairo_move_to(cr,20+(int)k+0.5,h-20);
+			cairo_line_to(cr,20+(int)k+0.5,h-10);
+			cairo_stroke(cr);
+		}
+		else
+		{
+			cairo_move_to(cr,20+(int)k+0.5,h-20);
+			cairo_line_to(cr,20+(int)k+0.5,h-15);
+			cairo_stroke(cr);
+		}
+		i++;
+	}
+	}
+
+
+	if(!(prule->hmin2 == prule->hmax2))
+	{
+
+	cairo_set_source_rgba(cr,0.72,0.94,0.1,1.0);    /* vruler2颜色为绿色 */
+	cairo_rectangle(cr,w-20.0,0.0,20.0,h-20.0);	/* vruler2 */
+	cairo_fill (cr);
+	cairo_stroke(cr);
+	cairo_set_source_rgba(cr,0.0,0.0,0.0,1.0);	/* 标尺及单位颜色为黑色 */
+	cairo_set_font_size(cr,8);
+	cairo_save(cr);
+	cairo_move_to(cr,(w-5),(h-30));/*vruler2 单位 ％*/
+	cairo_rotate(cr, G_PI*3/2);
+	//cairo_show_text(cr,"%");
+	cairo_show_text(cr,units[prule->h2_unit]);
+	cairo_restore(cr);
+
+		i=0;
+		for( k=0;k<h-20;k=k+(h-20.0)/prule->vrule2_copies )	/* vruler2 标尺 */
+		{
+			if(i%10 == 0)
+			{
+			cairo_save(cr);
+			cairo_move_to(cr,w-20,(int)k+0.5);
+			cairo_line_to(cr,w-5,(int)k+0.5);
+			cairo_stroke(cr);
+			cairo_move_to(cr,w-7,(int)k-2.5);
+			//		cairo_set_font_size(cr, 7);		/*设置字体大小*/
+			//		cairo_translate(cr,250,0);		/*平移*/
+			cairo_rotate(cr, G_PI * 3/2);		/*旋转270度*/
+			//		cairo_show_text(cr,"mm");   		/*标签*/
+			//str=g_strdup_printf("%d",(prule->hmax2-i));
+			str=g_strdup_printf("%.0f",prule->hmax2 - (float)(prule->hmax2-prule->hmin2)*i/(prule->vrule2_copies));
+			cairo_show_text(cr,str);   		/*标签*/
+			cairo_restore(cr);
+			}
+			else if(i%5 == 0)
+			{
+			cairo_move_to(cr,w-20,(int)k+0.5);
+			cairo_line_to(cr,w-10,(int)k+0.5);
+			cairo_stroke(cr);
+			}
+			else
+			{
+			cairo_move_to(cr,w-20,(int)k+0.5);
+			cairo_line_to(cr,w-15,(int)k+0.5);
+			cairo_stroke(cr);
+			}
+			i++;
+		}
+	}
+	g_free(str);
+	cairo_destroy(cr);
+	return TRUE;
+}
+
+#if 0
+static gboolean draw_info(GtkWidget *widget, GdkEventExpose *event, gpointer data)
+{
+	gfloat color_r = 0, color_g = 0, color_b = 0;
+	gint i,j,m,n,w,h;
+	cairo_t *cr; 
+	gfloat k;
+	gchar *str = NULL;
 
 	gtk_widget_get_size_request (widget, &w, &h);
 	g_print("w=%d, h=%d\n",w,h);
@@ -4109,7 +4600,7 @@ static gboolean draw_info(GtkWidget *widget, GdkEventExpose *event, gpointer dat
 	}
 
 	/* 画cursor */
-	if( CFG(overlay_cursor)==1 )
+	if (CFG(overlay_cursor)==1)
 	{
 		//cairo_set_line_width(cr, 1.0);
 		cairo_set_source_rgba(cr,1.0,0.5,0.5,1.0);
@@ -4289,7 +4780,7 @@ static gboolean draw_info(GtkWidget *widget, GdkEventExpose *event, gpointer dat
 	cairo_destroy(cr);
 	return TRUE;
 }
-
+#endif
 
 /* 画电池等信息 */
 static gboolean draw_other_info (GtkWidget *widget, GdkEventExpose *event, gpointer data)
@@ -4523,10 +5014,35 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 		case A_SCAN:
 			p->hmin1 = 0;
 			p->hmin2 = 0;
+			p->h1_unit = UNIT_BFH;
 			p->hmax1 = 100;
 			p->hmax2 = 100;
-			p->wmin1 = GROUP_VAL(start);
-			p->wmax1 = GROUP_VAL(range);
+			p->h2_unit = UNIT_BFH;
+			//	p->wmin1 = 30;
+			//	p->wmax1 = 80;
+
+			if(GROUP_VAL(ut_unit) == UT_UNIT_TIME)
+			{
+				p->wmin1 = GROUP_VAL(start)/1000.0;
+				p->wmax1 = GROUP_VAL(range)/1000.0;
+				p->w_unit = UNIT_US;
+			}
+			else
+			{
+				if(CFG(unit) == UNIT_MM)
+				{
+					p->wmin1 = GROUP_VAL(start)/1000.0*(GROUP_VAL(velocity)/200000.0);
+					p->wmax1 = GROUP_VAL(range)/1000.0*(GROUP_VAL(velocity)/200000.0);
+					p->w_unit = UNIT_MM;
+				}
+				else
+				{
+					p->wmin1 = GROUP_VAL(start)/1000.0*0.03937*(GROUP_VAL(velocity)/200000.0);
+					p->wmax1 = GROUP_VAL(range)/1000.0*0.03937*(GROUP_VAL(velocity)/200000.0);
+					p->w_unit = UNIT_INCH;
+				}
+			}
+
 			p->scan_type = A_SCAN;
 
 			g_sprintf (p->title, "A scan|Gr %d|CH %0.1f|SK%0.1f|L%d", 
@@ -4535,17 +5051,41 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 		case A_SCAN_R:
 			break;
 		case B_SCAN:
+			p->hmin1 = 0;
+			p->hmin2 = 0;
+			p->hmax1 = 415*10.0/get_prf();
+			p->hmax2 = 100;
+			p->wmin1 = GROUP_VAL(start);
+			p->wmax1 = GROUP_VAL(range);
+			p->scan_type = A_SCAN;
+
+			g_sprintf (p->title, "B scan|Gr %d|CH %0.1f|SK%0.1f|L%d", 
+					CFG(groupId) + 1, angle / 100.0, GROUP_VAL(skew) / 100.0, num + 1);
 			break;
 		case C_SCAN:
+			p->hmin1 = 0;
+			p->hmin2 = 0;
+			p->hmax1 = 100;
+			p->hmax2 = 100;
+			p->wmin1 = GROUP_VAL(start);
+			p->wmax1 = GROUP_VAL(range);
+			p->scan_type = A_SCAN;
+
+			g_sprintf (p->title, "C scan|Gr %d|CH %0.1f|SK%0.1f|L%d", 
+					CFG(groupId) + 1, angle / 100.0, GROUP_VAL(skew) / 100.0, num + 1);
 			break;
 		case S_SCAN:
 		case S_SCAN_A:
 		case S_SCAN_L:
 			break;
+		case A_B_SCAN:
+
+			break;
 		default:break;
 	}
 
 }
+
 
 /* 画波形数据显示区 */
 void draw_area_all()
@@ -4588,6 +5128,7 @@ void draw_area_all()
 			case B_SCAN:
 				pp->draw_area[0].scan_type	=	B_SCAN;
 				gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
+				set_drawarea_property (&(pp->draw_area[0]), B_SCAN, 0);
 				draw_area(pp->vbox_area[0], &(pp->draw_area[0]), 655, 425, "B-scan", 0.0, 100.0,
 						0.0, 100.0, 0.0, 100.0, NULL);
 				gtk_widget_show (pp->vbox_area[0]);
@@ -4595,6 +5136,7 @@ void draw_area_all()
 				break;
 			case C_SCAN:
 				gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
+				set_drawarea_property (&(pp->draw_area[0]), C_SCAN, 0);
 				draw_area(pp->vbox_area[0], &(pp->draw_area[0]), 655, 425, "C-scan", 0.0, 100.0,
 						0.0, 100.0, 0.0, 100.0, NULL);
 				gtk_widget_show (pp->vbox_area[0]);
@@ -4605,6 +5147,7 @@ void draw_area_all()
 				{
 					pp->draw_area[0].scan_type	=	S_SCAN;
 					gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
+					set_drawarea_property (&(pp->draw_area[0]), S_SCAN, 0);
 					draw_area(pp->vbox_area[0], &(pp->draw_area[0]), 655, 425, "S-scan", 0.0, 100.0,
 							0.0, 100.0, 0.0, 100.0, NULL);
 					gtk_widget_show (pp->vbox_area[0]);
@@ -4614,6 +5157,7 @@ void draw_area_all()
 				{
 					pp->draw_area[0].scan_type	=	S_SCAN_A;
 					gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
+					set_drawarea_property (&(pp->draw_area[0]), S_SCAN_A, 0);
 					draw_area(pp->vbox_area[0], &(pp->draw_area[0]), 655, 425, "S-scan", 0.0, 100.0,
 							0.0, 100.0, 0.0, 100.0, NULL);
 					gtk_widget_show (pp->vbox_area[0]);
@@ -4623,6 +5167,7 @@ void draw_area_all()
 				{
 					pp->draw_area[0].scan_type	=	S_SCAN_L;
 					gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
+					set_drawarea_property (&(pp->draw_area[0]), S_SCAN_L, 0);
 					draw_area(pp->vbox_area[0], &(pp->draw_area[0]), 655, 425, "S-scan", 0.0, 100.0,
 							0.0, 100.0, 0.0, 100.0, NULL);
 					gtk_widget_show (pp->vbox_area[0]);
@@ -4633,8 +5178,10 @@ void draw_area_all()
 				pp->draw_area[0].scan_type	=	A_SCAN;
 				pp->draw_area[1].scan_type	=	B_SCAN;
 				gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
+				set_drawarea_property (&(pp->draw_area[0]), A_SCAN, 0);
 				draw_area(pp->vbox_area[0], &(pp->draw_area[0]), 655, 130, "A-scan", 0.0, 100.0,
 						0.0, 100.0, 0.0, 0.0, NULL);
+				set_drawarea_property (&(pp->draw_area[1]), B_SCAN, 0);
 				draw_area(pp->vbox_area[0], &(pp->draw_area[1]), 655, 295, "B-scan", 0.0, 100.0,
 						0.0, 100.0, 0.0, 100.0, NULL);
 				gtk_widget_show (pp->vbox_area[0]);
@@ -4643,10 +5190,13 @@ void draw_area_all()
 				break;
 			case A_B_C_SCAN:
 				gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
+				set_drawarea_property (&(pp->draw_area[0]), A_SCAN, 0);
 				draw_area(pp->vbox_area[0], &(pp->draw_area[0]), 655, 125, "A-scan", 0.0, 100.0,
 						0.0, 100.0, 0.0, 100.0, NULL);
+				set_drawarea_property (&(pp->draw_area[1]), B_SCAN, 0);
 				draw_area(pp->vbox_area[0], &(pp->draw_area[1]), 655, 150, "B-scan", 0.0, 100.0,
 						0.0, 100.0, 0.0, 100.0, NULL);
+				set_drawarea_property (&(pp->draw_area[2]), C_SCAN, 0);
 				draw_area(pp->vbox_area[0], &(pp->draw_area[2]), 655, 150, "C-scan", 0.0, 100.0,
 						0.0, 100.0, 0.0, 100.0, NULL);
 				gtk_widget_show (pp->vbox_area[0]);
@@ -4657,10 +5207,13 @@ void draw_area_all()
 					gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->hbox_area[0], FALSE, FALSE, 0);
 					gtk_box_pack_start (GTK_BOX (pp->hbox_area[0]), pp->vbox_area[0], FALSE, FALSE, 0);
 					gtk_box_pack_start (GTK_BOX (pp->hbox_area[0]), pp->vbox_area[1], FALSE, FALSE, 0);
+					set_drawarea_property (&(pp->draw_area[0]), S_SCAN, 0);
 					draw_area(pp->vbox_area[0], &(pp->draw_area[0]), 300, 425, "S-scan", 0.0, 100.0,
 							0.0, 100.0, 0.0, 100.0, NULL);
+					set_drawarea_property (&(pp->draw_area[1]), A_SCAN, 0);
 					draw_area(pp->vbox_area[1], &(pp->draw_area[1]), 355, 210, "A-scan", 0.0, 100.0,
 							0.0, 100.0, 0.0, 100.0, NULL);
+					set_drawarea_property (&(pp->draw_area[2]), B_SCAN, 0);
 					draw_area(pp->vbox_area[1], &(pp->draw_area[2]), 355, 215, "B-scan", 0.0, 100.0,
 							0.0, 100.0, 0.0, 100.0, NULL);
 					gtk_widget_show (pp->hbox_area[0]);
@@ -4670,10 +5223,13 @@ void draw_area_all()
 				else
 				{
 					gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
+					set_drawarea_property (&(pp->draw_area[0]), A_SCAN, 0);
 					draw_area(pp->vbox_area[0], &(pp->draw_area[0]), 655, 125, "A-scan", 0.0, 100.0,
 							0.0, 100.0, 0.0, 100.0, NULL);
+					set_drawarea_property (&(pp->draw_area[1]), B_SCAN, 0);
 					draw_area(pp->vbox_area[0], &(pp->draw_area[1]), 655, 150, "B-scan", 0.0, 100.0,
 							0.0, 100.0, 0.0, 100.0, NULL);
+					set_drawarea_property (&(pp->draw_area[2]), S_SCAN, 0);
 					draw_area(pp->vbox_area[0], &(pp->draw_area[2]), 655, 150, "S-scan", 0.0, 100.0,
 							0.0, 100.0, 0.0, 100.0, NULL);
 					gtk_widget_show (pp->vbox_area[0]);
@@ -4683,8 +5239,10 @@ void draw_area_all()
 
 			case A_C_CC_SCAN:
 				gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
+				set_drawarea_property (&(pp->draw_area[0]), A_SCAN, 0);
 				draw_area(pp->vbox_area[0], &(pp->draw_area[0]), 655, 150, "A-scan", 0.0, 100.0,
 						0.0, 100.0, 0.0, 100.0, NULL);
+				set_drawarea_property (&(pp->draw_area[1]), C_SCAN, 0);
 				draw_area(pp->vbox_area[0], &(pp->draw_area[1]), 655, 275, "C-scan", 0.0, 100.0,
 						0.0, 100.0, 0.0, 100.0, NULL);
 				gtk_widget_show (pp->vbox_area[0]);
@@ -4699,8 +5257,10 @@ void draw_area_all()
 						pp->draw_area[0].scan_type	=	A_SCAN;
 						pp->draw_area[1].scan_type	=	S_SCAN;
 						gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
+						set_drawarea_property (&(pp->draw_area[0]), A_SCAN, 0);
 						draw_area(pp->vbox_area[0], &(pp->draw_area[0]), 655, 150, "A-scan", 0.0, 100.0,
 								0.0, 100.0, 0.0, 0.0, NULL);
+						set_drawarea_property (&(pp->draw_area[1]), S_SCAN, 0);
 						draw_area(pp->vbox_area[0], &(pp->draw_area[1]), 655, 295, "S-scan", 0.0, 100.0,
 								0.0, 100.0, 0.0, 100.0, NULL);
 						gtk_widget_show (pp->vbox_area[0]);
@@ -4714,8 +5274,10 @@ void draw_area_all()
 							pp->draw_area[0].scan_type	=	A_SCAN_R;
 							pp->draw_area[1].scan_type	=	S_SCAN_A;
 							gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->hbox_area[0], FALSE, FALSE, 0);
+							set_drawarea_property (&(pp->draw_area[0]), A_SCAN_R, 0);
 							draw_area(pp->hbox_area[0], &(pp->draw_area[0]), 250, 425, "A-scan", 0.0,
 									100.0, 0.0, 100.0, 0.0, 100.0, NULL);
+							set_drawarea_property (&(pp->draw_area[1]), S_SCAN_A, 0);
 							draw_area(pp->hbox_area[0], &(pp->draw_area[1]), 405, 425, "S-scan", 0.0, 
 									100.0, 0.0, 100.0, 0.0, 100.0, NULL);
 							gtk_widget_show (pp->hbox_area[0]);
@@ -4727,8 +5289,10 @@ void draw_area_all()
 							pp->draw_area[0].scan_type	=	A_SCAN_R;
 							pp->draw_area[1].scan_type	=	S_SCAN_L;
 							gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->hbox_area[0], FALSE, FALSE, 0);
+							set_drawarea_property (&(pp->draw_area[0]), A_SCAN_R, 0);
 							draw_area(pp->hbox_area[0], &(pp->draw_area[0]), 250, 425, "A-scan", 0.0,
 									100.0, 0.0, 100.0, 0.0, 100.0, NULL);
+							set_drawarea_property (&(pp->draw_area[1]), S_SCAN_L, 0);
 							draw_area(pp->hbox_area[0], &(pp->draw_area[1]), 405, 425, "S-scan", 0.0, 
 									100.0, 0.0, 100.0, 0.0, 100.0, NULL);
 							gtk_widget_show (pp->hbox_area[0]);
@@ -4744,8 +5308,10 @@ void draw_area_all()
 
 			case Strip_Chart_AA:
 				gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
+				set_drawarea_property (&(pp->draw_area[0]), A_SCAN, 0);
 				draw_area(pp->vbox_area[0], &(pp->draw_area[0]), 655, 150, "A-scan", 0.0, 100.0,
 						0.0, 100.0, 0.0, 100.0, NULL);
+				set_drawarea_property (&(pp->draw_area[1]), Strip_Chart_AA, 0);
 				draw_area(pp->vbox_area[0], &(pp->draw_area[1]), 655, 275, "Strip Chart", 0.0, 100.0,
 						0.0, 100.0, 0.0, 100.0, NULL);
 				gtk_widget_show (pp->vbox_area[0]);
@@ -5153,7 +5719,7 @@ void draw3_data0(DRAW_UI_P p)
 		case 3:
 			switch (pp->pos1[3])
 			{
-				case 0:/*Measurements -> Reading -> List  p300 */
+				case 0:/* Measurements -> Reading -> List P300 */
 					pp->x_pos = 398, pp->y_pos = 118-YOFFSET;
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 						draw3_pop_tt (data_300, NULL, 
@@ -5161,10 +5727,7 @@ void draw3_data0(DRAW_UI_P p)
 								list, 2, 0, CFG(list), 0);
 					else 
 						draw3_popdown (list1[CFG(list)], 0, 0);
-
 					break;
-
-
 				case 1:/*Measurements -> Cursors -> Selection p310 */
 					pp->x_pos = 569, pp->y_pos = 116-YOFFSET;
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
@@ -8413,7 +8976,7 @@ void draw3_data2(DRAW_UI_P p)
 					}
 					break;
 				case 2:/* Rectifier 检波 P122 */
-					pp->x_pos = 611, pp->y_pos = 288-YOFFSET;
+					pp->x_pos = 611, pp->y_pos = 288 - YOFFSET;
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 						draw3_pop_tt (data_122, NULL, 
 								menu_content[RECTIFIER + GROUP_VAL(rectifier)],
@@ -8867,17 +9430,16 @@ void draw3_data2(DRAW_UI_P p)
 		case 3:
 			switch (pp->pos1[3])
 			{
-				case 0:/*Measurements -> Reading -> Field 1 p302 */
-					pp->x_pos = 314, pp->y_pos = 287-YOFFSET;
+				case 0:/* Measurements -> Reading -> Field 1 P302 */
+					pp->x_pos = 200, pp->y_pos = 0;
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 						draw3_pop_tt (data_302, NULL, 
 								field[CFG(field1)],
-								field1, 4, 2, CFG(field1), 0);
+								field1, 60, 2, CFG(field1), 0);
 					else 
 						draw3_popdown (field[CFG(field1)], 2, 0);
-
+					g_print ("list=%d\n", CFG(field1));
 					break;
-
 				case 1:/*Measurements -> Cursors -> Scan p312 */
 					if(!GROUP_VAL(selection))
 					{
@@ -11058,7 +11620,7 @@ void draw3_data3(DRAW_UI_P p)
 							draw3_popdown (menu_content[VOLTAGE + 3 + CFG(voltage_ut)], 3, 0);
 					}
 					break;
-				case 2: /* Video Filter  P123 TAN1 */
+				case 2: /* Video Filter 视频滤波 P123 TAN1 */
 					if (GROUP_VAL(rectifier) == RF_WAVE)
 					{
 						gtk_widget_set_sensitive (pp->eventbox30[3], FALSE);
@@ -11410,12 +11972,12 @@ void draw3_data3(DRAW_UI_P p)
 		case 3:
 			switch (pp->pos1[3]) 
 			{
-				case 0:/*Measurements -> reading -> field2  p303*/
-					pp->x_pos = 314, pp->y_pos = 371-YOFFSET;
+				case 0:/* Measurements -> reading -> field2  P303*/
+					pp->x_pos = 200, pp->y_pos = 0;
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 						draw3_pop_tt (data_303, NULL, 
 								field[CFG(field2)],
-								field1, 4, 3, CFG(field2), 0);
+								field1, 60, 3, CFG(field2), 0);
 					else 
 						draw3_popdown (field[CFG(field2)], 3, 0);
 
@@ -13720,12 +14282,12 @@ void draw3_data4(DRAW_UI_P p)
 		case 3:
 			switch (pp->pos1[3])
 			{
-				case 0:/*Measurements -> Reading -> Field 3  p304 */
-					pp->x_pos = 314, pp->y_pos = 455-YOFFSET;
+				case 0:/*Measurements -> Reading -> Field 3 P304 */
+					pp->x_pos = 200, pp->y_pos = 0;
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
 						draw3_pop_tt (data_304, NULL, 
 								field[CFG(field3)],
-								field1, 4, 4, CFG(field3), 0);
+								field1, 60, 4, CFG(field3), 0);
 					else 
 						draw3_popdown (field[CFG(field3)], 4, 0);
 
@@ -15164,7 +15726,7 @@ void draw3_data5(DRAW_UI_P p)
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 5))
 					{
 						cur_value = CFG(reject);
-						lower = 1.0;
+						lower = 0.0;
 						upper = 100.0;
 						step = tmpf;
 						digit = 0;
@@ -15440,11 +16002,11 @@ void draw3_data5(DRAW_UI_P p)
 			switch (pp->pos1[3])
 			{
 				case 0:/*Measurements -> Reading -> Field 4 p305 */
-					pp->x_pos = 314, pp->y_pos = 534-YOFFSET;
+					pp->x_pos = 200, pp->y_pos = 0;
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 5))
 						draw3_pop_tt (data_305, NULL, 
 								field[CFG(field4)],
-								field1, 4, 5, CFG(field4), 0);
+								field1, 60, 5, CFG(field4), 0);
 					else 
 						draw3_popdown (field[CFG(field4)], 5, 0);
 
@@ -16482,19 +17044,24 @@ void process_key_press (gchar key)
 gpointer signal_thread(gpointer arg) 
 {
 	gchar key;
+	gchar tt[2];
+	tt[0] = 0x55;
+	tt[1] = 0xcc;
 	if (read(pp->fd_key, &key, 1) > 0 ) 
 	{	
 		process_key_press (key);
 	}
+	write (pp->fd_key, tt, 2);
+
+	write (pp->fd_key1, tt, 2);
 	return NULL;
 }
 
 gpointer signal_thread1(gpointer arg) 
 {
-	gint i, j, k, prf_count, offset;
+	gint i, j, k, prf_count, offset, offset1;
 	guchar *temp1 = (guchar *)(pp->p_beam_data + 0x100000);
 	DRAW_UI_P p = p_drawui_c;
-	pp->scan_count = !pp->scan_count;
 	pp->mark3 = 0;
 
 	/*	g_thread_create (signal_thread, NULL, FALSE, NULL);*/
@@ -16510,14 +17077,20 @@ gpointer signal_thread1(gpointer arg)
 		/* 这里需要压缩数据 或者 插值数据 这里只有一个beam 同时最多处理256beam */
 		for	(j = 0 ; j < TMP(beam_qty[i]); j++)
 		{  
-			for (offset = 0, k = 0 ; k < i; k++)
-				offset += GROUP_VAL_POS(k, point_qty) * TMP(beam_qty[k]);
+			for (offset = 0, offset1 = 0, k = 0 ; k < i; k++)
+			{
+				offset += (GROUP_VAL_POS(k, point_qty) + 32) * TMP(beam_qty[k]);
+				offset1 += TMP(beam_qty[k]);
+			}
+			memcpy (TMP(measure_data[offset1 + j]), (void *)(pp->p_beam_data + offset +
+							(GROUP_VAL_POS(i, point_qty) + 32) * j + GROUP_VAL_POS(i, point_qty)),
+					32*4);
 			if (GROUP_VAL_POS(i, point_qty) <= TMP(a_scan_dot_qty))
 			{
 				/* 只插值当前显示的A扫描 其余不插值 */
 				interpolation_data (
 						(DOT_TYPE *)(pp->p_beam_data + offset +
-							GROUP_VAL_POS(i, point_qty) * j),
+							(GROUP_VAL_POS(i, point_qty) + 32) * j),
 						TMP(scan_data[i] + TMP(a_scan_dot_qty) * j), 
 						GROUP_VAL_POS(i, point_qty),
 						TMP(a_scan_dot_qty));
@@ -16526,7 +17099,7 @@ gpointer signal_thread1(gpointer arg)
 			{
 				compress_data (
 						(DOT_TYPE *)(pp->p_beam_data + offset +
-							GROUP_VAL_POS(i, point_qty) * j),
+							(GROUP_VAL_POS(i, point_qty) + 32) * j),
 						TMP(scan_data[i] + TMP(a_scan_dot_qty) * j), 
 						GROUP_VAL_POS(i, point_qty),
 						TMP(a_scan_dot_qty), 
@@ -16550,6 +17123,7 @@ gpointer signal_thread1(gpointer arg)
 		pp->refresh_mark = 0;
 	}
 
+	pp->mark3 = 1;
 /*	change_fb();*/
 	return NULL;
 }
@@ -16557,11 +17131,29 @@ gpointer signal_thread1(gpointer arg)
 /* 读取波形数据 并画出来 */
 static gboolean time_handler2 (GtkWidget *widget)
 {
+	gint tmp, prf_tmp;
+	pp->scan_count++;
+	(GROUP_VAL (prf)) > 500 ? (prf_tmp = 50) : (prf_tmp = GROUP_VAL (prf) / 10);
+#if 0
 //	if (pp->mark3)
 //	{
+	if (GROUP_VAL(prf) < 120)
+		tmp = 10000 / GROUP_VAL (prf);
+	else
+		tmp = 8;
+	
+	if ((tmp < 50) || (pp->scan_count * 50 * GROUP_VAL(prf) / 10000) == 0)
 		g_thread_create (signal_thread1, NULL, FALSE, NULL);
 //	}
-
+#endif
+	if ((20 * pp->scan_count) >= (1000 / prf_tmp))
+	{
+		pp->scan_count = 0;
+		if (pp->mark3)
+		{
+			g_thread_create (signal_thread1, NULL, FALSE, NULL);
+		}
+	}
 	g_thread_create (signal_thread, NULL, FALSE, NULL);
 	return TRUE;
 
@@ -16637,6 +17229,7 @@ void change_language (guint lang, DRAW_UI_P p)
 			p->list1	= list1_en;
 			p->field1	= field1_en;
 			p->field	= field_en;
+			p->field_unit	= field_unit_en;
 
 			con0_p	= content_en10;
 			con1_p	= content1_en;
@@ -16652,6 +17245,34 @@ void change_language (guint lang, DRAW_UI_P p)
 			break;
 		default:break;
 	}
+}
+
+void draw_field_name ()
+{
+	gchar	*markup;
+	/* 4个测量值显示 */
+	markup = 
+		g_markup_printf_escaped("<span foreground='white' font_desc='10'>%s\n(%s)</span>",
+				pp->field[CFG(field1)], pp->field_unit[CFG(field1)]);
+	gtk_label_set_markup (GTK_LABEL(pp->label[8]),markup);
+	g_free (markup);
+
+	markup = 
+		g_markup_printf_escaped("<span foreground='white' font_desc='10'>%s\n(%s)</span>",
+				pp->field[CFG(field2)], pp->field_unit[CFG(field2)]);
+	gtk_label_set_markup (GTK_LABEL(pp->label[10]),markup);
+	g_free (markup);
+
+	markup = 
+		g_markup_printf_escaped("<span foreground='white' font_desc='10'>%s\n(%s)</span>",
+				pp->field[CFG(field3)], pp->field_unit[CFG(field3)]);
+	gtk_label_set_markup (GTK_LABEL(pp->label[12]),markup);
+
+	markup = 
+		g_markup_printf_escaped("<span foreground='white' font_desc='10'>%s\n(%s)</span>",
+				pp->field[CFG(field4)], pp->field_unit[CFG(field4)]);
+	gtk_label_set_markup (GTK_LABEL(pp->label[14]),markup);
+
 }
 
 /*初始化界面*/
@@ -16803,7 +17424,7 @@ void init_ui(DRAW_UI_P p)
 				G_CALLBACK(key_press_handler) ,(gpointer)(i + 2));
 	}
 
-	for ( i = 0; i < 30; i++)
+	for ( i = 0; i < 64; i++)
 		pp->menu_item3[i] = NULL;
 
 	/* 各box的包含关系*/
@@ -16956,6 +17577,8 @@ void init_ui(DRAW_UI_P p)
 	gtk_widget_set_size_request (GTK_WIDGET(pp->event[15]), 112, 34);
 	update_widget_bg(pp->event[15], backpic[4]);
 
+	draw_field_name ();
+
 	gtk_widget_show_all (pp->hbox1);   /* 上方显示信息  */
 
 	/* 画图区域及各button */
@@ -17052,7 +17675,7 @@ void init_ui(DRAW_UI_P p)
 #if ARM
 /*	g_thread_create (signal_thread, NULL, FALSE, NULL);*/
 /*	g_thread_create (signal_thread1, NULL, FALSE, NULL);*/
-	g_timeout_add (50, (GSourceFunc) time_handler2, NULL);
+	g_timeout_add (20, (GSourceFunc) time_handler2, NULL);
 #endif
 
 	g_timeout_add (1000, (GSourceFunc) time_handler1, NULL);

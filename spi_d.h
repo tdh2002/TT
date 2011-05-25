@@ -77,8 +77,14 @@ unsigned int	gate_c_start:20;		/* bit:12-31 闸门C 开始 */
 unsigned int	gate_c_logic:8;			/* bit:0-7 闸门C 逻辑 */
 unsigned int	gate_c_end:24;			/* bit:12-31 闸门C 结束 */
 
-/* s_group_ref (12-15) */
-unsigned int	TT3[4];
+/* s_group_reg (11) */
+unsigned int	voltage:8;			/* bit:0-7 发射电压 */
+unsigned int	damping:2;			/* bit:8-9 阻尼 */
+unsigned int	TT8:10;				/**/
+unsigned int	reject:12;			/* bit:20-31 闸门C 结束 */
+
+/* s_group_ref (13-15) */
+unsigned int	TT3[3];
 
 } group_data_spi;
 

@@ -230,8 +230,22 @@ typedef struct _law_info
 } LAW_INFO, *LAW_INFO_P;
 
 /*测量数据 (MEASURE_DATA)*/
-typedef struct _Measure_data {
-
+typedef struct _Measure_data
+{
+	guint	a_height;
+	guint	AdBA;
+	guint	AdBr;
+	guint	b_height;
+	guint	BdBB;
+	guint	BdBr;
+	guint	a_position;
+	guint	b_position;
+	guint	i_position;
+	guint	iw_position;
+	guint	TA;
+	guint	ML;
+	guint	TT[47];
+	gint	SA;
 } MEASURE_DATA, *MEASURE_DATA_P;
 
 /* 组信息 */
@@ -371,10 +385,8 @@ typedef	struct _Config
 	OUTPUT_INFO	output[3];		/* 输出信息 output[0],output[1],output[2] */
 	ANALOG_INFO	analog[2];		/* Analog 2 个 */
 
-
-
-
-	GROUP	group[setup_MAX_GROUP_QTY];			/* 前3个都接前面的128的接口 */
+	GROUP	group[setup_MAX_GROUP_QTY];			/* */
+	MEASURE_DATA	measure_data;
 
 	st_PART	part;				/* 被检测工件	*/
 	/* 所有聚焦法则的信息在这里 */

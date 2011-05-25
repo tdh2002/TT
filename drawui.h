@@ -630,5 +630,7 @@ extern void da_call_remark (GtkDialog *dialog, gint response_id, gpointer user_d
 extern void dialog_destroy(GtkWidget *widget,	GdkEventButton *event,	gpointer       data);
 extern int on_changed_config_file(GtkTreeSelection *selection,	gpointer       data);
 extern void add_to_list(GtkWidget *list, const gchar *str, guint count);
+extern void draw_field_name ();
+	
 #endif
 

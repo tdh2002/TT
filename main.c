@@ -13,6 +13,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <math.h>
 #include <sys/types.h>
 #include <gdk/gdkkeysyms.h>
 
@@ -336,7 +337,7 @@ void init_group_spi (guint group)
 	{
 		TMP(group_spi[group]).freq_band	= 0;
 	}
-	if (GROUP_VAL_POS(group, filter) == 1)
+	else if (GROUP_VAL_POS(group, filter) == 1)
 	{
 		if (GROUP_VAL_POS(group, frequency) < 1250)
 			TMP(group_spi[group]).freq_band	= 1;
@@ -378,7 +379,7 @@ void init_group_spi (guint group)
 	TMP(group_spi[group]).PA			= GROUP_VAL_POS (group, group_mode);		
 	TMP(group_spi[group]).sample_start	= 0;		/* 未完成 */
 
-	TMP(group_spi[group]).sum_gain		= GROUP_VAL_POS (group, sum_gain);	
+	TMP(group_spi[group]).sum_gain		= 4 * pow (10, GROUP_VAL_POS (group, sum_gain) / 10.0);	
 	TMP(group_spi[group]).sample_range	= 0;
 
 	TMP(group_spi[group]).beam_qty		= TMP (beam_qty[group]);	
@@ -442,4 +443,17 @@ void init_group_spi (guint group)
 	TMP(group_spi[group]).gate_c_logic	= tmp;	
 	TMP(group_spi[group]).gate_c_end	= (GROUP_VAL_POS(group, gate[2].start) + 
 		GROUP_VAL_POS (group, gate[2].width)) / 10;
+
+	TMP(group_spi[group]).reject = CFG(reject) * 40.95;	
+
+	if (GROUP_VAL_POS (group, group_mode) == UT_SCAN)
+		TMP(group_spi[group]).voltage = CFG(voltage_ut);	
+	else if (GROUP_VAL_POS (group, group_mode) == PA_SCAN)
+	{	
+		if CFG(voltage_pa)
+			TMP(group_spi[group]).voltage = 0x2;	
+		else
+			TMP(group_spi[group]).voltage = 0x0;	
+	}
+
 }

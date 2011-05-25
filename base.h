@@ -192,6 +192,7 @@ typedef struct tmp_config
 #endif
 
 	DOT_TYPE	scan_data[setup_MAX_GROUP_QTY][640*400];
+	guint		measure_data[setup_MAX_LAW_QTY][32];
 
 	gushort	special_col_amp[3];	/* 特殊颜色 */
 	gushort	color_amp[256];		/* 调色板信息 */
@@ -353,7 +354,7 @@ typedef struct Draw_interface
 	GtkWidget		*menu33[6];
 	GtkWidget		*menu_bar3;
 	GtkWidget		*root_menu3;
-	GtkWidget		*menu_item3[30];
+	GtkWidget		*menu_item3[64];
 
 	GtkWidget		*window;
 	GtkWidget		*win_keyboard;
@@ -380,6 +381,7 @@ typedef struct Draw_interface
 	const gchar **list1;
 	const gchar **field1;
 	const gchar **field;
+	const gchar **field_unit;
 
 	CONFIG_P		p_config;			/**/
 	TMP_CONFIG_P	p_tmp_config;		/**/
@@ -404,6 +406,7 @@ typedef struct Draw_interface
 	guchar			mark3;
 
 	guchar	bscan_mark;
+	guchar	cscan_mark;
 	guchar	sscan_mark;
 	guchar	refresh_mark;
 
@@ -432,6 +435,7 @@ typedef struct Draw_interface
 	GtkWidget *sw11;
 	GtkWidget *sw1;		/* 第二个scroll 探头 楔块 聚焦法则 setup 等需要2个sw */
 	int		fd_key;		/* 串口设备 */
+	int		fd_key1;		/* 串口设备 */
 
 	guchar  iter_qty;       /* treeview 中 iter 的个数 */
 	guchar  iter_pos;	/* treeview 中 iter 的位置 */

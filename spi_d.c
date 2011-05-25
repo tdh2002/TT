@@ -7,12 +7,13 @@
 #include <linux/spi/spidev.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <string.h>
 #include <sys/ioctl.h>
 #define ARRAY_DEVICE	"/dev/spidev1.0"
 #define NORMAL_DEVICE	"/dev/spidev3.1"
 
 #include "spi_d.h"
-#define DEBUG 0
+#define DEBUG 1
 
 static int fd_array, fd_normal;
 
@@ -86,16 +87,33 @@ void init_spi ()
 
 int write_group_data (group_data_spi *p, unsigned int group)
 {
+	group_data_spi new, *p1;
+	memcpy (&new, p, sizeof (group_data_spi));
+	p1 = &new;
 
 #if DEBUG
+/*	unsigned int *tmp = (unsigned *)(p);*/
 	unsigned int tmp = p->gain;
-	printf ("Gain = %d\n", tmp);
+	printf ("Gain= %d\n", tmp);
+	tmp = p->freq_band;
+	printf ("Freq_band= %d\n", tmp);
+	tmp = p->rectifier;
+	printf ("Rectifier= %d\n", tmp);
+	tmp = p->video_filter;
+	printf ("Video_filter= %d\n", tmp);
+	tmp = p->sum_gain;
+	printf ("sun gain= %d\n", tmp);
+	tmp = p->reject;
+	printf ("reject= %d\n", tmp);
+	tmp = p->voltage;
+	printf ("voltage= %d\n", tmp);
 #endif
+
 	p->offset = 16 * group;
 	p->addr = 0x2;
-	little_to_big ((unsigned int *)(p), sizeof(group_data_spi) / 4);
+	little_to_big ((unsigned int *)(p1), sizeof(group_data_spi) / 4);
 	
-	return write (fd_array, (unsigned char *)p, sizeof(group_data_spi));
+	return write (fd_array, (unsigned char *)(p1), sizeof(group_data_spi));
 }
 
 void write_focal_data ( )
