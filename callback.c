@@ -658,11 +658,14 @@ void b2_fun0(DRAW_UI_P p, guint pos)
 {
 	if(gtk_widget_get_visible(p->eventbox2[pos]))
 	{
-		p->pos_last1 = p->pos1[p->pos];
-		p->pos1[p->pos] = pos;
-		p->pos_pos = MENU3_STOP;
-		draw_menu2(0);
-		draw_menu3(0, NULL);
+		if (p->pos_last1 != pos)
+		{
+			p->pos_last1 = p->pos1[p->pos];
+			p->pos1[p->pos] = pos;
+			p->pos_pos = MENU3_STOP;
+			draw_menu2(0);
+			draw_menu3(0, NULL);
+		}
 	}
 }
 
@@ -1449,6 +1452,8 @@ void b3_fun3(gpointer p)
 
 					cal_focal_law ();
 					pp->cscan_mark = 1;
+					pp->ccscan_mark = 1;
+					pp->cccscan_mark = 1;
 					pp->sscan_mark = 1;
 					break;  /* 计算聚焦法则 P643 */
 				default:break;
@@ -3738,10 +3743,12 @@ void data_400 (GtkMenuItem *menuitem, gpointer data) /* Display -> Selection -> 
 			break;
 		case A_C_CC_SCAN:
 			pp->cscan_mark = 1;
+			pp->ccscan_mark = 1;
 			break;
 		case A_S_CC_SCAN:
-			pp->cscan_mark = 1;
 			pp->sscan_mark = 1;
+			pp->cccscan_mark = 1;
+/*			pp->cscan_mark = 1;*/
 			break;
 		default:break;
 	}

@@ -207,6 +207,8 @@ typedef struct tmp_config
 	guint	t_color[256];		/* 临时调色板信息 */
 
 	guint	max_prf;
+	guint	virtual_rules;			/* 一次dma数据里面有多少个重复的数据 */
+	guint	total_point_qty;
 	gushort	*fb1_addr;
 	gushort	*virtual_add;
 
@@ -410,6 +412,8 @@ typedef struct Draw_interface
 
 	guchar	bscan_mark;
 	guchar	cscan_mark;
+	guchar	ccscan_mark;
+	guchar	cccscan_mark;
 	guchar	sscan_mark;
 	guchar	refresh_mark;
 

@@ -375,7 +375,7 @@ typedef	struct _Config
 	guint	dis_range;			/* Strip Chart A 时候的显示范围 */
 	guint	avg_scan_speed;		/* 这个值只能显示不用加在这里的 delete */
 
-
+	guint	prf_virtual;
 
 	guchar	alarm_pos;          /* 当前选择 报警信息 0~15 */
 	guchar	output_pos;			/* 0~5 */

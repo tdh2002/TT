@@ -320,6 +320,8 @@ int main (int argc, char *argv[])
 	}
 #endif
 
+	for (i = 0; i < setup_MAX_GROUP_QTY; i++)
+		TMP(total_point_qty) += TMP(beam_qty[i]) * (GROUP_VAL_POS (i, point_qty) + 32);
 
 	init_ui (p_ui);
 

@@ -4771,6 +4771,7 @@ gboolean progress_motion_notify (GtkWidget *progress, GdkEvent *event, gpointer 
 	return FALSE;
 }
 
+#if 0
 static void draw_area(GtkWidget *parent_box, DRAW_AREA *draw_area, guint width, guint height,
 		const gchar *title, 
 		gdouble v1s, gdouble v1e,
@@ -4798,6 +4799,7 @@ static void draw_area(GtkWidget *parent_box, DRAW_AREA *draw_area, guint width, 
 			G_CALLBACK (draw_info), (gpointer)(draw_area));
 	//	gtk_widget_set_events (draw_area->drawing_area, GDK_POINTER_MOTION_MASK |
 	//			GDK_POINTER_MOTION_HINT_MASK);
+#if 0	
 	gtk_widget_add_events (draw_area->drawing_area, GDK_BUTTON_RELEASE_MASK | 
 			GDK_BUTTON_PRESS_MASK   |
 			GDK_POINTER_MOTION_MASK );
@@ -4810,12 +4812,14 @@ static void draw_area(GtkWidget *parent_box, DRAW_AREA *draw_area, guint width, 
 			G_CALLBACK (progress_button_press), NULL);
 	g_signal_connect ((draw_area->drawing_area), "motion-notify-event", 
 			G_CALLBACK (progress_motion_notify), NULL);
+#endif
 
 	gtk_widget_show_all(draw_area->vbox);
 
 	gtk_box_pack_start (GTK_BOX (parent_box), draw_area->vbox, FALSE, FALSE, 0);
 	return ;
 }
+#endif
 
 static void draw_area_(GtkWidget *parent_box, DRAW_AREA *draw_area, guint width, guint height)
 {
@@ -4843,6 +4847,7 @@ static void draw_area_(GtkWidget *parent_box, DRAW_AREA *draw_area, guint width,
 	/* 调用 draw_info 函数 */
 	g_signal_connect (G_OBJECT (draw_area->drawing_area), "expose-event",
 			G_CALLBACK (draw_info), (gpointer)(draw_area));
+#if 0
 	gtk_widget_add_events (draw_area->drawing_area, GDK_BUTTON_RELEASE_MASK | 
 			GDK_BUTTON_PRESS_MASK |	GDK_POINTER_MOTION_MASK );
 
@@ -4852,6 +4857,7 @@ static void draw_area_(GtkWidget *parent_box, DRAW_AREA *draw_area, guint width,
 			G_CALLBACK (progress_button_press), NULL);
 	g_signal_connect ((draw_area->drawing_area), "motion-notify-event", 
 			G_CALLBACK (progress_motion_notify), NULL);
+#endif
 
 	gtk_widget_show_all(draw_area->vbox);
 
@@ -4984,6 +4990,7 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 			break;
 		case C_SCAN:
 		case CC_SCAN:
+		case CCC_SCAN:
 			p->hmin1 = 0;
 			p->hmin2 = 0;
 			if (LAW_VAL(Focal_type) == AZIMUTHAL_SCAN)
@@ -5003,6 +5010,17 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 		case S_SCAN:
 		case S_SCAN_A:
 		case S_SCAN_L:
+			p->hmin1 = 0;
+			p->hmin2 = 0;
+			p->h1_unit = UNIT_BFH;
+			p->hmax1 = 100;
+			p->hmax2 = 100;
+			p->h2_unit = UNIT_BFH;
+
+			p->wmin1 = w1;
+			p->wmax1 = w2;
+			p->w_unit = w_unit;
+
 			g_sprintf (p->title, "S scan|Gr %d|CH %0.1f|SK%0.1f|L%d", 
 					CFG(groupId) + 1, angle / 100.0, GROUP_VAL(skew) / 100.0, num + 1);
 			break;
@@ -5186,7 +5204,7 @@ void draw_area_all()
 				gtk_widget_show (pp->vbox_area[0]);
 				break;
 			case A_S_CC_SCAN:
-				if (CFG(c_scan11) == C_SCAN_OFF)
+				if (CFG(c_scan11) == C_SCAN_OFF) /* c 扫描不存在的情况 */
 				{
 					if ((GROUP_VAL(ut_unit) == UT_UNIT_SOUNDPATH) ||
 							(GROUP_VAL(ut_unit) == UT_UNIT_TIME))
@@ -5195,14 +5213,12 @@ void draw_area_all()
 						pp->draw_area[1].scan_type	=	S_SCAN;
 						gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
 						set_drawarea_property (&(pp->draw_area[0]), A_SCAN, 0);
-						draw_area(pp->vbox_area[0], &(pp->draw_area[0]), 655, 150, "A-scan", 0.0, 100.0,
-								0.0, 100.0, 0.0, 0.0, NULL);
+						draw_area_ (pp->vbox_area[0], &(pp->draw_area[0]), 655, 130);
 						set_drawarea_property (&(pp->draw_area[1]), S_SCAN, 0);
-						draw_area(pp->vbox_area[0], &(pp->draw_area[1]), 655, 295, "S-scan", 0.0, 100.0,
-								0.0, 100.0, 0.0, 100.0, NULL);
+						draw_area_ (pp->vbox_area[0], &(pp->draw_area[1]), 655, 295);
 						gtk_widget_show (pp->vbox_area[0]);
-						set_scan_config (0, A_SCAN, 615, 615, 115, 0, 0, CFG(groupId));
-						set_scan_config (1, S_SCAN, 615, 615, 260, 0, 130, CFG(groupId));
+						set_scan_config (0, A_SCAN, 605, 605, 95, 0, 0, CFG(groupId));
+						set_scan_config (1, S_SCAN, 605, 605, 260, 0, 130, CFG(groupId));
 					}
 					else if (GROUP_VAL(ut_unit) == UT_UNIT_TRUE_DEPTH)
 					{
@@ -5212,14 +5228,12 @@ void draw_area_all()
 							pp->draw_area[1].scan_type	=	S_SCAN_A;
 							gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->hbox_area[0], FALSE, FALSE, 0);
 							set_drawarea_property (&(pp->draw_area[0]), A_SCAN_R, 0);
-							draw_area(pp->hbox_area[0], &(pp->draw_area[0]), 250, 425, "A-scan", 0.0,
-									100.0, 0.0, 100.0, 0.0, 100.0, NULL);
+							draw_area_ (pp->hbox_area[0], &(pp->draw_area[0]), 250, 425);
 							set_drawarea_property (&(pp->draw_area[1]), S_SCAN_A, 0);
-							draw_area(pp->hbox_area[0], &(pp->draw_area[1]), 405, 425, "S-scan", 0.0, 
-									100.0, 0.0, 100.0, 0.0, 100.0, NULL);
+							draw_area_ (pp->hbox_area[0], &(pp->draw_area[1]), 405, 425);
 							gtk_widget_show (pp->hbox_area[0]);
-							set_scan_config (0, A_SCAN_R, 390, 210, 390, 0, 0, CFG(groupId));
-							set_scan_config (1, S_SCAN_A, 390, 365, 390, 250, 0, CFG(groupId));
+							set_scan_config (0, A_SCAN_R, 390, 200, 390, 0, 0, CFG(groupId));
+							set_scan_config (1, S_SCAN_A, 390, 355, 390, 250, 0, CFG(groupId));
 						} 
 						else if (LAW_VAL(Focal_type) == LINEAR_SCAN)
 						{
@@ -5227,40 +5241,83 @@ void draw_area_all()
 							pp->draw_area[1].scan_type	=	S_SCAN_L;
 							gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->hbox_area[0], FALSE, FALSE, 0);
 							set_drawarea_property (&(pp->draw_area[0]), A_SCAN_R, 0);
-							draw_area(pp->hbox_area[0], &(pp->draw_area[0]), 250, 425, "A-scan", 0.0,
-									100.0, 0.0, 100.0, 0.0, 100.0, NULL);
+							draw_area_ (pp->hbox_area[0], &(pp->draw_area[0]), 250, 425);
 							set_drawarea_property (&(pp->draw_area[1]), S_SCAN_L, 0);
-							draw_area(pp->hbox_area[0], &(pp->draw_area[1]), 405, 425, "S-scan", 0.0, 
-									100.0, 0.0, 100.0, 0.0, 100.0, NULL);
+							draw_area_ (pp->hbox_area[0], &(pp->draw_area[1]), 405, 425);
 							gtk_widget_show (pp->hbox_area[0]);
-							set_scan_config (0, A_SCAN_R, 390, 210, 390, 0, 0, CFG(groupId));
-							set_scan_config (1, S_SCAN_L, 390, 365, 390, 250, 0, CFG(groupId));
+							set_scan_config (0, A_SCAN_R, 390, 200, 390, 0, 0, CFG(groupId));
+							set_scan_config (1, S_SCAN_L, 390, 355, 390, 250, 0, CFG(groupId));
 						}
 					}
 				}
 				else
 				{
+					if ((GROUP_VAL(ut_unit) == UT_UNIT_SOUNDPATH) ||
+							(GROUP_VAL(ut_unit) == UT_UNIT_TIME))
+					{
+						pp->draw_area[0].scan_type	=	A_SCAN;
+						pp->draw_area[1].scan_type	=	S_SCAN;
+						pp->draw_area[2].scan_type	=	CCC_SCAN;
+						gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
+						set_drawarea_property (&(pp->draw_area[0]), A_SCAN, 0);
+						draw_area_ (pp->vbox_area[0], &(pp->draw_area[0]), 655, 125);
+						set_drawarea_property (&(pp->draw_area[1]), S_SCAN, 0);
+						draw_area_ (pp->vbox_area[0], &(pp->draw_area[1]), 655, 150);
+						set_drawarea_property (&(pp->draw_area[2]), CCC_SCAN, 0);
+						draw_area_ (pp->vbox_area[0], &(pp->draw_area[2]), 655, 150);
+						gtk_widget_show (pp->vbox_area[0]);
+						set_scan_config (0, A_SCAN, 605, 605, 95, 0, 0, CFG(groupId));
+						set_scan_config (1, S_SCAN, 605, 605, 115, 0, 125, CFG(groupId));
+						set_scan_config (2, CCC_SCAN, 605, 605, 115, 0, 275, CFG(groupId));
+					}
+					else if (GROUP_VAL(ut_unit) == UT_UNIT_TRUE_DEPTH)
+					{
+						gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->hbox_area[0], FALSE, FALSE, 0);
+						gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[1], FALSE, FALSE, 0);
+						if (LAW_VAL(Focal_type) == AZIMUTHAL_SCAN)
+						{
+							pp->draw_area[0].scan_type	=	A_SCAN_R;
+							pp->draw_area[1].scan_type	=	S_SCAN_A;
+							pp->draw_area[2].scan_type	=	CCC_SCAN;
+							set_drawarea_property (&(pp->draw_area[0]), A_SCAN_R, 0);
+							draw_area_ (pp->hbox_area[0], &(pp->draw_area[0]), 250, 275);
+							set_drawarea_property (&(pp->draw_area[1]), S_SCAN_A, 0);
+							draw_area_ (pp->hbox_area[0], &(pp->draw_area[1]), 405, 275);
+							set_drawarea_property (&(pp->draw_area[2]), CCC_SCAN, 0);
+							draw_area_ (pp->vbox_area[1], &(pp->draw_area[2]), 655, 150);
+							gtk_widget_show (pp->hbox_area[0]);
+							set_scan_config (0, A_SCAN_R, 390, 200, 240, 0, 0, CFG(groupId));
+							set_scan_config (1, S_SCAN_A, 390, 355, 240, 250, 0, CFG(groupId));
+							set_scan_config (2, CCC_SCAN, 390, 605, 115, 0, 275, CFG(groupId));
+						} 
+						else if (LAW_VAL(Focal_type) == LINEAR_SCAN)
+						{
+							pp->draw_area[0].scan_type	=	A_SCAN_R;
+							pp->draw_area[1].scan_type	=	S_SCAN_L;
+							pp->draw_area[2].scan_type	=	CCC_SCAN;
+							set_drawarea_property (&(pp->draw_area[0]), A_SCAN_R, 0);
+							draw_area_ (pp->hbox_area[0], &(pp->draw_area[0]), 250, 425);
+							set_drawarea_property (&(pp->draw_area[1]), S_SCAN_L, 0);
+							draw_area_ (pp->hbox_area[0], &(pp->draw_area[1]), 405, 425);
+							set_drawarea_property (&(pp->draw_area[2]), CCC_SCAN, 0);
+							draw_area_ (pp->vbox_area[1], &(pp->draw_area[2]), 655, 150);
+							gtk_widget_show (pp->hbox_area[0]);
+							set_scan_config (0, A_SCAN_R, 390, 200, 390, 0, 0, CFG(groupId));
+							set_scan_config (1, S_SCAN_L, 390, 355, 390, 250, 0, CFG(groupId));
+							set_scan_config (2, CCC_SCAN, 390, 605, 115, 0, 275, CFG(groupId));
+						}
+					}
 				}
 				break;
-
 			case Strip_Chart_AA:
-				gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
-				set_drawarea_property (&(pp->draw_area[0]), A_SCAN, 0);
-				draw_area(pp->vbox_area[0], &(pp->draw_area[0]), 655, 150, "A-scan", 0.0, 100.0,
-						0.0, 100.0, 0.0, 100.0, NULL);
-				set_drawarea_property (&(pp->draw_area[1]), Strip_Chart_AA, 0);
-				draw_area(pp->vbox_area[0], &(pp->draw_area[1]), 655, 275, "Strip Chart", 0.0, 100.0,
-						0.0, 100.0, 0.0, 100.0, NULL);
-				gtk_widget_show (pp->vbox_area[0]);
 				break;
-
 			default:
 				break;
 		}
 	}
-	else 
-		if (CFG (display_group) == DISPLAY_ALL_GROUP) 
+	else if (CFG (display_group) == DISPLAY_ALL_GROUP) 
 		{
+#if 0
 			switch (CFG(groupQty))
 			{
 				case 2:
@@ -5362,6 +5419,7 @@ void draw_area_all()
 					break;
 				default:break;
 			}
+#endif
 		}
 
 	if (str)
@@ -17069,6 +17127,7 @@ gpointer signal_thread1(gpointer arg)
 static gboolean time_handler2 (GtkWidget *widget)
 {
 	gint tmp, prf_tmp;
+	GThread *tt;
 	pp->scan_count++;
 
 	g_thread_create (signal_thread, NULL, FALSE, NULL);
@@ -17091,7 +17150,8 @@ static gboolean time_handler2 (GtkWidget *widget)
 		pp->scan_count = 0;
 		if (pp->mark3)
 		{
-			g_thread_create (signal_thread1, NULL, FALSE, NULL);
+			tt = g_thread_create (signal_thread1, NULL, FALSE, NULL);
+			g_thread_set_priority (tt, G_THREAD_PRIORITY_URGENT);
 		}
 	}
 	return TRUE;
