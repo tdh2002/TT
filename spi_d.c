@@ -116,8 +116,25 @@ int write_group_data (group_data_spi *p, unsigned int group)
 	return write (fd_array, (unsigned char *)(p1), sizeof(group_data_spi));
 }
 
-void write_focal_data ( )
+int write_focal_data (focal_data_spi *p, unsigned int beam_num)
 {
+	focal_data_spi new, *p1;
+	memcpy (&new, p, sizeof (focal_data_spi));
+	p1 = &new;
+
+#if DEBUG
+	/*
+	unsigned int tmp = p->gain;
+	printf ("Gain= %d\n", tmp);
+	tmp = p->freq_band;
+	*/
+#endif
+
+	p->offset = 64 * beam_num;
+	p->addr = 0x1;
+	little_to_big ((unsigned int *)(p1), sizeof(focal_data_spi) / 4);
+	
+	return write (fd_array, (unsigned char *)(p1), sizeof(focal_data_spi));
 }
 
 void write_tgc_data ()

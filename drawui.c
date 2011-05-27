@@ -16961,9 +16961,8 @@ gpointer signal_thread(gpointer arg)
 
 gpointer signal_thread1(gpointer arg) 
 {
-	gint i, j, k, prf_count, offset, offset1;
+	gint i, j, k, offset, offset1;
 	guchar *temp1 = (guchar *)(pp->p_beam_data + 0x100000);
-	DRAW_UI_P p = p_drawui_c;
 	pp->mark3 = 0;
 	/* 32是什么东西 32是闸门测了的数据 */
 
@@ -17034,7 +17033,7 @@ gpointer signal_thread1(gpointer arg)
 /* 读取波形数据 并画出来 */
 static gboolean time_handler2 (GtkWidget *widget)
 {
-	gint tmp, prf_tmp;
+	gint prf_tmp;
 	GThread *tt;
 	pp->scan_count++;
 
