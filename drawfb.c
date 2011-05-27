@@ -875,6 +875,7 @@ void draw_scan(guchar scan_num, guchar scan_type, guchar group,
 					xoff, yoff, group);
 			break;
 		case B_SCAN:
+			break;
 			if (pp->bscan_mark)
 			{
 				draw_b_scan(dot_temp1, TMP(b_scan_width), TMP(b_scan_height),dot_temp,

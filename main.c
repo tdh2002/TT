@@ -408,8 +408,8 @@ void init_group_spi (guint group)
 		tmp = (tmp & 0xfffffffc) | 0x00;
 
 	TMP(group_spi[group]).gate_a_logic	= tmp;	
-	/* 0-1 表示同步选择 00 pulse 01 A 10 B 11 I 
-	 * 2 表示测量选择 0 Peak 1 Edge  其余预留 
+	/* 0-1 表示测量选择 00 波前 Edge 01 波峰 Peak 
+	 * 2-3 表示同步选择 00 发射同步Pulse 01 AGate 10 BGate 11 IGATE
 	 * */
 	TMP(group_spi[group]).gate_a_end	= (GROUP_VAL_POS(group, gate[0].start) + 
 		GROUP_VAL_POS (group, gate[0].width)) / 10;
@@ -433,8 +433,8 @@ void init_group_spi (guint group)
 	TMP(group_spi[group]).gate_b_end	= (GROUP_VAL_POS(group, gate[1].start) + 
 		GROUP_VAL_POS (group, gate[1].width)) / 10;
 
-	TMP(group_spi[group]).gate_c_height	= GROUP_VAL_POS(group, gate[2].height);
-	TMP(group_spi[group]).gate_c_start	= GROUP_VAL_POS(group, gate[2].start) / 10;
+	TMP(group_spi[group]).gate_i_height	= GROUP_VAL_POS(group, gate[2].height);
+	TMP(group_spi[group]).gate_i_start	= GROUP_VAL_POS(group, gate[2].start) / 10;
 
 	if (GROUP_VAL_POS(group, gate[2].synchro) == 0)
 		tmp = (tmp & 0xfffffff3) | 0x00;
@@ -444,8 +444,8 @@ void init_group_spi (guint group)
 	else if (GROUP_VAL_POS(group, gate[2].measure) == 1)
 		tmp = (tmp & 0xfffffffc) | 0x00;
 
-	TMP(group_spi[group]).gate_c_logic	= tmp;	
-	TMP(group_spi[group]).gate_c_end	= (GROUP_VAL_POS(group, gate[2].start) + 
+	TMP(group_spi[group]).gate_i_logic	= tmp;	
+	TMP(group_spi[group]).gate_i_end	= (GROUP_VAL_POS(group, gate[2].start) + 
 		GROUP_VAL_POS (group, gate[2].width)) / 10;
 
 	TMP(group_spi[group]).reject = CFG(reject) * 40.95;	

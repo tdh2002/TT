@@ -358,6 +358,7 @@ extern guint get_freq ();
 extern guint get_pw ();
 extern guint get_prf ();
 extern guint get_filter ();
+extern guint get_max_point_qty();
 
 extern void tt_label_show_string (GtkWidget *label, const gchar *s1, const gchar *s2,
 		const gchar *s3, const gchar *color,  guint font_size);

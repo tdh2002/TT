@@ -194,8 +194,8 @@ typedef struct tmp_config
 	DOT_TYPE	scan_data[setup_MAX_GROUP_QTY][640*400];
 	guint		measure_data[setup_MAX_LAW_QTY][32];
 
-	gushort	special_col_amp[3];	/* 特殊颜色 */
-	gushort	color_amp[256];		/* 调色板信息 */
+	gushort	special_col_amp[3];		/* 特殊颜色 */
+	gushort	color_amp[256];			/* 调色板信息 */
 
 	gushort	special_col_tofd[3];	/* 特殊颜色 */
 	gushort	color_tofd[256];		/* 调色板信息 */
@@ -203,12 +203,12 @@ typedef struct tmp_config
 	gushort	special_col_depth[3];	/* 特殊颜色 */
 	gushort	color_depth[256];		/* 调色板信息 */
 
-	guint	t_special_col[3];/* 临时特殊颜色 */
-	guint	t_color[256];		/* 临时调色板信息 */
+	guint	t_special_col[3];		/* 临时特殊颜色 */
+	guint	t_color[256];			/* 临时调色板信息 */
 
 	guint	max_prf;
 	guint	virtual_rules;			/* 一次dma数据里面有多少个重复的数据 */
-	guint	total_point_qty;
+	guint	total_point_qty;		/* 当前一次dma 点的总数量 */
 	gushort	*fb1_addr;
 	gushort	*virtual_add;
 
@@ -277,16 +277,19 @@ typedef struct _draw_area
 	gint	hmin1;
 	gint	hmin2;
 	gint	h1_unit;
+	gint	h1_color;
 	gint	hmax1;
 	gint	hmax2;
 	gint	h2_unit;
+	gint	h2_color;
 	gint	wmin1;
 	gint	wmax1;
 	gint	w_unit;
+	gint	w_color;
 	guchar	scan_type;
-	gint	vrule1_copies;		/* 将vruler1分成多少份 */
-	gint	vrule2_copies;		/* 将vruler2分成多少份 */
-	gint	hrule_copies;		/* 将hruler分成多少份 */
+	gint	hrule1_copies;		/* 将vruler1分成多少份 */
+	gint	hrule2_copies;		/* 将vruler2分成多少份 */
+	gint	wrule_copies;		/* 将hruler分成多少份 */
 	gchar	title[64];
 } DRAW_AREA, *DRAW_AREA_P;
 

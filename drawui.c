@@ -284,14 +284,12 @@ void menu3_pop(guint action)
 			pp->menu3_poppos = 0;			/*选中的位置跳到最前去*/
 			while(!gtk_widget_get_sensitive(pp->menu_item3[pp->menu3_poppos]))/*判断这一个位置是否可选*/
 				pp->menu3_poppos++;
-			//g_print("pp->menu3_poppos1 = %d\n",pp->menu3_poppos);
 		}
 		else
 		{
 			pp->menu3_poppos++;
 			while(!gtk_widget_get_sensitive(pp->menu_item3[pp->menu3_poppos]))
 				pp->menu3_poppos++;
-			//g_print("pp->menu3_poppos2 = %d\n",pp->menu3_poppos);
 		}
 		gtk_menu_item_select (GTK_MENU_ITEM (pp->menu_item3[pp->menu3_poppos]));
 	}
@@ -710,10 +708,6 @@ static void da_call_palette (GtkDialog *dialog, gint response_id, gpointer user_
 	else if (GTK_RESPONSE_CANCEL == response_id) /* 取消 */
 		gtk_widget_destroy (GTK_WIDGET (dialog));
 
-	//	for ( i = 0 ; i < 256 ; i ++)
-	//	{
-	//		g_print("%x,\n", TMP(color_amp[i]));
-	//	}
 }
 
 static void da_call_warning (GtkDialog *dialog, 
@@ -1454,7 +1448,7 @@ void selection_file_type(GtkWidget *list,char *dir_path,char *file_type)
 
 	if (dir == NULL)
 	{
-		g_printf("Open directory failed:%s \n",dir_path);
+		g_print("Open directory failed:%s \n",dir_path);
 		return ;
 	}
 
@@ -1522,8 +1516,6 @@ int open_config_file(GtkWidget *widget,	GdkEventButton *event,	gpointer       da
 
 			gtk_tree_model_get(source_model, &source_iter, 0, &value_name,  -1);
 
-			g_printf("value_name = %s\n",value_name);
-
 			memset(file_name,0,sizeof(file_name));
 
 			source_file = Get_Source_File_Path();    
@@ -1544,8 +1536,6 @@ int open_config_file(GtkWidget *widget,	GdkEventButton *event,	gpointer       da
 			gtk_tree_selection_unselect_iter(source_selection,&source_iter);
 
 			g_free(value_name);
-
-			g_printf("selection \n");
 
 		}
 		else
@@ -1793,8 +1783,6 @@ int on_changed_config_file(GtkTreeSelection *selection,	gpointer       data)
 
 			gtk_tree_model_get(source_model, &source_iter, 0, &value_name,  -1);
 
-			g_printf("value_name = %s\n",value_name);
-
 			memset(file_name,0,sizeof(file_name));    
 
 			strcpy(file_name,file_path);
@@ -1840,8 +1828,6 @@ int on_changed_config_file(GtkTreeSelection *selection,	gpointer       data)
 
 			g_free(value_name);
 
-			g_printf("selection \n");
-
 		}
 		else
 		{
@@ -1849,8 +1835,6 @@ int on_changed_config_file(GtkTreeSelection *selection,	gpointer       data)
 		} 
 
 	}
-
-	g_printf("on_changed_config_file\n");
 
 	return 0;
 }
@@ -1885,7 +1869,7 @@ int save_config_file(GtkWidget *widget,	GdkEventButton *event,	gpointer       da
 
 	if (fp < 0)
 	{
-		g_printf("in save_config_file function, can't open file\n");
+		g_print("in save_config_file function, can't open file\n");
 		return -1;
     }
 
@@ -2774,7 +2758,6 @@ gboolean law_read (GtkWidget *widget, GdkEventButton *event, gpointer data)
 
 		for (offset = 0, k = 0 ; k < CFG(groupId); k++)
 			offset += TMP(beam_qty[k]);
-		g_print("%s\n", file_path);
 		read_law_file(file_path, offset, CFG(groupId));
 		GROUP_VAL (frequency) = GROUP_VAL(probe.Frequency);				/* 频率 */
 
@@ -2932,7 +2915,6 @@ static void da_call_ip (GtkDialog *dialog, gint response_id, gpointer user_data)
 		for(i=0;i<4;i++)
 		{  
 			*tmp = gtk_spin_button_get_value((GtkSpinButton *)entry_ip_p->entry[i]);
-			g_printf("%d\n",*tmp);    
 			tmp++;
 		}
 
@@ -3067,7 +3049,6 @@ static void da_call_mask (GtkDialog *dialog, gint response_id, gpointer user_dat
 		for(i=0;i<4;i++)
 		{  
 			*tmp = gtk_spin_button_get_value((GtkSpinButton *)entry_mask_p->entry[i]);
-			g_printf("%d\n",*tmp);    
 			tmp++;
 		}
 
@@ -3205,7 +3186,6 @@ static void da_call_time (GtkDialog *dialog, gint response_id, gpointer user_dat
 		for(i=0;i<3;i++)
 		{  
 			*tmp = gtk_spin_button_get_value( (GtkSpinButton *)entry_time_p->entry[i] );
-			g_printf("%d\n",*tmp);    
 			tmp++;
 		}
         //生成命令
@@ -3395,7 +3375,6 @@ static void da_call_date (GtkDialog *dialog, gint response_id, gpointer user_dat
 		for(i=0;i<3;i++)
 		{  
 			*tmp = gtk_spin_button_get_value( (GtkSpinButton *)entry_date_p->entry[i] );
-			g_printf("%d\n",*tmp);    
 			tmp++;
 		}
         
@@ -4041,49 +4020,48 @@ static gboolean draw_info(GtkWidget *widget, GdkEventExpose *event, gpointer dat
 	gfloat k;
 	gchar *str = NULL;
     DRAW_AREA_P prule = (DRAW_AREA_P)(data) ;
+	
 
 	gtk_widget_get_size_request (widget, &w, &h);
-/*	g_print("w=%d, h=%d\n",w,h);*/
 
 	if(h>400)
 	{
-		prule->vrule1_copies = 100;
-		prule->vrule2_copies = 100;
+		prule->hrule1_copies = 100;
+		prule->hrule2_copies = 100;
 	}
 	else if ((h>300) && (h<400))
 	{
-		prule->vrule1_copies = 80;
-		prule->vrule2_copies = 80;
+		prule->hrule1_copies = 80;
+		prule->hrule2_copies = 80;
 	}
-	else if ((h>250) && (h<300))
+	else if ((h>150) && (h<300))
 	{
-		prule->vrule1_copies = 70;
-		prule->vrule2_copies = 70;
-	}
-	else if ((h>150) && (h<250))
-	{
-		prule->vrule1_copies = 50;
-		prule->vrule2_copies = 50;
+		prule->hrule1_copies = 50;
+		prule->hrule2_copies = 50;
 	}
 	else if ((h>100) && (h<150))
 	{
-		prule->vrule1_copies = 30;
-		prule->vrule2_copies = 30;
+		prule->hrule1_copies = 30;
+		prule->hrule2_copies = 30;
 	}
 	else
 	{
-		prule->vrule1_copies = 0;
-		prule->vrule2_copies = 0;
+		prule->hrule1_copies = 0;
+		prule->hrule2_copies = 0;
 	}
 
 	if(w>600)
-		prule->hrule_copies = 100;
+		prule->wrule_copies = 100;
 	else if((w>299)&&(w<400))
-		prule->hrule_copies = 50;
+		prule->wrule_copies = 50;
 	else if ((w>100)&&(w<200))
-		prule->hrule_copies = 25;
+		prule->wrule_copies = 25;
 	else 
-		prule->hrule_copies = 0;
+		prule->wrule_copies = 0;
+
+
+
+
 
 	cr = gdk_cairo_create(widget->window);
 	/* 网格 */
@@ -4237,271 +4215,6 @@ static gboolean draw_info(GtkWidget *widget, GdkEventExpose *event, gpointer dat
 		cairo_line_to(cr, (GROUP_VAL(gate[0].start) / 1000.0) * (GROUP_VAL(velocity) / 200000.0)+(GROUP_VAL(gate[0].width) / 1000.0) * (GROUP_VAL(velocity) / 200000.0)  ,(1.0-GROUP_VAL(gate[0].height) / 100.0)*(h-20) );
 
 		cairo_stroke(cr);
-		g_printf("A gate start = %f\n",(GROUP_VAL(gate[0].start) / 1000.0) * (GROUP_VAL(velocity) / 200000.0));
-		g_printf("A gate width = %f\n",(GROUP_VAL(gate[0].width) / 1000.0) * (GROUP_VAL(velocity) / 200000.0));
-
-		cairo_set_source_rgba(cr,0.0,1.0,0.0,1.0);	/* B闸门为绿色 */
-		cairo_move_to(cr, (GROUP_VAL(gate[1].start) / 1000.0) * (GROUP_VAL(velocity) / 200000.0), 
-				(1.0-GROUP_VAL(gate[1].height) / 100.0)*(h-20) );
-
-		cairo_line_to(cr, (GROUP_VAL(gate[1].start) / 1000.0) * (GROUP_VAL(velocity) / 200000.0)+(GROUP_VAL(gate[1].width) / 1000.0) * (GROUP_VAL(velocity) / 200000.0)  ,(1.0-GROUP_VAL(gate[1].height) / 100.0)*(h-20) );
-		cairo_stroke(cr);
-
-		cairo_set_source_rgba(cr,1.0,1.0,0.0,1.0);	/* C闸门为黄色 */
-		cairo_move_to(cr, (GROUP_VAL(gate[2].start) / 1000.0) * (GROUP_VAL(velocity) / 200000.0), 
-				(1.0-GROUP_VAL(gate[2].height) / 100.0)*(h-20) );
-
-		cairo_line_to(cr, (GROUP_VAL(gate[2].start) / 1000.0) * (GROUP_VAL(velocity) / 200000.0)+(GROUP_VAL(gate[2].width) / 1000.0) * (GROUP_VAL(velocity) / 200000.0)  ,(1.0-GROUP_VAL(gate[2].height) / 100.0)*(h-20) );
-
-		cairo_stroke(cr);
-	}
-
-	/* 画ruler */
-	if (prule->hmin1 != prule->hmax1)
-	{
-		cairo_set_source_rgba(cr,0.72,0.94,0.1,1.0);    /* vruler1颜色为绿色 */
-		cairo_rectangle(cr,0.0,0.0,20.0,h-20);		/* vruler1 */
-		cairo_fill (cr);
-		cairo_stroke(cr);
-		cairo_set_source_rgba(cr,0.0,0.0,0.0,1.0);	/* 标尺及单位颜色为黑色 */
-		cairo_set_font_size(cr,8);
-		cairo_save (cr);				/* 保存当前画笔 */
-		cairo_move_to (cr, 12, (h-30));	/*vruler1 单位 ％*/
-		cairo_rotate (cr, G_PI * 3/2);
-		cairo_show_text (cr, units[prule->h1_unit]);
-		cairo_restore (cr);
-
-		for(i=0, k=0;k<(h-20.0);k=k+(h-20.0)/prule->vrule1_copies)	/* vruler1 标尺 */
-		{
-			if(i%10 == 0)
-			{
-				cairo_save(cr);
-				cairo_move_to(cr,5,(int)k+0.5);
-				cairo_line_to(cr,20,(int)k+0.5);
-				cairo_stroke(cr);
-				cairo_move_to(cr,12,(int)k-2.5);
-				cairo_rotate(cr, G_PI * 3/2);		/*旋转270度*/
-				str=g_strdup_printf("%.0f",prule->hmax1 - (float)(prule->hmax1-prule->hmin1)*i/(prule->vrule1_copies));
-				cairo_show_text(cr,str);   		/*标签*/
-				cairo_restore(cr);
-			}
-			else if(i%5 == 0)
-			{
-
-				cairo_move_to(cr,10,(int)k+0.5);
-				cairo_line_to(cr,20,(int)k+0.5);
-				cairo_stroke(cr);
-			}
-			else
-			{
-				cairo_move_to(cr,15,(int)k+0.5);
-				cairo_line_to(cr,20,(int)k+0.5);
-				cairo_stroke(cr);
-			}
-			i++;
-		}
-	}
-
-	if (prule->wmin1 != prule->wmax1)
-	{
-		cairo_set_source_rgba(cr,0.72,0.94,0.1,1.0);    /* hruler颜色为绿色 */
-		cairo_rectangle(cr,20.0,h-20,w-50,20.0);	/* hruler */
-		cairo_fill (cr);
-		cairo_stroke(cr);
-		cairo_set_source_rgba(cr,0.0,0.0,0.0,1.0);	/* 标尺及单位颜色为黑色 */
-		cairo_set_font_size(cr,8);
-		cairo_move_to(cr,50,(h-5));/*hruler 单位 mm*/
-		cairo_show_text(cr, pp->units[prule->w_unit]);
-
-		for( i=0,k=0;k<w-50;k=k+(w-50.0)/prule->hrule_copies )	/* hruler 标尺 */
-		{
-			if(i%10 == 0)
-			{
-				cairo_move_to(cr,20+(int)k+0.5,h-20);
-				cairo_line_to(cr,20+(int)k+0.5,h-5);
-				cairo_stroke(cr);
-				cairo_move_to(cr,23.5+(int)k,h-5);
-				str=g_strdup_printf("%.2f",prule->wmin1 + (float)(prule->wmax1-prule->wmin1)*i/(prule->hrule_copies));
-				cairo_show_text(cr,str);   		/*标签*/
-			}
-			else if(i%5 == 0)
-			{
-				cairo_move_to(cr,20+(int)k+0.5,h-20);
-				cairo_line_to(cr,20+(int)k+0.5,h-10);
-				cairo_stroke(cr);
-			}
-			else
-			{
-				cairo_move_to(cr,20+(int)k+0.5,h-20);
-				cairo_line_to(cr,20+(int)k+0.5,h-15);
-				cairo_stroke(cr);
-			}
-			i++;
-		}
-	}
-
-	if( prule->hmin2 != prule->hmax2)
-	{
-		cairo_set_source_rgba(cr,0.72,0.94,0.1,1.0);    /* vruler2颜色为绿色 */
-		cairo_rectangle(cr,w-20.0,0.0,20.0,h-20.0);	/* vruler2 */
-		cairo_fill (cr);
-		cairo_stroke(cr);
-		cairo_set_source_rgba(cr,0.0,0.0,0.0,1.0);	/* 标尺及单位颜色为黑色 */
-		cairo_set_font_size(cr,8);
-		cairo_save(cr);
-		cairo_move_to(cr,(w-5),(h-30));/*vruler2 单位 ％*/
-		cairo_rotate(cr, G_PI*3/2);
-		cairo_show_text(cr,units[prule->h2_unit]);
-		cairo_restore(cr);
-
-		for( i=0,k=0;k<h-20;k=k+(h-20.0)/prule->vrule2_copies )	/* vruler2 标尺 */
-		{
-			if(i%10 == 0)
-			{
-				cairo_save(cr);
-				cairo_move_to(cr,w-20,(int)k+0.5);
-				cairo_line_to(cr,w-5,(int)k+0.5);
-				cairo_stroke(cr);
-				cairo_move_to(cr,w-7,(int)k-2.5);
-				cairo_rotate(cr, G_PI * 3/2);		/*旋转270度*/
-				str=g_strdup_printf("%.0f",prule->hmax2 - (float)(prule->hmax2-prule->hmin2)*i/(prule->vrule2_copies));
-				cairo_show_text(cr,str);   		/*标签*/
-				cairo_restore(cr);
-			}
-			else if(i%5 == 0)
-			{
-				cairo_move_to(cr,w-20,(int)k+0.5);
-				cairo_line_to(cr,w-10,(int)k+0.5);
-				cairo_stroke(cr);
-			}
-			else
-			{
-				cairo_move_to(cr,w-20,(int)k+0.5);
-				cairo_line_to(cr,w-15,(int)k+0.5);
-				cairo_stroke(cr);
-			}
-			i++;
-		}
-	}
-
-	g_free(str);
-	cairo_destroy(cr);
-	return TRUE;
-}
-
-#if 0
-static gboolean draw_info(GtkWidget *widget, GdkEventExpose *event, gpointer data)
-{
-	gfloat color_r = 0, color_g = 0, color_b = 0;
-	gint i,j,m,n,w,h;
-	cairo_t *cr; 
-	gfloat k;
-	gchar *str = NULL;
-
-	gtk_widget_get_size_request (widget, &w, &h);
-	g_print("w=%d, h=%d\n",w,h);
-	cr = gdk_cairo_create(widget->window);
-	/* 网格 */
-	cairo_set_line_width(cr, 1);
-	switch(CFG(grid))
-	{
-		case 0:
-			cairo_set_source_rgba(cr,0.0,0.5,0.5,1.0);break;
-		case 1:
-			cairo_set_source_rgba(cr,0.3,0.5,0.0,1.0);break;
-		case 2:
-			cairo_set_source_rgba(cr,0.5,0.0,0.0,1.0);break;
-		case 3:
-			cairo_set_source_rgba(cr,0.5,0.5,0.0,1.0);break;
-		case 4:
-			cairo_set_source_rgba(cr,0.0,0.0,0.0,1.0);break;
-		default:break;
-	}
-
-	if (CFG(grid) != 5) 
-	{
-		for (j = 0; j < h; j += (h / 10.0))
-		{
-			for  (m = 0; m < w; m += (w / 50.0))
-			{
-				cairo_move_to (cr, (int)(m) , (int)(j) + 0.5);
-				cairo_line_to (cr, (int)(m) +1 , (int)(j) + 0.5);
-				cairo_stroke (cr);
-			}
-		}
-		for ( i = 0; i < w; i += (w /10.0))
-		{
-			for (n = 0; n < h; n += (h / 50.0))
-			{
-				cairo_move_to (cr, (int)(i) , (int)(n) + 0.5);
-				cairo_line_to (cr, (int)(i) +1 , (int)(n) + 0.5);
-				cairo_stroke(cr);
-			}
-		}
-	}
-
-
-	/* 调色条信息 */
-	cairo_set_source_rgba (cr, 1.0, 1.0, 1.0, 1.0);
-	cairo_rectangle (cr, w-30, 0, 10, h-20);
-	cairo_fill (cr);
-	for ( i = 1; i < h - 21; i++ )
-	{
-		switch (((DRAW_AREA_P)(data))->scan_type)
-		{
-			case	A_SCAN:
-			case	A_SCAN_R:
-			case	B_SCAN:
-			case	S_SCAN:
-			case	S_SCAN_A:
-				color_r = ((TMP(color_amp[i * 256 / h]) >> 11)) / 32.0;
-				color_g = ((TMP(color_amp[i * 256 / h]) & 0x07e0) >> 5) / 64.0;
-				color_b = ((TMP(color_amp[i * 256 / h]) & 0x1f)) /  32.0;
-				break;
-			case	C_SCAN:
-				break;
-			default:break;
-		}
-		cairo_set_source_rgba (cr, color_r, color_g, color_b, 1.0);
-		cairo_move_to (cr, w - 29, i);
-		cairo_line_to (cr, w - 21, i);
-		cairo_stroke (cr);
-	}
-
-	/* 画cursor */
-	if (CFG(overlay_cursor)==1)
-	{
-		//cairo_set_line_width(cr, 1.0);
-		cairo_set_source_rgba(cr,1.0,0.5,0.5,1.0);
-		cairo_move_to (cr, 20, (h-20)*(1.0-GROUP_VAL(per_reference)/10000.0));
-		cairo_line_to (cr, w-30, (h-20)*(1.0-GROUP_VAL(per_reference)/10000.0));
-		cairo_stroke (cr);
-		cairo_move_to (cr, 20+(w-50)*GROUP_VAL(u_reference)/(GROUP_VAL(velocity)*10.0/20.85), 0);
-		cairo_line_to (cr, 20+(w-50)*GROUP_VAL(u_reference)/(GROUP_VAL(velocity)*10.0/20.85), h-20);
-		cairo_stroke (cr);
-
-		cairo_set_source_rgba(cr,0.5,1.0,0.5,1.0);
-		cairo_move_to (cr, 20, (h-20)*(1.0-GROUP_VAL(per_measure)/10000.0));
-		cairo_line_to (cr, w-30, (h-20)*(1.0-GROUP_VAL(per_measure)/10000.0));
-		cairo_stroke (cr);
-		cairo_move_to (cr, 20+(w-50)*GROUP_VAL(u_measure)/(GROUP_VAL(velocity)*10.0/20.85), 0);
-		/* 当前值除以最大值再乘以窗口宽度，即为百分比 */
-		cairo_line_to (cr, 20+(w-50)*GROUP_VAL(u_measure)/(GROUP_VAL(velocity)*10.0/20.85), h-20);
-		cairo_stroke (cr);
-	}
-
-	/* 画闸门 gate */
-	if(CFG(overlay_gate)==1)
-	{
-		cairo_set_source_rgba(cr,1.0,0.0,0.0,1.0);	/* A闸门为红色 */
-		cairo_move_to(cr, (GROUP_VAL(gate[0].start) / 1000.0) * (GROUP_VAL(velocity) / 200000.0), 
-				(1.0-GROUP_VAL(gate[0].height) / 100.0)*(h-20) );
-
-		cairo_line_to(cr, (GROUP_VAL(gate[0].start) / 1000.0) * (GROUP_VAL(velocity) / 200000.0)+(GROUP_VAL(gate[0].width) / 1000.0) * (GROUP_VAL(velocity) / 200000.0)  ,(1.0-GROUP_VAL(gate[0].height) / 100.0)*(h-20) );
-
-		cairo_stroke(cr);
-		g_printf("A gate start = %f\n",(GROUP_VAL(gate[0].start) / 1000.0) * (GROUP_VAL(velocity) / 200000.0));
-		g_printf("A gate width = %f\n",(GROUP_VAL(gate[0].width) / 1000.0) * (GROUP_VAL(velocity) / 200000.0));
 
 		cairo_set_source_rgba(cr,0.0,1.0,0.0,1.0);	/* B闸门为绿色 */
 		cairo_move_to(cr, (GROUP_VAL(gate[1].start) / 1000.0) * (GROUP_VAL(velocity) / 200000.0), 
@@ -4521,35 +4234,27 @@ static gboolean draw_info(GtkWidget *widget, GdkEventExpose *event, gpointer dat
 
 
 	/* 画ruler */
-	cairo_set_source_rgba(cr,0.72,0.94,0.1,1.0);    /* ruler颜色为绿色 */
-	cairo_rectangle(cr,0.0,0.0,20.0,h-20);		/* vruler1 */
-	cairo_fill (cr);
-	cairo_rectangle(cr,w-20.0,0.0,20.0,h-20.0);	/* vruler2 */
-	cairo_fill (cr);
-	cairo_rectangle(cr,20.0,h-20,w-40,20.0);	/* hruler */
+
+	if(!(prule->hmin1 == prule->hmax1))
+	{
+	//cairo_set_source_rgba(cr,0.72,0.94,0.1,1.0);    /* hruler1颜色为绿色 */
+
+	cairo_set_source_rgba(cr,((prule->h1_color)>>16)/255.0, (((prule->h1_color)>>8)&0x00FF)/255.0, ((prule->h1_color)&0xFF)/255.0, 1.0);
+
+	cairo_rectangle(cr,0.0,0.0,20.0,h-20);		/* hruler1 */
 	cairo_fill (cr);
 	cairo_stroke(cr);
-
 	cairo_set_source_rgba(cr,0.0,0.0,0.0,1.0);	/* 标尺及单位颜色为黑色 */
 	cairo_set_font_size(cr,8);
-
 	cairo_save (cr);				/* 保存当前画笔 */
-	cairo_move_to (cr, 12, (h-30));	/*vruler1 单位 ％*/
+	cairo_move_to (cr, 12, (h-30));	/*hruler1 单位 ％*/
 	cairo_rotate (cr, G_PI * 3/2);
-	cairo_show_text (cr, "%");
-	cairo_restore (cr);				/* 恢复当前保存的画笔 */
-
-	cairo_save(cr);
-	cairo_move_to(cr,(w-5),(h-30));/*vruler2 单位 ％*/
-	cairo_rotate(cr, G_PI*3/2);
-	cairo_show_text(cr,"%");
-	cairo_restore(cr);
-
-	cairo_move_to(cr,30,(h-5));/*hruler 单位 ％*/
-	cairo_show_text(cr,"mm");
+	cairo_show_text (cr, units[prule->h1_unit]);
+	//cairo_show_text (cr, "%");
+	cairo_restore (cr);
 
 	i=0;
-	for( k=0;k<(h-20.0);k=k+(h-20.0)/100.0)	/* vruler1 标尺 */
+	for( k=0;k<(h-20.0);k=k+(h-20.0)/prule->hrule1_copies)	/* hruler1 标尺 */
 	{
 		if(i%10 == 0)
 		{
@@ -4557,11 +4262,14 @@ static gboolean draw_info(GtkWidget *widget, GdkEventExpose *event, gpointer dat
 			cairo_move_to(cr,5,(int)k+0.5);
 			cairo_line_to(cr,20,(int)k+0.5);
 			cairo_stroke(cr);
-			cairo_move_to(cr,12,(int)k-2.5);
+			cairo_move_to(cr,12,(int)k-3.5);
 			//		cairo_set_font_size(cr, 7);		/*设置字体大小*/
 			//		cairo_translate(cr,250,0);		/*平移*/
 			cairo_rotate(cr, G_PI * 3/2);		/*旋转270度*/
-			str=g_strdup_printf("%d",(100-i));
+			//if( prule->hmax1 > prule->hmin1 )
+				str=g_strdup_printf("%.0f",prule->hmax1 - (float)(prule->hmax1-prule->hmin1)*i/(prule->hrule1_copies));
+			//else
+				//str=g_strdup_printf("%.0f",(float)(prule->hmin1-prule->hmax1)*i/(prule->hrule1_copies));
 			cairo_show_text(cr,str);   		/*标签*/
 			cairo_restore(cr);
 		}
@@ -4581,8 +4289,26 @@ static gboolean draw_info(GtkWidget *widget, GdkEventExpose *event, gpointer dat
 
 		i++;
 	}
+	}
+
+
+
+	if(!(prule->wmin1 == prule->wmax1))
+	{
+	//cairo_set_source_rgba(cr,0.72,0.94,0.1,1.0);    /* wruler颜色为绿色 */
+	cairo_set_source_rgba(cr,((prule->w_color)>>16)/255.0, (((prule->w_color)>>8)&0x00FF)/255.0, ((prule->w_color)&0xFF)/255.0, 1.0);
+	cairo_rectangle(cr,20.0,h-20,w-50,20.0);	/* wruler */
+	cairo_fill (cr);
+	cairo_stroke(cr);
+	cairo_set_source_rgba(cr,0.0,0.0,0.0,1.0);	/* 标尺及单位颜色为黑色 */
+	cairo_set_font_size(cr,8);
+	cairo_move_to(cr,50,(h-5));/*hruler 单位 mm*/
+	//cairo_show_text(cr,data->w_unit);
+	//cairo_show_text(cr,"mm");
+	cairo_show_text(cr,units[prule->w_unit]);
+
 	i=0;
-	for( k=0;k<w-50;k=k+(w-50.0)/100.0 )	/* hruler 标尺 */
+	for( k=0;k<w-50;k=k+(w-50.0)/prule->wrule_copies )	/* wruler 标尺 */
 	{
 
 		if(i%10 == 0)
@@ -4594,7 +4320,8 @@ static gboolean draw_info(GtkWidget *widget, GdkEventExpose *event, gpointer dat
 			//		cairo_set_font_size(cr, 7);		/*设置字体大小*/
 			//		cairo_translate(cr,250,0);		/*平移*/
 			//		cairo_rotate(cr, G_PI*3/2);		/*旋转270度*/
-			str=g_strdup_printf("%d",i);
+			//str=g_strdup_printf("%d",prule->wmin1 + i);
+			str=g_strdup_printf("%.2f",prule->wmin1 + (float)(prule->wmax1-prule->wmin1)*i/(prule->wrule_copies));
 			cairo_show_text(cr,str);   		/*标签*/
 			//		cairo_show_text(cr,"mm");   		/*标签*/
 		}
@@ -4612,12 +4339,31 @@ static gboolean draw_info(GtkWidget *widget, GdkEventExpose *event, gpointer dat
 		}
 		i++;
 	}
-	i=0;
-	for( k=0;k<h-20;k=k+(h-20.0)/100.0 )	/* vruler2 标尺 */
+	}
+
+
+	if(!(prule->hmin2 == prule->hmax2))
 	{
 
-		if(i%10 == 0)
+	//cairo_set_source_rgba(cr,0.72,0.94,0.1,1.0);    /* hruler2颜色为绿色 */
+	cairo_set_source_rgba(cr,((prule->h2_color)>>16)/255.0, (((prule->h2_color)>>8)&0x00FF)/255.0, ((prule->h2_color)&0xFF)/255.0, 1.0);
+	cairo_rectangle(cr,w-20.0,0.0,20.0,h-20.0);	/* hruler2 */
+	cairo_fill (cr);
+	cairo_stroke(cr);
+	cairo_set_source_rgba(cr,0.0,0.0,0.0,1.0);	/* 标尺及单位颜色为黑色 */
+	cairo_set_font_size(cr,8);
+	cairo_save(cr);
+	cairo_move_to(cr,(w-5),(h-30));/*hruler2 单位 ％*/
+	cairo_rotate(cr, G_PI*3/2);
+	//cairo_show_text(cr,"%");
+	cairo_show_text(cr,units[prule->h2_unit]);
+	cairo_restore(cr);
+
+		i=0;
+		for( k=0;k<h-20;k=k+(h-20.0)/prule->hrule2_copies )	/* hruler2 标尺 */
 		{
+			if(i%10 == 0)
+			{
 			cairo_save(cr);
 			cairo_move_to(cr,w-20,(int)k+0.5);
 			cairo_line_to(cr,w-5,(int)k+0.5);
@@ -4627,29 +4373,30 @@ static gboolean draw_info(GtkWidget *widget, GdkEventExpose *event, gpointer dat
 			//		cairo_translate(cr,250,0);		/*平移*/
 			cairo_rotate(cr, G_PI * 3/2);		/*旋转270度*/
 			//		cairo_show_text(cr,"mm");   		/*标签*/
-			str=g_strdup_printf("%d",(100-i));
+			//str=g_strdup_printf("%d",(prule->hmax2-i));
+			str=g_strdup_printf("%.0f",prule->hmax2 - (float)(prule->hmax2-prule->hmin2)*i/(prule->hrule2_copies));
 			cairo_show_text(cr,str);   		/*标签*/
 			cairo_restore(cr);
-		}
-		else if(i%5 == 0)
-		{
+			}
+			else if(i%5 == 0)
+			{
 			cairo_move_to(cr,w-20,(int)k+0.5);
 			cairo_line_to(cr,w-10,(int)k+0.5);
 			cairo_stroke(cr);
-		}
-		else
-		{
+			}
+			else
+			{
 			cairo_move_to(cr,w-20,(int)k+0.5);
 			cairo_line_to(cr,w-15,(int)k+0.5);
 			cairo_stroke(cr);
+			}
+			i++;
 		}
-		i++;
 	}
 	g_free(str);
 	cairo_destroy(cr);
 	return TRUE;
 }
-#endif
 
 /* 画电池等信息 */
 static gboolean draw_other_info (GtkWidget *widget, GdkEventExpose *event, gpointer data)
@@ -4755,16 +4502,11 @@ gboolean progress_motion_notify (GtkWidget *progress, GdkEvent *event, gpointer 
 	root = DefaultRootWindow(pp->disp);
 	XQueryPointer(pp->disp, root, &fromroot, &tmpwin, &x, &y, &tmp, &tmp, &tmp2);
 
-	//	if (y == 300)
-	//		g_print("%d  move a move %d\n", x, y);
-	//	return TRUE;
 
 	pressed = (gint)g_object_get_data (G_OBJECT(progress), "pressed");
-	//	g_print("%d  move a%d move %d\n", x, pressed, y);
 	if (pressed)
 	{
 		GROUP_GATE_POS(height) = (390 - (y - 115)) / 3.90 ;
-		g_print("%d  move a%d move %d\n", x, GROUP_GATE_POS(height), y);
 		gtk_widget_queue_draw (progress);
 	}
 
@@ -4917,29 +4659,34 @@ static inline void set_scan_config (guchar scan_num,guchar scan_type, guint aw, 
  */
 void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 {
-	gint angle = 0, num = 0, w1, w2, w_unit;
+	gint angle = 0, num = 0, w1, w2, w_unit, w_color;
 
 	p->scan_type = type;
 	if(GROUP_VAL(ut_unit) == UT_UNIT_TIME)
 	{
 		w1 = GROUP_VAL(start)/1000.0;
-		w2 = GROUP_VAL(range)/1000.0;
+		w2 = GROUP_VAL(range)/1000.0 + w1;
 		w_unit = UNIT_US;
+		w_color = 0xF8EAC4;
 	}
 	else
 	{
 		if(CFG(unit) == UNIT_MM)
 		{
 			w1 = GROUP_VAL(start)/1000.0*(GROUP_VAL(velocity)/200000.0);
-			w2 = GROUP_VAL(range)/1000.0*(GROUP_VAL(velocity)/200000.0);
+			w2 = GROUP_VAL(range)/1000.0*(GROUP_VAL(velocity)/200000.0) + w1;
 			w_unit = UNIT_MM;
 		}
 		else
 		{
 			w1 = GROUP_VAL(start)/1000.0*0.03937*(GROUP_VAL(velocity)/200000.0);
-			w2 = GROUP_VAL(range)/1000.0*0.03937*(GROUP_VAL(velocity)/200000.0);
+			w2 = GROUP_VAL(range)/1000.0*0.03937*(GROUP_VAL(velocity)/200000.0) + w1;
 			w_unit = UNIT_INCH;
 		}
+		if(GROUP_VAL(ut_unit) == UT_UNIT_TRUE_DEPTH)
+			w_color = 0xD6ABF1;	/* 紫色 */
+		else
+			w_color = 0xF49CD6;	/* 粉色 */
 	}
 	
 	switch (LAW_VAL(Focal_type))
@@ -4961,13 +4708,16 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 			p->hmin1 = 0;
 			p->hmin2 = 0;
 			p->h1_unit = UNIT_BFH;
+			p->h1_color = 0xEDF169;
 			p->hmax1 = 100;
 			p->hmax2 = 100;
 			p->h2_unit = UNIT_BFH;
+			p->h2_color = 0xEDF169;
 
 			p->wmin1 = w1;
 			p->wmax1 = w2;
 			p->w_unit = w_unit;
+			p->w_color = w_color;
 
 			g_sprintf (p->title, "A scan|Gr %d|CH %0.1f|SK%0.1f|L%d", 
 					CFG(groupId) + 1, angle / 100.0, GROUP_VAL(skew) / 100.0, num + 1);
@@ -4975,15 +4725,41 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 		case A_SCAN_R:
 			break;
 		case B_SCAN:
-			p->hmin1 = 0;
+			/* hrule1 */
+			if(CFG(i_scan)==0)	/* scan -> time */
+			{
+				p->hmin1 = 0;
+				p->hmax1 = 415 * 10.0/get_prf();
+				p->h1_unit = UNIT_S;
+				p->h1_color = 0xCCD9D5;	/*浅灰色*/
+			}
+			else		/* scan -> Encoder1/Encoder2  */
+			{
+				if(CFG(unit) == UNIT_MM)
+				{
+					p->hmin1 = GROUP_VAL(scan_offset)/10.0 + CFG(scan_start)/1000.0;
+					p->hmax1 = GROUP_VAL(scan_offset)/10.0 + CFG(scan_end)/1000.0;
+					p->h1_unit = UNIT_MM;
+					p->h1_color = 0x0AD5D3;
+				}
+				else
+				{
+					p->hmin1 = GROUP_VAL(scan_offset)/10.0*0.03937 + CFG(scan_start)/1000.0*0.03937;
+					p->hmax1 = GROUP_VAL(scan_offset)/10.0*0.03937 + CFG(scan_end)/1000.0*0.03937;
+					p->h1_unit = UNIT_INCH;
+					p->h1_color = 0x0AD5D3;	/*深绿色*/
+				}
+			}
+
 			p->hmin2 = 0;
-			p->h1_unit = UNIT_S;
-			p->hmax1 = 415 * 10 / get_prf();
 			p->hmax2 = 100;
-			p->h1_unit = UNIT_BFH;
+			p->h2_unit = UNIT_BFH;
+			p->h2_color = 0xEDF169;
+
 			p->wmin1 = w1;
 			p->wmax1 = w2;
 			p->w_unit = w_unit;
+			p->w_color = w_color;
 
 			g_sprintf (p->title, "B scan|Gr %d|CH %0.1f|SK%0.1f|L%d", 
 					CFG(groupId) + 1, angle / 100.0, GROUP_VAL(skew) / 100.0, num + 1);
@@ -4991,18 +4767,54 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 		case C_SCAN:
 		case CC_SCAN:
 		case CCC_SCAN:
-			p->hmin1 = 0;
-			p->hmin2 = 0;
-			if (LAW_VAL(Focal_type) == AZIMUTHAL_SCAN)
+			if(LAW_VAL(Focal_type)==0)	/* hrule1 *//*灰色*/
+			{
+				if(LAW_VAL (Angle_min) == LAW_VAL(Angle_max) )
+				{
+					p->hmin1 = LAW_VAL (Angle_min) / 100.0;
+					p->hmax1 = LAW_VAL (Angle_max) / 100.0 + 1.0;
+				}
+				else
+				{
+					p->hmin1 = LAW_VAL (Angle_min) / 100.0;
+					p->hmax1 = LAW_VAL (Angle_max) / 100.0;
+				}
 				p->h1_unit = UNIT_DEG;
+				p->h1_color = 0xB2C1C1;
+			}
 			else
-				p->h1_unit = UNIT_MM;
-			p->hmax1 = 100;
-			p->hmax2 = 100;
-			p->h2_unit = UNIT_BFH;
-			p->wmin1 = 0;
-			p->wmax1 = 100;
-			p->w_unit = UNIT_MM;
+			{
+			}
+
+			if((CFG(c_scan1)==0) || (CFG(c_scan1)==1))	/* hrule2 */
+			{
+				p->hmin2 = 0;
+				p->hmax2 = 100;
+				p->h2_unit = UNIT_BFH;
+				p->h2_color = 0xEDF169;	/*黄色*/
+			}
+			else
+			{
+				p->hmin2 = 0;
+				p->hmax2 = 100;
+				p->h2_unit = UNIT_MM;
+				p->h2_color = 0xD6ABF1;	/*紫色*/
+			}
+
+			if(CFG(unit) == UNIT_MM)	/* wrule */		/* 浅绿色 */
+			{
+				p->wmin1 = GROUP_VAL(scan_offset)/10.0 + CFG(scan_start)/1000.0;
+				p->wmax1 = GROUP_VAL(scan_offset)/10.0 + CFG(scan_end)/1000.0;
+				p->w_unit = UNIT_MM;
+				p->w_color = 0xADFBE3;
+			}
+			else
+			{
+				p->wmin1 = GROUP_VAL(scan_offset)/10.0*0.03937 + CFG(scan_start)/1000.0*0.03937;
+				p->wmax1 = GROUP_VAL(scan_offset)/10.0*0.03937 + CFG(scan_end)/1000.0*0.03937;
+				p->w_unit = UNIT_INCH;
+				p->w_color = 0xADFBE3;
+			}
 
 			g_sprintf (p->title, "C scan|Gr %d|CH %0.1f|SK%0.1f|L%d", 
 					CFG(groupId) + 1, angle / 100.0, GROUP_VAL(skew) / 100.0, num + 1);
@@ -5010,16 +4822,105 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 		case S_SCAN:
 		case S_SCAN_A:
 		case S_SCAN_L:
-			p->hmin1 = 0;
-			p->hmin2 = 0;
-			p->h1_unit = UNIT_BFH;
-			p->hmax1 = 100;
+			if(GROUP_VAL(ut_unit)==UT_UNIT_SOUNDPATH)
+			{
+				if(LAW_VAL (Angle_min) == LAW_VAL(Angle_max) )	/*hrule1*/	/* 灰色 */
+				{
+					p->hmin1 = LAW_VAL (Angle_min) / 100.0;
+					p->hmax1 = LAW_VAL (Angle_max) / 100.0 + 1.0;
+				}
+				else
+				{
+					p->hmin1 = LAW_VAL (Angle_min) / 100.0;
+					p->hmax1 = LAW_VAL (Angle_max) / 100.0 ;
+				}
+				p->h1_unit = UNIT_DEG;
+				p->h1_color = 0xB2C1C1;
+
+
+
+				if(CFG(unit) == UNIT_MM)	/*wrule*/
+				{
+					p->wmin1 = GROUP_VAL(start)/1000.0*(GROUP_VAL(velocity)/200000.0);
+					p->wmax1 = GROUP_VAL(range)/1000.0*(GROUP_VAL(velocity)/200000.0)+GROUP_VAL(start)/1000.0*(GROUP_VAL(velocity)/200000.0);
+					p->w_unit = UNIT_MM;
+					p->w_color = 0xF49CD6; /*粉色*/
+				}
+				else
+				{
+					p->wmin1 = GROUP_VAL(start)/1000.0*0.03937*(GROUP_VAL(velocity)/200000.0);
+					p->wmax1 = GROUP_VAL(range)/1000.0*0.03937*(GROUP_VAL(velocity)/200000.0)+GROUP_VAL(start)/1000.0*0.03937*(GROUP_VAL(velocity)/200000.0);
+					p->w_unit = UNIT_INCH;
+					p->w_color = 0xF49CD6; /*粉色*/
+				}
+			}
+			else if(GROUP_VAL(ut_unit) == UT_UNIT_TIME)
+			{
+				if(LAW_VAL (Angle_min) == LAW_VAL(Angle_max) )	/*hrule1*/
+				{
+					p->hmin1 = LAW_VAL (Angle_min) / 100.0;
+					p->hmax1 = LAW_VAL (Angle_max) / 100.0 + 1.0;
+				}
+				else
+				{
+					p->hmin1 = LAW_VAL (Angle_min) / 100.0;
+					p->hmax1 = LAW_VAL (Angle_max) / 100.0 ;
+				}
+				p->h1_unit = UNIT_DEG;
+				p->h1_color = 0xB2C1C1;	/*灰色*/
+
+				p->wmin1 = GROUP_VAL(start)/1000.0;	/*wrule*/
+				p->wmax1 = GROUP_VAL(range)/1000.0;
+				p->w_unit = UNIT_US;
+				p->w_color =0xF8EAC4; /*浅黄色*/
+
+			}
+
+			else if(GROUP_VAL(ut_unit) == UT_UNIT_TRUE_DEPTH)
+			{
+#if 0
+				if(CFG(unit) == UNIT_MM) /* hrule1 */	/*紫色，等待改成小的值在上，大的值在下 */
+				{
+					p->hmin1 = GROUP_VAL(start)/1000.0*(GROUP_VAL(velocity)/200000.0);
+					p->hmax1 = GROUP_VAL(range)/1000.0*(GROUP_VAL(velocity)/200000.0)+GROUP_VAL(start)/1000.0*(GROUP_VAL(velocity)/200000.0);
+					p->h1_unit = UNIT_MM;
+					p->h1_color = 0xD6ABF1;
+				}
+				else
+				{
+					p->hmin1 = GROUP_VAL(start)/1000.0*0.03937*(GROUP_VAL(velocity)/200000.0);
+					p->hmax1 = GROUP_VAL(range)/1000.0*0.03937*(GROUP_VAL(velocity)/200000.0)+GROUP_VAL(start)/1000.0*0.03937*(GROUP_VAL(velocity)/200000.0);
+					p->h1_unit = UNIT_INCH;
+					p->h1_color = 0xD6ABF1;
+				}
+#endif
+
+				if(CFG(unit) == UNIT_MM) /* hrule1 */	/*紫色，等待改成小的值在上，大的值在下 */
+				{
+					p->hmin1 = GROUP_VAL(range)/1000.0*(GROUP_VAL(velocity)/200000.0)-GROUP_VAL(start)/1000.0*(GROUP_VAL(velocity)/200000.0);
+					p->hmax1 = 0.0;
+					p->h1_unit = UNIT_MM;
+					p->h1_color = 0xD6ABF1;
+
+				}
+				else
+				{
+					p->hmin1 = GROUP_VAL(range)/1000.0*0.03937*(GROUP_VAL(velocity)/200000.0)-GROUP_VAL(start)/1000.0*0.03937*(GROUP_VAL(velocity)/200000.0);
+					p->hmax1 = 0.0;
+					p->h1_unit = UNIT_INCH;
+					p->h1_color = 0xD6ABF1;
+				}
+
+				p->wmin1 = 0;	/*wrule1*/	/* 深绿色 */
+				p->wmax1 = 100;
+				p->w_unit = UNIT_NONE;
+				p->w_color = 0x0AD5D3;
+			}
+
+			p->hmin2 = 0;	/*hrule2*/	/* 黄色 */
 			p->hmax2 = 100;
 			p->h2_unit = UNIT_BFH;
-
-			p->wmin1 = w1;
-			p->wmax1 = w2;
-			p->w_unit = w_unit;
+			p->h2_color = 0xEDF169;
 
 			g_sprintf (p->title, "S scan|Gr %d|CH %0.1f|SK%0.1f|L%d", 
 					CFG(groupId) + 1, angle / 100.0, GROUP_VAL(skew) / 100.0, num + 1);
@@ -5071,10 +4972,14 @@ void draw_area_all()
 			case B_SCAN:
 				pp->draw_area[0].scan_type	=	B_SCAN;
 				gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
+				g_print ("come\n");
 				set_drawarea_property (&(pp->draw_area[0]), B_SCAN, 0);
+				g_print ("go\n");
 				draw_area_ (pp->vbox_area[0], &(pp->draw_area[0]), 655, 425);
+				g_print ("go1\n");
 				gtk_widget_show (pp->vbox_area[0]);
 				set_scan_config (0, B_SCAN, 605, 605, 390, 0, 0, CFG(groupId));
+				g_print ("go2\n");
 				break;
 			case C_SCAN:
 				gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
@@ -5093,24 +4998,27 @@ void draw_area_all()
 					draw_area_ (pp->vbox_area[0], &(pp->draw_area[0]), 655, 425);
 					gtk_widget_show (pp->vbox_area[0]);
 					set_scan_config (0, S_SCAN, 605, 605, 390, 0, 0, CFG(groupId));
-				}
-				else if (LAW_VAL(Focal_type) == AZIMUTHAL_SCAN)
+				} 
+				else if (GROUP_VAL(ut_unit) == UT_UNIT_TRUE_DEPTH)
 				{
-					pp->draw_area[0].scan_type	=	S_SCAN_A;
-					gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
-					set_drawarea_property (&(pp->draw_area[0]), S_SCAN_A, 0);
-					draw_area_ (pp->vbox_area[0], &(pp->draw_area[0]), 655, 425);
-					gtk_widget_show (pp->vbox_area[0]);
-					set_scan_config (0, S_SCAN_A, 605, 605, 390, 0, 0, CFG(groupId));
-				}
-				else if (LAW_VAL(Focal_type) == LINEAR_SCAN)
-				{
-					pp->draw_area[0].scan_type	=	S_SCAN_L;
-					gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
-					set_drawarea_property (&(pp->draw_area[0]), S_SCAN_L, 0);
-					draw_area_ (pp->vbox_area[0], &(pp->draw_area[0]), 655, 425);
-					gtk_widget_show (pp->vbox_area[0]);
-					set_scan_config (0, S_SCAN_L, 605, 605, 390, 0, 0, CFG(groupId));
+					if (LAW_VAL(Focal_type) == AZIMUTHAL_SCAN)
+					{
+						pp->draw_area[0].scan_type	=	S_SCAN_A;
+						gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
+						set_drawarea_property (&(pp->draw_area[0]), S_SCAN_A, 0);
+						draw_area_ (pp->vbox_area[0], &(pp->draw_area[0]), 655, 425);
+						gtk_widget_show (pp->vbox_area[0]);
+						set_scan_config (0, S_SCAN_A, 605, 605, 390, 0, 0, CFG(groupId));
+					}
+					else if (LAW_VAL(Focal_type) == LINEAR_SCAN)
+					{
+						pp->draw_area[0].scan_type	=	S_SCAN_L;
+						gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
+						set_drawarea_property (&(pp->draw_area[0]), S_SCAN_L, 0);
+						draw_area_ (pp->vbox_area[0], &(pp->draw_area[0]), 655, 425);
+						gtk_widget_show (pp->vbox_area[0]);
+						set_scan_config (0, S_SCAN_L, 605, 605, 390, 0, 0, CFG(groupId));
+					}
 				}
 				break;
 			case A_B_SCAN:
@@ -6291,7 +6199,6 @@ void draw3_data0(DRAW_UI_P p)
 						time_min = q->tm_min;
 						time_sec = q->tm_sec;
 						memset(time_temp, 0, sizeof(time_temp));
-						g_print("%d\n",time_hour);
 						g_sprintf(time_temp,"%d:%d:%d",time_hour,time_min,time_sec);
 						draw3_popdown(time_temp, 0, 0);
 						gtk_label_set_text (GTK_LABEL (pp->label3[0]), temp);
@@ -6397,7 +6304,6 @@ void draw3_data1(DRAW_UI_P p)
 			{
 				case 0:/*Wizard -> Group -> start  p001 */
 					draw3_popdown (NULL, 1, 1);
-					g_print("start_qty = %d\n",pp->start_qty);
 					if( (pp->start_qty >0) && (pp->start_qty < 8) )
 						draw3_popdown_offset (NULL, 1, 1, 6 );
 					else if (pp->start_qty == 8)
@@ -6406,14 +6312,12 @@ void draw3_data1(DRAW_UI_P p)
 
 				case 1:/*Wizard -> Focal Law -> start p011 */
 					draw3_popdown (NULL, 1, 1);
-					g_print("fstart_qty = %d\n",pp->fstart_qty);
 					if( (pp->fstart_qty >0) && (pp->fstart_qty < 5) )
 						draw3_popdown_offset (NULL, 1, 1, 6 );
 					break;
 
 				case 2:/*Wizard -> Calibration -> start p021 */
 					//draw3_popdown (NULL, 1, 1);
-					g_print("cstart_qty = %d\n",pp->cstart_qty);
 					if(pp->ctype_pos == 1)
 					{
 						if( (pp->cstart_qty >1) && (pp->cstart_qty < 4) )
@@ -6483,7 +6387,8 @@ void draw3_data1(DRAW_UI_P p)
 					}
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 					{
-						if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
+						if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || 
+								(UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 						{
 							if (UNIT_MM == CFG(unit))
 							{
@@ -9122,14 +9027,18 @@ void draw3_data2(DRAW_UI_P p)
 					{
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 						{
-							if (GROUP_VAL(gate_pos) != GATE_B) /* 闸门选择B时候 有3个同步选项 */
+							if (GROUP_VAL(gate_pos) == GATE_B) /* 闸门选择B时候 有3个同步选项 */
 								draw3_pop_tt (data_2021, NULL,
 										menu_content[SYNCHRO + GROUP_GATE_POS(synchro)],
-										menu_content + SYNCHRO, 2, 2, GROUP_GATE_POS(synchro), 0);
-							else
+										menu_content + SYNCHRO, 3, 2, GROUP_GATE_POS(synchro), 0);
+							else if (GROUP_VAL(gate_pos) == GATE_A) /* 闸门选择A时候 有2个同步选项 */
 								draw3_pop_tt (data_2021, NULL, 
 										menu_content[SYNCHRO + GROUP_GATE_POS(synchro)],
-										menu_content + SYNCHRO, 3, 2, GROUP_GATE_POS(synchro), 0);
+										menu_content + SYNCHRO, 2, 2, GROUP_GATE_POS(synchro), 0);
+							else if (GROUP_VAL(gate_pos) == GATE_I) /* 闸门选择I时候 有1个同步选项 */
+								draw3_pop_tt (data_2021, NULL, 
+										menu_content[SYNCHRO + GROUP_GATE_POS(synchro)],
+										menu_content + SYNCHRO, 1, 2, GROUP_GATE_POS(synchro), 0);
 						}
 						else 
 							draw3_popdown (menu_content[SYNCHRO +GROUP_GATE_POS(synchro)], 2, 0);
@@ -9433,7 +9342,6 @@ void draw3_data2(DRAW_UI_P p)
 								field1, 60, 2, CFG(field1), 0);
 					else 
 						draw3_popdown (field[CFG(field1)], 2, 0);
-					g_print ("list=%d\n", CFG(field1));
 					break;
 				case 1:/*Measurements -> Cursors -> Scan p312 */
 					if(!GROUP_VAL(selection))
@@ -9465,7 +9373,6 @@ void draw3_data2(DRAW_UI_P p)
 							unit = UNIT_BFH;
 							draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 						}
-
 					}
 					else if (GROUP_VAL(selection)==1 || GROUP_VAL(selection)==2|| GROUP_VAL(selection)==3)
 					{
@@ -9763,7 +9670,7 @@ void draw3_data2(DRAW_UI_P p)
 		case 4:
 			switch (pp->pos1[4])
 			{
-				case 0:/* C-Scan2  p402*/
+				case 0:/* C-Scan2  P402 */
 					pp->x_pos = 580, pp->y_pos = 330;
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))/*选中402这个位置*/
 					{
@@ -11655,7 +11562,8 @@ void draw3_data3(DRAW_UI_P p)
 						{
 							cur_value = GROUP_VAL(point_qty) ;
 							lower =	32.0;
-							upper =	8192.0;	/* 最大值需要计算 TAN1 */
+//							upper =	8192.0;	/* 最大值需要计算 TAN1 */
+							upper = (gfloat) get_max_point_qty();
 							step = tmpf;
 							digit = 0;
 							pos = 3;
@@ -11708,7 +11616,8 @@ void draw3_data3(DRAW_UI_P p)
 						}
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 						{
-							if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
+							if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || 
+									(UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 							{
 								if (UNIT_MM == CFG(unit))
 								{
@@ -11743,11 +11652,13 @@ void draw3_data3(DRAW_UI_P p)
 								pos = 3;
 								unit = UNIT_US;
 							}
-							draw3_digit_pressed (data_203, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
+							draw3_digit_pressed (data_203, units[unit], cur_value , 
+									lower, upper, step, digit, p, pos, 0);
 						}
 						else 
 						{
-							if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
+							if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) ||
+									(UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 							{
 								if (UNIT_MM == CFG(unit))
 								{
@@ -16904,8 +16815,6 @@ void draw_keyboard (GtkWidget *widget, GdkEventButton *event,	gpointer data)
 
 	}
 
-	g_print ("draw keyboard\n");
-	//	gtk_main_quit();
 }
 
 #if ARM
@@ -17044,7 +16953,6 @@ gpointer signal_thread(gpointer arg)
 
 	if (read(pp->fd_key, &key, 1) > 0 ) 
 	{	
-		g_print ("key=%x\n", key);
 		process_key_press (key);
 	}
 

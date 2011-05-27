@@ -70,12 +70,12 @@ unsigned int	gate_b_logic:8;			/* bit:0-7 闸门B 逻辑 */
 unsigned int	gate_b_end:24;			/* bit:12-31 闸门B 结束 */
 
 /* s_group_reg (10) */
-unsigned int	gate_c_height:12;		/* bit:0-11 闸门C 高度 */
-unsigned int	gate_c_start:20;		/* bit:12-31 闸门C 开始 */
+unsigned int	gate_i_height:12;		/* bit:0-11 闸门C 高度 */
+unsigned int	gate_i_start:20;		/* bit:12-31 闸门C 开始 */
 
 /* s_group_reg (11) */
-unsigned int	gate_c_logic:8;			/* bit:0-7 闸门C 逻辑 */
-unsigned int	gate_c_end:24;			/* bit:12-31 闸门C 结束 */
+unsigned int	gate_i_logic:8;			/* bit:0-7 闸门C 逻辑 */
+unsigned int	gate_i_end:24;			/* bit:12-31 闸门C 结束 */
 
 /* s_group_reg (11) */
 unsigned int	voltage:8;			/* bit:0-7 发射电压 */
