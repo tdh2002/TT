@@ -11,6 +11,11 @@
 #define TGC_DATA_ADD	0x40000000
 #define FIR_DATA_ADD	0x80000000
 
+typedef struct _DWORD_OBJ
+{
+	unsigned int RX_TX_SEL_H;
+	unsigned int RX_TX_SEL_L;	
+} DWORD;
 
 
 typedef struct _Group_data
@@ -100,7 +105,7 @@ typedef struct _Focal_data
 	unsigned int	gain_offset:10;	/* bit:2-11 增益补偿单位0.1dB */
 	unsigned int	TT2:3;			/* bit:12-14 保留 */
 	unsigned int	group:4;		/* bit:15-18 groupId */
-	unsigned int	all_element_info:13;	/* bit:19-31 beam_qty*element */
+	unsigned int	all_beam_info:13;	/* bit:19-31 beam_qty */
 
 	/* s_group_reg (1) 地址 */
 	unsigned int	beam_delay:16;	/* bit:0-15 16 单位10ns */
@@ -110,12 +115,10 @@ typedef struct _Focal_data
 	unsigned int	TT4[10];			/* 保留 */
 
 	/* s_group_reg (12-13) 地址 接收使能 */
-	unsigned int	rx_sel0;
-	unsigned int	rx_sel1;
+	DWORD			rx_sel;
 
 	/* s_group_reg (14-15) 地址 发射使能 */
-	unsigned int	tx_sel0;
-	unsigned int	tx_sel1;
+	DWORD			tx_sel;
 
 	/* s_group_reg (16-47) 地址 阵元发射信息 */
 	unsigned int	tx_info[32];		/* bit0-13 发射开始 bit:16-29 发射结束*/
@@ -133,6 +136,7 @@ typedef struct _Focal_data
 } focal_data_spi;
 
 extern void init_spi ();
+extern DWORD channel_select(unsigned int n);
 extern int write_group_data (group_data_spi *p, unsigned int group);
 extern int write_focal_data (focal_data_spi *p, unsigned int beam_num);
 #endif

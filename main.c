@@ -19,6 +19,7 @@
 
 DRAW_UI_P	pp;
 void init_group_spi (guint group);
+void send_focal_spi (guint group);
 
 /* 测试用的初始值 */
 static void set_config (guint groupid)
@@ -316,6 +317,8 @@ int main (int argc, char *argv[])
 	{
 		init_group_spi (i - 1);
 		write_group_data (&TMP(group_spi[i - 1]), i - 1);
+		cal_focal_law(i - 1);
+		send_focal_spi (i - 1);
 		g_print ("group %d config init complete\n", i);
 	}
 #endif
@@ -332,6 +335,48 @@ int main (int argc, char *argv[])
 	gdk_threads_leave();
 
 	return 0;
+}
+
+void send_focal_spi (guint group)
+{
+	guint offset, beam_qty = TMP(beam_qty[group]), k, i;
+	for (offset = 0, k = 0 ; k < group; k++)
+		offset += TMP(beam_qty[k]);
+	for (k = offset; k < beam_qty; k++)
+	{
+		TMP(focal_spi[group]).group	= group;
+		TMP(focal_spi[group]).all_beam_info	= get_beam_qty();
+		TMP(focal_spi[group]).gain_offset	= GROUP_VAL_POS(group, gain_offset);
+
+		TMP(focal_spi[group]).beam_delay	= CFG(focal_law_all_beam[k].beam_delay) / 10;
+		TMP(focal_spi[group]).rx_sel	= 
+			channel_select(GROUP_VAL_POS(group, pulser) + LAW_VAL_POS(group, First_rx_elem));  
+		TMP(focal_spi[group]).tx_sel	= 
+			channel_select(GROUP_VAL_POS(group, receiver) + LAW_VAL_POS(group, First_tx_elem));  
+
+		for (i = 0 ; i < CFG(focal_law_all_beam[k].N_ActiveElements); i++)
+		{
+			TMP(focal_spi[group]).tx_info[i]	= 
+				((guint)(CFG(focal_law_all_elem[k][i].T_delay) / 2.5)) | 
+				(((guint)(GROUP_VAL_POS(group, pulser_width) / 2.5)) << 16) | (0x3 << 30);	
+			if (i < 16)
+				TMP(focal_spi[group]).rx_info[i]	= 
+					(TMP(focal_spi[group]).rx_info[i] & 0xffff0000) | 
+					((guint)(CFG(focal_law_all_elem[k][i].R_delay) / 2.5)); 
+			else
+				TMP(focal_spi[group]).rx_info[i - 16]	= 
+					(TMP(focal_spi[group]).rx_info[i] & 0x0000ffff) | 
+					((guint)(CFG(focal_law_all_elem[k][i].R_delay) / 2.5) << 16); 
+		}
+		
+		if (CFG(focal_law_all_beam[k].N_ActiveElements) < 32)
+		{
+			for (i = CFG(focal_law_all_beam[k].N_ActiveElements); i < 32; i++)
+				TMP(focal_spi[group]).rx_info[i] &= 0x3fffffff;
+		}
+
+		write_focal_data (&TMP(focal_spi[k - 1]), k - 1);
+	}
 }
 
 void init_group_spi (guint group)

@@ -242,6 +242,7 @@ typedef struct tmp_config
 	gint	fd_config;
 
 	group_data_spi	group_spi[setup_MAX_GROUP_QTY];
+	focal_data_spi	focal_spi[setup_MAX_LAW_QTY];
 
 	guchar	radius1_reg;
 	guchar	depth1_reg;
@@ -274,16 +275,19 @@ typedef struct _draw_area
 	GtkWidget *drawing_area;                /* 波形显示区 */
 	guint	width;
 	guint	height;
-	gint	hmin1;
-	gint	hmin2;
+	guint	h1_bit;
+	gfloat	hmin1;
+	gfloat	hmin2;
 	gint	h1_unit;
 	gint	h1_color;
-	gint	hmax1;
-	gint	hmax2;
+	guint	h2_bit;
+	gfloat	hmax1;
+	gfloat	hmax2;
 	gint	h2_unit;
 	gint	h2_color;
-	gint	wmin1;
-	gint	wmax1;
+	guint	w_bit;
+	gfloat	wmin1;
+	gfloat	wmax1;
 	gint	w_unit;
 	gint	w_color;
 	guchar	scan_type;

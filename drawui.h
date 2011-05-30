@@ -619,6 +619,8 @@ extern void data_930 (GtkMenuItem *menuitem, gpointer data);
 extern gboolean foo (GtkAccelGroup *accel_group, GObject *acceleratable,
 		guint keyval, GdkModifierType modifier, gpointer data);
 
+extern void cal_focal_law (guint group);
+
 extern gboolean key_press_handler (GtkWidget* pWidget, GdkEventKey* pEvent, gpointer data);
 extern void main_menu_pop();
 extern void show_help(guint i);
@@ -635,5 +637,6 @@ extern int on_changed_config_file(GtkTreeSelection *selection,	gpointer       da
 extern void add_to_list(GtkWidget *list, const gchar *str, guint count);
 extern void draw_field_name ();
 	
+extern void send_focal_spi (guint group);
 #endif
 

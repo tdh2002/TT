@@ -35,7 +35,6 @@
 _my_ip_set entry_ip;
 _my_mask_set entry_mask;
 
-
 GdkColor	color_black     = {0x0, 0x0, 0x0, 0x0};
 GdkColor	color_black1    = {0x0, 0x0, 0x0, 0x0800};
 GdkColor	color_white     = {0x0, 0xffff, 0xffff, 0xffff};
@@ -70,7 +69,6 @@ static gushort keyboard_send[] =
 };
 #endif
 
-
 static char *numkeyboard_display[]=
 {
 	"1\0", "2\0", "3\0", "+","4\0", "5\0", "6\0","-", "7\0", "8\0", "9\0", ".", "0\0",  "←\0", "→\0", "Backspace\0", "Delete\0", "Enter\0"
@@ -80,7 +78,6 @@ static gushort numkeyboard_send[] =
 {
 	XK_1, XK_2, XK_3, XK_plus, XK_4, XK_5, XK_6, XK_minus, XK_7, XK_8,  XK_9, XK_period, XK_0,  XK_Left, XK_Right, XK_BackSpace, XK_Delete, XK_Return
 };
-
 
 enum
 {
@@ -136,7 +133,6 @@ void (*draw_data3[6])(DRAW_UI_P p) =
 	draw3_data4,
 	draw3_data5
 };
-
 
 /* 显示各个菜单图标的名称 */
 const gchar **con0_p;
@@ -4083,18 +4079,18 @@ static gboolean draw_info(GtkWidget *widget, GdkEventExpose *event, gpointer dat
 
 	if (CFG(grid) != 5) 
 	{
-		for (j = 0; j < h; j += (h / 10.0))
+		for (j = 0; j < (h-20); j += ((h-20) / 10.0))
 		{
-			for  (m = 0; m < w; m += (w / 50.0))
+			for  (m = 20; m < (w-30); m += ((w-50) / 50.0))
 			{
 				cairo_move_to (cr, (int)(m) , (int)(j) + 0.5);
 				cairo_line_to (cr, (int)(m) +1 , (int)(j) + 0.5);
 				cairo_stroke (cr);
 			}
 		}
-		for ( i = 0; i < w; i += (w /10.0))
+		for ( i = 20; i < (w-30); i += ((w-50) /10.0))
 		{
-			for (n = 0; n < h; n += (h / 50.0))
+			for (n = 0; n < (h-20); n += ((h-20) / 50.0))
 			{
 				cairo_move_to (cr, (int)(i) , (int)(n) + 0.5);
 				cairo_line_to (cr, (int)(i) +1 , (int)(n) + 0.5);
@@ -4209,25 +4205,25 @@ static gboolean draw_info(GtkWidget *widget, GdkEventExpose *event, gpointer dat
 	if(CFG(overlay_gate)==1)
 	{
 		cairo_set_source_rgba(cr,1.0,0.0,0.0,1.0);	/* A闸门为红色 */
-		cairo_move_to(cr, (GROUP_VAL(gate[0].start) / 1000.0) * (GROUP_VAL(velocity) / 200000.0), 
+		cairo_move_to(cr, (GROUP_VAL(gate[0].start) / 1000.0) * (GROUP_VAL(velocity) / 200000.0)+20, 
 				(1.0-GROUP_VAL(gate[0].height) / 100.0)*(h-20) );
 
-		cairo_line_to(cr, (GROUP_VAL(gate[0].start) / 1000.0) * (GROUP_VAL(velocity) / 200000.0)+(GROUP_VAL(gate[0].width) / 1000.0) * (GROUP_VAL(velocity) / 200000.0)  ,(1.0-GROUP_VAL(gate[0].height) / 100.0)*(h-20) );
+		cairo_line_to(cr, (GROUP_VAL(gate[0].start) / 1000.0) * (GROUP_VAL(velocity) / 200000.0)+20+(GROUP_VAL(gate[0].width) / 1000.0) * (GROUP_VAL(velocity) / 200000.0)  ,(1.0-GROUP_VAL(gate[0].height) / 100.0)*(h-20) );
 
 		cairo_stroke(cr);
 
 		cairo_set_source_rgba(cr,0.0,1.0,0.0,1.0);	/* B闸门为绿色 */
-		cairo_move_to(cr, (GROUP_VAL(gate[1].start) / 1000.0) * (GROUP_VAL(velocity) / 200000.0), 
+		cairo_move_to(cr, (GROUP_VAL(gate[1].start) / 1000.0) * (GROUP_VAL(velocity) / 200000.0)+20, 
 				(1.0-GROUP_VAL(gate[1].height) / 100.0)*(h-20) );
 
-		cairo_line_to(cr, (GROUP_VAL(gate[1].start) / 1000.0) * (GROUP_VAL(velocity) / 200000.0)+(GROUP_VAL(gate[1].width) / 1000.0) * (GROUP_VAL(velocity) / 200000.0)  ,(1.0-GROUP_VAL(gate[1].height) / 100.0)*(h-20) );
+		cairo_line_to(cr, (GROUP_VAL(gate[1].start) / 1000.0) * (GROUP_VAL(velocity) / 200000.0)+20+(GROUP_VAL(gate[1].width) / 1000.0) * (GROUP_VAL(velocity) / 200000.0)  ,(1.0-GROUP_VAL(gate[1].height) / 100.0)*(h-20) );
 		cairo_stroke(cr);
 
 		cairo_set_source_rgba(cr,1.0,1.0,0.0,1.0);	/* C闸门为黄色 */
-		cairo_move_to(cr, (GROUP_VAL(gate[2].start) / 1000.0) * (GROUP_VAL(velocity) / 200000.0), 
+		cairo_move_to(cr, (GROUP_VAL(gate[2].start) / 1000.0) * (GROUP_VAL(velocity) / 200000.0)+20, 
 				(1.0-GROUP_VAL(gate[2].height) / 100.0)*(h-20) );
 
-		cairo_line_to(cr, (GROUP_VAL(gate[2].start) / 1000.0) * (GROUP_VAL(velocity) / 200000.0)+(GROUP_VAL(gate[2].width) / 1000.0) * (GROUP_VAL(velocity) / 200000.0)  ,(1.0-GROUP_VAL(gate[2].height) / 100.0)*(h-20) );
+		cairo_line_to(cr, (GROUP_VAL(gate[2].start) / 1000.0) * (GROUP_VAL(velocity) / 200000.0)+20+(GROUP_VAL(gate[2].width) / 1000.0) * (GROUP_VAL(velocity) / 200000.0)  ,(1.0-GROUP_VAL(gate[2].height) / 100.0)*(h-20) );
 
 		cairo_stroke(cr);
 	}
@@ -4267,7 +4263,7 @@ static gboolean draw_info(GtkWidget *widget, GdkEventExpose *event, gpointer dat
 			//		cairo_translate(cr,250,0);		/*平移*/
 			cairo_rotate(cr, G_PI * 3/2);		/*旋转270度*/
 			//if( prule->hmax1 > prule->hmin1 )
-				str=g_strdup_printf("%.0f",prule->hmax1 - (float)(prule->hmax1-prule->hmin1)*i/(prule->hrule1_copies));
+				str=g_strdup_printf("%.*f",prule->h1_bit, prule->hmax1 - (float)((prule->hmax1-prule->hmin1)*i/(prule->hrule1_copies)));
 			//else
 				//str=g_strdup_printf("%.0f",(float)(prule->hmin1-prule->hmax1)*i/(prule->hrule1_copies));
 			cairo_show_text(cr,str);   		/*标签*/
@@ -4329,7 +4325,7 @@ static gboolean draw_info(GtkWidget *widget, GdkEventExpose *event, gpointer dat
 		{
 			cairo_move_to(cr,20+(int)k+0.5,h-20);
 			cairo_line_to(cr,20+(int)k+0.5,h-10);
-			cairo_stroke(cr);
+			cairo_stroke(cr); 
 		}
 		else
 		{
@@ -4662,6 +4658,7 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 	gint angle = 0, num = 0, w1, w2, w_unit, w_color;
 
 	p->scan_type = type;
+#if 0
 	if(GROUP_VAL(ut_unit) == UT_UNIT_TIME)
 	{
 		w1 = GROUP_VAL(start)/1000.0;
@@ -4688,7 +4685,7 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 		else
 			w_color = 0xF49CD6;	/* 粉色 */
 	}
-	
+#endif	
 	switch (LAW_VAL(Focal_type))
 	{
 		case AZIMUTHAL_SCAN:
@@ -4709,15 +4706,38 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 			p->hmin2 = 0;
 			p->h1_unit = UNIT_BFH;
 			p->h1_color = 0xEDF169;
+			p->h1_bit = 0;
 			p->hmax1 = 100;
 			p->hmax2 = 100;
 			p->h2_unit = UNIT_BFH;
 			p->h2_color = 0xEDF169;
 
-			p->wmin1 = w1;
-			p->wmax1 = w2;
-			p->w_unit = w_unit;
-			p->w_color = w_color;
+			if(GROUP_VAL(ut_unit) == UT_UNIT_TIME)	/* wrule */	/*淡黄色*/
+			{
+				p->wmin1 = GROUP_VAL(start)/1000.0;
+				p->wmax1 = GROUP_VAL(range)/1000.0+GROUP_VAL(start)/1000.0;
+				p->w_unit = UNIT_US;
+				p->w_color = 0xF8EAC4;
+			}
+			else
+			{
+				if(CFG(unit) == UNIT_MM)
+				{
+					p->wmin1 = GROUP_VAL(start)/1000.0*(GROUP_VAL(velocity)/200000.0);
+					p->wmax1 = GROUP_VAL(range)/1000.0*(GROUP_VAL(velocity)/200000.0)+GROUP_VAL(start)/1000.0*(GROUP_VAL(velocity)/200000.0);
+					p->w_unit = UNIT_MM;
+				}
+				else
+				{
+					p->wmin1 = GROUP_VAL(start)/1000.0*0.03937*(GROUP_VAL(velocity)/200000.0);
+					p->wmax1 = GROUP_VAL(range)/1000.0*0.03937*(GROUP_VAL(velocity)/200000.0)+GROUP_VAL(start)/1000.0*0.03937*(GROUP_VAL(velocity)/200000.0);
+					p->w_unit = UNIT_INCH;
+				}
+				if(GROUP_VAL(ut_unit) == UT_UNIT_TRUE_DEPTH)
+					p->w_color = 0xD6ABF1;	/* 紫色 */
+				else
+					p->w_color = 0xF49CD6;	/* 粉色 */
+			}
 
 			g_sprintf (p->title, "A scan|Gr %d|CH %0.1f|SK%0.1f|L%d", 
 					CFG(groupId) + 1, angle / 100.0, GROUP_VAL(skew) / 100.0, num + 1);
@@ -4732,6 +4752,7 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 				p->hmax1 = 415 * 10.0/get_prf();
 				p->h1_unit = UNIT_S;
 				p->h1_color = 0xCCD9D5;	/*浅灰色*/
+				p->h1_bit = 1;
 			}
 			else		/* scan -> Encoder1/Encoder2  */
 			{
@@ -4741,6 +4762,7 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 					p->hmax1 = GROUP_VAL(scan_offset)/10.0 + CFG(scan_end)/1000.0;
 					p->h1_unit = UNIT_MM;
 					p->h1_color = 0x0AD5D3;
+					p->h1_bit = 0;
 				}
 				else
 				{
@@ -4748,6 +4770,7 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 					p->hmax1 = GROUP_VAL(scan_offset)/10.0*0.03937 + CFG(scan_end)/1000.0*0.03937;
 					p->h1_unit = UNIT_INCH;
 					p->h1_color = 0x0AD5D3;	/*深绿色*/
+					p->h1_bit = 0;
 				}
 			}
 
@@ -4756,10 +4779,32 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 			p->h2_unit = UNIT_BFH;
 			p->h2_color = 0xEDF169;
 
-			p->wmin1 = w1;
-			p->wmax1 = w2;
-			p->w_unit = w_unit;
-			p->w_color = w_color;
+			if(GROUP_VAL(ut_unit) == UT_UNIT_TIME)	/* wrule */
+			{
+				p->wmin1 = GROUP_VAL(start)/1000.0;
+				p->wmax1 = GROUP_VAL(range)/1000.0+GROUP_VAL(start)/1000.0;
+				p->w_unit = UNIT_US;
+				p->w_color = 0xF8EAC4;	/*浅黄色*/
+			}
+			else
+			{
+				if(CFG(unit) == UNIT_MM)
+				{
+					p->wmin1 = GROUP_VAL(start)/1000.0*(GROUP_VAL(velocity)/200000.0);
+					p->wmax1 = GROUP_VAL(range)/1000.0*(GROUP_VAL(velocity)/200000.0)+GROUP_VAL(start)/1000.0*(GROUP_VAL(velocity)/200000.0);
+					p->w_unit = UNIT_MM;
+				}
+				else
+				{
+					p->wmin1 = GROUP_VAL(start)/1000.0*0.03937*(GROUP_VAL(velocity)/200000.0);
+					p->wmax1 = GROUP_VAL(range)/1000.0*0.03937*(GROUP_VAL(velocity)/200000.0)+GROUP_VAL(start)/1000.0*0.03937*(GROUP_VAL(velocity)/200000.0);
+					p->w_unit = UNIT_INCH;
+				}
+				if(GROUP_VAL(ut_unit) == UT_UNIT_TRUE_DEPTH)
+					p->w_color = 0xD6ABF1;	/* 紫色 */
+				else
+					p->w_color = 0xF49CD6;	/* 粉色 */
+			}
 
 			g_sprintf (p->title, "B scan|Gr %d|CH %0.1f|SK%0.1f|L%d", 
 					CFG(groupId) + 1, angle / 100.0, GROUP_VAL(skew) / 100.0, num + 1);
@@ -4781,6 +4826,7 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 				}
 				p->h1_unit = UNIT_DEG;
 				p->h1_color = 0xB2C1C1;
+				p->h1_bit = 1;
 			}
 			else
 			{
@@ -4836,6 +4882,7 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 				}
 				p->h1_unit = UNIT_DEG;
 				p->h1_color = 0xB2C1C1;
+				p->h1_bit = 1;
 
 
 
@@ -4868,6 +4915,7 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 				}
 				p->h1_unit = UNIT_DEG;
 				p->h1_color = 0xB2C1C1;	/*灰色*/
+				p->h1_bit = 1;
 
 				p->wmin1 = GROUP_VAL(start)/1000.0;	/*wrule*/
 				p->wmax1 = GROUP_VAL(range)/1000.0;
@@ -4910,6 +4958,7 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 					p->h1_unit = UNIT_INCH;
 					p->h1_color = 0xD6ABF1;
 				}
+				p->h1_bit = 2;
 
 				p->wmin1 = 0;	/*wrule1*/	/* 深绿色 */
 				p->wmax1 = 100;
@@ -4972,14 +5021,10 @@ void draw_area_all()
 			case B_SCAN:
 				pp->draw_area[0].scan_type	=	B_SCAN;
 				gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
-				g_print ("come\n");
 				set_drawarea_property (&(pp->draw_area[0]), B_SCAN, 0);
-				g_print ("go\n");
 				draw_area_ (pp->vbox_area[0], &(pp->draw_area[0]), 655, 425);
-				g_print ("go1\n");
 				gtk_widget_show (pp->vbox_area[0]);
 				set_scan_config (0, B_SCAN, 605, 605, 390, 0, 0, CFG(groupId));
-				g_print ("go2\n");
 				break;
 			case C_SCAN:
 				gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
@@ -15579,7 +15624,7 @@ void draw3_data5(DRAW_UI_P p)
 						{
 							cur_value = get_prf() / 10.0;
 							lower =	1.0;
-							//							upper = (gfloat)(TMP(max_prf));	/* 最大值需要计算出来 */
+							//upper = (gfloat)(TMP(max_prf));	/* 最大值需要计算出来 */
 							upper = 100.0;
 							step = tmpf;
 							digit = 0;
@@ -16814,7 +16859,6 @@ void draw_keyboard (GtkWidget *widget, GdkEventButton *event,	gpointer data)
 		gtk_widget_show_all(pp->win_keyboard);
 
 	}
-
 }
 
 #if ARM
@@ -16985,8 +17029,8 @@ gpointer signal_thread1(gpointer arg)
 				offset1 += TMP(beam_qty[k]);
 			}
 			memcpy (TMP(measure_data[offset1 + j]), (void *)(pp->p_beam_data + offset +
-							(GROUP_VAL_POS(i, point_qty) + 32) * j + GROUP_VAL_POS(i, point_qty)),
-					32*4);
+							(GROUP_VAL_POS(i, point_qty) + 32) * j + GROUP_VAL_POS(i, point_qty)), 32);
+
 			if (GROUP_VAL_POS(i, point_qty) <= TMP(a_scan_dot_qty))
 			{
 				/* 只插值当前显示的A扫描 其余不插值 */

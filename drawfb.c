@@ -19,8 +19,10 @@
 #define TTY_DEVICE "/dev/ttyS1"
 #define TTY_DEVICE1 "/dev/ttyS0"
 
-#define COLOR_STEP 32     //    4  8  16  32  64
-#define COLOR_SHIFT 5     //    2  3   4   5   6
+#define COLOR_STEP 32     /*    4  8  16  32  64*/
+#define COLOR_SHIFT 5     /*    2  3   4   5   6*/
+#define MIN_DRAW_FAN_ANGLE_STEP    3
+
 static gchar*	pDraw  = NULL;          // 是否扇形区域 
 static guchar*	pAngleZoom = NULL; // 处于哪个角度区间 
 static guchar*	pDrawRate = NULL; // 填充比例 
@@ -343,20 +345,23 @@ void draw_b_scan (gushort *p, guint width, guint height, DOT_TYPE *data, DOT_TYP
 		for (i = 0; i < height; i++)
 			memset (p + FB_WIDTH * (i + yoffset) + xoffset, 0x0, width * 2);
 		return ;
+
 	}
 
+	/*
 	for (i = 0; i < height - 1; i++)
 		memcpy(p + (i + yoffset) * FB_WIDTH + xoffset, p + (i + yoffset + 1) * FB_WIDTH + xoffset, width * 2);
+		*/
 
 	/* 编码器同步的时候怎么画 */
-/*	memcpy(p + (yoffset) * FB_WIDTH, p + (yoffset + 1) * FB_WIDTH, FB_WIDTH * (height - 1) * 2);*/
+	memcpy(p + (yoffset) * FB_WIDTH, p + (yoffset + 1) * FB_WIDTH, FB_WIDTH * (height - 1) * 2);
 
 	for (j = 0; j < width - 1; j++)
 		fbdot (p, xoffset + j, yoffset + height - 1, TMP(color_amp[data1[j]]));
 
-//	g_print ("xoffset = %d yoffset = %d width =%d height =%d \n",
-//			xoffset, yoffset, width, height);
 #if 0
+	g_print ("xoffset = %d yoffset = %d width =%d height =%d \n",
+			xoffset, yoffset, width, height);
 	for (i = 0; i < height - 1; i++)
 		for (j = 0; j < width - 1; j++)
 			fbdot (p, xoffset + j, yoffset + i,
@@ -426,8 +431,176 @@ void draw_c_scan (gushort *p, guint width, guint height, DOT_TYPE *data, DOT_TYP
 
 
 int CalcFanScan(gdouble startAngle, gdouble endAngle,
-		gdouble stepAngle, gint startWave, gint endWave,
+		gdouble stepAngle, gint StartWave, gint endWave,
 		gint widstep, gint width, gint height)
+{
+       // 实际坐标
+       gdouble xLeftmost               ;     //      扇形 最左点坐标
+       gdouble xRightmost             ;     //     扇形 最右点坐标
+       gdouble yTopmost                ;      //     最上点
+       gdouble yBottonmost         ;    //     最下点
+       // 起始\终止\步进  角度
+       gdouble a1, a2 , a3                ;
+       int RowNo                              ;
+       //
+       gdouble _a3                            ;
+       int _RowNo                             ;
+       // 实际窗口 宽 高
+       gdouble tempW , tempH      ;
+       // 实际窗口 入射点坐标
+       gdouble xOrg , yOrg             ;
+       // 拉伸窗口 入射点坐标
+       gdouble xOrgS, yOrgS         ;
+       // 拉伸窗口 信号起 止半径
+       gdouble startWaveS , endWaveS ;
+       gdouble xxx  , yyy                 ;
+       gdouble tLength                  ;
+       gdouble xScale                     ;
+       gdouble yScale                     ;
+       int i , j                                      ;
+
+       gdouble* pScales                 ;
+       gdouble* pScalesAngle       ;
+       gdouble* _pScalesAngle     ;
+       gdouble tempx, tempy        ;
+       gdouble tempScale              ;
+       gdouble tAngle                    ;
+       int iAngle                               ;
+       // 为全局指针分配内在
+       pDraw             = (char*) malloc (width*height)                 ;
+       pAngleZoom = (unsigned char*)malloc(width*height)  ;
+       pDrawRate    = (unsigned char*)malloc(width*height)  ;
+       pDataNo        = (int*) malloc(sizeof(int)*width*height) ;
+
+       a1 = startAngle * G_PI/180.0 ;
+       a2 = endAngle   * G_PI/180.0   ;
+       a3 = stepAngle  * G_PI/180.0  ;
+       _a3 = MIN_DRAW_FAN_ANGLE_STEP * G_PI/180.0                       ;
+
+       //  扫描数据列数
+	   RowNo = (int)  ((endAngle-startAngle) / stepAngle +1)            ;
+	   _RowNo= (int) ((endAngle-startAngle) / MIN_DRAW_FAN_ANGLE_STEP + 1)            ;
+	   //  临时比例队列
+       pScales = (gdouble*)malloc(sizeof(gdouble)*RowNo)                   ;
+       pScalesAngle = (gdouble*)malloc(sizeof(gdouble)*RowNo)        ;
+
+       // calculate the fan in real coordinate
+       xLeftmost = a1 >= 0  ?  sin(a1) * StartWave : sin(a1) * endWave ;
+       xRightmost = a2 >= 0  ?  sin(a2) * endWave : sin(a2) * StartWave;
+
+       if(fabs(a1)>fabs(a2))
+       {
+              yTopmost = cos(a1)*StartWave                 ;
+              yBottonmost = cos(a2)*endWave            ;
+       }
+       else
+       {
+              yTopmost = cos(a2)*StartWave                 ;
+              yBottonmost= cos(a1)*endWave              ;
+       }
+       if(a1<=0&&a2>=0) yBottonmost = endWave ;
+       // 波型的实际宽度和高度.
+       // 虚拟发射点坐标
+       tempW = (gdouble)(xRightmost - xLeftmost)           ;
+       tempH = (gdouble)(yBottonmost- yTopmost)          ;
+       xOrg = 0 - xLeftmost                       ;
+       yOrg = 0 - yTopmost                        ;
+       // 实际尺寸 转 显示尺寸 比例
+       xScale = width/tempW                     ;
+       yScale = height/tempH                    ;
+       // 显示坐标系中 虚拟发射点坐标
+       xOrgS = (int)xOrg*xScale               ;
+       yOrgS = (int)yOrg*yScale               ;
+       //求每一列波型的 比例尺
+       //和拉伸后显示的扫描角度
+       for(i = 0; i< RowNo ; i++)
+       {
+             tempx = xScale*(sin(a1+i*a3)*endWave+xOrg)     ;
+             tempy = yScale*(cos(a1+i*a3)*endWave+yOrg)     ;
+             tempx = tempx - xOrgS                                             ;
+             tempy = tempy - yOrgS                                             ;
+             if(tempy != 0)
+                    pScalesAngle[i] = atan(tempx/tempy)             ;
+            else pScalesAngle[i] = tempx>0 ? G_PI/2.0 : -G_PI/2.0      ;
+             pScales[i] = sqrt(tempx*tempx+tempy*tempy)/endWave    ;
+       }
+       //当最小 步进角度 小于  MIN_DRAW_FAN_ANGLE_STEP   的时候
+       // 取  MIN_DRAW_FAN_ANGLE_STEP 为最小步进角度
+       // 实现 各个扇区 平稳过度
+       if( stepAngle > MIN_DRAW_FAN_ANGLE_STEP )
+       {
+                free( pScales);
+                pScales = (gdouble*) malloc(  sizeof(gdouble) * _RowNo ) ;
+                _pScalesAngle = ( gdouble* ) malloc( sizeof( gdouble) * _RowNo)  ;
+                for(i = 0; i< _RowNo ; i++)
+                {
+                         tempx = xScale*(sin(a1+i*_a3)*endWave +xOrg)     ;
+                         tempy = yScale*(cos(a1+i*_a3)*endWave+yOrg)    ;
+                         tempx = tempx - xOrgS                                             ;
+                         tempy = tempy - yOrgS                                              ;
+                         if(tempy != 0)
+                                  _pScalesAngle[i] = atan(tempx/tempy)             ;
+                         else _pScalesAngle[i] = tempx>0 ? G_PI/2.0 : -G_PI/2.0      ;
+                         pScales[i] = sqrt(tempx*tempx+tempy*tempy)/endWave    ;
+                }
+                  _pScalesAngle[_RowNo - 1] = pScalesAngle[ RowNo - 1]             ;
+       }
+
+       a1 = pScalesAngle[0];
+       a2 = pScalesAngle[RowNo -1];
+
+	   for(i = 0 ; i< height ; i++)
+       {
+             for(j = 0; j< width; j++)
+             {
+                  xxx = j-xOrgS  ;
+                  yyy = i-yOrgS  ;
+                  tLength = sqrt(xxx*xxx + yyy*yyy);
+                  tAngle  = asin(xxx/tLength)           ;
+                  if(tAngle > a2|| tAngle < a1)  {  pDraw[i*width+ j] = 0;  continue ;}
+                  iAngle = 0;
+                  while(tAngle>pScalesAngle[iAngle]&&tAngle<a2)
+                  {
+                        iAngle++ ;
+                  }
+                  iAngle--;
+                  pAngleZoom[i*width+j] = iAngle  ;
+                  tempScale = (tAngle - pScalesAngle[iAngle])/(pScalesAngle[iAngle+1] - pScalesAngle[iAngle])  ;
+                  if(tempScale > 1) tempScale = 1;
+                  pDrawRate[i*width+j] = (unsigned char)(tempScale*COLOR_STEP);
+                  if(stepAngle <= MIN_DRAW_FAN_ANGLE_STEP)
+                  {
+                                  tempScale = pScales[iAngle]*(1-tempScale)+pScales[iAngle+1]*tempScale  ;
+                                  startWaveS = StartWave*tempScale   ;
+                                  endWaveS   = endWave*tempScale     ;
+                                  pDataNo[i*width+j] = (int)((tLength-startWaveS)/tempScale )   ;
+                                  if(tLength > endWaveS || tLength<startWaveS) { pDraw [i*width + j]= 0 ; continue ;}
+                                  pDraw [i*width + j]= 255 ;
+                  }
+                  else
+                  {
+                                  iAngle = 0;
+                                  while(tAngle>_pScalesAngle[iAngle]&&tAngle<a2)
+                                  {
+                                        iAngle++ ;
+                                  }
+                                  iAngle--;
+                                  tempScale = (tAngle - _pScalesAngle[iAngle]) / (_pScalesAngle[iAngle+1] - _pScalesAngle[iAngle])  ;
+                                  if (tempScale > 1)     tempScale = 1;
+                                  tempScale =  pScales[iAngle] * (1- tempScale) +  pScales[iAngle+1]*tempScale  ;
+                                  startWaveS = StartWave * tempScale   ;
+                                  endWaveS   = endWave   * tempScale   ;
+                                  pDataNo[i*width+j] = (int)((tLength-startWaveS)/tempScale )   ;
+                                  if(tLength > endWaveS || tLength<startWaveS) { pDraw [i*width + j]= 0 ; continue ;}
+                                  pDraw [i*width + j]= 255 ;
+                  }
+             }
+       }
+       free(pScales);
+	   free(pScalesAngle);
+	   return 0;
+}
+#if 0
 {
        // 实际坐标 
        gdouble xLeftmost             ;    //      扇形 最左点坐标 
@@ -593,6 +766,7 @@ int CalcFanScan(gdouble startAngle, gdouble endAngle,
 	   free(pScalesAngle);
 	   return 0;
 }
+#endif
 /*
 {
        // 实际坐标 
@@ -875,16 +1049,15 @@ void draw_scan(guchar scan_num, guchar scan_type, guchar group,
 					xoff, yoff, group);
 			break;
 		case B_SCAN:
-			break;
 			if (pp->bscan_mark)
 			{
-				draw_b_scan(dot_temp1, TMP(b_scan_width), TMP(b_scan_height),dot_temp,
+				draw_b_scan(dot_temp1, TMP(b_scan_width), TMP(b_scan_height), dot_temp,
 						TMP(scan_data[group]) + TMP(a_scan_width) * TMP(beam_num[group]),
 						xoff, yoff, group, 1);
 				pp->bscan_mark = 0;	/* mark 的时候把画图区清空 */
 			}
 			else
-				draw_b_scan(dot_temp1, TMP(b_scan_width), TMP(b_scan_height),dot_temp,
+				draw_b_scan(dot_temp1, TMP(b_scan_width), TMP(b_scan_height), dot_temp,
 						TMP(scan_data[group]) + TMP(a_scan_width) * TMP(beam_num[group]),
 						xoff, yoff, group, 0);
 			break;

@@ -27,7 +27,6 @@ typedef struct FocusParameter
     gint G_Time[256];
     gint timedelay[256][32];
     gint k;//the num of calculator 
-    
 
 }PARAMETER, *PARAMETER_P;
 
