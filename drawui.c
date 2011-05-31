@@ -11608,7 +11608,7 @@ void draw3_data3(DRAW_UI_P p)
 							cur_value = GROUP_VAL(point_qty) ;
 							lower =	32.0;
 //							upper =	8192.0;	/* 最大值需要计算 TAN1 */
-							upper = (gfloat) get_max_point_qty();
+							upper = (gfloat) (get_max_point_qty());
 							step = tmpf;
 							digit = 0;
 							pos = 3;
@@ -17006,67 +17006,81 @@ gpointer signal_thread(gpointer arg)
 gpointer signal_thread1(gpointer arg) 
 {
 	gint i, j, k, offset, offset1;
-	guchar *temp1 = (guchar *)(pp->p_beam_data + 0x100000);
+	guint *temp1 = (guint *)(pp->p_beam_data + 0x800000);
 	pp->mark3 = 0;
 	/* 32是什么东西 32是闸门测了的数据 */
 
 	/*	g_thread_create (signal_thread, NULL, FALSE, NULL);*/
-	if (temp1[0])
-	{
-		temp1[0] = 0;
-	}
 
-	for (i = 0 ; i < CFG(groupQty); i++)
+	if (temp1[0] == 0)
 	{
-		pp->refresh_mark = 1;
-		/* 获取数据 */
-		/* 这里需要压缩数据 或者 插值数据 这里只有一个beam 同时最多处理256beam */
-		for	(j = 0 ; j < TMP(beam_qty[i]); j++)
-		{  
-			for (offset = 0, offset1 = 0, k = 0 ; k < i; k++)
-			{
-				offset += (GROUP_VAL_POS(k, point_qty) + 32) * TMP(beam_qty[k]);
-				offset1 += TMP(beam_qty[k]);
-			}
-			memcpy (TMP(measure_data[offset1 + j]), (void *)(pp->p_beam_data + offset +
+		for (i = 0 ; i < CFG(groupQty); i++)
+		{
+			/* 获取数据 */
+			/* 这里需要压缩数据 或者 插值数据 这里只有一个beam 同时最多处理256beam */
+			for	(j = 0 ; j < TMP(beam_qty[i]); j++)
+			{  
+				for (offset = 0, offset1 = 0, k = 0 ; k < i; k++)
+				{
+					offset += (GROUP_VAL_POS(k, point_qty) + 32) * TMP(beam_qty[k]);
+					offset1 += TMP(beam_qty[k]);
+				}
+				memcpy (TMP(measure_data[offset1 + j]), (void *)(pp->p_beam_data + offset +
 							(GROUP_VAL_POS(i, point_qty) + 32) * j + GROUP_VAL_POS(i, point_qty)), 32);
 
-			if (GROUP_VAL_POS(i, point_qty) <= TMP(a_scan_dot_qty))
-			{
-				/* 只插值当前显示的A扫描 其余不插值 */
-				interpolation_data (
-						(DOT_TYPE *)(pp->p_beam_data + offset +
-							(GROUP_VAL_POS(i, point_qty) + 32) * j),
-						TMP(scan_data[i] + TMP(a_scan_dot_qty) * j), 
-						GROUP_VAL_POS(i, point_qty),
-						TMP(a_scan_dot_qty));
+				if (GROUP_VAL_POS(i, point_qty) <= TMP(a_scan_dot_qty))
+				{
+					/* 只插值当前显示的A扫描 其余不插值 */
+					interpolation_data (
+							(DOT_TYPE *)(pp->p_beam_data + offset +
+								(GROUP_VAL_POS(i, point_qty) + 32) * j),
+							TMP(scan_data[i] + TMP(a_scan_dot_qty) * j), 
+							GROUP_VAL_POS(i, point_qty),
+							TMP(a_scan_dot_qty));
+				}
+				else if (GROUP_VAL_POS(i, point_qty) > TMP(a_scan_dot_qty))
+				{
+					compress_data (
+							(DOT_TYPE *)(pp->p_beam_data + offset +
+								(GROUP_VAL_POS(i, point_qty) + 32) * j),
+							TMP(scan_data[i] + TMP(a_scan_dot_qty) * j), 
+							GROUP_VAL_POS(i, point_qty),
+							TMP(a_scan_dot_qty), 
+							GROUP_VAL_POS(i, rectifier));
+				}
 			}
-			else if (GROUP_VAL_POS(i, point_qty) > TMP(a_scan_dot_qty))
+			for (k = 0; ((k < 16) && (TMP(scan_type[k]) != 0xff)); k++)
 			{
-				compress_data (
-						(DOT_TYPE *)(pp->p_beam_data + offset +
-							(GROUP_VAL_POS(i, point_qty) + 32) * j),
-						TMP(scan_data[i] + TMP(a_scan_dot_qty) * j), 
-						GROUP_VAL_POS(i, point_qty),
-						TMP(a_scan_dot_qty), 
-						GROUP_VAL_POS(i, rectifier));
+				if (TMP(scan_group[k]) == i)
+					draw_scan(k, TMP(scan_type[k]), TMP(scan_group[k]), 
+							TMP(scan_xpos[k]), TMP(scan_ypos[k]), dot_temp, 
+							/*						TMP(fb1_addr) + pp->scan_count*768*400);*/
+						TMP(fb1_addr) + 768*400);
+				//						dot_temp1);
 			}
 		}
-		for (k = 0; ((k < 16) && (TMP(scan_type[k]) != 0xff)); k++)
-		{
-			if (TMP(scan_group[k]) == i)
-				draw_scan(k, TMP(scan_type[k]), TMP(scan_group[k]), 
-						TMP(scan_xpos[k]), TMP(scan_ypos[k]), dot_temp, 
-/*						TMP(fb1_addr) + pp->scan_count*768*400);*/
-						dot_temp1);
-		}
+		temp1[0] = 1;
 	}
-
-	/* 复制波形到显存 */
-	if (pp->refresh_mark )
+	else 
 	{
-		memcpy (TMP(fb1_addr), dot_temp1, FB_WIDTH*400*2);	/* 如果用dma更快啊 */
-		pp->refresh_mark = 0;
+		pp->mark3 = 1;
+		return NULL;
+	}
+	/* 复制波形到显存 */
+
+	if (0)
+	{
+//		memcpy (TMP(fb1_addr), TMP(fb1_addr) + 768*400, FB_WIDTH*400*2);	/* 如果用dma更快啊 */
+//		pp->refresh_mark = 0;
+		if (temp1[0] == 0)
+		{
+			temp1[0] = 1;
+		}
+		else 
+		{
+			pp->mark3 = 1;
+			return NULL;
+		}
 	}
 
 	pp->mark3 = 1;
@@ -17083,7 +17097,7 @@ static gboolean time_handler2 (GtkWidget *widget)
 
 	g_thread_create (signal_thread, NULL, FALSE, NULL);
 
-	(GROUP_VAL (prf)) > 500 ? (prf_tmp = 50) : (prf_tmp = GROUP_VAL (prf) / 10);
+//	(GROUP_VAL (prf)) > 500 ? (prf_tmp = 50) : (prf_tmp = GROUP_VAL (prf) / 10);
 #if 0
 //	if (pp->mark3)
 //	{
@@ -17096,13 +17110,12 @@ static gboolean time_handler2 (GtkWidget *widget)
 		g_thread_create (signal_thread1, NULL, FALSE, NULL);
 //	}
 #endif
-	if ((20 * pp->scan_count) >= (1000 / prf_tmp))
+//	if ((20 * pp->scan_count) >= (1000 / prf_tmp))
 	{
 		pp->scan_count = 0;
 		if (pp->mark3)
 		{
 			tt = g_thread_create (signal_thread1, NULL, FALSE, NULL);
-			g_thread_set_priority (tt, G_THREAD_PRIORITY_URGENT);
 		}
 	}
 	return TRUE;

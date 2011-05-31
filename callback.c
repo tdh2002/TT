@@ -515,10 +515,10 @@ guint get_point_qty ()
 	{
 		switch (GROUP_VAL(point_qty_pos))
 		{
-			case 0:GROUP_VAL(point_qty) = 640;break;
-			case 1:GROUP_VAL(point_qty) = 160;break;
-			case 2:GROUP_VAL(point_qty) = 320;break;
-			case 3:GROUP_VAL(point_qty) = 640;break;
+			case 0:GROUP_VAL(point_qty) = MIN(get_max_point_qty(), 605);break;
+			case 1:GROUP_VAL(point_qty) = MIN(get_max_point_qty(), 160);break;
+			case 2:GROUP_VAL(point_qty) = MIN(get_max_point_qty(), 320);break;
+			case 3:GROUP_VAL(point_qty) = MIN(get_max_point_qty(), 640);break;
 			default:break;
 		}
 	}

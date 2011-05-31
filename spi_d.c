@@ -140,6 +140,8 @@ void init_spi ()
 		perror("ioctl spi read error4\n");
 		return ;
 	}
+
+	ioctl (fd_gpio, GPIO61_HIGH, &val);
 /*
 	write(fd, (unsigned char *)fpga_reg_p, sizeof(fpga_reg));
 
@@ -202,9 +204,9 @@ int write_focal_data (focal_data_spi *p, unsigned int beam_num)
 	p->addr = 0x1;
 	little_to_big ((unsigned int *)(p1), sizeof(focal_data_spi) / 4);
 
-	ioctl (fd_gpio, GPIO61_LOW, &i);
+	ioctl (fd_gpio, GPIO43_LOW, &i);
 	i = write (fd_array, (unsigned char *)(p1), sizeof(focal_data_spi));
-	ioctl (fd_gpio, GPIO61_HIGH, &i);
+	ioctl (fd_gpio, GPIO43_HIGH, &i);
 
 	return 0;
 }

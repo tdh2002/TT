@@ -98,20 +98,6 @@ void init_fb ()
 	return ;
 }
 
-void change_fb ()
-{
-	if (!vinfo.yoffset)
-		vinfo.yoffset = 400;
-	else
-		vinfo.yoffset = 0;
-
-	if (ioctl(fd_fb, FBIOPAN_DISPLAY, &vinfo) < 0)
-	{
-		printf("Error oppandisplay \n");
-	}
-	return ;
-}
-
 void init_mem ()
 {
 	int fd_mem;
