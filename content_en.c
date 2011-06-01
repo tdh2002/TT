@@ -333,7 +333,7 @@ static const gchar *content_en290[] = {
 
 static const gchar *content_en291[] = {
 	/* 二级菜单第9页下的第1页三级菜单 */
-	"  Clock Set  ","  Date Set  ", "  Select Key ","  Assign Key  ", NULL, NULL
+	"Clock Set \n(HH:MM:SS)", "Date Set", "Select Key", "Assign Key", NULL, NULL
 };
 
 static const gchar *content_en292[] = {

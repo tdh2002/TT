@@ -391,8 +391,8 @@ typedef	struct _Config
 	st_PART	part;				/* 被检测工件	*/
 	/* 所有聚焦法则的信息在这里 */
 	LAW_FOCAL	focal_law_all_info[setup_MAX_GROUP_QTY];
-	LAW_BEAM	focal_law_all_beam[setup_MAX_LAW_QTY];
-	LAW_ELEM	focal_law_all_elem[setup_MAX_LAW_QTY][setup_MAX_ELEM_RX_ACTIVE];	
+//	LAW_BEAM	focal_law_all_beam[setup_MAX_LAW_QTY];
+//	LAW_ELEM	focal_law_all_elem[setup_MAX_LAW_QTY][setup_MAX_ELEM_RX_ACTIVE];	
 
 	/*选项*/
 	guchar	unit;			/* 0 mm 1 inch */

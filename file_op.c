@@ -176,32 +176,32 @@ void read_law_file (const gchar *file_path, gint offset, gint group)
 					&temp[8], &temp[9], &temp[10],&temp[11],
 					&temp[12],&temp[13],&temp[14]);
 
-			CFG(focal_law_all_beam[offset + i]).N_ActiveElements	= temp[0];
-			CFG(focal_law_all_beam[offset + i]).frequency			= temp[1];
-			CFG(focal_law_all_beam[offset + i]).cycle				= temp[2];
-			CFG(focal_law_all_beam[offset + i]).sumgain				= temp[3];
-			CFG(focal_law_all_beam[offset + i]).mode				= temp[4];
-			CFG(focal_law_all_beam[offset + i]).filter				= temp[5];
-			CFG(focal_law_all_beam[offset + i]).R_angle				= temp[6];	
-			CFG(focal_law_all_beam[offset + i]).S_angle				= temp[7]; 
-			CFG(focal_law_all_beam[offset + i]).T_first				= temp[8];
-			CFG(focal_law_all_beam[offset + i]).R_first				= temp[9];		
-			CFG(focal_law_all_beam[offset + i]).Scan_offset			= temp[10]; 
-			CFG(focal_law_all_beam[offset + i]).Index_offset		= temp[11] ;
-			CFG(focal_law_all_beam[offset + i]).G_delay				= temp[12];
-			CFG(focal_law_all_beam[offset + i]).F_depth				= temp[13];
-			CFG(focal_law_all_beam[offset + i]).M_velocity			= temp[14];
+			TMP(focal_law_all_beam[offset + i]).N_ActiveElements	= temp[0];
+			TMP(focal_law_all_beam[offset + i]).frequency			= temp[1];
+			TMP(focal_law_all_beam[offset + i]).cycle				= temp[2];
+			TMP(focal_law_all_beam[offset + i]).sumgain				= temp[3];
+			TMP(focal_law_all_beam[offset + i]).mode				= temp[4];
+			TMP(focal_law_all_beam[offset + i]).filter				= temp[5];
+			TMP(focal_law_all_beam[offset + i]).R_angle				= temp[6];	
+			TMP(focal_law_all_beam[offset + i]).S_angle				= temp[7]; 
+			TMP(focal_law_all_beam[offset + i]).T_first				= temp[8];
+			TMP(focal_law_all_beam[offset + i]).R_first				= temp[9];		
+			TMP(focal_law_all_beam[offset + i]).Scan_offset			= temp[10]; 
+			TMP(focal_law_all_beam[offset + i]).Index_offset		= temp[11] ;
+			TMP(focal_law_all_beam[offset + i]).G_delay				= temp[12];
+			TMP(focal_law_all_beam[offset + i]).F_depth				= temp[13];
+			TMP(focal_law_all_beam[offset + i]).M_velocity			= temp[14];
 
-			for (j = 0; j < CFG(focal_law_all_beam[offset + i]).N_ActiveElements; j++)
+			for (j = 0; j < TMP(focal_law_all_beam[offset + i]).N_ActiveElements; j++)
 			{
 				l = fscanf(fd, "%d 	%d 	%d 	%d 	%d 	%d", &temp[0],&temp[1],
 						&temp[2], &temp[3], &temp[4], &temp[5]);
-				CFG(focal_law_all_elem[offset + i][j]).E_number		= temp[0];
-				CFG(focal_law_all_elem[offset + i][j]).FL_gain		= temp[1];
-				CFG(focal_law_all_elem[offset + i][j]).T_delay		= temp[2];
-				CFG(focal_law_all_elem[offset + i][j]).R_delay		= temp[3];
-				CFG(focal_law_all_elem[offset + i][j]).Amplitude	= temp[4];
-				CFG(focal_law_all_elem[offset + i][j]).P_width		= temp[5];
+				TMP(focal_law_all_elem[offset + i][j]).E_number		= temp[0];
+				TMP(focal_law_all_elem[offset + i][j]).FL_gain		= temp[1];
+				TMP(focal_law_all_elem[offset + i][j]).T_delay		= temp[2];
+				TMP(focal_law_all_elem[offset + i][j]).R_delay		= temp[3];
+				TMP(focal_law_all_elem[offset + i][j]).Amplitude	= temp[4];
+				TMP(focal_law_all_elem[offset + i][j]).P_width		= temp[5];
 			} 
 		} 
 	}
@@ -225,32 +225,32 @@ void save_law_file (const gchar *file_path, gint offset, gint group)
 		for (i = 0; i < TMP(beam_qty[group]); i++)
 		{
 			fprintf(fd, "%d 	%d 	%d 	%d 	%d 	%d 	%d 	%d 	%d 	%d 	%d 	%d 	%d 	%d 	%d\015\012",
-					CFG(focal_law_all_beam[offset + i]).N_ActiveElements,
-					CFG(focal_law_all_beam[offset + i]).frequency, 
-					CFG(focal_law_all_beam[offset + i]).cycle, 
-					CFG(focal_law_all_beam[offset + i]).sumgain, 
-					CFG(focal_law_all_beam[offset + i]).mode,
-					CFG(focal_law_all_beam[offset + i]).filter,
-					CFG(focal_law_all_beam[offset + i]).R_angle,
-					CFG(focal_law_all_beam[offset + i]).S_angle, 
-					CFG(focal_law_all_beam[offset + i]).T_first, 
-					CFG(focal_law_all_beam[offset + i]).R_first,
-					CFG(focal_law_all_beam[offset + i]).Scan_offset, 
-					CFG(focal_law_all_beam[offset + i]).Index_offset, 
-					CFG(focal_law_all_beam[offset + i]).G_delay, 
-					CFG(focal_law_all_beam[offset + i]).F_depth, 
-					CFG(focal_law_all_beam[offset + i]).M_velocity );
+					TMP(focal_law_all_beam[offset + i]).N_ActiveElements,
+					TMP(focal_law_all_beam[offset + i]).frequency, 
+					TMP(focal_law_all_beam[offset + i]).cycle, 
+					TMP(focal_law_all_beam[offset + i]).sumgain, 
+					TMP(focal_law_all_beam[offset + i]).mode,
+					TMP(focal_law_all_beam[offset + i]).filter,
+					TMP(focal_law_all_beam[offset + i]).R_angle,
+					TMP(focal_law_all_beam[offset + i]).S_angle, 
+					TMP(focal_law_all_beam[offset + i]).T_first, 
+					TMP(focal_law_all_beam[offset + i]).R_first,
+					TMP(focal_law_all_beam[offset + i]).Scan_offset, 
+					TMP(focal_law_all_beam[offset + i]).Index_offset, 
+					TMP(focal_law_all_beam[offset + i]).G_delay, 
+					TMP(focal_law_all_beam[offset + i]).F_depth, 
+					TMP(focal_law_all_beam[offset + i]).M_velocity );
 
 
-			for (j = 0; j < CFG(focal_law_all_beam[offset + i]).N_ActiveElements; j++)
+			for (j = 0; j < TMP(focal_law_all_beam[offset + i]).N_ActiveElements; j++)
 			{
 					fprintf(fd, "%d 	%d 	%d 	%d 	%d 	%d\015\012",          
-							CFG(focal_law_all_elem[offset + i][j]).E_number,
-							CFG(focal_law_all_elem[offset + i][j]).FL_gain,  
-							CFG(focal_law_all_elem[offset + i][j]).T_delay,
-							CFG(focal_law_all_elem[offset + i][j]).R_delay,
-							CFG(focal_law_all_elem[offset + i][j]).Amplitude, 
-							CFG(focal_law_all_elem[offset + i][j]).P_width ); 
+							TMP(focal_law_all_elem[offset + i][j]).E_number,
+							TMP(focal_law_all_elem[offset + i][j]).FL_gain,  
+							TMP(focal_law_all_elem[offset + i][j]).T_delay,
+							TMP(focal_law_all_elem[offset + i][j]).R_delay,
+							TMP(focal_law_all_elem[offset + i][j]).Amplitude, 
+							TMP(focal_law_all_elem[offset + i][j]).P_width ); 
 			} 
 
 		} 

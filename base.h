@@ -191,6 +191,9 @@ typedef struct tmp_config
 	DOT_TYPE	s_scan_data[640*400];		/**/
 #endif
 
+	LAW_BEAM	focal_law_all_beam[setup_MAX_LAW_QTY];
+	LAW_ELEM	focal_law_all_elem[setup_MAX_LAW_QTY][setup_MAX_ELEM_RX_ACTIVE];	
+
 	DOT_TYPE	scan_data[setup_MAX_GROUP_QTY][640*400];
 	guint		measure_data[setup_MAX_LAW_QTY][32];
 
@@ -562,7 +565,8 @@ typedef struct __save_file_name_struct
 
 #define LAW_VAL_POS(a, b)  (GROUP_VAL_POS(a,law_info).b)
 #define LAW_VAL(a)  (GROUP_VAL(law_info).a)
-#define BEAM_INFO(a,b)  (CFG(focal_law_all_beam[a].b))         /* a表示第几个波束， b表示当前波束下的某一个特性的值 */
+//#define BEAM_INFO(a,b)  (CFG(focal_law_all_beam[a].b))         /* a表示第几个波束， b表示当前波束下的某一个特性的值 */
+#define BEAM_INFO(a,b)  (TMP(focal_law_all_beam[a].b))         /* a表示第几个波束， b表示当前波束下的某一个特性的值 */
 
 #define GROUP_GATE_POS(a)   GROUP_VAL(gate[GROUP_VAL(gate_pos)].a)
 #define CFG_ALARM_POS(a)  CFG(alarm[CFG(alarm_pos)].a)

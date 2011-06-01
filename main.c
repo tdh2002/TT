@@ -348,30 +348,30 @@ void send_focal_spi (guint group)
 		TMP(focal_spi[group]).all_beam_info	= get_beam_qty();
 		TMP(focal_spi[group]).gain_offset	= GROUP_VAL_POS(group, gain_offset);
 
-		TMP(focal_spi[group]).beam_delay	= CFG(focal_law_all_beam[k].beam_delay) / 10;
+		TMP(focal_spi[group]).beam_delay	= TMP(focal_law_all_beam[k].beam_delay) / 10;
 		TMP(focal_spi[group]).rx_sel	= 
 			channel_select(GROUP_VAL_POS(group, pulser) + LAW_VAL_POS(group, First_rx_elem));  
 		TMP(focal_spi[group]).tx_sel	= 
 			channel_select(GROUP_VAL_POS(group, receiver) + LAW_VAL_POS(group, First_tx_elem));  
 
-		for (i = 0 ; i < CFG(focal_law_all_beam[k].N_ActiveElements); i++)
+		for (i = 0 ; i < TMP(focal_law_all_beam[k].N_ActiveElements); i++)
 		{
 			TMP(focal_spi[group]).tx_info[i]	= 
-				((guint)(CFG(focal_law_all_elem[k][i].T_delay) / 2.5)) | 
+				((guint)(TMP(focal_law_all_elem[k][i].T_delay) / 2.5)) | 
 				(((guint)(GROUP_VAL_POS(group, pulser_width) / 2.5)) << 16) | (0x3 << 30);	
 			if (i < 16)
 				TMP(focal_spi[group]).rx_info[i]	= 
 					(TMP(focal_spi[group]).rx_info[i] & 0xffff0000) | 
-					((guint)(CFG(focal_law_all_elem[k][i].R_delay) / 2.5)); 
+					((guint)(TMP(focal_law_all_elem[k][i].R_delay) / 2.5)); 
 			else
 				TMP(focal_spi[group]).rx_info[i - 16]	= 
 					(TMP(focal_spi[group]).rx_info[i] & 0x0000ffff) | 
-					((guint)(CFG(focal_law_all_elem[k][i].R_delay) / 2.5) << 16); 
+					((guint)(TMP(focal_law_all_elem[k][i].R_delay) / 2.5) << 16); 
 		}
 		
-		if (CFG(focal_law_all_beam[k].N_ActiveElements) < 32)
+		if (TMP(focal_law_all_beam[k].N_ActiveElements) < 32)
 		{
-			for (i = CFG(focal_law_all_beam[k].N_ActiveElements); i < 32; i++)
+			for (i = TMP(focal_law_all_beam[k].N_ActiveElements); i < 32; i++)
 				TMP(focal_spi[group]).rx_info[i] &= 0x3fffffff;
 		}
 

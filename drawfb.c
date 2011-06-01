@@ -194,7 +194,7 @@ void fbline(gushort *p, gint x1, gint y1, gint x2, gint y2, gushort col)
 
 	/* 算出,两个点之间的x坐标的差值.*/
 	M = ABS(x1 - x2);
-	/*算出,两个点之间的y坐标的差值. */
+	/* 算出,两个点之间的y坐标的差值.*/
 	N = ABS(y1 - y2);
 	/*如果两个点之间的x坐标间差值是0的话,则调用画竖线函数fbliney来完成*/
 	if (M == 0) 
@@ -284,9 +284,17 @@ void draw_a_scan (gushort *p, guint width, guint height,
 		fbline (p, 
 				xoffset + i,
 				yoffset + height * HEIGHT_TABLE[data[i]],
+				xoffset + i,
+				yoffset + height * HEIGHT_TABLE[data[i + 1]],
+				all_col_16[GROUP_VAL_POS(groupId, ascan_color)]);
+		/*
+		fbline (p, 
+				xoffset + i,
+				yoffset + height * HEIGHT_TABLE[data[i]],
 				xoffset + i + 1,
 				yoffset + height * HEIGHT_TABLE[data[i + 1]],
 				all_col_16[GROUP_VAL_POS(groupId, ascan_color)]);
+		*/
 		/* 画包络 */
 		if (GROUP_VAL_POS(groupId, ascan_envelope))
 		{
