@@ -42,6 +42,9 @@ guint get_max_point_qty()
 	return MIN(((max_point_qty / TMP(beam_qty[CFG(groupId)])) - 32), 8192);
 }
 
+//把group向导的设置参数保存起来
+_group_wizard g_group_wizard_struct;
+
 /* 输入数字时候的其他快捷键 */
 static guint key_fast_map[] =
 {
@@ -2633,12 +2636,103 @@ void data_002 (GtkMenuItem *menuitem, gpointer data) /* Wizard -> Group -> Opera
 	draw_menu3(0, NULL);
 	/* 发送给硬件 */
 }
+
 void data_0021 (GtkMenuItem *menuitem, gpointer data) /* Wizard -> Group -> Group */
 {
 	pp->wgroup_pos = (guchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
 	/* 发送给硬件 */
+}
+
+void data_0022 (GtkMenuItem *menuitem, gpointer data) /* */
+{
+	g_tmp_group_struct.group_mode = (gchar) (GPOINTER_TO_UINT (data));
+	//if(!g_tmp_group_struct.group_mode) /*group mode 选择UT时，focal law 不可用*/
+		//gtk_widget_set_sensitive(pp->menuitem[6],FALSE);
+	//else
+		//gtk_widget_set_sensitive(pp->menuitem[6],TRUE);
+	pp->pos_pos = MENU3_STOP;
+	draw_menu3(0, NULL);
+}
+
+void data_00231 (GtkSpinButton *spinbutton, gpointer data) /* Pulser 发射 P110 */
+{
+	g_tmp_group_struct.pulser =  (guchar) (gtk_spin_button_get_value (spinbutton));
+	if (g_tmp_group_struct.tx_rxmode == PULSE_ECHO)
+		g_tmp_group_struct.receiver =  (guchar) (gtk_spin_button_get_value (spinbutton));
+
+	/*发送给硬件*/
+}
+
+void data_00232 (GtkMenuItem *menuitem, gpointer data) /* 收发模式 Tx/Rx Mode P111 */
+{
+	g_tmp_group_struct.tx_rxmode = (gchar) (GPOINTER_TO_UINT (data));
+	if ( g_tmp_group_struct.tx_rxmode == PULSE_ECHO )
+		g_tmp_group_struct.receiver = g_tmp_group_struct.pulser;
+	pp->pos_pos = MENU3_STOP;
+	send_dsp_data (TX_RX_MODE_DSP,g_tmp_group_struct.tx_rxmode);
+	draw_menu3(0, NULL);
+	/* 发送给硬件 */
+}
+
+void data_0024 (GtkMenuItem *menuitem, gpointer data) /* Probe/Part -> Select -> Select 502 */
+{
+	pp->p_config->probe_select = (gchar) (GPOINTER_TO_UINT (data));
+	pp->pos_pos = MENU3_STOP;
+	draw_menu3(0, NULL);
+}
+
+void data_0026 (GtkSpinButton *spinbutton, gpointer data) /*scanoffset */
+{
+	if(CFG(unit) == UNIT_MM)
+	{
+		g_tmp_group_struct.scan_offset =  (gint) (gtk_spin_button_get_value (spinbutton) * 10.0);
+	}
+	else
+	{
+		g_tmp_group_struct.scan_offset =  (gint) (gtk_spin_button_get_value (spinbutton) * 10.0 / 0.03937);
+	}
+
+	draw_area_all ();
+}
+
+void data_0036 (GtkSpinButton *spinbutton, gpointer data) /*indexoffset */
+{
+	if(CFG(unit) == UNIT_MM)
+		g_tmp_group_struct.index_offset =  (gint) (gtk_spin_button_get_value (spinbutton) * 10.0);
+	else
+		g_tmp_group_struct.index_offset =  (gint) (gtk_spin_button_get_value (spinbutton) * 10.0 / 0.03937);
+}
+
+void data_0043 (GtkSpinButton *spinbutton, gpointer data) /* Pulser 发射 P120 */
+{
+	g_tmp_group_struct.receiver =  (guchar) (gtk_spin_button_get_value (spinbutton));
+
+	/*发送给硬件*/
+}
+
+void data_00461 (GtkSpinButton *spinbutton, gpointer data) /* Skew (deg) */
+{
+	g_tmp_group_struct.skew =  (gushort) (gtk_spin_button_get_value (spinbutton) * 100.0);
+}
+
+void data_00462 (GtkMenuItem *menuitem, gpointer data) /* Skew (deg) */
+{
+	gushort temp = GPOINTER_TO_UINT (data);
+	g_tmp_group_struct.skew_pos = (guchar) (GPOINTER_TO_UINT (data));
+	g_tmp_group_struct.skew = get_skew();
+	if (temp != 4)
+	{
+		pp->pos_pos = MENU3_STOP;
+		draw_menu3(0, NULL);
+	}
+	else
+	{
+		pp->mark_pop_change = 1;
+		pp->pos_pos = MENU3_PRESSED;
+		draw_menu3(0, NULL);
+	}
 }
 
 void data_022 (GtkMenuItem *menuitem, gpointer data) /* Wizard -> Calibration -> Type */

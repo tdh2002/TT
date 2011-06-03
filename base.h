@@ -556,6 +556,16 @@ typedef struct __save_file_name_struct
     GtkWidget *file_name;
 }_save_file_name_struct,* _save_file_name_struct_p;
 
+typedef struct __group_wizard
+{
+	enum 
+	{
+		add = 1,
+		modify
+	}operation;
+
+}_group_wizard, *_group_wizard_p;
+
 #define CUR_POS (pp->pos2[pp->pos][pp->pos1[pp->pos]])      /* 0,1,2,3,4,5 */
 #define CUR_POS_P(p) (p->pos2[p->pos][p->pos1[p->pos]])      /* 0,1,2,3,4,5 */
 #define CFG(a)	(pp->p_config->a)

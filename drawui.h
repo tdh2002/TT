@@ -6,6 +6,7 @@
 #ifndef	__DRAW_UI_H_
 #define	__DRAW_UI_H_
 #include "base.h"
+#include "base_config.h"
 #include "language.h"
 
 /* 扫查模式 */
@@ -176,8 +177,8 @@
 #define SOURCE		(DATA_LINK+4)
 #define DISPLAY		(SOURCE + 9)
 #define DISPL		(DISPLAY + 11)
-#define GROUP		(DISPL +11)
-#define C_SCAN1		(GROUP +2)
+#define GROUP_POS	(DISPL +11)
+#define C_SCAN1		(GROUP_POS +2)
 #define DATA2		(C_SCAN1 + 5)
 #define DIS_MODE	(DATA2 + 4)
 #define UTUNIT		(DIS_MODE + 4)
@@ -326,6 +327,9 @@
 #define CURVE_POS_DSP		0x3024
 #define POINT_POS_DSP		0x3025
 
+
+extern _group_wizard g_group_wizard_struct;
+extern GROUP g_tmp_group_struct;
 extern const gchar *backpic[];
 
 extern gint (*window_keypress_event_orig)(GtkWidget *widget, GdkEventKey *event);
@@ -361,6 +365,15 @@ extern gboolean eventbox2_function0 (GtkWidget *widget, GdkEventButton *event,	g
 
 extern void data_002 (GtkMenuItem *menuitem, gpointer data);
 extern void data_0021 (GtkMenuItem *menuitem, gpointer data);
+extern void data_0022 (GtkMenuItem *menuitem, gpointer data);
+extern void data_00231 (GtkSpinButton *spinbutton, gpointer data); 
+extern void data_00232 (GtkMenuItem *menuitem, gpointer data);
+extern void data_0024 (GtkMenuItem *menuitem, gpointer data); /*  */
+extern void data_0026 (GtkSpinButton *spinbutton, gpointer data); /**/
+extern void data_0036 (GtkSpinButton *spinbutton, gpointer data); /**/
+extern void data_0043 (GtkSpinButton *spinbutton, gpointer data);
+extern void data_00461 (GtkSpinButton *spinbutton, gpointer data);
+extern void data_00462 (GtkMenuItem *menuitem, gpointer data); /* Skew (deg) */
 extern void data_022 (GtkMenuItem *menuitem, gpointer data);
 extern void data_0221 (GtkMenuItem *menuitem, gpointer data);
 extern void data_0222 (GtkSpinButton *spinbutton, gpointer data);
