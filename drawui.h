@@ -141,24 +141,6 @@
 /* 最大测量范围  扫描延时+扫描范围 */
 #define MAX_RANGE_US	9899.89
 
-/* 弹出的对话框的类型 */
-#define DIALOG_REMARK	0
-#define DIALOG_PROBE	1
-#define DIALOG_WEDGE	2
-#define DIALOG_FILE_OPEN	6
-#define DIALOG_SAVE_SETUP_AS	7
-
-#define DIALOG_SYSTEM_INFO	8
-
-#define DIALOG_COLOR_PALETTE	11
-#define DIALOG_FILE_MANAGE		12
-#define DIALOG_LAW_SAVE			13
-#define DIALOG_LAW_READ			14
-#define DIALOG_IP				15
-#define DIALOG_MASK				16
-#define DIALOG_TIME				17
-#define DIALOG_DATE				18
-
 /* 各个menu 弹出菜单的偏移量 */
 #define TX_RX_MODE	0
 #define FREQUENCY	(TX_RX_MODE + 8)
@@ -343,6 +325,8 @@
 #define MODE_POS_DSP		0x3023
 #define CURVE_POS_DSP		0x3024
 #define POINT_POS_DSP		0x3025
+
+extern const gchar *backpic[];
 
 extern gint (*window_keypress_event_orig)(GtkWidget *widget, GdkEventKey *event);
 extern gint (*dialog_keypress_event_orig)(GtkWidget *widget, GdkEventKey *event);
@@ -638,5 +622,8 @@ extern void add_to_list(GtkWidget *list, const gchar *str, guint count);
 extern void draw_field_name ();
 	
 extern void send_focal_spi (guint group);
+extern void update_widget_bg(GtkWidget *widget, const gchar *img_file);
+
+extern void draw3_data1(DRAW_UI_P p) ;
 #endif
 
