@@ -4903,29 +4903,68 @@ void draw3_data2(DRAW_UI_P p)
 					}
 					else if ( pp->start_qty == 1 )
 					{
-						if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 2))
+						if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 2))	
 						{
-							//点击按钮，弹出菜单。
-							draw3_pop_tt (data_002, NULL, 
+							//进入这块就是用户点击了选项菜单
+							//如果group数量是1~7，则显示弹出菜单为add和modify
+							if ( ( pp->p_config->groupQty >= 1 ) && ( pp->p_config->groupQty < 8 ) )
+							{
+								//点击按钮，弹出菜单。
+								draw3_pop_tt (data_002, NULL, 
 									menu_content[OPERATION + pp->operation_pos],
 									menu_content + OPERATION, 2, 2, pp->operation_pos, 0);
+							}
+							//如果group数量是8，则显示弹出菜单为modify
+							else if ( pp->p_config->groupQty == 8 )
+							{
+								draw3_pop_tt (data_002, NULL, 
+									menu_content[OPERATION + pp->operation_pos + 1],
+									menu_content + OPERATION + 1, 1, 2, pp->operation_pos, 0);
+							}
                         }
 						else 
 						{
-							//没有点击时的显示，常规显示
-							draw3_popdown (menu_content[OPERATION + pp->operation_pos], 2, 0);
+							//在本块，代表没有点击的常规显示
 
-							//判断用户是选择了add，还是选择了modify，1代表选中，0代表没有选中
+							//group数量在1~7那时，默认显示为add
+							//group数量在8那时，默认显示为modify
+							if ( ( pp->p_config->groupQty >= 1 ) && ( pp->p_config->groupQty < 8 ) )
+							{
+								draw3_popdown (menu_content[OPERATION + pp->operation_pos], 2, 0);
+							}
+							else if ( pp->p_config->groupQty == 8 )
+							{
+								draw3_popdown (menu_content[OPERATION + pp->operation_pos + 1], 2, 0);
+							}
+
+							//判断用户是选择了add，还是选择了modify，
 							switch ( pp->operation_pos )
 							{
+								//选中第一个选项，
+								//如果group数量在1~7那时，选中是add
+								//如果group数量在8那时，选中是modify
 								case 0: 
-									g_group_wizard_struct.operation = add;
+									if ( ( pp->p_config->groupQty >= 1 ) && ( pp->p_config->groupQty < 8 ) ) 
+									{
+										g_group_wizard_struct.operation = add;
+										g_printf("add\n");
+									}
+									else
+									{
+										g_group_wizard_struct.operation = modify;
+										g_printf("modify\n");
+									}
 									break;
-								 
+								
+								//选中第二个选项
+								//如果有二个选项，第一个为add，第二个为modify。
+								//所以选中这个选项的，必是选中modify。
 								case 1:
 									g_group_wizard_struct.operation = modify;
+									g_printf("modify\n");
 									break;
-									 
+							    
+								//不能，并不会出这种情况	 
 								default:
 									break;
 							}
@@ -4935,13 +4974,12 @@ void draw3_data2(DRAW_UI_P p)
 					{
 						//if ( g_group_wizard_struct.operation == modify )
 						{
-
 						   if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 2))
 						    {	
-							    //根据有多少个group，在那个弹出菜单，显示多少个group选项
-							    draw3_pop_tt (data_0021, NULL, 
-								    menu_content[WGROUP + pp->wgroup_pos],
-								    menu_content + WGROUP,pp->p_config->groupQty,pp->p_config->groupQty,pp->wgroup_pos,0);
+								//根据有多少个group，在那个弹出菜单，显示多少个group选项
+								draw3_pop_tt (data_0021, NULL, 
+									menu_content[WGROUP + pp->wgroup_pos],
+									menu_content + WGROUP,pp->p_config->groupQty,2,pp->wgroup_pos,0);
 						    }
 						    else 
 						    {
@@ -4970,7 +5008,7 @@ void draw3_data2(DRAW_UI_P p)
 						    str = g_strdup_printf ("%s", con2_p[0][0][7]);	
 						    gtk_label_set_text (GTK_LABEL (pp->label3[2]), str);
 						    if (str)
-							    g_free (str);
+								g_free (str);
 					    }
 					}
 					else if ( pp->start_qty == 3 )
