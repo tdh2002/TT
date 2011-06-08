@@ -426,10 +426,12 @@ void init_group_spi (guint group)
 	TMP(group_spi[group]).UT2			= 0;		/* 未完成 */
 	TMP(group_spi[group]).UT1			= 0;		/* 未完成 */
 	TMP(group_spi[group]).PA			= GROUP_VAL_POS (group, group_mode);		
-	TMP(group_spi[group]).sample_start	= 0;		/* 未完成 */
+	TMP(group_spi[group]).sample_start	= (GROUP_VAL_POS (group, start) + 
+		GROUP_VAL_POS(group, wedge_delay)) / 10;		
 
 	TMP(group_spi[group]).sum_gain		= 4 * pow (10, GROUP_VAL_POS (group, sum_gain) / 10.0);	
-	TMP(group_spi[group]).sample_range	= 0;
+	TMP(group_spi[group]).sample_range	= TMP(group_spi[group]).sample_start + 
+		GROUP_VAL_POS(group, range) / 10;		
 
 	TMP(group_spi[group]).beam_qty		= TMP (beam_qty[group]);	
 	TMP(group_spi[group]).sample_offset	= 0;

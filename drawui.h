@@ -236,7 +236,7 @@
 #define MOUSE		(ASSIGN_K_P + 5)
 #define OPERATION	(MOUSE + 3)
 #define WGROUP		(OPERATION + 2)
-#define CTYPE		(WGROUP + 3)
+#define CTYPE		(WGROUP + 8)
 #define CMODE		(CTYPE + 3)
 #define SCODE		(CMODE + 4)
 #define ECHOTYPE	(SCODE + 2)

@@ -267,6 +267,8 @@ typedef struct tmp_config
 	guchar	compdb_reg;
 	guchar	cangle_reg;
 
+	GdkPixmap *pixmap_[16];
+
 } TMP_CONFIG, *TMP_CONFIG_P;
 
 /*画图区域*/

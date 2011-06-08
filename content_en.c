@@ -522,7 +522,7 @@ const gchar *all_menu_content_en[] =
 	"None", "Preset Encoder 2", "Pause/Resume", "Save Data", "Clear All",				/* 531 Assign Key */
 	"Off", "Mouse", "Control Area",									/* 536 Mouse */
 	"Add", "Modify",				/* Wizard->Group->Operation  OPERATION */
-	"Group 1", "Group 2", "Group 3",	/* Wizard->Group->Group  WGROUP */
+	"Group 1", "Group 2", "Group 3", "Group 4", "Group 5", "Group 6", "Group 7", "Group 8",	/* Wizard->Group->Group  WGROUP */
 	"Encoder", "Ultrasound", "Code",	/* Wizard->Calibration->Type */
 	"Velocity", "Wedge Delay", "Sensitivity", "TCG",	/* Wizard->Calibration->Mode */
 	"API-DL", "AWS-D1.5",				/* Select Code */

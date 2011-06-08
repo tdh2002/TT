@@ -161,7 +161,7 @@ void set_menu_position_tdh (GtkMenu *menu, gint *x, gint *y,
 
 /* 设置控件的背景图片 */
 void update_widget_bg(GtkWidget *widget, const gchar *img_file)
-{    
+{   
 	GtkStyle *style;   
 	GdkPixmap *pixmap; 
 	cairo_surface_t *image;
