@@ -2022,6 +2022,14 @@ static void draw_file_manage ()
 
 	GtkWidget *hbox_1_1_1_1;
 
+	GtkWidget *hbox_1_1_1_1_1;
+
+	GtkWidget *vbox_1_1_1_1_1_1;
+
+	GtkWidget *hbox_1_1_1_1_2;
+
+	GtkWidget *vbox_1_1_1_1_2_1;
+
 	GtkWidget *vbox_1_1_2;
 
 	GtkWidget *hbox_1_1_2_1;
@@ -2036,6 +2044,9 @@ static void draw_file_manage ()
 	GtkWidget *vbox_2_1_1[7];
 	GtkWidget *label_2_1_1[7];
 	char *char_2_1_1[7] = {"","","Close","","","",""};
+
+	GtkWidget *source_label;
+	GtkWidget *target_label;
 
 	GtkWidget *sw_1_1_1_1_1;
 	GtkWidget *sw_1_1_1_1_2;
@@ -2082,6 +2093,14 @@ static void draw_file_manage ()
 
 	hbox_1_1_1_1 = gtk_hbox_new(FALSE,0);
 
+	hbox_1_1_1_1_1 = gtk_hbox_new(FALSE,0);
+
+	vbox_1_1_1_1_1_1 = gtk_vbox_new(FALSE,0);
+
+	hbox_1_1_1_1_2 = gtk_hbox_new(FALSE,0);
+
+	vbox_1_1_1_1_2_1 = gtk_vbox_new(FALSE,0);
+
 	vbox_1_1_2 = gtk_vbox_new(FALSE,0);
 
 	hbox_1_1_2_1 = gtk_hbox_new(FALSE,0);
@@ -2120,11 +2139,11 @@ static void draw_file_manage ()
 
 	//源文件窗口，带滚动条
 	sw_1_1_1_1_1 = gtk_scrolled_window_new (NULL, NULL);
-	gtk_widget_set_size_request(sw_1_1_1_1_1, 343, 515);
+	gtk_widget_set_size_request(sw_1_1_1_1_1, 343, 485);
 
 	//目标文件窗口，带滚动条
 	sw_1_1_1_1_2 = gtk_scrolled_window_new (NULL, NULL);
-	gtk_widget_set_size_request(sw_1_1_1_1_2, 343, 515);
+	gtk_widget_set_size_request(sw_1_1_1_1_2, 343, 485);
 
 	//源文件路径
 	Set_Source_File_Path("/");
@@ -2132,6 +2151,14 @@ static void draw_file_manage ()
 	Set_Target_File_Path("/");
 	//
 
+    source_label = gtk_label_new("/");
+
+	gtk_widget_set_size_request(source_label, 343, 30);
+	
+	target_label = gtk_label_new("/");
+
+	gtk_widget_set_size_request(target_label, 343, 30);
+	
 	pp->selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(source_list));
 	pp->selection1 = gtk_tree_view_get_selection(GTK_TREE_VIEW(target_list));
 
@@ -2165,12 +2192,25 @@ static void draw_file_manage ()
 	}   
 
 	gtk_container_add(GTK_CONTAINER(sw_1_1_1_1_1),source_list);
+	
+	gtk_box_pack_start(GTK_BOX(hbox_1_1_1_1),hbox_1_1_1_1_1,FALSE,FALSE,0);
 
-	gtk_box_pack_start(GTK_BOX(hbox_1_1_1_1),sw_1_1_1_1_1,FALSE,FALSE,0);
+	gtk_box_pack_start(GTK_BOX(hbox_1_1_1_1_1),vbox_1_1_1_1_1_1,FALSE,FALSE,0);
+
+	gtk_box_pack_start(GTK_BOX(vbox_1_1_1_1_1_1),source_label,FALSE,FALSE,0);
+
+	gtk_box_pack_start(GTK_BOX(vbox_1_1_1_1_1_1),sw_1_1_1_1_1,FALSE,FALSE,0);
 
 	gtk_container_add(GTK_CONTAINER(sw_1_1_1_1_2),target_list);            
 
-	gtk_box_pack_start(GTK_BOX(hbox_1_1_1_1),sw_1_1_1_1_2,FALSE,FALSE,0);
+	gtk_box_pack_start(GTK_BOX(hbox_1_1_1_1),hbox_1_1_1_1_2,FALSE,FALSE,0);
+	
+	gtk_box_pack_start(GTK_BOX(hbox_1_1_1_1_2),vbox_1_1_1_1_2_1,FALSE,FALSE,0);
+	
+	gtk_box_pack_start(GTK_BOX(vbox_1_1_1_1_2_1),target_label,FALSE,FALSE,0);
+
+	gtk_box_pack_start(GTK_BOX(vbox_1_1_1_1_2_1),sw_1_1_1_1_2,FALSE,FALSE,0);
+
 
 	for(i=0;i<7;i++)
 	{
