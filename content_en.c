@@ -72,12 +72,17 @@ static const gchar *content_en29[] = {
 
 static const gchar *content_en200[] = {
 	/* 二级菜单第0页下的第0页三级菜单 */
-	"Back", "Start", "Operation", "Probe","Auto Detect", NULL,"Next","Group", "Group Mode","Connection P", "Select","Scan Offset","Index Offet", "Skew(°)", "Finish", "Continue", "Tx/Rx mode","Pulser","Receiver","Connection R"
+	"Back", "Start", "Operation", "Probe","Auto Detect", NULL, 
+	"Next", "Source", "Group Mode","Connection P", "Select",
+	"Scan Offset","Index Offet", "Skew(°)", "Finish", "Continue", 
+	"Tx/Rx mode","Pulser","Receiver","Connection R"
 };
 
 static const gchar *content_en201[] = {
 	/* 二级菜单第0页下的第1页三级菜单 */
-	"Back", "Start", "Law Type", "Material", "Last Element", "Element Step", "Next","Wave Type","Element Qty.", "First Element", "Min.Angle", "Max.Angle", "Angle Step"
+	"Back", "Start", "Law Type", "Material", "Last Element", 
+	"Element Step", "Next","Wave Type","Element Qty.", 
+	"First Element", "Min.Angle", "Max.Angle", "Angle Step", "Generate"
 };
 
 static const gchar *content_en202[] = {

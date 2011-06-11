@@ -363,17 +363,19 @@ extern void send_dsp_data (guint data_type, guint value);
 extern gboolean data_function0 (GtkWidget *widget,	GdkEventButton *event,	gpointer       data);
 extern gboolean eventbox2_function0 (GtkWidget *widget, GdkEventButton *event,	gpointer data);
 
-extern void data_002 (GtkMenuItem *menuitem, gpointer data);
 extern void data_0021 (GtkMenuItem *menuitem, gpointer data);
 extern void data_0022 (GtkMenuItem *menuitem, gpointer data);
-extern void data_00231 (GtkSpinButton *spinbutton, gpointer data); 
-extern void data_00232 (GtkMenuItem *menuitem, gpointer data);
-extern void data_0024 (GtkMenuItem *menuitem, gpointer data); /*  */
-extern void data_0026 (GtkSpinButton *spinbutton, gpointer data); /**/
-extern void data_0036 (GtkSpinButton *spinbutton, gpointer data); /**/
-extern void data_0043 (GtkSpinButton *spinbutton, gpointer data);
-extern void data_00461 (GtkSpinButton *spinbutton, gpointer data);
-extern void data_00462 (GtkMenuItem *menuitem, gpointer data); /* Skew (deg) */
+extern void data_0023 (GtkMenuItem *menuitem, gpointer data);
+extern void data_00241 (GtkSpinButton *spinbutton, gpointer data); 
+extern void data_00242 (GtkMenuItem *menuitem, gpointer data);
+extern void data_0025 (GtkMenuItem *menuitem, gpointer data); /*  */
+extern void data_0027 (GtkSpinButton *spinbutton, gpointer data); /**/
+extern void data_00341 (GtkSpinButton *spinbutton, gpointer data);
+extern void data_00342 (GtkSpinButton *spinbutton, gpointer data); /* Pulser 发射 P110 */
+extern void data_0037 (GtkSpinButton *spinbutton, gpointer data); /**/
+extern void data_0044 (GtkSpinButton *spinbutton, gpointer data);
+extern void data_00471 (GtkSpinButton *spinbutton, gpointer data);
+extern void data_00472 (GtkMenuItem *menuitem, gpointer data); /* Skew (deg) */
 extern void data_022 (GtkMenuItem *menuitem, gpointer data);
 extern void data_0221 (GtkMenuItem *menuitem, gpointer data);
 extern void data_0222 (GtkSpinButton *spinbutton, gpointer data);
@@ -628,9 +630,14 @@ extern void draw_warning(guint btn_qty, const gchar *warn_info);
 extern void draw3_pressed1(gfloat step, guint digit);
 
 extern void da_call_remark (GtkDialog *dialog, gint response_id, gpointer user_data);
+extern void da_call_edit_notes (GtkDialog *dialog, gint response_id, gpointer user_data);
+extern void da_call_edit_header (GtkDialog *dialog, gint response_id, gpointer user_data);
+
 
 extern void dialog_destroy(GtkWidget *widget,	GdkEventButton *event,	gpointer       data);
-extern int on_changed_config_file(GtkTreeSelection *selection,	gpointer       data);
+
+extern int on_changed_open_config_file(GtkTreeSelection *selection,	gpointer       data);
+extern int on_changed_save_config_file(GtkTreeSelection *selection,	gpointer       data);
 extern void add_to_list(GtkWidget *list, const gchar *str, guint count);
 extern void draw_field_name ();
 	

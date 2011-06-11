@@ -54,8 +54,8 @@ static guint key_fast_map[] =
 
 gboolean data_function0 (GtkWidget *widget,	GdkEventButton *event,	gpointer       data);
 
-void data_002 (GtkMenuItem *menuitem, gpointer data);
 void data_0021 (GtkMenuItem *menuitem, gpointer data);
+void data_0022 (GtkMenuItem *menuitem, gpointer data);
 void data_022 (GtkMenuItem *menuitem, gpointer data);
 void data_0221 (GtkMenuItem *menuitem, gpointer data);
 void data_0222 (GtkSpinButton *spinbutton, gpointer data);
@@ -2629,7 +2629,7 @@ gboolean data_function0 (GtkWidget *widget,	GdkEventButton *event,	gpointer data
 	return TRUE;
 }
 
-void data_002 (GtkMenuItem *menuitem, gpointer data) /* Wizard -> Group -> Operation */
+void data_0021 (GtkMenuItem *menuitem, gpointer data) /* Wizard -> Group -> Operation */
 {
 	pp->operation_pos = (guchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
@@ -2637,7 +2637,7 @@ void data_002 (GtkMenuItem *menuitem, gpointer data) /* Wizard -> Group -> Opera
 	/* 发送给硬件 */
 }
 
-void data_0021 (GtkMenuItem *menuitem, gpointer data) /* Wizard -> Group -> Group */
+void data_0022 (GtkMenuItem *menuitem, gpointer data) /* Wizard -> Group -> Group */
 {
 	pp->wgroup_pos = (guchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
@@ -2645,7 +2645,7 @@ void data_0021 (GtkMenuItem *menuitem, gpointer data) /* Wizard -> Group -> Grou
 	/* 发送给硬件 */
 }
 
-void data_0022 (GtkMenuItem *menuitem, gpointer data) /* */
+void data_0023 (GtkMenuItem *menuitem, gpointer data) /* */
 {
 	g_tmp_group_struct.group_mode = (gchar) (GPOINTER_TO_UINT (data));
 	//if(!g_tmp_group_struct.group_mode) /*group mode 选择UT时，focal law 不可用*/
@@ -2656,7 +2656,7 @@ void data_0022 (GtkMenuItem *menuitem, gpointer data) /* */
 	draw_menu3(0, NULL);
 }
 
-void data_00231 (GtkSpinButton *spinbutton, gpointer data) /* Pulser 发射 P110 */
+void data_00241 (GtkSpinButton *spinbutton, gpointer data) /* Pulser 发射 P110 */
 {
 	g_tmp_group_struct.pulser =  (guchar) (gtk_spin_button_get_value (spinbutton));
 	if (g_tmp_group_struct.tx_rxmode == PULSE_ECHO)
@@ -2665,7 +2665,7 @@ void data_00231 (GtkSpinButton *spinbutton, gpointer data) /* Pulser 发射 P110
 	/*发送给硬件*/
 }
 
-void data_00232 (GtkMenuItem *menuitem, gpointer data) /* 收发模式 Tx/Rx Mode P111 */
+void data_00242 (GtkMenuItem *menuitem, gpointer data) /* 收发模式 Tx/Rx Mode P111 */
 {
 	g_tmp_group_struct.tx_rxmode = (gchar) (GPOINTER_TO_UINT (data));
 	if ( g_tmp_group_struct.tx_rxmode == PULSE_ECHO )
@@ -2676,14 +2676,14 @@ void data_00232 (GtkMenuItem *menuitem, gpointer data) /* 收发模式 Tx/Rx Mod
 	/* 发送给硬件 */
 }
 
-void data_0024 (GtkMenuItem *menuitem, gpointer data) /* Probe/Part -> Select -> Select 502 */
+void data_0025 (GtkMenuItem *menuitem, gpointer data) /* Probe/Part -> Select -> Select 502 */
 {
 	pp->p_config->probe_select = (gchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
 }
 
-void data_0026 (GtkSpinButton *spinbutton, gpointer data) /*scanoffset */
+void data_0027 (GtkSpinButton *spinbutton, gpointer data) /*scanoffset */
 {
 	if(CFG(unit) == UNIT_MM)
 	{
@@ -2697,7 +2697,23 @@ void data_0026 (GtkSpinButton *spinbutton, gpointer data) /*scanoffset */
 	draw_area_all ();
 }
 
-void data_0036 (GtkSpinButton *spinbutton, gpointer data) /*indexoffset */
+void data_00341 (GtkSpinButton *spinbutton, gpointer data) /* Pulser 发射 P120 */
+{
+	g_tmp_group_struct.receiver =  (guchar) (gtk_spin_button_get_value (spinbutton));
+
+	/*发送给硬件*/
+}
+
+void data_00342 (GtkSpinButton *spinbutton, gpointer data) /* Pulser 发射 P110 */
+{
+	g_tmp_group_struct.pulser =  (guchar) (gtk_spin_button_get_value (spinbutton));
+	if ((g_tmp_group_struct.tx_rxmode) == PULSE_ECHO)
+		(g_tmp_group_struct.receiver) =  (guchar) (gtk_spin_button_get_value (spinbutton));
+
+	/*发送给硬件*/
+}
+
+void data_0037 (GtkSpinButton *spinbutton, gpointer data) /*indexoffset */
 {
 	if(CFG(unit) == UNIT_MM)
 		g_tmp_group_struct.index_offset =  (gint) (gtk_spin_button_get_value (spinbutton) * 10.0);
@@ -2705,19 +2721,19 @@ void data_0036 (GtkSpinButton *spinbutton, gpointer data) /*indexoffset */
 		g_tmp_group_struct.index_offset =  (gint) (gtk_spin_button_get_value (spinbutton) * 10.0 / 0.03937);
 }
 
-void data_0043 (GtkSpinButton *spinbutton, gpointer data) /* Pulser 发射 P120 */
+void data_0044 (GtkSpinButton *spinbutton, gpointer data) /* Pulser 发射 P120 */
 {
 	g_tmp_group_struct.receiver =  (guchar) (gtk_spin_button_get_value (spinbutton));
 
 	/*发送给硬件*/
 }
 
-void data_00461 (GtkSpinButton *spinbutton, gpointer data) /* Skew (deg) */
+void data_00471 (GtkSpinButton *spinbutton, gpointer data) /* Skew (deg) */
 {
 	g_tmp_group_struct.skew =  (gushort) (gtk_spin_button_get_value (spinbutton) * 100.0);
 }
 
-void data_00462 (GtkMenuItem *menuitem, gpointer data) /* Skew (deg) */
+void data_00472 (GtkMenuItem *menuitem, gpointer data) /* Skew (deg) */
 {
 	gushort temp = GPOINTER_TO_UINT (data);
 	g_tmp_group_struct.skew_pos = (guchar) (GPOINTER_TO_UINT (data));
@@ -4860,8 +4876,8 @@ void send_dsp_data (guint data_type, guint value)
 	}
 }
 
-/* 弹出备注信息2个按键的处理 一个是保存一个是取消 */
-void da_call_remark (GtkDialog *dialog, gint response_id, gpointer user_data)      
+/* Edit Notes 2个按键的处理 一个是保存一个是取消 */
+void da_call_edit_notes (GtkDialog *dialog, gint response_id, gpointer user_data)      
 {
 	GtkTextBuffer *TextBuffer = (GTK_TEXT_BUFFER (user_data));
 	if (GTK_RESPONSE_OK == response_id)  /* 保存信息 */
@@ -4873,7 +4889,30 @@ void da_call_remark (GtkDialog *dialog, gint response_id, gpointer user_data)
 		gtk_text_buffer_get_end_iter (TextBuffer, &end);
 
 		Data = gtk_text_buffer_get_text (TextBuffer, &start, &end, FALSE);
-		memcpy (CFG(remark_info), Data, sizeof(CFG(remark_info)));
+		memcpy (CFG(edit_notes_info), Data, sizeof(CFG(edit_notes_info)));
+
+		g_free (Data);
+		g_print ("OK_Pressed");
+	}
+	else if (GTK_RESPONSE_CANCEL == response_id) /* 取消 */
+		g_print ("CANCEL_Pressed");
+	gtk_widget_destroy (GTK_WIDGET (dialog));
+}
+
+/* Edit Header 2个按键的处理 一个是保存一个是取消 */
+void da_call_edit_header (GtkDialog *dialog, gint response_id, gpointer user_data)      
+{
+	GtkTextBuffer *TextBuffer = (GTK_TEXT_BUFFER (user_data));
+	if (GTK_RESPONSE_OK == response_id)  /* 保存信息 */
+	{
+		GtkTextIter start, end;
+		gchar *Data;
+
+		gtk_text_buffer_get_start_iter (TextBuffer, &start);
+		gtk_text_buffer_get_end_iter (TextBuffer, &end);
+
+		Data = gtk_text_buffer_get_text (TextBuffer, &start, &end, FALSE);
+		memcpy (CFG(edit_header_info), Data, sizeof(CFG(edit_header_info)));
 
 		g_free (Data);
 		g_print ("OK_Pressed");

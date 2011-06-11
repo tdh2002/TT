@@ -1,4 +1,5 @@
 
+
 /*
  *345678901234567890123456789012345678901234567890123456789012345678901234567890
  *      10        20        30        40        50        60        70        80
@@ -20,6 +21,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <assert.h>
+#include <unistd.h>
 
 enum
 {
@@ -29,6 +31,8 @@ enum
 
 _my_ip_set entry_ip;
 _my_mask_set entry_mask;
+void cd_source_dir_path (GtkTreeView *tree_view,GtkTreePath *path,GtkTreeViewColumn *column,gpointer user_data);
+void cd_target_dir_path (GtkTreeView *tree_view,GtkTreePath *path,GtkTreeViewColumn *column,gpointer user_data);
 
 /* Probe 选择探头2个按键的处理 一个是确认 一个是取消 */
 static void da_call_probe (GtkDialog *dialog, gint response_id, gpointer user_data)      
@@ -673,7 +677,7 @@ static void on_changed1_wedge(GtkTreeSelection *selection, gpointer label)
 }
 
 /* 0 记事本 备注 等 */
-static void draw_remark ()
+static void draw_edit_notes ()
 {
 	GtkWindow *win = GTK_WINDOW (pp->window);
 	GtkWidget *dialog;
@@ -682,7 +686,7 @@ static void draw_remark ()
 	GtkWidget *view;
 	GtkTextBuffer *TextBuffer;
 	//	GtkWidgetClass *widget_window_class1;
-	const gchar *buf = (const gchar *)(CFG(remark_info));
+	const gchar *buf = (const gchar *)(CFG(edit_notes_info));
 
 
 	dialog = gtk_dialog_new_with_buttons("Dialog_Remark", win,
@@ -712,7 +716,52 @@ static void draw_remark ()
 	gtk_text_buffer_set_text (TextBuffer, buf, -1);
 
 	g_signal_connect (G_OBJECT(dialog), "response",
-			G_CALLBACK(da_call_remark), (gpointer) (TextBuffer));
+			G_CALLBACK(da_call_edit_notes), (gpointer) (TextBuffer));
+
+	gtk_widget_show_all(dialog);
+}
+
+/* Edit Header 等 */
+static void draw_edit_header ()
+{
+	GtkWindow *win = GTK_WINDOW (pp->window);
+	GtkWidget *dialog;
+	GtkWidget *vbox1;	/* 指向dialog的vbox */
+	GtkWidget *sw;		/* 第一个scroll 备注只要一个sw */
+	GtkWidget *view;
+	GtkTextBuffer *TextBuffer;
+	//	GtkWidgetClass *widget_window_class1;
+	const gchar *buf = (const gchar *)(CFG(edit_header_info));
+
+
+	dialog = gtk_dialog_new_with_buttons("Dialog_edit_notes", win,
+			GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_NO_SEPARATOR,
+			GTK_STOCK_OK, GTK_RESPONSE_OK,
+			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+			NULL);
+	gtk_window_set_decorated (GTK_WINDOW (dialog), FALSE);			/*不可以装饰*/
+	//	widget_window_class1 = GTK_WIDGET_GET_CLASS (((GtkObject*)(dialog))); 
+	//	widget_window_class1->key_press_event = gtk_entry_digit_only_keypress_event; /* 指定哪些字符输入 */
+
+	gtk_widget_set_size_request(GTK_WIDGET (dialog), 300, 300);
+	vbox1 = GTK_WIDGET (GTK_DIALOG(dialog)->vbox);
+	sw = gtk_scrolled_window_new(NULL, NULL);
+
+	gtk_widget_set_size_request(sw, 300, 300);
+	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW(sw),
+			GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw),
+			GTK_SHADOW_ETCHED_IN);
+
+	gtk_box_pack_start(GTK_BOX(vbox1), sw, TRUE, TRUE, 5);
+	view = gtk_text_view_new ();
+	gtk_container_add (GTK_CONTAINER (sw), view);
+	TextBuffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
+	gtk_text_view_set_wrap_mode (GTK_TEXT_VIEW (view), GTK_WRAP_WORD_CHAR);
+	gtk_text_buffer_set_text (TextBuffer, buf, -1);
+
+	g_signal_connect (G_OBJECT(dialog), "response",
+			G_CALLBACK(da_call_edit_header), (gpointer) (TextBuffer));
 
 	gtk_widget_show_all(dialog);
 }
@@ -925,7 +974,7 @@ static void draw_wedge ()
 }
 
 //作者 geniikid
-//日期 2011-3-28
+//日期 2011-6-11
 //函数 selection_file_type
 //参数 char *dir_path
 //参数 char *file_type
@@ -933,6 +982,7 @@ void selection_file_type(GtkWidget *list,char *dir_path,char *file_type)
 {
 	DIR *dir;      
 	int i;
+	GtkListStore *store;
 	struct dirent* enump = NULL;
 	char *pos;
 	int name_len;
@@ -942,6 +992,10 @@ void selection_file_type(GtkWidget *list,char *dir_path,char *file_type)
 	assert(file_type != NULL);
 
 	i = 0;    
+	
+	store = GTK_LIST_STORE(gtk_tree_view_get_model
+			(GTK_TREE_VIEW(list)));
+	gtk_list_store_clear(store);
 
 	dir = opendir(dir_path);
 
@@ -957,15 +1011,26 @@ void selection_file_type(GtkWidget *list,char *dir_path,char *file_type)
 	{
 		name_len = strlen(enump->d_name);
 
-		if ((name_len == 1 && enump->d_name[0] == '.')|| (name_len == 2 && !strncmp(enump->d_name, "..", 2)))
+		if ( !( ( enump->d_type == DT_DIR ) || ( enump->d_type == DT_REG ) ) )
 			continue;
 
-		if ( name_len <= suffix_len )
+		if (name_len == 1 && enump->d_name[0] == '.') 
+			continue;
+
+	    if(name_len == 2 && !strncmp(enump->d_name, "..", 2))
+		{
+			if ( strcmp(dir_path,"/" ) == 0 )
+			{
+				continue;
+			}
+		}
+
+		if ( ( name_len <= suffix_len ) && ( enump->d_type == DT_REG ) )
 			continue;
 
 		pos = strstr(enump->d_name,file_type);
 
-		if (pos == NULL)
+		if ( ( pos == NULL ) && ( enump->d_type == DT_REG ) )
 			continue;
 		else
 		{    
@@ -978,11 +1043,104 @@ void selection_file_type(GtkWidget *list,char *dir_path,char *file_type)
 	closedir(dir);
 }
 
+int on_changed_open_config_file(GtkTreeSelection *selection,	gpointer       data)
+{
+	FILE *fp;
+
+	char *file_path = USER_CFG_PATH;
+
+	char file_name[256];
+
+	char *preview_file_name = "/tmp/zsh.htm";
+
+	GtkTreeIter source_iter;
+
+	GtkTreeSelection *source_selection; 
+
+	GtkTreeModel *source_model;
+
+	GtkWidget *source_list;
+	
+	int value;
+
+	char *value_name;
+
+	int temp;
+    
+	source_list = (GtkWidget *)data;
+
+	source_model = gtk_tree_view_get_model(GTK_TREE_VIEW(source_list));
+
+	source_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(source_list));
+
+	value = gtk_tree_model_get_iter_from_string (source_model, &source_iter, "0");
+	
+	while(value)   
+	{
+		if (gtk_tree_selection_iter_is_selected(source_selection,&source_iter))
+		{
+			gtk_tree_model_get(source_model, &source_iter, 0, &value_name,  -1);
+	        		
+			memset(file_name,0,sizeof(file_name));    
+
+			strcpy(file_name,file_path);
+
+			strcat(file_name,value_name);
+
+			fp = fopen(file_name, "r+");
+
+			if (fp < 0)
+				return TRUE;
+
+			temp = fread(pp->p_config, sizeof(CONFIG),1,fp);
+
+			fclose(fp);
+
+			fp = fopen(preview_file_name,"w+");
+
+			fprintf(fp,"<html>\n");
+
+			fprintf(fp,"<body>\n");
+
+			fprintf(fp,"<p>\n");
+
+			fprintf(fp,"%s\n",value_name);
+
+			fprintf(fp,"</p>\n");
+
+			fprintf(fp,"</body>\n");
+
+			fprintf(fp,"</html>\n");
+
+			fclose(fp);
+
+			memset(file_name,0,sizeof(file_name));
+
+			strcpy(file_name,"file://");
+
+			strcat(file_name,preview_file_name);
+
+			webkit_web_view_load_uri (pp->web_view_tmp, file_name);  
+
+			value = gtk_tree_model_iter_next(source_model,&source_iter);            
+
+			g_free(value_name);
+
+		}
+		else
+		{
+			value = gtk_tree_model_iter_next(source_model,&source_iter);
+		} 
+
+	}
+
+	return TRUE;
+}
 //作者 geniikid
 //日期 2011-4-1
 //函数 open_config_file
 //参数 char *path
-int open_config_file(GtkWidget *widget,	GdkEventButton *event,	gpointer       data)
+gint open_config_file(GtkWidget *widget,	GdkEventButton *event,	gpointer       data)
 {
 	FILE *fp;
 
@@ -998,9 +1156,11 @@ int open_config_file(GtkWidget *widget,	GdkEventButton *event,	gpointer       da
 	GtkTreeModel *source_model;
 	GtkTreeSelection *source_selection; 
 
-	GtkWidget *source_list = (GtkWidget *)data;
+	GtkWidget *source_list;
 
 	char *source_file;
+
+	source_list = (GtkWidget *)data;
 
 	source_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(source_list));
 
@@ -1012,8 +1172,9 @@ int open_config_file(GtkWidget *widget,	GdkEventButton *event,	gpointer       da
 	{
 		if (gtk_tree_selection_iter_is_selected(source_selection,&source_iter))
 		{
-
 			gtk_tree_model_get(source_model, &source_iter, 0, &value_name,  -1);
+            
+			g_print("%s\n",value_name);
 
 			memset(file_name,0,sizeof(file_name));
 
@@ -1026,7 +1187,7 @@ int open_config_file(GtkWidget *widget,	GdkEventButton *event,	gpointer       da
 			fp = fopen(file_name, "r+");
 
 			if (fp < 0)
-				return -1;
+				return TRUE;
 
 			temp = fread(pp->p_config, sizeof(CONFIG),1,fp);
 
@@ -1036,6 +1197,7 @@ int open_config_file(GtkWidget *widget,	GdkEventButton *event,	gpointer       da
 
 			g_free(value_name);
 
+			return FALSE;
 		}
 		else
 		{
@@ -1044,7 +1206,7 @@ int open_config_file(GtkWidget *widget,	GdkEventButton *event,	gpointer       da
 
 	}
 
-	return 0; 
+	return TRUE; 
 }
 
 /* 打开文件 */
@@ -1052,7 +1214,7 @@ static void draw_file_open_main()
 { 
 	GtkWindow *window = GTK_WINDOW (pp->window);
 
-	GtkWidget *dialog;
+	static GtkWidget *dialog;
 
 	GtkWidget *hbox_first;
 
@@ -1234,7 +1396,11 @@ static void draw_file_open_main()
 
 	g_signal_connect(G_OBJECT (hbox_1_1_2_1_1[0]), "button-press-event",G_CALLBACK(open_config_file), (gpointer)source_list);
 
-	g_signal_connect (G_OBJECT (source_selection), "changed", G_CALLBACK(on_changed_config_file), (gpointer)source_list);
+	g_signal_connect_after(G_OBJECT (hbox_1_1_2_1_1[0]), "button-press-event",G_CALLBACK(dialog_destroy), dialog);
+	
+	g_signal_connect (G_OBJECT (source_selection), "changed", G_CALLBACK(on_changed_open_config_file), (gpointer)source_list);
+
+    //g_signal_connect(G_OBJECT(dialog),"destroy_event",G_CALLBACK(dialog_destroy),dialog);
 
 	gtk_widget_show_all(dialog);
 
@@ -1243,7 +1409,7 @@ static void draw_file_open_main()
 }
 
 
-int on_changed_config_file(GtkTreeSelection *selection,	gpointer       data)
+int on_changed_save_config_file(GtkTreeSelection *selection,	gpointer       data)
 {
 	FILE *fp;
 
@@ -1267,7 +1433,13 @@ int on_changed_config_file(GtkTreeSelection *selection,	gpointer       data)
 
 	int temp;
 
-	source_list = (GtkWidget *)data;
+    GtkWidget *entry_name;
+    
+	_save_file_name_struct_p save_file_name_struct_p;
+	
+	save_file_name_struct_p = (_save_file_name_struct_p)data;
+
+	source_list = save_file_name_struct_p->list;
 
 	source_model = gtk_tree_view_get_model(GTK_TREE_VIEW(source_list));
 
@@ -1275,6 +1447,8 @@ int on_changed_config_file(GtkTreeSelection *selection,	gpointer       data)
 
 	value = gtk_tree_model_get_iter_from_string (source_model, &source_iter, "0");
 
+	entry_name = (GtkWidget *)save_file_name_struct_p->file_name;
+	
 	while(value)   
 	{
 		if (gtk_tree_selection_iter_is_selected(source_selection,&source_iter))
@@ -1282,6 +1456,8 @@ int on_changed_config_file(GtkTreeSelection *selection,	gpointer       data)
 
 			gtk_tree_model_get(source_model, &source_iter, 0, &value_name,  -1);
 
+	        gtk_entry_set_text(GTK_ENTRY(entry_name),value_name);
+			
 			memset(file_name,0,sizeof(file_name));    
 
 			strcpy(file_name,file_path);
@@ -1364,12 +1540,21 @@ int save_config_file(GtkWidget *widget,	GdkEventButton *event,	gpointer       da
 
 	strcat(path,file_name);
 
+	if ( strlen(file_name)  <= strlen(".cfg") )
+	{
+		strcat(path,".cfg");
+	}
+	else if( strcmp(file_name + strlen(file_name) - strlen(".cfg"),".cfg") != 0 )
+	{
+		strcat(path,".cfg");
+	}
+
 	fp = fopen(path, "wb+");
 
-	if (fp < 0)
+	if (fp == NULL)
 	{
 		g_print("in save_config_file function, can't open file\n");
-		return -1;
+		return TRUE;
     }
 
 	temp = fwrite(pp->p_config, sizeof(CONFIG),1,fp);
@@ -1377,10 +1562,10 @@ int save_config_file(GtkWidget *widget,	GdkEventButton *event,	gpointer       da
 	fclose(fp);
 
 	gtk_list_store_clear(store);
-
+	
 	selection_file_type(list, USER_CFG_PATH,	".cfg");
 	
-	return 0;
+	return FALSE;
 }
 
 static void draw_save_setup_as()
@@ -1628,8 +1813,10 @@ static void draw_save_setup_as()
 
 	g_signal_connect(G_OBJECT (eventbox_save), "button-press-event",G_CALLBACK(save_config_file), (gpointer)&save_file_name_struct);
 
-	g_signal_connect (G_OBJECT (source_selection), "changed", G_CALLBACK(on_changed_config_file), (gpointer)source_list);
+	g_signal_connect_after(G_OBJECT (eventbox_save), "button-press-event",G_CALLBACK(dialog_destroy), dialog);
 
+	g_signal_connect (G_OBJECT (source_selection), "changed", G_CALLBACK(on_changed_save_config_file), (gpointer)&save_file_name_struct);
+	
 	gtk_widget_show_all(dialog);
 
 	gtk_widget_hide (GTK_DIALOG(dialog)->action_area);
@@ -1863,12 +2050,15 @@ static void draw_file_manage ()
 	GtkTreeModel *target_model;
 
 	GtkCellRenderer *renderer;
-	GtkTreeViewColumn *column;
+	GtkTreeViewColumn *source_column;
+	GtkTreeViewColumn *target_column;
 	GtkListStore *store;
 
-	MY_SIGNAL my_signal;
+	static MY_SIGNAL my_signal;
 
 	int i;
+
+	char *file_type = ".cfg";
 
 	dialog = gtk_dialog_new_with_buttons ("Dialog_Wedge", win,
 			GTK_DIALOG_MODAL |	GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_NO_SEPARATOR,
@@ -1909,9 +2099,9 @@ static void draw_file_manage ()
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(target_list),FALSE);
 
 	renderer = gtk_cell_renderer_text_new();
-	column = gtk_tree_view_column_new_with_attributes("List Items",
+	source_column = gtk_tree_view_column_new_with_attributes("List Items",
 			renderer, "text", LIST_ITEM, NULL);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(source_list), column);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(source_list), source_column);
 
 	store = gtk_list_store_new(N_COLUMNS, G_TYPE_STRING);
 	gtk_tree_view_set_model(GTK_TREE_VIEW(source_list), 
@@ -1919,9 +2109,9 @@ static void draw_file_manage ()
 	g_object_unref(store);
 
 	renderer = gtk_cell_renderer_text_new();
-	column = gtk_tree_view_column_new_with_attributes("List Items",
+	target_column = gtk_tree_view_column_new_with_attributes("List Items",
 			renderer, "text", LIST_ITEM, NULL);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(target_list), column);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(target_list), target_column);
 
 	store = gtk_list_store_new(N_COLUMNS, G_TYPE_STRING);
 	gtk_tree_view_set_model(GTK_TREE_VIEW(target_list), 
@@ -1952,9 +2142,11 @@ static void draw_file_manage ()
 	target_model=gtk_tree_view_get_model(GTK_TREE_VIEW(target_list));
 
 	//源文件，文件视图
-	init_file_list (source_list, pp->selection, "/" , DT_DIR);
+	//init_file_list (source_list, pp->selection, "/" , DT_DIR);
+	selection_file_type(source_list,"/",file_type);
 	//目标文件，文件视图
-	init_file_list (target_list, pp->selection1, "/" , DT_DIR);
+	//init_file_list (target_list, pp->selection1, "/" , DT_DIR);
+    selection_file_type(target_list,"/",file_type);
 
 	gtk_tree_selection_set_mode(source_selection,GTK_SELECTION_MULTIPLE);
 
@@ -1979,7 +2171,6 @@ static void draw_file_manage ()
 	gtk_container_add(GTK_CONTAINER(sw_1_1_1_1_2),target_list);            
 
 	gtk_box_pack_start(GTK_BOX(hbox_1_1_1_1),sw_1_1_1_1_2,FALSE,FALSE,0);
-
 
 	for(i=0;i<7;i++)
 	{
@@ -2041,11 +2232,218 @@ static void draw_file_manage ()
 
 	g_signal_connect(G_OBJECT(hbox_1_1_2_1_1[5]), "button-press-event",G_CALLBACK(Rename_File), (gpointer)&my_signal);
 
+	g_signal_connect(G_OBJECT(source_list),"row-activated",G_CALLBACK(cd_source_dir_path),file_type);
+
+	g_signal_connect(G_OBJECT(target_list),"row-activated",G_CALLBACK(cd_target_dir_path),file_type);
+
 	gtk_widget_show_all(dialog);
 
 	gtk_widget_hide (GTK_DIALOG(dialog)->action_area);
 
 	return ;  
+}
+
+//函数说明:找到
+//函数名称:get_list_check_name
+//函数参数:tree_view代表在那个tree_view那里发生这件事
+//返回值  :file_name代表我们在那个文件上面双击的文件名
+char *get_list_check_name(GtkTreeView *tree_view)
+{
+	GtkTreeModel *model;
+
+	GtkTreeSelection *selection;
+
+	GtkTreeIter iter;
+
+    char *file_name = NULL;
+
+	int value = 0;
+
+	model = gtk_tree_view_get_model(tree_view);
+
+	selection = gtk_tree_view_get_selection(tree_view);
+
+	value = gtk_tree_model_get_iter_from_string(model,&iter,"0");
+
+	//循环查找整个目录
+	while(value)
+	{
+		//如果找到
+		//理论上来说，双击了，就是选中那个东西。所以直接找选中的那个就可以了。
+		//不过，这样会有一个问题，假设用户故意按ctrl键，再去双击，会有问题。
+		if (gtk_tree_selection_iter_is_selected(selection,&iter))
+		{
+			//读取文件名
+			gtk_tree_model_get(model,&iter,0,&file_name,-1);
+            //返回文件名
+			return file_name;
+		}
+		else
+		{
+			//下一个列表项
+			value = gtk_tree_model_iter_next(model,&iter);
+		}
+	}
+
+	//理论上来说，不会跳到这里。
+	//因为跳到这里，代表我们找了整个列表，都没有找到是那个进行了双击的。
+    return file_name;
+}
+
+//函数说明：判断某一个文件夹下面的某个文件，究竟是一个文件，还是一个目录
+//函数名称：is_dir
+//函数参数：path文件夹的路径名称
+//          file_name文件名
+//返回值  ：1代表是一个目录，0代表不是一个目录，是一个文件,-1代表查找出错。
+int is_dir(char *path,char *file_name)
+{
+	DIR *dir;
+    
+	struct dirent *dir_name;
+
+	//打开目录
+    dir = opendir(path);
+
+	//理论上不会出现这种现象，这个路径是用pwd所产生的。不过为了程序的健壮性，还是这么写
+	if ( dir == NULL )
+		return FALSE;
+
+    //循环搜索文件夹下面的
+    while ( ( dir_name = readdir(dir) ) != NULL )
+	{	
+		//找到那个文件
+        if( strcmp(dir_name->d_name,file_name ) == 0 )
+		{
+			//是文件夹
+			if( dir_name->d_type == DT_DIR )
+			{
+				closedir(dir);
+				return 1;
+			}
+			//是文件
+			else
+			{
+				closedir(dir);
+				return 0;
+			}
+		}
+	}
+
+	//理论上不会产生这个，
+	g_print("I am sorry,i can't find %s file in %s path\n",file_name,path);
+	return -1;
+}
+
+void change_source_dir(char *dir_name)
+{
+    char old_dir[PATH_MAX];
+
+	char new_dir[PATH_MAX];
+
+	int tmp;
+
+	getcwd(old_dir,PATH_MAX);
+
+    tmp = chdir(Get_Source_File_Path());
+
+    tmp = chdir(dir_name);
+
+    getcwd(new_dir,PATH_MAX);
+
+	Set_Source_File_Path(new_dir);
+
+	tmp = chdir(old_dir);
+} 
+
+void change_target_dir(char *dir_name)
+{ 
+    char old_dir[PATH_MAX];
+
+	char new_dir[PATH_MAX];
+
+	int tmp;
+
+	getcwd(old_dir,PATH_MAX);
+
+    tmp = chdir(Get_Target_File_Path());
+
+    tmp = chdir(dir_name);
+
+    getcwd(new_dir,PATH_MAX);
+
+	Set_Target_File_Path(new_dir);
+
+	tmp = chdir(old_dir);
+}
+
+void cd_source_dir_path (GtkTreeView *tree_view,GtkTreePath *path,GtkTreeViewColumn *column,gpointer user_data)
+{
+	char *file_type = (char *)user_data;
+
+	char *file_name = NULL;
+	
+	char *pwd_path = Get_Source_File_Path();
+
+	int return_value;
+
+	g_print("Source_File_Path is %s\n",pwd_path);
+
+	file_name = get_list_check_name(tree_view);
+
+	//没有查出选中是那个文件，直接退出
+	if(file_name == NULL)
+		return ;
+
+	//直接判断是不是文件夹
+    return_value = is_dir(pwd_path,file_name); 
+
+	//不是文件夹或者查找出错，直接退出
+	if ( ( return_value == -1 ) || ( return_value == 0 ) )
+	{
+		return ;
+	}
+
+	//
+	change_source_dir(file_name);
+    //
+	selection_file_type(GTK_WIDGET (tree_view),pwd_path,file_type);
+	//
+	g_free(file_name);
+}
+
+void cd_target_dir_path (GtkTreeView *tree_view,GtkTreePath *path,GtkTreeViewColumn *column,gpointer user_data)
+{ 
+	char *file_type = (char *)user_data;
+
+	char *file_name = NULL;
+	
+	char *pwd_path = Get_Target_File_Path();
+
+	int return_value;
+
+	g_print("Source_File_Path is %s\n",pwd_path);
+
+	file_name = get_list_check_name(tree_view);
+
+	//没有查出选中是那个文件，直接退出
+	if(file_name == NULL)
+		return ;
+
+	//直接判断是不是文件夹
+    return_value = is_dir(pwd_path,file_name); 
+
+	//不是文件夹或者查找出错，直接退出
+	if ( ( return_value == -1 ) || ( return_value == 0 ) )
+	{
+		return ;
+	} 
+
+	//
+	change_target_dir(file_name);
+    //
+	selection_file_type(GTK_WIDGET (tree_view),pwd_path,file_type);
+	//
+	g_free(file_name);
 }
 
 void  on_changed_law_save(GtkWidget *widget, gpointer label) 
@@ -3040,7 +3438,8 @@ void draw_dialog_all (guint type)
 	pp->dialog_pos = type;
 	switch (type)
 	{
-		case DIALOG_REMARK: draw_remark(); break;
+		case DIALOG_EDIT_NOTES: draw_edit_notes(); break;
+		case DIALOG_EDIT_HEADER: draw_edit_header(); break;
 		case DIALOG_PROBE:  draw_probe(); break;
 		case DIALOG_WEDGE:  draw_wedge(); break;
 		case DIALOG_FILE_OPEN:  draw_file_open_main(); break;

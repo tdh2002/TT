@@ -378,7 +378,7 @@ gboolean Copy_File(GtkWidget *widget,	GdkEventButton *event,	gpointer       data
 
     char *target_file;
     char *source_file;
-    char command[1024] = "cp ";
+    char command[1024] = "cp -r ";
     int value; 
     char *value_name;
 
@@ -400,6 +400,8 @@ gboolean Copy_File(GtkWidget *widget,	GdkEventButton *event,	gpointer       data
 
     target_model = my_signal->target_model;
 
+    g_print("entry copy_file function\n");
+
     value = gtk_tree_model_get_iter_from_string (source_model, &source_iter, "0");
 
     while(value)
@@ -411,14 +413,22 @@ gboolean Copy_File(GtkWidget *widget,	GdkEventButton *event,	gpointer       data
             g_printf("value_name = %s\n",value_name);
 
             memset(command,0,sizeof(command));
-              
-            strcpy(command,"cp ");
+            
+            strcpy(command,"cp -r ");
 
             target_file = Get_Target_File_Path();
 
             source_file = Get_Source_File_Path();    
 
             strcat(command,source_file);
+
+			if ( !( ( strlen(source_file) == 1 ) && ( strcmp(source_file,"/") == 0) ) )
+			{
+				if( strcmp(source_file + strlen(source_file) - strlen("/"), "/") != 0 )
+				{
+					strcat(command,"/");
+				}
+			}
 
             strcat(command,value_name);
 
@@ -497,7 +507,15 @@ gboolean Move_File(GtkWidget *widget,	GdkEventButton *event,	gpointer       data
 
             strcat(command,source_file);
 
-            strcat(command,value_name);
+			if ( !( ( strlen(source_file) == 1 ) && ( strcmp(source_file,"/") == 0) ) )
+			{
+				if( strcmp(source_file + strlen(source_file) - strlen("/"), "/") != 0 )
+				{
+					strcat(command,"/");
+				}
+			}
+
+			strcat(command,value_name);
 
             strcat(command," ");
 
@@ -530,7 +548,7 @@ gboolean Move_File(GtkWidget *widget,	GdkEventButton *event,	gpointer       data
 gboolean Delect_File(GtkWidget *widget,	GdkEventButton *event,	gpointer       data)
 {
     char *source_file;
-    char command[1024] = "mv ";
+    char command[1024] = "rm -r ";
     int value; 
     char *value_name;
 
@@ -565,11 +583,19 @@ gboolean Delect_File(GtkWidget *widget,	GdkEventButton *event,	gpointer       da
 
             memset(command,0,sizeof(command));
               
-            strcpy(command,"rm ");
+            strcpy(command,"rm -r ");
 
             source_file = Get_Source_File_Path();    
 
             strcat(command,source_file);
+
+			if ( !( ( strlen(source_file) == 1 ) && ( strcmp(source_file,"/") == 0) ) )
+			{
+				if( strcmp(source_file + strlen(source_file) - strlen("/"), "/") != 0 )
+				{
+					strcat(command,"/");
+				}
+			}
 
             strcat(command,value_name);
 

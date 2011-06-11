@@ -36,7 +36,7 @@ typedef struct _gate_info
 	guchar	synchro;        /* 同步 */
 	guchar	measure;        /*  */
 	guchar	rectifier_freq; /* 射频 */
-	guchar	height;
+	gchar	height;
 	gchar	tt[3];
 	gint	start;
 	guint	width;
@@ -491,7 +491,8 @@ typedef	struct _Config
 	guchar	mouse;                       /* Preferences -> Options -> mouse*/
 	guchar	remote_desktop;                       /* Preferences -> Options -> mouse*/
 
-	guchar	remark_info[256];
+	guchar	edit_notes_info[256];
+	guchar	edit_header_info[256];
 } CONFIG, *CONFIG_P;
 
 /* fetch material info of current config 获取当前配置中材料的信息 */
