@@ -101,6 +101,7 @@ void init_fb ()
 void init_mem ()
 {
 	int fd_mem;
+
 	if ((fd_mem = open(MEM_DEVICE, O_RDWR | O_SYNC)) == -1) 
 	{
 		perror (MEM_DEVICE);
@@ -342,13 +343,13 @@ void draw_b_scan (gushort *p, guint width, guint height, DOT_TYPE *data, DOT_TYP
 
 	}
 
-	/*
 	for (i = 0; i < height - 1; i++)
 		memcpy(p + (i + yoffset) * FB_WIDTH + xoffset, p + (i + yoffset + 1) * FB_WIDTH + xoffset, width * 2);
-		*/
 
 	/* 编码器同步的时候怎么画 */
+	/*
 	memcpy(p + (yoffset) * FB_WIDTH, p + (yoffset + 1) * FB_WIDTH, FB_WIDTH * (height - 1) * 2);
+	*/
 
 	for (j = 0; j < width - 1; j++)
 		fbdot (p, xoffset + j, yoffset + height - 1, TMP(color_amp[data1[j]]));

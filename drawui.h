@@ -331,6 +331,7 @@
 extern _group_wizard g_group_wizard_struct;
 extern GROUP g_tmp_group_struct;
 extern const gchar *backpic[];
+extern GdkPixbuf *g_pixbuf_[18]; 
 
 extern gint (*window_keypress_event_orig)(GtkWidget *widget, GdkEventKey *event);
 extern gint (*dialog_keypress_event_orig)(GtkWidget *widget, GdkEventKey *event);
@@ -642,8 +643,11 @@ extern void add_to_list(GtkWidget *list, const gchar *str, guint count);
 extern void draw_field_name ();
 	
 extern void send_focal_spi (guint group);
-extern void update_widget_bg(GtkWidget *widget, const gchar *img_file);
+//extern void update_widget_bg(GtkWidget *widget, const gchar *img_file);
 
+extern void update_widget_bg(GtkWidget *widget, int i);
 extern void draw3_data1(DRAW_UI_P p) ;
+
+extern void all_bg_pic_in_mem();
 #endif
 

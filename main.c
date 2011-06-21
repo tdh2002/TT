@@ -326,6 +326,8 @@ int main (int argc, char *argv[])
 	for (i = 0; i < setup_MAX_GROUP_QTY; i++)
 		TMP(total_point_qty) += TMP(beam_qty[i]) * (GROUP_VAL_POS (i, point_qty) + 32);
 
+	all_bg_pic_in_mem();
+
 	init_ui (p_ui);
 
 	gtk_widget_show (window);
@@ -345,10 +347,10 @@ void send_focal_spi (guint group)
 	for (k = offset; k < beam_qty; k++)
 	{
 		TMP(focal_spi[k]).group	= group;
-		TMP(focal_spi[k]).all_beam_info	= get_beam_qty();
+		TMP(focal_spi[k]).all_beam_info	= get_beam_qty() - 1;
 		TMP(focal_spi[k]).gain_offset	= GROUP_VAL_POS(group, gain_offset);
 
-		TMP(focal_spi[k]).beam_delay	= TMP(focal_law_all_beam[k].beam_delay) / 10;
+		TMP(focal_spi[k]).beam_delay	= TMP(focal_law_all_beam[k].G_delay) / 10;
 		TMP(focal_spi[k]).rx_sel	= 
 			channel_select(GROUP_VAL_POS(group, pulser) + LAW_VAL_POS(group, First_rx_elem));  
 		TMP(focal_spi[k]).tx_sel	= 
@@ -358,7 +360,8 @@ void send_focal_spi (guint group)
 		{
 			TMP(focal_spi[k]).tx_info[i]	= 
 				((guint)(TMP(focal_law_all_elem[k][i].T_delay) / 2.5)) | 
-				(((guint)(GROUP_VAL_POS(group, pulser_width) / 2.5)) << 16) | (0x3 << 30);	
+				(((guint)(TMP(focal_law_all_elem[k][i].T_delay) / 2.5)) +
+				((guint)(GROUP_VAL_POS(group, pulser_width) / 2.5))) << 16 | (0x3 << 30);	
 			if (i < 16)
 				TMP(focal_spi[k]).rx_info[i]	= 
 					(TMP(focal_spi[group]).rx_info[i] & 0xffff0000) | 
@@ -381,7 +384,7 @@ void send_focal_spi (guint group)
 
 void init_group_spi (guint group)
 {
-	gint tmp = 0;
+	gint tmp = 0, tt[4];
 	if (GROUP_VAL_POS(group, filter) == 0)
 	{
 		TMP(group_spi[group]).freq_band	= 0;
@@ -423,9 +426,9 @@ void init_group_spi (guint group)
 
 	TMP(group_spi[group]).tcg_point_qty	= 0;		/* 未完成 */
 	TMP(group_spi[group]).tcg_en		= 0;		/* 未完成 */
-	TMP(group_spi[group]).UT2			= 0;		/* 未完成 */
-	TMP(group_spi[group]).UT1			= 0;		/* 未完成 */
-	TMP(group_spi[group]).PA			= GROUP_VAL_POS (group, group_mode);		
+	TMP(group_spi[group]).UT2			= (GROUP_VAL_POS (group, group_mode) == 2) ? 1 : 0;		
+	TMP(group_spi[group]).UT1			= (GROUP_VAL_POS (group, group_mode) == 0) ? 1 : 0;		
+	TMP(group_spi[group]).PA			= (GROUP_VAL_POS (group, group_mode) == 1) ? 1 : 0;		
 	TMP(group_spi[group]).sample_start	= (GROUP_VAL_POS (group, start) + 
 		GROUP_VAL_POS(group, wedge_delay)) / 10;		
 
@@ -436,10 +439,17 @@ void init_group_spi (guint group)
 	TMP(group_spi[group]).beam_qty		= TMP (beam_qty[group]);	
 	TMP(group_spi[group]).sample_offset	= 0;
 
-	TMP(group_spi[group]).rx_time		= 0;
+	tt[0] = (GROUP_VAL_POS(group, gate[0].start) +	GROUP_VAL_POS (group, gate[0].width));
+	tt[1] = (GROUP_VAL_POS(group, gate[1].start) +	GROUP_VAL_POS (group, gate[1].width));
+	tt[2] = (GROUP_VAL_POS(group, gate[2].start) +	GROUP_VAL_POS (group, gate[2].width));
+
+	tt[3] = MAX(tt[0], (MAX(tt[1],tt[2]))) / 10;
+
+	TMP(group_spi[group]).rx_time		= MAX (tt[3], TMP(group_spi[group]).sample_range);
 	TMP(group_spi[group]).gain1			= 0;
 
-	TMP(group_spi[group]).idel_time		= 0;
+	TMP(group_spi[group]).idel_time		= 
+		100000000 / GROUP_VAL_POS(group, prf) - 2048 - TMP(group_spi[group]).rx_time;
 
 	TMP(group_spi[group]).gate_a_height	= GROUP_VAL_POS(group, gate[0].height);
 	TMP(group_spi[group]).gate_a_start	= GROUP_VAL_POS(group, gate[0].start) / 10;

@@ -683,13 +683,14 @@ static void draw_edit_notes ()
 	GtkWidget *dialog;
 	GtkWidget *vbox1;	/* 指向dialog的vbox */
 	GtkWidget *sw;		/* 第一个scroll 备注只要一个sw */
+	GtkWidget *label;
 	GtkWidget *view;
 	GtkTextBuffer *TextBuffer;
 	//	GtkWidgetClass *widget_window_class1;
 	const gchar *buf = (const gchar *)(CFG(edit_notes_info));
 
-
-	dialog = gtk_dialog_new_with_buttons("Dialog_Remark", win,
+	label = gtk_label_new("Notes");
+	dialog = gtk_dialog_new_with_buttons("Notes", win,
 			GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_NO_SEPARATOR,
 			GTK_STOCK_OK, GTK_RESPONSE_OK,
 			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
@@ -698,17 +699,18 @@ static void draw_edit_notes ()
 	//	widget_window_class1 = GTK_WIDGET_GET_CLASS (((GtkObject*)(dialog))); 
 	//	widget_window_class1->key_press_event = gtk_entry_digit_only_keypress_event; /* 指定哪些字符输入 */
 
-	gtk_widget_set_size_request(GTK_WIDGET (dialog), 300, 300);
+	gtk_widget_set_size_request(GTK_WIDGET (dialog), 300, 350);
 	vbox1 = GTK_WIDGET (GTK_DIALOG(dialog)->vbox);
 	sw = gtk_scrolled_window_new(NULL, NULL);
 
-	gtk_widget_set_size_request(sw, 300, 300);
+	gtk_widget_set_size_request(sw, 300, 270);
 	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW(sw),
 			GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw),
 			GTK_SHADOW_ETCHED_IN);
 
-	gtk_box_pack_start(GTK_BOX(vbox1), sw, TRUE, TRUE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox1), label, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox1), sw, FALSE, FALSE, 5);
 	view = gtk_text_view_new ();
 	gtk_container_add (GTK_CONTAINER (sw), view);
 	TextBuffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
@@ -728,12 +730,13 @@ static void draw_edit_header ()
 	GtkWidget *dialog;
 	GtkWidget *vbox1;	/* 指向dialog的vbox */
 	GtkWidget *sw;		/* 第一个scroll 备注只要一个sw */
+	GtkWidget *label;
 	GtkWidget *view;
 	GtkTextBuffer *TextBuffer;
 	//	GtkWidgetClass *widget_window_class1;
 	const gchar *buf = (const gchar *)(CFG(edit_header_info));
 
-
+	label = gtk_label_new("Header");
 	dialog = gtk_dialog_new_with_buttons("Dialog_edit_notes", win,
 			GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_NO_SEPARATOR,
 			GTK_STOCK_OK, GTK_RESPONSE_OK,
@@ -743,17 +746,18 @@ static void draw_edit_header ()
 	//	widget_window_class1 = GTK_WIDGET_GET_CLASS (((GtkObject*)(dialog))); 
 	//	widget_window_class1->key_press_event = gtk_entry_digit_only_keypress_event; /* 指定哪些字符输入 */
 
-	gtk_widget_set_size_request(GTK_WIDGET (dialog), 300, 300);
+	gtk_widget_set_size_request(GTK_WIDGET (dialog), 300, 350);
 	vbox1 = GTK_WIDGET (GTK_DIALOG(dialog)->vbox);
 	sw = gtk_scrolled_window_new(NULL, NULL);
 
-	gtk_widget_set_size_request(sw, 300, 300);
+	gtk_widget_set_size_request(sw, 300, 270);
 	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW(sw),
 			GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw),
 			GTK_SHADOW_ETCHED_IN);
 
-	gtk_box_pack_start(GTK_BOX(vbox1), sw, TRUE, TRUE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox1), label, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox1), sw, FALSE, FALSE, 5);
 	view = gtk_text_view_new ();
 	gtk_container_add (GTK_CONTAINER (sw), view);
 	TextBuffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
@@ -1304,7 +1308,7 @@ static void draw_file_open_main()
 			vbox_2_1_1[i] = gtk_vbox_new(FALSE,0);
 		}
 		gtk_widget_set_size_request(GTK_WIDGET(vbox_2_1_1[i]),114,85);
-		update_widget_bg(vbox_2_1_1[i], backpic[1]);
+		update_widget_bg(vbox_2_1_1[i],  /*backpic[1]*/ 1);
 
 		label_2_1_1[i] = gtk_label_new(char_2_1_1[i]);
 		gtk_widget_modify_fg (label_2_1_1[i], GTK_STATE_NORMAL, &color_black);
@@ -1347,7 +1351,7 @@ static void draw_file_open_main()
 			hbox_1_1_2_1_1[i] = gtk_hbox_new(FALSE,0);
 		}
 		gtk_widget_set_size_request(GTK_WIDGET(hbox_1_1_2_1_1[i]),114,85);
-		update_widget_bg(hbox_1_1_2_1_1[i], backpic[1]);
+		update_widget_bg(hbox_1_1_2_1_1[i], /*backpic[1]*/1);
 		label_1_1_2_1_1[i] = gtk_label_new(char_1_1_2_1_1[i]);
 		gtk_widget_modify_fg (label_1_1_2_1_1[i], GTK_STATE_NORMAL, &color_black);
 		gtk_label_set_justify(GTK_LABEL(label_1_1_2_1_1[i]), GTK_JUSTIFY_CENTER);
@@ -1675,7 +1679,7 @@ static void draw_save_setup_as()
 			vbox_2_1_1[i] = gtk_vbox_new(FALSE,0);
 		}
 		gtk_widget_set_size_request(GTK_WIDGET(vbox_2_1_1[i]),114,85);
-		update_widget_bg(vbox_2_1_1[i], backpic[1]);
+		update_widget_bg(vbox_2_1_1[i], /*backpic[1]*/ 1);
 
 		label_2_1_1[i] = gtk_label_new(char_2_1_1[i]);
 		gtk_widget_modify_fg (label_2_1_1[i], GTK_STATE_NORMAL, &color_black);
@@ -1734,7 +1738,7 @@ static void draw_save_setup_as()
 
 	eventbox_save = gtk_event_box_new();
 	gtk_widget_set_size_request (GTK_WIDGET(eventbox_save), 114, 85);
-	update_widget_bg(eventbox_save, backpic[1]);
+	update_widget_bg(eventbox_save, /*backpic[1]*/ 1);
 	label[0] = gtk_label_new("Save");
 	gtk_container_add(GTK_CONTAINER(eventbox_save),label[0]);
 	gtk_box_pack_start (GTK_BOX (hbox_1_1_2_1), eventbox_save, FALSE, FALSE, 0);
@@ -1743,7 +1747,7 @@ static void draw_save_setup_as()
 	gtk_widget_set_size_request (GTK_WIDGET(vbox_filename), 342, 85);
 	eventbox_filename = gtk_event_box_new();
 	gtk_widget_set_size_request (GTK_WIDGET(eventbox_filename), 342, 57);
-	update_widget_bg(eventbox_filename, backpic[1]);
+	update_widget_bg(eventbox_filename, /*backpic[1]*/1);
 	label[1] = gtk_label_new("File name");
 	gtk_container_add(GTK_CONTAINER(eventbox_filename),label[1]);
 	gtk_box_pack_start (GTK_BOX (vbox_filename), eventbox_filename, FALSE, FALSE, 0);
@@ -1759,7 +1763,7 @@ static void draw_save_setup_as()
 	gtk_widget_set_size_request (GTK_WIDGET(vbox_lock), 114, 85);
 	eventbox_lock1 = gtk_event_box_new();
 	gtk_widget_set_size_request (GTK_WIDGET(eventbox_lock1), 114, 85);
-	update_widget_bg(eventbox_lock1, backpic[1]);
+	update_widget_bg(eventbox_lock1, /*backpic[1]*/1);
 	label[2] = gtk_label_new("Setup Lock");
 	gtk_container_add(GTK_CONTAINER(eventbox_lock1),label[2]);
 	gtk_box_pack_start (GTK_BOX (vbox_lock), eventbox_lock1, FALSE, FALSE, 0);
@@ -1884,7 +1888,7 @@ static void draw_system_info ()
 	{
 		hbox_2_1_1[i] = gtk_event_box_new();
 		gtk_widget_set_size_request(GTK_WIDGET(hbox_2_1_1[i]),114,85);
-		update_widget_bg(hbox_2_1_1[i], backpic[1]);
+		update_widget_bg(hbox_2_1_1[i], /*backpic[1]*/1);
 		label_2_1_1[i] = gtk_label_new(char_2_1_1[i]);
 		gtk_widget_modify_fg (label_2_1_1[i], GTK_STATE_NORMAL, &color_black);
 		gtk_label_set_justify(GTK_LABEL(label_2_1_1[i]), GTK_JUSTIFY_CENTER);
@@ -2071,6 +2075,8 @@ static void draw_file_manage ()
 
 	char *file_type = ".cfg";
 
+	static _dir_path_label dir_path_label_struct;
+
 	dialog = gtk_dialog_new_with_buttons ("Dialog_Wedge", win,
 			GTK_DIALOG_MODAL |	GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_NO_SEPARATOR,
 			GTK_STOCK_OK, GTK_RESPONSE_OK,
@@ -2183,7 +2189,7 @@ static void draw_file_manage ()
 	{
 		hbox_1_1_2_1_1[i] = gtk_event_box_new();
 		gtk_widget_set_size_request(GTK_WIDGET(hbox_1_1_2_1_1[i]),114,85);
-		update_widget_bg(hbox_1_1_2_1_1[i], backpic[1]);
+		update_widget_bg(hbox_1_1_2_1_1[i], /*backpic[1]*/ 1);
 		label_1_1_2_1_1[i] = gtk_label_new(char_1_1_2_1_1[i]);
 		gtk_widget_modify_fg (label_1_1_2_1_1[i], GTK_STATE_NORMAL, &color_black);
 		gtk_label_set_justify(GTK_LABEL(label_1_1_2_1_1[i]), GTK_JUSTIFY_CENTER);
@@ -2224,7 +2230,7 @@ static void draw_file_manage ()
 		}
 
 		gtk_widget_set_size_request(GTK_WIDGET(vbox_2_1_1[i]),114,85);
-		update_widget_bg(vbox_2_1_1[i], backpic[1]);
+		update_widget_bg(vbox_2_1_1[i], /*backpic[1]*/ 1);
 
 		label_2_1_1[i] = gtk_label_new(char_2_1_1[i]);
 		gtk_widget_modify_fg (label_2_1_1[i], GTK_STATE_NORMAL, &color_black);
@@ -2259,6 +2265,10 @@ static void draw_file_manage ()
 	my_signal.target_selection = target_selection;
 	my_signal.target_list = target_list;
 
+	dir_path_label_struct.file_type = file_type;
+	dir_path_label_struct.source_label = source_label;
+	dir_path_label_struct.target_label = target_label;
+
 	//关闭窗口的信号
 	g_signal_connect(G_OBJECT (vbox_2_1_1[2]), "button-press-event",G_CALLBACK(dialog_destroy), dialog);
 
@@ -2272,9 +2282,9 @@ static void draw_file_manage ()
 
 	g_signal_connect(G_OBJECT(hbox_1_1_2_1_1[5]), "button-press-event",G_CALLBACK(Rename_File), (gpointer)&my_signal);
 
-	g_signal_connect(G_OBJECT(source_list),"row-activated",G_CALLBACK(cd_source_dir_path),file_type);
+	g_signal_connect(G_OBJECT(source_list),"row-activated",G_CALLBACK(cd_source_dir_path),&dir_path_label_struct);
 
-	g_signal_connect(G_OBJECT(target_list),"row-activated",G_CALLBACK(cd_target_dir_path),file_type);
+	g_signal_connect(G_OBJECT(target_list),"row-activated",G_CALLBACK(cd_target_dir_path),&dir_path_label_struct);
 
 	gtk_widget_show_all(dialog);
 
@@ -2418,7 +2428,11 @@ void change_target_dir(char *dir_name)
 
 void cd_source_dir_path (GtkTreeView *tree_view,GtkTreePath *path,GtkTreeViewColumn *column,gpointer user_data)
 {
-	char *file_type = (char *)user_data;
+    _dir_path_label_p dir_path_label_p_struct = (_dir_path_label_p) user_data;	
+
+	char *file_type = dir_path_label_p_struct->file_type;
+
+	GtkWidget *source_label = dir_path_label_p_struct->source_label;
 
 	char *file_name = NULL;
 	
@@ -2445,6 +2459,8 @@ void cd_source_dir_path (GtkTreeView *tree_view,GtkTreePath *path,GtkTreeViewCol
 
 	//
 	change_source_dir(file_name);
+	//
+	gtk_label_set_text(source_label,pwd_path);
     //
 	selection_file_type(GTK_WIDGET (tree_view),pwd_path,file_type);
 	//
@@ -2453,7 +2469,11 @@ void cd_source_dir_path (GtkTreeView *tree_view,GtkTreePath *path,GtkTreeViewCol
 
 void cd_target_dir_path (GtkTreeView *tree_view,GtkTreePath *path,GtkTreeViewColumn *column,gpointer user_data)
 { 
-	char *file_type = (char *)user_data;
+	_dir_path_label_p dir_path_label_p_struct = (_dir_path_label_p) user_data;	
+
+	char *file_type = dir_path_label_p_struct->file_type;
+
+	GtkWidget *target_label = dir_path_label_p_struct->target_label;
 
 	char *file_name = NULL;
 	
@@ -2480,7 +2500,9 @@ void cd_target_dir_path (GtkTreeView *tree_view,GtkTreePath *path,GtkTreeViewCol
 
 	//
 	change_target_dir(file_name);
-    //
+	//
+	gtk_label_set_text(target_label,pwd_path);
+	//
 	selection_file_type(GTK_WIDGET (tree_view),pwd_path,file_type);
 	//
 	g_free(file_name);
@@ -2586,10 +2608,10 @@ static void draw_law_save ()
 	vbox1	= GTK_WIDGET (GTK_DIALOG(dialog)->vbox);
 	ebox_save	= gtk_event_box_new();
 	label_save	= gtk_label_new("Save");
-	update_widget_bg(ebox_save, backpic[7]);
+	update_widget_bg(ebox_save, /*backpic[7]*/7);
 	ebox_close	= gtk_event_box_new();
 	label_close	= gtk_label_new("Close");
-	update_widget_bg(ebox_close, backpic[7]);
+	update_widget_bg(ebox_close, /*backpic[7]*/7);
 	entry_name	= gtk_entry_new();
 	vbox_name	= gtk_vbox_new(FALSE, 0);
 	ebox_name	= gtk_event_box_new();
@@ -2749,12 +2771,12 @@ static void draw_law_read ()
 	label_read	= gtk_label_new("Read");
 	gtk_widget_set_size_request(GTK_WIDGET (ebox_read), 115, 85);
 	//gtk_widget_modify_bg(GTK_WIDGET (ebox_read), GTK_STATE_NORMAL, &color_blue);
-	update_widget_bg(ebox_read, backpic[7]);
+	update_widget_bg(ebox_read, /*backpic[7]*/7);
 	ebox_close	= gtk_event_box_new();
 	label_close	= gtk_label_new("Close");
 	gtk_widget_set_size_request(GTK_WIDGET (ebox_close), 115, 85);
 	//gtk_widget_modify_bg(GTK_WIDGET (ebox_close), GTK_STATE_NORMAL, &color_blue);
-	update_widget_bg(ebox_close, backpic[7]);
+	update_widget_bg(ebox_close, /*backpic[7]*/7);
 
 	gtk_container_add (GTK_CONTAINER (ebox_read), label_read);
 	gtk_container_add (GTK_CONTAINER (ebox_close), label_close);

@@ -195,7 +195,8 @@ typedef struct tmp_config
 	LAW_ELEM	focal_law_all_elem[setup_MAX_LAW_QTY][setup_MAX_ELEM_RX_ACTIVE];	
 
 	DOT_TYPE	scan_data[setup_MAX_GROUP_QTY][640*400];
-	guint		measure_data[setup_MAX_LAW_QTY][32];
+	guint		measure_data[setup_MAX_LAW_QTY][8];
+	MEASURE_DATA	measure_data_dis;
 
 	gushort	special_col_amp[3];		/* 特殊颜色 */
 	gushort	color_amp[256];			/* 调色板信息 */
@@ -215,7 +216,7 @@ typedef struct tmp_config
 	gushort	*fb1_addr;
 	gushort	*virtual_add;
 
-	guint	beam_num[setup_MAX_GROUP_QTY];		/* Group显示的beam编号 */
+	guint	beam_num[setup_MAX_GROUP_QTY];		/* Group 显示的beam编号 */
 	guint	beam_qty[setup_MAX_GROUP_QTY];		/* Group beam总数量	*/
 	guint	angle_num;						/* 几个angle */
 	guint	beam_skew_num;					/* 几个beam_skew */
@@ -267,7 +268,7 @@ typedef struct tmp_config
 	guchar	compdb_reg;
 	guchar	cangle_reg;
 
-	GdkPixmap *pixmap_[16];
+    //GdkPixbuf *pixbuf_[18];
 
 } TMP_CONFIG, *TMP_CONFIG_P;
 
@@ -420,6 +421,7 @@ typedef struct Draw_interface
 	guchar			main_menu_pop_status; /* 0 down 1 up */
 	guchar			mark_pop_change;      /*  */
 	guchar			markreturn;
+	guchar			mark2;
 	guchar			mark3;
 
 	guchar	bscan_mark;
@@ -486,6 +488,8 @@ typedef struct Draw_interface
 	guchar	weldtype_pos;
 	guchar	cangle;
 
+	gfloat	swmin;
+	gfloat	swmax;
 } DRAW_UI, *DRAW_UI_P;
 
 typedef struct _MY_SIGNAL_TMP 
@@ -567,6 +571,13 @@ typedef struct __group_wizard
 	}operation;
 
 }_group_wizard, *_group_wizard_p;
+
+typedef struct __dir_path_label
+{
+	char *file_type;
+    GtkWidget *source_label;
+	GtkWidget *target_label;
+}_dir_path_label, *_dir_path_label_p;
 
 #define CUR_POS (pp->pos2[pp->pos][pp->pos1[pp->pos]])      /* 0,1,2,3,4,5 */
 #define CUR_POS_P(p) (p->pos2[p->pos][p->pos1[p->pos]])      /* 0,1,2,3,4,5 */

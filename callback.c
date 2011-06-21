@@ -33,15 +33,6 @@ guint get_prf ();
 guint get_filter ();
 guint get_max_point_qty();
 
-guint get_max_point_qty()
-{
-	guint i, point_qty = 0, max_point_qty;
-	for (i = 0; i < setup_MAX_GROUP_QTY; i++)
-		point_qty += TMP(beam_qty[i]) * (GROUP_VAL_POS (i, point_qty) + 32);
-	max_point_qty = 192000 - point_qty + TMP(beam_qty[CFG(groupId)]) * (GROUP_VAL (point_qty) + 128);
-	return MIN(((max_point_qty / TMP(beam_qty[CFG(groupId)])) - 32), 8192);
-}
-
 //把group向导的设置参数保存起来
 _group_wizard g_group_wizard_struct;
 
@@ -467,9 +458,7 @@ void cal_focal_law (guint group)
 	p->element_sel = &element_sel;
 	p->k = 0 ;	            
     
-	g_print("begin\n");
 	setup_para(p, group);
-	g_print("begin set\n");
     
 	focal_law(p, G_Delay);
 
@@ -477,8 +466,9 @@ void cal_focal_law (guint group)
 	/* 把聚集法则信息保存起来 */
 	for (offset = 0, k = 0 ; k < group; k++)
 		offset += TMP(beam_qty[k]);
-	g_print("offset = %d group=%d beam_qty = %d\n", 
+/*	g_print("offset = %d group=%d beam_qty = %d\n", 
 			offset, group, TMP(beam_qty[group]));
+			*/
 	save_cal_law (offset, group, p);
 
 	g_free (p);
@@ -509,6 +499,15 @@ guint get_sum_gain ()
 	return GROUP_VAL(sum_gain);
 }
 
+guint get_max_point_qty()
+{
+	guint i, point_qty = 0, max_point_qty;
+	for (i = 0; i < setup_MAX_GROUP_QTY; i++)
+		point_qty += TMP(beam_qty[i]) * (GROUP_VAL_POS (i, point_qty) + 32);
+	max_point_qty = 192000 - point_qty + TMP(beam_qty[CFG(groupId)]) * (GROUP_VAL (point_qty) + 128);
+	return MIN(((max_point_qty / TMP(beam_qty[CFG(groupId)])) - 32), 8192);
+}
+
 /* 取得压缩点的数量 */
 guint get_point_qty ()
 {
@@ -528,7 +527,7 @@ guint get_point_qty ()
 	return GROUP_VAL(point_qty);
 }
 
-/* 计算prf,并且附加限制 */
+/* 计算prf,并且附加限制 限制计算 */
 guint get_prf ()
 {
 	guint prf_temp, range_all, gate_range_all[3];
@@ -1614,8 +1613,9 @@ void b3_fun3(gpointer p)
 					   	  {
 							case 0:
 							case 1:
-							case 4:
 								data_process(&(TMP(u_reference_reg)), 3);break;
+							case 4:
+								data_process(&(TMP(u_measure_reg)), 3);break;
 							case 2:
 								data_process(&(TMP(i_reference_reg)), 3);break;
 							case 3:
@@ -1751,6 +1751,7 @@ void b3_fun4(gpointer p)
 			{
 				case 1: 
 					CFG(overlay_cursor) = !CFG(overlay_cursor);
+					gtk_widget_queue_draw (pp->vboxtable);
 					break; /* p414 */
 				default:break;
 			}
@@ -1860,8 +1861,9 @@ void b3_fun4(gpointer p)
 					   	  {
 							case 0:
 							case 1:
-							case 4:
 								data_process(&(TMP(u_measure_reg)), 3);break;
+							case 4:
+								data_process(&(TMP(i_reference_reg)), 3);break;
 							case 2:
 								data_process(&(TMP(i_measure_reg)), 3);break;
 							case 5:
@@ -1944,6 +1946,7 @@ void b3_fun5(gpointer p)
 			{
 				case 1: 
 					CFG(overlay_overlay) = !CFG(overlay_overlay);
+					gtk_widget_queue_draw (pp->vboxtable);
 					break; /* p415 */
 				default:break;
 			}
@@ -2050,11 +2053,11 @@ void b3_fun5(gpointer p)
 				   switch (pp->pos1[3])
 				   {
 					   case 0: break; 
-					   case 1: 
+					   case 1: /* P315 */ 
 					   	  switch(GROUP_VAL(selection))  
 					   	  {
 							case 4:
-								data_process(&(TMP(s_measure_reg)), 3);break;
+								data_process(&(TMP(i_measure_reg)), 3);break;
 							case 5:
 							case 6:
 							case 7:
@@ -3782,7 +3785,9 @@ void data_3111 (GtkSpinButton *spinbutton, gpointer data)
 		GROUP_VAL(s_reference) =  (gint) (gtk_spin_button_get_value (spinbutton)*100.0);
 	else
 		GROUP_VAL(s_reference) =  (gint) (gtk_spin_button_get_value (spinbutton)*100.0/0.03937);
+	gtk_widget_queue_draw (pp->vboxtable);
 }
+
 void data_3112 (GtkSpinButton *spinbutton, gpointer data) 
 {
 	GROUP_VAL(cursors_angle) =  (guint) (gtk_spin_button_get_value (spinbutton)*100.0);
@@ -3804,6 +3809,7 @@ void data_3121 (GtkSpinButton *spinbutton, gpointer data) /* */
 		GROUP_VAL(s_measure) =  (gint) (gtk_spin_button_get_value (spinbutton)*100.0);
 	else
 		GROUP_VAL(s_measure) =  (gint) (gtk_spin_button_get_value (spinbutton)*100.0/0.03937);
+	gtk_widget_queue_draw (pp->vboxtable);
 }
 
 void data_3122 (GtkSpinButton *spinbutton, gpointer data) /* */
@@ -3813,6 +3819,7 @@ void data_3122 (GtkSpinButton *spinbutton, gpointer data) /* */
 
 void data_313 (GtkSpinButton *spinbutton, gpointer data) /* */
 {
+#if 0
 	if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 	{
 		if(CFG(unit) == UNIT_MM)
@@ -3821,7 +3828,23 @@ void data_313 (GtkSpinButton *spinbutton, gpointer data) /* */
 			GROUP_VAL(u_reference) =  (guint) (gtk_spin_button_get_value (spinbutton)*1000.0/0.03937);
 	}
 	else
-		GROUP_VAL(u_reference) =  (guint) (gtk_spin_button_get_value (spinbutton)*(GROUP_VAL(velocity))/200.0);
+		GROUP_VAL(u_reference) =  (guint) (gtk_spin_button_get_value (spinbutton)/(GROUP_VAL(velocity))*200.0);
+
+#endif
+
+
+	if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
+	{
+		if (UNIT_MM == CFG(unit))
+			GROUP_VAL(u_reference) = (guint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / (GROUP_VAL(velocity) / 100000.0));
+		else  /* 英寸 */
+			GROUP_VAL(u_reference) = (guint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / ( 0.03937 * GROUP_VAL(velocity) / 100000.0));
+	}
+	else /* 显示方式为时间 */
+		GROUP_VAL(u_reference) = gtk_spin_button_get_value (spinbutton) * 1000.0 ; 
+
+
+	gtk_widget_queue_draw (pp->vboxtable);
 }
 
 void data_3131 (GtkSpinButton *spinbutton, gpointer data) /* */
@@ -3857,15 +3880,18 @@ void data_3133 (GtkSpinButton *spinbutton, gpointer data) /* */
 
 void data_314 (GtkSpinButton *spinbutton, gpointer data) /* */
 {
+
 	if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 	{
-		if(CFG(unit) == UNIT_MM)
-			GROUP_VAL(u_measure) =  (guint) (gtk_spin_button_get_value (spinbutton)*1000.0);
-		else
-			GROUP_VAL(u_measure) =  (guint) (gtk_spin_button_get_value (spinbutton)*1000.0/0.03937);
+		if (UNIT_MM == CFG(unit))
+			GROUP_VAL(u_measure) = (guint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / (GROUP_VAL(velocity) / 100000.0));
+		else  /* 英寸 */
+			GROUP_VAL(u_measure) = (guint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / ( 0.03937 * GROUP_VAL(velocity) / 100000.0));
 	}
-	else
-		GROUP_VAL(u_measure) =  (guint) (gtk_spin_button_get_value (spinbutton)*1000.0);
+	else /* 显示方式为时间 */
+		GROUP_VAL(u_measure) = gtk_spin_button_get_value (spinbutton) * 1000.0 ; 
+
+	gtk_widget_queue_draw (pp->vboxtable);
 
 }
 
@@ -4315,6 +4341,7 @@ void data_531 (GtkSpinButton *spinbutton, gpointer data) /*part_thickness*/
 	else
 		set_part_thickness (pp->p_config, (GUINT_TO_POINTER
 					((guint) (gtk_spin_button_get_value (spinbutton) * 1000.0/ 0.03937 ))));
+	gtk_widget_queue_draw (pp->vboxtable);
 }
 
 void data_532 (GtkSpinButton *spinbutton, gpointer data) /*part_thickness*/

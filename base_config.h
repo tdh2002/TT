@@ -38,7 +38,7 @@ typedef struct _gate_info
 	guchar	rectifier_freq; /* 射频 */
 	gchar	height;
 	gchar	tt[3];
-	gint	start;
+	gint	start;			/* 单位ns */
 	guint	width;
 } GATE_INFO, *GATE_INFO_P;
 
