@@ -112,7 +112,10 @@ typedef struct _Focal_data
 	unsigned int	TT3:16;			/* bit 16-31 保留*/
 
 	/* s_group_reg (2-11) 地址 */
-	unsigned int	TT4[10];			/* 保留 */
+	unsigned int	TT4[8];			/* 保留 */
+
+	unsigned int	tx_enable;
+	unsigned int	rx_enable;
 
 	/* s_group_reg (12-13) 地址 接收使能 */
 	DWORD			rx_sel;

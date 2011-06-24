@@ -346,6 +346,7 @@ extern guint get_beam_qty();
 extern guint get_freq ();
 extern guint get_pw ();
 extern guint get_prf ();
+extern guint get_max_prf ();
 extern guint get_filter ();
 extern guint get_max_point_qty();
 

@@ -1186,8 +1186,11 @@ static gboolean draw_info(GtkWidget *widget, GdkEventExpose *event, gpointer dat
 				{
 					for(i=1;i*(get_part_thickness(pp->p_config) / 1000.0) < (GROUP_VAL(range) / 1000.0) * (GROUP_VAL(velocity) / 200000.0); i++)
 					{
-						cairo_move_to (cr, 20+ (w-50)*(i*get_part_thickness(pp->p_config)/1000.0) / ((GROUP_VAL(range)/1000.0) * (GROUP_VAL(velocity)/200000.0)), 0);
-						cairo_line_to (cr, 20+ (w-50)*(i*get_part_thickness(pp->p_config)/1000.0) / ((GROUP_VAL(range)/1000.0) * (GROUP_VAL(velocity)/200000.0)), h-20);
+						for(j=0;j<h-20;j+=5)
+						{
+						cairo_move_to (cr, 20+ (w-50)*(i*get_part_thickness(pp->p_config)/1000.0) / ((GROUP_VAL(range)/1000.0) * (GROUP_VAL(velocity)/200000.0)), j);
+						cairo_line_to (cr, 20+ (w-50)*(i*get_part_thickness(pp->p_config)/1000.0) / ((GROUP_VAL(range)/1000.0) * (GROUP_VAL(velocity)/200000.0)), j+2.5);
+						}
 						cairo_stroke(cr);
 					}
 				}
@@ -1200,8 +1203,11 @@ static gboolean draw_info(GtkWidget *widget, GdkEventExpose *event, gpointer dat
 				{
 					for(i=1;i*(get_part_thickness(pp->p_config) / 1000.0) < (GROUP_VAL(range) / 1000.0) * (GROUP_VAL(velocity) / 200000.0); i++)
 					{
-						cairo_move_to (cr, 20+ (w-50)*(i*get_part_thickness(pp->p_config)/1000.0) / ((GROUP_VAL(range)/1000.0) * (GROUP_VAL(velocity)/200000.0)), 0);
-						cairo_line_to (cr, 20+ (w-50)*(i*get_part_thickness(pp->p_config)/1000.0) / ((GROUP_VAL(range)/1000.0) * (GROUP_VAL(velocity)/200000.0)), h-20);
+						for(j=0;j<h-20;j+=5)
+						{
+						cairo_move_to (cr, 20+ (w-50)*(i*get_part_thickness(pp->p_config)/1000.0) / ((GROUP_VAL(range)/1000.0) * (GROUP_VAL(velocity)/200000.0)), j);
+						cairo_line_to (cr, 20+ (w-50)*(i*get_part_thickness(pp->p_config)/1000.0) / ((GROUP_VAL(range)/1000.0) * (GROUP_VAL(velocity)/200000.0)), j+2.5);
+						}
 						cairo_stroke(cr);
 					}
 				}
@@ -1209,8 +1215,11 @@ static gboolean draw_info(GtkWidget *widget, GdkEventExpose *event, gpointer dat
 				{
 					for(i=1;i*(get_part_thickness(pp->p_config) / 1000.0) < GROUP_VAL(range)/1000.0*(GROUP_VAL(velocity)/200000.0)+tan((LAW_VAL (Angle_min) / 100.0)*(3.14/180.0))*tan((LAW_VAL (Angle_min) / 100.0)*(3.14/180.0))*GROUP_VAL(range)/1000.0*(GROUP_VAL(velocity)/200000.0); i++)
 					{
-						cairo_move_to (cr, 20, (h-20)*(i*get_part_thickness(pp->p_config)/1000.0) / ((GROUP_VAL(range)/1000.0) * (GROUP_VAL(velocity)/200000.0)) );
-						cairo_line_to (cr, w-30 , (h-20)*(i*get_part_thickness(pp->p_config)/1000.0) / ((GROUP_VAL(range)/1000.0) * (GROUP_VAL(velocity)/200000.0)) );
+						for(j=20;j<w-30;j+=5)
+						{
+						cairo_move_to (cr, j, (h-20)*(i*get_part_thickness(pp->p_config)/1000.0) / ((GROUP_VAL(range)/1000.0) * (GROUP_VAL(velocity)/200000.0)) );
+						cairo_line_to (cr, j+2.5 , (h-20)*(i*get_part_thickness(pp->p_config)/1000.0) / ((GROUP_VAL(range)/1000.0) * (GROUP_VAL(velocity)/200000.0)) );
+						}
 						cairo_stroke(cr);
 					}
 				}
@@ -1990,6 +1999,7 @@ static inline void set_scan_config (guchar scan_num,guchar scan_type, guint aw, 
 void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 {
 	gint angle = 0, num = 0;
+	gfloat mid = 0.0, middle = 0.0;
 
 	p->scan_type = type;
 
@@ -2231,47 +2241,94 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 
 			}
 
+			else if(GROUP_VAL(ut_unit) == UT_UNIT_TIME)
+			{
+				if(LAW_VAL (Angle_min) == LAW_VAL(Angle_max) )	/*hrule1*/
+				{
+					p->hmin1 = LAW_VAL (Angle_min) / 100.0;
+					p->hmax1 = LAW_VAL (Angle_max) / 100.0 + 1.0;
+				}
+				else
+				{
+					p->hmin1 = LAW_VAL (Angle_min) / 100.0;
+					p->hmax1 = LAW_VAL (Angle_max) / 100.0 ;
+				}
+				p->h1_unit = UNIT_DEG;
+				p->h1_color = 0xB2C1C1;	/*灰色*/
+				p->h1_bit = 1;
+
+				p->wmin1 = GROUP_VAL(start)/1000.0;	/*wrule*/
+				p->wmax1 = GROUP_VAL(range)/1000.0 + GROUP_VAL(start)/1000.0;
+				p->w_unit = UNIT_US;
+				p->w_color =0xF8EAC4; /*浅黄色*/
+
+			}
+
 			else if(GROUP_VAL(ut_unit) == UT_UNIT_TRUE_DEPTH)
 			{
-#if 0
-				if(CFG(unit) == UNIT_MM) /* hrule1 */	/*紫色，等待改成小的值在上，大的值在下 */
+				if(CFG(unit) == UNIT_MM) /* hrule1 */
 				{
-					p->hmin1 = GROUP_VAL(start)/1000.0*(GROUP_VAL(velocity)/200000.0);
-					p->hmax1 = GROUP_VAL(range)/1000.0*(GROUP_VAL(velocity)/200000.0)+GROUP_VAL(start)/1000.0*(GROUP_VAL(velocity)/200000.0);
+					p->hmin1 = GROUP_VAL(range)/1000.0*(GROUP_VAL(velocity)/200000.0)+GROUP_VAL(start)/1000.0*(GROUP_VAL(velocity)/200000.0)+tan((LAW_VAL (Angle_min) / 100.0)*(3.14/180.0))*tan((LAW_VAL (Angle_min) / 100.0)*(3.14/180.0))*GROUP_VAL(range)/1000.0*(GROUP_VAL(velocity)/200000.0);
+					p->hmax1 = GROUP_VAL(start)/1000.0*(GROUP_VAL(velocity)/200000.0);
 					p->h1_unit = UNIT_MM;
-					p->h1_color = 0xD6ABF1;
-				}
-				else
-				{
-					p->hmin1 = GROUP_VAL(start)/1000.0*0.03937*(GROUP_VAL(velocity)/200000.0);
-					p->hmax1 = GROUP_VAL(range)/1000.0*0.03937*(GROUP_VAL(velocity)/200000.0)+GROUP_VAL(start)/1000.0*0.03937*(GROUP_VAL(velocity)/200000.0);
-					p->h1_unit = UNIT_INCH;
-					p->h1_color = 0xD6ABF1;
-				}
-#endif
-
-				if(CFG(unit) == UNIT_MM) /* hrule1 */	/*紫色，等待改成小的值在上，大的值在下 */
-				{
-					p->hmin1 = GROUP_VAL(range)/1000.0*(GROUP_VAL(velocity)/200000.0)-GROUP_VAL(start)/1000.0*(GROUP_VAL(velocity)/200000.0);
-					p->hmax1 = 0.0;
-					p->h1_unit = UNIT_MM;
-					p->h1_color = 0xD6ABF1;
+					p->h1_color = 0xD6ABF1;/*紫色*/
 
 				}
 				else
 				{
-					p->hmin1 = GROUP_VAL(range)/1000.0*0.03937*(GROUP_VAL(velocity)/200000.0)-GROUP_VAL(start)/1000.0*0.03937*(GROUP_VAL(velocity)/200000.0);
-					p->hmax1 = 0.0;
+					p->hmin1 = GROUP_VAL(range)/1000.0*0.03937*(GROUP_VAL(velocity)/200000.0)+GROUP_VAL(start)/1000.0*0.03937*(GROUP_VAL(velocity)/200000.0);
+					p->hmax1 = GROUP_VAL(start)/1000.0*0.03937*(GROUP_VAL(velocity)/200000.0);
 					p->h1_unit = UNIT_INCH;
-					p->h1_color = 0xD6ABF1;
+					p->h1_color = 0xD6ABF1;/*紫色*/
 				}
 				p->h1_bit = 2;
 
-				p->wmin1 = 0;	/*wrule1*/	/* 深绿色 */
-				p->wmax1 = 100;
-				p->w_unit = UNIT_NONE;
-				p->w_color = 0x0AD5D3;
+				//p->wmin1 = 0;	/*wrule1*/
+				/*if(wedge == contact)
+					mid = pp->probe_primary_offset - (pp->element_qty * pp->element_pitch)/2.0;
+				else*/
+					mid = (-1)*GROUP_VAL_POS(CFG(groupId),wedge.Primary_offset)/1000.0 - (GROUP_VAL_POS(CFG(groupId),probe.Elem_qty) * GROUP_VAL_POS(CFG(groupId),probe.Pitch)/1000.0)/2.0;
+
+				if(GROUP_VAL(skew_pos)==0)
+					middle = GROUP_VAL(scan_offset)/10.0 - mid;
+				else if(GROUP_VAL(skew_pos)==1)
+					middle = GROUP_VAL(index_offset)/10.0 - mid;
+				else if(GROUP_VAL(skew_pos)==2)
+					middle = GROUP_VAL(scan_offset)/10.0 + mid;
+				else if (GROUP_VAL(skew_pos)==3)
+					middle = GROUP_VAL(index_offset)/10.0 + mid;
+
+				if((LAW_VAL (Angle_min)<0)&&(LAW_VAL (Angle_max)>0))
+				{
+				p->wmin1 = middle + GROUP_VAL(range)/1000.0 * sin((LAW_VAL (Angle_min) / 100.0)*(3.14/180.0));
+				p->wmax1 = middle + GROUP_VAL(range)/1000.0 * sin((LAW_VAL (Angle_max) / 100.0)*(3.14/180.0));
+				}
+				else if((LAW_VAL (Angle_min)<0)&&(LAW_VAL (Angle_max)<0))
+				{
+				p->wmin1 = middle + GROUP_VAL(range)/1000.0 * sin((LAW_VAL (Angle_min) / 100.0)*(3.14/180.0));
+				p->wmax1 = middle - GROUP_VAL(range)/1000.0 * sin((LAW_VAL (Angle_max) / 100.0)*(3.14/180.0));
+				}
+				else if((LAW_VAL (Angle_min)>0)&&(LAW_VAL (Angle_max)>0))
+				{
+				p->wmin1 = middle - GROUP_VAL(range)/1000.0 * sin((LAW_VAL (Angle_min) / 100.0)*(3.14/180.0));
+				p->wmax1 = middle + GROUP_VAL(range)/1000.0 * sin((LAW_VAL (Angle_max) / 100.0)*(3.14/180.0));
+				}
+				pp->swmin = p->wmin1;
+				pp->swmax = p->wmax1;
+
+				g_print("\nwedge_primary_offset = %.2f  ",GROUP_VAL_POS(CFG(groupId),wedge.Primary_offset)/1000.0);
+				g_print("element_qty = %d  ",GROUP_VAL_POS(CFG(groupId),probe.Elem_qty));
+				g_print("element_pitch ＝ %.2f\n",GROUP_VAL_POS(CFG(groupId),probe.Pitch)/1000.0);
+				g_print("wmin1 = %.2f  ", pp->swmin);
+				g_print("wmax1 = %.2f  ", pp->swmax);
+				g_print("middle = %.2f  ", middle );
+				g_print("angle_min = %.1f  ", LAW_VAL (Angle_min) / 100.0 );
+				g_print("sin = %.2f"  , sin((LAW_VAL (Angle_min) / 100.0)*(3.14/180.0)));
+				//p->wmax1 = 100;
+				p->w_unit = UNIT_MM;
+				p->w_color = 0x0AD5D3;/* 深绿色 */
 			}
+
 
 			p->hmin2 = 0;	/*hrule2*/	/* 黄色 */
 			p->hmax2 = 100;
@@ -2286,7 +2343,6 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 			break;
 		default:break;
 	}
-
 }
 
 
@@ -2725,7 +2781,7 @@ void draw3_data0(DRAW_UI_P p)
 					break;
 				case 1:/*Wizard -> Focal Law -> Back p010 */
 					draw3_popdown (NULL, 0, 1);
-					if ((p->fstart_qty == 0)||(p->fstart_qty == 1)||(p->fstart_qty == 5))
+					if ((p->fstart_qty == 0)||(p->fstart_qty == 1)||(p->fstart_qty == 6))
 					{
 						gtk_widget_set_sensitive(p->eventbox30[0], FALSE);
 						gtk_widget_set_sensitive(p->eventbox31[0], FALSE);
@@ -2738,6 +2794,16 @@ void draw3_data0(DRAW_UI_P p)
 					break;
 				case 2:/*Wizard -> Calibration -> Back*/
 					draw3_popdown (NULL, 0, 1);
+					if ((p->cstart_qty == 0)||(p->cstart_qty == 1))
+					{
+						gtk_widget_set_sensitive(p->eventbox30[0], FALSE);
+						gtk_widget_set_sensitive(p->eventbox31[0], FALSE);
+					}
+					else
+					{
+						gtk_widget_set_sensitive(p->eventbox30[0], TRUE);
+						gtk_widget_set_sensitive(p->eventbox31[0], TRUE);
+					}
 					break;
 				case 3:
 					if ( !con2_p[0][3][0] )
@@ -8323,7 +8389,7 @@ void draw3_data3(DRAW_UI_P p)
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 							draw3_pop_tt (data_533, NULL, 
 									get_material_name (pp->p_config),
-									menu_content + MATERIAL, 24, 3, CFG(part.Material_pos), 0);
+									menu_content + MATERIAL, 24, 3, get_part_material(pp->p_config), 0);
 						else 
 							draw3_popdown (get_material_name(pp->p_config), 3, 0);
 					}
@@ -10179,11 +10245,9 @@ void draw3_data3(DRAW_UI_P p)
 					pp->x_pos = 520, pp->y_pos = 140 - YOFFSET;
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 						draw3_pop_tt (data_533, NULL, 
-								//								menu_content[MATERIAL + CFG(part.Material_pos)],
 								get_material_name(pp->p_config),
-								menu_content + MATERIAL, 24, 3, CFG(part.Material_pos), 0);
+								menu_content + MATERIAL, 24, 3, get_part_material(pp->p_config), 0);
 					else 
-						//						draw3_popdown (menu_content[MATERIAL + CFG(part.Material_pos)], 3, 0);
 						draw3_popdown (get_material_name(pp->p_config), 3, 0);
 					break;
 				case 4:
@@ -13085,8 +13149,7 @@ void draw3_data5(DRAW_UI_P p)
 						{
 							cur_value = get_prf() / 10.0;
 							lower =	1.0;
-							//upper = (gfloat)(TMP(max_prf));	/* 最大值需要计算出来 */
-							upper = 100.0;
+							upper = get_max_prf();
 							step = tmpf;
 							digit = 0;
 							pos = 5;
@@ -14531,12 +14594,9 @@ void calc_measure_data()
 gpointer signal_thread(gpointer arg) 
 {
 	char key = 0;
-	char tt[2];
 	pp->mark2 = 0;
-	tt[0] = 0x55;
-	tt[1] = 0xcc;
 
-	if (read(pp->fd_key, &key, 1) > 0 ) 
+	if (read(pp->fd_key, &key, 1) > 0) 
 	{	
 		process_key_press (key);
 	}
@@ -14608,6 +14668,7 @@ gpointer signal_thread1(gpointer arg)
 	}
 
 	/* 计算数据 */
+	/*  */
 	draw_field_value ();
 	/* 复制波形到显存 */
 
@@ -15117,6 +15178,7 @@ void init_ui(DRAW_UI_P p)
 	}
 
 	pp->mark3 = 1;
+	pp->mark2 = 1;
 	pp->scan_count = 1;
 #if ARM
 /*	g_thread_create (signal_thread, NULL, FALSE, NULL);*/

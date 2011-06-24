@@ -42,7 +42,7 @@ static const st_MATERIAL data[] =
 	{148000, 0, "Water"}					/* 23 */
 };
 
-gchar *get_material_name(CONFIG *p)
+gchar *get_material_name (CONFIG *p)
 {
 	return (gchar *)(data[p->part.Material_pos].Name);
 }

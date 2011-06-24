@@ -23,7 +23,8 @@
 
 
 #include "spi_d.h"
-#define DEBUG 0
+#define TT_DEBUG 0
+#define DEBUG 1
 
 static int fd_array, fd_normal;
 static int fd_gpio;
@@ -157,6 +158,11 @@ int write_group_data (group_data_spi *p, unsigned int group)
 	memcpy (&new, p, sizeof (group_data_spi));
 	p1 = &new;
 
+#if TT_DEBUG
+	ioctl (fd_gpio, GPIO43_LOW, &i);
+	return 0;
+#endif
+
 #if DEBUG
 /*	unsigned int *tmp = (unsigned *)(p);*/
 	unsigned int tmp = p->gain;
@@ -173,6 +179,8 @@ int write_group_data (group_data_spi *p, unsigned int group)
 	printf ("reject= %d\n", tmp);
 	tmp = p->voltage;
 	printf ("voltage= %d\n", tmp);
+	tmp = p->compress_rato;
+	printf ("compress_rato= %d\n", tmp);
 #endif
 
 	p->offset = 16 * group;
@@ -191,6 +199,11 @@ int write_focal_data (focal_data_spi *p, unsigned int beam_num)
 	int i;
 	memcpy (&new, p, sizeof (focal_data_spi));
 	p1 = &new;
+
+#if TT_DEBUG
+	ioctl (fd_gpio, GPIO43_LOW, &i);
+	return 0;
+#endif
 
 #if DEBUG
 	/*

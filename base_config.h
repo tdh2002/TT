@@ -140,7 +140,7 @@ typedef struct _Wedge
 struct _Part;
 typedef struct _Part st_PART;
 
-/* 工件 (Part) */
+/* 工件 (Part) 12字节 已经全部移走只有CONFIG结构体用到了它 等待隐藏 */
 struct _Part
 {
 	guchar	Geometry;		/* 几何形状 FLAT/ID/OD/BALL */
@@ -376,6 +376,8 @@ typedef	struct _Config
 	guint	avg_scan_speed;		/* 这个值只能显示不用加在这里的 delete */
 
 	guint	prf_virtual;
+	guint	prf_compress;
+	guint	prf_compress_actual;
 
 	guchar	alarm_pos;          /* 当前选择 报警信息 0~15 */
 	guchar	output_pos;			/* 0~5 */
@@ -391,8 +393,6 @@ typedef	struct _Config
 	st_PART	part;				/* 被检测工件	*/
 	/* 所有聚焦法则的信息在这里 */
 	LAW_FOCAL	focal_law_all_info[setup_MAX_GROUP_QTY];
-//	LAW_BEAM	focal_law_all_beam[setup_MAX_LAW_QTY];
-//	LAW_ELEM	focal_law_all_elem[setup_MAX_LAW_QTY][setup_MAX_ELEM_RX_ACTIVE];	
 
 	/*选项*/
 	guchar	unit;			/* 0 mm 1 inch */
@@ -512,6 +512,7 @@ extern void set_part_thickness (CONFIG *p, gpointer data);
 extern guint get_part_diameter (CONFIG *p);
 extern void set_part_diameter (CONFIG *p, gpointer data);
 
+/**/
 
 
 #endif
