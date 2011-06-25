@@ -241,6 +241,7 @@ int main (int argc, char *argv[])
 	g_type_class_unref (g_type_class_ref (GTK_TYPE_IMAGE_MENU_ITEM));
 	g_object_set (gtk_settings_get_default (), "gtk-menu-bar-accel", NULL, NULL); 
 
+	/* 封装后需要条用函数初始化 */
 	p_ui		= (DRAW_UI_P)malloc(sizeof(DRAW_UI));
 	p_config	= (CONFIG_P)malloc(sizeof(CONFIG));
 	p_tmp_config	= (TMP_CONFIG_P)malloc(sizeof(TMP_CONFIG));
@@ -262,9 +263,9 @@ int main (int argc, char *argv[])
 	gtk_window_fullscreen (GTK_WINDOW(window));						/*全屏幕*/
 #endif
 	gtk_widget_modify_bg (window, GTK_STATE_NORMAL, &color_black);	/*黑色背景*/
-	g_signal_connect (G_OBJECT(window), "delete_event",
-			G_CALLBACK(gtk_main_quit), NULL);			
+	g_signal_connect (G_OBJECT(window), "delete_event",	G_CALLBACK(gtk_main_quit), NULL);
 
+	/* 把屏幕按键函数改成内核驱动代发 */
 	p_ui->disp = XOpenDisplay(NULL);
 	if (p_ui->disp == NULL)
 		return 1;
@@ -327,7 +328,6 @@ int main (int argc, char *argv[])
 	for (i = 0; i < setup_MAX_GROUP_QTY; i++)
 		TMP(total_point_qty) += TMP(beam_qty[i]) * (GROUP_VAL_POS (i, point_qty) + 32);
 
-	all_bg_pic_in_mem();
 
 	init_ui (p_ui);
 
@@ -388,6 +388,7 @@ void send_focal_spi (guint group)
 	}
 }
 
+/* 初始化需要发给fpga的group参数 */
 void init_group_spi (guint group)
 {
 	gint tmp = 0, tt[4];
@@ -439,12 +440,9 @@ void init_group_spi (guint group)
 		GROUP_VAL_POS(group, wedge_delay)) / 10;		
 
 	if (GROUP_VAL_POS(group, probe.Elem_qty) == 1)	
-		TMP(group_spi[group]).sum_gain	= 
-			/*		4 * pow (10, GROUP_VAL_POS (grp, sum_gain) / 10.0) / GROUP_VAL_POS(grp, probe.Elem_qty);*/	
-			4095;	
+		TMP(group_spi[group]).sum_gain	= 4095;	
 	else 
 		TMP(group_spi[group]).sum_gain	= 
-			/*		4 * pow (10, GROUP_VAL_POS (grp, sum_gain) / 10.0) / GROUP_VAL_POS(grp, probe.Elem_qty);*/	
 			4096 / GROUP_VAL_POS(group, probe.Elem_qty);	
 	TMP(group_spi[group]).sample_range	= TMP(group_spi[group]).sample_start + 
 		GROUP_VAL_POS(group, range) / 10;		
@@ -536,3 +534,4 @@ void init_group_spi (guint group)
 	}
 
 }
+

@@ -163,7 +163,7 @@ void set_menu_position_tdh (GtkMenu *menu, gint *x, gint *y,
 	return;
 }
 
-void all_bg_pic_in_mem()
+static void all_bg_pic_in_mem()
 {   
     gint i = 0;
     int count = sizeof(backpic) / sizeof(backpic[0]);
@@ -184,8 +184,8 @@ void update_widget_bg(GtkWidget *widget,int i)
 	int alpha_threshold = 0;
 
 	colormap = gdk_colormap_get_system ();
-
-    gdk_pixbuf_render_pixmap_and_mask_for_colormap(g_pixbuf_[i],colormap,&pixmap,NULL,alpha_threshold);
+    gdk_pixbuf_render_pixmap_and_mask_for_colormap(g_pixbuf_[i], 
+			colormap, &pixmap, NULL, alpha_threshold);
 
 	style = gtk_style_copy(widget->style);  
 
@@ -195,9 +195,7 @@ void update_widget_bg(GtkWidget *widget,int i)
     }
 
 	style->bg_pixmap[GTK_STATE_NORMAL] = (pixmap);
-
 	gtk_widget_set_style( widget, style);
-
 	g_object_unref(style);
 }
 
@@ -466,18 +464,18 @@ void draw_menu2 (gint pa)
 		p->mark_pop_change = 0;
 	for (i = 0 ; i < 5 ; i++) 
 	{
-			if (p->con1_p[p->pos][i])
-			{
-				gtk_label_set_text (GTK_LABEL (p->label2[i]), p->con1_p[p->pos][i]);
-				update_widget_bg (p->eventbox2[i], /*backpic[1]*/1);
-				gtk_widget_modify_fg (p->label2[i], GTK_STATE_NORMAL, &white);
-				gtk_widget_show (p->eventbox2[i]);
-			}
-			else
-			{
-				gtk_label_set_text (GTK_LABEL (p->label2[i]), " ");
-				gtk_widget_hide (p->eventbox2[i]);
-			}
+		if (p->con1_p[p->pos][i])
+		{
+			gtk_label_set_text (GTK_LABEL (p->label2[i]), p->con1_p[p->pos][i]);
+			update_widget_bg (p->eventbox2[i], /*backpic[1]*/1);
+			gtk_widget_modify_fg (p->label2[i], GTK_STATE_NORMAL, &white);
+			gtk_widget_show (p->eventbox2[i]);
+		}
+		else
+		{
+			gtk_label_set_text (GTK_LABEL (p->label2[i]), " ");
+			gtk_widget_hide (p->eventbox2[i]);
+		}
 	}
 	/* 当前二级菜单不是停留就是按下 */
 	if (p->pos_pos == 0)
@@ -14214,7 +14212,9 @@ static gboolean time_handler1 (GtkWidget *widget)
 	loctime = localtime(&curtime);
 	strftime (buffer, 32, "%F %T", loctime);
 	markup=g_markup_printf_escaped ("<span foreground='white' font_desc='10'>%s</span>", buffer);
+	gdk_threads_enter();
 	gtk_label_set_markup (GTK_LABEL(pp->label[4]),markup);
+	gdk_threads_leave();
 
 	g_free (markup);
 	return TRUE;
@@ -14776,7 +14776,9 @@ void draw_field_value ()
 	/* 4个测量值显示 */
 	markup = g_markup_printf_escaped ("<span foreground='white' font_desc='24'>%.2f</span>",
 			p_tmp[CFG(field1)] / 100.0);
+	gdk_threads_enter();
 	gtk_label_set_markup (GTK_LABEL(pp->label[9]), markup);
+	gdk_threads_leave();
 	g_free (markup);
 
 }
@@ -14788,6 +14790,8 @@ void init_ui(DRAW_UI_P p)
 	gchar	*markup;
 
 	p_drawui_c = p;
+
+	all_bg_pic_in_mem();
 	/* 初始化语言 language init */
 	change_language (CFG(language), p);
 

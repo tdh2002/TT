@@ -2949,6 +2949,8 @@ void data_102 (GtkSpinButton *spinbutton, gpointer data) /*Range 范围 P102 */
 {
 	gint grp = CFG(groupId);
 	gint tt[4];
+
+
 	if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 	{
 		if (UNIT_MM == CFG(unit))
@@ -3154,6 +3156,8 @@ void data_1151 (GtkSpinButton *spinbutton, gpointer data) /* PRF P115 */
 	
 	TMP(group_spi[grp]).idel_time		= 
 		100000000 / (GROUP_VAL_POS(grp, prf) / (10)) - 2048 - TMP(group_spi[grp]).rx_time;
+
+	g_print ("ideal_time = %d\n", TMP(group_spi[grp]).idel_time);
 
 	write_group_data (&TMP(group_spi[grp]), grp);
 	/* 发送给硬件 */
@@ -3362,13 +3366,11 @@ void data_1451 (GtkSpinButton *spinbutton, gpointer data) /* Sum Gain */
 
 	/* 发送给硬件 */
 	if (GROUP_VAL_POS(grp, probe.Elem_qty) == 1)	
-		TMP(group_spi[grp]).sum_gain	= 
-			/*		4 * pow (10, GROUP_VAL_POS (grp, sum_gain) / 10.0) / GROUP_VAL_POS(grp, probe.Elem_qty);*/	
-			4095;	
+		TMP(group_spi[grp]).sum_gain	= 4095;	
 	else 
 		TMP(group_spi[grp]).sum_gain	= 
-			/*		4 * pow (10, GROUP_VAL_POS (grp, sum_gain) / 10.0) / GROUP_VAL_POS(grp, probe.Elem_qty);*/	
 			4096 / GROUP_VAL_POS(grp, probe.Elem_qty);	
+	send_spi_data (grp);
 	/* 发送给硬件 */
 }
 
@@ -3394,12 +3396,9 @@ void data_145 (GtkMenuItem *menuitem, gpointer data) /* Sum Gain */
 
 	/* 发送给硬件 */
 	if (GROUP_VAL_POS(grp, probe.Elem_qty) == 1)	
-		TMP(group_spi[grp]).sum_gain	= 
-			/*		4 * pow (10, GROUP_VAL_POS (grp, sum_gain) / 10.0) / GROUP_VAL_POS(grp, probe.Elem_qty);*/	
-			4095;	
+		TMP(group_spi[grp]).sum_gain	= 4095;	
 	else 
 		TMP(group_spi[grp]).sum_gain	= 
-			/*		4 * pow (10, GROUP_VAL_POS (grp, sum_gain) / 10.0) / GROUP_VAL_POS(grp, probe.Elem_qty);*/	
 			4096 / GROUP_VAL_POS(grp, probe.Elem_qty);	
 	send_spi_data (grp);
 }
@@ -4516,7 +4515,6 @@ void data_610 (GtkSpinButton *spinbutton, gpointer data)
 	LAW_VAL(Angle_min) = (gshort) (gtk_spin_button_get_value (spinbutton) * 100.0);
 	draw_area_all();
 }
-
 
 
 /* max_angle P611 */
