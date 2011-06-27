@@ -24,7 +24,7 @@
 
 #include "spi_d.h"
 #define TT_DEBUG 0
-#define DEBUG 1
+#define DEBUG 0
 
 static int fd_array, fd_normal;
 static int fd_gpio;
@@ -187,9 +187,9 @@ int write_group_data (group_data_spi *p, unsigned int group)
 	p->addr = 0x2;
 	little_to_big ((unsigned int *)(p1), sizeof(group_data_spi) / 4);
 	
-	ioctl (fd_gpio, GPIO43_LOW, &i);
+/*	ioctl (fd_gpio, GPIO43_LOW, &i);*/ /* 发送group参数不复位 */
 	i = write (fd_array, (unsigned char *)(p1), sizeof(group_data_spi));
-	ioctl (fd_gpio, GPIO43_HIGH, &i);
+/*	ioctl (fd_gpio, GPIO43_HIGH, &i);*/
 	return 0;
 }
 

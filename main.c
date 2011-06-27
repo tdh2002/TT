@@ -232,6 +232,7 @@ int main (int argc, char *argv[])
 	CONFIG_P		p_config;				
 	TMP_CONFIG_P	p_tmp_config;					
 	GtkWidget		*window;
+	GdkColor		color_black_     = {0x0, 0x0, 0x0, 0x0};
 	gint			i;
 
 	g_thread_init(NULL);
@@ -262,7 +263,7 @@ int main (int argc, char *argv[])
 #if ARM
 	gtk_window_fullscreen (GTK_WINDOW(window));						/*全屏幕*/
 #endif
-	gtk_widget_modify_bg (window, GTK_STATE_NORMAL, &color_black);	/*黑色背景*/
+	gtk_widget_modify_bg (window, GTK_STATE_NORMAL, &color_black_);	/*黑色背景*/
 	g_signal_connect (G_OBJECT(window), "delete_event",	G_CALLBACK(gtk_main_quit), NULL);
 
 	/* 把屏幕按键函数改成内核驱动代发 */

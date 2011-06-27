@@ -29,6 +29,8 @@
 #include <math.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <pthread.h> 
+#include <semaphore.h>
 
 #define EVENT_METHOD(i, x) GTK_WIDGET_GET_CLASS((GtkObject*)(i))->x
 #define YOFFSET  26
@@ -45,6 +47,8 @@ GdkColor	color_text_base = {0x0, 0x1300, 0x4900, 0x7600};
 GdkColor	color_rule      = {0x0, 0xc300, 0xf000, 0x1d00};
 
 GROUP g_tmp_group_struct;
+
+sem_t sem;
 
 #if 0
 static char *keyboard_display[] = 
@@ -107,7 +111,7 @@ GdkPixbuf *g_pixbuf_[18];
 void change_language(guint lang, DRAW_UI_P p);
 void draw_menu1();
 void draw_menu2(gint pa);
-void draw_menu3(gint pa, gpointer p);
+void draw_menu3(gint pa, gpointer pt);
 void init_ui(DRAW_UI_P p);				/* 初始化界面 */
 void draw_area_all();
 
@@ -2371,7 +2375,6 @@ void draw_area_all()
 		switch (CFG(display))
 		{
 			case A_SCAN:
-				pp->draw_area[0].scan_type	=	A_SCAN;
 				gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
 				set_drawarea_property (&(pp->draw_area[0]), A_SCAN, 0);
 				draw_area_ (pp->vbox_area[0], &(pp->draw_area[0]), 655, 425);
@@ -3271,7 +3274,7 @@ void draw3_data0(DRAW_UI_P p)
 							TMP(beam_skew_num)	= (LAW_VAL(Angle_beam_skew_max) - 
 									LAW_VAL(Angle_beam_skew_min)) /
 								LAW_VAL(Angle_beam_skew_step) + 1;
-							temp_beam = temp_beam / TMP(beam_skew_num);
+							temp_beam = temp_beam / TMP(beam_skew_num) - 1;
 							lower = MAX (((gint)(LAW_VAL (Angle_max)) - 
 										(gint)(temp_beam * LAW_VAL(Angle_step))) / 100.0, -89.9);
 							upper = LAW_VAL (Angle_max) / 100.0;
@@ -5321,7 +5324,7 @@ void draw3_data1(DRAW_UI_P p)
 void draw3_data2(DRAW_UI_P p) 
 {
 	gchar temp[52];
-	gfloat tmpf = 0.0;
+	gfloat tmpf = 0.0, tmpfm;
 	gchar *str = NULL;
 	guint menu_status = 0;
 
@@ -6277,6 +6280,7 @@ void draw3_data2(DRAW_UI_P p)
 						case 2:	tmpf = GROUP_VAL(point_qty) / 10.0; break;
 						default:break;
 					}
+					tmpfm = GROUP_VAL(point_qty) / 100.0;
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 					{
 						max_tmp = (MAX_RANGE_US - GROUP_VAL(start) / 1000.0);
@@ -6289,6 +6293,7 @@ void draw3_data2(DRAW_UI_P p)
 								lower = (GROUP_VAL(point_qty) / 100.0) * GROUP_VAL(velocity) / 200000.0;
 								upper = MIN(max_tmp, max_tmp1) * (GROUP_VAL(velocity) / 200000.0);
 								step = tmpf * (GROUP_VAL(velocity) / 200000.0);
+								tmpfm = tmpfm * (GROUP_VAL(velocity) / 200000.0);
 								digit = 2;
 								pos = 2;
 								unit = UNIT_MM;
@@ -6299,6 +6304,7 @@ void draw3_data2(DRAW_UI_P p)
 								lower =	(GROUP_VAL(point_qty) / 100.0) * 0.03937 * GROUP_VAL(velocity) / 200000.0;
 								upper = MIN(max_tmp, max_tmp1) * 0.03937 * (GROUP_VAL(velocity) / 200000.0);
 								step = tmpf * 0.03937 * GROUP_VAL(velocity) / 200000.0;
+								tmpfm = tmpfm * 0.03937 * GROUP_VAL(velocity) / 200000.0;
 								digit = 3;
 								pos = 2;
 								unit = UNIT_INCH;
@@ -6310,6 +6316,7 @@ void draw3_data2(DRAW_UI_P p)
 							lower =	GROUP_VAL(point_qty) / 100.0;
 							upper = MIN(max_tmp, max_tmp1);										
 							step = tmpf;
+							tmpfm = tmpfm;
 							digit = 2;
 							pos = 2;
 							unit = UNIT_US;
@@ -6344,6 +6351,7 @@ void draw3_data2(DRAW_UI_P p)
 						}
 						draw3_digit_stop (cur_value , units[unit], digit, pos, 0);
 					}
+					TMP(range_step_min) = ((gint)(tmpfm * 1000)+ 5) / 10 * 10;
 					break;
 				case 1: /* Freq频带(Mhz)  P112 TAN1 */
 					pp->x_pos = 587, pp->y_pos = 288-YOFFSET;	
@@ -9149,6 +9157,7 @@ void draw3_data3(DRAW_UI_P p)
 						digit = 0;
 						draw3_digit_stop (cur_value , units[unit], digit, pos, 0);
 					}
+
 					break;
 				default:break;
 			}
@@ -14212,9 +14221,7 @@ static gboolean time_handler1 (GtkWidget *widget)
 	loctime = localtime(&curtime);
 	strftime (buffer, 32, "%F %T", loctime);
 	markup=g_markup_printf_escaped ("<span foreground='white' font_desc='10'>%s</span>", buffer);
-	gdk_threads_enter();
 	gtk_label_set_markup (GTK_LABEL(pp->label[4]),markup);
-	gdk_threads_leave();
 
 	g_free (markup);
 	return TRUE;
@@ -14668,22 +14675,10 @@ gpointer signal_thread1(gpointer arg)
 	}
 
 	/* 计算数据 */
+
 	/*  */
 	draw_field_value ();
 	/* 复制波形到显存 */
-
-	if (0)
-	{
-		if (temp1[0] == 0)
-		{
-			temp1[0] = 1;
-		}
-		else 
-		{
-			pp->mark3 = 1;
-			return NULL;
-		}
-	}
 
 	pp->mark3 = 1;
 	return NULL;
@@ -14701,6 +14696,81 @@ static gboolean time_handler2 (GtkWidget *widget)
 		g_thread_create (signal_thread1, NULL, FALSE, NULL);
 	}
 	return TRUE;
+}
+
+static void *thread_func(void *arg) 
+{ 
+	gint i, j, k, offset, offset1;
+	guint *temp1 = (guint *)(pp->p_beam_data + 0x800000);
+	pp->mark3 = 0;
+
+	while (1) 
+	{ 
+/*		sem_wait(&sem);*/
+/*		g_print ("caoni ma\n");*/
+		if (temp1[0] == 0)
+		{
+			for (i = 0 ; i < CFG(groupQty); i++)
+			{
+				/* 获取数据 */
+				/* 这里需要压缩数据 或者 插值数据 这里只有一个beam 同时最多处理256beam */
+				for	(j = 0 ; j < TMP(beam_qty[i]); j++)
+				{  
+					for (offset = 0, offset1 = 0, k = 0 ; k < i; k++)
+					{
+						offset += (GROUP_VAL_POS(k, point_qty) + 32) * TMP(beam_qty[k]);
+						offset1 += TMP(beam_qty[k]);
+					}
+					memcpy (TMP(measure_data[offset1 + j]), (void *)(pp->p_beam_data + offset +
+								(GROUP_VAL_POS(i, point_qty) + 32) * j + GROUP_VAL_POS(i, point_qty)), 32);
+
+					if (GROUP_VAL_POS(i, point_qty) <= TMP(a_scan_dot_qty))
+					{
+						/* 只插值当前显示的A扫描 其余不插值 */
+						interpolation_data (
+								(DOT_TYPE *)(pp->p_beam_data + offset +
+									(GROUP_VAL_POS(i, point_qty) + 32) * j),
+								TMP(scan_data[i] + TMP(a_scan_dot_qty) * j), 
+								GROUP_VAL_POS(i, point_qty),
+								TMP(a_scan_dot_qty));
+					}
+					else if (GROUP_VAL_POS(i, point_qty) > TMP(a_scan_dot_qty))
+					{
+						compress_data (
+								(DOT_TYPE *)(pp->p_beam_data + offset +
+									(GROUP_VAL_POS(i, point_qty) + 32) * j),
+								TMP(scan_data[i] + TMP(a_scan_dot_qty) * j), 
+								GROUP_VAL_POS(i, point_qty),
+								TMP(a_scan_dot_qty), 
+								GROUP_VAL_POS(i, rectifier));
+					}
+				}
+				for (k = 0; ((k < 16) && (TMP(scan_type[k]) != 0xff)); k++)
+				{
+					if (TMP(scan_group[k]) == i)
+						draw_scan(k, TMP(scan_type[k]), TMP(scan_group[k]), 
+								TMP(scan_xpos[k]), TMP(scan_ypos[k]), dot_temp, 
+								TMP(fb1_addr) + 768*400);
+					//						dot_temp1);
+				}
+			}
+			temp1[0] = 1;
+		}
+		usleep(20000);
+	}
+}
+
+static void *thread_func1(void *arg) 
+{ 
+	char key = 0;
+	while (1) 
+	{
+		if (read(pp->fd_key, &key, 1) > 0) 
+		{	
+			process_key_press (key);
+		}
+		usleep(20000);
+	}
 }
 
 #endif
@@ -14769,6 +14839,12 @@ void draw_field_name ()
 
 }
 
+gboolean on_finish(gpointer p)
+{
+	gtk_label_set_markup (GTK_LABEL(pp->label[9]), p);
+	return FALSE;
+}
+
 void draw_field_value ()
 {
 	gchar	*markup;
@@ -14776,9 +14852,10 @@ void draw_field_value ()
 	/* 4个测量值显示 */
 	markup = g_markup_printf_escaped ("<span foreground='white' font_desc='24'>%.2f</span>",
 			p_tmp[CFG(field1)] / 100.0);
-	gdk_threads_enter();
-	gtk_label_set_markup (GTK_LABEL(pp->label[9]), markup);
-	gdk_threads_leave();
+//	gdk_threads_enter();
+//	gtk_label_set_markup (GTK_LABEL(pp->label[9]), markup);
+//	gdk_threads_leave();
+	g_idle_add(on_finish, markup);
 	g_free (markup);
 
 }
@@ -14788,6 +14865,8 @@ void init_ui(DRAW_UI_P p)
 {
 	gint	i;
 	gchar	*markup;
+	pthread_t tid; 
+	sem_init(&sem,0,0);
 
 	p_drawui_c = p;
 
@@ -15188,6 +15267,8 @@ void init_ui(DRAW_UI_P p)
 /*	g_thread_create (signal_thread, NULL, FALSE, NULL);*/
 /*	g_thread_create (signal_thread1, NULL, FALSE, NULL);*/
 	g_timeout_add (20, (GSourceFunc) time_handler2, NULL);
+/*	pthread_create (&tid, NULL, thread_func, NULL);
+	pthread_create (&tid, NULL, thread_func1, NULL);*/
 #endif
 
 	g_timeout_add (1000, (GSourceFunc) time_handler1, NULL);

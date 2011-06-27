@@ -245,6 +245,8 @@ typedef struct tmp_config
 
 	gint	fd_config;
 
+	gint	range_step_min;
+
 	group_data_spi	group_spi[setup_MAX_GROUP_QTY];
 	focal_data_spi	focal_spi[setup_MAX_LAW_QTY];
 
@@ -275,9 +277,9 @@ typedef struct tmp_config
 /*画图区域*/
 typedef struct _draw_area 
 {
-	GtkWidget *vbox;			/*  */
-	GtkWidget *ebox;			/* 存放标题 */
-	GtkWidget *label;			/* 窗口名字 */
+	GtkWidget *vbox;						/*  */
+	GtkWidget *ebox;						/* 存放标题 */
+	GtkWidget *label;						/* 窗口名字 */
 	GtkWidget *drawing_area;                /* 波形显示区 */
 	guint	width;
 	guint	height;
@@ -296,7 +298,7 @@ typedef struct _draw_area
 	gfloat	wmax1;
 	gint	w_unit;
 	gint	w_color;
-	guchar	scan_type;
+	gint	scan_type;
 	gint	hrule1_copies;		/* 将vruler1分成多少份 */
 	gint	hrule2_copies;		/* 将vruler2分成多少份 */
 	gint	wrule_copies;		/* 将hruler分成多少份 */
