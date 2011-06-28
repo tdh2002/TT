@@ -183,6 +183,7 @@ typedef struct tmp_config
 	guchar    index_resolution_reg;	/* Scan -> Area -> index_resolution*/
 
 	guchar	bright_reg;		/*preferences -> pref. -> bright*/
+	guchar	distance_reg;		/*preferences -> pref. -> bright*/
 
 #if 0
 	DOT_TYPE	envelope_max[setup_MAX_GROUP_QTY][640];	/**/
@@ -299,6 +300,8 @@ typedef struct _draw_area
 	gint	w_unit;
 	gint	w_color;
 	gint	scan_type;
+	gint	group;
+	gint	mask;
 	gint	hrule1_copies;		/* 将vruler1分成多少份 */
 	gint	hrule2_copies;		/* 将vruler2分成多少份 */
 	gint	wrule_copies;		/* 将hruler分成多少份 */
@@ -490,6 +493,8 @@ typedef struct Draw_interface
 	guchar	weldtype_pos;
 	guchar	cangle;
 
+	gint	distance;
+
 	gfloat	swmin;
 	gfloat	swmax;
 } DRAW_UI, *DRAW_UI_P;
@@ -598,6 +603,7 @@ typedef struct __dir_path_label
 #define CFG_OUTPUT_POS(a) CFG(output[CFG(output_pos)].a)
 #define CFG_ANALOG_POS(a) CFG(analog[CFG(output_pos - 3)].a)
 #define GROUP_CURSORS_POS(a) GROUP_VAL(cursors_info[GROUP_VAL(selection)-5].a)
+#define CFG_DISPLAY_POS(a)  CFG(display[CFG(display_pos)].a)
 
 #define CFG_ZOOM_POS(a)  CFG(zoom_display[CFG(zoom_display_pos)].a)
 

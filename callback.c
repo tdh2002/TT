@@ -55,6 +55,7 @@ void data_0223 (GtkSpinButton *spinbutton, gpointer data);
 void data_0224 (GtkSpinButton *spinbutton, gpointer data);
 void data_0225 (GtkMenuItem *menuitem, gpointer data);
 void data_0226 (GtkSpinButton *spinbutton, gpointer data);
+void data_0227 (GtkSpinButton *spinbutton, gpointer data);
 void data_023 (GtkMenuItem *menuitem, gpointer data); 
 void data_0231 (GtkMenuItem *menuitem, gpointer data); 
 void data_0232 (GtkSpinButton *spinbutton, gpointer data);
@@ -729,16 +730,34 @@ void b3_fun0(gpointer pt)
 				case 1:
 					((p->fstart_qty) > 1) ? (p->fstart_qty) -- : ((p->fstart_qty) = 6);break;
 				case 2:
-					if((p->ctype_pos == 1) && (p->cmode_pos == 0))
-						((p->cstart_qty) > 1) ? (p->cstart_qty) -- : ((p->cstart_qty) = 4);
-					else if((p->ctype_pos == 1) && (p->cmode_pos == 1))
-						((p->cstart_qty) > 1) ? (p->cstart_qty) -- : ((p->cstart_qty) = 5);
-					else if((p->ctype_pos == 1) && (p->cmode_pos == 2))
-						((p->cstart_qty) > 1) ? (p->cstart_qty) -- : ((p->cstart_qty) = 6);
-					else if((p->ctype_pos == 1) && (p->cmode_pos == 3))
-						((p->cstart_qty) > 1) ? (p->cstart_qty) -- : ((p->cstart_qty) = 5);
-					else if(p->ctype_pos == 2)
-						((p->cstart_qty) > 1) ? (p->cstart_qty) -- : ((p->cstart_qty) = 5);
+					switch(p->ctype_pos)
+					{
+						case 0:
+							((p->cstart_qty) > 1) ? (p->cstart_qty) -- : ((p->cstart_qty) = 4);
+							break;
+						case 1:
+							switch(p->cmode_pos)
+							{
+								case 0:
+									((p->cstart_qty) > 1) ? (p->cstart_qty) -- : ((p->cstart_qty) = 4);
+									break;
+								case 1:
+									((p->cstart_qty) > 1) ? (p->cstart_qty) -- : ((p->cstart_qty) = 5);
+									break;
+								case 2:
+									((p->cstart_qty) > 1) ? (p->cstart_qty) -- : ((p->cstart_qty) = 6);
+									break;
+								case 3:
+									((p->cstart_qty) > 1) ? (p->cstart_qty) -- : ((p->cstart_qty) = 5);
+									break;
+								default:break;
+							}
+							break;
+						case 2:
+							((p->cstart_qty) > 1) ? (p->cstart_qty) -- : ((p->cstart_qty) = 5);
+							break;
+						default:break;
+					}
 					break;
 				case 3:break;
 				default:break;
@@ -902,16 +921,34 @@ void b3_fun1(gpointer p)
 					case 0:((pp->start_qty) < 9) ? (pp->start_qty) ++ : ((pp->start_qty) = 1); break;
 					case 1:((pp->fstart_qty) < 6) ? (pp->fstart_qty) ++ : ((pp->fstart_qty) = 1); break;
 					case 2:
-							if((pp->ctype_pos == 1) && (pp->cmode_pos == 0))
+						switch(pp->ctype_pos)
+						{
+							case 0:
 								((pp->cstart_qty) < 4) ? (pp->cstart_qty) ++ : ((pp->cstart_qty) = 1);
-							else if((pp->ctype_pos == 1) && (pp->cmode_pos == 1))
+								break;
+							case 1:
+								switch(pp->cmode_pos)
+								{
+									case 0:
+										((pp->cstart_qty) < 4) ? (pp->cstart_qty) ++ : ((pp->cstart_qty) = 1);
+										break;
+									case 1:
+										((pp->cstart_qty) < 5) ? (pp->cstart_qty) ++ : ((pp->cstart_qty) = 1);
+										break;
+									case 2:
+										((pp->cstart_qty) < 6) ? (pp->cstart_qty) ++ : ((pp->cstart_qty) = 1);
+										break;
+									case 3:
+										((pp->cstart_qty) < 5) ? (pp->cstart_qty) ++ : ((pp->cstart_qty) = 1);
+										break;
+									default:break;
+								}
+								break;
+							case 2:
 								((pp->cstart_qty) < 5) ? (pp->cstart_qty) ++ : ((pp->cstart_qty) = 1);
-							else if((pp->ctype_pos == 1) && (pp->cmode_pos == 2))
-								((pp->cstart_qty) < 6) ? (pp->cstart_qty) ++ : ((pp->cstart_qty) = 1);
-							else if((pp->ctype_pos == 1) && (pp->cmode_pos == 3))
-								((pp->cstart_qty) < 5) ? (pp->cstart_qty) ++ : ((pp->cstart_qty) = 1);
-							else if(pp->ctype_pos == 2)
-								((pp->cstart_qty) < 5) ? (pp->cstart_qty) ++ : ((pp->cstart_qty) = 1);
+								break;
+							default:break;
+						}
 							break;
 					case 3:break;
 					default:break;
@@ -1232,7 +1269,9 @@ void b3_fun2(gpointer p)
 						case 2:	/* 022 */
  							   if ( pp->cstart_qty == 2 )
  							   {
-									if ((pp->ctype_pos == 1) && (pp->cmode_pos == 0))
+									if(pp->ctype_pos == 0)
+ 							   			data_process(&(TMP(origin_reg)), 2);
+									else if ((pp->ctype_pos == 1) && (pp->cmode_pos == 0))
  							   			data_process(&(TMP(cangle_reg)), 1);
  							   		else if((pp->ctype_pos == 1) && (pp->cmode_pos == 2))
  							   			data_process(&(TMP(ref_amplitude_reg)), 2);
@@ -1241,7 +1280,9 @@ void b3_fun2(gpointer p)
  							   }
  							   else if ( pp->cstart_qty == 3 )
  							   {
-									if((pp->ctype_pos == 2)&&(pp->scode_pos == 1))
+									if(pp->ctype_pos == 0)
+ 							   			data_process(&(TMP(distance_reg)), 2);
+									else if((pp->ctype_pos == 2)&&(pp->scode_pos == 1))
  							   			data_process(&(TMP(cstart_reg)), 3);
  							   }
  							   else if ( pp->cstart_qty == 4 )
@@ -1903,7 +1944,7 @@ void b3_fun4(gpointer p)
 				   switch (pp->pos1[4])
 				   {
 					   case 0:
-						   if( CFG(display)==10) 
+						   if( CFG(display_pos)==10) 
 							   data_process(&(TMP(dis_range_reg)), 2);
 						   break; /*404*/
 					   case 1:break; /*414*/
@@ -2811,6 +2852,11 @@ void data_0226 (GtkSpinButton *spinbutton, gpointer data) /* wizard  Comp Gain  
 	pp->cangle =  (guchar) (gtk_spin_button_get_value (spinbutton));
 }
 
+void data_0227 (GtkSpinButton *spinbutton, gpointer data) /* distance */
+{
+	pp->distance =  (gint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
+}
+
 void data_023 (GtkMenuItem *menuitem, gpointer data) /* Wizard -> Calibration -> Mode */
 {
 	pp->cmode_pos = (guchar) (GPOINTER_TO_UINT (data));
@@ -3123,7 +3169,7 @@ void data_1141 (GtkSpinButton *spinbutton, gpointer data) /* PW  P114 */
 	temp = (temp / 250) * 250;
 	GROUP_VAL(pulser_width) = temp;
 
-	send_dsp_data (PW_DSP, GROUP_VAL(pulser_width) / 250) ;  /* 以2.5ns 为单位发出信息 */
+	send_focal_spi (CFG(groupId));
 	/* 发送给硬件 */
 }
 
@@ -3144,6 +3190,7 @@ void data_114 (GtkMenuItem *menuitem, gpointer data) /* PW */
 		pp->pos_pos = MENU3_PRESSED;
 		draw_menu3(0, NULL);
 	}
+	send_focal_spi (CFG(groupId));
 	/* 发送给硬件 */
 }
 
@@ -4108,34 +4155,34 @@ void data_333 (GtkSpinButton *spinbutton, gpointer data) /*echo_qty p333 */
 
 void data_400 (GtkMenuItem *menuitem, gpointer data) /* Display -> Selection -> display p400 */
 {
-	CFG(display) = (guchar) (GPOINTER_TO_UINT (data));
+	CFG(display_pos) = (guchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
-	switch (CFG(display))
+	switch (CFG(display_pos))
 	{
 		case A_SCAN:
 			break;
 		case B_SCAN:
-			CFG(display_group) = DISPLAY_CURRENT_GROUP;
+			CFG_DISPLAY_POS(display_group) = DISPLAY_CURRENT_GROUP;
 			pp->bscan_mark = 1;
 			break;
 		case C_SCAN:
-			CFG(display_group) = DISPLAY_CURRENT_GROUP;
+			CFG_DISPLAY_POS(display_group) = DISPLAY_CURRENT_GROUP;
 			pp->cscan_mark = 1;
 			break;
 		case S_SCAN:
 			pp->sscan_mark = 1;
 			break;
 		case A_B_SCAN:
-			CFG(display_group) = DISPLAY_CURRENT_GROUP;
+			CFG_DISPLAY_POS(display_group) = DISPLAY_CURRENT_GROUP;
 			pp->bscan_mark = 1;
 			break;
 		case A_B_C_SCAN:
-			CFG(display_group) = DISPLAY_CURRENT_GROUP;
+			CFG_DISPLAY_POS(display_group) = DISPLAY_CURRENT_GROUP;
 			pp->bscan_mark = 1;
 			pp->cscan_mark = 1;
 			break;
 		case A_B_S_SCAN:
-			CFG(display_group) = DISPLAY_CURRENT_GROUP;
+			CFG_DISPLAY_POS(display_group) = DISPLAY_CURRENT_GROUP;
 			pp->bscan_mark = 1;
 			pp->sscan_mark = 1;
 			break;

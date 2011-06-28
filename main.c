@@ -110,7 +110,8 @@ static void set_config (guint groupid)
 	CFG(min_thickness)=50;
 	CFG(max_thickness)=99900;
 	CFG(echo_qty)=1;
-	CFG(display_group) = DISPLAY_CURRENT_GROUP; /*0是All*/
+//	CFG(display_group) = DISPLAY_CURRENT_GROUP; /*0是All*/
+ 	CFG_DISPLAY_POS(display_group) = DISPLAY_CURRENT_GROUP; /*0是All*/
 	CFG(c_scan1)=0;   /*0是A%*/
 	CFG(c_scan2)=0;   /*0是A%*/
 	CFG(c_scan11)	=	C_SCAN_OFF;
@@ -224,6 +225,7 @@ static void set_config (guint groupid)
 	set_part_geometry (pp->p_config, GUINT_TO_POINTER (PLATE_PART)	);
 
 	pp->ctype_pos = 1;
+ 	pp->cmode_pos = 2;
 }
 
 int main (int argc, char *argv[])

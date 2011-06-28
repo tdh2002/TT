@@ -15,6 +15,13 @@
 #include "base_const.h"
 #include <gtk/gtk.h>
 
+ /* display信息 */
+ typedef struct _display_info
+ {
+	guchar	display_group;		/*  0 All  1 current */
+ 
+} DISPLAY_INFO, *DISPLAY_INFO_P;
+ 
 typedef struct _zoom_display_info
 {
 	guchar	zoom_type;
@@ -364,7 +371,7 @@ typedef	struct _Config
 	guchar	auto_height;		/* 自动增益高度*/
 
 	/*显示*/
-	guchar	display;			/* 显示模式 A B C A+B A+B+C A+S ... */
+	guchar	display_pos;			/* 显示模式 A B C A+B A+B+C A+S ... */
 	guchar	display_group;		/* 显示所有group还是 当前 */
 	guchar	c_scan1;			/* c扫描参考1 */
 	guchar	c_scan2;			/* c扫描参考2 */
@@ -389,6 +396,7 @@ typedef	struct _Config
 
 	GROUP	group[setup_MAX_GROUP_QTY];			/* */
 	MEASURE_DATA	measure_data;
+ 	DISPLAY_INFO display[11];
 
 	st_PART	part;				/* 被检测工件	*/
 	/* 所有聚焦法则的信息在这里 */
