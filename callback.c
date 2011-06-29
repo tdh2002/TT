@@ -506,8 +506,8 @@ guint get_max_point_qty()
 	guint i, point_qty = 0, max_point_qty;
 	for (i = 0; i < setup_MAX_GROUP_QTY; i++)
 		point_qty += TMP(beam_qty[i]) * (GROUP_VAL_POS (i, point_qty) + 32);
-	max_point_qty = 192000 - point_qty + TMP(beam_qty[CFG(groupId)]) * (GROUP_VAL (point_qty) + 128);
-	return MIN(((max_point_qty / TMP(beam_qty[CFG(groupId)])) - 32), 8192);
+	max_point_qty = 192000 - point_qty + TMP(beam_qty[get_current_group(pp->p_config)]) * (GROUP_VAL (point_qty) + 128);
+	return MIN(((max_point_qty / TMP(beam_qty[get_current_group(pp->p_config)])) - 32), 8192);
 }
 
 /* 取得压缩点的数量 */
@@ -534,8 +534,6 @@ guint get_max_prf()
 	guint i, point_qty = 0 ;
 	for (i = 0; i < setup_MAX_GROUP_QTY; i++)
 		point_qty += TMP(beam_qty[i]) * (GROUP_VAL_POS (i, point_qty) + 32);
-	CFG (prf_compress) = 192000 / (point_qty + 32);
-	g_print ("%d\n", CFG(prf_compress));
 //	return ((192000 / (point_qty + 32)) * 25);
 	return 250;
 }
@@ -1515,15 +1513,15 @@ void b3_fun3(gpointer p)
 
 					}
 
-					TMP(beam_qty[CFG(groupId)])	= temp_beam;
-					TMP(beam_num[CFG(groupId)]) = 0;
+					TMP(beam_qty[get_current_group(pp->p_config)])	= temp_beam;
+					TMP(beam_num[get_current_group(pp->p_config)]) = 0;
 
-					TMP(group_spi[CFG(groupId)]).beam_qty = TMP(beam_qty[CFG(groupId)]) - 1; 
+					TMP(group_spi[get_current_group(pp->p_config)]).beam_qty = TMP(beam_qty[get_current_group(pp->p_config)]) - 1; 
 					TMP(group_spi[grp]).idel_time		= 
 						100000000 / (GROUP_VAL_POS(grp, prf) / 10) - 2048 - TMP(group_spi[grp]).rx_time;
-					write_group_data (&TMP(group_spi[CFG(groupId)]), CFG(groupId));
-					cal_focal_law (CFG(groupId));
-					send_focal_spi (CFG(groupId));
+					write_group_data (&TMP(group_spi[get_current_group(pp->p_config)]), get_current_group(pp->p_config));
+					cal_focal_law (get_current_group(pp->p_config));
+					send_focal_spi (get_current_group(pp->p_config));
 					pp->cscan_mark = 1;
 					pp->ccscan_mark = 1;
 					pp->cccscan_mark = 1;
@@ -1944,7 +1942,7 @@ void b3_fun4(gpointer p)
 				   switch (pp->pos1[4])
 				   {
 					   case 0:
-						   if( CFG(display_pos)==10) 
+						   if( get_display_pos(pp->p_config)==10) 
 							   data_process(&(TMP(dis_range_reg)), 2);
 						   break; /*404*/
 					   case 1:break; /*414*/
@@ -2134,7 +2132,7 @@ void b3_fun5(gpointer p)
 			case 4:
 				   switch (pp->pos1[4])
 				   {
-					   case 0:data_process(&(TMP(avg_scan_speed_reg)), 3); break; /*405*/
+					   case 0:break; /*405*/
 					   case 1:break; /*415*/
 					   case 2:/*425*/
 							  if(CFG_ZOOM_POS(zoom_type) == 0) 
@@ -2310,10 +2308,10 @@ static int handler_key(guint keyval, gpointer data)
 	switch (keyval) 
 	{
 		case GDK_KP_0:
-			(TMP(beam_num[CFG(groupId)]) < (TMP(beam_qty[CFG(groupId)]) - 1))	?
-				(TMP(beam_num[CFG(groupId)]) += 1)	:	
-			(TMP(beam_num[CFG(groupId)]) = 0);
-			g_print("beam num =%d\n", TMP(beam_num[CFG(groupId)]));
+			(TMP(beam_num[get_current_group(pp->p_config)]) < (TMP(beam_qty[get_current_group(pp->p_config)]) - 1))	?
+				(TMP(beam_num[get_current_group(pp->p_config)]) += 1)	:	
+			(TMP(beam_num[get_current_group(pp->p_config)]) = 0);
+			g_print("beam num =%d\n", TMP(beam_num[get_current_group(pp->p_config)]));
 			draw_area_all ();
 			break;
 		case GDK_Super_L:
@@ -2937,7 +2935,7 @@ void data_0243 (GtkSpinButton *spinbutton, gpointer data) /* wizard  tolerance  
 void data_100 (GtkSpinButton *spinbutton, gpointer data) /* 增益Gain P100 */
 {
 	gchar *markup;
-	gint grp = CFG(groupId);
+	gint grp = get_current_group(pp->p_config);
 	if (GROUP_VAL(db_ref))
 		GROUP_VAL(gain) = (gushort) (gtk_spin_button_get_value (spinbutton) * 100 + GROUP_VAL(gainr));
 	else
@@ -2962,7 +2960,7 @@ void data_100 (GtkSpinButton *spinbutton, gpointer data) /* 增益Gain P100 */
 void data_101 (GtkSpinButton *spinbutton, gpointer data) /*Start 扫描延时 P101 */
 {
 	gint tt[4];
-	gint grp = CFG(groupId);
+	gint grp = get_current_group(pp->p_config);
 	if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 	{
 		if (UNIT_MM == CFG(unit))
@@ -3006,7 +3004,7 @@ gint rounding(gint src1, gint src2, gint round)
 
 void data_102 (GtkSpinButton *spinbutton, gpointer data) /*Range 范围 P102 */
 {
-	gint grp = CFG(groupId);
+	gint grp = get_current_group(pp->p_config);
 	gint tt[4];
 	gint range = ((gint)(gtk_spin_button_get_value(spinbutton) * 1000) + 5) / 10 * 10;
 
@@ -3044,7 +3042,7 @@ void data_102 (GtkSpinButton *spinbutton, gpointer data) /*Range 范围 P102 */
 void data_103 (GtkSpinButton *spinbutton, gpointer data) /*楔块延时  P103 */
 {
 	gint tt[4];
-	gint grp = CFG(groupId);
+	gint grp = get_current_group(pp->p_config);
 	GROUP_VAL(wedge_delay) = (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0) ;
 
 	TMP(group_spi[grp]).sample_start	= (GROUP_VAL_POS (grp, start) + 
@@ -3135,31 +3133,15 @@ void data_112 (GtkMenuItem *menuitem, gpointer data) /* 频率 Freq P112 */
 
 void data_113 (GtkMenuItem *menuitem, gpointer data)  /* Voltage  P113 */
 {
-	gint grp = CFG(groupId);
-	if (GROUP_VAL(group_mode) == PA_SCAN)
-	{
-		CFG(voltage_pa) = (gchar) (GPOINTER_TO_UINT (data));
-		send_dsp_data (VOLTAGE_DSP, CFG(voltage_pa));
-	}
-	else if (GROUP_VAL (group_mode) == UT_SCAN)
-	{
-		CFG(voltage_ut) = (gchar) (GPOINTER_TO_UINT (data));
-		send_dsp_data (VOLTAGE_DSP, CFG(voltage_ut));
-	}
+	gint grp = get_current_group (pp->p_config);
+	set_voltage (pp->p_config, grp, (guchar)(GPOINTER_TO_UINT (data)));
+
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
-	if (GROUP_VAL_POS (grp, group_mode) == UT_SCAN)
-		TMP(group_spi[grp]).voltage = CFG(voltage_ut);	
-	else if (GROUP_VAL_POS (grp, group_mode) == PA_SCAN)
-	{	
-		if CFG(voltage_pa)
-			TMP(group_spi[grp]).voltage = 0x2;	
-		else
-			TMP(group_spi[grp]).voltage = 0x0;	
-	}
+
+	TMP(group_spi[grp]).voltage = get_voltage (pp->p_config, grp);	
 	send_spi_data (grp);
 	/* 发送给硬件 */
-
 }
 
 void data_1141 (GtkSpinButton *spinbutton, gpointer data) /* PW  P114 */
@@ -3169,7 +3151,7 @@ void data_1141 (GtkSpinButton *spinbutton, gpointer data) /* PW  P114 */
 	temp = (temp / 250) * 250;
 	GROUP_VAL(pulser_width) = temp;
 
-	send_focal_spi (CFG(groupId));
+	send_focal_spi (get_current_group(pp->p_config));
 	/* 发送给硬件 */
 }
 
@@ -3190,14 +3172,14 @@ void data_114 (GtkMenuItem *menuitem, gpointer data) /* PW */
 		pp->pos_pos = MENU3_PRESSED;
 		draw_menu3(0, NULL);
 	}
-	send_focal_spi (CFG(groupId));
+	send_focal_spi (get_current_group(pp->p_config));
 	/* 发送给硬件 */
 }
 
 void data_1151 (GtkSpinButton *spinbutton, gpointer data) /* PRF P115 */
 {
 	gchar *markup;
-	gint grp = CFG(groupId);
+	gint grp = get_current_group(pp->p_config);
 	GROUP_VAL(prf) =  (guint) (gtk_spin_button_get_value (spinbutton) * 10);
 	markup=g_markup_printf_escaped(
 			"<span foreground='white' font_desc='10'>PRF: %d(%d)</span>",GROUP_VAL(prf) / 10, (GROUP_VAL(prf) / 10) * 1);
@@ -3228,7 +3210,7 @@ void data_1151 (GtkSpinButton *spinbutton, gpointer data) /* PRF P115 */
 void data_115 (GtkMenuItem *menuitem, gpointer data) /* PRF */
 {
 	guint temp = GPOINTER_TO_UINT (data);
-	gint grp = CFG(groupId);
+	gint grp = get_current_group(pp->p_config);
 	GROUP_VAL(prf_pos) = temp;
 	GROUP_VAL(prf) = get_prf();			/*  */
 	if (temp != 3)
@@ -3259,7 +3241,7 @@ void data_115 (GtkMenuItem *menuitem, gpointer data) /* PRF */
 /* filter 滤波 P121 */
 void data_121 (GtkMenuItem *menuitem, gpointer data)  
 {
-	gint grp = CFG(groupId);
+	gint grp = get_current_group(pp->p_config);
 	GROUP_VAL(filter) = (guchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
@@ -3301,7 +3283,7 @@ void data_121 (GtkMenuItem *menuitem, gpointer data)
 
 void data_122 (GtkMenuItem *menuitem, gpointer data)  /* Rectifier 检波 P122 */
 {
-	gint grp = CFG(groupId);
+	gint grp = get_current_group(pp->p_config);
 	GROUP_VAL(rectifier) = (gchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
@@ -3323,11 +3305,11 @@ void data_124 (GtkMenuItem *menuitem, gpointer data)  /* averaging 平均 TAN1 P
 
 void data_125 (GtkSpinButton *spinbutton, gpointer data) /*抑制 Reject P125 */
 {
-	gint grp = CFG(groupId);
-	pp->p_config->reject =  (guchar) (gtk_spin_button_get_value (spinbutton));
+	gint grp = get_current_group(pp->p_config);
+	set_reject(pp->p_config, (guchar) (gtk_spin_button_get_value (spinbutton)));
 
 	/*发送给硬件*/
-	TMP(group_spi[grp]).reject = CFG(reject) * 40.95;	
+	TMP(group_spi[grp]).reject = get_reject(pp->p_config) * 40.95;	
 	send_spi_data (grp);
 }
 
@@ -3369,7 +3351,7 @@ void data_135 (GtkSpinButton *spinbutton, gpointer data) /*gain offset */
 
 void data_1431 (GtkSpinButton *spinbutton, gpointer data) /* point qty P143 */
 {
-	gint grp = CFG(groupId);
+	gint grp = get_current_group(pp->p_config);
 	GROUP_VAL(point_qty) =  (guint)(gtk_spin_button_get_value (spinbutton));
 	get_prf();
 
@@ -3382,8 +3364,7 @@ void data_1431 (GtkSpinButton *spinbutton, gpointer data) /* point qty P143 */
 		((GROUP_VAL_POS(grp, range) / 10.0) / GROUP_VAL_POS(grp, point_qty)) > 1 ? 
 		((GROUP_VAL_POS(grp, range) / 10.0) / GROUP_VAL_POS(grp, point_qty)) : 1;
 	if (GROUP_VAL_POS(grp, prf)  >= 250)
-		TMP(group_spi[grp]).idel_time		= 
-			100000000 / (GROUP_VAL_POS(grp, prf) / (10.0 * CFG(prf_compress))) - 2048 - TMP(group_spi[grp]).rx_time;
+		;
 	else
 		TMP(group_spi[grp]).idel_time		= 
 			100000000 / (GROUP_VAL_POS(grp, prf) / (10)) - 2048 - TMP(group_spi[grp]).rx_time;
@@ -3394,7 +3375,7 @@ void data_1431 (GtkSpinButton *spinbutton, gpointer data) /* point qty P143 */
 void data_143 (GtkMenuItem *menuitem, gpointer data) /* point qty P143 */
 {
 	guint temp = GPOINTER_TO_UINT (data);
-	gint grp = CFG(groupId);
+	gint grp = get_current_group(pp->p_config);
 	GROUP_VAL(point_qty_pos) = temp;
 	GROUP_VAL(point_qty) = get_point_qty();
 	get_prf();
@@ -3419,8 +3400,7 @@ void data_143 (GtkMenuItem *menuitem, gpointer data) /* point qty P143 */
 		((GROUP_VAL_POS(grp, range) / 10.0) / GROUP_VAL_POS(grp, point_qty)) > 1 ? 
 		((GROUP_VAL_POS(grp, range) / 10.0) / GROUP_VAL_POS(grp, point_qty)) : 1;
 	if (GROUP_VAL_POS(grp, prf)  >= 250)
-		TMP(group_spi[grp]).idel_time		= 
-			100000000 / (GROUP_VAL_POS(grp, prf) / (10.0 * CFG(prf_compress))) - 2048 - TMP(group_spi[grp]).rx_time;
+		;
 	else
 		TMP(group_spi[grp]).idel_time		= 
 			100000000 / (GROUP_VAL_POS(grp, prf) / (10)) - 2048 - TMP(group_spi[grp]).rx_time;
@@ -3430,7 +3410,7 @@ void data_143 (GtkMenuItem *menuitem, gpointer data) /* point qty P143 */
 
 void data_1451 (GtkSpinButton *spinbutton, gpointer data) /* Sum Gain */
 {
-	gint	grp	= CFG(groupId);
+	gint	grp	= get_current_group(pp->p_config);
 	GROUP_VAL(sum_gain) =  (gushort) ((gtk_spin_button_get_value (spinbutton)) * 100.0);
 
 	/* 发送给硬件 */
@@ -3447,7 +3427,7 @@ void data_1451 (GtkSpinButton *spinbutton, gpointer data) /* Sum Gain */
 void data_145 (GtkMenuItem *menuitem, gpointer data) /* Sum Gain */
 {
 	guint	temp= GPOINTER_TO_UINT (data);
-	gint	grp	= CFG(groupId);
+	gint	grp	= get_current_group(pp->p_config);
 	GROUP_VAL(sum_gain_pos) = temp;
 	GROUP_VAL(sum_gain) = get_sum_gain();
 	if (temp != 1)
@@ -3493,7 +3473,7 @@ void data_201 (GtkMenuItem *menuitem, gpointer data) /* parameter 闸门参数�
 
 void data_202 (GtkSpinButton *spinbutton, gpointer data)	/* 闸门开始位置 P202 */
 {
-	guint group = CFG(groupId);
+	guint group = get_current_group(pp->p_config);
 	if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 	{
 		if (UNIT_MM == CFG(unit))
@@ -3531,7 +3511,7 @@ void data_202 (GtkSpinButton *spinbutton, gpointer data)	/* 闸门开始位置 P
 void data_2021 (GtkMenuItem *menuitem, gpointer data)	/* 闸门同步 */
 {
 	guint tmp=0;
-	guint group = CFG(groupId);
+	guint group = get_current_group(pp->p_config);
 	GROUP_VAL(gate[GROUP_VAL(gate_pos)].synchro) = (guchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
@@ -3562,7 +3542,7 @@ void data_2021 (GtkMenuItem *menuitem, gpointer data)	/* 闸门同步 */
 
 void data_203 (GtkSpinButton *spinbutton, gpointer data) /* 闸门宽度 P203 */
 {
-	guint group = CFG(groupId);
+	guint group = get_current_group(pp->p_config);
 	if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 	{
 		if (UNIT_MM == CFG(unit))
@@ -3595,7 +3575,7 @@ void data_203 (GtkSpinButton *spinbutton, gpointer data) /* 闸门宽度 P203 */
 void data_2031 (GtkMenuItem *menuitem, gpointer data)	/* 波峰或者前沿 测量选项 */
 {
 	guint tmp=0;
-	guint group = CFG(groupId);
+	guint group = get_current_group(pp->p_config);
 	GROUP_VAL(gate[GROUP_VAL(gate_pos)].measure) = (guchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
@@ -3624,7 +3604,7 @@ void data_2031 (GtkMenuItem *menuitem, gpointer data)	/* 波峰或者前沿 测�
 
 void data_204 (GtkSpinButton *spinbutton, gpointer data) /* 闸门高度 P204 */
 {
-	guint group = CFG(groupId);
+	guint group = get_current_group(pp->p_config);
 	GROUP_VAL(gate[GROUP_VAL(gate_pos)].height) =  (guchar) (gtk_spin_button_get_value (spinbutton) );
 
 	if (GROUP_VAL(gate_pos) == GATE_A)
@@ -4155,34 +4135,29 @@ void data_333 (GtkSpinButton *spinbutton, gpointer data) /*echo_qty p333 */
 
 void data_400 (GtkMenuItem *menuitem, gpointer data) /* Display -> Selection -> display p400 */
 {
-	CFG(display_pos) = (guchar) (GPOINTER_TO_UINT (data));
+	set_display_pos (pp->p_config, (guchar)(GPOINTER_TO_UINT (data)));
 	pp->pos_pos = MENU3_STOP;
-	switch (CFG(display_pos))
+	switch (get_display_pos(pp->p_config))
 	{
 		case A_SCAN:
 			break;
 		case B_SCAN:
-			CFG_DISPLAY_POS(display_group) = DISPLAY_CURRENT_GROUP;
 			pp->bscan_mark = 1;
 			break;
 		case C_SCAN:
-			CFG_DISPLAY_POS(display_group) = DISPLAY_CURRENT_GROUP;
 			pp->cscan_mark = 1;
 			break;
 		case S_SCAN:
 			pp->sscan_mark = 1;
 			break;
 		case A_B_SCAN:
-			CFG_DISPLAY_POS(display_group) = DISPLAY_CURRENT_GROUP;
 			pp->bscan_mark = 1;
 			break;
 		case A_B_C_SCAN:
-			CFG_DISPLAY_POS(display_group) = DISPLAY_CURRENT_GROUP;
 			pp->bscan_mark = 1;
 			pp->cscan_mark = 1;
 			break;
 		case A_B_S_SCAN:
-			CFG_DISPLAY_POS(display_group) = DISPLAY_CURRENT_GROUP;
 			pp->bscan_mark = 1;
 			pp->sscan_mark = 1;
 			break;
@@ -4201,12 +4176,13 @@ void data_400 (GtkMenuItem *menuitem, gpointer data) /* Display -> Selection -> 
 	draw_area_all ();
 }
 
-void data_401 (GtkMenuItem *menuitem, gpointer data) /* Display -> Selection -> group p401 */
+void data_401 (GtkMenuItem *menuitem, gpointer data) /* Display -> Selection Ascan -> group p401 */
 {
-	CFG(display_group) = (guchar) (GPOINTER_TO_UINT (data));
+	set_display_group (pp->p_config, (guchar) (GPOINTER_TO_UINT (data)));
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
 }
+
 void data_4011 (GtkMenuItem *menuitem, gpointer data) /* Display -> Selection -> C-Scan1 p401 */
 {
 	CFG(c_scan1) = (guchar) (GPOINTER_TO_UINT (data));
@@ -4254,7 +4230,6 @@ void data_404 (GtkSpinButton *spinbutton, gpointer data) /*Display Range P404 */
 }
 void data_405 (GtkSpinButton *spinbutton, gpointer data) /*Avg.Scan Speed P405 */
 {
-	CFG(avg_scan_speed) =  (guint) (gtk_spin_button_get_value (spinbutton)*100.0);
 }
 
 void data_410 (GtkMenuItem *menuitem, gpointer data) /* Display -> Overlay -> UT Unit p410 */
@@ -4420,14 +4395,13 @@ void data_445 (GtkMenuItem *menuitem, gpointer data) /* Display -> Properties ->
 
 void data_500 (GtkMenuItem *menuitem, gpointer data) /* 增加删除选择group P500 */
 {
-	guchar temp;
-	temp = (guchar)(GPOINTER_TO_UINT (data));
+	guchar temp = (guchar)(GPOINTER_TO_UINT (data));
 	switch (temp)
 	{
-		case 0:CFG(groupQty) += 1;
-			   CFG(group[CFG(groupQty) -1]) = CFG(group[0]);
-//			   memcpy(&CFG(group[CFG(groupQty) -1]), &CFG(group[0]) , sizeof(GROUP));
-			   break;						/* 增加*/
+		case 0:
+			set_group_qty(pp->p_config, get_group_qty(pp->p_config) + 1);
+			grpcpy (pp->p_config, get_group_qty(pp->p_config) - 1, 0);
+			break;						/* 增加*/
 		case 1:
 		case 2:
 		case 3:
@@ -4436,10 +4410,12 @@ void data_500 (GtkMenuItem *menuitem, gpointer data) /* 增加删除选择group 
 		case 6:
 		case 7:
 		case 8:
-			   /* 把参数切换到当前选择的group 未完成 */
-			   CFG(groupId)	= temp - 1;
-			   break;
-		case 9:CFG(groupQty) -= 1;break;
+			/* 把参数切换到当前选择的group 未完成 */
+			set_current_group(pp->p_config, temp - 1);
+			break;
+		case 9:
+			set_group_qty(pp->p_config, get_group_qty(pp->p_config) - 1);
+			break;
 		default:break;
 	}
 
@@ -4998,7 +4974,7 @@ void send_dsp_data (guint data_type, guint value)
 					   g_print("%d\n", value);
 					   break;
 		case VOLTAGE_DSP:
-					   if (CFG(groupId) != 3)
+					   if (get_current_group(pp->p_config) != 3)
 						   switch (value)
 						   {
 							   case 0:g_print("%x\n", setup_VOLTAGE_MIN_PA);break;

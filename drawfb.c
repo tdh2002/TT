@@ -391,7 +391,7 @@ void draw_c_scan (gushort *p, guint width, guint height, DOT_TYPE *data, DOT_TYP
 		}
 
 
-	for (offset = 0, k = 0 ; k < CFG(groupId); k++)
+	for (offset = 0, k = 0 ; k < get_current_group(pp->p_config); k++)
 		offset += TMP(beam_qty[k]);
 
 	/* 不同的C-source measure_data 后面取值不一样  */

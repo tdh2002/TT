@@ -406,7 +406,7 @@ static void on_changed_probe(GtkTreeSelection *selection, gpointer p)
 	}
 	gtk_tree_model_unref_node (model, &iter);
 
-	switch (CFG(language))
+	switch (get_language(pp->p_config))
 	{
 		case ENGLISH_:
 			if (GROUP_VAL(group_mode) == PA_SCAN ) 
@@ -454,7 +454,7 @@ static void on_changed_wedge(GtkTreeSelection *selection, gpointer label)
 	}
 	gtk_tree_model_unref_node (model, &iter);
 
-	switch (CFG(language))
+	switch (get_language(pp->p_config))
 	{
 		case ENGLISH_:
 			if (GROUP_VAL(group_mode) == PA_SCAN ) 
@@ -579,7 +579,7 @@ static gchar* get_probe_info(const gchar *file_path)
 	gchar *probe_info = NULL;
 	read_probe_file (file_path, &p1);
 
-	switch (CFG(language))
+	switch (get_language(pp->p_config))
 	{
 		case ENGLISH_:
 			if (GROUP_VAL(group_mode) == PA_SCAN)
@@ -602,7 +602,7 @@ static gchar* get_wedge_info(const gchar *file_path)
 	gchar *wedge_info = NULL;
 	read_wedge_file (file_path, &w1);
 
-	switch (CFG(language))
+	switch (get_language(pp->p_config))
 	{
 		case ENGLISH_:
 			if (GROUP_VAL(group_mode) == UT_SCAN)
@@ -2392,13 +2392,13 @@ void change_source_dir(char *dir_name)
 
 	int tmp;
 
-	getcwd(old_dir,PATH_MAX);
+	tmp = (gint)getcwd( old_dir, PATH_MAX);
 
     tmp = chdir(Get_Source_File_Path());
 
     tmp = chdir(dir_name);
 
-    getcwd(new_dir,PATH_MAX);
+    tmp = (gint)getcwd(new_dir,PATH_MAX);
 
 	Set_Source_File_Path(new_dir);
 
@@ -2413,13 +2413,13 @@ void change_target_dir(char *dir_name)
 
 	int tmp;
 
-	getcwd(old_dir,PATH_MAX);
+	tmp = (gint)getcwd(old_dir,PATH_MAX);
 
     tmp = chdir(Get_Target_File_Path());
 
     tmp = chdir(dir_name);
 
-    getcwd(new_dir,PATH_MAX);
+    tmp = (gint)getcwd(new_dir,PATH_MAX);
 
 	Set_Target_File_Path(new_dir);
 
@@ -2460,7 +2460,7 @@ void cd_source_dir_path (GtkTreeView *tree_view,GtkTreePath *path,GtkTreeViewCol
 	//
 	change_source_dir(file_name);
 	//
-	gtk_label_set_text(source_label,pwd_path);
+	gtk_label_set_text(GTK_LABEL (source_label), pwd_path);
     //
 	selection_file_type(GTK_WIDGET (tree_view),pwd_path,file_type);
 	//
@@ -2501,7 +2501,7 @@ void cd_target_dir_path (GtkTreeView *tree_view,GtkTreePath *path,GtkTreeViewCol
 	//
 	change_target_dir(file_name);
 	//
-	gtk_label_set_text(target_label,pwd_path);
+	gtk_label_set_text(GTK_LABEL (target_label), pwd_path);
 	//
 	selection_file_type(GTK_WIDGET (tree_view),pwd_path,file_type);
 	//
@@ -2539,9 +2539,9 @@ gboolean law_save (GtkWidget *widget, GdkEventButton *event, gpointer data)
 	gint offset, k;
 	file_path = g_strdup_printf ("%s%s.law",
 			USER_LAW_PATH, gtk_entry_get_text (GTK_ENTRY (data)));
-	for (offset = 0, k = 0 ; k < CFG(groupId); k++)
+	for (offset = 0, k = 0 ; k < get_current_group(pp->p_config); k++)
 		offset += TMP(beam_qty[k]);
-	save_law_file(file_path, offset, CFG(groupId));
+	save_law_file(file_path, offset, get_current_group(pp->p_config));
 	g_free (file_path);
 	//	widget_window_class->key_press_event = my_keypress_event;
 	gtk_widget_destroy (gtk_widget_get_parent 
@@ -2715,11 +2715,10 @@ gboolean law_read (GtkWidget *widget, GdkEventButton *event, gpointer data)
 		gtk_tree_model_get(model, &iter, LIST_ITEM, &value,  -1);
 		file_path = g_strdup_printf ("%s%s", USER_LAW_PATH, value);
 
-		for (offset = 0, k = 0 ; k < CFG(groupId); k++)
+		for (offset = 0, k = 0 ; k < get_current_group(pp->p_config); k++)
 			offset += TMP(beam_qty[k]);
-		read_law_file(file_path, offset, CFG(groupId));
+		read_law_file(file_path, offset, get_current_group(pp->p_config));
 		GROUP_VAL (frequency) = GROUP_VAL(probe.Frequency);				/* 频率 */
-
 	}
 
 	g_free (file_path);

@@ -9,9 +9,6 @@
 #include "base_config.h"
 #include "language.h"
 
-/* 扫查模式 */
-#define UT_SCAN		0
-#define PA_SCAN		1
 /* 当前位置信息  */
 #define MENU1_STOP    4
 #define MENU2_STOP    0 
@@ -52,10 +49,6 @@
 #define	PULSE_ECHO		1
 #define	THROUGH_TRAN	2
 #define TOFD			3
-/* 电压 P113 */
-#define VOLTAGE_HIGH
-#define VOLTAGE_MID
-#define VOLTAGE_LOW
 /* 电压 */
 #define VOL_LOW		0
 #define VOL_HIGH	1
@@ -93,33 +86,9 @@
 #define LONGITUDINAL_WAVE	0
 #define SHEAR_WAVE	1
 
-/* 显示模式ABSC */
-#define	DISPLAY_ALL_GROUP	0
-#define DISPLAY_CURRENT_GROUP	1
-
-#define C_SCAN_A_HEIGHT		0
-#define C_SCAN_B_HEIGHT		1
-#define C_SCAN_THICKNESS	2
-#define C_SCAN_I_GATE		3
-#define C_SCAN_OFF			4
 
 
-#define A_SCAN	     0
-#define A_SCAN_R		0x20
-#define B_SCAN	     1
-#define C_SCAN	     2
-#define CC_SCAN		0x22
-#define CCC_SCAN	0x32
-#define S_SCAN	     3			/*  */
-#define S_SCAN_A		0x23	/* truedepath 的角度扫查 */
-#define S_SCAN_L		0x33	/* truedepth 的线扫 */
-#define A_B_SCAN     4
-#define A_B_C_SCAN	 5
-#define A_B_S_SCAN	 6
-#define A_C_CC_SCAN	 7
-#define A_S_CC_SCAN	 8
-#define PA_TOFD	         9
-#define Strip_Chart_AA	 10
+
 
 #define GAIN_MAX	80.0
 #define GAINR_OFF	0

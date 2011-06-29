@@ -24,8 +24,8 @@ void send_focal_spi (guint group);
 /* 测试用的初始值 */
 static void set_config (guint groupid)
 {
-	CFG(groupQty)	= 1;
-	CFG(groupId)	= groupid;
+	set_group_qty (pp->p_config, 1);
+	set_current_group (pp->p_config, groupid);
 	GROUP_VAL(group_mode) = PA_SCAN;
 	CFG(probe_select)=0;
 	GROUP_VAL(scan_offset)=0;
@@ -39,8 +39,7 @@ static void set_config (guint groupid)
 
 	CFG(auto_program)	=	AUTO_FOCAL_ON;
 
-	CFG(voltage_pa) = 0;
-	CFG(voltage_ut) = 0;
+	set_voltage (pp->p_config, get_current_group(pp->p_config), VOLTAGE_LOW);
 	/* UT settings */
 	GROUP_VAL(velocity)	= 592000;	/* 5920m/s */ 
 	GROUP_VAL(gain)         = 10;
@@ -110,8 +109,14 @@ static void set_config (guint groupid)
 	CFG(min_thickness)=50;
 	CFG(max_thickness)=99900;
 	CFG(echo_qty)=1;
-//	CFG(display_group) = DISPLAY_CURRENT_GROUP; /*0是All*/
- 	CFG_DISPLAY_POS(display_group) = DISPLAY_CURRENT_GROUP; /*0是All*/
+	set_display_pos (pp->p_config, S_SCAN);
+ 	set_display_group(pp->p_config, DISPLAY_CURRENT_GROUP); /*0是All*/
+	set_display_pos (pp->p_config, A_S_CC_SCAN);
+ 	set_display_group(pp->p_config, DISPLAY_CURRENT_GROUP); /*0是All*/
+	set_display_pos (pp->p_config, A_C_CC_SCAN);
+ 	set_display_group(pp->p_config, DISPLAY_CURRENT_GROUP); /*0是All*/
+	set_display_pos (pp->p_config, A_SCAN);
+ 	set_display_group(pp->p_config, DISPLAY_CURRENT_GROUP); /*0是All*/
 	CFG(c_scan1)=0;   /*0是A%*/
 	CFG(c_scan2)=0;   /*0是A%*/
 	CFG(c_scan11)	=	C_SCAN_OFF;
@@ -119,7 +124,6 @@ static void set_config (guint groupid)
 	CFG(data2)=0;     /*0是A%*/
 	CFG(dis_mode)=0;  /* 0是 All & A-Scan */
 	CFG(dis_range)=100.0;
-	CFG(avg_scan_speed)=1000.0;
 	GROUP_VAL(ut_unit)=0;  /* 0 是 Sound Path */
 	CFG(grid)=5;     /*5是 Off*/
 	CFG(sizing_curves)=0;
@@ -128,7 +132,6 @@ static void set_config (guint groupid)
 	CFG(overlay_overlay)=0;
 
 
-	CFG(zoom_display_pos)=0;
 	CFG_ZOOM_POS(zoom_type)=0;
 	CFG_ZOOM_POS(start_usound)=1000;
 	CFG_ZOOM_POS(end_usound)=1000;
@@ -258,6 +261,7 @@ int main (int argc, char *argv[])
 	memset (p_tmp_config, 0x0, sizeof(TMP_CONFIG));
 	g_print ("DRAW_UI's size:%d xx = %d\n", sizeof(DRAW_UI), p_ui->mark3);
 	g_print ("CONFIG's size:%d xx = %d\n", sizeof(CONFIG), p_config->time);
+	g_print ("GROUP size:%d xx = %d\n", sizeof(GROUP), p_config->time);
 
 	window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_decorated (GTK_WINDOW (window), FALSE);			/*不可以装饰*/
@@ -318,7 +322,7 @@ int main (int argc, char *argv[])
 	p_ui->p_beam_data = TMP(dma_data_add);		/* FPGA过来的数据 */
 
 	/* 初始化要冲送给fpga的值 */
-	for (i = CFG(groupQty) ; i != 0; i--)
+	for (i = get_group_qty(pp->p_config) ; i != 0; i--)
 	{
 		init_group_spi (i - 1);
 		write_group_data (&TMP(group_spi[i - 1]), i - 1);
@@ -524,17 +528,9 @@ void init_group_spi (guint group)
 	TMP(group_spi[group]).gate_i_end	= (GROUP_VAL_POS(group, gate[2].start) + 
 		GROUP_VAL_POS (group, gate[2].width)) / 10;
 
-	TMP(group_spi[group]).reject = CFG(reject) * 40.95;	
+	TMP(group_spi[group]).reject = get_reject(pp->p_config) * 40.95;	
 
-	if (GROUP_VAL_POS (group, group_mode) == UT_SCAN)
-		TMP(group_spi[group]).voltage = CFG(voltage_ut);	
-	else if (GROUP_VAL_POS (group, group_mode) == PA_SCAN)
-	{	
-		if CFG(voltage_pa)
-			TMP(group_spi[group]).voltage = 0x2;	
-		else
-			TMP(group_spi[group]).voltage = 0x0;	
-	}
+	TMP(group_spi[group]).voltage = get_voltage (pp->p_config, group);	
 
 }
 

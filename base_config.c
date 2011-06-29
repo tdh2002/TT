@@ -57,7 +57,7 @@ guint get_material_sw (CONFIG *p)
 	return data[p->part.Material_pos].Velocity_SW;
 }
 
-guint get_part_geometry (CONFIG *p)
+guchar get_part_geometry (CONFIG *p)
 {
 	return p->part.Geometry;
 }
@@ -67,7 +67,7 @@ void set_part_geometry (CONFIG *p, gpointer data)
 	p->part.Geometry = (guchar)(GPOINTER_TO_UINT (data));
 }
 
-guint get_part_material (CONFIG *p)
+guchar get_part_material (CONFIG *p)
 {
 	return p->part.Material_pos;
 }
@@ -97,7 +97,163 @@ void set_part_diameter (CONFIG *p, gpointer data)
 	p->part.Diameter = (guint)(GPOINTER_TO_UINT (data));
 }
 
+/* 配置信息的操作 */
+guchar get_current_group (CONFIG *p)	/* 当前p活动的group 0-7 */
+{
+	return	p->groupId;
+}
+
+void set_current_group (CONFIG *p, guchar data)	/* 设置p当前活动的group */
+{
+	g_assert (data < 8);
+	p->groupId = data;
+}
+
+guchar get_group_qty (CONFIG *p)	/* 取得p当前group数量 */
+{
+	return	p->groupQty;
+}
+
+void set_group_qty (CONFIG *p, guchar data)	/* 设置p当前group数量 */
+{
+	g_assert (data < 9);
+	p->groupQty = data;
+}
+
+guchar get_voltage (CONFIG *p, guint group_num)	/* 取得p发射电压,发射与group的模式相关 */
+{
+	switch ((p->group[group_num].group_mode))
+	{
+		case UT_SCAN:
+		case UT1_SCAN:	return p->voltage_ut;	break;
+		case PA_SCAN:	return p->voltage_pa;	break;
+		default:g_print("Voltage get value error\n");
+				return 0;break;
+	}
+}
+
+void set_voltage (CONFIG *p, guint group_num, guchar data)	/* 取得p发射电压,发射与group的模式相关 */
+{
+	g_assert (data < 3);
+	switch ((p->group[group_num].group_mode))
+	{
+		case UT_SCAN:
+		case UT1_SCAN:	p->voltage_ut = data;	break;
+		case PA_SCAN:	p->voltage_pa = data;	break;
+		default:g_print("Voltage set value error\n");	break;
+	}
+}
+
+guchar get_language (CONFIG *p)		/* 获取语言 */
+{
+	return p->language;
+}
+
+void set_language (CONFIG *p, guchar data)	/* 设置语言 */
+{
+	g_assert (data < 2);			/* 支持语言的总数量 */
+	p->language = data;
+}
+
+guchar get_reject (CONFIG *p)		/* 获取抑制 */
+{
+	return p->reject;
+}
+
+void set_reject (CONFIG *p, guchar data)	/* 设置抑制 */
+{
+	g_assert (data < 101);			/* 支持语言的总数量 */
+	p->reject = data;
+}
+
+guchar get_display_pos (CONFIG *p)		/* 获取当前显示模式 ABSC... */
+{
+	return p->display_pos;
+}
+
+void set_display_pos (CONFIG *p, guchar data)	/* 设置当前显示模式 ABSC */
+{
+	g_assert (data < 11);
+	p->display_pos = data;
+}
+
+guchar get_display_group (CONFIG *p)		/* 获取显示是全部还是当前 返回1是当前 0是全部 */
+{
+	switch (get_display_pos(p))
+	{
+		case A_SCAN: 
+			return (p->display_group & 0x01); break;
+		case S_SCAN:
+			return (p->display_group & 0x02) >> 1; break;
+		case A_C_CC_SCAN:
+			return (p->display_group & 0x04) >> 2; break;
+		case A_S_CC_SCAN:
+			return (p->display_group & 0x08) >> 3; break;
+		case B_SCAN:
+		case C_SCAN:
+		case A_B_SCAN:
+		case A_B_C_SCAN:
+		case A_B_S_SCAN:
+		case PA_TOFD:
+		case Strip_Chart_AA: return 1;break;
+		default:break;
+	}
+}
+
+void set_display_group (CONFIG *p, guchar data)	/* 设置显示是当前还是全部 */
+{
+	g_assert (data < 2);
+	switch (get_display_pos(p))
+	{
+		case A_SCAN:
+			p->display_group = (p->display_group & ~0x01) | data; break;
+		case S_SCAN:
+			p->display_group = (p->display_group & ~0x02) | (data << 1); break;
+		case A_C_CC_SCAN:
+			p->display_group = (p->display_group & ~0x04) | (data << 2); break;
+		case A_S_CC_SCAN:
+			p->display_group = (p->display_group & ~0x08) | (data << 3); break;
+		case B_SCAN:
+		case C_SCAN:
+		case A_B_SCAN:
+		case A_B_C_SCAN:
+		case A_B_S_SCAN:
+		case PA_TOFD:
+		case Strip_Chart_AA: return ;break;
+		default:break;
+	}
+}
 
 
 
+/* group操作*/
+void grpcpy (CONFIG *p, guint dst, guint src)		/* 把src group 配置复制到 dst group */
+{
+	g_assert (src < 8);
+	g_assert (dst < 8);
+	g_assert (src != dst);
+	memcpy (&p->group[dst], &p->group[src] , sizeof(GROUP));
+}
+
+
+
+
+
+
+
+/***
+void *get_cfg_val (CONFIG *p, gint val_type, gint grp)
+{
+	g_assert (p);
+	g_assert (grp < 8);
+	g_assert (val_type > 0);
+	g_assert (val_type < 200);
+	switch (val_type)
+	{
+		case VAL_GRP_ID:	
+			return	(gpointer)(p->groupId);break;
+		default:break;
+	}
+}
+*****/
 

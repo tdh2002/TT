@@ -35,6 +35,7 @@
 #define EVENT_METHOD(i, x) GTK_WIDGET_GET_CLASS((GtkObject*)(i))->x
 #define YOFFSET  26
 
+#define	P_CFG	(pp->p_config)
 
 GdkColor	color_black     = {0x0, 0x0, 0x0, 0x0};
 GdkColor	color_black1    = {0x0, 0x0, 0x0, 0x0800};
@@ -2025,14 +2026,14 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 	switch (LAW_VAL(Focal_type))
 	{
 		case AZIMUTHAL_SCAN:
-			num = TMP(beam_num[CFG(groupId)]);
+			num = TMP(beam_num[get_current_group(pp->p_config)]);
 			angle = LAW_VAL (Angle_min) + LAW_VAL (Angle_step)*num;
 			break;
 		case LINEAR_SCAN:
 		case DEPTH_SCAN:
 		case STATIC_SCAN:
 			angle = LAW_VAL (Angle_min);
-			num = TMP(beam_num[CFG(groupId)]);
+			num = TMP(beam_num[get_current_group(pp->p_config)]);
 		default:break;
 	}
 	switch (type)
@@ -2076,7 +2077,7 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 			}
 
 			g_sprintf (p->title, "A scan|Gr %d|CH %0.1f|SK%0.1f|L%d", 
-					CFG(groupId) + 1, angle / 100.0, GROUP_VAL_POS(p->group, skew) / 100.0, num + 1);
+					get_current_group(pp->p_config) + 1, angle / 100.0, GROUP_VAL_POS(p->group, skew) / 100.0, num + 1);
 			break;
 		case A_SCAN_R:
 			break;
@@ -2143,7 +2144,7 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 			}
 
 			g_sprintf (p->title, "B scan|Gr %d|CH %0.1f|SK%0.1f|L%d", 
-					CFG(groupId) + 1, angle / 100.0, GROUP_VAL_POS(p->group, skew) / 100.0, num + 1);
+					get_current_group(pp->p_config) + 1, angle / 100.0, GROUP_VAL_POS(p->group, skew) / 100.0, num + 1);
 			break;
 		case C_SCAN:
 		case CC_SCAN:
@@ -2199,7 +2200,7 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 			}
 
 			g_sprintf (p->title, "C scan|Gr %d|CH %0.1f|SK%0.1f|L%d", 
-					CFG(groupId) + 1, angle / 100.0, GROUP_VAL_POS(p->group, skew) / 100.0, num + 1);
+					get_current_group(pp->p_config) + 1, angle / 100.0, GROUP_VAL_POS(p->group, skew) / 100.0, num + 1);
 			break;
 		case S_SCAN:
 		case S_SCAN_A:
@@ -2306,7 +2307,7 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 				/*if(wedge == contact)
 					mid = pp->probe_primary_offset - (pp->element_qty * pp->element_pitch)/2.0;
 				else*/
-					mid = (-1)*GROUP_VAL_POS(CFG(groupId),wedge.Primary_offset)/1000.0 - (GROUP_VAL_POS(CFG(groupId),probe.Elem_qty) * GROUP_VAL_POS(CFG(groupId),probe.Pitch)/1000.0)/2.0;
+					mid = (-1)*GROUP_VAL_POS(get_current_group(pp->p_config),wedge.Primary_offset)/1000.0 - (GROUP_VAL_POS(get_current_group(pp->p_config),probe.Elem_qty) * GROUP_VAL_POS(get_current_group(pp->p_config),probe.Pitch)/1000.0)/2.0;
 
 				if(GROUP_VAL_POS(p->group, skew_pos)==0)
 					middle = GROUP_VAL_POS(p->group, scan_offset)/10.0 - mid;
@@ -2335,9 +2336,9 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 				pp->swmin = p->wmin1;
 				pp->swmax = p->wmax1;
 
-				g_print("\nwedge_primary_offset = %.2f  ",GROUP_VAL_POS(CFG(groupId),wedge.Primary_offset)/1000.0);
-				g_print("element_qty = %d  ",GROUP_VAL_POS(CFG(groupId),probe.Elem_qty));
-				g_print("element_pitch ＝ %.2f\n",GROUP_VAL_POS(CFG(groupId),probe.Pitch)/1000.0);
+				g_print("\nwedge_primary_offset = %.2f  ",GROUP_VAL_POS(get_current_group(pp->p_config),wedge.Primary_offset)/1000.0);
+				g_print("element_qty = %d  ",GROUP_VAL_POS(get_current_group(pp->p_config),probe.Elem_qty));
+				g_print("element_pitch ＝ %.2f\n",GROUP_VAL_POS(get_current_group(pp->p_config),probe.Pitch)/1000.0);
 				g_print("wmin1 = %.2f  ", pp->swmin);
 				g_print("wmax1 = %.2f  ", pp->swmax);
 				g_print("middle = %.2f  ", middle );
@@ -2355,7 +2356,7 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 			p->h2_color = 0xEDF169;
 
 			g_sprintf (p->title, "S scan|Gr %d|CH %0.1f|SK%0.1f|L%d", 
-					CFG(groupId) + 1, angle / 100.0, GROUP_VAL_POS(p->group, skew) / 100.0, num + 1);
+					get_current_group(pp->p_config) + 1, angle / 100.0, GROUP_VAL_POS(p->group, skew) / 100.0, num + 1);
 			break;
 		case A_B_SCAN:
 
@@ -2387,9 +2388,9 @@ void draw_area_all()
 		memset (TMP(scan_type), 0xff, 16);
 	}
 
-	if (CFG_DISPLAY_POS (display_group) == DISPLAY_CURRENT_GROUP) 
+	if (get_display_group(pp->p_config) == DISPLAY_CURRENT_GROUP) 
 	{
-		switch (CFG(display_pos))
+		switch (get_display_pos(pp->p_config))
 		{
 			case A_SCAN:
 				pp->draw_area[0].scan_type	=	A_SCAN;
@@ -2397,22 +2398,23 @@ void draw_area_all()
 				set_drawarea_property (&(pp->draw_area[0]), A_SCAN, 0);
 				draw_area_ (pp->vbox_area[0], &(pp->draw_area[0]), 655, 425);
 				gtk_widget_show (pp->vbox_area[0]);
-				set_scan_config (0, A_SCAN, 605, 605, 390, 0, 0, CFG(groupId));
+				set_scan_config (0, A_SCAN, 605, 605, 390, 0, 0, get_current_group(pp->p_config));
 				/* 显示的位置 偏移等等 */
 				break;
 			case B_SCAN:
+				g_print ("bscan\n");
 				pp->draw_area[0].scan_type	=	B_SCAN;
 				gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
 				set_drawarea_property (&(pp->draw_area[0]), B_SCAN, 0);
 				draw_area_ (pp->vbox_area[0], &(pp->draw_area[0]), 655, 425);
 				gtk_widget_show (pp->vbox_area[0]);
-				set_scan_config (0, B_SCAN, 605, 605, 390, 0, 0, CFG(groupId));
+				set_scan_config (0, B_SCAN, 605, 605, 390, 0, 0, get_current_group(pp->p_config));
 				break;
 			case C_SCAN:
 				gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
 				set_drawarea_property (&(pp->draw_area[0]), C_SCAN, 0);
 				draw_area_ (pp->vbox_area[0], &(pp->draw_area[0]), 655, 425);
-				set_scan_config (0, C_SCAN, 605, 605, 390, 0, 0, CFG(groupId));
+				set_scan_config (0, C_SCAN, 605, 605, 390, 0, 0, get_current_group(pp->p_config));
 				gtk_widget_show (pp->vbox_area[0]);
 				break;
 			case S_SCAN:
@@ -2424,7 +2426,7 @@ void draw_area_all()
 					set_drawarea_property (&(pp->draw_area[0]), S_SCAN, 0);
 					draw_area_ (pp->vbox_area[0], &(pp->draw_area[0]), 655, 425);
 					gtk_widget_show (pp->vbox_area[0]);
-					set_scan_config (0, S_SCAN, 605, 605, 390, 0, 0, CFG(groupId));
+					set_scan_config (0, S_SCAN, 605, 605, 390, 0, 0, get_current_group(pp->p_config));
 				} 
 				else if (GROUP_VAL(ut_unit) == UT_UNIT_TRUE_DEPTH)
 				{
@@ -2435,7 +2437,7 @@ void draw_area_all()
 						set_drawarea_property (&(pp->draw_area[0]), S_SCAN_A, 0);
 						draw_area_ (pp->vbox_area[0], &(pp->draw_area[0]), 655, 425);
 						gtk_widget_show (pp->vbox_area[0]);
-						set_scan_config (0, S_SCAN_A, 605, 605, 390, 0, 0, CFG(groupId));
+						set_scan_config (0, S_SCAN_A, 605, 605, 390, 0, 0, get_current_group(pp->p_config));
 					}
 					else if (LAW_VAL(Focal_type) == LINEAR_SCAN)
 					{
@@ -2444,7 +2446,7 @@ void draw_area_all()
 						set_drawarea_property (&(pp->draw_area[0]), S_SCAN_L, 0);
 						draw_area_ (pp->vbox_area[0], &(pp->draw_area[0]), 655, 425);
 						gtk_widget_show (pp->vbox_area[0]);
-						set_scan_config (0, S_SCAN_L, 605, 605, 390, 0, 0, CFG(groupId));
+						set_scan_config (0, S_SCAN_L, 605, 605, 390, 0, 0, get_current_group(pp->p_config));
 					}
 				}
 				break;
@@ -2457,8 +2459,8 @@ void draw_area_all()
 				set_drawarea_property (&(pp->draw_area[1]), B_SCAN, 0);
 				draw_area_ (pp->vbox_area[0], &(pp->draw_area[1]), 655, 295);
 				gtk_widget_show (pp->vbox_area[0]);
-				set_scan_config (0, A_SCAN, 605, 605, 100, 0, 0, CFG(groupId));
-				set_scan_config (1, B_SCAN, 605, 605, 260, 0, 130, CFG(groupId));
+				set_scan_config (0, A_SCAN, 605, 605, 100, 0, 0, get_current_group(pp->p_config));
+				set_scan_config (1, B_SCAN, 605, 605, 260, 0, 130, get_current_group(pp->p_config));
 				break;
 			case A_B_C_SCAN:
 				gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
@@ -2469,9 +2471,9 @@ void draw_area_all()
 				set_drawarea_property (&(pp->draw_area[2]), C_SCAN, 0);
 				draw_area_ (pp->vbox_area[0], &(pp->draw_area[2]), 655, 150);
 				gtk_widget_show (pp->vbox_area[0]);
-				set_scan_config (0, A_SCAN, 605, 605, 90, 0, 0, CFG(groupId));
-				set_scan_config (1, B_SCAN, 605, 605, 115, 0, 125, CFG(groupId));
-				set_scan_config (2, C_SCAN, 605, 605, 115, 0, 275, CFG(groupId));
+				set_scan_config (0, A_SCAN, 605, 605, 90, 0, 0, get_current_group(pp->p_config));
+				set_scan_config (1, B_SCAN, 605, 605, 115, 0, 125, get_current_group(pp->p_config));
+				set_scan_config (2, C_SCAN, 605, 605, 115, 0, 275, get_current_group(pp->p_config));
 				break;
 			case A_B_S_SCAN:
 				if (GROUP_VAL(ut_unit) == UT_UNIT_TRUE_DEPTH)
@@ -2492,11 +2494,11 @@ void draw_area_all()
 					gtk_widget_show (pp->vbox_area[0]);
 					gtk_widget_show (pp->vbox_area[1]);
 					if (LAW_VAL(Focal_type) == AZIMUTHAL_SCAN)
-						set_scan_config (0, S_SCAN_A, 305, 250, 390, 0, 0, CFG(groupId));
+						set_scan_config (0, S_SCAN_A, 305, 250, 390, 0, 0, get_current_group(pp->p_config));
 					else if (LAW_VAL(Focal_type) == LINEAR_SCAN)
-						set_scan_config (0, S_SCAN_L, 305, 250, 390, 0, 0, CFG(groupId));
-					set_scan_config (1, A_SCAN, 305, 305, 175, 300, 0, CFG(groupId));
-					set_scan_config (2, B_SCAN, 305, 305, 180, 300, 210, CFG(groupId));
+						set_scan_config (0, S_SCAN_L, 305, 250, 390, 0, 0, get_current_group(pp->p_config));
+					set_scan_config (1, A_SCAN, 305, 305, 175, 300, 0, get_current_group(pp->p_config));
+					set_scan_config (2, B_SCAN, 305, 305, 180, 300, 210, get_current_group(pp->p_config));
 				}
 				else
 				{
@@ -2508,9 +2510,9 @@ void draw_area_all()
 					set_drawarea_property (&(pp->draw_area[2]), B_SCAN, 0);
 					draw_area_ (pp->vbox_area[0], &(pp->draw_area[2]), 655, 150);
 					gtk_widget_show (pp->vbox_area[0]);
-					set_scan_config (0, A_SCAN, 605, 605, 90, 0, 0, CFG(groupId));
-					set_scan_config (1, S_SCAN, 605, 605, 115, 0, 125, CFG(groupId));
-					set_scan_config (2, B_SCAN, 605, 605, 115, 0, 275, CFG(groupId));
+					set_scan_config (0, A_SCAN, 605, 605, 90, 0, 0, get_current_group(pp->p_config));
+					set_scan_config (1, S_SCAN, 605, 605, 115, 0, 125, get_current_group(pp->p_config));
+					set_scan_config (2, B_SCAN, 605, 605, 115, 0, 275, get_current_group(pp->p_config));
 				}
 				break;
 			case A_C_CC_SCAN:
@@ -2521,8 +2523,8 @@ void draw_area_all()
 					draw_area_ (pp->vbox_area[0], &(pp->draw_area[0]), 655, 150);
 					set_drawarea_property (&(pp->draw_area[1]), C_SCAN, 0);
 					draw_area_ (pp->vbox_area[0], &(pp->draw_area[1]), 655, 275);
-					set_scan_config (0, A_SCAN, 605, 605, 115, 0, 0, CFG(groupId));
-					set_scan_config (1, C_SCAN, 605, 605, 240, 0, 150, CFG(groupId));
+					set_scan_config (0, A_SCAN, 605, 605, 115, 0, 0, get_current_group(pp->p_config));
+					set_scan_config (1, C_SCAN, 605, 605, 240, 0, 150, get_current_group(pp->p_config));
 				}
 				else if (CFG(c_scan2) != C_SCAN_OFF)
 				{
@@ -2532,9 +2534,9 @@ void draw_area_all()
 					draw_area_ (pp->vbox_area[0], &(pp->draw_area[1]), 655, 150);
 					set_drawarea_property (&(pp->draw_area[2]), CC_SCAN, 0);
 					draw_area_ (pp->vbox_area[0], &(pp->draw_area[2]), 655, 150);
-					set_scan_config (0, A_SCAN, 605, 605, 90, 0, 0, CFG(groupId));
-					set_scan_config (1, C_SCAN, 605, 605, 115, 0, 125, CFG(groupId));
-					set_scan_config (2, CC_SCAN, 605, 605, 115, 0, 275, CFG(groupId));
+					set_scan_config (0, A_SCAN, 605, 605, 90, 0, 0, get_current_group(pp->p_config));
+					set_scan_config (1, C_SCAN, 605, 605, 115, 0, 125, get_current_group(pp->p_config));
+					set_scan_config (2, CC_SCAN, 605, 605, 115, 0, 275, get_current_group(pp->p_config));
 				}
 				gtk_widget_show (pp->vbox_area[0]);
 				break;
@@ -2552,8 +2554,8 @@ void draw_area_all()
 						set_drawarea_property (&(pp->draw_area[1]), S_SCAN, 0);
 						draw_area_ (pp->vbox_area[0], &(pp->draw_area[1]), 655, 295);
 						gtk_widget_show (pp->vbox_area[0]);
-						set_scan_config (0, A_SCAN, 605, 605, 95, 0, 0, CFG(groupId));
-						set_scan_config (1, S_SCAN, 605, 605, 260, 0, 130, CFG(groupId));
+						set_scan_config (0, A_SCAN, 605, 605, 95, 0, 0, get_current_group(pp->p_config));
+						set_scan_config (1, S_SCAN, 605, 605, 260, 0, 130, get_current_group(pp->p_config));
 					}
 					else if (GROUP_VAL(ut_unit) == UT_UNIT_TRUE_DEPTH)
 					{
@@ -2567,8 +2569,8 @@ void draw_area_all()
 							set_drawarea_property (&(pp->draw_area[1]), S_SCAN_A, 0x08);
 							draw_area_ (pp->hbox_area[0], &(pp->draw_area[1]), 405, 425);
 							gtk_widget_show (pp->hbox_area[0]);
-							set_scan_config (0, A_SCAN_R, 390, 200, 390, 0, 0, CFG(groupId));
-							set_scan_config (1, S_SCAN_A, 390, 355, 390, 250, 0, CFG(groupId));
+							set_scan_config (0, A_SCAN_R, 390, 200, 390, 0, 0, get_current_group(pp->p_config));
+							set_scan_config (1, S_SCAN_A, 390, 355, 390, 250, 0, get_current_group(pp->p_config));
 						} 
 						else if (LAW_VAL(Focal_type) == LINEAR_SCAN)
 						{
@@ -2580,8 +2582,8 @@ void draw_area_all()
 							set_drawarea_property (&(pp->draw_area[1]), S_SCAN_L, 0x08);
 							draw_area_ (pp->hbox_area[0], &(pp->draw_area[1]), 405, 425);
 							gtk_widget_show (pp->hbox_area[0]);
-							set_scan_config (0, A_SCAN_R, 390, 200, 390, 0, 0, CFG(groupId));
-							set_scan_config (1, S_SCAN_L, 390, 355, 390, 250, 0, CFG(groupId));
+							set_scan_config (0, A_SCAN_R, 390, 200, 390, 0, 0, get_current_group(pp->p_config));
+							set_scan_config (1, S_SCAN_L, 390, 355, 390, 250, 0, get_current_group(pp->p_config));
 						}
 					}
 				}
@@ -2601,9 +2603,9 @@ void draw_area_all()
 						set_drawarea_property (&(pp->draw_area[2]), CCC_SCAN, 0);
 						draw_area_ (pp->vbox_area[0], &(pp->draw_area[2]), 655, 150);
 						gtk_widget_show (pp->vbox_area[0]);
-						set_scan_config (0, A_SCAN, 605, 605, 95, 0, 0, CFG(groupId));
-						set_scan_config (1, S_SCAN, 605, 605, 115, 0, 125, CFG(groupId));
-						set_scan_config (2, CCC_SCAN, 605, 605, 115, 0, 275, CFG(groupId));
+						set_scan_config (0, A_SCAN, 605, 605, 95, 0, 0, get_current_group(pp->p_config));
+						set_scan_config (1, S_SCAN, 605, 605, 115, 0, 125, get_current_group(pp->p_config));
+						set_scan_config (2, CCC_SCAN, 605, 605, 115, 0, 275, get_current_group(pp->p_config));
 					}
 					else if (GROUP_VAL(ut_unit) == UT_UNIT_TRUE_DEPTH)
 					{
@@ -2621,9 +2623,9 @@ void draw_area_all()
 							set_drawarea_property (&(pp->draw_area[2]), CCC_SCAN, 0);
 							draw_area_ (pp->vbox_area[1], &(pp->draw_area[2]), 655, 150);
 							gtk_widget_show (pp->hbox_area[0]);
-							set_scan_config (0, A_SCAN_R, 390, 200, 240, 0, 0, CFG(groupId));
-							set_scan_config (1, S_SCAN_A, 390, 355, 240, 250, 0, CFG(groupId));
-							set_scan_config (2, CCC_SCAN, 390, 605, 115, 0, 275, CFG(groupId));
+							set_scan_config (0, A_SCAN_R, 390, 200, 240, 0, 0, get_current_group(pp->p_config));
+							set_scan_config (1, S_SCAN_A, 390, 355, 240, 250, 0, get_current_group(pp->p_config));
+							set_scan_config (2, CCC_SCAN, 390, 605, 115, 0, 275, get_current_group(pp->p_config));
 						} 
 						else if (LAW_VAL(Focal_type) == LINEAR_SCAN)
 						{
@@ -2637,9 +2639,9 @@ void draw_area_all()
 							set_drawarea_property (&(pp->draw_area[2]), CCC_SCAN, 0);
 							draw_area_ (pp->vbox_area[1], &(pp->draw_area[2]), 655, 150);
 							gtk_widget_show (pp->hbox_area[0]);
-							set_scan_config (0, A_SCAN_R, 390, 200, 390, 0, 0, CFG(groupId));
-							set_scan_config (1, S_SCAN_L, 390, 355, 390, 250, 0, CFG(groupId));
-							set_scan_config (2, CCC_SCAN, 390, 605, 115, 0, 275, CFG(groupId));
+							set_scan_config (0, A_SCAN_R, 390, 200, 390, 0, 0, get_current_group(pp->p_config));
+							set_scan_config (1, S_SCAN_L, 390, 355, 390, 250, 0, get_current_group(pp->p_config));
+							set_scan_config (2, CCC_SCAN, 390, 605, 115, 0, 275, get_current_group(pp->p_config));
 						}
 					}
 				}
@@ -2650,12 +2652,12 @@ void draw_area_all()
 				break;
 		}
 	}
-	else if (CFG_DISPLAY_POS(display_group) == DISPLAY_ALL_GROUP) 
+	else if (get_display_group(pp->p_config) == DISPLAY_ALL_GROUP) 
 		{
-			switch (CFG(groupQty))
+			switch (get_group_qty(pp->p_config))
 			{
 				case 2:
-					switch (CFG(display_pos))
+					switch (get_display_pos(pp->p_config))
 					{
 						case A_SCAN:
 							pp->draw_area[0].group	=	0;
@@ -2859,7 +2861,7 @@ void draw_area_all()
 					}
 					break;
 				case 3:
-					switch (CFG(display_pos))
+					switch (get_display_pos(pp->p_config))
 					{
 						case A_SCAN:
 							pp->draw_area[0].group	=	0;
@@ -3135,7 +3137,7 @@ void draw_area_all()
 					}
 					break;
 				case 4:
-					switch (CFG(display_pos))
+					switch (get_display_pos(pp->p_config))
 					{
 						case A_SCAN:
 							pp->draw_area[0].group	=	0;
@@ -3165,7 +3167,7 @@ void draw_area_all()
 					}
 					break;
 				case 5:
-					switch (CFG(display_pos))
+					switch (get_display_pos(pp->p_config))
 					{
 						case A_SCAN:
 							pp->draw_area[0].group	=	0;
@@ -3201,7 +3203,7 @@ void draw_area_all()
 					}
 					break;
 				case 6:
-					switch (CFG(display_pos))
+					switch (get_display_pos(pp->p_config))
 					{
 						case A_SCAN:
 							pp->draw_area[0].group	=	0;
@@ -3241,7 +3243,7 @@ void draw_area_all()
 					}
 					break;
 				case 7:
-					switch (CFG(display_pos))
+					switch (get_display_pos(pp->p_config))
 					{
 						case A_SCAN:
 							pp->draw_area[0].group	=	0;
@@ -3287,7 +3289,7 @@ void draw_area_all()
 					}
 					break;
 				case 8:
-					switch (CFG(display_pos))
+					switch (get_display_pos(pp->p_config))
 					{
 						case A_SCAN:
 							pp->draw_area[0].group	=	0;
@@ -3681,16 +3683,16 @@ void draw3_data0(DRAW_UI_P p)
 					p->x_pos = 415, p->y_pos = 90;
 					if ((p->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 					{
-						if (CFG(groupQty) != 3)
+						if (get_group_qty(pp->p_config) != 3)
 							menu_status = 0x200;
 						if (GROUP_VAL(ascan_source) != 0)
 							menu_status |= 0x72;
 						draw3_pop_tt (data_400, NULL, 
-								menu_content[DISPL + CFG(display_pos)],
-								menu_content + DISPLAY, 11, 0, CFG(display_pos), menu_status);
+								menu_content[DISPL + get_display_pos(pp->p_config)],
+								menu_content + DISPLAY, 11, 0, get_display_pos(pp->p_config), menu_status);
 					}
 					else 
-						draw3_popdown (menu_content[DISPL + CFG(display_pos)], 0, 0);
+						draw3_popdown (menu_content[DISPL + get_display_pos(pp->p_config)], 0, 0);
 					break;
 				case 1:/*Display -> Overlay -> UT Unit  P410 */
 					p->x_pos = 566, p->y_pos = 120-YOFFSET;
@@ -3746,7 +3748,7 @@ void draw3_data0(DRAW_UI_P p)
 					p->x_pos = 590, p->y_pos = 90;	/* 位置ok */
 					if ((p->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 					{
-						switch (CFG(groupQty))
+						switch (get_group_qty(pp->p_config))
 						{
 							case 1:	menu_status = 0x03fc;break;
 							case 2: menu_status = 0x01f8;break;
@@ -3759,11 +3761,11 @@ void draw3_data0(DRAW_UI_P p)
 							default:break;
 						}
 						draw3_pop_tt (data_500, NULL, 
-								menu_content[GROUP_P + CFG(groupId) + 1],
-								menu_content + GROUP_P, 10, 0, CFG(groupId) + 1, menu_status);
+								menu_content[GROUP_P + get_current_group(pp->p_config) + 1],
+								menu_content + GROUP_P, 10, 0, get_current_group(pp->p_config) + 1, menu_status);
 					}
 					else 
-						draw3_popdown (menu_content[GROUP_P + CFG(groupId) + 1], 0, 0);
+						draw3_popdown (menu_content[GROUP_P + get_current_group(pp->p_config) + 1], 0, 0);
 					break;
 				case 1:/* Scan Offset  P510 */
 					switch (TMP(scanoffset_reg))
@@ -3870,7 +3872,7 @@ void draw3_data0(DRAW_UI_P p)
 							/* 最大不能超过最大Angle_max */
 							cur_value = LAW_VAL (Angle_min) / 100.0;
 							/* 计算lower为妙 */
-							temp_beam = LAW_MAX_QTY - get_beam_qty() + TMP(beam_qty[CFG(groupId)]);
+							temp_beam = LAW_MAX_QTY - get_beam_qty() + TMP(beam_qty[get_current_group(pp->p_config)]);
 							TMP(beam_skew_num)	= (LAW_VAL(Angle_beam_skew_max) - 
 									LAW_VAL(Angle_beam_skew_min)) /
 								LAW_VAL(Angle_beam_skew_step) + 1;
@@ -4935,18 +4937,19 @@ void draw3_data1(DRAW_UI_P p)
 					pp->x_pos = 593, pp->y_pos = 175;
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))/*选中401这个位置*/
 					{
-						if(CFG(display_pos) == A_SCAN || CFG(display_pos) == S_SCAN)
+						if(get_display_pos(pp->p_config) == A_SCAN || 
+								get_display_pos(pp->p_config) == S_SCAN)
 						{	
-							if (CFG(groupQty) == 1)
+							if (get_group_qty(pp->p_config) == 1)
 								menu_status = 0x01;
 							draw3_pop_tt (data_401, NULL, 
-									menu_content[GROUP_POS + CFG_DISPLAY_POS(display_group)],
-									menu_content + GROUP_POS, 2, 1, CFG_DISPLAY_POS(display_group), menu_status);
+									menu_content[GROUP_POS + get_display_group(pp->p_config)],
+									menu_content + GROUP_POS, 2, 1, get_display_group(pp->p_config), menu_status);
 							gtk_widget_queue_draw(pp->vboxtable);
 						}
-						else if ((CFG(display_pos) == C_SCAN) || 
-								(CFG(display_pos) == A_B_C_SCAN) ||
-								(CFG(display_pos) == A_C_CC_SCAN))
+						else if ((get_display_pos(pp->p_config) == C_SCAN) || 
+								(get_display_pos(pp->p_config) == A_B_C_SCAN) ||
+								(get_display_pos(pp->p_config) == A_C_CC_SCAN))
 						{
 							draw3_pop_tt (data_4011, NULL, 
 									menu_content[C_SCAN1 + CFG(c_scan1)],
@@ -4954,7 +4957,7 @@ void draw3_data1(DRAW_UI_P p)
 							str = g_strdup_printf ("%s", con2_p[4][0][6]);	
 							gtk_label_set_text (GTK_LABEL (pp->label3[1]), str);
 						}
-						else if (CFG(display_pos) == A_S_CC_SCAN)
+						else if (get_display_pos(pp->p_config) == A_S_CC_SCAN)
 						{
 							draw3_pop_tt (data_4012, NULL, 
 									menu_content[C_SCAN1+CFG(c_scan11)],
@@ -4962,7 +4965,7 @@ void draw3_data1(DRAW_UI_P p)
 							str = g_strdup_printf ("%s", con2_p[4][0][6]);	
 							gtk_label_set_text (GTK_LABEL (pp->label3[1]), str);
 						}
-						else if(CFG(display_pos)==10)
+						else if(get_display_pos(pp->p_config)==10)
 							/*Display 为 Strip Chart-[A]*/
 						{
 							draw3_pop_tt (data_4013, NULL, 
@@ -4972,7 +4975,7 @@ void draw3_data1(DRAW_UI_P p)
 							gtk_label_set_text (GTK_LABEL (pp->label3[1]), str);
 
 						}
-						else if(CFG(display_pos)==1 || CFG(display_pos)==4 || CFG(display_pos)==6)
+						else if(get_display_pos(pp->p_config)==1 || get_display_pos(pp->p_config)==4 || get_display_pos(pp->p_config)==6)
 						{
 							gtk_widget_hide (pp->eventbox30[1]);
 							gtk_widget_hide (pp->eventbox31[1]);
@@ -4980,26 +4983,26 @@ void draw3_data1(DRAW_UI_P p)
 					}
 					else 
 					{
-						if(CFG(display_pos) == A_SCAN || CFG(display_pos) == S_SCAN)
+						if(get_display_pos(pp->p_config) == A_SCAN || get_display_pos(pp->p_config) == S_SCAN)
 						{
-							draw3_popdown (menu_content[GROUP_POS+CFG_DISPLAY_POS(display_group)], 1, 0);
+							draw3_popdown (menu_content[GROUP_POS+get_display_group(pp->p_config)], 1, 0);
 						}
-						else if ((CFG(display_pos) == C_SCAN) || 
-								(CFG(display_pos) == A_B_C_SCAN) ||
-								(CFG(display_pos) == A_C_CC_SCAN))
+						else if ((get_display_pos(pp->p_config) == C_SCAN) || 
+								(get_display_pos(pp->p_config) == A_B_C_SCAN) ||
+								(get_display_pos(pp->p_config) == A_C_CC_SCAN))
 						{
 							draw3_popdown (menu_content[C_SCAN1+CFG(c_scan1)], 1, 0);
 							str = g_strdup_printf ("%s", con2_p[4][0][6]);	
 							gtk_label_set_text (GTK_LABEL (pp->label3[1]), str);
 						}
-						else if(CFG(display_pos)==8)
+						else if(get_display_pos(pp->p_config)==8)
 							/*Display 为 A-S-[C]*/
 						{
 							draw3_popdown (menu_content[C_SCAN1+CFG(c_scan11)], 1, 0);
 							str = g_strdup_printf ("%s", con2_p[4][0][6]);	
 							gtk_label_set_text (GTK_LABEL (pp->label3[1]), str);
 						}
-						else if(CFG(display_pos)==10)
+						else if(get_display_pos(pp->p_config)==10)
 							/*Display 为 Strip Chart-[A]*/
 						{
 							draw3_popdown (menu_content[C_SCAN1+CFG(data1)], 1, 0);
@@ -5007,7 +5010,7 @@ void draw3_data1(DRAW_UI_P p)
 							gtk_label_set_text (GTK_LABEL (pp->label3[1]), str);
 
 						}
-						else if(CFG(display_pos)==1 || CFG(display_pos)==4 || CFG(display_pos)==6)
+						else if(get_display_pos(pp->p_config)==1 || get_display_pos(pp->p_config)==4 || get_display_pos(pp->p_config)==6)
 						{
 							gtk_widget_hide (pp->eventbox30[1]);
 							gtk_widget_hide (pp->eventbox31[1]);
@@ -5435,7 +5438,7 @@ void draw3_data1(DRAW_UI_P p)
 						{
 							/* 计算lower为妙 */
 							cur_value = LAW_VAL(Angle_max) / 100.0;
-							temp_beam = LAW_MAX_QTY - get_beam_qty() + TMP(beam_qty[CFG(groupId)]);
+							temp_beam = LAW_MAX_QTY - get_beam_qty() + TMP(beam_qty[get_current_group(pp->p_config)]);
 							TMP(beam_skew_num)	= (LAW_VAL(Angle_beam_skew_max) - 
 									LAW_VAL(Angle_beam_skew_min)) /
 								LAW_VAL(Angle_beam_skew_step) + 1;
@@ -6362,7 +6365,7 @@ void draw3_data2(DRAW_UI_P p)
 								/* 最大不能超过最大Angle_max */
 								cur_value = LAW_VAL (Angle_min) / 100.0;
 								/* 计算lower为妙 */
-								temp_beam = LAW_MAX_QTY - get_beam_qty() + TMP(beam_qty[CFG(groupId)]);
+								temp_beam = LAW_MAX_QTY - get_beam_qty() + TMP(beam_qty[get_current_group(pp->p_config)]);
 								TMP(beam_skew_num)	= (LAW_VAL(Angle_beam_skew_max) - 
 										LAW_VAL(Angle_beam_skew_min)) /
 									LAW_VAL(Angle_beam_skew_step) + 1;
@@ -7880,7 +7883,7 @@ void draw3_data2(DRAW_UI_P p)
 					pp->x_pos = 580, pp->y_pos = 330;
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))/*选中402这个位置*/
 					{
-						if(CFG(display_pos)==7)
+						if(get_display_pos(pp->p_config)==7)
 							/*Display 为 A-C-[C]*/
 						{
 							draw3_pop_tt (data_402, NULL, 
@@ -7891,17 +7894,17 @@ void draw3_data2(DRAW_UI_P p)
 							gtk_widget_queue_draw(pp->vboxtable);
 
 						}
-						else if(CFG(display_pos)==8)
+						else if(get_display_pos(pp->p_config)==8)
 							/*Display 为 A-S-[C]*/
 						{
 							draw3_pop_tt (data_401, NULL, 
-									menu_content[GROUP_POS + CFG_DISPLAY_POS(display_group)],
-									menu_content + GROUP_POS, 2, 2, CFG_DISPLAY_POS(display_group), 0);
+									menu_content[GROUP_POS + get_display_group(pp->p_config)],
+									menu_content + GROUP_POS, 2, 2, get_display_group(pp->p_config), 0);
 							str = g_strdup_printf ("%s", con2_p[4][0][1]);	
 							gtk_label_set_text (GTK_LABEL (pp->label3[2]), str);
 
 						}
-						else if(CFG(display_pos)==10)
+						else if(get_display_pos(pp->p_config)==10)
 							/*Display 为 Strip Chart-[A]*/
 						{
 							draw3_pop_tt (data_4021, NULL, 
@@ -7920,21 +7923,21 @@ void draw3_data2(DRAW_UI_P p)
 					}
 					else 
 					{
-						if(CFG(display_pos)==7)/* Display 为 A-C-[C] */
+						if(get_display_pos(pp->p_config)==7)/* Display 为 A-C-[C] */
 						{
 							draw3_popdown (menu_content[C_SCAN1+CFG(c_scan2)], 2, 0);
 							str = g_strdup_printf ("%s", con2_p[4][0][7]);	
 							gtk_label_set_text (GTK_LABEL (pp->label3[2]), str);
 						}
 
-						else if(CFG(display_pos)==8)/* Display 为 A-S-[C] */
+						else if(get_display_pos(pp->p_config)==8)/* Display 为 A-S-[C] */
 						{
-							draw3_popdown (menu_content[GROUP_POS+CFG_DISPLAY_POS(display_group)], 2, 0);
+							draw3_popdown (menu_content[GROUP_POS+get_display_group(pp->p_config)], 2, 0);
 							str = g_strdup_printf ("%s", con2_p[4][0][1]);	
 							gtk_label_set_text (GTK_LABEL (pp->label3[2]), str);
 						}
 
-						else if(CFG(display_pos)==10)/* Display 为 Strip Chart-[A] */
+						else if(get_display_pos(pp->p_config)==10)/* Display 为 Strip Chart-[A] */
 						{
 							draw3_popdown (menu_content[DATA2+CFG(data2)], 2, 0);
 							str = g_strdup_printf ("%s", con2_p[4][0][9]);	
@@ -8459,7 +8462,7 @@ void draw3_data2(DRAW_UI_P p)
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 						{
 							cur_value = LAW_VAL (Angle_step) / 100.0;
-							temp_beam = LAW_MAX_QTY - get_beam_qty() + TMP(beam_qty[CFG(groupId)]);
+							temp_beam = LAW_MAX_QTY - get_beam_qty() + TMP(beam_qty[get_current_group(pp->p_config)]);
 							TMP(beam_skew_num)	= (LAW_VAL(Angle_beam_skew_max) - 
 									LAW_VAL(Angle_beam_skew_min)) /
 								LAW_VAL(Angle_beam_skew_step) + 1;
@@ -8880,6 +8883,7 @@ void draw3_data3(DRAW_UI_P p)
 
 	gfloat cur_value=0.0, lower = 0, upper = 0, step = 0;
 	guint digit = 0, pos, unit = 0, content_pos, menu_status = 0, temp_beam, temp_beam1;
+	guint grp = get_current_group(pp->p_config);
 
 
 	switch (pp->pos) 
@@ -9140,7 +9144,7 @@ void draw3_data3(DRAW_UI_P p)
 							{
 								/* 计算lower为妙 */
 								cur_value = LAW_VAL(Angle_max) / 100.0;
-								temp_beam = LAW_MAX_QTY - get_beam_qty() + TMP(beam_qty[CFG(groupId)]);
+								temp_beam = LAW_MAX_QTY - get_beam_qty() + TMP(beam_qty[get_current_group(pp->p_config)]);
 								TMP(beam_skew_num)	= (LAW_VAL(Angle_beam_skew_max) - 
 										LAW_VAL(Angle_beam_skew_min)) /
 									LAW_VAL(Angle_beam_skew_step) + 1;
@@ -9764,21 +9768,14 @@ void draw3_data3(DRAW_UI_P p)
 					pp->x_pos = 586, pp->y_pos = 373 - YOFFSET;
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 					{
-						if (GROUP_VAL(group_mode) == PA_SCAN)
-							draw3_pop_tt (data_113, NULL, 
-									menu_content[VOLTAGE + 3 + CFG(voltage_pa)],
-									menu_content + VOLTAGE + 6, 2, 3, CFG(voltage_pa), 0);
-						else if (GROUP_VAL (group_mode) == UT_SCAN)
-							draw3_pop_tt (data_113, NULL, 
-									menu_content[VOLTAGE + 3 + CFG(voltage_ut)],
-									menu_content + VOLTAGE, 3, 3, CFG(voltage_ut), 0);
+						draw3_pop_tt (data_113, NULL, 
+								menu_content[VOLTAGE + 3 + get_voltage(pp->p_config, grp)],
+								menu_content + VOLTAGE, 3, 3, get_voltage (pp->p_config, grp), 
+								((pp->p_config->group[grp].group_mode) == PA_SCAN) ? 4 : 0);
 					}
 					else 
 					{
-						if (GROUP_VAL(group_mode) == PA_SCAN)
-							draw3_popdown (menu_content[VOLTAGE + 3 + CFG(voltage_pa)], 3, 0);
-						else if (GROUP_VAL (group_mode) == UT_SCAN)
-							draw3_popdown (menu_content[VOLTAGE + 3 + CFG(voltage_ut)], 3, 0);
+						draw3_popdown (menu_content[VOLTAGE + 3 + get_voltage (pp->p_config, grp)], 3, 0);
 					}
 					break;
 				case 2: /* Video Filter 视频滤波 P123 TAN1 */
@@ -10602,17 +10599,17 @@ void draw3_data3(DRAW_UI_P p)
 					pp->x_pos = 550, pp->y_pos = 410;
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))/*选中403这个位置*/
 					{
-						if(CFG(display_pos)==7)
+						if(get_display_pos(pp->p_config)==7)
 							/*Display 为 A-C-[C]*/
 						{
 							draw3_pop_tt (data_401, NULL, 
-									menu_content[GROUP_POS+CFG_DISPLAY_POS(display_group)],
-									menu_content + GROUP_POS, 2, 3, CFG_DISPLAY_POS(display_group), 0);
+									menu_content[GROUP_POS+get_display_group(pp->p_config)],
+									menu_content + GROUP_POS, 2, 3, get_display_group(pp->p_config), 0);
 							str = g_strdup_printf ("%s", con2_p[4][0][1]);	
 							gtk_label_set_text (GTK_LABEL (pp->label3[3]), str);
 
 						}
-						else if(CFG(display_pos)==10)
+						else if(get_display_pos(pp->p_config)==10)
 							/*Display 为 Strip Chart-[A]*/
 						{
 							draw3_pop_tt (data_403, NULL, 
@@ -10631,13 +10628,13 @@ void draw3_data3(DRAW_UI_P p)
 					}
 					else 
 					{
-						if(CFG(display_pos)==7)/* Display 为 A-C-[C] */
+						if(get_display_pos(pp->p_config)==7)/* Display 为 A-C-[C] */
 						{
-							draw3_popdown (menu_content[GROUP_POS+CFG_DISPLAY_POS(display_group)], 3, 0);
+							draw3_popdown (menu_content[GROUP_POS+get_display_group(pp->p_config)], 3, 0);
 							str = g_strdup_printf ("%s", con2_p[4][0][1]);	
 							gtk_label_set_text (GTK_LABEL (pp->label3[3]), str);
 						}
-						else if(CFG(display_pos)==10)
+						else if(get_display_pos(pp->p_config)==10)
 							/*Display 为 Strip Chart-[A]*/
 						{
 							draw3_popdown (menu_content[DIS_MODE+CFG(dis_mode)], 3, 0);
@@ -10733,8 +10730,8 @@ void draw3_data3(DRAW_UI_P p)
 						case 0:	/* Ascan 时候的source */
 							if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 							{
-								if ((CFG(display_pos) == B_SCAN) ||	(CFG(display_pos) == A_B_SCAN)||
-										(CFG(display_pos) == A_B_C_SCAN)|| (CFG(display_pos) == A_B_S_SCAN))
+								if ((get_display_pos(pp->p_config) == B_SCAN) ||	(get_display_pos(pp->p_config) == A_B_SCAN)||
+										(get_display_pos(pp->p_config) == A_B_C_SCAN)|| (get_display_pos(pp->p_config) == A_B_S_SCAN))
 									menu_status = 0x0e;
 								draw3_pop_tt (data_443, NULL, 
 										menu_content[PROP_SOURCE + GROUP_VAL(ascan_source)],
@@ -10990,7 +10987,7 @@ void draw3_data3(DRAW_UI_P p)
 							/* 最大不能超过最大Angle_beam_skew_max */
 							cur_value = LAW_VAL (Angle_beam_skew_min) / 100.0;
 							/* 计算lower为妙 */
-							temp_beam = LAW_MAX_QTY - get_beam_qty() + TMP(beam_qty[CFG(groupId)]);
+							temp_beam = LAW_MAX_QTY - get_beam_qty() + TMP(beam_qty[get_current_group(pp->p_config)]);
 							TMP(angle_num)	= (LAW_VAL(Angle_max) - LAW_VAL(Angle_min)) /
 								LAW_VAL(Angle_step) + 1;
 							temp_beam1 = temp_beam / TMP(angle_num);
@@ -11748,7 +11745,7 @@ void draw3_data4(DRAW_UI_P p)
 							if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
 							{
 								cur_value = LAW_VAL (Angle_step) / 100.0;
-								temp_beam = LAW_MAX_QTY - get_beam_qty() + TMP(beam_qty[CFG(groupId)]);
+								temp_beam = LAW_MAX_QTY - get_beam_qty() + TMP(beam_qty[get_current_group(pp->p_config)]);
 								TMP(beam_skew_num)	= (LAW_VAL(Angle_beam_skew_max) - 
 										LAW_VAL(Angle_beam_skew_min)) /
 									LAW_VAL(Angle_beam_skew_step) + 1;
@@ -12758,7 +12755,7 @@ void draw3_data4(DRAW_UI_P p)
 				case 0:/* p404 */
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))/*选中404这个位置*/
 					{
-						if(CFG(display_pos)==10)
+						if(get_display_pos(pp->p_config)==10)
 							/*Display 为 Strip Chart-[A]*/
 						{
 							/* 当前步进 */
@@ -12789,7 +12786,7 @@ void draw3_data4(DRAW_UI_P p)
 					}
 					else 
 					{
-						if(CFG(display_pos)==10)
+						if(get_display_pos(pp->p_config)==10)
 							/*Display 为 Strip Chart-[A]*/
 						{
 							cur_value = CFG(dis_range)/100.0;
@@ -13037,7 +13034,7 @@ void draw3_data4(DRAW_UI_P p)
 							/* 最大不能超过最大Angle_beam_skew_max */
 							cur_value = LAW_VAL (Angle_beam_skew_max) / 100.0;
 							/* 计算lower为妙 */
-							temp_beam = LAW_MAX_QTY - get_beam_qty() + TMP(beam_qty[CFG(groupId)]);
+							temp_beam = LAW_MAX_QTY - get_beam_qty() + TMP(beam_qty[get_current_group(pp->p_config)]);
 							TMP(angle_num)	= (LAW_VAL(Angle_max) - LAW_VAL(Angle_min)) /
 								LAW_VAL(Angle_step) + 1;
 							temp_beam = temp_beam / TMP(angle_num);
@@ -13908,7 +13905,7 @@ void draw3_data5(DRAW_UI_P p)
 					}
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 5))
 					{
-						cur_value = CFG(reject);
+						cur_value = get_reject(pp->p_config);
 						lower = 0.0;
 						upper = 100.0;
 						step = tmpf;
@@ -13920,7 +13917,7 @@ void draw3_data5(DRAW_UI_P p)
 					}
 					else 
 					{
-						cur_value = CFG(reject);
+						cur_value = get_reject(pp->p_config);
 						digit = 0;
 						pos = 5;
 						unit = UNIT_BFH;
@@ -14349,73 +14346,7 @@ void draw3_data5(DRAW_UI_P p)
 			switch (pp->pos1[4])
 			{
 				case 0:		/*  */
-# if 0
-					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 5))/*选中p405这个位置*/
-					{
-						if(CFG(display)==10)
-							/*Display 为 Strip Chart-[A]*/
-						{
-							/* 当前步进 */
-							switch (TMP(avg_scan_speed_reg))
-							{
-								case 0:	tmpf = 0.1; break;
-								case 1:	tmpf = 1.0; break;
-								case 2:	tmpf = 10.0; break;
-								case 3:	tmpf = 100.0; break;
-								default:break;
-							}
-
-							if(UNIT_MM == CFG(unit))
-							{
-								cur_value = GROUP_VAL(prf)/10.0;//CFG(avg_scan_speed)/100.0;
-								lower = 0.01;
-								upper = 100.0;	/* 与prf一样 */
-								step = tmpf;
-								digit = 2;
-								pos = 5;
-								unit = UNIT_MM_S;
-							}
-							else
-							{
-								cur_value =  GROUP_VAL(prf)/10.0*0.03937;
-								lower = 0.01;
-								upper = 100.0*0.03937;	/* 与prf一样 */
-								step = tmpf;
-								digit = 2;
-								pos = 5;
-								unit = UNIT_INCH_S;
-
-							}
-							draw3_digit_pressed (data_405, units[unit], cur_value , lower, upper, step, digit, p, pos, 12);
-							gtk_widget_set_sensitive (pp->eventbox30[5],FALSE);
-							gtk_widget_set_sensitive (pp->eventbox31[5],FALSE);
-
-						}
-						else 
-						{
-							gtk_widget_hide (pp->eventbox30[5]);
-							gtk_widget_hide (pp->eventbox31[5]);
-						}
-					}
-					else 
-					{
-						if(CFG(display)==10)
-							/*Display 为 Strip Chart-[A]*/
-						{
-							cur_value = CFG(avg_scan_speed)/100.0;
-							digit = 2;
-							pos = 5;
-							unit = UNIT_MM_S;
-							draw3_digit_stop (cur_value, units[unit], digit, pos, 12);
-						}
-						else 
-						{
-							gtk_widget_hide (pp->eventbox30[5]);
-							gtk_widget_hide (pp->eventbox31[5]);
-						}
-					}
-#endif
-					if(CFG(display_pos)==10)
+					if(get_display_pos(pp->p_config)==10)
 						/*Display 为 Strip Chart-[A]*/
 					{
 						if(UNIT_MM == CFG(unit))
@@ -14621,7 +14552,7 @@ void draw3_data5(DRAW_UI_P p)
 							/* 最大不能超过最大Angle_beam_skew_max */
 							cur_value = LAW_VAL (Angle_beam_skew_step) / 100.0;
 							/* 计算lower为妙 */
-							temp_beam = LAW_MAX_QTY - get_beam_qty() + TMP(beam_qty[CFG(groupId)]);
+							temp_beam = LAW_MAX_QTY - get_beam_qty() + TMP(beam_qty[get_current_group(pp->p_config)]);
 							TMP(angle_num)	= (LAW_VAL(Angle_max) - LAW_VAL(Angle_min)) /
 								LAW_VAL(Angle_step) + 1;
 							temp_beam = temp_beam / TMP(angle_num);
@@ -15323,7 +15254,7 @@ gpointer signal_thread1(gpointer arg)
 
 	if (temp1[0] == 0)
 	{
-		for (i = 0 ; i < CFG(groupQty); i++)
+		for (i = 0 ; i < get_group_qty(pp->p_config); i++)
 		{
 			/* 获取数据 */
 			/* 这里需要压缩数据 或者 插值数据 这里只有一个beam 同时最多处理256beam */
@@ -15411,7 +15342,7 @@ static void *thread_func(void *arg)
 /*		g_print ("caoni ma\n");*/
 		if (temp1[0] == 0)
 		{
-			for (i = 0 ; i < CFG(groupQty); i++)
+			for (i = 0 ; i < get_group_qty(pp->p_config); i++)
 			{
 				/* 获取数据 */
 				/* 这里需要压缩数据 或者 插值数据 这里只有一个beam 同时最多处理256beam */
@@ -15573,7 +15504,7 @@ void init_ui(DRAW_UI_P p)
 
 	all_bg_pic_in_mem();
 	/* 初始化语言 language init */
-	change_language (CFG(language), p);
+	change_language (get_language(pp->p_config), p);
 
 	pp->pos_pos		= MENU3_STOP;
 	pp->menu2_qty	= 5;

@@ -15,13 +15,13 @@
 #include "base_const.h"
 #include <gtk/gtk.h>
 
- /* display信息 */
- typedef struct _display_info
- {
+/* display信息 */
+typedef struct _display_info
+{
 	guchar	display_group;		/*  0 All  1 current */
- 
+
 } DISPLAY_INFO, *DISPLAY_INFO_P;
- 
+
 typedef struct _zoom_display_info
 {
 	guchar	zoom_type;
@@ -142,7 +142,6 @@ typedef struct _Wedge
 	guint	Secondary_offset;	/* 微米 */
 	gint	A6[107];
 } WEDGE, *WEDGE_P;
-
 
 struct _Part;
 typedef struct _Part st_PART;
@@ -362,17 +361,16 @@ typedef struct _Group
 /*配置信息 (CONFIG)*/
 typedef	struct _Config 
 {
-	guchar	groupId;			/* 当前group */
-	guchar	groupQty;			/* 共有几个group  0 1 2 3 4 5 6 7 */
+	guchar	groupId;			/* 当前group 0-7 */
+	guchar	groupQty;			/* 共有几个group  1-8 */
 	guchar	voltage_pa;			/* PA UT 的电压 */
 	guchar	voltage_ut;	
 	guchar	language;			/* 语言 */
 	guchar	reject;		        /* 抑制 */
-	guchar	auto_height;		/* 自动增益高度*/
-
 	/*显示*/
-	guchar	display_pos;			/* 显示模式 A B C A+B A+B+C A+S ... */
+	guchar	display_pos;		/* 显示模式 A B C A+B A+B+C A+S ... */
 	guchar	display_group;		/* 显示所有group还是 当前 */
+	guchar	c_scan;				/* c扫描参考 */
 	guchar	c_scan1;			/* c扫描参考1 */
 	guchar	c_scan2;			/* c扫描参考2 */
 	guchar	c_scan11;			/* ASCscan 时候的c扫描参考*/
@@ -380,11 +378,6 @@ typedef	struct _Config
 	guchar	data2;				/*  */
 	guchar	dis_mode;			/* Strip Chart A 时候的模式 */
 	guint	dis_range;			/* Strip Chart A 时候的显示范围 */
-	guint	avg_scan_speed;		/* 这个值只能显示不用加在这里的 delete */
-
-	guint	prf_virtual;
-	guint	prf_compress;
-	guint	prf_compress_actual;
 
 	guchar	alarm_pos;          /* 当前选择 报警信息 0~15 */
 	guchar	output_pos;			/* 0~5 */
@@ -396,11 +389,10 @@ typedef	struct _Config
 
 	GROUP	group[setup_MAX_GROUP_QTY];			/* */
 	MEASURE_DATA	measure_data;
- 	DISPLAY_INFO display[11];
 
 	st_PART	part;				/* 被检测工件	*/
 	/* 所有聚焦法则的信息在这里 */
-	LAW_FOCAL	focal_law_all_info[setup_MAX_GROUP_QTY];
+/*	LAW_FOCAL	focal_law_all_info[setup_MAX_GROUP_QTY];*/
 
 	/*选项*/
 	guchar	unit;			/* 0 mm 1 inch */
@@ -504,23 +496,45 @@ typedef	struct _Config
 } CONFIG, *CONFIG_P;
 
 /* fetch material info of current config 获取当前配置中材料的信息 */
-extern gint	 parse_material_info (CONFIG *p);
-extern void  print_material_info (CONFIG *p);
-extern gchar *get_material_name (CONFIG *p);
-extern guint get_material_lw (CONFIG *p);
-extern guint get_material_sw (CONFIG *p);
+extern gchar	*get_material_name (CONFIG *p);
+extern guint	get_material_lw (CONFIG *p);
+extern guint	get_material_sw (CONFIG *p);
 
 /* part operations 工件的操作 */
-extern guint get_part_geometry (CONFIG *p);
-extern void set_part_geometry (CONFIG *p, gpointer data);
-extern guint get_part_material (CONFIG *p);
-extern void set_part_material (CONFIG *p, gpointer data);
-extern guint get_part_thickness (CONFIG *p);
-extern void set_part_thickness (CONFIG *p, gpointer data);
-extern guint get_part_diameter (CONFIG *p);
-extern void set_part_diameter (CONFIG *p, gpointer data);
+extern guchar	get_part_geometry (CONFIG *p);
+extern void		set_part_geometry (CONFIG *p, gpointer data);
+extern guchar	get_part_material (CONFIG *p);
+extern void		set_part_material (CONFIG *p, gpointer data);
+extern guint	get_part_thickness (CONFIG *p);
+extern void		set_part_thickness (CONFIG *p, gpointer data);
+extern guint	get_part_diameter (CONFIG *p);
+extern void		set_part_diameter (CONFIG *p, gpointer data);
 
-/**/
+/* 配置信息的操作 */
+extern guchar	get_current_group (CONFIG *p);
+extern void		set_current_group (CONFIG *p, guchar data);
+extern guchar	get_group_qty (CONFIG *p);
+extern void		set_group_qty (CONFIG *p, guchar data);
+extern guchar	get_voltage (CONFIG *p, guint group_num);
+extern void		set_voltage (CONFIG *p, guint group_num, guchar data);
+extern guchar	get_language (CONFIG *p);
+extern void		set_language (CONFIG *p, guchar data);
+extern guchar	get_reject (CONFIG *p);
+extern void		set_reject (CONFIG *p, guchar data);
+extern guchar	get_display_pos (CONFIG *p);
+extern void		set_display_pos (CONFIG *p, guchar data);
+extern guchar	get_display_group (CONFIG *p);
+extern void		set_display_group (CONFIG *p, guchar data);
+extern guchar	get_cscan_source (CONFIG *p);
+extern void		set_cscan_source (CONFIG *p, guchar data);
 
+
+/* group操作 */
+extern void		grpcpy (CONFIG *p, guint src, guint dst);
+
+/***
+#define	VAL_GRP_ID	0x0001
+extern gint	*get_cfg_val (CONFIG *p, gint val_type, gint grp);
+***/
 
 #endif

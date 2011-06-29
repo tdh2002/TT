@@ -28,11 +28,43 @@
 #define PLATE_PART	0
 #define OD_PART		1
 #define ID_PART		2
+/* 扫查模式 */
+#define UT_SCAN		0
+#define PA_SCAN		1
+#define	UT1_SCAN	2
+/* 电压 P113 */
+#define VOLTAGE_HIGH	2
+#define VOLTAGE_MID		1
+#define VOLTAGE_LOW		0
 
+/* 显示模式ABSC */
+#define	DISPLAY_ALL_GROUP	0
+#define DISPLAY_CURRENT_GROUP	1
 
+/* 扫描  */
+#define A_SCAN	     0
+#define A_SCAN_R		0x20
+#define B_SCAN	     1
+#define C_SCAN	     2
+#define CC_SCAN		0x22
+#define CCC_SCAN	0x32
+#define S_SCAN	     3			/*  */
+#define S_SCAN_A		0x23	/* truedepath 的角度扫查 */
+#define S_SCAN_L		0x33	/* truedepth 的线扫 */
+#define A_B_SCAN     4
+#define A_B_C_SCAN	 5
+#define A_B_S_SCAN	 6
+#define A_C_CC_SCAN	 7
+#define A_S_CC_SCAN	 8
+#define PA_TOFD	         9
+#define Strip_Chart_AA	 10
 
-
-
+/* c扫描的source选项 */
+#define C_SCAN_A_HEIGHT		0
+#define C_SCAN_B_HEIGHT		1
+#define C_SCAN_THICKNESS	2
+#define C_SCAN_I_GATE		3
+#define C_SCAN_OFF			4
 
 /* Range of availage voltage (sPulseVoltagePA). 相控发射电压 */
 #define setup_VOLTAGE_MIN_PA   0x100 
