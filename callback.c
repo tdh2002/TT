@@ -477,6 +477,19 @@ void cal_focal_law (guint group)
 	return ;
 }
 
+/* 取整函数 */
+gint rounding(gint src1, gint src2, gint round)
+{
+	if (src1 == src2)
+		return src2;
+	else if (src1 < src2)
+		return (((src2 - src1 + round / 2) / round) * round + src1);
+	else if (src1 > src2)
+		return (src1 - ((src1 - src2 + round / 2) / round) * round);
+	else 
+		return 0;
+}
+
 guint	get_beam_qty()
 {
 	guint i, beam_qty = 0;
@@ -1326,8 +1339,6 @@ void b3_fun2(gpointer p)
 				   {
 					   case 0:data_process(&(pp->p_tmp_config->agate_start_reg), 3); break; /* 202 agate start*/
 					   case 1:
-							  //if (CFG(alarm[CFG(alarm_pos)].conditiona)== 0)
-							  //	CFG(alarm[CFG(alarm_pos)].conditionb) = 0;
 							  /* 弹出一个选择菜单,选择 */                         break; 
 					   case 2:data_process(&(pp->p_tmp_config->count_reg), 1); break; /* 222 output count*/
 					   case 3:
@@ -2936,6 +2947,9 @@ void data_100 (GtkSpinButton *spinbutton, gpointer data) /* 增益Gain P100 */
 {
 	gchar *markup;
 	gint grp = get_current_group(pp->p_config);
+	gint gain = ((gint)(gtk_spin_button_get_value(spinbutton) * 100) + 5) / 10 * 10;
+	gtk_spin_button_set_value (spinbutton, gain / 100.0);
+
 	if (GROUP_VAL(db_ref))
 		GROUP_VAL(gain) = (gushort) (gtk_spin_button_get_value (spinbutton) * 100 + GROUP_VAL(gainr));
 	else
@@ -2987,19 +3001,6 @@ void data_101 (GtkSpinButton *spinbutton, gpointer data) /*Start 扫描延时 P1
 		100000000 / (GROUP_VAL_POS(grp, prf) / 10) - 2048 - TMP(group_spi[grp]).rx_time;
 	send_spi_data (grp);
 	/*发送给硬件*/
-}
-
-/* 取整函数 */
-gint rounding(gint src1, gint src2, gint round)
-{
-	if (src1 == src2)
-		return src2;
-	else if (src1 < src2)
-		return (((src2 - src1 + round / 2) / round) * round + src1);
-	else if (src1 > src2)
-		return (src1 - ((src1 - src2 + round / 2) / round) * round);
-	else 
-		return 0;
 }
 
 void data_102 (GtkSpinButton *spinbutton, gpointer data) /*Range 范围 P102 */
@@ -3633,52 +3634,46 @@ void data_2041 (GtkMenuItem *menuitem, gpointer data) /* 闸门RF 选择 射频�
 
 void data_210 (GtkMenuItem *menuitem, gpointer data) /* Alarm  P210 */
 {
-	CFG(alarm_pos) = (guchar) (GPOINTER_TO_UINT (data));
+	set_alarm_pos (pp->p_config, (guchar) (GPOINTER_TO_UINT (data)));
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
-	send_dsp_data (ALARM_POS_DSP, CFG(alarm_pos));
 	/* 发送给硬件 */
 }
 
 void data_211 (GtkMenuItem *menuitem, gpointer data) /* Group A P211 */
 {
-	CFG(alarm[CFG(alarm_pos)].groupa) = (guchar) (GPOINTER_TO_UINT (data));
+	set_alarm_groupa (pp->p_config,	(guchar) (GPOINTER_TO_UINT (data)));
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
-	send_dsp_data (GROUPA_DSP, CFG(alarm[CFG(alarm_pos)].groupa));
 	/* 发送给硬件 */
 }
 void data_212 (GtkMenuItem *menuitem, gpointer data) /* Condition A P212 */
 {
-	CFG(alarm[CFG(alarm_pos)].conditiona) = (guchar) (GPOINTER_TO_UINT (data));
+	set_alarm_conditiona (pp->p_config,	(guchar) (GPOINTER_TO_UINT (data)));
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
-	send_dsp_data (CONDITIONA_DSP, CFG(alarm[CFG(alarm_pos)].conditiona));
 	/* 发送给硬件 */
 }
 
 void data_213 (GtkMenuItem *menuitem, gpointer data) /* operator P213 */
 {
-	CFG(alarm[CFG(alarm_pos)].operat) = (guchar) (GPOINTER_TO_UINT (data));
+	set_alarm_operator (pp->p_config, (guchar) (GPOINTER_TO_UINT (data)));
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
-	send_dsp_data (OPERAT_DSP, CFG(alarm[CFG(alarm_pos)].operat));
 }
 
 void data_214 (GtkMenuItem *menuitem, gpointer data) /* Group B P214 */
 {
-	CFG(alarm[CFG(alarm_pos)].groupb) = (guchar) (GPOINTER_TO_UINT (data));
+	set_alarm_groupb (pp->p_config,	(guchar) (GPOINTER_TO_UINT (data)));
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
-	send_dsp_data (GROUPB_DSP, CFG(alarm[CFG(alarm_pos)].groupb));
 }
 
 void data_215 (GtkMenuItem *menuitem, gpointer data) /* condition B P215 */
 {
-	CFG(alarm[CFG(alarm_pos)].conditionb) = (guchar) (GPOINTER_TO_UINT (data));
+	set_alarm_conditionb (pp->p_config,	(guchar) (GPOINTER_TO_UINT (data)));
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
-	send_dsp_data (CONDITIONB_DSP, CFG(alarm[CFG(alarm_pos)].conditionb));
 }
 
 void data_220 (GtkMenuItem *menuitem, gpointer data) /* Output P220 */
@@ -4183,9 +4178,9 @@ void data_401 (GtkMenuItem *menuitem, gpointer data) /* Display -> Selection Asc
 	draw_menu3(0, NULL);
 }
 
-void data_4011 (GtkMenuItem *menuitem, gpointer data) /* Display -> Selection -> C-Scan1 p401 */
+void data_4011 (GtkMenuItem *menuitem, gpointer data) /* Display -> Selection -> C-Scan1 地一个Cscan p401 */
 {
-	CFG(c_scan1) = (guchar) (GPOINTER_TO_UINT (data));
+	set_cscan_source (pp->p_config, (guchar) (GPOINTER_TO_UINT (data)), 0);
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
 	draw_area_all ();
@@ -4194,40 +4189,46 @@ void data_4011 (GtkMenuItem *menuitem, gpointer data) /* Display -> Selection ->
 
 void data_4012 (GtkMenuItem *menuitem, gpointer data) /* ASC显示模式后时候Cscan的source P401 */
 {
-	CFG(c_scan11) = (guchar) (GPOINTER_TO_UINT (data));
+	set_cscan_source (pp->p_config, (guchar) (GPOINTER_TO_UINT (data)), 0);
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
+	draw_area_all ();
 }
 
 void data_4013 (GtkMenuItem *menuitem, gpointer data) /* Display -> Selection -> Data1 p401 */
 {
-	CFG(data1) = (guchar) (GPOINTER_TO_UINT (data));
+	set_stripscan_data1 (pp->p_config, (guchar) (GPOINTER_TO_UINT (data)));
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
 }
 
 void data_402 (GtkMenuItem *menuitem, gpointer data) /* Display -> Selection -> C-Scan2 p402 */
 {
-	CFG(c_scan2) = (guchar) (GPOINTER_TO_UINT (data));
+	set_cscan_source (pp->p_config, (guchar) (GPOINTER_TO_UINT (data)), 1);
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
+	draw_area_all ();
 }
 void data_4021 (GtkMenuItem *menuitem, gpointer data) /* Display -> Selection -> C-Scan2 p402 */
 {
-	CFG(data2) = (guchar) (GPOINTER_TO_UINT (data));
+	set_stripscan_data2 (pp->p_config, (guchar) (GPOINTER_TO_UINT (data)));
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
 }
 void data_403 (GtkMenuItem *menuitem, gpointer data) /* Display -> Selection -> Mode p403 */
 {
-	CFG(dis_mode) = (guchar) (GPOINTER_TO_UINT (data));
+	set_stripscan_mode (pp->p_config, (guchar) (GPOINTER_TO_UINT (data)));
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
 }
+
 void data_404 (GtkSpinButton *spinbutton, gpointer data) /*Display Range P404 */
 {
-	CFG(dis_range) =  (guint) (gtk_spin_button_get_value (spinbutton)*100.0);
+	set_stripscan_disrange (pp->p_config, (guint) (gtk_spin_button_get_value (spinbutton)*100.0));
+	pp->pos_pos = MENU3_STOP;
+	draw_menu3(0, NULL);
 }
+
 void data_405 (GtkSpinButton *spinbutton, gpointer data) /*Avg.Scan Speed P405 */
 {
 }

@@ -599,7 +599,7 @@ typedef struct __dir_path_label
 #define BEAM_INFO(a,b)  (TMP(focal_law_all_beam[a].b))         /* a表示第几个波束， b表示当前波束下的某一个特性的值 */
 
 #define GROUP_GATE_POS(a)   GROUP_VAL(gate[GROUP_VAL(gate_pos)].a)
-#define CFG_ALARM_POS(a)  CFG(alarm[CFG(alarm_pos)].a)
+
 #define CFG_OUTPUT_POS(a) CFG(output[CFG(output_pos)].a)
 #define CFG_ANALOG_POS(a) CFG(analog[CFG(output_pos - 3)].a)
 #define GROUP_CURSORS_POS(a) GROUP_VAL(cursors_info[GROUP_VAL(selection)-5].a)

@@ -66,6 +66,43 @@
 #define C_SCAN_I_GATE		3
 #define C_SCAN_OFF			4
 
+/* strip chart data 选项 */
+#define STRIP_SCAN_A_HEIGHT		0
+#define STRIP_SCAN_B_HEIGHT		1
+#define STRIP_SCAN_THICKNESS	2
+#define STRIP_SCAN_OFF			3
+
+/* strip chart mode 选项 */
+#define STRIP_SCAN_ALL_ASCAN	0
+#define STRIP_SCAN_CUR_SCAN		1
+#define STRIP_SCAN_ALL			2
+#define STRIP_SCAN_CUR			3
+
+/* 报警条件 */
+#define ALARM_NONE		0
+#define ALARM_GATEA		1
+#define ALARM_GATEB		2
+#define ALARM_GATEI		3
+#define ALARM_NOT_GATEA	4
+#define ALARM_NOT_GATEB	5
+#define ALARM_NOT_GATEI	6
+#define ALARM_MAX_THICKNESS	7
+#define ALARM_MIN_THICKNESS	8
+
+/* 操作AND OR */
+#define OPERATOR_AND	0
+#define OPERATOR_OR		1
+
+#define GRP_1	0
+#define GRP_2	1
+#define GRP_3	2
+#define GRP_4	3
+#define GRP_5	4
+#define GRP_6	5
+#define GRP_7	6
+#define GRP_8	7
+
+
 /* Range of availage voltage (sPulseVoltagePA). 相控发射电压 */
 #define setup_VOLTAGE_MIN_PA   0x100 
 #define	setup_VOLTAGE_MED_PA   0x101 

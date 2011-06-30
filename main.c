@@ -68,12 +68,14 @@ static void set_config (guint groupid)
 	GROUP_VAL(gate[GROUP_VAL(gate_pos)].width) = 10000;  
 	GROUP_VAL(gate[GROUP_VAL(gate_pos)].parameters) = 0;
 	GROUP_VAL(gate[GROUP_VAL(gate_pos)].synchro) = 0;  
-	CFG(alarm_pos)	= 0;                             /* alarm的值，1～16 */
-	CFG(alarm[CFG(alarm_pos)].groupa) = 0;           /* alarm中Group A 的值，1～4 */
-	CFG(alarm[CFG(alarm_pos)].conditiona) = 0;       /* alarm中Condition A 的值，0是 NONE */
-	CFG(alarm[CFG(alarm_pos)].operat) = 0;		 /* alarm中Operator 的值，AND OR */
-	CFG(alarm[CFG(alarm_pos)].groupb) = 0;		 /* alarm中Group B 的值，1～4 */
-	CFG(alarm[CFG(alarm_pos)].conditionb) = 0;	 /* alarm中Condition B 的值，0是 NONE */
+
+	set_alarm_pos (pp->p_config, 0);
+	set_alarm_groupa (pp->p_config, groupid);
+	set_alarm_conditiona (pp->p_config, ALARM_NONE);
+	set_alarm_operator (pp->p_config, OPERATOR_AND);
+	set_alarm_groupb (pp->p_config, groupid);
+	set_alarm_conditionb (pp->p_config, ALARM_NONE);
+
 	CFG(output_pos) = 0;				 /* output 的值，1～5 */
 	CFG(output[CFG(output_pos)].alarm1) = 0;
 	CFG(output[CFG(output_pos)].alarm1_status) = 0;
@@ -109,21 +111,27 @@ static void set_config (guint groupid)
 	CFG(min_thickness)=50;
 	CFG(max_thickness)=99900;
 	CFG(echo_qty)=1;
+	set_display_pos (pp->p_config, C_SCAN);
+	set_cscan_source (pp->p_config, C_SCAN_A_HEIGHT, 0);
+
 	set_display_pos (pp->p_config, S_SCAN);
  	set_display_group(pp->p_config, DISPLAY_CURRENT_GROUP); /*0是All*/
 	set_display_pos (pp->p_config, A_S_CC_SCAN);
  	set_display_group(pp->p_config, DISPLAY_CURRENT_GROUP); /*0是All*/
+	set_cscan_source (pp->p_config, C_SCAN_OFF, 0);
+
 	set_display_pos (pp->p_config, A_C_CC_SCAN);
  	set_display_group(pp->p_config, DISPLAY_CURRENT_GROUP); /*0是All*/
+	set_cscan_source (pp->p_config, C_SCAN_A_HEIGHT, 0);
+	set_cscan_source (pp->p_config, C_SCAN_OFF, 1);
+
 	set_display_pos (pp->p_config, A_SCAN);
  	set_display_group(pp->p_config, DISPLAY_CURRENT_GROUP); /*0是All*/
-	CFG(c_scan1)=0;   /*0是A%*/
-	CFG(c_scan2)=0;   /*0是A%*/
-	CFG(c_scan11)	=	C_SCAN_OFF;
-	CFG(data1)=0;     /*0是A%*/
-	CFG(data2)=0;     /*0是A%*/
-	CFG(dis_mode)=0;  /* 0是 All & A-Scan */
-	CFG(dis_range)=100.0;
+
+	set_stripscan_data1 (pp->p_config, STRIP_SCAN_A_HEIGHT);
+	set_stripscan_data2 (pp->p_config, STRIP_SCAN_A_HEIGHT);
+	set_stripscan_mode (pp->p_config, STRIP_SCAN_ALL_ASCAN);
+	set_stripscan_disrange (pp->p_config, 100);
 	GROUP_VAL(ut_unit)=0;  /* 0 是 Sound Path */
 	CFG(grid)=5;     /*5是 Off*/
 	CFG(sizing_curves)=0;

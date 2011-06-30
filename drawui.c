@@ -1123,7 +1123,7 @@ if(!(prule->mask & 0x04))
 				color_b = ((TMP(color_amp[i * 256 / h]) & 0x1f)) /  32.0;
 				break;
 			case	C_SCAN:
-				switch (CFG(c_scan1))
+				switch (get_cscan_source(pp->p_config, 0))
 				{
 					case C_SCAN_A_HEIGHT:
 					case C_SCAN_B_HEIGHT:
@@ -1141,7 +1141,7 @@ if(!(prule->mask & 0x04))
 				}
 				break;
 			case	CC_SCAN:
-				switch (CFG(c_scan2))
+				switch (get_cscan_source(pp->p_config, 1))
 				{
 					case C_SCAN_A_HEIGHT:
 					case C_SCAN_B_HEIGHT:
@@ -1159,7 +1159,7 @@ if(!(prule->mask & 0x04))
 				}
 				break;
 			case	CCC_SCAN:
-				switch (CFG(c_scan11))
+				switch (get_cscan_source(pp->p_config, 0))
 				{
 					case C_SCAN_A_HEIGHT:
 					case C_SCAN_B_HEIGHT:
@@ -2169,7 +2169,7 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 			{
 			}
 
-			if((CFG(c_scan1)==0) || (CFG(c_scan1)==1))	/* hrule2 */
+			if((get_cscan_source(pp->p_config, 0)==0) || (get_cscan_source(pp->p_config, 0)==1))	/* hrule2 */
 			{
 				p->hmin2 = 0;
 				p->hmax2 = 100;
@@ -2517,7 +2517,7 @@ void draw_area_all()
 				break;
 			case A_C_CC_SCAN:
 				gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
-				if (CFG(c_scan2) == C_SCAN_OFF)
+				if (get_cscan_source(pp->p_config, 1) == C_SCAN_OFF)
 				{
 					set_drawarea_property (&(pp->draw_area[0]), A_SCAN, 0);
 					draw_area_ (pp->vbox_area[0], &(pp->draw_area[0]), 655, 150);
@@ -2526,7 +2526,7 @@ void draw_area_all()
 					set_scan_config (0, A_SCAN, 605, 605, 115, 0, 0, get_current_group(pp->p_config));
 					set_scan_config (1, C_SCAN, 605, 605, 240, 0, 150, get_current_group(pp->p_config));
 				}
-				else if (CFG(c_scan2) != C_SCAN_OFF)
+				else if (get_cscan_source(pp->p_config, 1) != C_SCAN_OFF)
 				{
 					set_drawarea_property (&(pp->draw_area[0]), A_SCAN, 0);
 					draw_area_ (pp->vbox_area[0], &(pp->draw_area[0]), 655, 125);
@@ -2541,7 +2541,7 @@ void draw_area_all()
 				gtk_widget_show (pp->vbox_area[0]);
 				break;
 			case A_S_CC_SCAN:
-				if (CFG(c_scan11) == C_SCAN_OFF) /* c 扫描不存在的情况 */
+				if (get_cscan_source(pp->p_config, 0) == C_SCAN_OFF) /* c 扫描不存在的情况 */
 				{
 					if ((GROUP_VAL(ut_unit) == UT_UNIT_SOUNDPATH) ||
 							(GROUP_VAL(ut_unit) == UT_UNIT_TIME))
@@ -2704,7 +2704,7 @@ void draw_area_all()
 							set_scan_config (1, pp->draw_area[1].scan_type, 615, 288, 390, 327, 0, 1);
 							break;
 						case A_C_CC_SCAN:
-							if (CFG(c_scan2) == C_SCAN_OFF)
+							if (get_cscan_source(pp->p_config, 1) == C_SCAN_OFF)
 							{
 								pp->draw_area[0].group	=	0;
 								pp->draw_area[1].group	=	0;
@@ -2796,7 +2796,7 @@ void draw_area_all()
 								}
 							}
 
-							if (CFG(c_scan11) == C_SCAN_OFF) /* c 扫描不存在的情况 */
+							if (get_cscan_source(pp->p_config, 0) == C_SCAN_OFF) /* c 扫描不存在的情况 */
 							{
 								pp->draw_area[0].group	=	0;
 								pp->draw_area[1].group	=	0;
@@ -2918,7 +2918,7 @@ void draw_area_all()
 							set_scan_config (2, pp->draw_area[2].scan_type, 390, 179, 390, 436, 0, 2);
 							break;
 						case A_C_CC_SCAN:
-							if (CFG(c_scan2) == C_SCAN_OFF)
+							if (get_cscan_source(pp->p_config, 1) == C_SCAN_OFF)
 							{
 								pp->draw_area[0].group	=	0;
 								pp->draw_area[1].group	=	0;
@@ -3046,7 +3046,7 @@ void draw_area_all()
 								}
 							}
 
-							if (CFG(c_scan11) == C_SCAN_OFF) /* c 扫描不存在的情况 */
+							if (get_cscan_source(pp->p_config, 0) == C_SCAN_OFF) /* c 扫描不存在的情况 */
 							{
 								pp->draw_area[0].group	=	0;
 								pp->draw_area[1].group	=	0;
@@ -3360,7 +3360,7 @@ void draw3_data0(DRAW_UI_P p)
 	gfloat cur_value=0.0, lower, upper, step;
 	guint digit, pos, unit, content_pos, menu_status = 0;
 
-	guint menu_on=0, i, temp_beam;
+	guint menu_on=0, i, temp_beam, t;
 
 	int inet_sock;
 	struct ifreq ifr;
@@ -3578,14 +3578,19 @@ void draw3_data0(DRAW_UI_P p)
 					if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 0))
 					{
 						menu_on = 0;
+						t = get_alarm_pos (pp->p_config);
 						for (i = 0 ; i < 16; i++)
-							menu_on |= (CFG(alarm[i].conditiona) !=0 ) << i;
+						{
+							set_alarm_pos (pp->p_config, i);
+							menu_on |= ((get_alarm_conditiona (pp->p_config)) !=0 ) << i;
+						}
+						set_alarm_pos (pp->p_config, (guchar)(t));
 						draw3_pop_tt_on(data_210, NULL,
-								menu_content[ALARM_POS + CFG(alarm_pos)],
-								menu_content + ALARM_POS, 16, 0, CFG(alarm_pos), 0, menu_on, 16);
+								menu_content[ALARM_POS + get_alarm_pos(pp->p_config)],
+								menu_content + ALARM_POS, 16, 0, get_alarm_pos(pp->p_config), 0, menu_on, 16);
 					}
 					else 
-						draw3_popdown(menu_content[ALARM_POS + CFG(alarm_pos)], 0, 0);
+						draw3_popdown(menu_content[ALARM_POS + get_alarm_pos(pp->p_config)], 0, 0);
 					break;
 				case 2:/* Output  P220  */
 					p->x_pos = 581, p->y_pos = 120-YOFFSET;
@@ -4520,10 +4525,10 @@ void draw3_data1(DRAW_UI_P p)
 				case 1:/* Group A 第一组报警 P211 TAN1 */
 					pp->x_pos = 632, pp->y_pos = 201-YOFFSET;
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
-						draw3_pop_tt (data_211, NULL,menu_content[GROUPA + CFG_ALARM_POS(groupa)],
-								menu_content + GROUPA, 4, 1, CFG_ALARM_POS(groupa), 0);
+						draw3_pop_tt (data_211, NULL,menu_content[GROUPA + get_alarm_groupa(pp->p_config)],
+								menu_content + GROUPA, 4, 1, get_alarm_groupa(pp->p_config), 0);
 					else 
-						draw3_popdown (menu_content[GROUPA + CFG_ALARM_POS(groupa)], 1, 0);
+						draw3_popdown (menu_content[GROUPA + get_alarm_groupa(pp->p_config)], 1, 0);
 					break;
 				case 2:/*  Gate -> Output -> Alarm or Group #  P221 */
 					pp->x_pos = 604, pp->y_pos = 202-YOFFSET;
@@ -4952,16 +4957,16 @@ void draw3_data1(DRAW_UI_P p)
 								(get_display_pos(pp->p_config) == A_C_CC_SCAN))
 						{
 							draw3_pop_tt (data_4011, NULL, 
-									menu_content[C_SCAN1 + CFG(c_scan1)],
-									menu_content + C_SCAN1, 4, 1, CFG(c_scan1), 0);
+									menu_content[C_SCAN1 + get_cscan_source(pp->p_config, 0)],
+									menu_content + C_SCAN1, 4, 1, get_cscan_source(pp->p_config, 0), 0);
 							str = g_strdup_printf ("%s", con2_p[4][0][6]);	
 							gtk_label_set_text (GTK_LABEL (pp->label3[1]), str);
 						}
 						else if (get_display_pos(pp->p_config) == A_S_CC_SCAN)
 						{
 							draw3_pop_tt (data_4012, NULL, 
-									menu_content[C_SCAN1+CFG(c_scan11)],
-									menu_content + C_SCAN1, 5, 1, CFG(c_scan11), 0);
+									menu_content[C_SCAN1+get_cscan_source(pp->p_config, 0)],
+									menu_content + C_SCAN1, 5, 1, get_cscan_source(pp->p_config, 0), 0);
 							str = g_strdup_printf ("%s", con2_p[4][0][6]);	
 							gtk_label_set_text (GTK_LABEL (pp->label3[1]), str);
 						}
@@ -4969,8 +4974,8 @@ void draw3_data1(DRAW_UI_P p)
 							/*Display 为 Strip Chart-[A]*/
 						{
 							draw3_pop_tt (data_4013, NULL, 
-									menu_content[C_SCAN1+CFG(data1)],
-									menu_content + C_SCAN1, 3, 1, CFG(data1), 0);
+									menu_content[C_SCAN1+get_stripscan_data1(pp->p_config)],
+									menu_content + C_SCAN1, 3, 1, get_stripscan_data1(pp->p_config), 0);
 							str = g_strdup_printf ("%s", con2_p[4][0][8]);	
 							gtk_label_set_text (GTK_LABEL (pp->label3[1]), str);
 
@@ -4991,21 +4996,21 @@ void draw3_data1(DRAW_UI_P p)
 								(get_display_pos(pp->p_config) == A_B_C_SCAN) ||
 								(get_display_pos(pp->p_config) == A_C_CC_SCAN))
 						{
-							draw3_popdown (menu_content[C_SCAN1+CFG(c_scan1)], 1, 0);
+							draw3_popdown (menu_content[C_SCAN1+get_cscan_source(pp->p_config, 0)], 1, 0);
 							str = g_strdup_printf ("%s", con2_p[4][0][6]);	
 							gtk_label_set_text (GTK_LABEL (pp->label3[1]), str);
 						}
 						else if(get_display_pos(pp->p_config)==8)
 							/*Display 为 A-S-[C]*/
 						{
-							draw3_popdown (menu_content[C_SCAN1+CFG(c_scan11)], 1, 0);
+							draw3_popdown (menu_content[C_SCAN1+get_cscan_source(pp->p_config, 0)], 1, 0);
 							str = g_strdup_printf ("%s", con2_p[4][0][6]);	
 							gtk_label_set_text (GTK_LABEL (pp->label3[1]), str);
 						}
 						else if(get_display_pos(pp->p_config)==10)
 							/*Display 为 Strip Chart-[A]*/
 						{
-							draw3_popdown (menu_content[C_SCAN1+CFG(data1)], 1, 0);
+							draw3_popdown (menu_content[C_SCAN1+get_stripscan_data1(pp->p_config)], 1, 0);
 							str = g_strdup_printf ("%s", con2_p[4][0][8]);	
 							gtk_label_set_text (GTK_LABEL (pp->label3[1]), str);
 
@@ -7259,14 +7264,14 @@ void draw3_data2(DRAW_UI_P p)
 					break;
 				case 1:/* Condition GroupA P212 TAN1 */
 					pp->x_pos = 535, pp->y_pos = 285-YOFFSET;
-					if ((CFG_ALARM_POS(groupa) == CFG_ALARM_POS(groupb)) &&
-							CFG_ALARM_POS(conditionb))
-						menu_status = 1<<(CFG_ALARM_POS(conditionb));
+					if ((get_alarm_groupa(pp->p_config) == get_alarm_groupb(pp->p_config)) &&
+							get_alarm_conditionb(pp->p_config))
+						menu_status = 1<<(get_alarm_conditionb(pp->p_config));
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
-						draw3_pop_tt (data_212, NULL, menu_content[CONDITIONA +	CFG_ALARM_POS(conditiona)],
-								menu_content + CONDITIONA, 9, 2, CFG_ALARM_POS(conditiona), menu_status);
+						draw3_pop_tt (data_212, NULL, menu_content[CONDITIONA +	get_alarm_conditiona(pp->p_config)],
+								menu_content + CONDITIONA, 9, 2, get_alarm_conditiona(pp->p_config), menu_status);
 					else 
-						draw3_popdown (menu_content[CONDITIONA + CFG_ALARM_POS(conditiona)], 2, 0);
+						draw3_popdown (menu_content[CONDITIONA + get_alarm_conditiona(pp->p_config)], 2, 0);
 					break;
 				case 2:/* Output->Count or Data P222 */
 					pp->x_pos = 578, pp->y_pos = 300;
@@ -7887,8 +7892,8 @@ void draw3_data2(DRAW_UI_P p)
 							/*Display 为 A-C-[C]*/
 						{
 							draw3_pop_tt (data_402, NULL, 
-									menu_content[C_SCAN1 + CFG(c_scan2)],
-									menu_content + C_SCAN1, 5, 2, CFG(c_scan2), 0);
+									menu_content[C_SCAN1 + get_cscan_source(pp->p_config, 1)],
+									menu_content + C_SCAN1, 5, 2, get_cscan_source(pp->p_config, 1), 0);
 							str = g_strdup_printf ("%s", con2_p[4][0][7]);	
 							gtk_label_set_text (GTK_LABEL (pp->label3[2]), str);
 							gtk_widget_queue_draw(pp->vboxtable);
@@ -7908,8 +7913,8 @@ void draw3_data2(DRAW_UI_P p)
 							/*Display 为 Strip Chart-[A]*/
 						{
 							draw3_pop_tt (data_4021, NULL, 
-									menu_content[DATA2+CFG(data2)],
-									menu_content + DATA2, 4, 2, CFG(data2), 0);
+									menu_content[DATA2+get_stripscan_data2(pp->p_config)],
+									menu_content + DATA2, 4, 2, get_stripscan_data2(pp->p_config), 0);
 							str = g_strdup_printf ("%s", con2_p[4][0][9]);	
 							gtk_label_set_text (GTK_LABEL (pp->label3[2]), str);
 
@@ -7925,7 +7930,7 @@ void draw3_data2(DRAW_UI_P p)
 					{
 						if(get_display_pos(pp->p_config)==7)/* Display 为 A-C-[C] */
 						{
-							draw3_popdown (menu_content[C_SCAN1+CFG(c_scan2)], 2, 0);
+							draw3_popdown (menu_content[C_SCAN1+get_cscan_source(pp->p_config, 1)], 2, 0);
 							str = g_strdup_printf ("%s", con2_p[4][0][7]);	
 							gtk_label_set_text (GTK_LABEL (pp->label3[2]), str);
 						}
@@ -7939,7 +7944,7 @@ void draw3_data2(DRAW_UI_P p)
 
 						else if(get_display_pos(pp->p_config)==10)/* Display 为 Strip Chart-[A] */
 						{
-							draw3_popdown (menu_content[DATA2+CFG(data2)], 2, 0);
+							draw3_popdown (menu_content[DATA2+get_stripscan_data2(pp->p_config)], 2, 0);
 							str = g_strdup_printf ("%s", con2_p[4][0][9]);	
 							gtk_label_set_text (GTK_LABEL (pp->label3[2]), str);
 						}
@@ -9966,10 +9971,10 @@ void draw3_data3(DRAW_UI_P p)
 				case 1:/*Operator  P213*/
 					pp->x_pos = 609, pp->y_pos = 371-YOFFSET;
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
-						draw3_pop_tt (data_213, NULL,menu_content[OPERAT + CFG_ALARM_POS(operat)],
-								menu_content + OPERAT, 2, 3, CFG_ALARM_POS(operat), 0);
+						draw3_pop_tt (data_213, NULL,menu_content[OPERAT + get_alarm_operator(pp->p_config)],
+								menu_content + OPERAT, 2, 3, get_alarm_operator(pp->p_config), 0);
 					else 
-						draw3_popdown (menu_content[OPERAT + CFG_ALARM_POS(operat)], 3, 0);
+						draw3_popdown (menu_content[OPERAT + get_alarm_operator(pp->p_config)], 3, 0);
 					break;
 
 				case 2:/* Sound  p223 */
@@ -10613,8 +10618,8 @@ void draw3_data3(DRAW_UI_P p)
 							/*Display 为 Strip Chart-[A]*/
 						{
 							draw3_pop_tt (data_403, NULL, 
-									menu_content[DIS_MODE+CFG(dis_mode)],
-									menu_content + DIS_MODE, 4, 3, CFG(dis_mode), 0);
+									menu_content[DIS_MODE+get_stripscan_mode(pp->p_config)],
+									menu_content + DIS_MODE, 4, 3, get_stripscan_mode(pp->p_config), 0);
 							str = g_strdup_printf ("%s", con2_p[4][0][10]);	
 							gtk_label_set_text (GTK_LABEL (pp->label3[3]), str);
 
@@ -10637,7 +10642,7 @@ void draw3_data3(DRAW_UI_P p)
 						else if(get_display_pos(pp->p_config)==10)
 							/*Display 为 Strip Chart-[A]*/
 						{
-							draw3_popdown (menu_content[DIS_MODE+CFG(dis_mode)], 3, 0);
+							draw3_popdown (menu_content[DIS_MODE+get_stripscan_mode(pp->p_config)], 3, 0);
 							str = g_strdup_printf ("%s", con2_p[4][0][10]);	
 							gtk_label_set_text (GTK_LABEL (pp->label3[3]), str);
 
@@ -12326,10 +12331,10 @@ void draw3_data4(DRAW_UI_P p)
 				case 1:/*Group B   p214 */
 					pp->x_pos = 632, pp->y_pos = 456-YOFFSET;
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
-						draw3_pop_tt (data_214, NULL,menu_content[GROUPA + CFG_ALARM_POS(groupb)],
-								menu_content + GROUPA, 4, 4, CFG_ALARM_POS(groupb), 0);
+						draw3_pop_tt (data_214, NULL,menu_content[GROUPA + get_alarm_groupb(pp->p_config)],
+								menu_content + GROUPA, 4, 4, get_alarm_groupb(pp->p_config), 0);
 					else 
-						draw3_popdown (menu_content[GROUPA + CFG_ALARM_POS(groupb)], 4, 0);
+						draw3_popdown (menu_content[GROUPA + get_alarm_groupb(pp->p_config)], 4, 0);
 					break;
 
 				case 2:/* Output->delay P224 */
@@ -12767,7 +12772,7 @@ void draw3_data4(DRAW_UI_P p)
 								default:break;
 							}
 
-							cur_value = CFG(dis_range)/100.0;
+							cur_value = get_stripscan_disrange(pp->p_config)/100.0;
 							lower = 0.51;
 							upper = 46.0;
 							step = tmpf;
@@ -12789,7 +12794,7 @@ void draw3_data4(DRAW_UI_P p)
 						if(get_display_pos(pp->p_config)==10)
 							/*Display 为 Strip Chart-[A]*/
 						{
-							cur_value = CFG(dis_range)/100.0;
+							cur_value = get_stripscan_disrange(pp->p_config)/100.0;
 							digit = 2;
 							pos = 4;
 							unit = UNIT_S;
@@ -14040,31 +14045,30 @@ void draw3_data5(DRAW_UI_P p)
 				case 1:/*Condition   p215 */
 					pp->x_pos = 532, pp->y_pos = 395-YOFFSET;
 					/* 当groupa与groupb的值相同时，condition互相制约 */
-					if ( CFG_ALARM_POS(groupa) == CFG_ALARM_POS(groupb) )
+					if ( get_alarm_groupa(pp->p_config) == get_alarm_groupb(pp->p_config) )
 					{
 						/* 当 groupa 的值不为 None 时*/
-						if (CFG(alarm[CFG(alarm_pos)].conditiona))
+						if (get_alarm_conditiona (pp->p_config))
 						{
-							menu_status = 1<<(CFG_ALARM_POS(conditiona));
+							menu_status = 1<<(get_alarm_conditiona(pp->p_config));
 						}
-
 						/* 当groupa与groupb的值相同,且condition a 与 condition b 的值相同时 */
-						if ((CFG_ALARM_POS(conditiona)==CFG_ALARM_POS(conditionb)) &&
-								CFG_ALARM_POS(conditiona))
+						if ((get_alarm_conditiona(pp->p_config)==get_alarm_conditionb(pp->p_config)) &&
+								get_alarm_conditiona(pp->p_config))
 						{
-							menu_status = 1<<(CFG_ALARM_POS(conditiona));
-							CFG_ALARM_POS(conditionb) = 0;  /* conditionb 变为 None */
+							menu_status = 1<<(get_alarm_conditiona(pp->p_config));
+							set_alarm_conditionb(pp->p_config, ALARM_NONE);  /* conditionb 变为 None */
 							gtk_label_set_text (GTK_LABEL (pp->data3[5]), menu_content[CONDITIONA +
-									CFG_ALARM_POS(conditionb)]);
+									get_alarm_conditionb(pp->p_config)]);
 						}
 					}
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 5))
-						draw3_pop_tt (data_215, NULL,menu_content[CONDITIONA + CFG_ALARM_POS(conditionb)],
-								menu_content + CONDITIONA, 9, 5, CFG_ALARM_POS(conditionb), menu_status);
+						draw3_pop_tt (data_215, NULL,menu_content[CONDITIONA + get_alarm_conditionb(pp->p_config)],
+								menu_content + CONDITIONA, 9, 5, get_alarm_conditionb(pp->p_config), menu_status);
 					else 
-						draw3_popdown (menu_content[CONDITIONA + CFG_ALARM_POS(conditionb)], 5, 0);
+						draw3_popdown (menu_content[CONDITIONA + get_alarm_conditionb(pp->p_config)], 5, 0);
 
-					if (CFG_ALARM_POS(conditiona) == 0)/*conditiona为None时，conditionb不可用*/
+					if (get_alarm_conditiona(pp->p_config) == 0)/*conditiona为None时，conditionb不可用*/
 					{
 						gtk_widget_set_sensitive(pp->eventbox30[5],FALSE);
 						gtk_widget_set_sensitive(pp->eventbox31[5],FALSE);

@@ -1091,39 +1091,39 @@ void draw_scan(guchar scan_num, guchar scan_type, guchar group,
 			{
 				draw_c_scan(dot_temp1, TMP(c_scan_width), TMP(c_scan_height), dot_temp,
 						TMP(scan_data[group]) + TMP(a_scan_width) * TMP(beam_num[group]),
-						xoff, yoff, group, 1, CFG(c_scan1));
+						xoff, yoff, group, 1, get_cscan_source(pp->p_config, 0));
 				pp->cscan_mark = 0;	/* mark 的时候把画图区清空 */
 			}
 			else
 				draw_c_scan(dot_temp1, TMP(c_scan_width), TMP(c_scan_height),dot_temp,
 						TMP(scan_data[group]) + TMP(a_scan_width) * TMP(beam_num[group]),
-						xoff, yoff, group, 0, CFG(c_scan1));
+						xoff, yoff, group, 0, get_cscan_source(pp->p_config, 0));
 			break;
 		case CC_SCAN:
 			if (pp->ccscan_mark)
 			{
 				draw_c_scan(dot_temp1, TMP(c_scan_width), TMP(c_scan_height), dot_temp,
 						TMP(scan_data[group]) + TMP(a_scan_width) * TMP(beam_num[group]),
-						xoff, yoff, group, 1, CFG(c_scan1));
+						xoff, yoff, group, 1, get_cscan_source(pp->p_config, 1));
 				pp->ccscan_mark = 0;	/* mark 的时候把画图区清空 */
 			}
 			else
-			draw_c_scan(dot_temp1, TMP(c_scan_width), TMP(c_scan_height),dot_temp,
-					TMP(scan_data[group]) + TMP(a_scan_width) * TMP(beam_num[group]),
-					xoff, yoff, group, 0, CFG(c_scan2));
+				draw_c_scan(dot_temp1, TMP(c_scan_width), TMP(c_scan_height),dot_temp,
+						TMP(scan_data[group]) + TMP(a_scan_width) * TMP(beam_num[group]),
+						xoff, yoff, group, 0, get_cscan_source(pp->p_config, 1));
 			break;
 		case CCC_SCAN:
 			if (pp->cccscan_mark)
 			{
 				draw_c_scan(dot_temp1, TMP(c_scan_width), TMP(c_scan_height), dot_temp,
 						TMP(scan_data[group]) + TMP(a_scan_width) * TMP(beam_num[group]),
-						xoff, yoff, group, 1, CFG(c_scan11));
+						xoff, yoff, group, 1, get_cscan_source(pp->p_config, 0));
 				pp->cccscan_mark = 0;	/* mark 的时候把画图区清空 */
 			}
 			else
-			draw_c_scan(dot_temp1, TMP(c_scan_width), TMP(c_scan_height),dot_temp,
-					TMP(scan_data[group]) + TMP(a_scan_width) * TMP(beam_num[group]),
-					xoff, yoff, group, 0, CFG(c_scan11));
+				draw_c_scan(dot_temp1, TMP(c_scan_width), TMP(c_scan_height),dot_temp,
+						TMP(scan_data[group]) + TMP(a_scan_width) * TMP(beam_num[group]),
+						xoff, yoff, group, 0, get_cscan_source (pp->p_config, 0));
 			break;
 		default:break;
 	}

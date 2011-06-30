@@ -182,13 +182,13 @@ guchar get_display_group (CONFIG *p)		/* 获取显示是全部还是当前 返�
 	switch (get_display_pos(p))
 	{
 		case A_SCAN: 
-			return (p->display_group & 0x01); break;
+			return (p->display_group & 0x01); break;		/**/
 		case S_SCAN:
-			return (p->display_group & 0x02) >> 1; break;
+			return (p->display_group & 0x02) >> 1; break;	/**/
 		case A_C_CC_SCAN:
-			return (p->display_group & 0x04) >> 2; break;
+			return (p->display_group & 0x04) >> 2; break;	/**/
 		case A_S_CC_SCAN:
-			return (p->display_group & 0x08) >> 3; break;
+			return (p->display_group & 0x08) >> 3; break;	/**/
 		case B_SCAN:
 		case C_SCAN:
 		case A_B_SCAN:
@@ -198,6 +198,7 @@ guchar get_display_group (CONFIG *p)		/* 获取显示是全部还是当前 返�
 		case Strip_Chart_AA: return 1;break;
 		default:break;
 	}
+	return 1;
 }
 
 void set_display_group (CONFIG *p, guchar data)	/* 设置显示是当前还是全部 */
@@ -224,7 +225,167 @@ void set_display_group (CONFIG *p, guchar data)	/* 设置显示是当前还是�
 	}
 }
 
+guchar	get_cscan_source (CONFIG *p, guint pos)	/* 获取c scan source */
+{
+	g_assert (pos < 2);
+	switch (get_display_pos(p))
+	{
+		case C_SCAN:
+		case A_B_C_SCAN:
+			return (p->c_scan_pos & 0x03); break;			/* c_scan1 第0~1位 0 1 2 3 */
+		case A_C_CC_SCAN:
+			if (pos == 0)
+				return (p->c_scan_pos & 0x03);				/* c_scan1 第0~1位 0 1 2 3 */
+			else if (pos == 1)
+				return (p->c_scan_pos & 0x1c) >> 2;			/* c_scan2 第2-4位 0 1 2 3 4 */
+			break;
+		case A_S_CC_SCAN:
+			return (p->c_scan_pos & 0xe0) >> 5; break;		/* c_scan3 5-7位  0 1 2 3 4*/
+		case A_SCAN: 
+		case B_SCAN:
+		case S_SCAN:
+		case A_B_SCAN:
+		case A_B_S_SCAN:
+		case PA_TOFD:
+		case Strip_Chart_AA: return 4;break;
+		default:break;
+	}
+	return 4;
+}
 
+void set_cscan_source (CONFIG *p, guchar data, guint pos)	/* 设置c scan source */
+{
+	g_assert (pos < 2);
+	g_assert (data < 5);
+	switch (get_display_pos(p))
+	{
+		case C_SCAN:
+		case A_B_C_SCAN:
+			p->c_scan_pos = (p->c_scan_pos & ~0x03) | data; break;			/* c_scan1 第0~1位 0 1 2 3 */
+		case A_C_CC_SCAN:
+			if (pos == 0)
+				p->c_scan_pos = (p->c_scan_pos & ~0x03) | data;		/* c_scan1 第0~1位 0 1 2 3 */
+			else if (pos == 1)
+				p->c_scan_pos = (p->c_scan_pos & ~0x1c) | (data << 2);		/* c_scan2 第2-4位 0 1 2 3 4 */
+			break;
+		case A_S_CC_SCAN:
+			p->c_scan_pos = (p->c_scan_pos & ~0xe0) | (data << 5); break;	/* c_scan3 5-7位  0 1 2 3 4*/
+		case A_SCAN: 
+		case B_SCAN:
+		case S_SCAN:
+		case A_B_SCAN:
+		case A_B_S_SCAN:
+		case PA_TOFD:
+		case Strip_Chart_AA: return ;break;
+		default:break;
+	}
+}
+
+guchar get_stripscan_data1 (CONFIG *p)
+{
+	return p->data1;
+}
+
+guchar get_stripscan_data2 (CONFIG *p)
+{
+	return p->data2;
+}
+
+guchar get_stripscan_mode (CONFIG *p)
+{
+	return p->dis_mode;
+}
+
+guint get_stripscan_disrange (CONFIG *p)
+{
+	return p->dis_range;
+}
+
+void set_stripscan_data1 (CONFIG *p, guchar data)
+{
+	g_assert (data < 3);
+	p->data1 = data;
+}
+
+void set_stripscan_data2 (CONFIG *p, guchar data)
+{
+	g_assert (data < 4);
+	p->data2 = data;
+}
+
+void set_stripscan_mode (CONFIG *p, guchar data)
+{
+	g_assert (data < 4);
+	p->dis_mode = data;
+}
+
+void set_stripscan_disrange (CONFIG *p, guint data)
+{
+	g_assert (data > 0 );
+	p->dis_range = data;
+}
+
+guchar get_alarm_pos (CONFIG *p)				/* 16中不同的报警信息 */
+{
+	return p->alarm_pos;
+}
+
+void set_alarm_pos (CONFIG *p, guchar data)
+{
+	g_assert (data < 16);
+	p->alarm_pos = data;
+}
+
+/* alarm_info 分布 3 4 1 3 4 groupa conditiona operator groupb conditionb */
+guchar get_alarm_groupa (CONFIG *p)
+{
+	return p->alarm_info[get_alarm_pos(p)] & 0x7;
+}
+
+void set_alarm_groupa (CONFIG *p, guchar data)
+{
+	p->alarm_info[get_alarm_pos(p)] = (p->alarm_info[get_alarm_pos(p)] & ~0x07) | data; 		
+}
+
+guchar get_alarm_conditiona (CONFIG *p)
+{
+	return (p->alarm_info[get_alarm_pos(p)] & 0x78) >> 3;
+}
+
+void set_alarm_conditiona (CONFIG *p, guchar data)
+{
+	p->alarm_info[get_alarm_pos(p)] = (p->alarm_info[get_alarm_pos(p)] & ~0x78) | (data << 3); 		
+}
+
+guchar get_alarm_operator (CONFIG *p)
+{
+	return (p->alarm_info[get_alarm_pos(p)] & 0x80) >> 7;
+}
+
+void set_alarm_operator (CONFIG *p, guchar data)
+{
+	p->alarm_info[get_alarm_pos(p)] = (p->alarm_info[get_alarm_pos(p)] & ~0x80) | (data << 7); 
+}
+
+guchar get_alarm_groupb (CONFIG *p)
+{
+	return (p->alarm_info[get_alarm_pos(p)] & 0x700) >> 8;
+}
+
+void set_alarm_groupb (CONFIG *p, guchar data)
+{
+	p->alarm_info[get_alarm_pos(p)] = (p->alarm_info[get_alarm_pos(p)] & ~0x700) | (data << 8); 
+}
+
+guchar get_alarm_conditionb (CONFIG *p)
+{
+	return (p->alarm_info[get_alarm_pos(p)] & 0x7800) >> 11;
+}
+
+void set_alarm_conditionb (CONFIG *p, guchar data)
+{
+	p->alarm_info[get_alarm_pos(p)] = (p->alarm_info[get_alarm_pos(p)] & ~0x7800) | (data << 11); 		
+}
 
 /* group操作*/
 void grpcpy (CONFIG *p, guint dst, guint src)		/* 把src group 配置复制到 dst group */

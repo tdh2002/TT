@@ -49,17 +49,6 @@ typedef struct _gate_info
 	guint	width;
 } GATE_INFO, *GATE_INFO_P;
 
-/* 报警信息 */
-typedef struct _alarm_info 
-{
-	guchar	groupa;   	    /* GROUP A     */
-	guchar	conditiona;     /* Condition A */
-	guchar	operat;         /* Operator    */
-	guchar	groupb;	        /* GROUP B 	   */
-	guchar	conditionb;     /* Condition B */
-	guchar	tt[3];
-} ALARM_INFO, *ALARM_INFO_P;
-
 /* 输出信息 */
 typedef struct _output_info 
 {
@@ -367,22 +356,20 @@ typedef	struct _Config
 	guchar	voltage_ut;	
 	guchar	language;			/* 语言 */
 	guchar	reject;		        /* 抑制 */
-	/*显示*/
+/*显示*/
 	guchar	display_pos;		/* 显示模式 A B C A+B A+B+C A+S ... */
 	guchar	display_group;		/* 显示所有group还是 当前 */
-	guchar	c_scan;				/* c扫描参考 */
-	guchar	c_scan1;			/* c扫描参考1 */
-	guchar	c_scan2;			/* c扫描参考2 */
-	guchar	c_scan11;			/* ASCscan 时候的c扫描参考*/
+	guchar	c_scan_pos;
 	guchar	data1;				/* Strip Chart A 的DATA */
 	guchar	data2;				/*  */
 	guchar	dis_mode;			/* Strip Chart A 时候的模式 */
 	guint	dis_range;			/* Strip Chart A 时候的显示范围 */
 
-	guchar	alarm_pos;          /* 当前选择 报警信息 0~15 */
+	guchar	alarm_pos;          /* 当前选择报警信息 0~15 */
 	guchar	output_pos;			/* 0~5 */
+	guchar	TTT0[2];
 
-	ALARM_INFO	alarm[16];		/* alarm[0], alarm[1], ..., alarm[15] */
+	gushort	alarm_info[16];		/*     */
 
 	OUTPUT_INFO	output[3];		/* 输出信息 output[0],output[1],output[2] */
 	ANALOG_INFO	analog[2];		/* Analog 2 个 */
@@ -391,8 +378,6 @@ typedef	struct _Config
 	MEASURE_DATA	measure_data;
 
 	st_PART	part;				/* 被检测工件	*/
-	/* 所有聚焦法则的信息在这里 */
-/*	LAW_FOCAL	focal_law_all_info[setup_MAX_GROUP_QTY];*/
 
 	/*选项*/
 	guchar	unit;			/* 0 mm 1 inch */
@@ -401,10 +386,6 @@ typedef	struct _Config
 	guint	date;			/*  */
 	guint	time;			/*  */
 
-	guchar	type;                            /*Wizard -> calibration -> type */
-	guchar	calibration_mode;                /*Wizard -> calibration -> Mode */
-
-	//guchar	alarm;                           /*Gate/Alarm->Alarm->Alarm*/
 	guchar	list;                            /*Measurements->Reading->list*/
 	guchar	field1;                            /*Measurements->Reading->Field1*/
 	guchar	field2;                            /*Measurements->Reading->Field2*/
@@ -421,7 +402,6 @@ typedef	struct _Config
 	guint	min_thickness;                  /*Measurements->Thickness->min*/
 	guint	max_thickness;                  /*Measurements->Thickness->max*/
 	guchar	echo_qty;                       /*Measurements->Thickness->echo_qty*/
-
 
 	guchar	grid;                           /* Display -> Overlay -> grid */
 	guchar	sizing_curves;                  /* Display -> overlay -> sizing curves*/
@@ -525,9 +505,28 @@ extern guchar	get_display_pos (CONFIG *p);
 extern void		set_display_pos (CONFIG *p, guchar data);
 extern guchar	get_display_group (CONFIG *p);
 extern void		set_display_group (CONFIG *p, guchar data);
-extern guchar	get_cscan_source (CONFIG *p);
-extern void		set_cscan_source (CONFIG *p, guchar data);
-
+extern guchar	get_cscan_source (CONFIG *p, guint pos);
+extern void		set_cscan_source (CONFIG *p, guchar data, guint pos);
+extern guchar	get_stripscan_data1 (CONFIG *p);
+extern guchar	get_stripscan_data2 (CONFIG *p);
+extern guchar	get_stripscan_mode (CONFIG *p);
+extern guint	get_stripscan_disrange (CONFIG *p);
+extern void		set_stripscan_data1 (CONFIG *p, guchar data);
+extern void		set_stripscan_data2 (CONFIG *p, guchar data);
+extern void		set_stripscan_mode (CONFIG *p, guchar data);
+extern void		set_stripscan_disrange (CONFIG *p, guint data);
+extern guchar	get_alarm_pos (CONFIG *p);
+extern guchar	get_alarm_groupa (CONFIG *p);
+extern guchar	get_alarm_groupb (CONFIG *p);
+extern guchar	get_alarm_conditiona (CONFIG *p);
+extern guchar	get_alarm_conditionb (CONFIG *p);
+extern guchar	get_alarm_operator (CONFIG *p);
+extern void		set_alarm_pos (CONFIG *p, guchar data);
+extern void		set_alarm_groupa (CONFIG *p, guchar data);
+extern void		set_alarm_groupb (CONFIG *p, guchar data);
+extern void		set_alarm_conditiona (CONFIG *p, guchar data);
+extern void		set_alarm_conditionb (CONFIG *p, guchar data);
+extern void		set_alarm_operator (CONFIG *p, guchar data);
 
 /* group操作 */
 extern void		grpcpy (CONFIG *p, guint src, guint dst);
