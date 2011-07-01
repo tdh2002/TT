@@ -13,6 +13,7 @@
 #define __FILE_OP_H_
 
 #include "base.h"
+#include "drawui.h"
 
 extern void read_probe_file (const gchar *file_path, PROBE_P p);	/* 读取探头信息 */
 extern void read_wedge_file (const gchar *file_path, WEDGE_P p);	/* 读取楔块信息 */
@@ -67,7 +68,7 @@ extern int Scan_Target_File(GtkWidget *widget,GtkTreeModel *model,char *file_nam
 extern int Select_File();
 
 extern int Unselect_File();
-
+;
 extern gboolean Select_All_File (GtkWidget *widget,	GdkEventButton *event,	gpointer       data);
 
 extern int Unselect_All_File();
@@ -80,6 +81,16 @@ extern gboolean Delect_File(GtkWidget *widget,	GdkEventButton *event,	gpointer  
 
 extern int Rename_File(char *file_name);
 
+extern void report_build_start(char *file_name);
 
+extern void report_build_header(char *file_name);
+
+extern void report_build_group_start(char *file_name,int group);
+
+extern void report_build_setup(char *file_name,int group);
+
+extern void report_build_group_config(char *file_name,int group);
+
+extern void report_build_end(char *file_name);
 
 #endif

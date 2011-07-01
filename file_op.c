@@ -25,6 +25,7 @@
 #include <string.h>
 #include <glib/gprintf.h>
 
+
 char SOURCE_FILE_NAME[FILE_NAME_MAX];
 char SOURCE_FILE_PATH[FILE_NAME_MAX];
 char TARGET_FILE_NAME[FILE_NAME_MAX];
@@ -626,5 +627,460 @@ int Rename_File(char *file_name)
     return 0;
 }
 
+void report_build_start(char *file_name)
+{
+    FILE *fp = NULL;  
+
+    fp = fopen(file_name,"w+");
+
+    if(fp == NULL)
+    {
+        return ;
+    }
+
+    fprintf(fp,"<html>\n");
+    fprintf(fp,"<head>\n");
+    fprintf(fp,"<style>\n");
+    fprintf(fp,"table { font-size: 9; font:\"tahoma\"; }\n");
+    fprintf(fp,"body { font-size: 9; font:\"tahoma\"; }\n");
+    fprintf(fp,"h3 { page-break-before: always }\n");
+    fprintf(fp,"\n");
+    fprintf(fp,".general_cell { width : 110; valign:\"bottom\"; }\n");
+    fprintf(fp,"</style>\n");
+    fprintf(fp,"</head>\n");
+    fprintf(fp,"<body>\n");
+    fprintf(fp,"<br>\n");
+
+    fclose(fp);
+}
+
+void report_build_header(char *file_name)
+{
+    FILE *fp = NULL;
+
+    fp = fopen(file_name,"r+");
+
+    if(fp == NULL)
+    {
+        return ;
+    }
+
+    fseek(fp,0,SEEK_END);
+
+    fprintf(fp,"<table width=\"690\" border=\"1\">\n");
+    fprintf(fp,"<tr><td>\n");
+    fprintf(fp,"<table>\n");
+    
+    fprintf(fp,"<tr><td class = \"general_cell\"><b>Report Date</b></td>\n");
+    fprintf(fp,"    <td class = \"general_cell\"><b>Report Version</b></td>\n");
+    fprintf(fp,"    <td class = \"general_cell\"><b>Setup File Name</b></td>\n");
+    fprintf(fp,"    <td class = \"general_cell\"><b>Inspection Date</b></td>\n");
+    fprintf(fp,"    <td class = \"general_cell\"><b>Inspection Version</b></td>\n");
+    fprintf(fp,"    <td class = \"general_cell\"><b>Save Mode</b></td>\n");
+    fprintf(fp,"</tr>\n\n");
+    
+    fprintf(fp,"<tr><td class  = \"general_cell\">N/A</td>\n");
+    fprintf(fp,"    <td class  = \"general_cell\">N/A</td>\n");
+    fprintf(fp,"    <td class  = \"general_cell\">N/A</td>\n");
+    fprintf(fp,"    <td class  = \"general_cell\">N/A</td>\n");
+    fprintf(fp,"    <td class  = \"general_cell\">N/A</td>\n");
+    fprintf(fp,"    <td class  = \"general_cell\">N/A</td>\n");
+    fprintf(fp,"</tr>\n\n");
+
+    fprintf(fp,"<tr><td class = \"general_cell\"><b>Doppler Type</b></td>\n");
+    fprintf(fp,"    <td class = \"general_cell\"><b>Doppler Serial</b></td>\n");
+    fprintf(fp,"    <td class = \"general_cell\"><b>Module Type</b></td>\n");
+    fprintf(fp,"    <td class = \"general_cell\"><b>Module Serial #</b></td>\n");
+    fprintf(fp,"    <td class = \"general_cell\"><b>Cailbration Due</b></td>\n");
+    fprintf(fp,"    <td class = \"general_cell\"><b>Data File Name</b></td>\n");
+    fprintf(fp,"</tr>\n\n");
+
+    fprintf(fp,"<tr><td class  = \"general_cell\">N/A</td>\n");
+    fprintf(fp,"    <td class  = \"general_cell\">N/A</td>\n");
+    fprintf(fp,"    <td class  = \"general_cell\">N/A</td>\n");
+    fprintf(fp,"    <td class  = \"general_cell\">N/A</td>\n");
+    fprintf(fp,"    <td class  = \"general_cell\">N/A</td>\n");
+    fprintf(fp,"    <td class  = \"general_cell\">N/A</td>\n");
+    fprintf(fp,"</tr>\n\n");
+
+    fprintf(fp,"</table>\n");
+    fprintf(fp,"</td></tr>\n");
+    fprintf(fp,"</table>\n\n");
+
+    fprintf(fp,"<br>\n");
+
+    fprintf(fp,"<table width=\"690\" border=\"1\">\n");
+    fprintf(fp,"<tr><td>\n");
+
+    fprintf(fp,"<table width = \"100%%\" >\n");
+    fprintf(fp,"<tr><td width =\"50%%\"><table>\n");
+    fprintf(fp,"<tr><td class = \"general_cell\"><b>Contractor</b></td>");
+    fprintf(fp,"<td>Name</td></tr>\n");
+    fprintf(fp,"</table></td>\n\n");
+
+    fprintf(fp,"<td width=\"50%%\"><table>\n");
+    fprintf(fp,"<tr><td class = \"general_cell\"><b>Technician</b></td>\n");
+    fprintf(fp,"<td>Name</td></tr>\n");
+    fprintf(fp,"</table></td></tr>\n\n");
+
+    fprintf(fp,"<tr><td width = \"50%%\"><table>\n");
+    fprintf(fp,"<tr><td class = \"general_cell\"><b>Customer</b></td>\n");
+    fprintf(fp,"<td>Name</td></tr>\n");
+    fprintf(fp,"</table></td>\n\n");
+    
+    fprintf(fp,"<td width = \"50%%\"><table>\n");
+    fprintf(fp,"<tr><td class = \"general_cell\"><b>Project</b></td>\n");
+    fprintf(fp,"<td>Name</td></tr>\n");
+    fprintf(fp,"</table></td></tr>\n\n");
+  
+    fprintf(fp,"<tr><td width = \" 50%% \"><table>");
+    fprintf(fp,"<tr><td class = \"general_cell\"><b>Site</b></td>\n");
+    fprintf(fp,"<td>Name</td></tr>\n");
+    fprintf(fp,"</table></td>\n\n");
+
+    fprintf(fp,"<td width = \"50%%\"><table>\n");
+    fprintf(fp,"<tr><td class = \"general_cell\"><b>Part Number</b></td>");
+    fprintf(fp,"<td>Name</td></tr>\n");
+    fprintf(fp,"</table></td></tr>\n\n");
+
+    fprintf(fp,"<tr><td width = \"50%%\"></td>");
+    fprintf(fp,"    <td width = \"50%%\"></td></tr>\n");
+    fprintf(fp,"<tr><td width = \"50%%\"></td>\n");
+    fprintf(fp,"    <td width = \"50%%\"></td></tr>\n\n");
+
+    fprintf(fp,"</table>\n");
+    fprintf(fp,"</tr></td>\n");
+    fprintf(fp,"</table>\n\n");
+
+    fclose(fp);
+}
+
+void report_build_group_start(char *file_name,int group)
+{
+
+    FILE *fp = NULL;
+
+    fp = fopen(file_name,"r+");
+
+    if (fp == NULL)
+    {
+        return ;
+    }
+
+    fseek(fp,0,SEEK_END);
+
+    fprintf(fp,"<H3></H3>\n");
+    fprintf(fp,"<TABLE WIDTH=\"690\" BORDER=\"0\">\n");
+    fprintf(fp,"<TR>\n");
+    fprintf(fp,"    <TD><HR></TD>\n");
+    fprintf(fp,"</TR>\n");
+    fprintf(fp,"<TR>\n");
+    fprintf(fp,"    <TD><B>Group %d</B></TD>\n",group + 1);
+    fprintf(fp,"</TR>\n");
+    fprintf(fp,"</TABLE>\n\n");
+
+    fclose(fp);
+}
+
+void report_build_probe(char *file_name,int group)
+{
+    FILE *fp = NULL;
+
+    fp = fopen(file_name,"r+");
+
+    if ( fp == NULL )
+    {
+        return ;
+    }
+
+    fseek(fp,0,SEEK_END);
+
+    fprintf(fp,"<BR>\n");
+    fprintf(fp,"Probe Characterization\n");
+    fprintf(fp,"<TABLE WIDTH=\"690\" BORDER=\"1\">\n");
+    fprintf(fp,"<TR><TD>\n");
+    fprintf(fp,"<TABLE>\n\n");
+
+    fprintf(fp,"<TR>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\"><B>Probe Model</B></TD>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\"><B>Probe Serial #</B></TD>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\"><B></B></TD>\n");
+    fprintf(fp,"  	<TD CLASS = \"GENERAL_CELL\"><B>&nbsp;</B></TD>\n"); 
+    fprintf(fp,"</TR>\n\n");
+
+    fprintf(fp,"<TR>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">N/A</TD>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">N/A</TD>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\"></TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">&nbsp;</TD>\n");
+    fprintf(fp,"</TR>\n\n");
+
+    fprintf(fp,"<TR>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\"><B>Probe Frequency</B></TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\"><B>Peak Frequency</B></TD>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\"><B>Wedge Model</B></TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\"><B>Wedge Angle</B></TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\"><B>Probe Aperture</B></TD>\n");
+    fprintf(fp,"  	<TD CLASS = \"GENERAL_CELL\"><B>&nbsp;</B></TD>\n");
+    fprintf(fp,"</TR>\n\n");
+
+    fprintf(fp,"<TR>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">N/A</TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">N/A</TD>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">N/A</TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">0.0º</TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">N/A</TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">&nbsp;</TD>\n");
+    fprintf(fp,"</TR>\n\n");
+
+    fprintf(fp,"<TR>\n");
+    fprintf(fp,"  	<TD CLASS = \"GENERAL_CELL\"><B>&nbsp;</B></TD>\n");
+    fprintf(fp,"</TR>\n\n");
+
+    fprintf(fp,"<TR>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\"><B>&nbsp;</B></TD>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\"><B>Lower Frequency</B></TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\"><B>Higher Frequency</B></TD>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\"><B>Center Frequency</B></TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\"><B>Bandwidth (MHz)</B></TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\"><B>Bandwidth (%%)</B></TD>\n");
+    fprintf(fp,"</TR>\n\n");
+
+    fprintf(fp,"<TR>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\"><B>-6 dB</B></TD>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">N/A</TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">N/A</TD>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">N/A</TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">N/A</TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">N/A</TD>\n");
+    fprintf(fp,"</TR>\n\n");
+
+    fprintf(fp,"<TR>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\"><B>-20 dB</B></TD>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">N/A</TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">N/A</TD>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">N/A</TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">N/A</TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">N/A</TD>\n");
+    fprintf(fp,"</TR>\n\n");
+
+    fprintf(fp,"<TR>\n");
+    fprintf(fp,"  	<TD CLASS = \"GENERAL_CELL\"><B>&nbsp;</B></TD>\n");
+    fprintf(fp,"</TR>\n\n");
+
+    fprintf(fp,"<TR>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\"><B>Date</B></TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\"><B>Time</B></TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\"><B>Procedure</B></TD>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\"><B>Calibration Block</B></TD>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\"><B>Characterization Gain</B></TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\"><B>A%%</B></TD>\n");
+    fprintf(fp,"</TR>\n\n");
+
+    fprintf(fp,"<TR>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">N/A</TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">N/A</TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">N/A</T   D>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">N/A</TD>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">N/A</TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">N/A</TD>\n");
+    fprintf(fp,"</TR>\n\n");
+
+    fprintf(fp,"</TABLE>\n");
+    fprintf(fp,"</TD></TR>\n");
+    fprintf(fp,"</TABLE>\n\n\n\n");
+
+    fclose(fp);
+}
+
+void report_build_setup(char *file_name,int group)
+{
+    FILE *fp = NULL;
+    
+    fp = fopen(file_name,"r+");
+
+    if (fp == NULL)
+    {
+         return ;
+    }
+    
+    fseek(fp,0,SEEK_END);
+
+    fprintf(fp,"<BR>\n");
+    fprintf(fp,"Setup\n");
+    fprintf(fp,"<TABLE WIDTH=\"690\" BORDER=\"1\">\n");
+    fprintf(fp,"<TR><TD>\n");
+    fprintf(fp,"<B></B>\n");
+
+    fprintf(fp,"<TABLE>\n");
+
+    fprintf(fp,"<TR>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\"><B>Beam Delay</B></TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\"><B>Start (Half Path)</B></TD>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\"><B>Range (Half Path)</B></TD>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\"><B>PRF</B></TD>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\"><B>Type</B></TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\"><B>Averaging Factor</B></TD>\n");
+    fprintf(fp,"</TR>\n");
+
+    fprintf(fp,"<TR>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%d ns</TD>\n",BEAM_INFO(group,beam_delay));
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%d ns</TD>\n",GROUP_VAL_POS(group,start));
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%d ns</TD>\n",GROUP_VAL_POS(group,range));
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%d</TD>\n",GROUP_VAL_POS(group,prf));
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%s</TD>\n",menu_content[ GROUP_MODE_P +(GROUP_VAL_POS(group,group_mode))]);
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%d</TD>\n",1 << GROUP_VAL_POS(group,averaging));
+    fprintf(fp,"</TR>\n\n");
+
+	fprintf(fp,"<TR>\n");
+	fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\"><B>Scale Type</B></TD>\n");
+	fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\"><B>Scale Factor</B></TD>\n");
+	fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\"><B>Video Filter</B></TD>\n");
+	fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\"><B>Pretrig.</B></TD>\n");
+	fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\"><B>Rectification</B></TD>\n");
+	fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\"><B>Band-Pass Filter</B></TD>\n");
+	fprintf(fp,"</TR>\n\n");
+
+	fprintf(fp,"<TR>\n");
+	fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">N/A</TD>\n");
+	fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%f</TD>\n",(GROUP_VAL_POS(group,range) / 10.0) / GROUP_VAL_POS(group,point_qty));
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%s</TD>\n",menu_content[ OFF_ON + (GROUP_VAL_POS(group,video_filter))]);
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">N/A</TD>\n");//Pretrig    
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%s</TD>\n",menu_content[ RECTIFIER + (GROUP_VAL_POS(group,rectifier))]);
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%s</TD>\n",menu_content[ FILTER +(GROUP_VAL_POS(group,filter))]);
+    fprintf(fp,"</TR>\n\n");
+
+    fprintf(fp,"<TR>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\"><B>Voltage</B></TD>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\"><B>Gain</B></TD>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\"><B>Mode</B></TD>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\"><B>Wave Type</B></TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\"><B>Sound Velocity</B></TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\"><B>Pulse Width</B></TD>\n");
+    fprintf(fp,"</TR>\n\n");
+
+    fprintf(fp,"<TR>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">N/A</TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\"></TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\"></TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">N/A</TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%d 0.01m/s</TD>\n",GROUP_VAL_POS(group,velocity));
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\"></TD>\n");
+    fprintf(fp,"</TR>\n\n");
+
+#if 0
+<TR>
+    <TD CLASS = "GENERAL_CELL">45 (Low)</TD>
+	<TD CLASS = "GENERAL_CELL">20.00 dB</TD>
+	<TD CLASS = "GENERAL_CELL">PE (Pulse-Echo)</TD>
+	<TD CLASS = "GENERAL_CELL">Longitudinal</TD>
+    <TD CLASS = "GENERAL_CELL">5890.0 m/s</TD>
+    <TD CLASS = "GENERAL_CELL">100.00 ns</TD>
+</TR>
 
 
+<TR>
+    <TD CLASS = "GENERAL_CELL"><B>Scan Offset</B></TD>
+	<TD CLASS = "GENERAL_CELL"><B>Index Offset</B></TD>
+	<TD CLASS = "GENERAL_CELL"><B>Skew</B></TD>
+    <TD CLASS = "GENERAL_CELL"><B></B></TD>
+    <TD CLASS = "GENERAL_CELL"><B>&nbsp;</B></TD>
+    <TD CLASS = "GENERAL_CELL"><B>&nbsp;</B></TD>
+</TR>
+
+<TR>
+    <TD CLASS = "GENERAL_CELL">0.00 mm</TD>
+	<TD CLASS = "GENERAL_CELL">0.00 mm</TD>
+	<TD CLASS = "GENERAL_CELL">90.0º</TD>
+    <TD CLASS = "GENERAL_CELL"></TD>
+    <TD CLASS = "GENERAL_CELL">&nbsp;</TD>
+    <TD CLASS = "GENERAL_CELL">&nbsp;</TD>
+</TR>
+</TABLE>
+
+<HR>
+
+<TABLE>
+<TR>
+    <TD CLASS = "GENERAL_CELL"><B>Gate</B></TD>
+	<TD CLASS = "GENERAL_CELL"><B>Start</B></TD>
+	<TD CLASS = "GENERAL_CELL"><B>Width</B></TD>
+	<TD CLASS = "GENERAL_CELL"><B>Threshold</B></TD>
+    <TD CLASS = "GENERAL_CELL"><B>Synchro</B></TD>
+    <TD CLASS = "GENERAL_CELL"><B>&nbsp;</B></TD>
+</TR>
+
+<TR>
+    <TD CLASS = "GENERAL_CELL">I</TD>
+	<TD CLASS = "GENERAL_CELL">-0.01 mm</TD>
+	<TD CLASS = "GENERAL_CELL">19.99 mm</TD>
+	<TD CLASS = "GENERAL_CELL">20.00 %</TD>
+	<TD CLASS = "GENERAL_CELL">Pulse</TD>
+    <TD CLASS = "GENERAL_CELL">&nbsp;</TD>
+</TR>
+
+<TR>
+    <TD CLASS = "GENERAL_CELL">A</TD>
+	<TD CLASS = "GENERAL_CELL">19.98 mm</TD>
+	<TD CLASS = "GENERAL_CELL">29.99 mm</TD>
+	<TD CLASS = "GENERAL_CELL">25.00 %</TD>
+	<TD CLASS = "GENERAL_CELL">Pulse</TD>
+    <TD CLASS = "GENERAL_CELL">&nbsp;</TD>
+</TR>
+
+<TR>
+    <TD CLASS = "GENERAL_CELL">B</TD>
+	<TD CLASS = "GENERAL_CELL">39.98 mm</TD>
+	<TD CLASS = "GENERAL_CELL">19.99 mm</TD>
+	<TD CLASS = "GENERAL_CELL">30.00 %</TD>
+	<TD CLASS = "GENERAL_CELL">Pulse</TD>
+    <TD CLASS = "GENERAL_CELL">&nbsp;</TD>
+</TR>
+#endif
+    fprintf(fp,"</TABLE>\n");
+
+
+
+
+
+    fprintf(fp,"</TD></TR>\n");
+    fprintf(fp,"</TABLE>\n");
+
+
+
+    fclose(fp);
+}
+
+void report_build_group_config(char *file_name,int group)
+{
+    report_build_group_start(file_name,group);
+
+    report_build_probe(file_name,group);
+
+    report_build_setup(file_name,group);
+
+    //report_build_calculator(file_name,group);
+
+    //report_build_part(file_name,group);
+
+    //report_build_scan_area(file_name,group);
+}
+
+void report_build_end(char *file_name)
+{
+    FILE *fp = NULL;
+    
+    fp = fopen(file_name,"r+");
+
+    if (fp == NULL)
+    {
+        return ;
+    }
+    
+    fseek(fp,0,SEEK_END);
+
+    fprintf(fp,"</body>\n");
+    fprintf(fp,"</html>\n");
+
+    fclose(fp);
+}

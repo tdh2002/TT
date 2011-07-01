@@ -23,6 +23,7 @@
 #define DIALOG_MASK				16
 #define DIALOG_TIME				17
 #define DIALOG_DATE				18
+#define DIALOG_REPORT_BUILD		19
 
 extern void draw_dialog_all (guint type);
 

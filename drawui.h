@@ -296,7 +296,7 @@
 #define CURVE_POS_DSP		0x3024
 #define POINT_POS_DSP		0x3025
 
-
+extern const gchar **menu_content;
 extern _group_wizard g_group_wizard_struct;
 extern GROUP g_tmp_group_struct;
 extern const gchar *backpic[];

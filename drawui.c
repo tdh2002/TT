@@ -11844,8 +11844,12 @@ void draw3_data3(DRAW_UI_P p)
 
 				case 1:/*File -> report -> build p813 */
 					draw3_popdown(NULL,3,1);
-					gtk_widget_set_sensitive(pp->eventbox30[3],FALSE);
-					gtk_widget_set_sensitive(pp->eventbox31[3],FALSE);
+					//gtk_widget_set_sensitive(pp->eventbox30[3],FALSE);
+					//gtk_widget_set_sensitive(pp->eventbox31[3],FALSE);
+                    if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
+                    {
+                        draw_dialog_all(DIALOG_REPORT_BUILD);
+                    }
 					break;
 
 				case 2:/*File -> format -> Note  p823 */
