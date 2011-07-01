@@ -52,15 +52,12 @@ typedef struct _gate_info
 /* 输出信息 */
 typedef struct _output_info 
 {
-	guchar	alarm1;   	    /* Alarm # 编号  */
-	guchar	alarm1_qty;		/* 开启alarm的个数*/
-	gushort	alarm1_status;	/* 状态 */
-	guchar	count;    	    /* count    */
-	guchar	sound;          /* sound    */
-	gchar	tt[2];
-	guint	delay;			/* delay 	*/
-	guint	holdtime;       /* holdtime */
-} OUTPUT_INFO, *OUTPUT_INFO_P;
+	gushort	alarm_info;		/* 状态 表示16个alarm信号的状态 */
+	guchar	count;    	    /**/
+	guchar	sound;          /**/
+	guint	delay;			/* 单位ns */
+	guint	holdtime;       /* 单位ns */
+} OUTPUT_INFO1, *OUTPUT_INFO_P1;
 
 /* 光标信息 */
 typedef struct _cursors_info 
@@ -366,13 +363,12 @@ typedef	struct _Config
 	guint	dis_range;			/* Strip Chart A 时候的显示范围 */
 
 	guchar	alarm_pos;          /* 当前选择报警信息 0~15 */
-	guchar	output_pos;			/* 0~5 */
-	guchar	TTT0[2];
-
+	guchar	output_pos;			/* 选择输出0~4 */
+	guchar	analog1[2];			/* Analog 2个 0-2位表示group 3-4位是data */
 	gushort	alarm_info[16];		/* 存储alarm 配置的信息 */
+	OUTPUT_INFO1 output1[3];	/* 输出信息 output[0],output[1],output[2] */
 
-	OUTPUT_INFO	output[3];		/* 输出信息 output[0],output[1],output[2] */
-	ANALOG_INFO	analog[2];		/* Analog 2 个 */
+	ANALOG_INFO	analog[2];		/* Analog 2个 */
 
 	GROUP	group[setup_MAX_GROUP_QTY];			/* */
 	MEASURE_DATA	measure_data;
@@ -515,6 +511,7 @@ extern void		set_stripscan_data1 (CONFIG *p, guchar data);
 extern void		set_stripscan_data2 (CONFIG *p, guchar data);
 extern void		set_stripscan_mode (CONFIG *p, guchar data);
 extern void		set_stripscan_disrange (CONFIG *p, guint data);
+/* ALARM */
 extern guchar	get_alarm_pos (CONFIG *p);
 extern guchar	get_alarm_groupa (CONFIG *p);
 extern guchar	get_alarm_groupb (CONFIG *p);
@@ -527,6 +524,26 @@ extern void		set_alarm_groupb (CONFIG *p, guchar data);
 extern void		set_alarm_conditiona (CONFIG *p, guchar data);
 extern void		set_alarm_conditionb (CONFIG *p, guchar data);
 extern void		set_alarm_operator (CONFIG *p, guchar data);
+/* OUTPUT */
+extern guchar	get_output_pos (CONFIG *p);
+extern gushort	get_output_alarm (CONFIG *p);
+extern gushort	get_1output_alarm_pos (CONFIG *p);
+extern guchar	get_output_alarm_qty (CONFIG *p);
+extern guchar	get_output_alarm_pos (CONFIG *p, guint pos);
+extern void		set_output_pos (CONFIG *p, guchar data);
+extern void		set_output_alarm (CONFIG *p, guchar data, guint pos);
+extern guchar	get_output_count (CONFIG *p);
+extern guchar	get_output_sound (CONFIG *p);
+extern void		set_output_count (CONFIG *p, guchar data);
+extern void		set_output_sound (CONFIG *p, guchar data);
+extern guint	get_output_delay (CONFIG *p);
+extern guint	get_output_holdtime (CONFIG *p);
+extern void		set_output_delay (CONFIG *p, guint data);
+extern void		set_output_holdtime (CONFIG *p, guint data);
+extern guchar	get_output_group (CONFIG *p);
+extern guchar	get_output_data (CONFIG *p);
+extern void		set_output_group (CONFIG *p, guchar data);
+extern void		set_output_data (CONFIG *p, guchar data);
 
 /* group操作 */
 extern void		grpcpy (CONFIG *p, guint src, guint dst);

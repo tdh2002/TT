@@ -3483,8 +3483,11 @@ void draw_report_build()
 
     char *file_name = "report_build.html";
 
+#if X86
 	gchar *file_path = "file://report_build.html";
-	//    gchar *file_path = "file:///home/geniikid/tmp/system_info.htm";
+#elif ARM
+	gchar *file_path = "http://127.0.0.1/report_build.html";
+#endif
 
 	GtkWidget *sw;
 

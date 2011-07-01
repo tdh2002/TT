@@ -93,6 +93,29 @@
 #define OPERATOR_AND	0
 #define OPERATOR_OR		1
 
+/* 报警输出选项 */
+#define OUTPUT1	0
+#define OUTPUT2	1
+#define OUTPUT3	2
+#define ANALOG1	3
+#define ANALOG2	4
+
+#define ALARM_OFF	0
+#define ALARM_ON	1
+
+/* 报警声音 */
+#define SOUND_OFF	0
+#define SOUND_300	1
+#define SOUND_600	2
+#define SOUND_1000	3
+#define SOUND_1500	4
+
+/**/
+#define OUTPUT_DATA_OFF	0
+#define OUTPUT_DATA_A	1
+#define OUTPUT_DATA_B	2
+#define OUTPUT_DATA_THICKNESS	3
+
 #define GRP_1	0
 #define GRP_2	1
 #define GRP_3	2

@@ -337,7 +337,7 @@ void show_help(guint i)
 		switch(pp->pos)		/*改变帮助文档的路径*/
 		{
 			case 0:
-				pp->file_path = "file:///home/gll/arraytop/TT/source/system/Help/Contextual/Wizard_Menu.html";
+				pp->file_path = "file:///home/tt/TT/source/system/Help/Contextual/Wizard_Menu.html";
 				break;
 			case 1:
 				pp->file_path = "file:///home/gll/arraytop/TT/source/system/Help/Contextual/UT_Settings_Menu.html";
@@ -3526,7 +3526,7 @@ void draw3_data0(DRAW_UI_P p)
 	gchar *str = NULL;
 
 	gfloat cur_value=0.0, lower, upper, step;
-	guint digit, pos, unit, content_pos, menu_status = 0;
+	guint digit, pos, unit, content_pos, menu_status = 0, tt;
 
 	guint menu_on=0, i, temp_beam, t;
 
@@ -3765,16 +3765,21 @@ void draw3_data0(DRAW_UI_P p)
 					if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 0))
 					{
 						menu_on = 0x0;
+						tt = get_output_pos(pp->p_config);
 						for (i = 0 ; i < 3; i++) /*alarm#的值决定前三项后面是否跟[On]*/
-							menu_on |= (CFG(output[i].alarm1) != 0 ) << i;
+						{
+							set_output_pos(pp->p_config, i); 
+							menu_on |= (get_output_alarm_qty(pp->p_config) != 0 ) << i;
+						}
 
 						for (i = 3 ; i < 5; i++) /*data的值决定后两项后面是否跟[On]*/
 							menu_on |= (CFG(analog[i - 3].data) != 0 ) << i;
-						draw3_pop_tt_on (data_220, NULL, menu_content[OUTPUT_POS + CFG(output_pos)],
-								menu_content + OUTPUT_POS, 5, 0, CFG(output_pos), 0, menu_on, 5);
+						set_output_pos (pp->p_config, tt);
+						draw3_pop_tt_on (data_220, NULL, menu_content[OUTPUT_POS + get_output_pos(pp->p_config)],
+								menu_content + OUTPUT_POS, 5, 0, get_output_pos(pp->p_config), 0, menu_on, 5);
 					}
 					else 
-						draw3_popdown (menu_content[OUTPUT_POS + CFG(output_pos)], 0, 0);
+						draw3_popdown (menu_content[OUTPUT_POS + get_output_pos(pp->p_config)], 0, 0);
 					break;
 
 				case 3:/* Sizing Curves -> Setup  p230 */
@@ -4432,7 +4437,7 @@ void draw3_data1(DRAW_UI_P p)
 	gchar *str;
 
 	gfloat cur_value=0.0, lower, upper, step;
-	guint digit, pos, unit, content_pos, menu_status = 0, temp_beam;
+	guint digit, pos, unit, content_pos, menu_status = 0, temp_beam, tt;
 
 	int inet_sock;
 	struct ifreq ifr;
@@ -4711,28 +4716,38 @@ void draw3_data1(DRAW_UI_P p)
 					else 
 						draw3_popdown (menu_content[GROUPA + get_alarm_groupa(pp->p_config)], 1, 0);
 					break;
-				case 2:/*  Gate -> Output -> Alarm or Group #  P221 */
+				case 2: /* Gate -> Output -> Alarm or Group #  P221 */
 					pp->x_pos = 604, pp->y_pos = 202-YOFFSET;
-					if (CFG(output_pos) < 3)
+					if (get_output_pos(pp->p_config) < 3)	/* ALARM */
 					{
+						tt = get_output_alarm_qty (pp->p_config);
 						if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 1))
 						{
-							if ((CFG_OUTPUT_POS(alarm1_qty) == 0) ||
-									(CFG_OUTPUT_POS(alarm1_qty) == 1))
-								draw3_pop_tt_on (data_221, NULL, menu_content[ALARM1+CFG_OUTPUT_POS(alarm1)],
-										menu_content + ALARM1, 18, 1, CFG_OUTPUT_POS(alarm1),
-										0, CFG_OUTPUT_POS(alarm1_status) << 2, 19);
+							if (tt == 0)
+								draw3_pop_tt_on (data_221, NULL, menu_content[ALARM1 + tt],
+										menu_content + ALARM1, 18, 1, tt, 0, 0, 19);
+							else if (tt == 16)
+								draw3_pop_tt_on (data_221, NULL, menu_content[ALARM1 + 1],
+										menu_content + ALARM1, 19, 1, 1,
+										0, get_output_alarm(pp->p_config) << 2, 19);
+							else if (tt == 1)
+								draw3_pop_tt_on (data_221, NULL, menu_content[ALARM1 + get_1output_alarm_pos (pp->p_config) + 1],
+										menu_content + ALARM1, 18, 1, get_1output_alarm_pos (pp->p_config) + 1,
+										0, get_output_alarm(pp->p_config) << 2, 19);
 							else
-								draw3_pop_tt_on (data_221, NULL, menu_content[ALARM1+CFG_OUTPUT_POS(alarm1)],
-										menu_content + ALARM1, 19, 1, CFG_OUTPUT_POS(alarm1),
-										0, CFG_OUTPUT_POS(alarm1_status) << 2, 19);
+								draw3_pop_tt_on (data_221, NULL, menu_content[ALARM1 + 18],
+										menu_content + ALARM1, 19, 1, 18,
+										0, get_output_alarm(pp->p_config) << 2, 19);
 						}
 						else
 						{ 
-							if ((CFG_OUTPUT_POS(alarm1_qty) == 0) ||
-									(CFG_OUTPUT_POS(alarm1_qty) == 1) ||
-									(CFG_OUTPUT_POS(alarm1_qty) == 16))
-								draw3_popdown (menu_content[ALARM1+CFG_OUTPUT_POS(alarm1)], 1, 0);
+							if (tt == 0)
+								draw3_popdown (menu_content[ALARM1 + 0], 1, 0);
+							else if (tt == 16)
+								draw3_popdown (menu_content[ALARM1 + 1], 1, 0);
+							else if (tt == 1)
+								draw3_popdown (menu_content[ALARM1 +
+									get_1output_alarm_pos (pp->p_config) + 1], 1, 0);
 							else
 								draw3_popdown (menu_content[ALARM1 + 18], 1, 0);
 						}
@@ -4753,7 +4768,6 @@ void draw3_data1(DRAW_UI_P p)
 						gtk_label_set_text (GTK_LABEL (pp->label3[1]), str);
 					}
 					break;
-
 				case 3:/*Sizing Curves -> Curve  p231 */
 					pp->x_pos = 565, pp->y_pos = 202-YOFFSET;
 					if (GROUP_VAL(mode_pos) == 0)  /* MODE 为Setup 时候 */
@@ -7550,7 +7564,7 @@ void draw3_data2(DRAW_UI_P p)
 				case 2:/* Output->Count or Data P222 */
 					pp->x_pos = 578, pp->y_pos = 300;
 					/* 当前步进 */
-					if (CFG(output_pos) < 3)
+					if (get_output_pos(pp->p_config) < 3)
 					{
 						switch (TMP(count_reg))
 						{
@@ -7560,7 +7574,7 @@ void draw3_data2(DRAW_UI_P p)
 						}
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 						{
-							cur_value = CFG_OUTPUT_POS(count);
+							cur_value = get_output_count (pp->p_config);
 							lower = 1.0;
 							upper = 100.0;
 							step = tmpf;
@@ -7571,7 +7585,7 @@ void draw3_data2(DRAW_UI_P p)
 						}
 						else 
 						{
-							cur_value = CFG_OUTPUT_POS(count);
+							cur_value =	get_output_count (pp->p_config);
 							digit = 0;
 							pos = 2;
 							unit = UNIT_NONE;
@@ -10355,13 +10369,13 @@ void draw3_data3(DRAW_UI_P p)
 
 				case 2:/* Sound  p223 */
 					pp->x_pos = 424, pp->y_pos = 370-YOFFSET;
-					if (CFG(output_pos) < 3)
+					if (get_output_pos(pp->p_config) < 3)
 					{
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
-							draw3_pop_tt (data_223, NULL,menu_content[SOUND + 5 + CFG_OUTPUT_POS(sound)],
-									menu_content + SOUND, 5, 3, CFG_OUTPUT_POS(sound), 0);
+							draw3_pop_tt (data_223, NULL,menu_content[SOUND + 5 + get_output_sound(pp->p_config)],
+									menu_content + SOUND, 5, 3, get_output_sound(pp->p_config), 0);
 						else 
-							draw3_popdown (menu_content[SOUND + 5 + CFG_OUTPUT_POS(sound)], 3, 0);
+							draw3_popdown (menu_content[SOUND + 5 + get_output_sound(pp->p_config)], 3, 0);
 					}
 					else
 					{
@@ -12834,7 +12848,7 @@ void draw3_data4(DRAW_UI_P p)
 					break;
 
 				case 2:/* Output->delay P224 */
-					if (CFG(output_pos) < 3)
+					if (get_output_pos(pp->p_config) < 3)
 					{
 						/* 当前步进 */
 						switch (TMP(active_delay_reg))
@@ -12847,7 +12861,7 @@ void draw3_data4(DRAW_UI_P p)
 						}
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
 						{
-							cur_value = CFG_OUTPUT_POS(delay) / 1000.0;
+							cur_value = get_output_delay(pp->p_config) / 1000.0;
 							lower = 0.0;
 							upper = 5000.0;
 							step = tmpf;
@@ -12858,7 +12872,7 @@ void draw3_data4(DRAW_UI_P p)
 						}
 						else 
 						{
-							cur_value = CFG_OUTPUT_POS(delay)/1000.0;
+							cur_value = get_output_delay(pp->p_config) / 1000.0;
 							digit = 2;
 							pos = 4;
 							unit = UNIT_MS;
@@ -14757,7 +14771,7 @@ void draw3_data5(DRAW_UI_P p)
 					break;
 
 				case 2:/* Hold Time P225 */
-					if (CFG(output_pos) < 3)
+					if (get_output_pos(pp->p_config) < 3)
 					{
 						/* 当前步进 */
 						switch (TMP(holdtime_reg))
@@ -14770,7 +14784,7 @@ void draw3_data5(DRAW_UI_P p)
 						}
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 5))
 						{
-							cur_value = CFG_OUTPUT_POS(holdtime)/1000.0;
+							cur_value = get_output_holdtime(pp->p_config)/1000.0;
 							lower = 0.0;
 							upper = 5000.0;
 							step = tmpf;
@@ -14781,7 +14795,7 @@ void draw3_data5(DRAW_UI_P p)
 						}
 						else 
 						{
-							cur_value = CFG_OUTPUT_POS(holdtime)/1000.0;
+							cur_value = get_output_holdtime(pp->p_config)/1000.0;
 							digit = 2;
 							pos = 5;
 							unit = UNIT_MS;

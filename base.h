@@ -600,7 +600,6 @@ typedef struct __dir_path_label
 
 #define GROUP_GATE_POS(a)   GROUP_VAL(gate[GROUP_VAL(gate_pos)].a)
 
-#define CFG_OUTPUT_POS(a) CFG(output[CFG(output_pos)].a)
 #define CFG_ANALOG_POS(a) CFG(analog[CFG(output_pos - 3)].a)
 #define GROUP_CURSORS_POS(a) GROUP_VAL(cursors_info[GROUP_VAL(selection)-5].a)
 #define CFG_DISPLAY_POS(a)  CFG(display[CFG(display_pos)].a)

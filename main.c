@@ -24,6 +24,7 @@ void send_focal_spi (guint group);
 /* 测试用的初始值 */
 static void set_config (guint groupid)
 {
+	gint i;
 	set_group_qty (pp->p_config, 1);
 	set_current_group (pp->p_config, groupid);
 	GROUP_VAL(group_mode) = PA_SCAN;
@@ -76,10 +77,10 @@ static void set_config (guint groupid)
 	set_alarm_groupb (pp->p_config, groupid);
 	set_alarm_conditionb (pp->p_config, ALARM_NONE);
 
-	CFG(output_pos) = 0;				 /* output 的值，1～5 */
-	CFG(output[CFG(output_pos)].alarm1) = 0;
-	CFG(output[CFG(output_pos)].alarm1_status) = 0;
-	CFG(output[CFG(output_pos)].alarm1_qty) = 0;
+	set_output_pos (pp->p_config, OUTPUT1);
+	for (i = 1; i < 17; i++) 
+		set_output_alarm (pp->p_config, ALARM_OFF, i);
+
 	CFG(analog[CFG(output_pos)].group) = 0;          /* output中group 的值，0是 1*/
 	CFG(analog[CFG(output_pos)].data) = 0;           /* output中data 的值，0是 Off*/
 	GROUP_VAL(mode_pos)= 0;				 /* 0是Setup */

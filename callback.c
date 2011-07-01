@@ -3681,66 +3681,36 @@ void data_215 (GtkMenuItem *menuitem, gpointer data) /* condition B P215 */
 
 void data_220 (GtkMenuItem *menuitem, gpointer data) /* Output P220 */
 {	
-	CFG(output_pos) = (guchar) (GPOINTER_TO_UINT (data));
+	set_output_pos (pp->p_config, (guchar) (GPOINTER_TO_UINT (data)));
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
-	send_dsp_data (OUTPUT_POS_DSP, CFG(output_pos));
 }
 
 void data_221 (GtkMenuItem *menuitem, gpointer data) /* Output -> alarm # P221 */
 {
-	guchar temp = (guchar) (GPOINTER_TO_UINT (data));
-	gushort tmp1 = 0;
+	gint temp = (GPOINTER_TO_INT (data));
 	gint i;
-	if (temp != 18)
-		CFG_OUTPUT_POS(alarm1) = (guchar) (GPOINTER_TO_UINT (data));
+
 	if (temp == 0)
 	{
-		CFG_OUTPUT_POS(alarm1_status) = 0x0;
-		CFG_OUTPUT_POS(alarm1_qty) = 0;
+		for (i = 1; i < 17; i++) 
+			set_output_alarm (pp->p_config, ALARM_OFF, i);
 	}
 	else if (temp == 1)
 	{
-		CFG_OUTPUT_POS(alarm1_status) = 0xffff;
-		CFG_OUTPUT_POS(alarm1_qty) = 16;
+		for (i = 1; i < 17; i++) 
+			set_output_alarm (pp->p_config, ALARM_ON, i);
 	}
-	else if (temp == 18)
+	else if (temp ==  18)
 	{
 	}
 	else 
 	{
-		tmp1 = ((0x1 << (temp - 2)) & CFG_OUTPUT_POS(alarm1_status));
-		if (tmp1) 
-		{
-			CFG_OUTPUT_POS(alarm1_status) &= (~(0x01 << (temp - 2)));
-			CFG_OUTPUT_POS(alarm1_qty) -= 1;
-		}
-		else
-		{
-			CFG_OUTPUT_POS(alarm1_status) |= ((0x01 << (temp - 2)));
-			CFG_OUTPUT_POS(alarm1_qty) += 1;
-		}
+		set_output_alarm (pp->p_config, !get_output_alarm_pos (pp->p_config, temp -1), temp - 1);
 	}
-	if ((CFG_OUTPUT_POS(alarm1_qty) == 0) ||
-			(CFG_OUTPUT_POS(alarm1_qty) == 16))
-	{
-	}
-	else if (CFG_OUTPUT_POS(alarm1_qty) == 1)
-	{
-		for ( i = 0 ; i < 16; i++) 
-		{
-			if (( 0x01 << i) & CFG_OUTPUT_POS(alarm1_status)) {
-				CFG_OUTPUT_POS(alarm1) = i + 2;
-				break;
-			}
-		}
-	}
-	else 
-		CFG_OUTPUT_POS(alarm1) = 18;
 
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
-	send_dsp_data (ALARM1_DSP, CFG_OUTPUT_POS(alarm1));
 }
 
 void data_2211 (GtkMenuItem *menuitem, gpointer data) /* Output -> group */
@@ -3753,8 +3723,7 @@ void data_2211 (GtkMenuItem *menuitem, gpointer data) /* Output -> group */
 
 void data_222 (GtkSpinButton *spinbutton, gpointer data) /* count P222 */
 {
-	CFG_OUTPUT_POS(count) =  (guchar) (gtk_spin_button_get_value (spinbutton));
-	send_dsp_data (COUNT_DSP, CFG_OUTPUT_POS(count));
+	set_output_count (pp->p_config, (guchar) (gtk_spin_button_get_value (spinbutton)));
 }
 
 void data_2221 (GtkMenuItem *menuitem, gpointer data) /* count */
@@ -3767,22 +3736,19 @@ void data_2221 (GtkMenuItem *menuitem, gpointer data) /* count */
 
 void data_223 (GtkMenuItem *menuitem, gpointer data) /* sound P223 */
 {
-	CFG_OUTPUT_POS(sound) = (guchar) (GPOINTER_TO_UINT (data));
+	set_output_sound (pp->p_config,	(guchar) (GPOINTER_TO_UINT (data)));
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
-	send_dsp_data (SOUND_DSP, CFG_OUTPUT_POS(sound));
 }
 
 void data_224 (GtkSpinButton *spinbutton, gpointer data) /*active_delay */
 {
-	CFG_OUTPUT_POS(delay) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
-	send_dsp_data (DELAY_DSP, CFG_OUTPUT_POS(delay));
+	set_output_delay (pp->p_config,	(guint) (gtk_spin_button_get_value (spinbutton) * 1000.0));
 }
 
 void data_225 (GtkSpinButton *spinbutton, gpointer data) /* holdtime P225*/
 {
-	CFG_OUTPUT_POS(holdtime) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
-	send_dsp_data (HOLDTIME_DSP, CFG_OUTPUT_POS(holdtime));
+	set_output_holdtime (pp->p_config,	(guint) (gtk_spin_button_get_value (spinbutton) * 1000.0));
 }
 
 void data_230 (GtkMenuItem *menuitem, gpointer data) /* Gate/Alarm -> Sizing Curves -> Mode P230 */

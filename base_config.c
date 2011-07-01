@@ -344,6 +344,7 @@ guchar get_alarm_groupa (CONFIG *p)
 
 void set_alarm_groupa (CONFIG *p, guchar data)
 {
+	g_assert (data < 8);
 	p->alarm_info[get_alarm_pos(p)] = (p->alarm_info[get_alarm_pos(p)] & ~0x07) | data; 		
 }
 
@@ -354,6 +355,7 @@ guchar get_alarm_conditiona (CONFIG *p)
 
 void set_alarm_conditiona (CONFIG *p, guchar data)
 {
+	g_assert (data < 9);
 	p->alarm_info[get_alarm_pos(p)] = (p->alarm_info[get_alarm_pos(p)] & ~0x78) | (data << 3); 		
 }
 
@@ -364,6 +366,7 @@ guchar get_alarm_operator (CONFIG *p)
 
 void set_alarm_operator (CONFIG *p, guchar data)
 {
+	g_assert (data < 2);
 	p->alarm_info[get_alarm_pos(p)] = (p->alarm_info[get_alarm_pos(p)] & ~0x80) | (data << 7); 
 }
 
@@ -374,6 +377,7 @@ guchar get_alarm_groupb (CONFIG *p)
 
 void set_alarm_groupb (CONFIG *p, guchar data)
 {
+	g_assert (data < 8);
 	p->alarm_info[get_alarm_pos(p)] = (p->alarm_info[get_alarm_pos(p)] & ~0x700) | (data << 8); 
 }
 
@@ -384,7 +388,128 @@ guchar get_alarm_conditionb (CONFIG *p)
 
 void set_alarm_conditionb (CONFIG *p, guchar data)
 {
-	p->alarm_info[get_alarm_pos(p)] = (p->alarm_info[get_alarm_pos(p)] & ~0x7800) | (data << 11); 		
+	g_assert (data < 9);
+	p->alarm_info[get_alarm_pos(p)] = (p->alarm_info[get_alarm_pos(p)] & ~0x7800) | (data << 11);
+}
+
+/* OUPUT */
+guchar	get_output_pos (CONFIG *p)
+{
+	return p->output_pos;
+}
+
+void set_output_pos (CONFIG *p, guchar data)
+{
+	g_assert (data < 5);
+	p->output_pos = data;
+}
+
+gushort	get_output_alarm (CONFIG *p)
+{
+	return p->output1[get_output_pos(p)].alarm_info;
+}
+
+gushort	get_1output_alarm_pos (CONFIG *p)
+{
+	gint i;
+	g_assert (get_output_alarm_qty (p) == 1);
+	for (i = 0; i < 16; i++)
+	{
+		if (get_output_alarm_pos (p, i + 1))
+			return (i + 1);
+	}
+	return 0;
+}
+
+guchar get_output_alarm_qty (CONFIG *p)
+{
+	gint qty = 0, i;
+	for (i = 0; i < 16; i++)
+	{
+		if (get_output_alarm_pos (p, i + 1))
+			qty += 1;
+	}
+	return (guchar)(qty);
+}
+
+guchar get_output_alarm_pos (CONFIG *p, guint pos)
+{
+	g_assert (pos < 17);
+	return (p->output1[get_output_pos(p)].alarm_info >> (pos - 1)) & 0x01;
+}
+
+void set_output_alarm (CONFIG *p, guchar data, guint pos)
+{
+	g_assert (data < 2);
+	g_assert (data < 17);
+	p->output1[get_output_pos(p)].alarm_info = 
+		(p->output1[get_output_pos(p)].alarm_info & ~(0x01 << (pos - 1))) | (data << (pos -1));
+}
+
+guchar get_output_count (CONFIG *p)
+{
+	return p->output1[get_output_pos(p)].count;
+}
+
+guchar get_output_sound (CONFIG *p)
+{
+	return p->output1[get_output_pos(p)].sound;
+}
+
+void set_output_count (CONFIG *p, guchar data)
+{
+	g_assert (data < 101);
+	p->output1[get_output_pos(p)].count = data;
+}
+
+void set_output_sound (CONFIG *p, guchar data)
+{
+	g_assert (data < 5);
+	p->output1[get_output_pos(p)].sound = data;
+}
+
+guint get_output_delay (CONFIG *p)
+{
+	return p->output1[get_output_pos(p)].delay;
+}
+
+guint get_output_holdtime (CONFIG *p)
+{
+	return p->output1[get_output_pos(p)].holdtime;
+}
+
+void set_output_delay (CONFIG *p, guint data)
+{
+	p->output1[get_output_pos(p)].delay = data;
+}
+
+void set_output_holdtime (CONFIG *p, guint data)
+{
+	p->output1[get_output_pos(p)].holdtime = data;
+}
+
+guchar get_output_group (CONFIG *p)
+{
+	return (p->analog1[get_output_pos(p) - 3] & 0x7);
+}
+
+guchar get_output_data (CONFIG *p)
+{
+	return ((p->analog1[get_output_pos(p) - 3] & 0x18) >> 3);
+}
+
+void set_output_group (CONFIG *p, guchar data)
+{
+	g_assert (data < 8);
+	p->analog1[get_output_pos(p)] = 
+		(p->analog1[get_output_pos(p)] & ~(0x07)) | data;
+}
+
+void set_output_data (CONFIG *p, guchar data)
+{
+	g_assert (data < 4);
+	p->analog1[get_output_pos(p)] = 
+		(p->analog1[get_output_pos(p)] & ~(0x18)) | (data << 3);
 }
 
 /* group操作*/
