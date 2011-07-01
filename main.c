@@ -237,6 +237,7 @@ static void set_config (guint groupid)
 
 	pp->ctype_pos = 1;
  	pp->cmode_pos = 2;
+	pp->cstart_qty = 1;
 }
 
 int main (int argc, char *argv[])

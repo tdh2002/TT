@@ -750,7 +750,7 @@ void b3_fun0(gpointer pt)
 							switch(p->cmode_pos)
 							{
 								case 0:
-									((p->cstart_qty) > 1) ? (p->cstart_qty) -- : ((p->cstart_qty) = 4);
+									((p->cstart_qty) > 1) ? (p->cstart_qty) -- : ((p->cstart_qty) = 6);
 									break;
 								case 1:
 									((p->cstart_qty) > 1) ? (p->cstart_qty) -- : ((p->cstart_qty) = 5);
@@ -941,7 +941,7 @@ void b3_fun1(gpointer p)
 								switch(pp->cmode_pos)
 								{
 									case 0:
-										((pp->cstart_qty) < 4) ? (pp->cstart_qty) ++ : ((pp->cstart_qty) = 1);
+										((pp->cstart_qty) < 6) ? (pp->cstart_qty) ++ : ((pp->cstart_qty) = 1);
 										break;
 									case 1:
 										((pp->cstart_qty) < 5) ? (pp->cstart_qty) ++ : ((pp->cstart_qty) = 1);
@@ -3504,8 +3504,9 @@ void data_202 (GtkSpinButton *spinbutton, gpointer data)	/* 闸门开始位置 P
 		TMP(group_spi[group]).gate_i_end	= (GROUP_VAL_POS(group, gate[2].start) + 
 				GROUP_VAL_POS (group, gate[2].width)) / 10;
 	}
-
 	send_spi_data (group);
+
+	gtk_widget_queue_draw(pp->draw_area->drawing_area);
 
 }
 
@@ -3571,6 +3572,7 @@ void data_203 (GtkSpinButton *spinbutton, gpointer data) /* 闸门宽度 P203 */
 	}
 
 	send_spi_data (group);
+	gtk_widget_queue_draw(pp->draw_area->drawing_area);
 }
 
 void data_2031 (GtkMenuItem *menuitem, gpointer data)	/* 波峰或者前沿 测量选项 */
@@ -3622,6 +3624,7 @@ void data_204 (GtkSpinButton *spinbutton, gpointer data) /* 闸门高度 P204 */
 	}
 
 	send_spi_data (group);
+	gtk_widget_queue_draw(pp->draw_area->drawing_area);
 }
 
 void data_2041 (GtkMenuItem *menuitem, gpointer data) /* 闸门RF 选择 射频时候才可以调节 */

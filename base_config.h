@@ -369,7 +369,7 @@ typedef	struct _Config
 	guchar	output_pos;			/* 0~5 */
 	guchar	TTT0[2];
 
-	gushort	alarm_info[16];		/*     */
+	gushort	alarm_info[16];		/* 存储alarm 配置的信息 */
 
 	OUTPUT_INFO	output[3];		/* 输出信息 output[0],output[1],output[2] */
 	ANALOG_INFO	analog[2];		/* Analog 2 个 */

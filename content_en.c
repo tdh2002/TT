@@ -14,7 +14,7 @@ const gchar *content_en10[] = {
 
 static const gchar *content_en20[] = {
 	/* 二级菜单第0页 */
-	"Group", "Focal Law", "Calibration", "Weld", NULL
+	"Group", "Focal Law", "Calibration", NULL, NULL
 };
 
 static const gchar *content_en21[] = {
@@ -92,7 +92,7 @@ static const gchar *content_en202[] = {
 
 static const gchar *content_en203[] = {
 	/* 二级菜单第0页下的第3页三级菜单 */
-	"Back", "Start", "Weld", "Symmetry", NULL, NULL
+	NULL, NULL, NULL, NULL, NULL, NULL
 };
 
 static const gchar *content_en204[] = {
