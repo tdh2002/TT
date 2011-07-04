@@ -1618,7 +1618,7 @@ void b3_fun3(gpointer p)
 								 	 }
 								 	 else if ((pp->ctype_pos == 1) && ((pp->cmode_pos == 1)||(pp->cmode_pos == 2)||(pp->cmode_pos == 3)))
 								 	 {
-											data_process (&(TMP(last_angle_reg)), 2);
+											data_process (&(TMP(max_angle_reg)), 2);
 									 }
 								 	 else if ((pp->ctype_pos == 2) && (pp->scode_pos == 1))
 								 	 {
@@ -2318,13 +2318,97 @@ static int handler_key(guint keyval, gpointer data)
 	guint	data1 = (GPOINTER_TO_UINT (data));
 	switch (keyval) 
 	{
-		case GDK_KP_0:
+		case GDK_KP_0:	/* 选中 P310 cursors 这个位置 */
+			pp->pos = 3;
+			pp->pos1[pp->pos] = 1;
+			CUR_POS = 0;
+			pp->pos_pos = MENU3_PRESSED;
+			draw_menu1();
+			draw_menu2(0);
+			draw_menu3(0, NULL);
+			break;
+
+		case GDK_KP_1:	/* 冻结 */
+			TMP(freeze) = !TMP(freeze);
+			break;
+
+		case GDK_KP_2:	/* 选中 Calibration 这个位置 */
+			pp->pos = 0;
+			pp->pos1[pp->pos] = 2;
+			//CUR_POS = 0;
+			pp->pos_pos = MENU2_PRESSED;
+			draw_menu1();
+			draw_menu2(0);
+			draw_menu3(0, NULL);
+			break;
+
+		case GDK_KP_3:	/* 选中 P100 Gain 这个位置 */
+			pp->pos = 1;
+			pp->pos1[pp->pos] = 0;
+			CUR_POS = 0;
+			pp->pos_pos = MENU3_PRESSED;
+			draw_menu1();
+			draw_menu2(0);
+			draw_menu3(0, NULL);
+			break;
+
+		case GDK_KP_4:	/* 选中 P801 Open 这个位置 */
+			pp->pos = 8;
+			pp->pos1[pp->pos] = 0;
+			CUR_POS = 1;
+			pp->pos_pos = MENU3_PRESSED;
+			draw_menu1();
+			draw_menu2(0);
+			draw_menu3(0, NULL);
+			break;
+
+		case GDK_KP_5:	/* 选中 P200 Gate 这个位置 */
+			pp->pos = 2;
+			pp->pos1[pp->pos] = 0;
+			CUR_POS = 0;
+			pp->pos_pos = MENU3_PRESSED;
+			draw_menu1();
+			draw_menu2(0);
+			draw_menu3(0, NULL);
+			break;
+
+		case GDK_KP_6:	/* 开始／停止 */			
+			break;
+
+		case GDK_KP_7:	/* 保存 */			
+			break;
+
+		case GDK_KP_8:	/* 选中 P140 Set 80% 这个位置 */
+			pp->pos = 1;
+			pp->pos1[pp->pos] = 4;
+			CUR_POS = 0;
+			pp->pos_pos = MENU3_PRESSED;
+			draw_menu1();
+			draw_menu2(0);
+			draw_menu3(0, NULL);
+			break;
+
+		case GDK_KP_9:	/* 选中 P400 Display 这个位置 */
+			pp->pos = 4;
+			pp->pos1[pp->pos] = 0;
+			CUR_POS = 0;
+			pp->pos_pos = MENU3_PRESSED;
+			draw_menu1();
+			draw_menu2(0);
+			draw_menu3(0, NULL);
+			break;
+
+		case GDK_KP_Subtract:  /* +/- */
 			(TMP(beam_num[get_current_group(pp->p_config)]) < (TMP(beam_qty[get_current_group(pp->p_config)]) - 1))	?
 				(TMP(beam_num[get_current_group(pp->p_config)]) += 1)	:	
 			(TMP(beam_num[get_current_group(pp->p_config)]) = 0);
 			g_print("beam num =%d\n", TMP(beam_num[get_current_group(pp->p_config)]));
 			draw_area_all ();
 			break;
+
+		case GDK_KP_Divide:	/* 擦除 */			
+			break;
+
 		case GDK_Super_L:
 			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
 			{
@@ -2838,10 +2922,12 @@ void data_0221 (GtkMenuItem *menuitem, gpointer data) /* Wizard -> Calibration -
 	draw_menu3(0, NULL);
 	/* 发送给硬件 */
 }
+#if 0
 void data_0222 (GtkSpinButton *spinbutton, gpointer data) /* wizard  First Angle  */
 {
 	pp->first_angle =  (gshort) (gtk_spin_button_get_value (spinbutton) * 100.0);
 }
+#endif
 void data_0223 (GtkSpinButton *spinbutton, gpointer data) /* wizard  Ref.Amplitude  */
 {
 	pp->ref_amplitude =  (gushort) (gtk_spin_button_get_value (spinbutton) * 100.0);
@@ -2908,11 +2994,12 @@ void data_0237 (GtkSpinButton *spinbutton, gpointer data) /* wizard  thickness *
 {
 	pp->thickness =  (gint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
 }
-
+#if 0
 void data_0238 (GtkSpinButton *spinbutton, gpointer data) /* wizard  thickness A */
 {
 	pp->last_angle =  (gint) (gtk_spin_button_get_value (spinbutton) * 100.0);
 }
+#endif
 void data_0239 (GtkSpinButton *spinbutton, gpointer data) /* wizard  Tolerance*/
 {
 	pp->tolerance_t =  (gushort) (gtk_spin_button_get_value (spinbutton) * 100.0);
@@ -3508,7 +3595,7 @@ void data_202 (GtkSpinButton *spinbutton, gpointer data)	/* 闸门开始位置 P
 	}
 	send_spi_data (group);
 
-	gtk_widget_queue_draw(pp->draw_area->drawing_area);
+	gtk_widget_queue_draw (pp->vboxtable);
 
 }
 
@@ -3574,7 +3661,7 @@ void data_203 (GtkSpinButton *spinbutton, gpointer data) /* 闸门宽度 P203 */
 	}
 
 	send_spi_data (group);
-	gtk_widget_queue_draw(pp->draw_area->drawing_area);
+	gtk_widget_queue_draw (pp->vboxtable);
 }
 
 void data_2031 (GtkMenuItem *menuitem, gpointer data)	/* 波峰或者前沿 测量选项 */
@@ -3626,7 +3713,7 @@ void data_204 (GtkSpinButton *spinbutton, gpointer data) /* 闸门高度 P204 */
 	}
 
 	send_spi_data (group);
-	gtk_widget_queue_draw(pp->draw_area->drawing_area);
+	gtk_widget_queue_draw (pp->vboxtable);
 }
 
 void data_2041 (GtkMenuItem *menuitem, gpointer data) /* 闸门RF 选择 射频时候才可以调节 */
@@ -4146,6 +4233,8 @@ void data_401 (GtkMenuItem *menuitem, gpointer data) /* Display -> Selection Asc
 	set_display_group (pp->p_config, (guchar) (GPOINTER_TO_UINT (data)));
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
+	draw_area_all ();
+/*	gtk_widget_queue_draw (pp->vboxtable);*/
 }
 
 void data_4011 (GtkMenuItem *menuitem, gpointer data) /* Display -> Selection -> C-Scan1 地一个Cscan p401 */

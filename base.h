@@ -264,12 +264,14 @@ typedef struct tmp_config
 	guchar	deptha_reg;
 	guchar	thickness_reg;
 	guchar	tolerance_reg;
-	guchar	first_angle_reg;
-	guchar	last_angle_reg;
+	//guchar	first_angle_reg;
+	//guchar	last_angle_reg;
 	guchar	ref_amplitude_reg;
 	guchar	tolerance_t_reg;
 	guchar	compdb_reg;
 	guchar	cangle_reg;
+
+	gchar	freeze;
 
     //GdkPixbuf *pixbuf_[18];
 
@@ -485,8 +487,8 @@ typedef struct Draw_interface
 	gint	deptha;
 	gint	thickness;
 	gint	tolerance;
-	gshort	first_angle;
-	gshort	last_angle;
+	//gshort	first_angle;
+	//gshort	last_angle;
 	gushort	ref_amplitude;
 	guint	tolerance_t;
 	gushort	comp_gain;

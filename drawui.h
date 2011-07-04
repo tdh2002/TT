@@ -325,6 +325,7 @@ extern void tt_label_show_float (GtkWidget *label, const gchar *s1, gfloat value
 		const gchar *s3, const gchar *color,  guint font_size);
 
 extern void change_language();										/* 选择语言 */
+extern void draw_menu1();
 extern void draw_menu2(gint pa);									/* 更新二级菜单 */
 extern void draw_menu3(gint pa, gpointer pt);					    /* 更新三级菜单 */
 extern void init_ui(DRAW_UI_P p);									/* 初始化界面 */

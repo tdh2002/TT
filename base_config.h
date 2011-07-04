@@ -360,7 +360,6 @@ typedef	struct _Config
 	gushort	alarm_info[16];		/* 存储alarm 配置的信息 */
 	OUTPUT_INFO1 output1[3];	/* 输出信息 output[0],output[1],output[2] */
 
-
 	GROUP	group[setup_MAX_GROUP_QTY];			/* */
 	MEASURE_DATA	measure_data;
 
