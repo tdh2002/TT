@@ -501,15 +501,15 @@ guchar get_output_data (CONFIG *p)
 void set_output_group (CONFIG *p, guchar data)
 {
 	g_assert (data < 8);
-	p->analog1[get_output_pos(p)] = 
-		(p->analog1[get_output_pos(p)] & ~(0x07)) | data;
+	p->analog1[get_output_pos(p) - 3] = 
+		(p->analog1[get_output_pos(p) - 3] & ~(0x07)) | data;
 }
 
 void set_output_data (CONFIG *p, guchar data)
 {
 	g_assert (data < 4);
-	p->analog1[get_output_pos(p)] = 
-		(p->analog1[get_output_pos(p)] & ~(0x18)) | (data << 3);
+	p->analog1[get_output_pos(p) - 3] = 
+		(p->analog1[get_output_pos(p) - 3] & ~(0x18)) | (data << 3);
 }
 
 /* group操作*/

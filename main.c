@@ -81,8 +81,6 @@ static void set_config (guint groupid)
 	for (i = 1; i < 17; i++) 
 		set_output_alarm (pp->p_config, ALARM_OFF, i);
 
-	CFG(analog[CFG(output_pos)].group) = 0;          /* output中group 的值，0是 1*/
-	CFG(analog[CFG(output_pos)].data) = 0;           /* output中data 的值，0是 Off*/
 	GROUP_VAL(mode_pos)= 0;				 /* 0是Setup */
 	GROUP_VAL(curve_pos)= 0;			/* 0是NOne */
 	GROUP_VAL(ref_ampl)=10; 
@@ -456,7 +454,8 @@ void init_group_spi (guint group)
 	TMP(group_spi[group]).sample_start	= (GROUP_VAL_POS (group, start) + 
 		GROUP_VAL_POS(group, wedge_delay)) / 10;		
 
-	if (GROUP_VAL_POS(group, probe.Elem_qty) == 1)	
+//	if (GROUP_VAL_POS(group, probe.Elem_qty) == 1)	
+	if (LAW_VAL_POS(group, Elem_qty) == 1)	
 		TMP(group_spi[group]).sum_gain	= 4095;	
 	else 
 		TMP(group_spi[group]).sum_gain	= 

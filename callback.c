@@ -3415,7 +3415,8 @@ void data_1451 (GtkSpinButton *spinbutton, gpointer data) /* Sum Gain */
 	GROUP_VAL(sum_gain) =  (gushort) ((gtk_spin_button_get_value (spinbutton)) * 100.0);
 
 	/* 发送给硬件 */
-	if (GROUP_VAL_POS(grp, probe.Elem_qty) == 1)	
+//	if (GROUP_VAL_POS(grp, probe.Elem_qty) == 1)	
+	if (LAW_VAL_POS(grp, Elem_qty) == 1)	
 		TMP(group_spi[grp]).sum_gain	= 4095;	
 	else 
 		TMP(group_spi[grp]).sum_gain	= 
@@ -3445,7 +3446,8 @@ void data_145 (GtkMenuItem *menuitem, gpointer data) /* Sum Gain */
 	}
 
 	/* 发送给硬件 */
-	if (GROUP_VAL_POS(grp, probe.Elem_qty) == 1)	
+//	if (GROUP_VAL_POS(grp, probe.Elem_qty) == 1)	
+	if (LAW_VAL_POS(grp, Elem_qty) == 1)	
 		TMP(group_spi[grp]).sum_gain	= 4095;	
 	else 
 		TMP(group_spi[grp]).sum_gain	= 
@@ -3715,10 +3717,10 @@ void data_221 (GtkMenuItem *menuitem, gpointer data) /* Output -> alarm # P221 *
 
 void data_2211 (GtkMenuItem *menuitem, gpointer data) /* Output -> group */
 {
-	CFG_ANALOG_POS(group) = (guchar) (GPOINTER_TO_UINT (data));
+	set_output_group (pp->p_config, (guchar) (GPOINTER_TO_UINT (data)));
+
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
-	send_dsp_data (GROUPA_DSP, CFG_ANALOG_POS(group));
 }
 
 void data_222 (GtkSpinButton *spinbutton, gpointer data) /* count P222 */
@@ -3728,10 +3730,9 @@ void data_222 (GtkSpinButton *spinbutton, gpointer data) /* count P222 */
 
 void data_2221 (GtkMenuItem *menuitem, gpointer data) /* count */
 {
-	CFG_ANALOG_POS(data) = (guchar) (GPOINTER_TO_UINT (data));
+	set_output_data (pp->p_config, (guchar) (GPOINTER_TO_UINT (data)));
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
-	send_dsp_data (DATA_DSP, CFG_ANALOG_POS(data));
 }
 
 void data_223 (GtkMenuItem *menuitem, gpointer data) /* sound P223 */

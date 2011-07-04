@@ -70,14 +70,6 @@ typedef struct _cursors_info
 	gint	index;
 } CURSORS_INFO, *CURSORS_INFO_P;
 
-/* 输出信息 */
-typedef struct _analog_info 
-{
-	guchar	group;	/* GROUP */
-	guchar	data;	/* DATA */
-	gchar	tt[2];
-} ANALOG_INFO, *ANALOG_INFO_P;
-
 /* 探头(Probe)  516 byte 如果探头是unknown 必须给一个参数 */
 typedef struct _Probe
 {
@@ -368,7 +360,6 @@ typedef	struct _Config
 	gushort	alarm_info[16];		/* 存储alarm 配置的信息 */
 	OUTPUT_INFO1 output1[3];	/* 输出信息 output[0],output[1],output[2] */
 
-	ANALOG_INFO	analog[2];		/* Analog 2个 */
 
 	GROUP	group[setup_MAX_GROUP_QTY];			/* */
 	MEASURE_DATA	measure_data;

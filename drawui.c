@@ -3773,7 +3773,10 @@ void draw3_data0(DRAW_UI_P p)
 						}
 
 						for (i = 3 ; i < 5; i++) /*data的值决定后两项后面是否跟[On]*/
-							menu_on |= (CFG(analog[i - 3].data) != 0 ) << i;
+						{
+							set_output_pos(pp->p_config, i); 
+							menu_on |= (get_output_data(pp->p_config) != 0 ) << i;
+						}
 						set_output_pos (pp->p_config, tt);
 						draw3_pop_tt_on (data_220, NULL, menu_content[OUTPUT_POS + get_output_pos(pp->p_config)],
 								menu_content + OUTPUT_POS, 5, 0, get_output_pos(pp->p_config), 0, menu_on, 5);
@@ -4757,12 +4760,13 @@ void draw3_data1(DRAW_UI_P p)
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 						{
 							draw3_pop_tt (data_2211, NULL, 
-									menu_content[GROUPA + CFG_ANALOG_POS(group)],
-									menu_content + GROUPA, 4, 1, CFG_ANALOG_POS(group), 0);
+									menu_content[GROUPA +
+									get_output_group(pp->p_config)],
+									menu_content + GROUPA, 4, 1, get_output_group(pp->p_config), 0);
 						}
 						else 
 						{
-							draw3_popdown (menu_content[GROUPA+CFG_ANALOG_POS(group)], 1, 0);
+							draw3_popdown (menu_content[GROUPA + get_output_group(pp->p_config)], 1, 0);
 						}
 						str = g_strdup_printf ("%s", con2_p[2][2][6]);	
 						gtk_label_set_text (GTK_LABEL (pp->label3[1]), str);
@@ -7597,12 +7601,12 @@ void draw3_data2(DRAW_UI_P p)
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 						{
 							draw3_pop_tt (data_2221, NULL, 
-									menu_content[DATA + CFG_ANALOG_POS(data)],
-									menu_content + DATA, 4, 2, CFG_ANALOG_POS(data), 0);
+									menu_content[DATA + get_output_data(pp->p_config)],
+									menu_content + DATA, 4, 2, get_output_data(pp->p_config), 0);
 						}
 						else 
 						{
-							draw3_popdown (menu_content[DATA + CFG_ANALOG_POS(data)], 2, 0);
+							draw3_popdown (menu_content[DATA + get_output_data(pp->p_config)], 2, 0);
 						}
 						str = g_strdup_printf ("%s", con2_p[2][2][7]);	
 						gtk_label_set_text (GTK_LABEL (pp->label3[2]), str);

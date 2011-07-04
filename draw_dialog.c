@@ -1069,7 +1069,7 @@ int on_changed_open_config_file(GtkTreeSelection *selection,	gpointer       data
 
 	char *value_name;
 
-	int temp;
+	//int temp;
     
 	source_list = (GtkWidget *)data;
 
@@ -1091,14 +1091,14 @@ int on_changed_open_config_file(GtkTreeSelection *selection,	gpointer       data
 
 			strcat(file_name,value_name);
 
-			fp = fopen(file_name, "r+");
+			//fp = fopen(file_name, "r+");
 
-			if (fp < 0)
-				return TRUE;
+			//if (fp < 0)
+			//	return TRUE;
 
-			temp = fread(pp->p_config, sizeof(CONFIG),1,fp);
+			//temp = fread(pp->p_config, sizeof(CONFIG),1,fp);
 
-			fclose(fp);
+			//fclose(fp);
 
 			fp = fopen(preview_file_name,"w+");
 
@@ -1190,7 +1190,7 @@ gint open_config_file(GtkWidget *widget,	GdkEventButton *event,	gpointer       d
 
 			fp = fopen(file_name, "r+");
 
-			if (fp < 0)
+			if (fp == NULL)
 				return TRUE;
 
 			temp = fread(pp->p_config, sizeof(CONFIG),1,fp);
@@ -1435,7 +1435,7 @@ int on_changed_save_config_file(GtkTreeSelection *selection,	gpointer       data
 
 	char *value_name;
 
-	int temp;
+	//int temp;
 
     GtkWidget *entry_name;
     
@@ -1468,14 +1468,14 @@ int on_changed_save_config_file(GtkTreeSelection *selection,	gpointer       data
 
 			strcat(file_name,value_name);
 
-			fp = fopen(file_name, "r+");
+			//fp = fopen(file_name, "r+");
 
-			if (fp < 0)
-				return -1;
+			//if (fp < 0)
+			//	return -1;
 
-			temp = fread(pp->p_config, sizeof(CONFIG),1,fp);
+			//temp = fread(pp->p_config, sizeof(CONFIG),1,fp);
 
-			fclose(fp);
+			//fclose(fp);
 
 			fp = fopen(preview_file_name,"w+");
 
