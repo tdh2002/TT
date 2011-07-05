@@ -6,6 +6,7 @@
 #include "drawui.h"
 #include "drawfb.h"
 #include "spi_d.h"
+#include "file_op.h"
 
 #include <time.h>
 #include <stdio.h>
@@ -270,8 +271,8 @@ int main (int argc, char *argv[])
 	memset (p_config, 0x0, sizeof(CONFIG));
 	memset (p_tmp_config, 0x0, sizeof(TMP_CONFIG));
 	g_print ("DRAW_UI's size:%d xx = %d\n", sizeof(DRAW_UI), p_ui->mark3);
-	g_print ("CONFIG's size:%d xx = %d\n", sizeof(CONFIG), p_config->time);
-	g_print ("GROUP size:%d xx = %d\n", sizeof(GROUP), p_config->time);
+	g_print ("CONFIG's size:%d \n", sizeof(CONFIG));
+	g_print ("GROUP size:%d \n", sizeof(GROUP));
 
 	window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_decorated (GTK_WINDOW (window), FALSE);			/*不可以装饰*/
@@ -309,6 +310,41 @@ int main (int argc, char *argv[])
 			g_print("success open config file\n");
 		}
 	}
+	/* 读取颜色 amp toft depth */
+	read_palette_file ("source/system/Sample/Palette/ONDT_Amplitude.pal",
+			TMP(t_special_col), TMP(t_color));  /*   */
+	if (TMP(t_special_col[0]) != 0x12345678)
+	{
+		TMP(special_col_amp[0]) = COL_24_TO_16(TMP(t_special_col)[0]);
+		TMP(special_col_amp[1]) = COL_24_TO_16(TMP(t_special_col)[1]);
+		TMP(special_col_amp[2]) = COL_24_TO_16(TMP(t_special_col)[2]);
+	}
+	for (i = 0; i < 256; i ++)
+		TMP(color_amp[i]) = COL_24_TO_16(TMP(t_color)[i]);
+
+	read_palette_file ("source/system/Sample/Palette/ONDT_RFTOFD.pal",
+			TMP(t_special_col), TMP(t_color));  /*   */
+	if (TMP(t_special_col[0]) != 0x12345678)
+	{
+		TMP(special_col_tofd[0]) = COL_24_TO_16(TMP(t_special_col)[0]);
+		TMP(special_col_tofd[1]) = COL_24_TO_16(TMP(t_special_col)[1]);
+		TMP(special_col_tofd[2]) = COL_24_TO_16(TMP(t_special_col)[2]);
+	}
+	for (i = 0; i < 256; i ++)
+		TMP(color_tofd[i]) = COL_24_TO_16(TMP(t_color)[i]);
+
+	read_palette_file ("source/system/Sample/Palette/ONDT_Corrosion.pal",
+			TMP(t_special_col), TMP(t_color));  /*   */
+	if (TMP(t_special_col[0]) != 0x12345678)
+	{
+		TMP(special_col_depth[0]) = COL_24_TO_16(TMP(t_special_col)[0]);
+		TMP(special_col_depth[1]) = COL_24_TO_16(TMP(t_special_col)[1]);
+		TMP(special_col_depth[2]) = COL_24_TO_16(TMP(t_special_col)[2]);
+	}
+	for (i = 0; i < 256; i ++)
+		TMP(color_depth[i]) = COL_24_TO_16(TMP(t_color)[i]);
+
+
 
 	memset (TMP(scan_type), 0xff, 16);
 	TMP(beam_qty[0]) = 1;

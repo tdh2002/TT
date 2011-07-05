@@ -361,22 +361,21 @@ typedef	struct _Config
 	OUTPUT_INFO1 output1[3];	/* 输出信息 output[0],output[1],output[2] */
 
 	GROUP	group[setup_MAX_GROUP_QTY];			/* */
-	MEASURE_DATA	measure_data;
-
+//	MEASURE_DATA	measure_data;
 	st_PART	part;				/* 被检测工件	*/
-
 	/*选项*/
-	guchar	unit;			/* 0 mm 1 inch */
-	guint	bright;
+	guchar	bright;				/* 亮度 0~100 */
 
-	guint	date;			/*  */
-	guint	time;			/*  */
+	gushort	year;
+	guchar	month;
+	guchar	day;
+	guchar	hour;
+	guchar	minitue;
+	guchar	second;
+	guchar	unit;				/* 0 mm 1 inch */
 
-	guchar	list;                            /*Measurements->Reading->list*/
-	guchar	field1;                            /*Measurements->Reading->Field1*/
-	guchar	field2;                            /*Measurements->Reading->Field2*/
-	guchar	field3;                            /*Measurements->Reading->Field3*/
-	guchar	field4;                            /*Measurements->Reading->Field4*/
+	guchar	list;	/* Measurements->Reading->list  filed */
+	guchar	field[4];	
 
 	guint	VPA;                            /*Measurements->Cursors->VPA*/
 	guint	cursors_scan;                   /*Measurements->Cursors->Scan*/
@@ -534,6 +533,23 @@ extern guchar	get_output_group (CONFIG *p);
 extern guchar	get_output_data (CONFIG *p);
 extern void		set_output_group (CONFIG *p, guchar data);
 extern void		set_output_data (CONFIG *p, guchar data);
+
+/* 设置获取亮度 */
+extern guchar	get_bright (CONFIG *p);			
+extern void		set_bright (CONFIG *p, guchar data);
+/* Reading list field 设置当前读取的数值 */
+extern guchar	get_reading_list (CONFIG *p);			
+extern void		set_reading_list (CONFIG *p, guchar data);
+extern guchar	get_reading_field1 (CONFIG *p);			
+extern void		set_reading_field1 (CONFIG *p, guchar data);
+extern guchar	get_reading_field2 (CONFIG *p);			
+extern void		set_reading_field2 (CONFIG *p, guchar data);
+extern guchar	get_reading_field3 (CONFIG *p);			
+extern void		set_reading_field3 (CONFIG *p, guchar data);
+extern guchar	get_reading_field4 (CONFIG *p);			
+extern void		set_reading_field4 (CONFIG *p, guchar data);
+
+
 
 /* group操作 */
 extern void		grpcpy (CONFIG *p, guint src, guint dst);

@@ -512,6 +512,78 @@ void set_output_data (CONFIG *p, guchar data)
 		(p->analog1[get_output_pos(p) - 3] & ~(0x18)) | (data << 3);
 }
 
+/* 设置获取亮度 */
+guchar get_bright (CONFIG *p)
+{
+	return	p->bright;
+}
+
+void set_bright (CONFIG *p, guchar data)
+{
+	g_assert (data < 101);
+	p->bright = data;
+}
+
+/* Reading list field 设置当前读取的数值 */
+guchar get_reading_list (CONFIG *p)
+{
+	return p->list;
+}
+
+void set_reading_list (CONFIG *p, guchar data)
+{
+	g_assert (data < 2);
+	p->list = data;
+}
+
+guchar get_reading_field1 (CONFIG *p)
+{
+	return p->field[0];
+}
+
+void set_reading_field1 (CONFIG *p, guchar data)
+{
+	g_assert (data < 128);
+	p->field[0] = data;
+}
+
+guchar get_reading_field2 (CONFIG *p)
+{
+	return p->field[1];
+}
+
+void set_reading_field2 (CONFIG *p, guchar data)
+{
+	g_assert (data < 128);
+	p->field[1] = data;
+}
+
+guchar get_reading_field3 (CONFIG *p)
+{
+	return p->field[2];
+}
+
+void set_reading_field3 (CONFIG *p, guchar data)
+{
+	g_assert (data < 128);
+	p->field[2] = data;
+}
+
+guchar get_reading_field4 (CONFIG *p)
+{
+	return p->field[3];
+}
+
+void set_reading_field4 (CONFIG *p, guchar data)
+{
+	g_assert (data < 128);
+	p->field[3] = data;
+}
+
+
+
+
+
 /* group操作*/
 void grpcpy (CONFIG *p, guint dst, guint src)		/* 把src group 配置复制到 dst group */
 {

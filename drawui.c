@@ -3826,10 +3826,10 @@ void draw3_data0(DRAW_UI_P p)
 					p->x_pos = 398, p->y_pos = 118-YOFFSET;
 					if ((p->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 						draw3_pop_tt (data_300, NULL, 
-								list1[CFG(list)],
-								list, 2, 0, CFG(list), 0);
+								list1[get_reading_list(pp->p_config)],
+								list, 2, 0, get_reading_list(pp->p_config), 0);
 					else 
-						draw3_popdown (list1[CFG(list)], 0, 0);
+						draw3_popdown (list1[get_reading_list(pp->p_config)], 0, 0);
 					break;
 				case 1:/*Measurements -> Cursors -> Selection p310 */
 					p->x_pos = 569, p->y_pos = 116-YOFFSET;
@@ -4910,7 +4910,7 @@ void draw3_data1(DRAW_UI_P p)
 
 					/* 设置label */
 					gtk_label_set_text (GTK_LABEL (pp->label3[1]), temp);
-					if(CFG(list)==0)
+					if(get_reading_list(pp->p_config)==0)
 						gtk_label_set_text (GTK_LABEL (pp->data3[1]), "Manual Weld 1");
 					else
 						gtk_label_set_text (GTK_LABEL (pp->data3[1]), "Auto. Weld 1");
@@ -6074,7 +6074,7 @@ void draw3_data1(DRAW_UI_P p)
 
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 					{
-						cur_value = pp->p_config->bright;
+						cur_value = get_bright (pp->p_config);
 						lower = 1.0;
 						upper = 100.0;
 						step = tmpf;
@@ -6085,7 +6085,7 @@ void draw3_data1(DRAW_UI_P p)
 					}
 					else 
 					{
-						cur_value = pp->p_config->bright;
+						cur_value = get_bright (pp->p_config);
 						digit = 0;
 						pos = 1;
 						unit = UNIT_BFH;
@@ -7887,10 +7887,10 @@ void draw3_data2(DRAW_UI_P p)
 					pp->x_pos = 200, pp->y_pos = 0;
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 						draw3_pop_tt (data_302, NULL, 
-								field[CFG(field1)],
-								field1, 60, 2, CFG(field1), 0);
+								field[get_reading_field1(pp->p_config)],
+								field1, 60, 2, get_reading_field1(pp->p_config), 0);
 					else 
-						draw3_popdown (field[CFG(field1)], 2, 0);
+						draw3_popdown (field[get_reading_field1(pp->p_config)], 2, 0);
 					break;
 				case 1:/*Measurements -> Cursors -> Scan p312 */
 					if(!GROUP_VAL(selection))
@@ -10622,10 +10622,10 @@ void draw3_data3(DRAW_UI_P p)
 					pp->x_pos = 200, pp->y_pos = 0;
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 						draw3_pop_tt (data_303, NULL, 
-								field[CFG(field2)],
-								field1, 60, 3, CFG(field2), 0);
+								field[get_reading_field2(pp->p_config)],
+								field1, 60, 3, get_reading_field2(pp->p_config), 0);
 					else 
-						draw3_popdown (field[CFG(field2)], 3, 0);
+						draw3_popdown (field[get_reading_field2(pp->p_config)], 3, 0);
 
 					break;
 
@@ -13055,10 +13055,10 @@ void draw3_data4(DRAW_UI_P p)
 					pp->x_pos = 200, pp->y_pos = 0;
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
 						draw3_pop_tt (data_304, NULL, 
-								field[CFG(field3)],
-								field1, 60, 4, CFG(field3), 0);
+								field[get_reading_field3(pp->p_config)],
+								field1, 60, 4, get_reading_field3(pp->p_config), 0);
 					else 
-						draw3_popdown (field[CFG(field3)], 4, 0);
+						draw3_popdown (field[get_reading_field3(pp->p_config)], 4, 0);
 
 					break;
 
@@ -14649,7 +14649,7 @@ void draw3_data5(DRAW_UI_P p)
 						{
 							cur_value = get_prf() / 10.0;
 							lower =	1.0;
-							upper = get_max_prf();
+							upper = get_max_prf() / 10.0;
 							step = tmpf;
 							digit = 0;
 							pos = 5;
@@ -14979,10 +14979,10 @@ void draw3_data5(DRAW_UI_P p)
 					pp->x_pos = 200, pp->y_pos = 0;
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 5))
 						draw3_pop_tt (data_305, NULL, 
-								field[CFG(field4)],
-								field1, 60, 5, CFG(field4), 0);
+								field[get_reading_field4(pp->p_config)],
+								field1, 60, 5, get_reading_field4(pp->p_config), 0);
 					else 
-						draw3_popdown (field[CFG(field4)], 5, 0);
+						draw3_popdown (field[get_reading_field4(pp->p_config)], 5, 0);
 
 					break;
 
@@ -16027,7 +16027,6 @@ void calc_measure_data()
 gpointer signal_thread(gpointer arg) 
 {
 	char key = 0;
-	pp->mark2 = 0;
 
 	if (read(pp->fd_key, &key, 1) > 0) 
 	{	
@@ -16115,6 +16114,7 @@ static gboolean time_handler2 (GtkWidget *widget)
 {
 	if (pp->mark2)
 	{
+		pp->mark2 = 0;
 		g_thread_create (signal_thread, NULL, FALSE, NULL);
 	}
 	if (pp->mark3)
@@ -16241,25 +16241,25 @@ void draw_field_name ()
 	/* 4个测量值名字显示 */
 	markup = 
 		g_markup_printf_escaped("<span foreground='white' font_desc='10'>%s\n(%s)</span>",
-				pp->field[CFG(field1)], pp->field_unit[CFG(field1)]);
+				pp->field[get_reading_field1(pp->p_config)], pp->field_unit[get_reading_field1(pp->p_config)]);
 	gtk_label_set_markup (GTK_LABEL(pp->label[8]),markup);
 	g_free (markup);
 
 	markup = 
 		g_markup_printf_escaped("<span foreground='white' font_desc='10'>%s\n(%s)</span>",
-				pp->field[CFG(field2)], pp->field_unit[CFG(field2)]);
+				pp->field[get_reading_field2(pp->p_config)], pp->field_unit[get_reading_field2(pp->p_config)]);
 	gtk_label_set_markup (GTK_LABEL(pp->label[10]),markup);
 	g_free (markup);
 
 	markup = 
 		g_markup_printf_escaped("<span foreground='white' font_desc='10'>%s\n(%s)</span>",
-				pp->field[CFG(field3)], pp->field_unit[CFG(field3)]);
+				pp->field[get_reading_field3(pp->p_config)], pp->field_unit[get_reading_field3(pp->p_config)]);
 	gtk_label_set_markup (GTK_LABEL(pp->label[12]),markup);
 	g_free (markup);
 
 	markup = 
 		g_markup_printf_escaped("<span foreground='white' font_desc='10'>%s\n(%s)</span>",
-				pp->field[CFG(field4)], pp->field_unit[CFG(field4)]);
+				pp->field[get_reading_field4(pp->p_config)], pp->field_unit[get_reading_field4(pp->p_config)]);
 	gtk_label_set_markup (GTK_LABEL(pp->label[14]),markup);
 	g_free (markup);
 
@@ -16277,7 +16277,7 @@ void draw_field_value ()
 	guint	*p_tmp = (guint *)(&TMP(measure_data_dis));
 	/* 4个测量值显示 */
 	markup = g_markup_printf_escaped ("<span foreground='white' font_desc='24'>%.2f</span>",
-			p_tmp[CFG(field1)] / 100.0);
+			p_tmp[get_reading_field1(pp->p_config)] / 100.0);
 //	gdk_threads_enter();
 //	gtk_label_set_markup (GTK_LABEL(pp->label[9]), markup);
 //	gdk_threads_leave();
@@ -16692,7 +16692,7 @@ void init_ui(DRAW_UI_P p)
 #if ARM
 /*	g_thread_create (signal_thread, NULL, FALSE, NULL);*/
 /*	g_thread_create (signal_thread1, NULL, FALSE, NULL);*/
-	g_timeout_add (20, (GSourceFunc) time_handler2, NULL);
+	g_timeout_add (50, (GSourceFunc) time_handler2, NULL);
 /*	pthread_create (&tid, NULL, thread_func, NULL);
 	pthread_create (&tid, NULL, thread_func1, NULL);*/
 #endif

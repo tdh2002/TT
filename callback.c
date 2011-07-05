@@ -567,21 +567,21 @@ guint get_prf ()
 	*/
 	if (GROUP_VAL(prf_pos) == 3)
 	{
-		if (GROUP_VAL(prf) > prf_temp * 10)
-			GROUP_VAL(prf) = prf_temp * 10;
+		if (GROUP_VAL(prf) > prf_temp )
+			GROUP_VAL(prf) = prf_temp ;
 	}
 	else 
 	{
 		switch (GROUP_VAL(prf_pos))
 		{
 			case 0:
-				GROUP_VAL(prf) = prf_temp * 10;
+				GROUP_VAL(prf) = prf_temp ;
 				break;
 			case 1:
-				GROUP_VAL(prf) = prf_temp * 5;
+				GROUP_VAL(prf) = prf_temp ;
 				break;
 			case 2:
-				GROUP_VAL(prf) = (prf_temp > 60 ) ? 600 : prf_temp * 10;
+				GROUP_VAL(prf) = (prf_temp > 600 ) ? 600 : prf_temp ;
 				break;
 			default:break;
 		}
@@ -3279,7 +3279,7 @@ void data_1151 (GtkSpinButton *spinbutton, gpointer data) /* PRF P115 */
 	gtk_label_set_markup (GTK_LABEL (pp->label[5]), markup); ;
 
 	g_free(markup);
-	if (GROUP_VAL_POS(grp, prf)  >= 250 )
+	if (GROUP_VAL_POS(grp, prf)  >= 250)
 		/*
 		TMP(group_spi[grp]).idel_time		= 
 			100000000 / (GROUP_VAL_POS(grp, prf) / (10.0 * CFG(prf_compress))) - 2048 - TMP(group_spi[grp]).rx_time;
@@ -3440,6 +3440,7 @@ void data_135 (GtkSpinButton *spinbutton, gpointer data) /*gain offset */
 void data_1431 (GtkSpinButton *spinbutton, gpointer data) /* point qty P143 */
 {
 	gint grp = get_current_group(pp->p_config);
+	gint tt[4];
 	GROUP_VAL(point_qty) =  (guint)(gtk_spin_button_get_value (spinbutton));
 	get_prf();
 
@@ -3451,9 +3452,14 @@ void data_1431 (GtkSpinButton *spinbutton, gpointer data) /* point qty P143 */
 	TMP(group_spi[grp]).compress_rato	= 
 		((GROUP_VAL_POS(grp, range) / 10.0) / GROUP_VAL_POS(grp, point_qty)) > 1 ? 
 		((GROUP_VAL_POS(grp, range) / 10.0) / GROUP_VAL_POS(grp, point_qty)) : 1;
-	if (GROUP_VAL_POS(grp, prf)  >= 250)
-		;
-	else
+	TMP(group_spi[grp]).sample_range	= TMP(group_spi[grp]).sample_start + 
+		GROUP_VAL_POS(grp, range) / 10;		
+	tt[0] = (GROUP_VAL_POS(grp, gate[0].start) + GROUP_VAL_POS (grp, gate[0].width));
+	tt[1] = (GROUP_VAL_POS(grp, gate[1].start) + GROUP_VAL_POS (grp, gate[1].width));
+	tt[2] = (GROUP_VAL_POS(grp, gate[2].start) + GROUP_VAL_POS (grp, gate[2].width));
+
+	tt[3] = MAX(tt[0], (MAX(tt[1],tt[2]))) / 10;
+	TMP(group_spi[grp]).rx_time		= MAX (tt[3], TMP(group_spi[grp]).sample_range);
 		TMP(group_spi[grp]).idel_time		= 
 			100000000 / (GROUP_VAL_POS(grp, prf) / (10)) - 2048 - TMP(group_spi[grp]).rx_time;
 	send_spi_data (grp);
@@ -3943,21 +3949,21 @@ void data_235 (GtkSpinButton *spinbutton, gpointer data) /*Ref.Amplitude.Offset 
 
 void data_300 (GtkMenuItem *menuitem, gpointer data) /* Measurements -> Reading -> list 300 */
 {
-	CFG(list) = (gchar)(GPOINTER_TO_UINT (data));
+	set_reading_list (pp->p_config, (gchar)(GPOINTER_TO_UINT (data)));
 	
-	if (CFG(list) == 0)
+	if (get_reading_list(pp->p_config) == 0)
 	{
-		CFG(field1) = 0;
-		CFG(field2) = 31;
-		CFG(field3) = 29;
-		CFG(field4) = 33;
+		set_reading_field1 (pp->p_config, 0);
+		set_reading_field2 (pp->p_config, 31);
+		set_reading_field3 (pp->p_config, 29);
+		set_reading_field4 (pp->p_config, 33);
 	}
-	else if (CFG(list) == 1)
+	else if ( get_reading_list(pp->p_config) == 1)
 	{
-		CFG(field1) = 0;
-		CFG(field2) = 31;
-		CFG(field3) = 35;
-		CFG(field4) = 37;
+		set_reading_field1 (pp->p_config, 0);
+		set_reading_field2 (pp->p_config, 31);
+		set_reading_field3 (pp->p_config, 35);
+		set_reading_field4 (pp->p_config, 37);
 	}
 
 	pp->pos_pos = MENU3_STOP;
@@ -3966,28 +3972,28 @@ void data_300 (GtkMenuItem *menuitem, gpointer data) /* Measurements -> Reading 
 
 void data_302 (GtkMenuItem *menuitem, gpointer data) /* Measurements -> Reading -> Field1 302 */ 
 {
-	CFG(field1) = (gchar) (GPOINTER_TO_UINT (data));
+	set_reading_field1 (pp->p_config, (gchar) (GPOINTER_TO_UINT (data)));
 	pp->pos_pos = MENU3_STOP;
 	draw_field_name ();
 	draw_menu3(0, NULL);
 }
 void data_303 (GtkMenuItem *menuitem, gpointer data) /* Measurements -> Reading -> Field2 303 */
 {
-	CFG(field2) = (gchar) (GPOINTER_TO_UINT (data));
+	set_reading_field2 (pp->p_config, (gchar) (GPOINTER_TO_UINT (data)));
 	pp->pos_pos = MENU3_STOP;
 	draw_field_name ();
 	draw_menu3(0, NULL);
 }
 void data_304 (GtkMenuItem *menuitem, gpointer data) /* Measurements -> Reading -> Field3 304 */
 {
-	CFG(field3) = (gchar) (GPOINTER_TO_UINT (data));
+	set_reading_field3 (pp->p_config, (gchar) (GPOINTER_TO_UINT (data)));
 	pp->pos_pos = MENU3_STOP;
 	draw_field_name ();
 	draw_menu3(0, NULL);
 }
 void data_305 (GtkMenuItem *menuitem, gpointer data) /* Measurements -> Reading -> Field4 305 */
 {
-	CFG(field4) = (gchar) (GPOINTER_TO_UINT (data));
+	set_reading_field4 (pp->p_config, (gchar) (GPOINTER_TO_UINT (data)));
 	pp->pos_pos = MENU3_STOP;
 	draw_field_name ();
 	draw_menu3(0, NULL);
@@ -4459,8 +4465,9 @@ void data_500 (GtkMenuItem *menuitem, gpointer data) /* 增加删除选择group 
 	switch (temp)
 	{
 		case 0:
-			set_group_qty(pp->p_config, get_group_qty(pp->p_config) + 1);
+			set_group_qty (pp->p_config, get_group_qty(pp->p_config) + 1);
 			grpcpy (pp->p_config, get_group_qty(pp->p_config) - 1, 0);
+			set_current_group(pp->p_config, get_group_qty(pp->p_config) - 1);
 			break;						/* 增加*/
 		case 1:
 		case 2:
@@ -4475,6 +4482,7 @@ void data_500 (GtkMenuItem *menuitem, gpointer data) /* 增加删除选择group 
 			break;
 		case 9:
 			set_group_qty(pp->p_config, get_group_qty(pp->p_config) - 1);
+			set_current_group(pp->p_config, get_group_qty(pp->p_config) - 1);
 			break;
 		default:break;
 	}
@@ -5014,7 +5022,7 @@ void data_930(GtkMenuItem *menuitem, gpointer data) /* Preferences -> system -> 
 
 void data_901 (GtkSpinButton *spinbutton, gpointer data) /*scan_resolution*/
 {
-	pp->p_config->bright =  (guint) (gtk_spin_button_get_value (spinbutton));
+	set_bright (pp->p_config, (guchar) (gtk_spin_button_get_value (spinbutton)));
 }
 
 
