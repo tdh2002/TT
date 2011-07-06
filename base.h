@@ -55,6 +55,36 @@ extern GdkColor color_rule;
 #define	COLOR_BLACK		4
 #define	COLOR_WHITE		5
 
+typedef struct _calibration
+{
+	//ENCODER
+	gint delt_distance;
+	gint measure_start;
+	gint measure_end;
+	gint delt_measure;
+	guint resolution;
+
+	//Ultrasound->Velocity
+	gint radius1;
+	gint radius2;
+	gint depth1;
+	gint depth2;
+	gint thickness1;
+	gint thickness2;
+	gint time_start;
+	gint time_end;
+
+	gchar velocity_last;
+	//Ultrasound->Wedge Delay
+	gchar data;//保存半径，深度，厚度的值
+	gchar data_measure[20];//保存检测到的实际值
+	gchar wd_radius[20];
+	gchar wd_depth[20];
+	gchar wd_thickness[20];
+	gchar wd_delay[20];
+	
+} CALIBRATION,*CALIBRATION_P;
+
 typedef struct tmp_config 
 {
 	guchar	db_reg;				/* 增益 gain 步进		*/
@@ -273,6 +303,7 @@ typedef struct tmp_config
 	gchar	freeze;
 
     //GdkPixbuf *pixbuf_[18];
+	CALIBRATION wizard_calibration;
 
 } TMP_CONFIG, *TMP_CONFIG_P;
 
@@ -608,6 +639,7 @@ typedef struct __dir_path_label
 #define CFG_ZOOM_POS(a)  CFG(zoom_display[CFG(zoom_display_pos)].a)
 
 #define TMP(a)  (pp->p_tmp_config->a)
+#define TMP_CBA(a) (TMP(wizard_calibration).a)
 #define	MENU_STATUS	(pp->pos_pos) 
 
 #endif
