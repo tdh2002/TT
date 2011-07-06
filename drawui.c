@@ -1322,7 +1322,7 @@ if(!(prule->mask & 0x04))
 					str=g_strdup_printf("%.2f",GROUP_VAL(u_reference)/1000.0);
 				else
 				{
-					if(CFG(unit)==UNIT_MM)
+					if(get_unit(pp->p_config)==UNIT_MM)
 						str=g_strdup_printf("%.2f",GROUP_VAL(u_reference)/1000.0 * (GROUP_VAL(velocity)/200000.0));
 					else
 						str=g_strdup_printf("%.2f",GROUP_VAL(u_reference)/1000.0 * 0.03937 * (GROUP_VAL(velocity)/200000.0));
@@ -1347,7 +1347,7 @@ if(!(prule->mask & 0x04))
 					str=g_strdup_printf("%.2f",GROUP_VAL(u_measure)/1000.0);
 				else
 				{
-					if(CFG(unit)==UNIT_MM)
+					if(get_unit(pp->p_config)==UNIT_MM)
 						str=g_strdup_printf("%.2f",GROUP_VAL(u_measure)/1000.0 * (GROUP_VAL(velocity)/200000.0));
 					else
 						str=g_strdup_printf("%.2f",GROUP_VAL(u_measure)/1000.0 * 0.03937 * (GROUP_VAL(velocity)/200000.0));
@@ -1373,7 +1373,7 @@ if(!(prule->mask & 0x04))
 					str=g_strdup_printf("%.2f",GROUP_VAL(u_reference)/1000.0);
 				else
 				{
-					if(CFG(unit)==UNIT_MM)
+					if(get_unit(pp->p_config)==UNIT_MM)
 						str=g_strdup_printf("%.2f",GROUP_VAL(u_reference)/1000.0 * (GROUP_VAL(velocity)/200000.0));
 					else
 						str=g_strdup_printf("%.2f",GROUP_VAL(u_reference)/1000.0 * 0.03937 * (GROUP_VAL(velocity)/200000.0));
@@ -1398,7 +1398,7 @@ if(!(prule->mask & 0x04))
 					str=g_strdup_printf("%.2f",GROUP_VAL(u_measure)/1000.0);
 				else
 				{
-					if(CFG(unit)==UNIT_MM)
+					if(get_unit(pp->p_config)==UNIT_MM)
 						str=g_strdup_printf("%.2f",GROUP_VAL(u_measure)/1000.0 * (GROUP_VAL(velocity)/200000.0));
 					else
 						str=g_strdup_printf("%.2f",GROUP_VAL(u_measure)/1000.0 * 0.03937 * (GROUP_VAL(velocity)/200000.0));
@@ -1420,7 +1420,7 @@ if(!(prule->mask & 0x04))
 				cairo_set_source_rgba(cr,0.0,0.0,0.0,1.0);/*当前值*/
 				cairo_move_to(cr,20+(w-50)*(GROUP_VAL(s_reference)/100.0-GROUP_VAL(scan_offset)/10.0-CFG(scan_start)/1000.0)/(CFG(scan_end)/1000.0-CFG(scan_start)/1000.0)+3,10);
 
-				if(CFG(unit)==UNIT_MM)
+				if(get_unit(pp->p_config)==UNIT_MM)
 					str=g_strdup_printf("%.2f",GROUP_VAL(s_reference)/100.0);
 				else
 					str=g_strdup_printf("%.2f",GROUP_VAL(s_reference)/100.0 * 0.03937 );
@@ -1438,7 +1438,7 @@ if(!(prule->mask & 0x04))
 				cairo_stroke (cr);
 				cairo_set_source_rgba(cr,0.0,0.0,0.0,1.0);/*当前值*/
 				cairo_move_to(cr,20+(w-50)*(GROUP_VAL(s_measure)/100.0-GROUP_VAL(scan_offset)/10.0-CFG(scan_start)/1000.0)/(CFG(scan_end)/1000.0-CFG(scan_start)/1000.0)+3,10);
-				if(CFG(unit)==UNIT_MM)
+				if(get_unit(pp->p_config)==UNIT_MM)
 					str=g_strdup_printf("%.2f",GROUP_VAL(s_measure)/100.0);
 				else
 					str=g_strdup_printf("%.2f",GROUP_VAL(s_measure)/100.0 * 0.03937 );
@@ -1517,7 +1517,7 @@ if(!(prule->mask & 0x04))
 					cairo_stroke (cr);
 					cairo_set_source_rgba(cr,0.0,0.0,0.0,1.0);/*当前值*/
 					cairo_move_to(cr,23, (h-20)*(GROUP_VAL(u_reference)/1000.0-GROUP_VAL(start)/1000.0)/(GROUP_VAL(range)/1000.0)-4 );
-					if(CFG(unit)==UNIT_MM)
+					if(get_unit(pp->p_config)==UNIT_MM)
 						str=g_strdup_printf("%.2f",GROUP_VAL(u_reference)/1000.0 * (GROUP_VAL(velocity)/200000.0));
 					else
 						str=g_strdup_printf("%.2f",GROUP_VAL(u_reference)/1000.0 * 0.03937 * (GROUP_VAL(velocity)/200000.0));
@@ -1535,7 +1535,7 @@ if(!(prule->mask & 0x04))
 					cairo_stroke (cr);
 					cairo_set_source_rgba(cr,0.0,0.0,0.0,1.0);/*当前值*/
 					cairo_move_to(cr,23, (h-20)*(GROUP_VAL(u_measure)/1000.0-GROUP_VAL(start)/1000.0)/(GROUP_VAL(range)/1000.0)-4 );
-					if(CFG(unit)==UNIT_MM)
+					if(get_unit(pp->p_config)==UNIT_MM)
 						str=g_strdup_printf("%.2f",GROUP_VAL(u_measure)/1000.0 * (GROUP_VAL(velocity)/200000.0));
 					else
 						str=g_strdup_printf("%.2f",GROUP_VAL(u_measure)/1000.0 * 0.03937 * (GROUP_VAL(velocity)/200000.0));
@@ -2202,7 +2202,7 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 
 			if((CFG(display_pos) == A_S_CC_SCAN ) && (get_cscan_source(pp->p_config, 0)==4) && (GROUP_VAL_POS(p->group, ut_unit) == UT_UNIT_TRUE_DEPTH) && (CFG(groupQty)==1))
 			{	/*A_S scan 在 true depth时， A scan 需要旋转90度*/
-				if(CFG(unit) == UNIT_MM) /* hrule1 */
+				if(get_unit(pp->p_config) == UNIT_MM) /* hrule1 */
 				{
 					p->hmin1 = GROUP_VAL_POS(p->group, range)/1000.0*(GROUP_VAL_POS(p->group, velocity)/200000.0)+GROUP_VAL_POS(p->group, start)/1000.0*(GROUP_VAL_POS(p->group, velocity)/200000.0);
 					p->hmax1 = GROUP_VAL_POS(p->group, start)/1000.0*(GROUP_VAL_POS(p->group, velocity)/200000.0);
@@ -2250,7 +2250,7 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 				}
 				else
 				{
-					if(CFG(unit) == UNIT_MM)
+					if(get_unit(pp->p_config) == UNIT_MM)
 					{
 						p->wmin1 = GROUP_VAL_POS(p->group, start)/1000.0*(GROUP_VAL_POS(p->group, velocity)/200000.0);
 						p->wmax1 = GROUP_VAL_POS(p->group, range)/1000.0*(GROUP_VAL_POS(p->group, velocity)/200000.0)+GROUP_VAL_POS(p->group, start)/1000.0*(GROUP_VAL_POS(p->group, velocity)/200000.0);
@@ -2285,7 +2285,7 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 			}
 			else		/* scan -> Encoder1/Encoder2  */
 			{
-				if(CFG(unit) == UNIT_MM)
+				if(get_unit(pp->p_config) == UNIT_MM)
 				{
 					p->hmin1 = GROUP_VAL_POS(p->group, scan_offset)/10.0 + CFG(scan_start)/1000.0;
 					p->hmax1 = GROUP_VAL_POS(p->group, scan_offset)/10.0 + CFG(scan_end)/1000.0;
@@ -2317,7 +2317,7 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 			}
 			else
 			{
-				if(CFG(unit) == UNIT_MM)
+				if(get_unit(pp->p_config) == UNIT_MM)
 				{
 					p->wmin1 = GROUP_VAL_POS(p->group, start)/1000.0*(GROUP_VAL_POS(p->group, velocity)/200000.0);
 					p->wmax1 = GROUP_VAL_POS(p->group, range)/1000.0*(GROUP_VAL_POS(p->group, velocity)/200000.0)+GROUP_VAL_POS(p->group, start)/1000.0*(GROUP_VAL_POS(p->group, velocity)/200000.0);
@@ -2376,7 +2376,7 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 				p->h2_color = 0xD6ABF1;	/*紫色*/
 			}
 
-			if(CFG(unit) == UNIT_MM)	/* wrule */		/* 浅绿色 */
+			if(get_unit(pp->p_config) == UNIT_MM)	/* wrule */		/* 浅绿色 */
 			{
 				p->wmin1 = GROUP_VAL_POS(p->group, scan_offset)/10.0 + CFG(scan_start)/1000.0;
 				p->wmax1 = GROUP_VAL_POS(p->group, scan_offset)/10.0 + CFG(scan_end)/1000.0;
@@ -2415,7 +2415,7 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 
 
 
-				if(CFG(unit) == UNIT_MM)	/*wrule*/
+				if(get_unit(pp->p_config) == UNIT_MM)	/*wrule*/
 				{
 					p->wmin1 = GROUP_VAL_POS(p->group, start)/1000.0*(GROUP_VAL_POS(p->group, velocity)/200000.0);
 					p->wmax1 = GROUP_VAL_POS(p->group, range)/1000.0*(GROUP_VAL_POS(p->group, velocity)/200000.0)+GROUP_VAL_POS(p->group, start)/1000.0*(GROUP_VAL_POS(p->group, velocity)/200000.0);
@@ -2455,7 +2455,7 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 
 			else if(GROUP_VAL_POS(p->group, ut_unit) == UT_UNIT_TRUE_DEPTH)
 			{
-				if(CFG(unit) == UNIT_MM) /* hrule1 */
+				if(get_unit(pp->p_config) == UNIT_MM) /* hrule1 */
 				{
 					p->hmin1 = GROUP_VAL_POS(p->group, range)/1000.0*(GROUP_VAL_POS(p->group, velocity)/200000.0)+GROUP_VAL_POS(p->group, start)/1000.0*(GROUP_VAL_POS(p->group, velocity)/200000.0)+tan((LAW_VAL_POS (p->group, Angle_min) / 100.0)*(3.14/180.0))*tan((LAW_VAL_POS (p->group, Angle_min) / 100.0)*(3.14/180.0))*GROUP_VAL_POS(p->group, range)/1000.0*(GROUP_VAL_POS(p->group, velocity)/200000.0);
 					p->hmax1 = GROUP_VAL_POS(p->group, start)/1000.0*(GROUP_VAL_POS(p->group, velocity)/200000.0);
@@ -3968,7 +3968,7 @@ void draw3_data0(DRAW_UI_P p)
 					}
 					if ((p->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 					{
-						if(UNIT_MM == CFG(unit))
+						if(UNIT_MM == get_unit(pp->p_config))
 						{
 							cur_value = GROUP_VAL(scan_offset)/10.0;
 							lower = -100000.0;
@@ -3992,7 +3992,7 @@ void draw3_data0(DRAW_UI_P p)
 					}
 					else 
 					{
-						if(UNIT_MM == CFG(unit))
+						if(UNIT_MM == get_unit(pp->p_config))
 						{
 							cur_value = GROUP_VAL(scan_offset)/10.0;
 							digit = 1;
@@ -4231,7 +4231,7 @@ void draw3_data0(DRAW_UI_P p)
 					{
 						if ((p->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 						{
-							if(CFG(unit) == UNIT_MM)
+							if(get_unit(pp->p_config) == UNIT_MM)
 							{
 								cur_value = CFG(scan_start)/1000.0;
 								lower = -99999.0;
@@ -4256,7 +4256,7 @@ void draw3_data0(DRAW_UI_P p)
 						}
 						else 
 						{
-							if(CFG(unit) == UNIT_MM)
+							if(get_unit(pp->p_config) == UNIT_MM)
 							{
 								cur_value = CFG(scan_start)/1000.0;
 								digit = 2;
@@ -4275,7 +4275,7 @@ void draw3_data0(DRAW_UI_P p)
 					}
 					else  /* Inspection -> Type 选择 Helicoidal Scan  时 */
 					{
-						if(CFG(unit) == UNIT_MM)
+						if(get_unit(pp->p_config) == UNIT_MM)
 						{
 							CFG(scan_start) = 0;
 							digit = 0;
@@ -4377,10 +4377,10 @@ void draw3_data0(DRAW_UI_P p)
 					p->x_pos = 570, p->y_pos = 118-YOFFSET;
 					if ((p->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 						draw3_pop_tt (data_900, NULL, 
-								menu_content[P_UNITS+CFG(unit)],
-								menu_content+P_UNITS, 2, 0,CFG(unit), 0);
+								menu_content[P_UNITS+get_unit(pp->p_config)],
+								menu_content+P_UNITS, 2, 0,get_unit(pp->p_config), 0);
 					else 
-						draw3_popdown (menu_content[P_UNITS+CFG(unit)], 0, 0);
+						draw3_popdown (menu_content[P_UNITS+get_unit(pp->p_config)], 0, 0);
 					break;
 				case 1:/* Preferences -> system -> clock set 设置时间 p910 */
 					if ((p->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
@@ -4569,7 +4569,7 @@ void draw3_data1(DRAW_UI_P p)
 						if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || 
 								(UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 						{
-							if (UNIT_MM == CFG(unit))
+							if (UNIT_MM == get_unit(pp->p_config))
 							{
 								cur_value = (GROUP_VAL(start) / 1000.0) * (GROUP_VAL(velocity) / 200000.0);   /* 当前显示的范围数值mm */
 								lower = (BEAM_INFO(0,beam_delay) /1000.0) * GROUP_VAL(velocity) / 200000.0;
@@ -4608,7 +4608,7 @@ void draw3_data1(DRAW_UI_P p)
 					{
 						if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 						{
-							if (UNIT_MM == CFG(unit))
+							if (UNIT_MM == get_unit(pp->p_config))
 							{
 								cur_value = (GROUP_VAL(start) / 1000.0) * (GROUP_VAL(velocity) / 200000.0);   /* 当前显示的范围数值mm */
 								unit = UNIT_MM;
@@ -4828,7 +4828,7 @@ void draw3_data1(DRAW_UI_P p)
 							{
 								if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 								{
-									if (UNIT_MM == CFG(unit))
+									if (UNIT_MM == get_unit(pp->p_config))
 									{
 										cur_value = GROUP_VAL(mat_atten) / 1000.0;
 										lower = 0.00;
@@ -4865,7 +4865,7 @@ void draw3_data1(DRAW_UI_P p)
 							{
 								if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 								{
-									if (UNIT_MM == CFG(unit))
+									if (UNIT_MM == get_unit(pp->p_config))
 									{
 										cur_value = GROUP_VAL(mat_atten) / 1000.0;
 										digit = 2;
@@ -4965,7 +4965,7 @@ void draw3_data1(DRAW_UI_P p)
 						}
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 						{
-							if(CFG(unit) == UNIT_MM)
+							if(get_unit(pp->p_config) == UNIT_MM)
 							{
 								cur_value = GROUP_VAL(s_reference)/100.0;
 								lower = -1000000.0;
@@ -4989,7 +4989,7 @@ void draw3_data1(DRAW_UI_P p)
 						}
 						else 
 						{
-							if(CFG(unit) == UNIT_MM)
+							if(get_unit(pp->p_config) == UNIT_MM)
 							{
 								cur_value = GROUP_VAL(s_reference)/100.0;
 								digit = 1;
@@ -5092,7 +5092,7 @@ void draw3_data1(DRAW_UI_P p)
 					}
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 					{
-						if (CFG(unit)==UNIT_MM)
+						if (get_unit(pp->p_config)==UNIT_MM)
 						{
 							cur_value = CFG(min_thickness)/1000.0;
 							lower = 0.05;
@@ -5117,7 +5117,7 @@ void draw3_data1(DRAW_UI_P p)
 					}
 					else 
 					{
-						if (CFG(unit)==UNIT_MM)
+						if (get_unit(pp->p_config)==UNIT_MM)
 						{
 							cur_value = CFG(min_thickness)/1000.0;
 							digit = 2;
@@ -5459,7 +5459,7 @@ void draw3_data1(DRAW_UI_P p)
 					}
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 					{
-						if(UNIT_MM == CFG(unit))
+						if(UNIT_MM == get_unit(pp->p_config))
 						{
 							cur_value = GROUP_VAL(index_offset)/10.0;
 							lower = -1000000.0;
@@ -5483,7 +5483,7 @@ void draw3_data1(DRAW_UI_P p)
 					}
 					else 
 					{
-						if(UNIT_MM == CFG(unit))
+						if(UNIT_MM == get_unit(pp->p_config))
 						{
 							cur_value =GROUP_VAL(index_offset)/10.0;
 							digit = 1;
@@ -5550,7 +5550,7 @@ void draw3_data1(DRAW_UI_P p)
 					}
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 					{
-						if(UNIT_MM == CFG(unit))
+						if(UNIT_MM == get_unit(pp->p_config))
 						{
 							cur_value = get_part_thickness(pp->p_config) / 1000.0;
 							lower = 0.05;
@@ -5577,7 +5577,7 @@ void draw3_data1(DRAW_UI_P p)
 					}
 					else 
 					{
-						if(UNIT_MM == CFG(unit))
+						if(UNIT_MM == get_unit(pp->p_config))
 						{
 							cur_value = get_part_thickness(pp->p_config) / 1000.0;
 							digit = 2;
@@ -5917,7 +5917,7 @@ void draw3_data1(DRAW_UI_P p)
 					{
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 						{
-							if(CFG(unit) == UNIT_MM)
+							if(get_unit(pp->p_config) == UNIT_MM)
 							{
 								cur_value = CFG(scan_end)/1000.0;
 								lower = CFG(scan_start)/1000.0;
@@ -5941,7 +5941,7 @@ void draw3_data1(DRAW_UI_P p)
 						}
 						else 
 						{
-							if(CFG(unit) == UNIT_MM)
+							if(get_unit(pp->p_config) == UNIT_MM)
 							{
 								cur_value = CFG(scan_end)/1000.0;
 								digit = 2;
@@ -5960,7 +5960,7 @@ void draw3_data1(DRAW_UI_P p)
 					}
 					else  /* Inspection -> Type 选择 Helicoidal Scan  时  ????CFG(scan_start)的值有待确定 */
 					{
-						if(CFG(unit) == UNIT_MM)
+						if(get_unit(pp->p_config) == UNIT_MM)
 						{
 							CFG(scan_start) = 346.0;
 							digit = 2;
@@ -6875,7 +6875,7 @@ void draw3_data2(DRAW_UI_P p)
 								{
 									if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 									{
-										if (UNIT_MM == CFG(unit))
+										if (UNIT_MM == get_unit(pp->p_config))
 										{
 											cur_value = (GROUP_VAL(gate[0].start) / 1000.0) * (GROUP_VAL(velocity) / 200000.0);   /* 当前显示的起位数值mm */
 											lower = (BEAM_INFO(0,beam_delay) /1000.0) * (GROUP_VAL(velocity) / 200000.0);
@@ -6912,7 +6912,7 @@ void draw3_data2(DRAW_UI_P p)
 								{
 									if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 									{
-										if (UNIT_MM == CFG(unit))
+										if (UNIT_MM == get_unit(pp->p_config))
 										{
 											cur_value = (GROUP_VAL(gate[0].start) / 1000.0) * (GROUP_VAL(velocity) / 200000.0);   /* 当前显示的范围数值mm */
 											unit = UNIT_MM;
@@ -6965,7 +6965,7 @@ void draw3_data2(DRAW_UI_P p)
 								{
 									if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 									{
-										if (UNIT_MM == CFG(unit))
+										if (UNIT_MM == get_unit(pp->p_config))
 										{
 											cur_value = (GROUP_VAL(gate[0].start) / 1000.0) * (GROUP_VAL(velocity) / 200000.0);   /* 当前显示的起位数值mm */
 											lower = (BEAM_INFO(0,beam_delay) /1000.0) * (GROUP_VAL(velocity) / 200000.0);
@@ -7002,7 +7002,7 @@ void draw3_data2(DRAW_UI_P p)
 								{
 									if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 									{
-										if (UNIT_MM == CFG(unit))
+										if (UNIT_MM == get_unit(pp->p_config))
 										{
 											cur_value = (GROUP_VAL(gate[0].start) / 1000.0) * (GROUP_VAL(velocity) / 200000.0);   /* 当前显示的范围数值mm */
 											unit = UNIT_MM;
@@ -7076,7 +7076,7 @@ void draw3_data2(DRAW_UI_P p)
 								{
 									if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 									{
-										if (UNIT_MM == CFG(unit))
+										if (UNIT_MM == get_unit(pp->p_config))
 										{
 											cur_value = (GROUP_VAL(gate[0].start) / 1000.0) * (GROUP_VAL(velocity) / 200000.0);   /* 当前显示的起位数值mm */
 											lower = (BEAM_INFO(0,beam_delay) /1000.0) * (GROUP_VAL(velocity) / 200000.0);
@@ -7113,7 +7113,7 @@ void draw3_data2(DRAW_UI_P p)
 								{
 									if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 									{
-										if (UNIT_MM == CFG(unit))
+										if (UNIT_MM == get_unit(pp->p_config))
 										{
 											cur_value = (GROUP_VAL(gate[0].start) / 1000.0) * (GROUP_VAL(velocity) / 200000.0);   /* 当前显示的范围数值mm */
 											unit = UNIT_MM;
@@ -7215,7 +7215,7 @@ void draw3_data2(DRAW_UI_P p)
 							{
 								if(pp->cmode_pos == 0)
 								{
-									if (CFG(unit) == 0)
+									if (get_unit(pp->p_config) == 0)
 									{
 										cur_value = GROUP_VAL(velocity) / 100.0;
 										digit = 1;
@@ -7300,7 +7300,7 @@ void draw3_data2(DRAW_UI_P p)
 						max_tmp1 = GROUP_VAL(point_qty) * 20.0;
 						if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 						{
-							if (UNIT_MM == CFG(unit))
+							if (UNIT_MM == get_unit(pp->p_config))
 							{
 								cur_value = (GROUP_VAL(range) / 1000.0) * (GROUP_VAL(velocity) / 200000.0);   /* 当前显示的范围数值mm */
 								lower = (GROUP_VAL(point_qty) / 100.0) * GROUP_VAL(velocity) / 200000.0;
@@ -7340,7 +7340,7 @@ void draw3_data2(DRAW_UI_P p)
 					{
 						if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 						{
-							if (UNIT_MM == CFG(unit))
+							if (UNIT_MM == get_unit(pp->p_config))
 							{
 								cur_value = (GROUP_VAL(range) / 1000.0) * (GROUP_VAL(velocity) / 200000.0);   /* 当前显示的范围数值mm */
 								unit = UNIT_MM;
@@ -7500,7 +7500,7 @@ void draw3_data2(DRAW_UI_P p)
 									case 3:	tmpf = 10.0; break;
 									default:break;
 								}
-								if (UNIT_MM == CFG(unit)) 
+								if (UNIT_MM == get_unit(pp->p_config)) 
 								{
 									cur_value = (GROUP_GATE_POS(start) / 1000.0) * (GROUP_VAL(velocity) / 200000.0);   /* 当前显示的起位数值mm */
 									lower = (BEAM_INFO(0,beam_delay) /1000.0) * GROUP_VAL(velocity) / 200000.0;
@@ -7547,7 +7547,7 @@ void draw3_data2(DRAW_UI_P p)
 						{
 							if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 							{
-								if (UNIT_MM == CFG(unit))
+								if (UNIT_MM == get_unit(pp->p_config))
 								{
 									cur_value = (GROUP_GATE_POS(start) / 1000.0) * (GROUP_VAL(velocity) / 200000.0);   /* 当前显示的范围数值mm */
 									unit = UNIT_MM;
@@ -7716,7 +7716,7 @@ void draw3_data2(DRAW_UI_P p)
 							{
 								if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 								{
-									if (UNIT_MM == CFG(unit))
+									if (UNIT_MM == get_unit(pp->p_config))
 									{
 										cur_value = GROUP_VAL(position) / 1000.0;
 										lower = 0.0;
@@ -7754,7 +7754,7 @@ void draw3_data2(DRAW_UI_P p)
 							{
 								if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 								{
-									if (UNIT_MM == CFG(unit))
+									if (UNIT_MM == get_unit(pp->p_config))
 									{
 										cur_value = GROUP_VAL(position)/1000.0;
 										digit = 2;
@@ -7795,7 +7795,7 @@ void draw3_data2(DRAW_UI_P p)
 							{
 								if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 								{
-									if (UNIT_MM == CFG(unit))
+									if (UNIT_MM == get_unit(pp->p_config))
 									{
 										cur_value =GROUP_VAL(delay)/1000.0;
 										lower = 0.0;
@@ -7836,7 +7836,7 @@ void draw3_data2(DRAW_UI_P p)
 							{
 								if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 								{
-									if (UNIT_MM == CFG(unit))
+									if (UNIT_MM == get_unit(pp->p_config))
 									{
 										cur_value =GROUP_VAL(delay)/1000.0;
 										digit = 2;
@@ -7936,7 +7936,7 @@ void draw3_data2(DRAW_UI_P p)
 						}
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 						{
-							if(CFG(unit) == UNIT_MM)
+							if(get_unit(pp->p_config) == UNIT_MM)
 							{
 								cur_value = GROUP_VAL(s_measure)/100.0;
 								lower = -1000000.0;
@@ -7960,7 +7960,7 @@ void draw3_data2(DRAW_UI_P p)
 						}
 						else
 						{
-							if(CFG(unit) == UNIT_MM)
+							if(get_unit(pp->p_config) == UNIT_MM)
 							{
 								cur_value = GROUP_VAL(s_measure)/100.0;
 								digit = 1;
@@ -7999,7 +7999,7 @@ void draw3_data2(DRAW_UI_P p)
 						{
 							if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 							{
-								if(CFG(unit) == UNIT_MM)
+								if(get_unit(pp->p_config) == UNIT_MM)
 								{
 									cur_value = GROUP_VAL(u_reference)/1000.0 * (GROUP_VAL(velocity)/200000.0);
 									lower = GROUP_VAL(start)/1000.0*(GROUP_VAL(velocity)/200000.0);
@@ -8037,7 +8037,7 @@ void draw3_data2(DRAW_UI_P p)
 						{
 							if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 							{
-								if(CFG(unit) == UNIT_MM)
+								if(get_unit(pp->p_config) == UNIT_MM)
 								{
 									cur_value = GROUP_VAL(u_reference)/1000.0 * (GROUP_VAL(velocity)/200000.0);
 									digit = 2;
@@ -8106,7 +8106,7 @@ void draw3_data2(DRAW_UI_P p)
 						}
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 						{
-							if(CFG(unit) == UNIT_MM)
+							if(get_unit(pp->p_config) == UNIT_MM)
 							{
 								cur_value = GROUP_CURSORS_POS(scan)/100.0;
 								lower = -100000.0;
@@ -8130,7 +8130,7 @@ void draw3_data2(DRAW_UI_P p)
 						}
 						else
 						{
-							if(CFG(unit) == UNIT_MM)
+							if(get_unit(pp->p_config) == UNIT_MM)
 							{
 								cur_value = GROUP_CURSORS_POS(scan)/100.0;
 								digit = 1;
@@ -8166,7 +8166,7 @@ void draw3_data2(DRAW_UI_P p)
 					}
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 					{
-						if(UNIT_MM == CFG(unit))
+						if(UNIT_MM == get_unit(pp->p_config))
 						{
 							cur_value = CFG(max_thickness)/1000.0;
 							lower = (CFG(min_thickness)/1000.0) + 0.01;
@@ -8190,7 +8190,7 @@ void draw3_data2(DRAW_UI_P p)
 					}
 					else 
 					{
-						if(UNIT_MM == CFG(unit))
+						if(UNIT_MM == get_unit(pp->p_config))
 						{
 							cur_value = CFG(max_thickness)/1000.0;
 							digit = 2;
@@ -8602,7 +8602,7 @@ void draw3_data2(DRAW_UI_P p)
 					{
 						if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 						{
-							if (UNIT_MM == CFG(unit)) 
+							if (UNIT_MM == get_unit(pp->p_config)) 
 							{
 								cur_value = (GROUP_VAL(gate[0].start) / 1000.0) * (GROUP_VAL(velocity) / 200000.0);   /* 当前显示的起位数值mm */
 								lower = (BEAM_INFO(0,beam_delay) /1000.0) * (GROUP_VAL(velocity) / 200000.0);
@@ -8639,7 +8639,7 @@ void draw3_data2(DRAW_UI_P p)
 					{
 						if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 						{
-							if (UNIT_MM == CFG(unit))
+							if (UNIT_MM == get_unit(pp->p_config))
 							{
 								cur_value = (GROUP_VAL(gate[0].start) / 1000.0) * (GROUP_VAL(velocity) / 200000.0);   /* 当前显示的范围数值mm */
 								unit = UNIT_MM;
@@ -8670,7 +8670,7 @@ void draw3_data2(DRAW_UI_P p)
 					switch(get_part_geometry(pp->p_config))
 					{
 						case 0:
-							if(UNIT_MM == CFG(unit))
+							if(UNIT_MM == get_unit(pp->p_config))
 							{
 								cur_value = get_part_diameter(pp->p_config) / 1000.0;
 								digit = 2;
@@ -8701,7 +8701,7 @@ void draw3_data2(DRAW_UI_P p)
 							}
 							if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 							{
-								if(UNIT_MM == CFG(unit))
+								if(UNIT_MM == get_unit(pp->p_config))
 								{
 									cur_value = get_part_diameter(pp->p_config) / 1000.0;
 									lower = 2.0 * get_part_thickness(pp->p_config) / 1000.0;
@@ -8725,7 +8725,7 @@ void draw3_data2(DRAW_UI_P p)
 							}
 							else 
 							{
-								if(UNIT_MM == CFG(unit))
+								if(UNIT_MM == get_unit(pp->p_config))
 								{
 									cur_value = get_part_diameter(pp->p_config) / 1000.0;
 									digit = 2;
@@ -9066,7 +9066,7 @@ void draw3_data2(DRAW_UI_P p)
 					}
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 					{
-						if(CFG(unit) == UNIT_MM)
+						if(get_unit(pp->p_config) == UNIT_MM)
 						{
 							cur_value = CFG(scan_resolution)/1000.0;
 							lower = 1.0;
@@ -9090,7 +9090,7 @@ void draw3_data2(DRAW_UI_P p)
 					}
 					else 
 					{
-						if(CFG(unit) == UNIT_MM)
+						if(get_unit(pp->p_config) == UNIT_MM)
 						{
 							cur_value = CFG(scan_resolution)/1000.0;
 							digit = 2;
@@ -9919,7 +9919,7 @@ void draw3_data3(DRAW_UI_P p)
 								{
 									if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 									{
-										if (UNIT_MM == CFG(unit))
+										if (UNIT_MM == get_unit(pp->p_config))
 										{
 											cur_value = (GROUP_GATE_POS(width) / 1000.0) * (GROUP_VAL(velocity) / 200000.0);   /* 当前显示的范围数值mm */
 											lower = 3.2 * GROUP_VAL(velocity) / 200000.0;
@@ -9959,7 +9959,7 @@ void draw3_data3(DRAW_UI_P p)
 								{
 									if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 									{
-										if (UNIT_MM == CFG(unit))
+										if (UNIT_MM == get_unit(pp->p_config))
 										{
 											cur_value = (GROUP_GATE_POS(width) / 1000.0) * (GROUP_VAL(velocity) / 200000.0);   /* 当前显示的范围数值mm */
 											unit = UNIT_MM;
@@ -10005,7 +10005,7 @@ void draw3_data3(DRAW_UI_P p)
 								{
 									if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 									{
-										if (UNIT_MM == CFG(unit))
+										if (UNIT_MM == get_unit(pp->p_config))
 										{
 											cur_value = (GROUP_GATE_POS(width) / 1000.0) * (GROUP_VAL(velocity) / 200000.0);   /* 当前显示的范围数值mm */
 											lower = 3.2 * GROUP_VAL(velocity) / 200000.0;
@@ -10045,7 +10045,7 @@ void draw3_data3(DRAW_UI_P p)
 								{
 									if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 									{
-										if (UNIT_MM == CFG(unit))
+										if (UNIT_MM == get_unit(pp->p_config))
 										{
 											cur_value = (GROUP_GATE_POS(width) / 1000.0) * (GROUP_VAL(velocity) / 200000.0);   /* 当前显示的范围数值mm */
 											unit = UNIT_MM;
@@ -10096,7 +10096,7 @@ void draw3_data3(DRAW_UI_P p)
 								{
 									if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 									{
-										if (UNIT_MM == CFG(unit))
+										if (UNIT_MM == get_unit(pp->p_config))
 										{
 											cur_value = (GROUP_GATE_POS(width) / 1000.0) * (GROUP_VAL(velocity) / 200000.0);   /* 当前显示的范围数值mm */
 											lower = 3.2 * GROUP_VAL(velocity) / 200000.0;
@@ -10136,7 +10136,7 @@ void draw3_data3(DRAW_UI_P p)
 								{
 									if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 									{
-										if (UNIT_MM == CFG(unit))
+										if (UNIT_MM == get_unit(pp->p_config))
 										{
 											cur_value = (GROUP_GATE_POS(width) / 1000.0) * (GROUP_VAL(velocity) / 200000.0);   /* 当前显示的范围数值mm */
 											unit = UNIT_MM;
@@ -10349,7 +10349,7 @@ void draw3_data3(DRAW_UI_P p)
 									case 3:	tmpf = 10.0; break;
 									default:break;
 								}
-								if (UNIT_MM == CFG(unit))
+								if (UNIT_MM == get_unit(pp->p_config))
 								{
 									cur_value = (GROUP_GATE_POS(width) / 1000.0) * (GROUP_VAL(velocity) / 200000.0);   /* 当前显示的范围数值mm */
 									lower = 0.04 * GROUP_VAL(velocity) / 200000.0;
@@ -10400,7 +10400,7 @@ void draw3_data3(DRAW_UI_P p)
 							if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) ||
 									(UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 							{
-								if (UNIT_MM == CFG(unit))
+								if (UNIT_MM == get_unit(pp->p_config))
 								{
 									cur_value = (GROUP_GATE_POS(width) / 1000.0) * (GROUP_VAL(velocity) / 200000.0);   /* 当前显示的范围数值mm */
 									unit = UNIT_MM;
@@ -10646,7 +10646,7 @@ void draw3_data3(DRAW_UI_P p)
 						{
 							if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 							{
-								if(CFG(unit) == UNIT_MM)
+								if(get_unit(pp->p_config) == UNIT_MM)
 								{
 									cur_value = GROUP_VAL(u_reference)/1000.0 * (GROUP_VAL(velocity)/200000.0);
 									lower = GROUP_VAL(start)/1000.0*(GROUP_VAL(velocity)/200000.0);
@@ -10684,7 +10684,7 @@ void draw3_data3(DRAW_UI_P p)
 						{
 							if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 							{
-								if(CFG(unit) == UNIT_MM)
+								if(get_unit(pp->p_config) == UNIT_MM)
 								{
 									cur_value = GROUP_VAL(u_reference)/1000.0 * (GROUP_VAL(velocity)/200000.0);
 									digit = 2;
@@ -10722,7 +10722,7 @@ void draw3_data3(DRAW_UI_P p)
 						}
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 						{
-							if(CFG(unit) == UNIT_MM)
+							if(get_unit(pp->p_config) == UNIT_MM)
 							{
 								cur_value = GROUP_VAL(i_reference)/100.0;
 								lower = -999999.0;
@@ -10746,7 +10746,7 @@ void draw3_data3(DRAW_UI_P p)
 						}
 						else
 						{
-							if(CFG(unit) == UNIT_MM)
+							if(get_unit(pp->p_config) == UNIT_MM)
 							{
 								cur_value = GROUP_VAL(i_reference)/100.0;
 								digit = 1;
@@ -10776,7 +10776,7 @@ void draw3_data3(DRAW_UI_P p)
 						}
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 						{
-							if(CFG(unit) == UNIT_MM)
+							if(get_unit(pp->p_config) == UNIT_MM)
 							{
 								cur_value = GROUP_VAL(s_refmeas)/100.0;
 								lower = 12.0;
@@ -10800,7 +10800,7 @@ void draw3_data3(DRAW_UI_P p)
 						}
 						else
 						{
-							if(CFG(unit) == UNIT_MM)
+							if(get_unit(pp->p_config) == UNIT_MM)
 							{
 								cur_value = GROUP_VAL(s_refmeas)/100.0;
 								digit = 1;
@@ -10833,7 +10833,7 @@ void draw3_data3(DRAW_UI_P p)
 						{
 							if((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 							{
-								if(CFG(unit) == UNIT_MM)
+								if(get_unit(pp->p_config) == UNIT_MM)
 								{
 									cur_value = GROUP_VAL(u_measure)/1000.0*(GROUP_VAL(velocity)/200000.0);
 									lower = GROUP_VAL(start)/1000.0*(GROUP_VAL(velocity)/200000.0);
@@ -10870,7 +10870,7 @@ void draw3_data3(DRAW_UI_P p)
 						{
 							if((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 							{
-								if(CFG(unit) == UNIT_MM)
+								if(get_unit(pp->p_config) == UNIT_MM)
 								{
 									cur_value = GROUP_VAL(u_measure)/1000.0*(GROUP_VAL(velocity)/200000.0);
 									digit = 2;
@@ -10911,7 +10911,7 @@ void draw3_data3(DRAW_UI_P p)
 						{
 							if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 							{
-								if(CFG(unit) == UNIT_MM)
+								if(get_unit(pp->p_config) == UNIT_MM)
 								{
 									cur_value = GROUP_CURSORS_POS(UT)/100.0;
 									lower = -0.07;
@@ -10949,7 +10949,7 @@ void draw3_data3(DRAW_UI_P p)
 						{
 							if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 							{
-								if(CFG(unit) == UNIT_MM)
+								if(get_unit(pp->p_config) == UNIT_MM)
 								{
 									cur_value = GROUP_CURSORS_POS(UT)/100.0;
 									digit = 2;
@@ -10987,7 +10987,7 @@ void draw3_data3(DRAW_UI_P p)
 						}
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 						{
-							if(CFG(unit) == UNIT_MM)
+							if(get_unit(pp->p_config) == UNIT_MM)
 							{
 								cur_value = GROUP_CURSORS_POS(index)/100.0;
 								lower = -100000.0;
@@ -11011,7 +11011,7 @@ void draw3_data3(DRAW_UI_P p)
 						}
 						else
 						{
-							if(CFG(unit) == UNIT_MM)
+							if(get_unit(pp->p_config) == UNIT_MM)
 							{
 								cur_value = GROUP_CURSORS_POS(index)/100.0;
 								digit = 1;
@@ -11363,7 +11363,7 @@ void draw3_data3(DRAW_UI_P p)
 					{
 						if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 						{
-							if (UNIT_MM == CFG(unit))
+							if (UNIT_MM == get_unit(pp->p_config))
 							{
 								cur_value = (GROUP_VAL(gate[0].width) / 1000.0) * (GROUP_VAL(velocity) / 200000.0);   /* 当前显示的范围数值mm */
 								lower = 3.2 * GROUP_VAL(velocity) / 200000.0;
@@ -11402,7 +11402,7 @@ void draw3_data3(DRAW_UI_P p)
 					{
 						if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 						{
-							if (UNIT_MM == CFG(unit))
+							if (UNIT_MM == get_unit(pp->p_config))
 							{
 								cur_value = (GROUP_VAL(gate[0].width) / 1000.0) * (GROUP_VAL(velocity) / 200000.0);   /* 当前显示的范围数值mm */
 								unit = UNIT_MM;
@@ -11628,7 +11628,7 @@ void draw3_data3(DRAW_UI_P p)
 					{
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 						{
-							if(UNIT_MM == CFG(unit))
+							if(UNIT_MM == get_unit(pp->p_config))
 							{
 								cur_value = LAW_VAL(Focus_depth) / 1000.0;
 								lower = 0.10;
@@ -11653,7 +11653,7 @@ void draw3_data3(DRAW_UI_P p)
 						}
 						else 
 						{
-							if(UNIT_MM == CFG(unit))
+							if(UNIT_MM == get_unit(pp->p_config))
 							{
 								cur_value = LAW_VAL(Focus_depth)/1000.0;
 								digit = 2;
@@ -11672,7 +11672,7 @@ void draw3_data3(DRAW_UI_P p)
 					}
 					else
 					{
-						if(UNIT_MM == CFG(unit))
+						if(UNIT_MM == get_unit(pp->p_config))
 						{
 							cur_value = LAW_VAL(Focus_depth)/1000.0;
 							digit = 2;
@@ -11796,7 +11796,7 @@ void draw3_data3(DRAW_UI_P p)
 
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 					{
-						if(UNIT_MM == CFG(unit))
+						if(UNIT_MM == get_unit(pp->p_config))
 						{
 							cur_value = CFG(scanspeed) / 1000.0;
 							lower = 1.0;
@@ -11820,7 +11820,7 @@ void draw3_data3(DRAW_UI_P p)
 					}
 					else 
 					{
-						if(UNIT_MM == CFG(unit))
+						if(UNIT_MM == get_unit(pp->p_config))
 						{
 							cur_value = CFG(scanspeed)/1000.0;
 							digit = 2;
@@ -11851,7 +11851,7 @@ void draw3_data3(DRAW_UI_P p)
 					{
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 						{
-							if(CFG(unit) == UNIT_MM)
+							if(get_unit(pp->p_config) == UNIT_MM)
 							{
 								cur_value = CFG(index_start)/1000.0;
 								lower = -99999.0;
@@ -11875,7 +11875,7 @@ void draw3_data3(DRAW_UI_P p)
 						}
 						else 
 						{
-							if(CFG(unit) == UNIT_MM)
+							if(get_unit(pp->p_config) == UNIT_MM)
 							{
 								cur_value = CFG(index_start)/1000.0;
 								digit = 2;
@@ -11895,7 +11895,7 @@ void draw3_data3(DRAW_UI_P p)
 					else
 						/* Inspection -> Type 选择 One-Line Scan 时 */
 					{
-						if(CFG(unit) == UNIT_MM)
+						if(get_unit(pp->p_config) == UNIT_MM)
 						{
 							cur_value = CFG(index_start);
 							digit = 2;
@@ -12293,7 +12293,7 @@ void draw3_data4(DRAW_UI_P p)
 								if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || 
 										(UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 								{
-									if (UNIT_MM == CFG(unit))
+									if (UNIT_MM == get_unit(pp->p_config))
 									{
 										cur_value = (GROUP_VAL(start) / 1000.0) * (GROUP_VAL(velocity) / 200000.0); /* 当前显示的范围数值mm */
 										lower = (BEAM_INFO(0,beam_delay) /1000.0) * GROUP_VAL(velocity) / 200000.0;
@@ -12332,7 +12332,7 @@ void draw3_data4(DRAW_UI_P p)
 							{
 								if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 								{
-									if (UNIT_MM == CFG(unit))
+									if (UNIT_MM == get_unit(pp->p_config))
 									{
 										cur_value = (GROUP_VAL(start) / 1000.0) * (GROUP_VAL(velocity) / 200000.0);   /* 当前显示的范围数值mm */
 										unit = UNIT_MM;
@@ -12712,7 +12712,7 @@ void draw3_data4(DRAW_UI_P p)
 					}
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
 					{
-						if (CFG(unit) == 0)
+						if (get_unit(pp->p_config) == 0)
 						{
 							cur_value = GROUP_VAL(velocity) / 100.0;
 							lower = 635.0;
@@ -12735,7 +12735,7 @@ void draw3_data4(DRAW_UI_P p)
 					}
 					else 
 					{
-						if (CFG(unit) == 0)
+						if (get_unit(pp->p_config) == 0)
 						{
 							cur_value = GROUP_VAL(velocity) / 100.0;
 							digit = 1;
@@ -13078,7 +13078,7 @@ void draw3_data4(DRAW_UI_P p)
 						{
 							if((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 							{
-								if(CFG(unit) == UNIT_MM)
+								if(get_unit(pp->p_config) == UNIT_MM)
 								{
 									cur_value = GROUP_VAL(u_measure)/1000.0*(GROUP_VAL(velocity)/200000.0);
 									lower = GROUP_VAL(start)/1000.0*(GROUP_VAL(velocity)/200000.0);
@@ -13115,7 +13115,7 @@ void draw3_data4(DRAW_UI_P p)
 						{
 							if((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 							{
-								if(CFG(unit) == UNIT_MM)
+								if(get_unit(pp->p_config) == UNIT_MM)
 								{
 									cur_value = GROUP_VAL(u_measure)/1000.0*(GROUP_VAL(velocity)/200000.0);
 									digit = 2;
@@ -13153,7 +13153,7 @@ void draw3_data4(DRAW_UI_P p)
 						}
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
 						{
-							if(CFG(unit) == UNIT_MM)
+							if(get_unit(pp->p_config) == UNIT_MM)
 							{
 								cur_value = GROUP_VAL(i_measure)/100.0;
 								lower = -999999.0;
@@ -13177,7 +13177,7 @@ void draw3_data4(DRAW_UI_P p)
 						}
 						else
 						{
-							if(CFG(unit) == UNIT_MM)
+							if(get_unit(pp->p_config) == UNIT_MM)
 							{
 								cur_value = GROUP_VAL(i_measure)/100.0;
 								digit = 1;
@@ -13212,7 +13212,7 @@ void draw3_data4(DRAW_UI_P p)
 						}
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
 						{
-							if(CFG(unit) == UNIT_MM)
+							if(get_unit(pp->p_config) == UNIT_MM)
 							{
 								cur_value = GROUP_VAL(i_reference)/100.0;
 								lower = -999999.0;
@@ -13236,7 +13236,7 @@ void draw3_data4(DRAW_UI_P p)
 						}
 						else
 						{
-							if(CFG(unit) == UNIT_MM)
+							if(get_unit(pp->p_config) == UNIT_MM)
 							{
 								cur_value = GROUP_VAL(i_reference)/100.0;
 								digit = 1;
@@ -13266,7 +13266,7 @@ void draw3_data4(DRAW_UI_P p)
 						}
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
 						{
-							if(CFG(unit) == UNIT_MM)
+							if(get_unit(pp->p_config) == UNIT_MM)
 							{
 								cur_value = GROUP_CURSORS_POS(scan)/100.0;
 								lower = -100000.0;
@@ -13290,7 +13290,7 @@ void draw3_data4(DRAW_UI_P p)
 						}
 						else
 						{
-							if(CFG(unit) == UNIT_MM)
+							if(get_unit(pp->p_config) == UNIT_MM)
 							{
 								cur_value = GROUP_CURSORS_POS(scan)/100.0;
 								digit = 1;
@@ -13875,7 +13875,7 @@ void draw3_data4(DRAW_UI_P p)
 					{
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
 						{
-							if( CFG(unit) == UNIT_MM )
+							if( get_unit(pp->p_config) == UNIT_MM )
 							{
 								cur_value = CFG(index_end)/1000.0;
 								lower = CFG(index_start)/1000.0;
@@ -13899,7 +13899,7 @@ void draw3_data4(DRAW_UI_P p)
 						}
 						else 
 						{
-							if( CFG(unit) == UNIT_MM )
+							if( get_unit(pp->p_config) == UNIT_MM )
 							{
 								cur_value = CFG(index_end)/1000.0;
 								digit = 2;
@@ -13920,7 +13920,7 @@ void draw3_data4(DRAW_UI_P p)
 					else
 						/* Inspection -> Type 选择 One-Line Scan 时 */
 					{
-						if( CFG(unit) == UNIT_MM )
+						if( get_unit(pp->p_config) == UNIT_MM )
 						{
 							cur_value = CFG(index_end);
 							digit = 2;
@@ -14164,7 +14164,7 @@ void draw3_data5(DRAW_UI_P p)
 									max_tmp1 = GROUP_VAL(point_qty) * 20.0;
 									if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 									{
-										if (UNIT_MM == CFG(unit))
+										if (UNIT_MM == get_unit(pp->p_config))
 										{
 											cur_value = (GROUP_VAL(range) / 1000.0) * (GROUP_VAL(velocity) / 200000.0);   /* 当前显示的范围数值mm */
 											lower = (GROUP_VAL(point_qty) / 100.0) * GROUP_VAL(velocity) / 200000.0;
@@ -14204,7 +14204,7 @@ void draw3_data5(DRAW_UI_P p)
 								{
 									if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 									{
-										if (UNIT_MM == CFG(unit))
+										if (UNIT_MM == get_unit(pp->p_config))
 										{
 											cur_value = (GROUP_VAL(range) / 1000.0) * (GROUP_VAL(velocity) / 200000.0);   /* 当前显示的范围数值mm */
 											unit = UNIT_MM;
@@ -15022,7 +15022,7 @@ void draw3_data5(DRAW_UI_P p)
 						}
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 5))
 						{
-							if(CFG(unit) == UNIT_MM)
+							if(get_unit(pp->p_config) == UNIT_MM)
 							{
 								cur_value = GROUP_VAL(i_measure)/100.0;
 								lower = -999999.0;
@@ -15046,7 +15046,7 @@ void draw3_data5(DRAW_UI_P p)
 						}
 						else 
 						{
-							if(CFG(unit) == UNIT_MM)
+							if(get_unit(pp->p_config) == UNIT_MM)
 							{
 								cur_value = GROUP_VAL(i_measure)/100.0;
 								digit = 1;
@@ -15076,7 +15076,7 @@ void draw3_data5(DRAW_UI_P p)
 						}
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 5))
 						{
-							if(CFG(unit)==UNIT_MM)
+							if(get_unit(pp->p_config)==UNIT_MM)
 							{
 								cur_value = GROUP_CURSORS_POS(index)/100.0;
 								lower = -100000.0;
@@ -15100,7 +15100,7 @@ void draw3_data5(DRAW_UI_P p)
 						}
 						else 
 						{
-							if(CFG(unit)==UNIT_MM)
+							if(get_unit(pp->p_config)==UNIT_MM)
 							{
 								cur_value = GROUP_CURSORS_POS(index)/100.0;
 								digit = 1;
@@ -15143,7 +15143,7 @@ void draw3_data5(DRAW_UI_P p)
 					if(get_display_pos(pp->p_config)==10)
 						/*Display 为 Strip Chart-[A]*/
 					{
-						if(UNIT_MM == CFG(unit))
+						if(UNIT_MM == get_unit(pp->p_config))
 						{
 							cur_value = GROUP_VAL(prf)/10.0;
 							digit = 2;
@@ -15469,7 +15469,7 @@ void draw3_data5(DRAW_UI_P p)
 					{
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 5))
 						{
-							if( CFG(unit) == UNIT_MM )
+							if( get_unit(pp->p_config) == UNIT_MM )
 							{
 								cur_value = CFG(index_resolution)/1000.0;
 								lower = 0.01;
@@ -15493,7 +15493,7 @@ void draw3_data5(DRAW_UI_P p)
 						}
 						else 
 						{
-							if( CFG(unit) == UNIT_MM )
+							if( get_unit(pp->p_config) == UNIT_MM )
 							{
 								cur_value = CFG(index_resolution)/1000.0;
 								digit = 2;
@@ -15513,7 +15513,7 @@ void draw3_data5(DRAW_UI_P p)
 					else
 						/* Inspection -> Type 选择 One-Line Scan 时 */
 					{
-						if( CFG(unit) == UNIT_MM )
+						if( get_unit(pp->p_config) == UNIT_MM )
 						{
 							cur_value = CFG(index_resolution)/1000.0;
 							digit = 2;

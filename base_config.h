@@ -377,9 +377,6 @@ typedef	struct _Config
 	guchar	list;	/* Measurements->Reading->list  filed */
 	guchar	field[4];	
 
-	guint	VPA;                            /*Measurements->Cursors->VPA*/
-	guint	cursors_scan;                   /*Measurements->Cursors->Scan*/
-	guint	cursors_index;                  /*Measurements->Cursors->index*/
 	guchar	display_table;                  /*Measurements->Table->display table*/
 	guchar	entry_image;                   /*Measurements->Table->entry image*/
 	guchar	entry_qty;                     /*Measurements->Table->Select Entry*/
@@ -548,7 +545,9 @@ extern guchar	get_reading_field3 (CONFIG *p);
 extern void		set_reading_field3 (CONFIG *p, guchar data);
 extern guchar	get_reading_field4 (CONFIG *p);			
 extern void		set_reading_field4 (CONFIG *p, guchar data);
-
+/* 单位 */
+extern guchar	get_unit (CONFIG *p);			
+extern void		set_unit (CONFIG *p, guchar data);
 
 
 /* group操作 */

@@ -90,7 +90,6 @@ typedef struct tmp_config
 	guchar	count_reg;			/*count步进*/
 	guchar	active_delay_reg;	/* active_delay  步进 */
 	guchar	holdtime_reg;		/* holdtime  步进 */
-	guchar	VPA_reg;			/* VPA  步进 */
 	guchar  cursors_amplitude_reg;
 	guchar  cursors_ut_reg;
 	guchar	cursors_scan_reg;	/* cursors_scan  步进 */

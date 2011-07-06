@@ -580,6 +580,17 @@ void set_reading_field4 (CONFIG *p, guchar data)
 	p->field[3] = data;
 }
 
+/* 单位 */
+guchar get_unit (CONFIG *p)
+{
+	return p->unit;
+}
+
+void set_unit (CONFIG *p, guchar data)
+{
+	g_assert (data < 2);
+	p->unit = data;
+}
 
 
 

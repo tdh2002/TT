@@ -461,7 +461,8 @@ void cal_focal_law (guint group)
 	p->k = 0 ;	            
     
 	setup_para(p, group);
-    
+   
+	/*  */
 	focal_law(p, G_Delay);
 
 	
@@ -469,8 +470,8 @@ void cal_focal_law (guint group)
 	for (offset = 0, k = 0 ; k < group; k++)
 		offset += TMP(beam_qty[k]);
 /*	g_print("offset = %d group=%d beam_qty = %d\n", 
-			offset, group, TMP(beam_qty[group]));
-			*/
+			offset, group, TMP(beam_qty[group]));*/
+			
 	save_cal_law (offset, group, p);
 
 	g_free (p);
@@ -1530,9 +1531,12 @@ void b3_fun3(gpointer p)
 					TMP(group_spi[get_current_group(pp->p_config)]).beam_qty = TMP(beam_qty[get_current_group(pp->p_config)]) - 1; 
 					TMP(group_spi[grp]).idel_time		= 
 						100000000 / (GROUP_VAL_POS(grp, prf) / 10) - 2048 - TMP(group_spi[grp]).rx_time;
-					write_group_data (&TMP(group_spi[get_current_group(pp->p_config)]), get_current_group(pp->p_config));
+
 					cal_focal_law (get_current_group(pp->p_config));
 					send_focal_spi (get_current_group(pp->p_config));
+
+					write_group_data (&TMP(group_spi[get_current_group(pp->p_config)]), get_current_group(pp->p_config));
+
 					pp->cscan_mark = 1;
 					pp->ccscan_mark = 1;
 					pp->cccscan_mark = 1;
@@ -2841,7 +2845,7 @@ void data_0025 (GtkMenuItem *menuitem, gpointer data) /* Probe/Part -> Select ->
 
 void data_0027 (GtkSpinButton *spinbutton, gpointer data) /*scanoffset */
 {
-	if(CFG(unit) == UNIT_MM)
+	if(get_unit(pp->p_config) == UNIT_MM)
 	{
 		g_tmp_group_struct.scan_offset =  (gint) (gtk_spin_button_get_value (spinbutton) * 10.0);
 	}
@@ -2871,7 +2875,7 @@ void data_00342 (GtkSpinButton *spinbutton, gpointer data) /* Pulser 发射 P110
 
 void data_0037 (GtkSpinButton *spinbutton, gpointer data) /*indexoffset */
 {
-	if(CFG(unit) == UNIT_MM)
+	if(get_unit(pp->p_config) == UNIT_MM)
 		g_tmp_group_struct.index_offset =  (gint) (gtk_spin_button_get_value (spinbutton) * 10.0);
 	else
 		g_tmp_group_struct.index_offset =  (gint) (gtk_spin_button_get_value (spinbutton) * 10.0 / 0.03937);
@@ -3064,7 +3068,7 @@ void data_101 (GtkSpinButton *spinbutton, gpointer data) /*Start 扫描延时 P1
 	gint grp = get_current_group(pp->p_config);
 	if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 	{
-		if (UNIT_MM == CFG(unit))
+		if (UNIT_MM == get_unit(pp->p_config))
 			GROUP_VAL(start) = (gint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / (GROUP_VAL(velocity) / 100000.0));
 		else  /* 英寸 */
 			GROUP_VAL(start) = (gint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / ( 0.03937 * GROUP_VAL(velocity) / 100000.0));
@@ -3100,7 +3104,7 @@ void data_102 (GtkSpinButton *spinbutton, gpointer data) /*Range 范围 P102 */
 	
 	if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 	{
-		if (UNIT_MM == CFG(unit))
+		if (UNIT_MM == get_unit(pp->p_config))
 			GROUP_VAL(range) = (guint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / (GROUP_VAL(velocity) / 100000.0));
 		else  /* 英寸 */
 			GROUP_VAL(range) = (guint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / ( 0.03937 * GROUP_VAL(velocity) / 100000.0));
@@ -3152,7 +3156,7 @@ void data_103 (GtkSpinButton *spinbutton, gpointer data) /*楔块延时  P103 */
 
 void data_104 (GtkSpinButton *spinbutton, gpointer data) /*声速 P104 */
 {
-	if (UNIT_MM == CFG(unit))
+	if (UNIT_MM == get_unit(pp->p_config))
 		GROUP_VAL(velocity) = (guint) (gtk_spin_button_get_value (spinbutton) * 100);
 	else   /* 英寸/微秒 */
 		GROUP_VAL(velocity) = (guint) (gtk_spin_button_get_value (spinbutton) * 25400 * 100 );
@@ -3572,7 +3576,7 @@ void data_202 (GtkSpinButton *spinbutton, gpointer data)	/* 闸门开始位置 P
 	guint group = get_current_group(pp->p_config);
 	if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 	{
-		if (UNIT_MM == CFG(unit))
+		if (UNIT_MM == get_unit(pp->p_config))
 			GROUP_GATE_POS(start) = (gint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / (GROUP_VAL(velocity) / 100000.0));
 		else  /* 英寸 */
 			GROUP_GATE_POS(start) = (gint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / ( 0.03937 * GROUP_VAL(velocity) / 100000.0));
@@ -3642,7 +3646,7 @@ void data_203 (GtkSpinButton *spinbutton, gpointer data) /* 闸门宽度 P203 */
 	guint group = get_current_group(pp->p_config);
 	if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 	{
-		if (UNIT_MM == CFG(unit))
+		if (UNIT_MM == get_unit(pp->p_config))
 			GROUP_GATE_POS(width) = (guint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / (GROUP_VAL(velocity) / 100000.0));
 		else  /* 英寸 */
 			GROUP_GATE_POS(width) = (guint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / ( 0.03937 * GROUP_VAL(velocity) / 100000.0));
@@ -3873,7 +3877,7 @@ void data_2312 (GtkSpinButton *spinbutton, gpointer data) /* Mat.Attenuatior P23
 {
 	if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 	{
-		if (UNIT_MM == CFG(unit))
+		if (UNIT_MM == get_unit(pp->p_config))
 			GROUP_VAL(mat_atten) = (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 );
 		else  /* 英寸 */
 			GROUP_VAL(mat_atten) = (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 * 0.03937);
@@ -3893,7 +3897,7 @@ void data_2321 (GtkSpinButton *spinbutton, gpointer data) /* Position P2321 */
 {
 	if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 	{
-		if (UNIT_MM == CFG(unit))
+		if (UNIT_MM == get_unit(pp->p_config))
 			GROUP_VAL(position) = (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
 		else  /* 英寸 */
 			GROUP_VAL(position) = (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 / 0.03937 );
@@ -3907,7 +3911,7 @@ void data_2322 (GtkSpinButton *spinbutton, gpointer data) /* Delay P2322 */
 {
 	if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 	{
-		if (UNIT_MM == CFG(unit))
+		if (UNIT_MM == get_unit(pp->p_config))
 			GROUP_VAL(delay) = (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 ) ;
 		else  /* 英寸 */
 			GROUP_VAL(delay) = (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 / 0.03937) ;
@@ -4009,12 +4013,11 @@ void data_310 (GtkMenuItem *menuitem, gpointer data) /* Measurements -> cursors 
 
 void data_311 (GtkSpinButton *spinbutton, gpointer data) 
 {
-	//pp->p_config->VPA =  (guint) (gtk_spin_button_get_value (spinbutton));
 	GROUP_VAL(per_reference) =  (gushort) (gtk_spin_button_get_value (spinbutton)*100.0);
 }
 void data_3111 (GtkSpinButton *spinbutton, gpointer data) 
 {
-	if(CFG(unit) == UNIT_MM)
+	if(get_unit(pp->p_config) == UNIT_MM)
 		GROUP_VAL(s_reference) =  (gint) (gtk_spin_button_get_value (spinbutton)*100.0);
 	else
 		GROUP_VAL(s_reference) =  (gint) (gtk_spin_button_get_value (spinbutton)*100.0/0.03937);
@@ -4038,7 +4041,7 @@ void data_312 (GtkSpinButton *spinbutton, gpointer data) /* */
 
 void data_3121 (GtkSpinButton *spinbutton, gpointer data) /* */
 {
-	if(CFG(unit) == UNIT_MM)
+	if(get_unit(pp->p_config) == UNIT_MM)
 		GROUP_VAL(s_measure) =  (gint) (gtk_spin_button_get_value (spinbutton)*100.0);
 	else
 		GROUP_VAL(s_measure) =  (gint) (gtk_spin_button_get_value (spinbutton)*100.0/0.03937);
@@ -4055,7 +4058,7 @@ void data_313 (GtkSpinButton *spinbutton, gpointer data) /* */
 #if 0
 	if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 	{
-		if(CFG(unit) == UNIT_MM)
+		if(get_unit(pp->p_config) == UNIT_MM)
 			GROUP_VAL(u_reference) =  (guint) (gtk_spin_button_get_value (spinbutton)*1000.0);
 		else
 			GROUP_VAL(u_reference) =  (guint) (gtk_spin_button_get_value (spinbutton)*1000.0/0.03937);
@@ -4068,7 +4071,7 @@ void data_313 (GtkSpinButton *spinbutton, gpointer data) /* */
 
 	if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 	{
-		if (UNIT_MM == CFG(unit))
+		if (UNIT_MM == get_unit(pp->p_config))
 			GROUP_VAL(u_reference) = (guint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / (GROUP_VAL(velocity) / 100000.0));
 		else  /* 英寸 */
 			GROUP_VAL(u_reference) = (guint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / ( 0.03937 * GROUP_VAL(velocity) / 100000.0));
@@ -4082,7 +4085,7 @@ void data_313 (GtkSpinButton *spinbutton, gpointer data) /* */
 
 void data_3131 (GtkSpinButton *spinbutton, gpointer data) /* */
 {
-	if(CFG(unit) == UNIT_MM)
+	if(get_unit(pp->p_config) == UNIT_MM)
 		GROUP_VAL(i_reference) =  (gint) (gtk_spin_button_get_value (spinbutton)*100.0);
 	else
 		GROUP_VAL(i_reference) =  (gint) (gtk_spin_button_get_value (spinbutton)*100.0/0.03937);
@@ -4090,7 +4093,7 @@ void data_3131 (GtkSpinButton *spinbutton, gpointer data) /* */
 
 void data_3132 (GtkSpinButton *spinbutton, gpointer data) /* */
 {
-	if(CFG(unit) == UNIT_MM)
+	if(get_unit(pp->p_config) == UNIT_MM)
 		GROUP_VAL(s_refmeas) =  (gushort) (gtk_spin_button_get_value (spinbutton)*100.0);
 	else
 		GROUP_VAL(s_refmeas) =  (gushort) (gtk_spin_button_get_value (spinbutton)*100.0/0.03937);
@@ -4102,7 +4105,7 @@ void data_3133 (GtkSpinButton *spinbutton, gpointer data) /* */
 
 	if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 	{
-		if(CFG(unit) == UNIT_MM)
+		if(get_unit(pp->p_config) == UNIT_MM)
 			GROUP_CURSORS_POS(UT) =  (gshort) (gtk_spin_button_get_value (spinbutton)*1000.0);
 		else
 			GROUP_CURSORS_POS(UT) =  (gshort) (gtk_spin_button_get_value (spinbutton)*1000.0/0.03937);
@@ -4116,7 +4119,7 @@ void data_314 (GtkSpinButton *spinbutton, gpointer data) /* */
 
 	if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 	{
-		if (UNIT_MM == CFG(unit))
+		if (UNIT_MM == get_unit(pp->p_config))
 			GROUP_VAL(u_measure) = (guint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / (GROUP_VAL(velocity) / 100000.0));
 		else  /* 英寸 */
 			GROUP_VAL(u_measure) = (guint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / ( 0.03937 * GROUP_VAL(velocity) / 100000.0));
@@ -4130,7 +4133,7 @@ void data_314 (GtkSpinButton *spinbutton, gpointer data) /* */
 
 void data_3141 (GtkSpinButton *spinbutton, gpointer data) /* */
 {
-	if(CFG(unit) == UNIT_MM)
+	if(get_unit(pp->p_config) == UNIT_MM)
 		GROUP_VAL(i_measure) =  (gint) (gtk_spin_button_get_value (spinbutton)*100.0);
 	else
 		GROUP_VAL(i_measure) =  (gint) (gtk_spin_button_get_value (spinbutton)*100.0/0.03937);
@@ -4138,7 +4141,7 @@ void data_3141 (GtkSpinButton *spinbutton, gpointer data) /* */
 
 void data_3142 (GtkSpinButton *spinbutton, gpointer data) /* */
 {
-	if(CFG(unit) == UNIT_MM)
+	if(get_unit(pp->p_config) == UNIT_MM)
 		GROUP_CURSORS_POS(scan) =  (gint) (gtk_spin_button_get_value (spinbutton)*100.0);
 	else
 		GROUP_CURSORS_POS(scan) =  (gint) (gtk_spin_button_get_value (spinbutton)*100.0/0.03937);
@@ -4152,7 +4155,7 @@ void data_315 (GtkMenuItem *menuitem, gpointer data) /* Measurements -> DATA LIN
 }
 void data_3151 (GtkSpinButton *spinbutton, gpointer data) /* */
 {
-	if(CFG(unit) == UNIT_MM)
+	if(get_unit(pp->p_config) == UNIT_MM)
 		GROUP_CURSORS_POS(index) =  (gint) (gtk_spin_button_get_value (spinbutton)*100.0);
 	else
 		GROUP_CURSORS_POS(index) =  (gint) (gtk_spin_button_get_value (spinbutton)*100.0/0.03937);
@@ -4172,7 +4175,7 @@ void data_330 (GtkMenuItem *menuitem, gpointer data) /* Measurements -> Thicknes
 
 void data_331 (GtkSpinButton *spinbutton, gpointer data) /*min_thickness p331 */
 {
-	if(UNIT_MM == CFG(unit))
+	if(UNIT_MM == get_unit(pp->p_config))
 		CFG(min_thickness) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
 	else
 		CFG(min_thickness) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 / 0.03937);
@@ -4180,7 +4183,7 @@ void data_331 (GtkSpinButton *spinbutton, gpointer data) /*min_thickness p331 */
 
 void data_332 (GtkSpinButton *spinbutton, gpointer data) /*max_thickness p332 */
 {
-	if(UNIT_MM == CFG(unit))
+	if(UNIT_MM == get_unit(pp->p_config))
 		CFG(max_thickness) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
 	else
 		CFG(max_thickness) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 / 0.03937 );
@@ -4511,7 +4514,7 @@ void data_502 (GtkMenuItem *menuitem, gpointer data) /* Probe/Part -> Select -> 
 
 void data_510 (GtkSpinButton *spinbutton, gpointer data) /*scanoffset */
 {
-	if(CFG(unit) == UNIT_MM)
+	if(get_unit(pp->p_config) == UNIT_MM)
 	GROUP_VAL(scan_offset) =  (gint) (gtk_spin_button_get_value (spinbutton) * 10.0);
 	else
 	GROUP_VAL(scan_offset) =  (gint) (gtk_spin_button_get_value (spinbutton) * 10.0 / 0.03937);
@@ -4521,7 +4524,7 @@ void data_510 (GtkSpinButton *spinbutton, gpointer data) /*scanoffset */
 
 void data_511 (GtkSpinButton *spinbutton, gpointer data) /*indexoffset */
 {
-	if(CFG(unit) == UNIT_MM)
+	if(get_unit(pp->p_config) == UNIT_MM)
 	GROUP_VAL(index_offset) =  (gint) (gtk_spin_button_get_value (spinbutton) * 10.0);
 	else
 	GROUP_VAL(index_offset) =  (gint) (gtk_spin_button_get_value (spinbutton) * 10.0 / 0.03937);
@@ -4574,7 +4577,7 @@ void data_530 (GtkMenuItem *menuitem, gpointer data) /* Probe/Part -> Parts -> G
 
 void data_531 (GtkSpinButton *spinbutton, gpointer data) /*part_thickness*/
 {
-	if(UNIT_MM == CFG(unit))
+	if(UNIT_MM == get_unit(pp->p_config))
 		set_part_thickness (pp->p_config, (GUINT_TO_POINTER
 					((guint) (gtk_spin_button_get_value (spinbutton) * 1000.0))));
 	else
@@ -4585,7 +4588,7 @@ void data_531 (GtkSpinButton *spinbutton, gpointer data) /*part_thickness*/
 
 void data_532 (GtkSpinButton *spinbutton, gpointer data) /*part_thickness*/
 {
-	if(UNIT_MM == CFG(unit))
+	if(UNIT_MM == get_unit(pp->p_config))
 		set_part_diameter (pp->p_config, (GUINT_TO_POINTER
 					((guint) (gtk_spin_button_get_value (spinbutton) * 1000.0))));
 	else
@@ -4714,7 +4717,7 @@ void data_6221 (GtkSpinButton *spinbutton, gpointer data) /* Angle Step P622 */
 # if 0
 void data_623 (GtkSpinButton *spinbutton, gpointer data) /* focus_depth P623*/
 {
-	if(UNIT_MM == CFG(unit))
+	if(UNIT_MM == get_unit(pp->p_config))
 		LAW_VAL(Focus_depth) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
 	else
 		LAW_VAL(Focus_depth) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 / 0.03937 );
@@ -4826,7 +4829,7 @@ void data_712 (GtkMenuItem *menuitem, gpointer data) /* Scan -> Inspection -> In
 
 void data_713 (GtkSpinButton *spinbutton, gpointer data) /*scan_speed*/
 {
-	if(UNIT_MM == CFG(unit))
+	if(UNIT_MM == get_unit(pp->p_config))
 		CFG(scanspeed) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
 	else
 		CFG(scanspeed) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 / 0.03937 );
@@ -4844,7 +4847,7 @@ void data_715 (GtkSpinButton *spinbutton, gpointer data) /*index_speed*/
 
 void data_720 (GtkSpinButton *spinbutton, gpointer data) /*scan_start*/
 {
-	if(UNIT_MM == CFG(unit))
+	if(UNIT_MM == get_unit(pp->p_config))
 		CFG(scan_start) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
 	else
 		CFG(scan_start) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 / 0.03937 );
@@ -4854,7 +4857,7 @@ void data_720 (GtkSpinButton *spinbutton, gpointer data) /*scan_start*/
 
 void data_721 (GtkSpinButton *spinbutton, gpointer data) /*scan_end*/
 {
-	if(UNIT_MM == CFG(unit))
+	if(UNIT_MM == get_unit(pp->p_config))
 		CFG(scan_end) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
 	else
 		CFG(scan_end) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 / 0.03937 );
@@ -4864,7 +4867,7 @@ void data_721 (GtkSpinButton *spinbutton, gpointer data) /*scan_end*/
 
 void data_722 (GtkSpinButton *spinbutton, gpointer data) /*scan_resolution*/
 {
-	if(UNIT_MM == CFG(unit))
+	if(UNIT_MM == get_unit(pp->p_config))
 		CFG(scan_resolution) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
 	else
 		CFG(scan_resolution) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 / 0.03937 );
@@ -4872,7 +4875,7 @@ void data_722 (GtkSpinButton *spinbutton, gpointer data) /*scan_resolution*/
 
 void data_723 (GtkSpinButton *spinbutton, gpointer data) /*index_start*/
 {
-	if(UNIT_MM == CFG(unit))
+	if(UNIT_MM == get_unit(pp->p_config))
 		CFG(index_start) =  (guint) (gtk_spin_button_get_value (spinbutton)*1000.0);
 	else
 		CFG(index_start) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 / 0.03937 );
@@ -4880,7 +4883,7 @@ void data_723 (GtkSpinButton *spinbutton, gpointer data) /*index_start*/
 
 void data_724 (GtkSpinButton *spinbutton, gpointer data) /*index_end*/
 {
-	if(UNIT_MM == CFG(unit))
+	if(UNIT_MM == get_unit(pp->p_config))
 		CFG(index_end) =  (guint) (gtk_spin_button_get_value (spinbutton)*1000.0);
 	else
 		CFG(index_end) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 / 0.03937 );
@@ -4888,7 +4891,7 @@ void data_724 (GtkSpinButton *spinbutton, gpointer data) /*index_end*/
 
 void data_725 (GtkSpinButton *spinbutton, gpointer data) /*index_resolution*/
 {
-	if(UNIT_MM == CFG(unit))
+	if(UNIT_MM == get_unit(pp->p_config))
 		CFG(index_resolution) =  (guint) (gtk_spin_button_get_value (spinbutton)*1000.0);
 	else
 		CFG(index_resolution) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 / 0.03937 );
@@ -4960,7 +4963,7 @@ void data_830(GtkMenuItem *menuitem, gpointer data) /* File -> User Field -> sel
 
 void data_900(GtkMenuItem *menuitem, gpointer data) /* Preferences -> Pref. -> Units */
 {
-	CFG(unit) = (guchar) (GPOINTER_TO_UINT (data));
+	set_unit (pp->p_config, (guchar) (GPOINTER_TO_UINT (data)));
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
 

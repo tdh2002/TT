@@ -410,8 +410,8 @@ void send_focal_spi (guint group)
 		TMP(focal_spi[k]).tx_sel	= 
 			channel_select(GROUP_VAL_POS(group, receiver));// + LAW_VAL_POS(group, First_tx_elem));
 
-
-		for (i = 0 ; i < TMP(focal_law_all_beam[k].N_ActiveElements); i++)
+		for (i = (GROUP_VAL_POS(group, receiver) > 97 ? (GROUP_VAL_POS(group, receiver) - 97) : 0);
+				i < TMP(focal_law_all_beam[k].N_ActiveElements); i++)
 		{
 			TMP(focal_spi[k]).tx_info[i]	= 
 				((guint)(TMP(focal_law_all_elem[k][i].T_delay) / 2.5)) | 

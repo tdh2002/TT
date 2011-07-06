@@ -48,8 +48,11 @@ DWORD  channel_select(unsigned int n)
 	int temp[33];
 	int L=0,H=0;
 	DWORD tx_select;
-	if((n > 97) || (n <1))
-		exit(1);
+	if(n <1)
+		n = 1;
+
+	if(n > 97)
+		n = 97;
 
 	for(i=n; i<n + 32; ++i)
 	{
