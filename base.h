@@ -517,8 +517,8 @@ typedef struct Draw_interface
 	gint	deptha;
 	gint	thickness;
 	gint	tolerance;
-	//gshort	first_angle;
-	//gshort	last_angle;
+	gshort	first_angle;
+	gshort	last_angle;
 	gushort	ref_amplitude;
 	guint	tolerance_t;
 	gushort	comp_gain;
