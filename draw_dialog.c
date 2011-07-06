@@ -130,6 +130,7 @@ static void da_call_wedge (GtkDialog *dialog, gint response_id, gpointer user_da
 
 			gtk_label_set_text (GTK_LABEL (pp->data3[4]), GROUP_VAL(wedge.Model));
 			gtk_widget_destroy (GTK_WIDGET (dialog));
+			change_keypress_event (KEYPRESS_MAIN);
 		}
 		else
 		{
@@ -137,7 +138,8 @@ static void da_call_wedge (GtkDialog *dialog, gint response_id, gpointer user_da
 			{
 				strcpy(GROUP_VAL(wedge.Model), " Unknown");
 				gtk_label_set_text (GTK_LABEL (pp->data3[4]), GROUP_VAL(wedge.Model));
-				gtk_widget_destroy (GTK_WIDGET (dialog));			
+				gtk_widget_destroy (GTK_WIDGET (dialog));
+				change_keypress_event (KEYPRESS_MAIN);			
 			}
 			else
 			{	
@@ -145,12 +147,16 @@ static void da_call_wedge (GtkDialog *dialog, gint response_id, gpointer user_da
 					gtk_tree_selection_select_iter(pp->selection1, &iter);/*选择&iter指定的那项*/
 				else
 					gtk_widget_destroy (GTK_WIDGET (dialog));
+					change_keypress_event (KEYPRESS_MAIN);
 			}
 		}
 	}
 
 	else if (GTK_RESPONSE_CANCEL == response_id) /* 取消 */
+	{
 		gtk_widget_destroy (GTK_WIDGET (dialog));
+		change_keypress_event (KEYPRESS_MAIN);
+	}
 }
 
 /* 调色板 选择2个按键的处理 一个是确认 一个是取消 */
@@ -208,17 +214,21 @@ static void da_call_palette (GtkDialog *dialog, gint response_id, gpointer user_
 
 			g_free (file_path);
 			gtk_widget_destroy (GTK_WIDGET (dialog));
+			change_keypress_event (KEYPRESS_MAIN);
 		}
 	}
 	else if (GTK_RESPONSE_CANCEL == response_id) /* 取消 */
+	{
 		gtk_widget_destroy (GTK_WIDGET (dialog));
-
+		change_keypress_event (KEYPRESS_MAIN);
+	}
 }
 
 static void da_call_warning (GtkDialog *dialog, 
 		gint response_id, gpointer user_data)      
 {
 	gtk_widget_destroy (GTK_WIDGET (dialog));
+	change_keypress_event (KEYPRESS_MAIN);
 	return ;
 }
 
@@ -2554,6 +2564,7 @@ gboolean law_close (GtkWidget *widget, GdkEventButton *event,	gpointer data)
 {
 	//	widget_window_class->key_press_event = my_keypress_event;
 	gtk_widget_destroy (GTK_WIDGET (data));
+	change_keypress_event (KEYPRESS_MAIN);
 	return TRUE;
 }
 
@@ -2901,11 +2912,13 @@ static void da_call_ip (GtkDialog *dialog, gint response_id, gpointer user_data)
 
 		//关闭窗口
 		gtk_widget_destroy (GTK_WIDGET (dialog));
+		change_keypress_event (KEYPRESS_MAIN);
 	}
 	else if(GTK_RESPONSE_CANCEL == response_id)
 	{
 		//关闭窗口
 		gtk_widget_destroy (GTK_WIDGET (dialog));
+		change_keypress_event (KEYPRESS_MAIN);
 	}
 
 
@@ -3032,11 +3045,13 @@ static void da_call_mask (GtkDialog *dialog, gint response_id, gpointer user_dat
 
 		//关闭窗口
 		gtk_widget_destroy (GTK_WIDGET (dialog));
+		change_keypress_event (KEYPRESS_MAIN);
 	}
 	else if(GTK_RESPONSE_CANCEL == response_id)
 	{
 		//关闭窗口
 		gtk_widget_destroy (GTK_WIDGET (dialog));
+		change_keypress_event (KEYPRESS_MAIN);
 	}
 
 
@@ -3155,6 +3170,7 @@ static void da_call_time (GtkDialog *dialog, gint response_id, gpointer user_dat
 		
         //关闭对话框
         gtk_widget_destroy (GTK_WIDGET (dialog));
+		change_keypress_event (KEYPRESS_MAIN);
 
     }
     //点击了取消按钮
@@ -3162,6 +3178,7 @@ static void da_call_time (GtkDialog *dialog, gint response_id, gpointer user_dat
     {
         //关闭对话框
 		gtk_widget_destroy (GTK_WIDGET (dialog));
+		change_keypress_event (KEYPRESS_MAIN);
     }
 }
 
@@ -3375,12 +3392,14 @@ static void da_call_date (GtkDialog *dialog, gint response_id, gpointer user_dat
 
 	    //关闭对话框	
         gtk_widget_destroy (GTK_WIDGET (dialog));
+		change_keypress_event (KEYPRESS_MAIN);
 
     }
     else if (GTK_RESPONSE_CANCEL == response_id)
     {
         //关闭对话框
 		gtk_widget_destroy (GTK_WIDGET (dialog));
+		change_keypress_event (KEYPRESS_MAIN);
     }
 }
 

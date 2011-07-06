@@ -1128,7 +1128,7 @@ void b3_fun1(gpointer p)
 				   {
 					   case 0: break; 
 					   case 1: data_process (&(pp->p_tmp_config->indexoffset_reg), 2);  break; /*511 */
-					   case 2: data_process (&(pp->p_tmp_config->db_reg), 2);  break;     /*521*/
+					   case 2: data_process (&(pp->p_tmp_config->db_reg), 4);  break;     /*521*/
 					   case 3: data_process (&(pp->p_tmp_config->part_thickness_reg), 3);  break;     /*531*/
 					   case 4: break; 
 					   default:break;
@@ -2518,6 +2518,10 @@ static int handler_key(guint keyval, gpointer data)
 			pp->help_yn = !pp->help_yn;
 			break;
 		case GDK_F2:
+			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
+			{
+				main_menu_pop(MENU_HIDE);/*收回主菜单条*/
+			}
 			if(gtk_widget_get_sensitive(pp->eventbox2[0]))
 			{
 				menu3_pop(MENU3_HIDE);
@@ -2529,6 +2533,10 @@ static int handler_key(guint keyval, gpointer data)
 			}			
 			break;
 		case GDK_F3:
+			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
+			{
+				main_menu_pop(MENU_HIDE);/*收回主菜单条*/
+			}
 			if(gtk_widget_get_sensitive(pp->eventbox2[1]))
 			{
 				menu3_pop(MENU3_HIDE);
@@ -2540,6 +2548,10 @@ static int handler_key(guint keyval, gpointer data)
 			}		
 			break;
 		case GDK_F4:
+			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
+			{
+				main_menu_pop(MENU_HIDE);/*收回主菜单条*/
+			}
 			if(gtk_widget_get_sensitive(pp->eventbox2[2]))
 			{
 				menu3_pop(MENU3_HIDE);
@@ -2551,6 +2563,10 @@ static int handler_key(guint keyval, gpointer data)
 			}		
 			break;
 		case GDK_F5:
+			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
+			{
+				main_menu_pop(MENU_HIDE);/*收回主菜单条*/
+			}
 			if(gtk_widget_get_sensitive(pp->eventbox2[3]))
 			{
 				menu3_pop(MENU3_HIDE);
@@ -2562,6 +2578,10 @@ static int handler_key(guint keyval, gpointer data)
 			}			
 			break;
 		case GDK_F6:
+			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
+			{
+				main_menu_pop(MENU_HIDE);/*收回主菜单条*/
+			}
 			if(gtk_widget_get_sensitive(pp->eventbox2[4]))
 			{
 				menu3_pop(MENU3_HIDE);
@@ -2573,7 +2593,10 @@ static int handler_key(guint keyval, gpointer data)
 			}			
 			break;
 		case GDK_F7:
-
+			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
+			{
+				main_menu_pop(MENU_HIDE);/*收回主菜单条*/
+			}
 			if(gtk_widget_get_sensitive(pp->eventbox30[5]))
 			{
 				if (MENU36_PRESS == data1)
@@ -2586,6 +2609,10 @@ static int handler_key(guint keyval, gpointer data)
 			}			
 			break;
 		case GDK_F8:
+			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
+			{
+				main_menu_pop(MENU_HIDE);/*收回主菜单条*/
+			}
 			if(gtk_widget_get_sensitive(pp->eventbox30[4]))
 			{
 				if (MENU35_PRESS == data1)
@@ -2598,6 +2625,10 @@ static int handler_key(guint keyval, gpointer data)
 			}			
 			break;
 		case GDK_F9:
+			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
+			{
+				main_menu_pop(MENU_HIDE);/*收回主菜单条*/
+			}
 			if(gtk_widget_get_sensitive(pp->eventbox30[3]))
 			{
 				if (MENU34_PRESS == data1)
@@ -2610,6 +2641,10 @@ static int handler_key(guint keyval, gpointer data)
 			}			
 			break;
 		case GDK_F10:
+			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
+			{
+				main_menu_pop(MENU_HIDE);/*收回主菜单条*/
+			}
 			if(gtk_widget_get_sensitive(pp->eventbox30[2]))
 			{
 				if (MENU33_PRESS == data1)	
@@ -2622,6 +2657,10 @@ static int handler_key(guint keyval, gpointer data)
 			}		
 			break;
 		case GDK_F11:
+			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
+			{
+				main_menu_pop(MENU_HIDE);/*收回主菜单条*/
+			}
 			if(gtk_widget_get_sensitive(pp->eventbox30[1]))
 			{
 				if (MENU32_PRESS == data1)
@@ -2634,6 +2673,10 @@ static int handler_key(guint keyval, gpointer data)
 			}			
 			break;
 		case GDK_F12:
+			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
+			{
+				main_menu_pop(MENU_HIDE);/*收回主菜单条*/
+			}
 			if(gtk_widget_get_sensitive(pp->eventbox30[0]))
 			{
 				if (MENU31_PRESS == data1)
@@ -5179,6 +5222,7 @@ void da_call_edit_notes (GtkDialog *dialog, gint response_id, gpointer user_data
 	else if (GTK_RESPONSE_CANCEL == response_id) /* 取消 */
 		g_print ("CANCEL_Pressed");
 	gtk_widget_destroy (GTK_WIDGET (dialog));
+	change_keypress_event (KEYPRESS_MAIN);
 }
 
 /* Edit Header 2个按键的处理 一个是保存一个是取消 */
@@ -5202,11 +5246,13 @@ void da_call_edit_header (GtkDialog *dialog, gint response_id, gpointer user_dat
 	else if (GTK_RESPONSE_CANCEL == response_id) /* 取消 */
 		g_print ("CANCEL_Pressed");
 	gtk_widget_destroy (GTK_WIDGET (dialog));
+	change_keypress_event (KEYPRESS_MAIN);
 }
 
 void dialog_destroy(GtkWidget *widget,	GdkEventButton *event,	gpointer       data)
 {
 	gtk_widget_destroy (GTK_WIDGET(data));
+	change_keypress_event (KEYPRESS_MAIN);
 }
 
 

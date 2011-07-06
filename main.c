@@ -240,6 +240,7 @@ static void set_config (guint groupid)
 	pp->cstart_qty = 1;
 
 	CFG(paper_size) = 2;	/*paper墨认选择A4*/
+	GROUP_GATE_POS(height) = 20; /*闸门默认高度为20*/
 }
 
 int main (int argc, char *argv[])

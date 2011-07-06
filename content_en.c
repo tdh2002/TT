@@ -34,7 +34,7 @@ static const gchar *content_en23[] = {
 
 static const gchar *content_en24[] = {
 	/* 二级菜单第4页 */
-	"Selection", "Overlay", "Zoom", "Color", "Properties"
+	"Selection", "Overlay", "Color", "Properties", NULL
 };
 
 static const gchar *content_en25[] = {
@@ -197,18 +197,18 @@ static const gchar *content_en241[] = {
 };
 
 static const gchar *content_en242[] = {
-	/* 二级菜单第4页下的第2页三级菜单 */
-	"  Display  ","  Type  ", "Start USound", "End USound", "Start Amplitude", "End Amplitude","Range USound", "Range Amplitude", "Center USound", "Center Amplitude"
-};
-
-static const gchar *content_en243[] = {
 	/* 二级菜单第4页下的第3页三级菜单 */
 	"  Select  ","  Start  ", "  End  ","  Load  ", "Mode", NULL, "Contrast", "Brightness", "Min", "Max", "Mode"
 };
 
-static const gchar *content_en244[] = {
+static const gchar *content_en243[] = {
 	/* 二级菜单第4页下的第4页三级菜单 */
 	"  Scan  ","  Color  ", "  Envelope  ","  Source  ", "  Appearance  ", "  Overlay  ", "Compression", "Optimum","Ratio 1:1","Imterpolation","Color","Orientation"
+};
+
+static const gchar *content_en244[] = {
+	/* 二级菜单第3页下的第4页三级菜单 */
+	NULL, NULL, NULL ,NULL ,NULL, NULL
 };
 
 
