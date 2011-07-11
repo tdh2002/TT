@@ -24,7 +24,7 @@
 
 #include "spi_d.h"
 #define TT_DEBUG 0
-#define DEBUG 0
+#define DEBUG 1
 
 static int fd_array, fd_normal;
 static int fd_gpio;
@@ -214,6 +214,8 @@ int write_focal_data (focal_data_spi *p, unsigned int beam_num)
 	printf ("Gain= %d\n", tmp);
 	tmp = p->freq_band;
 	*/
+	g_print ("tx:%x rx:%x\n", p->tx_enable, p->rx_enable);
+	g_print ("tx_info:%x \n", p->tx_info[0]);
 #endif
 
 	p->offset = 64 * beam_num;

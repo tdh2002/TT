@@ -42,6 +42,7 @@ void cba_ultrasound_wedgedelay();
 void cba_ultrasound_sensitivity();
 void cba_ultrasound_TCG();
 
+
 //把group向导的设置参数保存起来
 _group_wizard g_group_wizard_struct;
 
@@ -376,7 +377,9 @@ static void setup_para(PARAMETER_P p, guint group)
     p->beam_angle->beam_skew_angle_stop = 0;
     p->beam_angle->beam_skew_angle_resolution = 0;
 
-    p->beam_angle->beam_type = 0;
+    //与P600 Law Type 对应起来
+	p->beam_angle->beam_type = LAW_VAL(Focal_type);
+//	g_print("test beamnum is %d\n",p->beam_angle->beam_type);
     p->beam_angle->beam_angle_sel = 0;
 
 	/* 样本 */
@@ -396,18 +399,23 @@ static void setup_para(PARAMETER_P p, guint group)
     p->specimen->Inspection_od_id[1] = 1;  
 
 	/* 聚焦点 */
-    p->focal_point->focal_focus_type = 1;	/* 0 half path 1 TURE DEPTH */
-    p->focal_point->focal_focus_point_start = LAW_VAL_POS (group, Focus_depth) / 1000.0;	/* type =0 是 声程 type =1 是深度 */
-    p->focal_point->focal_focus_point_stop = 0; 
-    p->focal_point->focal_focus_point_resolution = 0; 
+    p->focal_point->focal_focus_type = LAW_VAL(Focal_point_type);	/* 0 half path 1 TURE DEPTH */
+//    p->focal_point->focal_focus_point_start = LAW_VAL_POS (group, Focus_depth) / 1000.0;	/* type =0 是 声程 type =1 是深度 */
+    p->focal_point->focal_focus_point_start = LAW_VAL(Position_start)/ 1000.0;	/* type =0 是 声程 type =1 是深度 */
+    p->focal_point->focal_focus_point_stop = LAW_VAL(Position_end)/ 1000.0; 
+    p->focal_point->focal_focus_point_resolution = LAW_VAL(Position_step)/ 1000.0;
+//	g_print("focal point parament %d %f %f %f\n",p->focal_point->focal_focus_type,p->focal_point->focal_focus_point_start,p->focal_point->focal_focus_point_stop,p->focal_point->focal_focus_point_resolution);
     
     p->element_sel->pri_axis_ape = LAW_VAL_POS (group, Elem_qty);
     p->element_sel->sec_axis_ape = 1;
+    p->element_sel->primary_axis_s = LAW_VAL(First_tx_elem);
+//	g_print("test linear first num %d\n",p->element_sel->primary_axis_s);
 }
 
 static void save_cal_law(gint offset, gint group, PARAMETER_P p)
 {
 	gint i, j;
+	g_print ("\n qty1 =%d \n", p->k);
 	for (i = 0; i < TMP(beam_qty[group]); i++)
 	{
 		TMP(focal_law_all_beam[offset + i]).N_ActiveElements	= LAW_VAL_POS (group, Elem_qty);
@@ -469,7 +477,6 @@ void cal_focal_law (guint group)
 	p->k = 0 ;	            
     
 	setup_para(p, group);
-   
 	/*  */
 	focal_law(p, G_Delay);
 
@@ -985,11 +992,11 @@ void b3_fun1(gpointer p)
 								switch(pp->cmode_pos)
 								{
 									case 0://Velocity
-										if((pp->cstart_qty) < 3)
+										if((pp->cstart_qty) < 4)
 										{
 											(pp->cstart_qty) ++;
 										}
-										else if((pp->cstart_qty) == 3)
+										else if((pp->cstart_qty) == 4)
 										{
 											(pp->cstart_qty) ++;
 											//获取闸门1信息
@@ -1007,7 +1014,7 @@ void b3_fun1(gpointer p)
 											}
 											TMP_CBA(time_start) = 0;//待更新
 										}
-										else if((pp->cstart_qty) == 4)
+										else if((pp->cstart_qty) == 5)
 										{
 											(pp->cstart_qty) ++;
 											//获取闸门2信息
@@ -1023,9 +1030,9 @@ void b3_fun1(gpointer p)
 													TMP_CBA(thickness2) = 0;//待更新
 													break;
 											}
-											TMP_CBA(time_end) = 0;//待更新
+											TMP_CBA(time_end) = 10;//待更新
 										}
-										else if((pp->cstart_qty) == 5)
+										else if((pp->cstart_qty) == 6)
 										{
 											(pp->cstart_qty) =1;
 											//在此调用声速校准函数->此处校准之后的声速用于Wedge Delay校准
@@ -1627,8 +1634,6 @@ void b3_fun2(gpointer p)
 
 void b3_fun3(gpointer p)
 {
-	gint	i, j;
-	guint	temp_beam;
 	gint	grp = CFG (groupId);
 	/* 之前的位置 */
 	pp->pos_last2 = pp->pos2[pp->pos][pp->pos1[pp->pos]];
@@ -1661,37 +1666,9 @@ void b3_fun3(gpointer p)
 			switch (pp->pos1[6])
 			{
 				case 4:
-					temp_beam = 1;
-					if (LAW_VAL (Focal_type) == AZIMUTHAL_SCAN)
-					{
-						i = (LAW_VAL(Angle_max) - LAW_VAL(Angle_min)) /
-							LAW_VAL(Angle_step) + 1;
-						j = (LAW_VAL(Angle_beam_skew_min) - LAW_VAL(Angle_beam_skew_max)) /
-							LAW_VAL(Angle_beam_skew_step) + 1;
-						temp_beam = i * j;
-					}
-					else  
-					{
-
-					}
-
-					TMP(beam_qty[get_current_group(pp->p_config)])	= temp_beam;
-					TMP(beam_num[get_current_group(pp->p_config)]) = 0;
-
-					TMP(group_spi[get_current_group(pp->p_config)]).beam_qty = TMP(beam_qty[get_current_group(pp->p_config)]) - 1; 
-					TMP(group_spi[grp]).idel_time		= 
-						100000000 / (GROUP_VAL_POS(grp, prf) / 10) - 2048 - TMP(group_spi[grp]).rx_time;
-
-					cal_focal_law (get_current_group(pp->p_config));
-					send_focal_spi (get_current_group(pp->p_config));
-
-					write_group_data (&TMP(group_spi[get_current_group(pp->p_config)]), get_current_group(pp->p_config));
-
-					pp->cscan_mark = 1;
-					pp->ccscan_mark = 1;
-					pp->cccscan_mark = 1;
-					pp->sscan_mark = 1;
-					break;  /* 计算聚焦法则 P643 */
+					/* 计算聚焦法则 P643 */
+					generate_focallaw();
+					break;  
 				default:break;
 			}
 			break;
@@ -3447,10 +3424,10 @@ void data_113 (GtkMenuItem *menuitem, gpointer data)  /* Voltage  P113 */
 void data_1141 (GtkSpinButton *spinbutton, gpointer data) /* PW  P114 */
 {
 	guint temp;
-	temp =  (guint) ((gtk_spin_button_get_value (spinbutton)) * 100.0);
+	temp =  (guint) ((gtk_spin_button_get_value (spinbutton))*100.0);
 	temp = (temp / 250) * 250;
 	GROUP_VAL(pulser_width) = temp;
-
+//	g_print("\n pulser width=%f \n",GROUP_VAL(pulser_width));
 	send_focal_spi (get_current_group(pp->p_config));
 	/* 发送给硬件 */
 }
@@ -5426,6 +5403,9 @@ void send_spi_data (gint group)
 	write_group_data (&TMP(group_spi[group]), group);
 }
 
+//*********生存聚焦法则************
+//  2011.6.25 何凡添加
+//*********生存聚焦法则************
 void generate_focallaw()
 {
 	gint	i, j;
@@ -5441,26 +5421,53 @@ void generate_focallaw()
 			LAW_VAL(Angle_beam_skew_step) + 1;
 		temp_beam = i * j;
 	}
-	else  
+	else if(LAW_VAL (Focal_type) == LINEAR_SCAN) 
+	{
+		if (LAW_VAL(Elem_step) == 1)
+		temp_beam = 1 +
+			(LAW_VAL (Last_tx_elem) - LAW_VAL(First_tx_elem) + 1 - LAW_VAL (Elem_qty));
+
+	}
+	else if(LAW_VAL (Focal_type) == DEPTH_SCAN) 
 	{
 
 	}
+	else if(LAW_VAL (Focal_type) == STATIC_SCAN) 
+	{
 
+	}
 	TMP(beam_qty[get_current_group(pp->p_config)])	= temp_beam;
 	TMP(beam_num[get_current_group(pp->p_config)]) = 0;
 
 	TMP(group_spi[get_current_group(pp->p_config)]).beam_qty = TMP(beam_qty[get_current_group(pp->p_config)]) - 1; 
 	TMP(group_spi[grp]).idel_time		= 
 		100000000 / (GROUP_VAL_POS(grp, prf) / 10) - 2048 - TMP(group_spi[grp]).rx_time;
-	write_group_data (&TMP(group_spi[get_current_group(pp->p_config)]), get_current_group(pp->p_config));
+
 	cal_focal_law (get_current_group(pp->p_config));
 	send_focal_spi (get_current_group(pp->p_config));
+
+	//计算聚焦法则时，sumgain默认为Auto
+	if (LAW_VAL_POS(grp, Elem_qty) == 1)	
+		TMP(group_spi[grp]).sum_gain	= 4095;	
+	else 
+		TMP(group_spi[grp]).sum_gain	= 
+			4096 / LAW_VAL_POS(grp, Elem_qty);					
+	g_print("\n sumgain = %d\n",TMP(group_spi[grp]).sum_gain);
+
+	write_group_data (&TMP(group_spi[get_current_group(pp->p_config)]), get_current_group(pp->p_config));
+
 	pp->cscan_mark = 1;
 	pp->ccscan_mark = 1;
 	pp->cccscan_mark = 1;
-	pp->sscan_mark = 1;			
+	pp->sscan_mark = 1;	
+
+	g_print("\nqty = %d\n ", temp_beam);
+		
 }
 
+//****************************************
+//  编码器校准：2011.7.1 何凡
+//****************************************
 guint cba_encoder()
 {
 	gint K = 483;
@@ -5471,6 +5478,9 @@ guint cba_encoder()
 	return TMP_CBA(resolution);
 }
 
+//****************************************
+//  声速校准：2011.7.1 何凡
+//****************************************
 gchar cba_ultrasound_velocity()
 {
 	switch(pp->echotype_pos)
@@ -5488,6 +5498,9 @@ gchar cba_ultrasound_velocity()
 	return TMP_CBA(velocity_last);
 }
 
+//****************************************
+//  延时校准：2011.7.1 何凡
+//****************************************
 void cba_ultrasound_wedgedelay()
 {
 	gint i;
@@ -5510,12 +5523,19 @@ void cba_ultrasound_wedgedelay()
 	}
 }
 
+//****************************************
+//  灵敏度校准：2011.7.1 何凡
+//****************************************
 void cba_ultrasound_sensitivity()
 {
 
 }
 
+//****************************************
+//  TCG校准：2011.7.1 何凡
+//****************************************
 void cba_ultrasound_TCG()
 {
 
 }
+

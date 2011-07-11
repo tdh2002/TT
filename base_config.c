@@ -592,6 +592,38 @@ void set_unit (CONFIG *p, guchar data)
 	p->unit = data;
 }
 
+guchar get_display_table (CONFIG *p)
+{
+	return p->display_table;
+}
+
+void set_display_table (CONFIG *p, guchar data)
+{
+	g_assert (data < 2);
+	p->display_table = data;
+}
+
+guchar get_entry_image (CONFIG *p)
+{
+	return p->entry_image;
+}
+
+void set_entry_image (CONFIG *p, guchar data)
+{
+	g_assert (data < 2);
+	p->entry_image = data;
+}
+
+guchar get_entry_qty (CONFIG *p)
+{
+	return p->entry_qty;
+}
+
+void set_entry_qty (CONFIG *p, guchar data)
+{
+	p->entry_qty = data;
+}
+
 
 
 

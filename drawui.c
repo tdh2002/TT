@@ -3862,7 +3862,7 @@ void draw3_data0(DRAW_UI_P p)
 
 				case 2:/*Measurements -> Table -> Display Table  p320 */
 
-					draw3_popdown (menu_content[OFF_ON + CFG(display_table)], 0, 0);
+					draw3_popdown (menu_content[OFF_ON + get_display_table(pp->p_config)], 0, 0);
 					break;
 
 				case 3:/*Measurements -> Thickness -> Source  p330 */
@@ -5088,7 +5088,7 @@ void draw3_data1(DRAW_UI_P p)
 
 				case 2:/*Measurements -> Table -> Entry Image p321*/
 
-					draw3_popdown(menu_content[OFF_ON + CFG(entry_image)],1,0);
+					draw3_popdown(menu_content[OFF_ON + get_entry_image(pp->p_config)],1,0);
 					break;
 
 				case 3:/*Measurements -> Thickness -> Min  p331 */
@@ -5837,7 +5837,8 @@ void draw3_data1(DRAW_UI_P p)
 							cur_value = LAW_VAL(First_tx_elem);
 							lower = 1.0;
 							/* 计算最大值 */
-							upper = GROUP_VAL(probe.Elem_qty) - LAW_VAL(Elem_qty) + 1;
+							upper = (gfloat)MIN((GROUP_VAL(probe.Elem_qty) - LAW_VAL(Elem_qty) + 1),
+								  (128 + 1 - GROUP_VAL(pulser)));
 							step = tmpf;
 							digit = 0;
 							pos = 1;
@@ -14578,7 +14579,7 @@ void draw3_data5(DRAW_UI_P p)
 							if (GROUP_VAL(prf_pos) == 3)	/* 自定义数值时候按下显示数值 */
 							{
 								/* 更新当前增益值显示 */
-								str = g_strdup_printf ("%d", GROUP_VAL(prf) / 10);
+								str = g_strdup_printf ("%d", get_prf() / 10);
 								draw3_pop_tt (data_115, NULL, 
 										str, menu_content + PRF, 4, 5, GROUP_VAL(prf_pos), 0);
 								g_free(str);
@@ -14590,20 +14591,11 @@ void draw3_data5(DRAW_UI_P p)
 					}
 					else 
 					{
-						if (GROUP_VAL(prf))
-						{
-							str = g_strdup_printf ("%d", GROUP_VAL(prf)/10.0 );
-							draw3_popdown (str, 5, 0);
-							g_free(str);
-						}
-						else 
-						{
-							cur_value = GROUP_VAL(prf) / 10.0;
-							unit = UNIT_NULL;
-							pos = 5;
-							digit = 0;
-							draw3_digit_stop (cur_value , units[unit], digit, pos, 0);
-						}
+						cur_value = GROUP_VAL(prf) / 10.0;
+						unit = UNIT_NULL;
+						pos = 5;
+						digit = 0;
+						draw3_digit_stop (cur_value , units[unit], digit, pos, 0);
 					}
 					break;
 				case 2:/* Reject 抑制 P125 TAN1 */

@@ -126,6 +126,10 @@
 #define GRP_8	7
 
 
+#define	NORMAL_OFF	0
+#define	NORMAL_ON	1
+
+
 /* Range of availage voltage (sPulseVoltagePA). 相控发射电压 */
 #define setup_VOLTAGE_MIN_PA   0x100 
 #define	setup_VOLTAGE_MED_PA   0x101 

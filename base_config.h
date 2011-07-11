@@ -374,16 +374,16 @@ typedef	struct _Config
 	guchar	second;
 	guchar	unit;				/* 0 mm 1 inch */
 
-	guchar	list;	/* Measurements->Reading->list  filed */
+	guchar	list;				/* Measurements->Reading->list filed */
 	guchar	field[4];	
 
-	guchar	display_table;                  /*Measurements->Table->display table*/
-	guchar	entry_image;                   /*Measurements->Table->entry image*/
-	guchar	entry_qty;                     /*Measurements->Table->Select Entry*/
+	guchar	display_table;		/* Measurements->Table->display table ON or OFF */
+	guchar	entry_image;		/* Measurements->Table->entry image   ON or OFF */
+	guchar	entry_qty;			/* Measurements->Table->Select Entry  */
 
-	guint	min_thickness;                  /*Measurements->Thickness->min*/
-	guint	max_thickness;                  /*Measurements->Thickness->max*/
-	guchar	echo_qty;                       /*Measurements->Thickness->echo_qty*/
+	guint	min_thickness;		/* Measurements->Thickness->min */
+	guint	max_thickness;		/* Measurements->Thickness->max */
+	guchar	echo_qty;			/* Measurements->Thickness->echo_qty */
 
 	guchar	grid;                           /* Display -> Overlay -> grid */
 	guchar	sizing_curves;                  /* Display -> overlay -> sizing curves*/
@@ -548,6 +548,12 @@ extern void		set_reading_field4 (CONFIG *p, guchar data);
 /* 单位 */
 extern guchar	get_unit (CONFIG *p);			
 extern void		set_unit (CONFIG *p, guchar data);
+extern guchar	get_display_table (CONFIG *p);			
+extern void		set_display_table (CONFIG *p, guchar data);
+extern guchar	get_entry_image (CONFIG *p);			
+extern void		set_entry_image (CONFIG *p, guchar data);
+extern guchar	get_entry_qty (CONFIG *p);			
+extern void		set_entry_qty (CONFIG *p, guchar data);
 
 
 /* group操作 */

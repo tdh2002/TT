@@ -614,6 +614,7 @@ extern int on_changed_save_config_file(GtkTreeSelection *selection,	gpointer    
 extern void add_to_list(GtkWidget *list, const gchar *str, guint count);
 extern void draw_field_name ();
 	
+extern void write_focal_data1 (guint group);
 extern void send_focal_spi (guint group);
 
 extern void update_widget_bg(GtkWidget *widget, int i);

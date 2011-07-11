@@ -108,6 +108,9 @@ typedef struct element_sel
 {   
 	gdouble pri_axis_ape;
 	gdouble sec_axis_ape;
+	gdouble	primary_axis_s;
 }ELEMENT_SEL ,*ELEMENT_SEL_P;
+
+
 
 #endif
