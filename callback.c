@@ -1386,7 +1386,7 @@ void b3_fun2(gpointer p)
 			switch (pp->pos1[4])
 			{
 				case 1: 
-					CFG(sizing_curves) = !CFG(sizing_curves);
+					set_overlay_sizing_curves(pp->p_config, !get_overlay_sizing_curves(pp->p_config));
 					break; /* p412 */
 				case 4: 
 					CFG(optimum) = !CFG(optimum);
@@ -1657,7 +1657,7 @@ void b3_fun3(gpointer p)
 			switch (pp->pos1[4])
 			{
 				case 1: 
-					CFG(overlay_gate) = !CFG(overlay_gate);
+					set_overlay_gate(pp->p_config, !get_overlay_gate(pp->p_config));
 					break; /* p413 */
 				default:break;
 			}
@@ -1965,7 +1965,7 @@ void b3_fun4(gpointer p)
 			switch (pp->pos1[4])
 			{
 				case 1: 
-					CFG(overlay_cursor) = !CFG(overlay_cursor);
+					set_overlay_cursor (pp->p_config, !get_overlay_cursor (pp->p_config));
 					gtk_widget_queue_draw (pp->vboxtable);
 					break; /* p414 */
 				default:break;
@@ -2160,7 +2160,7 @@ void b3_fun5(gpointer p)
 			switch (pp->pos1[4])
 			{
 				case 1: 
-					CFG(overlay_overlay) = !CFG(overlay_overlay);
+					set_overlay_overlay (pp->p_config, !get_overlay_overlay (pp->p_config));
 					gtk_widget_queue_draw (pp->vboxtable);
 					break; /* p415 */
 				default:break;
@@ -3659,6 +3659,7 @@ void data_143 (GtkMenuItem *menuitem, gpointer data) /* point qty P143 */
 {
 	guint temp = GPOINTER_TO_UINT (data);
 	gint grp = get_current_group(pp->p_config);
+	gint tt[4];
 	GROUP_VAL(point_qty_pos) = temp;
 	GROUP_VAL(point_qty) = get_point_qty();
 	get_prf();
@@ -3682,9 +3683,14 @@ void data_143 (GtkMenuItem *menuitem, gpointer data) /* point qty P143 */
 	TMP(group_spi[grp]).compress_rato	= 
 		((GROUP_VAL_POS(grp, range) / 10.0) / GROUP_VAL_POS(grp, point_qty)) > 1 ? 
 		((GROUP_VAL_POS(grp, range) / 10.0) / GROUP_VAL_POS(grp, point_qty)) : 1;
-	if (GROUP_VAL_POS(grp, prf)  >= 250)
-		;
-	else
+	TMP(group_spi[grp]).sample_range	= TMP(group_spi[grp]).sample_start + 
+		GROUP_VAL_POS(grp, range) / 10;		
+	tt[0] = (GROUP_VAL_POS(grp, gate[0].start) + GROUP_VAL_POS (grp, gate[0].width));
+	tt[1] = (GROUP_VAL_POS(grp, gate[1].start) + GROUP_VAL_POS (grp, gate[1].width));
+	tt[2] = (GROUP_VAL_POS(grp, gate[2].start) + GROUP_VAL_POS (grp, gate[2].width));
+
+	tt[3] = MAX(tt[0], (MAX(tt[1],tt[2]))) / 10;
+	TMP(group_spi[grp]).rx_time		= MAX (tt[3], TMP(group_spi[grp]).sample_range);
 		TMP(group_spi[grp]).idel_time		= 
 			100000000 / (GROUP_VAL_POS(grp, prf) / (10)) - 2048 - TMP(group_spi[grp]).rx_time;
 	send_spi_data (grp);
@@ -4346,9 +4352,9 @@ void data_3151 (GtkSpinButton *spinbutton, gpointer data) /* */
 		GROUP_CURSORS_POS(index) =  (gint) (gtk_spin_button_get_value (spinbutton)*100.0/0.03937);
 }
 
-void data_324 (GtkSpinButton *spinbutton, gpointer data) /*entry_qty */
+void data_324 (GtkSpinButton *spinbutton, gpointer data) /* entry_qty P324 */
 {
-	pp->p_config->entry_qty =  (guint) (gtk_spin_button_get_value (spinbutton));
+	set_cur_entry (pp->p_config, (guint) (gtk_spin_button_get_value (spinbutton)));
 }
 
 void data_330 (GtkMenuItem *menuitem, gpointer data) /* Measurements -> Thickness -> source p330 */
@@ -4361,22 +4367,22 @@ void data_330 (GtkMenuItem *menuitem, gpointer data) /* Measurements -> Thicknes
 void data_331 (GtkSpinButton *spinbutton, gpointer data) /*min_thickness p331 */
 {
 	if(UNIT_MM == get_unit(pp->p_config))
-		CFG(min_thickness) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
+		set_min_thickness(pp->p_config, (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0));
 	else
-		CFG(min_thickness) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 / 0.03937);
+		set_min_thickness(pp->p_config, (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 / 0.03937 ));
 }
 
 void data_332 (GtkSpinButton *spinbutton, gpointer data) /*max_thickness p332 */
 {
 	if(UNIT_MM == get_unit(pp->p_config))
-		CFG(max_thickness) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
+		set_max_thickness(pp->p_config, (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0));
 	else
-		CFG(max_thickness) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 / 0.03937 );
+		set_max_thickness(pp->p_config, (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 / 0.03937 ));
 }
 
 void data_333 (GtkSpinButton *spinbutton, gpointer data) /*echo_qty p333 */
 {
-	CFG(echo_qty) =  (guchar) (gtk_spin_button_get_value (spinbutton));
+	set_echo_qty(pp->p_config, (guchar) (gtk_spin_button_get_value (spinbutton)));
 }
 
 void data_400 (GtkMenuItem *menuitem, gpointer data) /* Display -> Selection -> display p400 */
@@ -4496,7 +4502,7 @@ void data_410 (GtkMenuItem *menuitem, gpointer data) /* Display -> Overlay -> UT
 
 void data_411 (GtkMenuItem *menuitem, gpointer data) /* 选择栅格颜色  P411 */
 {
-	CFG(grid) = (guchar) (GPOINTER_TO_UINT (data));
+	set_overlay_grid (pp->p_config,(guchar) (GPOINTER_TO_UINT (data)));
 	pp->pos_pos = MENU3_STOP;
 	gtk_widget_queue_draw (pp->vboxtable);
 	draw_menu3(0, NULL);

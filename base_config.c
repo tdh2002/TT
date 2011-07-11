@@ -42,6 +42,21 @@ static const st_MATERIAL data[] =
 	{148000, 0, "Water"}					/* 23 */
 };
 
+static inline gboolean get_bit_value (gint val, gint bit)
+{
+	g_assert (bit < 32);
+	g_assert (bit >= 0);
+	return ((val & (0x01 << bit)) != 0);
+}
+
+static inline gint set_bit_value (gint val, gint bit, gboolean val1)
+{
+	g_assert (bit < 32);
+	g_assert (bit >= 0);
+	return ((val & ~(0x1 << bit)) | (val1 << bit));
+
+}
+
 gchar *get_material_name (CONFIG *p)
 {
 	return (gchar *)(data[p->part.Material_pos].Name);
@@ -614,18 +629,117 @@ void set_entry_image (CONFIG *p, guchar data)
 	p->entry_image = data;
 }
 
-guchar get_entry_qty (CONFIG *p)
+guint get_entry_qty (CONFIG *p)
 {
 	return p->entry_qty;
 }
 
-void set_entry_qty (CONFIG *p, guchar data)
+void set_entry_qty (CONFIG *p, guint data)
 {
 	p->entry_qty = data;
 }
 
+guint get_cur_entry (CONFIG *p)
+{
+	return p->cur_entry;
+}
 
+void set_cur_entry (CONFIG *p, guint data)
+{
+	p->cur_entry = data;
+}
 
+guint get_min_thickness (CONFIG *p)
+{
+	return p->min_thickness;
+}
+
+void set_min_thickness (CONFIG *p, guint data)
+{
+	p->min_thickness = data;
+}
+
+guint get_max_thickness (CONFIG *p)
+{
+	return p->max_thickness;
+}
+
+void set_max_thickness (CONFIG *p, guint data)
+{
+	p->max_thickness = data;
+}
+
+guchar get_echo_qty (CONFIG *p)
+{
+	return p->echo_qty;
+}
+
+void set_echo_qty (CONFIG *p, guchar data)
+{
+	g_assert (data < 11);
+	g_assert (data != 0);
+	p->echo_qty = data;
+}
+
+/* Display Overlay 菜单数值的保存 */
+guchar get_overlay_grid (CONFIG *p)
+{
+	return p->grid;
+}
+
+void set_overlay_grid (CONFIG *p, guchar data)
+{
+	g_assert (data < 6);
+	p->grid = data;
+}
+
+/* 0位是overlay sizing curves */
+gboolean get_overlay_sizing_curves (CONFIG *p)
+{
+	return get_bit_value (p->on_off_status, 0);		
+}
+
+void set_overlay_sizing_curves (CONFIG *p, gboolean data)
+{
+	g_assert ((data == 1) || (data == 0));
+	p->on_off_status = set_bit_value (p->on_off_status, 0, data);
+}
+
+/* 1位是overlay gate */
+gboolean get_overlay_gate (CONFIG *p)
+{
+	return get_bit_value (p->on_off_status, 1);		
+}
+
+void set_overlay_gate (CONFIG *p, gboolean data)
+{
+	g_assert ((data == 1) || (data == 0));
+	p->on_off_status = set_bit_value (p->on_off_status, 1, data);
+}
+
+/* 2位是overlay cursor */
+gboolean get_overlay_cursor (CONFIG *p)
+{
+	return get_bit_value (p->on_off_status, 2);		
+}
+
+void set_overlay_cursor (CONFIG *p, gboolean data)
+{
+	g_assert ((data == 1) || (data == 0));
+	p->on_off_status = set_bit_value (p->on_off_status, 2, data);
+}
+
+/* 3位是overlay overlay */
+gboolean get_overlay_overlay (CONFIG *p)
+{
+	return get_bit_value (p->on_off_status, 3);		
+}
+
+void set_overlay_overlay (CONFIG *p, gboolean data)
+{
+	g_assert ((data == 1) || (data == 0));
+	p->on_off_status = set_bit_value (p->on_off_status, 3, data);
+}
 
 /* group操作*/
 void grpcpy (CONFIG *p, guint dst, guint src)		/* 把src group 配置复制到 dst group */

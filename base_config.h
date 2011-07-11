@@ -348,7 +348,7 @@ typedef	struct _Config
 /*显示*/
 	guchar	display_pos;		/* 显示模式 A B C A+B A+B+C A+S ... */
 	guchar	display_group;		/* 显示所有group还是 当前 */
-	guchar	c_scan_pos;
+	guchar	c_scan_pos;			/* c扫描的source*/
 	guchar	data1;				/* Strip Chart A 的DATA */
 	guchar	data2;				/*  */
 	guchar	dis_mode;			/* Strip Chart A 时候的模式 */
@@ -374,22 +374,26 @@ typedef	struct _Config
 	guchar	second;
 	guchar	unit;				/* 0 mm 1 inch */
 
-	guchar	list;				/* Measurements->Reading->list filed */
-	guchar	field[4];	
+	guchar	list;				/* Measurements->Reading->list filed  测量的list选项 */
+	guchar	field[4];			/* 4个测量值选择 */
 
-	guchar	display_table;		/* Measurements->Table->display table ON or OFF */
+	guchar	display_table;		/* Measurements->Table->display table 测量数据保存显示  ON or OFF */
 	guchar	entry_image;		/* Measurements->Table->entry image   ON or OFF */
-	guchar	entry_qty;			/* Measurements->Table->Select Entry  */
+	guint	cur_entry;			/* Measurements->Table->Select Entry 增加一组测量数据(entry)  */
+	guint	entry_qty;			/* Measurements->Table->Select Entry 删除一组测量数组 */
 
 	guint	min_thickness;		/* Measurements->Thickness->min */
 	guint	max_thickness;		/* Measurements->Thickness->max */
 	guchar	echo_qty;			/* Measurements->Thickness->echo_qty */
 
-	guchar	grid;                           /* Display -> Overlay -> grid */
-	guchar	sizing_curves;                  /* Display -> overlay -> sizing curves*/
-	guchar	overlay_gate;                   /* Display -> overlay -> gate*/
-	guchar	overlay_cursor;                 /* Display -> overlay -> cursor*/
-	guchar	overlay_overlay;                /* Display -> overlay -> overlay*/
+	guchar	grid;				/* Display->overlay->grid 网格选项 */
+	guint	on_off_status;		
+	/* 保存各种ON OFF 菜单的值
+	0位 Display->overlay->sizing curves 曲线的显示开关
+	1位 Display->overlay->gate 闸门的显示开关 
+	2位 Display->overlay->cursor  标尺显示开关 
+	3位 Display->overlay->overlay 什么的显示开关? 
+	*/	
 
 	ZOOM_DISPLAY_INFO	zoom_display[6];     /* Display -> zoom -> display   A、B、S..Scan*/
 	guchar	zoom_display_pos;               /* A-Scan  B-Scan  S-Scan  ... Off 共6个*/
@@ -548,13 +552,33 @@ extern void		set_reading_field4 (CONFIG *p, guchar data);
 /* 单位 */
 extern guchar	get_unit (CONFIG *p);			
 extern void		set_unit (CONFIG *p, guchar data);
+/*  */
 extern guchar	get_display_table (CONFIG *p);			
 extern void		set_display_table (CONFIG *p, guchar data);
 extern guchar	get_entry_image (CONFIG *p);			
 extern void		set_entry_image (CONFIG *p, guchar data);
-extern guchar	get_entry_qty (CONFIG *p);			
-extern void		set_entry_qty (CONFIG *p, guchar data);
+extern guint	get_cur_entry (CONFIG *p);			
+extern void		set_cur_entry (CONFIG *p, guint data);
+extern guint	get_entry_qty (CONFIG *p);			
+extern void		set_entry_qty (CONFIG *p, guint data);
+extern guint	get_min_thickness (CONFIG *p);			
+extern void		set_min_thickness (CONFIG *p, guint data);
+extern guint	get_max_thickness (CONFIG *p);			
+extern void		set_max_thickness (CONFIG *p, guint data);
+extern guchar	get_echo_qty (CONFIG *p);			
+extern void		set_echo_qty (CONFIG *p, guchar data);
 
+/* Display Overlay */
+extern guchar	get_overlay_grid (CONFIG *p);			
+extern void		set_overlay_grid (CONFIG *p, guchar data);
+extern gboolean get_overlay_sizing_curves (CONFIG *p);
+extern void		set_overlay_sizing_curves (CONFIG *p, gboolean data);
+extern gboolean get_overlay_gate (CONFIG *p);
+extern void		set_overlay_gate (CONFIG *p, gboolean data);
+extern gboolean get_overlay_cursor (CONFIG *p);
+extern void		set_overlay_cursor (CONFIG *p, gboolean data);
+extern gboolean get_overlay_overlay (CONFIG *p);
+extern void		set_overlay_overlay (CONFIG *p, gboolean data);
 
 /* group操作 */
 extern void		grpcpy (CONFIG *p, guint src, guint dst);

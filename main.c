@@ -105,12 +105,14 @@ static void set_config (guint groupid)
 
 	GROUP_VAL(probe.Model[0]) = 32;
 
-	CFG(display_table)=0;  /*0是OFF*/
-	CFG(entry_image)=0;    /*0是OFF*/
+	set_display_table (pp->p_config, NORMAL_OFF);
+	set_entry_image (pp->p_config, NORMAL_OFF);
+	set_cur_entry (pp->p_config, 0);
+	set_entry_qty (pp->p_config, 10);
 	GROUP_VAL(source)=0;   /*0是A^ */
-	CFG(min_thickness)=50;
-	CFG(max_thickness)=99900;
-	CFG(echo_qty)=1;
+	set_min_thickness (pp->p_config, 50);
+	set_max_thickness (pp->p_config, 99900);
+	set_echo_qty (pp->p_config, 1);
 	set_display_pos (pp->p_config, C_SCAN);
 	set_cscan_source (pp->p_config, C_SCAN_A_HEIGHT, 0);
 
@@ -133,11 +135,11 @@ static void set_config (guint groupid)
 	set_stripscan_mode (pp->p_config, STRIP_SCAN_ALL_ASCAN);
 	set_stripscan_disrange (pp->p_config, 100);
 	GROUP_VAL(ut_unit)=0;  /* 0 是 Sound Path */
-	CFG(grid)=5;     /*5是 Off*/
-	CFG(sizing_curves)=0;
-	CFG(overlay_gate)=0;
-	CFG(overlay_cursor)=0;
-	CFG(overlay_overlay)=0;
+	set_overlay_grid(pp->p_config, 5);     /*5是 Off*/
+	set_overlay_sizing_curves (pp->p_config, NORMAL_OFF);
+	set_overlay_gate (pp->p_config, NORMAL_OFF);
+	set_overlay_cursor (pp->p_config, NORMAL_OFF);
+	set_overlay_overlay (pp->p_config, NORMAL_OFF);
 
 
 	CFG_ZOOM_POS(zoom_type)=0;
@@ -241,6 +243,7 @@ static void set_config (guint groupid)
 
 	CFG(paper_size) = 2;	/*paper墨认选择A4*/
 	GROUP_GATE_POS(height) = 20; /*闸门默认高度为20*/
+
 }
 
 int main (int argc, char *argv[])
@@ -356,6 +359,8 @@ int main (int argc, char *argv[])
 	TMP(beam_qty[5]) = 0;
 	TMP(beam_qty[6]) = 0;
 	TMP(beam_qty[7]) = 0;
+
+	TMP(range_step_min) = ((gint)(GROUP_VAL(point_qty) * 10)+ 5) / 10 * 10;
 
 #if ARM
 	init_fb ();					

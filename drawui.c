@@ -1104,7 +1104,7 @@ static gboolean draw_info(GtkWidget *widget, GdkEventExpose *event, gpointer dat
 	cr = gdk_cairo_create(widget->window);
 	/* 网格 */
 	cairo_set_line_width(cr, 1);
-	switch(CFG(grid))
+	switch(get_overlay_grid(pp->p_config))
 	{
 		case 0:
 			cairo_set_source_rgba(cr,0.0,0.5,0.5,1.0);break;
@@ -1119,7 +1119,7 @@ static gboolean draw_info(GtkWidget *widget, GdkEventExpose *event, gpointer dat
 		default:break;
 	}
 
-	if (CFG(grid) != 5)
+	if (get_overlay_grid(pp->p_config) != 5)
 	{
 		for (j = 0; j < (h-20); j += ((h-20) / 10.0))
 		{
@@ -1224,7 +1224,7 @@ if(!(prule->mask & 0x04))
 	}
 }
 	/* 画 overlay */
-	if( CFG(overlay_overlay)==1 )
+	if (get_overlay_overlay(pp->p_config) == 1)
 	{
 		cairo_set_source_rgba(cr,1.0,1.0,1.0,1.0);
 
@@ -1284,7 +1284,7 @@ if(!(prule->mask & 0x04))
 
 
 	/* 画cursor */
-	if( CFG(overlay_cursor)==1 )
+	if (get_overlay_cursor(pp->p_config) == 1)
 	{
 		switch (((DRAW_AREA_P)(data))->scan_type)
 		{
@@ -1596,7 +1596,7 @@ if(!(prule->mask & 0x04))
 
 
 	/* 画闸门 gate */
-	if(CFG(overlay_gate)==1)
+	if(get_overlay_gate (pp->p_config) == 1)
 	{
 		cairo_save(cr);
 		cairo_set_line_width(cr, 2);
@@ -3873,9 +3873,7 @@ void draw3_data0(DRAW_UI_P p)
 								menu_content + SOURCE, 9, 0, GROUP_VAL(source), 0);
 					else 
 						draw3_popdown (menu_content[SOURCE + GROUP_VAL(source)], 0, 0);
-
 					break;
-
 				case 4:/*Measurements -> Export -> Export Table p340 */
 					if ((p->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 						draw_dialog_all (DIALOG_REMARK);
@@ -5105,9 +5103,9 @@ void draw3_data1(DRAW_UI_P p)
 					{
 						if (get_unit(pp->p_config)==UNIT_MM)
 						{
-							cur_value = CFG(min_thickness)/1000.0;
+							cur_value = get_min_thickness(pp->p_config)/1000.0;
 							lower = 0.05;
-							upper = (CFG(max_thickness)/1000.0)-0.01;
+							upper = (get_max_thickness(pp->p_config)/1000.0)-0.01;
 							step = tmpf;
 							digit = 2;
 							pos = 1;
@@ -5115,9 +5113,9 @@ void draw3_data1(DRAW_UI_P p)
 						}
 						else
 						{
-							cur_value = CFG(min_thickness)/1000.0*0.03937;
+							cur_value = get_min_thickness(pp->p_config)/1000.0*0.03937;
 							lower = 0.002;
-							upper = (CFG(max_thickness)/1000.0*0.03937)-0.005;
+							upper = (get_max_thickness(pp->p_config)/1000.0*0.03937)-0.005;
 							step = tmpf/2.0;
 							digit = 3;
 							pos = 1;
@@ -5130,14 +5128,14 @@ void draw3_data1(DRAW_UI_P p)
 					{
 						if (get_unit(pp->p_config)==UNIT_MM)
 						{
-							cur_value = CFG(min_thickness)/1000.0;
+							cur_value = get_min_thickness(pp->p_config)/1000.0;
 							digit = 2;
 							pos = 1;
 							unit = UNIT_MM;
 						}
 						else
 						{
-							cur_value = CFG(min_thickness)/1000.0*0.03937;
+							cur_value = get_min_thickness(pp->p_config)/1000.0*0.03937;
 							digit = 3;
 							pos = 1;
 							unit = UNIT_INCH;
@@ -5245,12 +5243,11 @@ void draw3_data1(DRAW_UI_P p)
 					pp->x_pos = 600, pp->y_pos = 175;
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 						draw3_pop_tt (data_411, NULL, 
-								menu_content[GRID + CFG(grid)],
-								menu_content + GRID, 6, 1, CFG(grid), 0);
+								menu_content[GRID + get_overlay_grid(pp->p_config)],
+								menu_content + GRID, 6, 1, get_overlay_grid(pp->p_config), 0);
 					else 
-						draw3_popdown (menu_content[GRID + CFG(grid)], 1, 0);
+						draw3_popdown (menu_content[GRID + get_overlay_grid(pp->p_config)], 1, 0);
 					break;
-
 				case 2:/*Display -> Color -> start p421 */
 					if(GROUP_VAL(col_select_pos) == 0)
 					{
@@ -8186,8 +8183,8 @@ void draw3_data2(DRAW_UI_P p)
 					{
 						if(UNIT_MM == get_unit(pp->p_config))
 						{
-							cur_value = CFG(max_thickness)/1000.0;
-							lower = (CFG(min_thickness)/1000.0) + 0.01;
+							cur_value = get_max_thickness(pp->p_config)/1000.0;
+							lower = (get_min_thickness(pp->p_config)/1000.0) + 0.01;
 							upper = 99999.00;
 							step = tmpf;
 							digit = 2;
@@ -8196,8 +8193,8 @@ void draw3_data2(DRAW_UI_P p)
 						}
 						else
 						{
-							cur_value = CFG(max_thickness)/1000.0 * 0.03937;
-							lower = (CFG(min_thickness)/1000.0 * 0.03937) + 0.005;
+							cur_value = get_max_thickness(pp->p_config)/1000.0 * 0.03937;
+							lower = (get_min_thickness(pp->p_config)/1000.0 * 0.03937) + 0.005;
 							upper = 99999.00 * 0.03937;
 							step = tmpf/2.0;
 							digit = 3;
@@ -8210,14 +8207,14 @@ void draw3_data2(DRAW_UI_P p)
 					{
 						if(UNIT_MM == get_unit(pp->p_config))
 						{
-							cur_value = CFG(max_thickness)/1000.0;
+							cur_value = get_max_thickness(pp->p_config)/1000.0;
 							digit = 2;
 							pos = 2;
 							unit = UNIT_MM;
 						}
 						else
 						{
-							cur_value = CFG(max_thickness)/1000.0 * 0.03937;
+							cur_value = get_max_thickness(pp->p_config)/1000.0 * 0.03937;
 							digit = 3;
 							pos = 2;
 							unit = UNIT_INCH;
@@ -8313,7 +8310,7 @@ void draw3_data2(DRAW_UI_P p)
 					break;
 
 				case 1:/*Display -> Overlay -> sizing curves  p412 */
-					draw3_popdown(menu_content[OFF_ON + CFG(sizing_curves)],2,0);
+					draw3_popdown(menu_content[OFF_ON + get_overlay_sizing_curves(pp->p_config)],2,0);
 					break;
 				case 2:/*Display -> Color -> end p422 */
 					if(GROUP_VAL(col_select_pos) == 0)
@@ -11069,7 +11066,7 @@ void draw3_data3(DRAW_UI_P p)
 					}
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 					{
-						cur_value = CFG(echo_qty);
+						cur_value = get_echo_qty(pp->p_config);
 						lower = 1.0;
 						upper = 10.0;
 						step = tmpf;
@@ -11080,7 +11077,7 @@ void draw3_data3(DRAW_UI_P p)
 					}
 					else 
 					{
-						cur_value = CFG(echo_qty);
+						cur_value = get_echo_qty(pp->p_config);
 						digit = 0;
 						pos = 3;
 						unit = UNIT_NONE;
@@ -11160,7 +11157,7 @@ void draw3_data3(DRAW_UI_P p)
 					break;
 
 				case 1:/*Display -> Overlay -> gate  p413 */
-					draw3_popdown(menu_content[OFF_ON + CFG(overlay_gate)],3,0);
+					draw3_popdown(menu_content[OFF_ON + get_overlay_gate (pp->p_config)],3,0);
 					break;
 
 				case 2:/* Load color 调色板 P423 */
@@ -13283,20 +13280,19 @@ void draw3_data4(DRAW_UI_P p)
 					}
 					gtk_widget_queue_draw(pp->draw_area->drawing_area);
 					break;
-				case 2:/*Measurements -> Table -> Select Entry  P324*/
+				case 2:/* Measurements -> Table -> Select Entry  P324*/
 					/* 当前步进 */
 					switch (pp->p_tmp_config->entry_reg)
 					{
 						case 0:	tmpf = 1.0; break;
 						case 1:	tmpf = 10.0; break;
-
 						default:break;
 					}
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
 					{
-						cur_value = pp->p_config->entry_qty;
+						cur_value = get_cur_entry (pp->p_config);
 						lower = 1.0;
-						upper = 46.0;
+						upper = get_entry_qty (pp->p_config);
 						step = tmpf;
 						digit = 0;
 						pos = 4;
@@ -13305,7 +13301,7 @@ void draw3_data4(DRAW_UI_P p)
 					}
 					else 
 					{
-						cur_value = pp->p_config->entry_qty;
+						cur_value = get_cur_entry (pp->p_config);
 						digit = 0;
 						pos = 4;
 						unit = UNIT_NONE;
@@ -13382,7 +13378,7 @@ void draw3_data4(DRAW_UI_P p)
 
 
 				case 1:/*Display -> Overlay -> cursor  p414 */
-					draw3_popdown(menu_content[OFF_ON + CFG(overlay_cursor)],4,0);
+					draw3_popdown(menu_content[OFF_ON + get_overlay_cursor (pp->p_config)],4,0);
 					break;
 
 				case 2:/*Display -> color -> Mode  p424 */
@@ -15078,7 +15074,7 @@ void draw3_data5(DRAW_UI_P p)
 					break;
 
 				case 1:/*Display -> Overlay -> overlay  p415 */
-					draw3_popdown(menu_content[OFF_ON + CFG(overlay_overlay)],5,0);
+					draw3_popdown(menu_content[OFF_ON + get_overlay_overlay(pp->p_config)],5,0);
 					break;
 
 				case 2:

@@ -184,6 +184,10 @@ int write_group_data (group_data_spi *p, unsigned int group)
 	printf ("voltage= %d\n", tmp);
 	tmp = p->compress_rato;
 	printf ("compress_rato= %d\n", tmp);
+	tmp = p->gate_a_start;
+	printf ("gate_a_start= %d\n", tmp);
+	tmp = p->gate_a_end;
+	printf ("gate_a_end= %d\n", tmp);
 #endif
 
 	p->offset = 16 * group;
