@@ -412,11 +412,11 @@ void send_focal_spi (guint group)
 		{
 			GROUP_VAL(receiver) = GROUP_VAL(pulser);
 			TMP(focal_spi[k]).rx_sel	= 
-				channel_select(GROUP_VAL_POS(group, pulser)+LAW_VAL_POS(group, First_tx_elem)-1 ); //何凡修改 
+				channel_select((guint)(GROUP_VAL_POS(group, pulser))+ (guint)(LAW_VAL_POS(group, First_tx_elem))-1 ); //何凡修改 
 			TMP(focal_spi[k]).tx_sel	= 
-				channel_select(GROUP_VAL_POS(group, receiver)+LAW_VAL_POS(group, First_tx_elem)-1 );//何凡修改
+				channel_select((guint)(GROUP_VAL_POS(group, receiver))+ (guint)(LAW_VAL_POS(group, First_tx_elem))-1 );//何凡修改
 			
-			tmp = GROUP_VAL_POS(group, receiver)+LAW_VAL_POS(group, First_tx_elem)-1 ;
+			tmp = (guint) (GROUP_VAL_POS(group, receiver))+(guint)(LAW_VAL_POS(group, First_tx_elem))-1 ;
 			channel_index_num = (tmp % 32 == 0)? 31 : (tmp % 32 -1); 
 			cnt = pow(2,LAW_VAL_POS(group, Elem_qty))-1; 
 			for (i = 0;i < TMP(focal_law_all_beam[k].N_ActiveElements); i++)

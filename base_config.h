@@ -188,8 +188,8 @@ typedef struct _law_info
 	guchar	Tx_connect;			/* pulser该法则的探头发射第一个阵元其连接口的编号 */
 	guchar	Rx_connect;			/* receiver */
 	guchar	Elem_qty;			/* 聚焦阵元数 */
-	guchar	First_tx_elem;		/* 法则使用的第一个发射阵元 收发分离时候 tx rx 不一样 */
-	guchar	First_rx_elem;		/* 法则使用的第一个接收阵元 */
+	gshort	First_tx_elem;		/* 法则使用的第一个发射阵元 收发分离时候 tx rx 不一样 */
+	gshort	First_rx_elem;		/* 法则使用的第一个接收阵元 */
 	guchar	Last_tx_elem;		/* 法则使用的最后一个发射阵元 */
 	guchar	Last_rx_elem;		/* 法则使用的最后一个接收阵元 */
 	guchar	Elem_step;			/* 线扫时候可以设置阵元间隔 */

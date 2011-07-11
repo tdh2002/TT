@@ -1,4 +1,7 @@
 
+export PATH=/stuff/tmp/sysroots/i686-linux/usr/armv7a/bin:$PATH
+
+
 CC = arm-angstrom-linux-gnueabi-gcc
 
 CFLAGS=-D_REENTRANT -DARM -pthread \

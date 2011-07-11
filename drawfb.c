@@ -157,7 +157,7 @@ void init_serial ()
 
 
 /* draw a dot on coordinate (x,y) 在 (x,y) 画点 */
-void fbdot(gushort *p, gint x, gint y, gushort col)
+inline void fbdot(gushort *p, gint x, gint y, gushort col)
 {
 	*(p + FB_WIDTH*y + x) = col;
 }
