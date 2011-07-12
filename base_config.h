@@ -22,20 +22,6 @@ typedef struct _display_info
 
 } DISPLAY_INFO, *DISPLAY_INFO_P;
 
-typedef struct _zoom_display_info
-{
-	guchar	zoom_type;
-	gchar	tt[3];
-	guint	start_usound;
-	guint	end_usound;
-	guint	range_usound;
-	guint	center_usound;
-	guchar	start_amplitude;
-	guchar	end_amplitude;
-	guchar	range_amplitude;
-	guchar	center_amplitude;
-} ZOOM_DISPLAY_INFO, *ZOOM_DISPLAY_INFO_P;
-
 /* 闸门信息 */
 typedef struct _gate_info
 {
@@ -393,26 +379,18 @@ typedef	struct _Config
 	1位 Display->overlay->gate 闸门的显示开关 
 	2位 Display->overlay->cursor  标尺显示开关 
 	3位 Display->overlay->overlay 什么的显示开关? 
+	4位 Display->Properties->Bscan.optimum B扫描最优开关 
+	5位 Display->Properties->Cscan.ratio1:1 C扫描开关 
+	6位 Display->Properties->Sscan.interpolation S扫描插值开关 
+	7位 Display->Properties->Stripchart.orientation Strip chart 方向 0垂直 1水平 
+	8位 探头自动检测开关 
+	9位	选择探头或者是自定义探头
+	10位 probe/part characterize FFT 开关
+	11位 聚集法则 auto_program 开关
 	*/	
-
-	ZOOM_DISPLAY_INFO	zoom_display[6];     /* Display -> zoom -> display   A、B、S..Scan*/
-	guchar	zoom_display_pos;               /* A-Scan  B-Scan  S-Scan  ... Off 共6个*/
-
-	guchar	prop_scan;                      /* Display -> Properties -> Scan  6个 */
-
-	guint	compress;                       /* Display -> Properties -> compress */
-	guchar	optimum;                        /* Display -> Properties -> optimum */
-	guchar	ratio;                          /* Display -> Properties -> Ratio 1:1 */
-	guchar	interpolation;                  /* Display -> Properties -> Interpolation */
-	guchar	fft_color;                      /* Display -> Properties -> fft_color */
-	guchar	orientation;                      /* Display -> Properties -> orientation*/
-
-	guchar	auto_detect;                    /* 自动检测探头连接状态 开启时候不能调节 收发起止位置 */
-
-	guchar	probe_select;                   /*Probe/Part -> select -> select*/
-	guchar	fft;                            /*Probe/Part -> characterize -> FFT*/
-
-	guchar	auto_program;                   /* Off   On*/
+	guchar	dis_prop_scan;		/* Display->Properties->Scan  6个 */
+	guchar	fft_color;			/* Display->Properties->fft_color */
+	guint	bcompress;			/* Display->Properties->compress */
 
 	guchar	encoder;
 	guchar	polarity;
@@ -579,6 +557,37 @@ extern gboolean get_overlay_cursor (CONFIG *p);
 extern void		set_overlay_cursor (CONFIG *p, gboolean data);
 extern gboolean get_overlay_overlay (CONFIG *p);
 extern void		set_overlay_overlay (CONFIG *p, gboolean data);
+/* Display Properties */
+extern guchar	get_dis_prop_scan (CONFIG *p);			
+extern void		set_dis_prop_scan (CONFIG *p, guchar data);
+extern guint	get_b_compress (CONFIG *p);			
+extern void		set_b_compress (CONFIG *p, guint data);
+extern gboolean get_dis_prop_boptimum (CONFIG *p);
+extern void		set_dis_prop_boptimum (CONFIG *p, gboolean data);
+extern gboolean get_dis_prop_cratio (CONFIG *p);
+extern void		set_dis_prop_cratio (CONFIG *p, gboolean data);
+extern gboolean get_dis_prop_sinterpolation (CONFIG *p);
+extern void		set_dis_prop_sinterpolation (CONFIG *p, gboolean data);
+extern gboolean get_dis_prop_strip_orientation (CONFIG *p);
+extern void		set_dis_prop_strip_orientation (CONFIG *p, gboolean data);
+extern guchar	get_fft_color (CONFIG *p);			
+extern void		set_fft_color (CONFIG *p, guchar data);
+
+/* 自动检测探头 */
+extern gboolean get_auto_detect (CONFIG *p);
+extern void		set_auto_detect (CONFIG *p, gboolean data);
+
+/* 选择探头或者是自定义探头 */
+extern gboolean get_probe_select (CONFIG *p);
+extern void		set_probe_select (CONFIG *p, gboolean data);
+
+/* 选择探头FFT开关 */
+extern gboolean get_probe_fft (CONFIG *p);
+extern void		set_probe_fft (CONFIG *p, gboolean data);
+
+/* 选择聚焦法则自动计算开关 */
+extern gboolean get_auto_focal (CONFIG *p);
+extern void		set_auto_focal (CONFIG *p, gboolean data);
 
 /* group操作 */
 extern void		grpcpy (CONFIG *p, guint src, guint dst);

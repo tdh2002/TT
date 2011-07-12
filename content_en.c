@@ -203,7 +203,7 @@ static const gchar *content_en242[] = {
 
 static const gchar *content_en243[] = {
 	/* 二级菜单第4页下的第4页三级菜单 */
-	"  Scan  ","  Color  ", "  Envelope  ","  Source  ", "  Appearance  ", "  Overlay  ", "Compression", "Optimum","Ratio 1:1","Imterpolation","Color","Orientation"
+	"  Scan  ","  Color  ", "  Envelope  ","  Source  ", "  Appearance  ", "  Overlay  ", "Compression", "Optimum","Ratio 1:1","Interpolation","Color","Orientation"
 };
 
 static const gchar *content_en244[] = {

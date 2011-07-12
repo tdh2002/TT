@@ -320,8 +320,8 @@ static void setup_para(PARAMETER_P p, guint group)
 	p->probe_p->pri_ele_size = 1;	/* ffff*/
 	p->probe_p->sec_ele_size = 0;	/* 2D 时候有效 */
 
-//	p->probe_p->pb_skew_angle_r = 0;	/*ffff */
-//	p->probe_p->pb_frequency = 5.0;	/*ffff */
+	p->probe_p->pb_skew_angle_r = 0;	/*ffff */
+	p->probe_p->pb_frequency = 5.0;	/*ffff */
 	p->probe_p->ele_num_pri_r = GROUP_VAL_POS(group, probe.Elem_qty);	/* */
 	p->probe_p->ele_num_sec_r = 1;	/* */
 	p->probe_p->pri_axis_pitch_r = GROUP_VAL_POS(group, probe.Pitch) / 1000.0;	/* */
@@ -349,7 +349,7 @@ static void setup_para(PARAMETER_P p, guint group)
     p->wedge_r->wg_roof_angle=0;/* 顶角 度*/
     p->wedge_r->wg_lon_vel = 3230;/*纵波声速m/s*/
     p->wedge_r->wg_trans_vel = 3230;/*横波声速m/s*/
-//    p->wedge_r->wg_density= 7.8;/* 密度 */
+    p->wedge_r->wg_density= 7.8;/* 密度 */
     p->wedge_r->wg_heigh_fir	= GROUP_VAL_POS(group, wedge.Height) / 1000.0;	/*第一阵元高度mm*/
     p->wedge_r->wg_pri_elem_offset_fir = 0;/*第一主轴阵元偏移mm*/
     p->wedge_r->wg_sec_elem_offset_fir = 0;/*第一次轴阵元偏移mm*/
@@ -378,9 +378,9 @@ static void setup_para(PARAMETER_P p, guint group)
     p->beam_angle->beam_skew_angle_resolution = 0;
 
     //与P600 Law Type 对应起来
-	p->beam_angle->beam_type = LAW_VAL(Focal_type);
+ 	p->beam_angle->beam_type = LAW_VAL_POS(group,Focal_type);//何凡修改
 //	g_print("test beamnum is %d\n",p->beam_angle->beam_type);
-    p->beam_angle->beam_angle_sel = 0;
+	p->beam_angle->beam_angle_sel = 0;//只有Refracted angle一种情况 何凡修改
 
 	/* 样本 */
     p->specimen->speci_longitudinal_wave	= GROUP_VAL_POS (group, velocity) / 100.0;	/*样本纵波声速 */  
@@ -400,7 +400,8 @@ static void setup_para(PARAMETER_P p, guint group)
 
 	/* 聚焦点 */
     p->focal_point->focal_focus_type = LAW_VAL(Focal_point_type);	/* 0 half path 1 TURE DEPTH */
-//    p->focal_point->focal_focus_point_start = LAW_VAL_POS (group, Focus_depth) / 1000.0;	/* type =0 是 声程 type =1 是深度 */
+//  p->focal_point->focal_focus_point_start = LAW_VAL_POS (group, Focus_depth) / 1000.0;	/* type =0 是 声程 type =1 是深度 */
+ 	p->focal_point->offset_start = LAW_VAL(Position_start)/1000.0 ;//true depth 何凡添加
     p->focal_point->focal_focus_point_start = LAW_VAL(Position_start)/ 1000.0;	/* type =0 是 声程 type =1 是深度 */
     p->focal_point->focal_focus_point_stop = LAW_VAL(Position_end)/ 1000.0; 
     p->focal_point->focal_focus_point_resolution = LAW_VAL(Position_step)/ 1000.0;
@@ -409,13 +410,28 @@ static void setup_para(PARAMETER_P p, guint group)
     p->element_sel->pri_axis_ape = LAW_VAL_POS (group, Elem_qty);
     p->element_sel->sec_axis_ape = 1;
     p->element_sel->primary_axis_s = LAW_VAL(First_tx_elem);
+	p->element_sel->primary_axis_e = LAW_VAL(Last_tx_elem);//
+	p->element_sel->primary_axis_r = LAW_VAL(Elem_step);//
 //	g_print("test linear first num %d\n",p->element_sel->primary_axis_s);
+//	g_print ("\np->element_sel->pri_axis_ape = %f\n p->probe_p->ele_num_pri= %d\n",
+//			p->element_sel->pri_axis_ape, p->probe_p->ele_num_pri);
 }
 
 static void save_cal_law(gint offset, gint group, PARAMETER_P p)
 {
 	gint i, j;
-	g_print ("\n qty1 =%d \n", p->k);
+	int ElementStart = p->element_sel->primary_axis_s - 1;
+	int SelectColumn  = p->element_sel->pri_axis_ape     ;
+	int ElementStop  =   SelectColumn+ ElementStart      ;
+    for(i=0;i<p->k+1;i++)
+    {
+        //数组每行第一个元素保存 G_Delay 
+        g_print ("\nTimeDelay[%d]:%d\n",i,p->G_delay[i]);
+	    for(j = ElementStart; j< ElementStop ; j++)
+	     {
+		  g_print ("p->timedelay[%d][%d]:%d\n",i,j,p->timedelay[i][j]);   
+	     }
+    }   
 	for (i = 0; i < TMP(beam_qty[group]); i++)
 	{
 		TMP(focal_law_all_beam[offset + i]).N_ActiveElements	= LAW_VAL_POS (group, Elem_qty);
@@ -478,7 +494,9 @@ void cal_focal_law (guint group)
     
 	setup_para(p, group);
 	/*  */
+	g_print ("3333\n");
 	focal_law(p, G_Delay);
+	g_print ("33333\n");
 
 	
 	/* 把聚集法则信息保存起来 */
@@ -564,7 +582,7 @@ guint get_max_prf()
 	for (i = 0; i < setup_MAX_GROUP_QTY; i++)
 		point_qty += TMP(beam_qty[i]) * (GROUP_VAL_POS (i, point_qty) + 32);
 //	return ((192000 / (point_qty + 32)) * 25);
-	return 250;
+	return 400;
 }
 
 /* 计算prf,并且附加限制 限制计算 */
@@ -812,7 +830,7 @@ void b3_fun0(gpointer pt)
 			switch (p->pos1[5])
 			{
 				case 2: 
-					CFG(fft) = !CFG(fft); /* P520 */
+					set_probe_fft (pp->p_config, !get_probe_fft(pp->p_config)); /* P520 */
 					break; 
 				default:break;
 			}
@@ -821,7 +839,7 @@ void b3_fun0(gpointer pt)
 			switch (p->pos1[6])
 			{
 				case 4: 
-					CFG(auto_program) = !CFG(auto_program); /* P640 */
+					set_auto_focal (pp->p_config, !get_auto_focal(pp->p_config)); /* P640 */
 					break; 
 				default:break;
 			}
@@ -1155,17 +1173,17 @@ void b3_fun1(gpointer p)
 		case 4:
 			switch (pp->pos1[4])
 			{
-				case 4:
-					switch(CFG(prop_scan)) 
+				case 3:
+					switch(get_dis_prop_scan(pp->p_config)) 
 					{
 						case 0:break;
 						case 1:break;
-						case 2:CFG(ratio)= !CFG(ratio);break;
-						case 3:CFG(interpolation) = !CFG(interpolation);break;
+						case 2:set_dis_prop_cratio (pp->p_config, !get_dis_prop_cratio (pp->p_config));break;
+						case 3:set_dis_prop_sinterpolation (pp->p_config, !get_dis_prop_sinterpolation (pp->p_config));break;
 						default:break;
 					}
 					break;  
-					/* P441 */
+					/* P431 */
 				default:break;
 			}
 			break;
@@ -1268,7 +1286,7 @@ void b3_fun1(gpointer p)
 							   break; 
 
 					   case 4:
-							   switch(CFG(prop_scan)) 
+							   switch(get_dis_prop_scan(pp->p_config)) 
 							   {
 								   case 0:break;
 								   case 1:data_process(&(TMP(compress_reg)), 2 );break;
@@ -1388,9 +1406,9 @@ void b3_fun2(gpointer p)
 				case 1: 
 					set_overlay_sizing_curves(pp->p_config, !get_overlay_sizing_curves(pp->p_config));
 					break; /* p412 */
-				case 4: 
-					CFG(optimum) = !CFG(optimum);
-					break; /* p442 */
+				case 3: 
+					set_dis_prop_boptimum (pp->p_config, !get_dis_prop_boptimum (pp->p_config));
+					break; /* p432 */
 				default:break;
 			}
 			break;
@@ -1554,12 +1572,7 @@ void b3_fun2(gpointer p)
 				   {
 					   case 0: break; 
 					   case 1: break;  /*412*/
-					   case 2:
-							   if (CFG_ZOOM_POS(zoom_type) == 0 || CFG_ZOOM_POS(zoom_type) == 1)
-								   data_process(&(TMP(start_usound_reg)), 2);
-							   else if (CFG_ZOOM_POS(zoom_type) == 2)
-								   data_process(&(TMP(center_usound_reg)), 2);
-							   break;  /*p422 */
+					   case 2: break;  /*p422 */
 					   case 3: 
 							   if (GROUP_VAL(col_select_pos) == 0)
 								   data_process(&(TMP(color_end_reg)), 1);  /*432 */
@@ -1667,7 +1680,9 @@ void b3_fun3(gpointer p)
 			{
 				case 4:
 					/* 计算聚焦法则 P643 */
+							g_print ("dfdffa\n");
 					generate_focallaw();
+							g_print ("121dfdffa\n");
 					break;  
 				default:break;
 			}
@@ -1841,13 +1856,7 @@ void b3_fun3(gpointer p)
 				   {
 					   case 0: break;
 					   case 1: break; /*413*/
-					   case 2: /*423*/
-							   if(CFG_ZOOM_POS(zoom_type) == 0) 
-								   data_process(&(TMP(end_usound_reg)), 2);
-							   else if( CFG_ZOOM_POS(zoom_type) == 1 || CFG_ZOOM_POS(zoom_type) == 2 )
-								   data_process(&(TMP(range_usound_reg)), 2);
-							   break;
-
+					   case 2: break; /*423*/
 					   case 3: break;  
 					   case 4: break; 
 					   default:break;
@@ -1938,8 +1947,8 @@ void b3_fun4(gpointer p)
 			{
 				case 0:	/* p004 */
  						if ( pp->start_qty == 5 )
- 							CFG(auto_detect) = !CFG(auto_detect);
- 						break;
+							set_auto_detect (pp->p_config, !get_auto_detect(pp->p_config));
+						break;
 				case 1:break;
 				case 2:/*p024*/
 					   //在此调用校准函数
@@ -2103,12 +2112,7 @@ void b3_fun4(gpointer p)
 							   data_process(&(TMP(dis_range_reg)), 2);
 						   break; /*404*/
 					   case 1:break; /*414*/
-					   case 2:/*424*/
-							  if(CFG_ZOOM_POS(zoom_type) == 0 || CFG_ZOOM_POS(zoom_type) == 1) 
-								  data_process(&(TMP(start_amplitude_reg)), 1);
-							  else if(CFG_ZOOM_POS(zoom_type) == 2 )
-								  data_process(&(TMP(center_amplitude_reg)), 1);
-							  break;
+					   case 2:break; /*424*/
 					   case 3:break; 
 					   case 4:break; 
 					   default:break;
@@ -2170,7 +2174,7 @@ void b3_fun5(gpointer p)
 			switch (pp->pos1[5])
 			{
 				case 0: 
-					CFG(auto_detect) = !CFG(auto_detect);
+					set_auto_detect (pp->p_config, !get_auto_detect(pp->p_config));
 					break; /* p505 */
 				default:break;
 			}
@@ -2291,12 +2295,7 @@ void b3_fun5(gpointer p)
 				   {
 					   case 0:break; /*405*/
 					   case 1:break; /*415*/
-					   case 2:/*425*/
-							  if(CFG_ZOOM_POS(zoom_type) == 0) 
-								  data_process(&(TMP(end_amplitude_reg)), 1);
-							  else if(CFG_ZOOM_POS(zoom_type) == 1 || CFG_ZOOM_POS(zoom_type) == 2 )
-								  data_process(&(TMP(range_amplitude_reg)), 1);
-							  break;
+					   case 2:break; /*425*/
 					   case 3:break; 
 					   case 4:break; 
 					   default:break;
@@ -3023,7 +3022,7 @@ void data_00242 (GtkMenuItem *menuitem, gpointer data) /* 收发模式 Tx/Rx Mod
 
 void data_0025 (GtkMenuItem *menuitem, gpointer data) /* Probe/Part -> Select -> Select 502 */
 {
-	pp->p_config->probe_select = (gchar) (GPOINTER_TO_UINT (data));
+	set_probe_select (pp->p_config, (gboolean) (GPOINTER_TO_UINT (data)));
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
 }
@@ -3468,12 +3467,12 @@ void data_1151 (GtkSpinButton *spinbutton, gpointer data) /* PRF P115 */
 	gtk_label_set_markup (GTK_LABEL (pp->label[5]), markup); ;
 
 	g_free(markup);
-	if (GROUP_VAL_POS(grp, prf)  >= 250)
+	if (GROUP_VAL_POS(grp, prf)  >= 400)
 		/*
 		TMP(group_spi[grp]).idel_time		= 
 			100000000 / (GROUP_VAL_POS(grp, prf) / (10.0 * CFG(prf_compress))) - 2048 - TMP(group_spi[grp]).rx_time;
 			*/
-	GROUP_VAL_POS(grp, prf) = 250;
+	GROUP_VAL_POS(grp, prf) = 400;
 	
 	TMP(group_spi[grp]).idel_time		= 
 		100000000 / (GROUP_VAL_POS(grp, prf) / (10)) - 2048 - TMP(group_spi[grp]).rx_time;
@@ -3502,12 +3501,12 @@ void data_115 (GtkMenuItem *menuitem, gpointer data) /* PRF */
 		draw_menu3(0, NULL);
 	}
 
-	if (GROUP_VAL_POS(grp, prf)  >= 250)
+	if (GROUP_VAL_POS(grp, prf)  >= 400)
 		/*
 		TMP(group_spi[grp]).idel_time		= 
 			100000000 / (GROUP_VAL_POS(grp, prf) / (10.0 * CFG(prf_compress))) - 2048 - TMP(group_spi[grp]).rx_time;
 			*/
-	GROUP_VAL_POS(grp, prf) = 250;
+	GROUP_VAL_POS(grp, prf) = 400;
 	TMP(group_spi[grp]).idel_time		= 
 		100000000 / (GROUP_VAL_POS(grp, prf) / (10)) - 2048 - TMP(group_spi[grp]).rx_time;
 	/* 如何 */
@@ -4510,47 +4509,42 @@ void data_411 (GtkMenuItem *menuitem, gpointer data) /* 选择栅格颜色  P411
 
 void data_420 (GtkMenuItem *menuitem, gpointer data) /* Display -> Zoom -> Display p420 */
 {
-	CFG(zoom_display_pos) = (guchar) (GPOINTER_TO_UINT (data));
-	pp->pos_pos = MENU3_STOP;
-	draw_menu3(0, NULL);
 }
+
 void data_421 (GtkMenuItem *menuitem, gpointer data) /* Display -> Zoom -> Type p421 */
 {
-	CFG_ZOOM_POS(zoom_type) = (guchar) (GPOINTER_TO_UINT (data));
-	pp->pos_pos = MENU3_STOP;
-	draw_menu3(0, NULL);
 }
+
 void data_422 (GtkSpinButton *spinbutton, gpointer data) /* start USound p422 */
 {
-	CFG_ZOOM_POS(start_usound) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
 }
+
 void data_4221 (GtkSpinButton *spinbutton, gpointer data) /* start USound p422 */
 {
-	CFG_ZOOM_POS(center_usound) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
 }
+
 void data_423 (GtkSpinButton *spinbutton, gpointer data) /* end USound p423 */
 {
-	CFG_ZOOM_POS(end_usound) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
 }
+
 void data_4231 (GtkSpinButton *spinbutton, gpointer data) /* range USound p423 */
 {
-	CFG_ZOOM_POS(range_usound) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
 }
+
 void data_424 (GtkSpinButton *spinbutton, gpointer data) /* start Amplitude p424 */
 {
-	CFG_ZOOM_POS(start_amplitude) =  (guchar) (gtk_spin_button_get_value (spinbutton));
 }
+
 void data_4241 (GtkSpinButton *spinbutton, gpointer data) /* center Amplitude p424 */
 {
-	CFG_ZOOM_POS(center_amplitude) =  (guchar) (gtk_spin_button_get_value (spinbutton));
 }
+
 void data_425 (GtkSpinButton *spinbutton, gpointer data) /* end Amplitude p425 */
 {
-	CFG_ZOOM_POS(end_amplitude) =  (guchar) (gtk_spin_button_get_value (spinbutton));
 }
+
 void data_4251 (GtkSpinButton *spinbutton, gpointer data) /* range Amplitude p4251 */
 {
-	CFG_ZOOM_POS(range_amplitude) =  (guchar) (gtk_spin_button_get_value (spinbutton));
 }
 
 void data_430 (GtkMenuItem *menuitem, gpointer data) /* Display -> Color -> select p430 */
@@ -4597,7 +4591,7 @@ void data_434 (GtkMenuItem *menuitem, gpointer data) /* Display -> color -> mode
 
 void data_440 (GtkMenuItem *menuitem, gpointer data) /* Display -> Properties -> scan 440 */
 {
-	pp->p_config->prop_scan = (guchar) (GPOINTER_TO_UINT (data));
+	set_dis_prop_scan (pp->p_config, (guchar) (GPOINTER_TO_UINT (data)));
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
 }
@@ -4608,19 +4602,22 @@ void data_441 (GtkMenuItem *menuitem, gpointer data) /* Display -> Properties ->
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
 }
-void data_4411 (GtkSpinButton *spinbutton, gpointer data) /*Display -> Properties -> Compress 4411 */
+
+void data_4411 (GtkSpinButton *spinbutton, gpointer data) /* Display->Properties->Compress 4411 */
 {
-	pp->p_config->compress =  (guint) ((gtk_spin_button_get_value (spinbutton)) * 1000.0);
+	set_b_compress (pp->p_config, (guint) ((gtk_spin_button_get_value (spinbutton)) * 1000.0));
 }
-void data_4414 (GtkMenuItem *menuitem, gpointer data) /* Display -> Properties -> Color 4414 */
+
+void data_4414 (GtkMenuItem *menuitem, gpointer data) /* Display -> Properties -> Color P4414 */
 {
-	CFG(fft_color) = (guchar) (GPOINTER_TO_UINT (data));
+	set_fft_color (pp->p_config, (guchar) (GPOINTER_TO_UINT (data)));
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
 }
-void data_4415 (GtkMenuItem *menuitem, gpointer data) /* Display -> Properties -> Color 4415 */
+
+void data_4415 (GtkMenuItem *menuitem, gpointer data) /* Display -> Properties -> Color P4415 */
 {
-	pp->p_config->orientation = (guchar) (GPOINTER_TO_UINT (data));
+	set_dis_prop_strip_orientation (pp->p_config, (guchar) (GPOINTER_TO_UINT (data)));
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
 }
@@ -4698,7 +4695,7 @@ void data_501 (GtkMenuItem *menuitem, gpointer data) /* Probe/Part -> Select -> 
 
 void data_502 (GtkMenuItem *menuitem, gpointer data) /* Probe/Part -> Select -> Select 502 */
 {
-	pp->p_config->probe_select = (gchar) (GPOINTER_TO_UINT (data));
+	set_probe_select (pp->p_config, (gboolean) (GPOINTER_TO_UINT (data)));
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
 }
@@ -5429,10 +5426,13 @@ void generate_focallaw()
 	}
 	else if(LAW_VAL (Focal_type) == LINEAR_SCAN) 
 	{
-		if (LAW_VAL(Elem_step) == 1)
-		temp_beam = 1 +
-			(LAW_VAL (Last_tx_elem) - LAW_VAL(First_tx_elem) + 1 - LAW_VAL (Elem_qty));
+//		if( (LAW_VAL(Last_tx_elem)+LAW_VAL(Elem_qty) ) > GROUP_VAL_POS(get_current_group(pp->p_config), probe.Elem_qty) )
+//				LAW_VAL (Last_tx_elem) = GROUP_VAL_POS(get_current_group(pp->p_config), probe.Elem_qty) - LAW_VAL (Elem_qty) ;
+	
+//		temp_beam = (int)( ( LAW_VAL (Last_tx_elem)-LAW_VAL(First_tx_elem) ) / LAW_VAL(Elem_step) ) + 1;
 
+		temp_beam = (int)( ( LAW_VAL (Last_tx_elem)-LAW_VAL(First_tx_elem) - LAW_VAL(Elem_qty) + 1 ) /
+				LAW_VAL(Elem_step) ) + 1;
 	}
 	else if(LAW_VAL (Focal_type) == DEPTH_SCAN) 
 	{
@@ -5445,11 +5445,14 @@ void generate_focallaw()
 	TMP(beam_qty[get_current_group(pp->p_config)])	= temp_beam;
 	TMP(beam_num[get_current_group(pp->p_config)]) = 0;
 
-	TMP(group_spi[get_current_group(pp->p_config)]).beam_qty = TMP(beam_qty[get_current_group(pp->p_config)]) - 1; 
+	TMP(group_spi[get_current_group(pp->p_config)]).beam_qty = 
+		TMP(beam_qty[get_current_group(pp->p_config)]) - 1; 
 	TMP(group_spi[grp]).idel_time		= 
 		100000000 / (GROUP_VAL_POS(grp, prf) / 10) - 2048 - TMP(group_spi[grp]).rx_time;
 
+	g_print ("2111\n");
 	cal_focal_law (get_current_group(pp->p_config));
+	g_print ("2222\n");
 	send_focal_spi (get_current_group(pp->p_config));
 
 	//计算聚焦法则时，sumgain默认为Auto
@@ -5458,7 +5461,7 @@ void generate_focallaw()
 	else 
 		TMP(group_spi[grp]).sum_gain	= 
 			4096 / LAW_VAL_POS(grp, Elem_qty);					
-	g_print("\n sumgain = %d\n",TMP(group_spi[grp]).sum_gain);
+	g_print("\n sumgain = %d\n", TMP(group_spi[grp]).sum_gain);
 
 	write_group_data (&TMP(group_spi[get_current_group(pp->p_config)]), get_current_group(pp->p_config));
 
@@ -5467,8 +5470,6 @@ void generate_focallaw()
 	pp->cccscan_mark = 1;
 	pp->sscan_mark = 1;	
 
-	g_print("\nqty = %d\n ", temp_beam);
-		
 }
 
 //****************************************

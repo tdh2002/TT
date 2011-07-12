@@ -3928,10 +3928,10 @@ void draw3_data0(DRAW_UI_P p)
 					p->x_pos = 570, p->y_pos = 118-YOFFSET;
 					if ((p->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 						draw3_pop_tt (data_440, NULL, 
-								menu_content[PROP_SCAN + CFG(prop_scan)],
-								menu_content + PROP_SCAN, 6, 0, CFG(prop_scan), 0);
+								menu_content[PROP_SCAN + get_dis_prop_scan(pp->p_config)],
+								menu_content + PROP_SCAN, 6, 0, get_dis_prop_scan(pp->p_config), 0);
 					else 
-						draw3_popdown (menu_content[PROP_SCAN + CFG(prop_scan)], 0, 0);
+						draw3_popdown (menu_content[PROP_SCAN + get_dis_prop_scan(pp->p_config)], 0, 0);
 					break;
 
 				case 4:
@@ -4020,7 +4020,7 @@ void draw3_data0(DRAW_UI_P p)
 					}
 					break;
 				case 2:/*Probe/Part -> characterize -> FFT p520 */
-					draw3_popdown (menu_content[OFF_ON + CFG(fft)], 0, 0);
+					draw3_popdown (menu_content[OFF_ON + get_probe_fft (pp->p_config)], 0, 0);
 					break;
 
 				case 3: /* 被检则工件的几何形状  P530 */
@@ -4064,7 +4064,7 @@ void draw3_data0(DRAW_UI_P p)
 						case 2:	tmpf = 10.0; break;
 						default:break;
 					}
-					if(CFG(auto_program) == AUTO_FOCAL_ON)
+					if(get_auto_focal (pp->p_config) == AUTO_FOCAL_ON)
 						/* 聚焦法则自动计算开启时, Min Angle 才可调节 */
 					{
 						if ((p->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
@@ -4109,7 +4109,7 @@ void draw3_data0(DRAW_UI_P p)
 					break;
 				case 2:/* 聚焦点的计算方式 0halfpath 1truedepth 2projection 3focalplane 4automatic P620 */
 					p->x_pos = 555, p->y_pos = 116 - YOFFSET;
-					if(CFG(auto_program) == AUTO_FOCAL_ON)
+					if(get_auto_focal (pp->p_config) == AUTO_FOCAL_ON)
 					{
 						if ((p->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 						{
@@ -4149,7 +4149,7 @@ void draw3_data0(DRAW_UI_P p)
 						case 2:	tmpf = 100.0; break;
 						default:break;
 					}
-					if (CFG(auto_program) == AUTO_FOCAL_ON) /* 聚焦法则自动计算为 on 时，Element Qty 才可调节 */
+					if (get_auto_focal (pp->p_config) == AUTO_FOCAL_ON) /* 聚焦法则自动计算为 on 时，Element Qty 才可调节 */
 					{
 						if ((p->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 						{
@@ -4186,7 +4186,7 @@ void draw3_data0(DRAW_UI_P p)
 					}
 					break;
 				case 4:/* 自动计算聚焦法则 P640 */
-					draw3_popdown (menu_content[OFF_ON + CFG(auto_program)], 0, 0);
+					draw3_popdown (menu_content[OFF_ON + get_auto_focal (pp->p_config)], 0, 0);
 					break;
 				default:break;
 			}
@@ -5353,7 +5353,7 @@ void draw3_data1(DRAW_UI_P p)
 					break;
 
 				case 3:/* Ascan->Color  p431 */
-					switch(CFG(prop_scan))
+					switch(get_dis_prop_scan(pp->p_config))
 					{
 						case 0:	/* properties scan 选择Ascan时候 */
 							pp->x_pos = 598, pp->y_pos = 175;
@@ -5375,7 +5375,7 @@ void draw3_data1(DRAW_UI_P p)
 							}
 							if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 							{
-								cur_value = CFG(compress)/1000.0;
+								cur_value = get_b_compress (pp->p_config) / 1000.0;
 								lower = 0.10;
 								upper = 65536.0;
 								step = tmpf;
@@ -5386,7 +5386,7 @@ void draw3_data1(DRAW_UI_P p)
 							}
 							else 
 							{
-								cur_value = CFG(compress)/1000.0;
+								cur_value = get_b_compress(pp->p_config) / 1000.0;
 								digit = 2;
 								pos = 1;
 								unit = UNIT_NONE;
@@ -5395,13 +5395,13 @@ void draw3_data1(DRAW_UI_P p)
 							}
 							break;
 						case 2:
-							draw3_popdown(menu_content[OFF_ON + CFG(ratio)],1,0);
+							draw3_popdown(menu_content[OFF_ON + get_dis_prop_cratio(pp->p_config)],1,0);
 							g_sprintf (temp,"%s", con2_p[4][3][8]);
 							gtk_label_set_text (GTK_LABEL (pp->label3[1]), temp);
 
 							break;
 						case 3:
-							draw3_popdown(menu_content[OFF_ON + CFG(interpolation)],1,0);
+							draw3_popdown (menu_content[OFF_ON + get_dis_prop_sinterpolation(pp->p_config)],1,0);
 							g_sprintf (temp,"%s", con2_p[4][3][9]);
 							gtk_label_set_text (GTK_LABEL (pp->label3[1]), temp);
 							break;
@@ -5409,10 +5409,10 @@ void draw3_data1(DRAW_UI_P p)
 							pp->x_pos = 600, pp->y_pos = 210;
 							if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 								draw3_pop_tt (data_4414, NULL, 
-										menu_content[FFT_COLOR+CFG(fft_color)],
-										menu_content+FFT_COLOR, 4, 1, CFG(fft_color), 0x08);
+										menu_content[FFT_COLOR+get_fft_color (pp->p_config)],
+										menu_content+FFT_COLOR, 4, 1, get_fft_color (pp->p_config), 0x08);
 							else 
-								draw3_popdown (menu_content[FFT_COLOR+CFG(fft_color)], 1, 0);
+								draw3_popdown (menu_content[FFT_COLOR+get_fft_color (pp->p_config)], 1, 0);
 							g_sprintf (temp,"%s", con2_p[4][3][10]);
 							gtk_label_set_text (GTK_LABEL (pp->label3[1]), temp);
 							break;
@@ -5420,10 +5420,10 @@ void draw3_data1(DRAW_UI_P p)
 							pp->x_pos = 575, pp->y_pos = 230;
 							if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 								draw3_pop_tt (data_4415, NULL, 
-										menu_content[ORIENTATION + CFG(orientation)],
-										menu_content+ORIENTATION, 2, 1, CFG(orientation), 0);
+										menu_content[ORIENTATION + get_dis_prop_strip_orientation(pp->p_config)],
+										menu_content+ORIENTATION, 2, 1, get_dis_prop_strip_orientation(pp->p_config), 0);
 							else 
-								draw3_popdown (menu_content[ORIENTATION + CFG(orientation)], 1, 0);
+								draw3_popdown (menu_content[ORIENTATION + get_dis_prop_strip_orientation(pp->p_config)], 1, 0);
 							g_sprintf (temp,"%s", con2_p[4][3][11]);
 							gtk_label_set_text (GTK_LABEL (pp->label3[1]), temp);
 							break;
@@ -5655,7 +5655,7 @@ void draw3_data1(DRAW_UI_P p)
 						default:break;
 					}
 					if ((LAW_VAL(Focal_type) == AZIMUTHAL_SCAN) &&
-							(CFG(auto_program) == AUTO_FOCAL_ON))
+							(get_auto_focal (pp->p_config) == AUTO_FOCAL_ON))
 						/* 聚焦法则自动计算开启时并且是角度扫查, Max Angle 才可调节 */
 					{
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
@@ -5704,7 +5704,7 @@ void draw3_data1(DRAW_UI_P p)
 						   3 Halfpath  时候 这里设置offset  start
 						   4 Automatic 时候 不能设置 */
 
-					if(CFG(auto_program) == AUTO_FOCAL_ON)
+					if(get_auto_focal (pp->p_config) == AUTO_FOCAL_ON)
 						/* 聚焦法则自动计算开启时, Max Angle 才可调节 */
 					{
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
@@ -5827,7 +5827,7 @@ void draw3_data1(DRAW_UI_P p)
 						case 2:	tmpf = 100.0; break;
 						default:break;
 					}
-					if(CFG(auto_program) == AUTO_FOCAL_ON)/* 聚焦法则自动计算开启时, First Element才可调节 */
+					if(get_auto_focal (pp->p_config) == AUTO_FOCAL_ON)/* 聚焦法则自动计算开启时, First Element才可调节 */
 					{
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 						{
@@ -5863,7 +5863,7 @@ void draw3_data1(DRAW_UI_P p)
 					}
 					break;
 				case 4:/* 读取聚集法则 P641*/
-					if (CFG(auto_program) == AUTO_FOCAL_ON )
+					if (get_auto_focal (pp->p_config) == AUTO_FOCAL_ON )
 					{
 						draw3_popdown(NULL, 1, 1);
 						gtk_widget_set_sensitive(pp->eventbox30[1],FALSE);
@@ -6390,12 +6390,12 @@ void draw3_data2(DRAW_UI_P p)
 							if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 							{
 								draw3_pop_tt (data_0025, NULL, 
-										menu_content[PROB_SELECT + CFG(probe_select)],
-										menu_content + PROB_SELECT, 2, 2, CFG(probe_select), 0);
+										menu_content[PROB_SELECT + get_probe_select (pp->p_config)],
+										menu_content + PROB_SELECT, 2, 2, get_probe_select (pp->p_config), 0);
 							}
 							else 
 							{
-								draw3_popdown (menu_content[PROB_SELECT + CFG(probe_select)], 2, 0);
+								draw3_popdown (menu_content[PROB_SELECT + get_probe_select (pp->p_config)], 2, 0);
 							}
 
 							str = g_strdup_printf ("%s", con2_p[0][0][10]);	
@@ -6504,7 +6504,7 @@ void draw3_data2(DRAW_UI_P p)
 							temp_qty = 3;
 						}
 
-						if (CFG(auto_program) == AUTO_FOCAL_ON)
+						if (get_auto_focal (pp->p_config) == AUTO_FOCAL_ON)
 						{
 							if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 							{
@@ -6540,7 +6540,7 @@ void draw3_data2(DRAW_UI_P p)
 							case 2:	tmpf = 100.0; break;
 							default:break;
 						}
-						if (CFG(auto_program) == AUTO_FOCAL_ON) /* 聚焦法则自动计算为 on 时，Element Qty 才可调节 */
+						if (get_auto_focal (pp->p_config) == AUTO_FOCAL_ON) /* 聚焦法则自动计算为 on 时，Element Qty 才可调节 */
 						{
 							if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 							{
@@ -6585,7 +6585,7 @@ void draw3_data2(DRAW_UI_P p)
 							case 2:	tmpf = 10.0; break;
 							default:break;
 						}
-						if(CFG(auto_program) == AUTO_FOCAL_ON)
+						if(get_auto_focal (pp->p_config) == AUTO_FOCAL_ON)
 							/* 聚焦法则自动计算开启时, Min Angle 才可调节 */
 						{
 							if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
@@ -8412,9 +8412,9 @@ void draw3_data2(DRAW_UI_P p)
 					}
 					break;
 
-				case 3:/* Display -> Properties -> Envelope p432 */
+				case 3:/* Display->Properties-> Ascan Envelope  Bscan optimum p432 */
 
-					switch(CFG(prop_scan))
+					switch(get_dis_prop_scan(pp->p_config))
 					{
 						case 0: /* Ascan 时候的包络 */
 							pp->x_pos = 596, pp->y_pos = 320-YOFFSET;
@@ -8425,8 +8425,8 @@ void draw3_data2(DRAW_UI_P p)
 							else 
 								draw3_popdown (menu_content[ENVELOPE + GROUP_VAL(ascan_envelope)], 2, 0);
 							break;
-						case 1:
-							draw3_popdown(menu_content[OFF_ON + CFG(optimum)],2,0);
+						case 1: /* Bscan 时候是optimum */
+							draw3_popdown (menu_content[OFF_ON + get_dis_prop_boptimum (pp->p_config)], 2, 0);
 							g_sprintf (temp,"%s", con2_p[4][3][7]);
 							gtk_label_set_text (GTK_LABEL (pp->label3[2]), temp);
 							break;
@@ -8465,10 +8465,10 @@ void draw3_data2(DRAW_UI_P p)
 					pp->x_pos = 562, pp->y_pos = 288-YOFFSET;
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 						draw3_pop_tt (data_502, NULL, 
-								menu_content[PROB_SELECT + CFG(probe_select)],
-								menu_content + PROB_SELECT, 2, 2, CFG(probe_select), 0);
+								menu_content[PROB_SELECT + get_probe_select (pp->p_config)],
+								menu_content + PROB_SELECT, 2, 2, get_probe_select (pp->p_config), 0);
 					else 
-						draw3_popdown (menu_content[PROB_SELECT + CFG(probe_select)], 2, 0);
+						draw3_popdown (menu_content[PROB_SELECT + get_probe_select (pp->p_config)], 2, 0);
 					break;
 
 				case 1:/* skew angle P512 */
@@ -8804,7 +8804,7 @@ void draw3_data2(DRAW_UI_P p)
 						default:break;
 					}
 					if ((LAW_VAL(Focal_type) == AZIMUTHAL_SCAN) &&
-							(CFG(auto_program) == AUTO_FOCAL_ON))
+							(get_auto_focal (pp->p_config) == AUTO_FOCAL_ON))
 						/* 角度扫查时开始自动计算聚焦法则时候可以调节 */
 					{
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
@@ -8847,7 +8847,7 @@ void draw3_data2(DRAW_UI_P p)
 					}
 					break;
 				case 2:/* 角度扫查的步进 P622 */
-					if(CFG(auto_program) == AUTO_FOCAL_ON)
+					if(get_auto_focal (pp->p_config) == AUTO_FOCAL_ON)
 						/* 聚焦法则自动计算开启时, Max Angle 才可调节 */
 					{
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
@@ -8962,7 +8962,7 @@ void draw3_data2(DRAW_UI_P p)
 						default:break;
 					}
 					/* 聚焦法则自动计算开启时  */
-					if ((CFG(auto_program) == AUTO_FOCAL_ON) &&
+					if ((get_auto_focal (pp->p_config) == AUTO_FOCAL_ON) &&
 							(LAW_VAL(Focal_type) == LINEAR_SCAN))
 					{
 						/*Law Config 为 Linear 时，Last Element可调*/
@@ -9325,9 +9325,9 @@ void draw3_data3(DRAW_UI_P p)
 
 					else if ( pp->start_qty == 5 )
 					{
-						if(CFG(auto_detect))
+						if(get_auto_detect (pp->p_config))
 						{
-							if(CFG(probe_select)==0)
+							if(get_probe_select (pp->p_config)==0)
 							{
 								if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 								{
@@ -9339,7 +9339,7 @@ void draw3_data3(DRAW_UI_P p)
 								g_sprintf (temp,"%s", con2_p[5][0][3]);
 								gtk_label_set_text (GTK_LABEL (pp->label3[3]), temp);
 							}
-							else if(CFG(probe_select)==1)
+							else if(get_probe_select (pp->p_config)==1)
 							{
 								draw3_popdown(NULL,3,1);
 								g_sprintf (temp,"%s", con2_p[5][0][6]);
@@ -9351,7 +9351,7 @@ void draw3_data3(DRAW_UI_P p)
 						}
 						else
 						{
-							if(CFG(probe_select)==0)
+							if(get_probe_select (pp->p_config)==0)
 							{
 								if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 								{
@@ -9364,14 +9364,14 @@ void draw3_data3(DRAW_UI_P p)
 								gtk_label_set_text (GTK_LABEL (pp->label3[3]), temp);
 								gtk_label_set_text (GTK_LABEL (pp->data3[3]), (g_tmp_group_struct.probe.Model));
 							}
-							else if( CFG(probe_select)==1 )
+							else if( get_probe_select (pp->p_config)==1 )
 							{
 								draw3_popdown(NULL,3,1);
 								g_sprintf (temp,"%s", con2_p[5][0][6]);
 								gtk_label_set_text (GTK_LABEL (pp->label3[3]), temp);
 							}
 						}
-						if( (g_tmp_group_struct.group_mode) && CFG(auto_detect))	/* 自动检测开启时同时又在PA模式时，探头不可选 */
+						if( (g_tmp_group_struct.group_mode) && get_auto_detect (pp->p_config))	/* 自动检测开启时同时又在PA模式时，探头不可选 */
 						{
 							gtk_widget_set_sensitive(pp->eventbox30[3],FALSE);
 							gtk_widget_set_sensitive(pp->eventbox31[3],FALSE);
@@ -9385,7 +9385,7 @@ void draw3_data3(DRAW_UI_P p)
 					}
 					else if( pp->start_qty == 6 )
 					{
-						if (CFG(probe_select)==0)
+						if (get_probe_select (pp->p_config)==0)
 						{
 							if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 								draw_dialog_all (DIALOG_WEDGE);
@@ -9395,7 +9395,7 @@ void draw3_data3(DRAW_UI_P p)
 							g_sprintf (temp,"%s", con2_p[5][0][4]);
 							gtk_label_set_text (GTK_LABEL (pp->label3[3]), temp);
 						}
-						else if(CFG(probe_select)==1)
+						else if(get_probe_select (pp->p_config)==1)
 						{
 							draw3_popdown(NULL,3,1);
 							g_sprintf (temp,"%s", con2_p[5][0][7]);
@@ -9456,7 +9456,7 @@ void draw3_data3(DRAW_UI_P p)
 							case 2:	tmpf = 100.0; break;
 							default:break;
 						}
-						if(CFG(auto_program) == AUTO_FOCAL_ON)/* 聚焦法则自动计算开启时, First Element才可调节 */
+						if(get_auto_focal (pp->p_config) == AUTO_FOCAL_ON)/* 聚焦法则自动计算开启时, First Element才可调节 */
 						{
 							if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 							{
@@ -9500,7 +9500,7 @@ void draw3_data3(DRAW_UI_P p)
 							default:break;
 						}
 						if ((LAW_VAL(Focal_type) == AZIMUTHAL_SCAN) &&
-								(CFG(auto_program) == AUTO_FOCAL_ON))
+								(get_auto_focal (pp->p_config) == AUTO_FOCAL_ON))
 							/* 聚焦法则自动计算开启时并且是角度扫查, Max Angle 才可调节 */
 						{
 							if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
@@ -11167,7 +11167,7 @@ void draw3_data3(DRAW_UI_P p)
 					break;
 				case 3:/* A_SCAN -> Source  P433 */
 					pp->x_pos = 567, pp->y_pos =368-YOFFSET;
-					switch(CFG(prop_scan))
+					switch(get_dis_prop_scan(pp->p_config))
 					{
 						case 0:	/* Ascan 时候的source */
 							if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
@@ -11218,9 +11218,9 @@ void draw3_data3(DRAW_UI_P p)
 			switch (pp->pos1[5])
 			{
 				case 0:/* Probe/Part -> Select -> Probe 探头选择  P503 */
-					if(CFG(auto_detect))
+					if(get_auto_detect (pp->p_config))
 					{
-						if(CFG(probe_select)==0)
+						if(get_probe_select (pp->p_config)==0)
 						{
 							if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 							{
@@ -11232,7 +11232,7 @@ void draw3_data3(DRAW_UI_P p)
 							g_sprintf (temp,"%s", con2_p[5][0][3]);
 							gtk_label_set_text (GTK_LABEL (pp->label3[3]), temp);
 						}
-						else if(CFG(probe_select)==1)
+						else if(get_probe_select (pp->p_config)==1)
 						{
 							draw3_popdown(NULL,3,1);
 							g_sprintf (temp,"%s", con2_p[5][0][6]);
@@ -11244,7 +11244,7 @@ void draw3_data3(DRAW_UI_P p)
 					}
 					else
 					{
-						if(CFG(probe_select)==0)
+						if(get_probe_select (pp->p_config)==0)
 						{
 							if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 							{
@@ -11257,14 +11257,14 @@ void draw3_data3(DRAW_UI_P p)
 							gtk_label_set_text (GTK_LABEL (pp->label3[3]), temp);
 							gtk_label_set_text (GTK_LABEL (pp->data3[3]), GROUP_VAL(probe.Model));
 						}
-						else if( CFG(probe_select)==1 )
+						else if( get_probe_select (pp->p_config)==1 )
 						{
 							draw3_popdown(NULL,3,1);
 							g_sprintf (temp,"%s", con2_p[5][0][6]);
 							gtk_label_set_text (GTK_LABEL (pp->label3[3]), temp);
 						}
 					}
-					if( GROUP_VAL(group_mode) && CFG(auto_detect))	/* 自动检测开启时同时又在PA模式时，探头不可选 */
+					if( GROUP_VAL(group_mode) && get_auto_detect (pp->p_config))	/* 自动检测开启时同时又在PA模式时，探头不可选 */
 					{
 						gtk_widget_set_sensitive(pp->eventbox30[3],FALSE);
 						gtk_widget_set_sensitive(pp->eventbox31[3],FALSE);
@@ -11423,7 +11423,7 @@ void draw3_data3(DRAW_UI_P p)
 						default:break;
 					}
 					if ((LAW_VAL(Focal_type) == AZIMUTHAL_SCAN) &&
-							(CFG(auto_program) == AUTO_FOCAL_ON) 
+							(get_auto_focal (pp->p_config) == AUTO_FOCAL_ON) 
 							&& (GROUP_VAL(probe.PA_probe_type) == 9)
 							/* 如何判断2D探头 */
 					   )
@@ -11469,7 +11469,7 @@ void draw3_data3(DRAW_UI_P p)
 					}
 					break;
 				case 2:/* 聚焦深度 线扫   聚焦声程 角度扫查 P623 */
-					if(CFG(auto_program) == AUTO_FOCAL_ON)
+					if(get_auto_focal (pp->p_config) == AUTO_FOCAL_ON)
 						/* 聚焦法则自动计算开启时, Max Angle 才可调节 */
 					{
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
@@ -11585,7 +11585,7 @@ void draw3_data3(DRAW_UI_P p)
 						case 2:	tmpf = 10.0; break;
 						default:break;
 					}
-					if ((CFG(auto_program) == AUTO_FOCAL_ON))
+					if ((get_auto_focal (pp->p_config) == AUTO_FOCAL_ON))
 						/* 自动计算聚焦法则时候可以调节 */
 					{
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
@@ -11662,7 +11662,7 @@ void draw3_data3(DRAW_UI_P p)
 						case 2:	tmpf = 100.0; break;
 						default:break;
 					}
-					if ((CFG(auto_program) == AUTO_FOCAL_ON) &&
+					if ((get_auto_focal (pp->p_config) == AUTO_FOCAL_ON) &&
 							(LAW_VAL(Focal_type) == LINEAR_SCAN))
 					{
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
@@ -11698,7 +11698,7 @@ void draw3_data3(DRAW_UI_P p)
 					break;
 				case 4: /* 计算聚焦法则 P643 */
 					draw3_popdown (NULL, 3, 1);
-					if (CFG(auto_program) == AUTO_FOCAL_OFF)
+					if (get_auto_focal (pp->p_config) == AUTO_FOCAL_OFF)
 					{
 						gtk_widget_set_sensitive(pp->eventbox30[3],FALSE);
 						gtk_widget_set_sensitive(pp->eventbox31[3],FALSE);
@@ -12088,7 +12088,7 @@ void draw3_data4(DRAW_UI_P p)
 
 					else if (( pp->start_qty == 5 )&&(g_tmp_group_struct.group_mode)==1)/*PA模式时才有Auto Detect键*/
 					{
-						draw3_popdown (menu_content[OFF_ON + CFG(auto_detect)], 4, 0);
+						draw3_popdown (menu_content[OFF_ON + get_auto_detect (pp->p_config)], 4, 0);
 					}
 					else if(pp->start_qty == 7)
 					{
@@ -12148,7 +12148,7 @@ void draw3_data4(DRAW_UI_P p)
 							default:break;
 						}
 						/* 聚焦法则自动计算开启时  */
-						if ((CFG(auto_program) == AUTO_FOCAL_ON) &&
+						if ((get_auto_focal (pp->p_config) == AUTO_FOCAL_ON) &&
 								(LAW_VAL(Focal_type) == LINEAR_SCAN))
 						{
 							/*Law Config 为 Linear 时，Last Element可调*/
@@ -12193,7 +12193,7 @@ void draw3_data4(DRAW_UI_P p)
 							default:break;
 						}
 						if ((LAW_VAL(Focal_type) == AZIMUTHAL_SCAN) &&
-								(CFG(auto_program) == AUTO_FOCAL_ON))
+								(get_auto_focal (pp->p_config) == AUTO_FOCAL_ON))
 							/* 角度扫查时开始自动计算聚焦法则时候可以调节 */
 						{
 							if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
@@ -13405,7 +13405,7 @@ void draw3_data4(DRAW_UI_P p)
 
 				case 3:/*Display -> properties -> appearence  p434 */
 					pp->x_pos = 536, pp->y_pos = 455-YOFFSET;
-					switch(CFG(prop_scan))
+					switch(get_dis_prop_scan(pp->p_config))
 					{
 						case 0:	/* Ascan 时候的 appearance */
 							if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
@@ -13452,7 +13452,7 @@ void draw3_data4(DRAW_UI_P p)
 			switch (pp->pos1[5])
 			{
 				case 0:/* Probe/Part -> Select -> Wedge P504*/
-					if (CFG(probe_select)==0)
+					if (get_probe_select (pp->p_config)==0)
 					{
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
 							draw_dialog_all (DIALOG_WEDGE);
@@ -13462,7 +13462,7 @@ void draw3_data4(DRAW_UI_P p)
 						g_sprintf (temp,"%s", con2_p[5][0][4]);
 						gtk_label_set_text (GTK_LABEL (pp->label3[4]), temp);
 					}
-					else if(CFG(probe_select)==1)
+					else if(get_probe_select (pp->p_config)==1)
 					{
 						draw3_popdown(NULL,4,1);
 						g_sprintf (temp,"%s", con2_p[5][0][7]);
@@ -13515,7 +13515,7 @@ void draw3_data4(DRAW_UI_P p)
 				case 1: /* beam skew angle max 2D时候可以用 P614 */
 #if 0
 					pp->x_pos = 544, pp->y_pos = 456-YOFFSET;
-					if(CFG(auto_program) == AUTO_FOCAL_ON)
+					if(get_auto_focal (pp->p_config) == AUTO_FOCAL_ON)
 						/* 聚焦法则自动计算开启时, 纵横才可以调节 */
 					{
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
@@ -13541,7 +13541,7 @@ void draw3_data4(DRAW_UI_P p)
 						default:break;
 					}
 					if ((LAW_VAL(Focal_type) == AZIMUTHAL_SCAN) &&
-							(CFG(auto_program) == AUTO_FOCAL_ON) 
+							(get_auto_focal (pp->p_config) == AUTO_FOCAL_ON) 
 							&& (GROUP_VAL(probe.PA_probe_type) == 9)
 							/* 如何判断2D探头 */
 					   )
@@ -13601,7 +13601,7 @@ void draw3_data4(DRAW_UI_P p)
 					}
 					else
 					{
-						if ((CFG(auto_program) == AUTO_FOCAL_ON)&&(LAW_VAL(Focal_point_type)==FOCALPLANE_P))
+						if ((get_auto_focal (pp->p_config) == AUTO_FOCAL_ON)&&(LAW_VAL(Focal_point_type)==FOCALPLANE_P))
 						{
 							if((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
 							{
@@ -13660,7 +13660,7 @@ void draw3_data4(DRAW_UI_P p)
 						temp_qty = 3;
 					}
 
-					if (CFG(auto_program) == AUTO_FOCAL_ON)
+					if (get_auto_focal (pp->p_config) == AUTO_FOCAL_ON)
 					{
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
 						{
@@ -13999,7 +13999,7 @@ void draw3_data5(DRAW_UI_P p)
 							case 2:	tmpf = 100.0; break;
 							default:break;
 						}
-						if ((CFG(auto_program) == AUTO_FOCAL_ON) &&
+						if ((get_auto_focal (pp->p_config) == AUTO_FOCAL_ON) &&
 								(LAW_VAL(Focal_type) == LINEAR_SCAN))
 						{
 							if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 5))
@@ -15084,7 +15084,7 @@ void draw3_data5(DRAW_UI_P p)
 					break;
 				case 3:/* Display -> properties -> overlay  p435 */
 					pp->x_pos = 575, pp->y_pos = 541-YOFFSET;
-					switch(CFG(prop_scan))
+					switch(get_dis_prop_scan(pp->p_config))
 					{
 						case 0:	/* Ascan 时候的 overlay */
 							if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 5))
@@ -15130,7 +15130,7 @@ void draw3_data5(DRAW_UI_P p)
 			switch (pp->pos1[5])
 			{
 				case 0:/*Probe/Part -> Select -> Auto Detect  p505 */
-					draw3_popdown (menu_content[OFF_ON + CFG(auto_detect)], 5, 0);
+					draw3_popdown (menu_content[OFF_ON + get_auto_detect (pp->p_config)], 5, 0);
 					break;
 
 				case 1:
@@ -15184,7 +15184,7 @@ void draw3_data5(DRAW_UI_P p)
 						default:break;
 					}
 					if ((LAW_VAL(Focal_type) == AZIMUTHAL_SCAN) &&
-							(CFG(auto_program) == AUTO_FOCAL_ON) 
+							(get_auto_focal (pp->p_config) == AUTO_FOCAL_ON) 
 							&& (GROUP_VAL(probe.PA_probe_type) == 9)
 							/* 如何判断2D探头 */
 					   )

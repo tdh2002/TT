@@ -152,14 +152,6 @@ typedef struct tmp_config
 
 	guchar   dis_range_reg;
 	guchar   avg_scan_speed_reg;
-	guchar   start_usound_reg;	/* Display -> zoom -> Start USound */
-	guchar   end_usound_reg;	/* Display -> zoom -> End USound */
-	guchar   range_usound_reg;	/* Display -> zoom -> Range USound */
-	guchar   center_usound_reg;
-	guchar   start_amplitude_reg;	/* Display -> zoom -> Start Amplitude */
-	guchar   end_amplitude_reg;	/* Display -> zoom -> End Amplitude */
-	guchar   range_amplitude_reg;	/* Display -> zoom -> Range Amplitude */
-	guchar   center_amplitude_reg;
 
 	guchar   color_contrast_reg;	/* Display -> Color -> contrast  */
 	guchar   brightness_reg;	/* Display -> Color -> brightness*/
@@ -636,7 +628,6 @@ typedef struct __dir_path_label
 #define GROUP_CURSORS_POS(a) GROUP_VAL(cursors_info[GROUP_VAL(selection)-5].a)
 #define CFG_DISPLAY_POS(a)  CFG(display[CFG(display_pos)].a)
 
-#define CFG_ZOOM_POS(a)  CFG(zoom_display[CFG(zoom_display_pos)].a)
 
 #define TMP(a)  (pp->p_tmp_config->a)
 #define TMP_CBA(a) (TMP(wizard_calibration).a)

@@ -741,6 +741,136 @@ void set_overlay_overlay (CONFIG *p, gboolean data)
 	p->on_off_status = set_bit_value (p->on_off_status, 3, data);
 }
 
+/* Display Properties 操作 */
+guchar get_dis_prop_scan (CONFIG *p)
+{
+	return p->dis_prop_scan;
+}
+
+void set_dis_prop_scan (CONFIG *p, guchar data)
+{
+	g_assert (data < 6);
+	p->dis_prop_scan = data;
+}
+
+guint get_b_compress (CONFIG *p)
+{
+	return p->bcompress;
+}
+
+void set_b_compress (CONFIG *p, guint data)
+{
+	p->bcompress = data;
+}
+
+/* 4位是bscan optimum */
+gboolean get_dis_prop_boptimum (CONFIG *p)
+{
+	return get_bit_value (p->on_off_status, 4);		
+}
+
+void set_dis_prop_boptimum (CONFIG *p, gboolean data)
+{
+	g_assert ((data == 1) || (data == 0));
+	p->on_off_status = set_bit_value (p->on_off_status, 4, data);
+}
+
+/* 5位是cscan ratio */
+gboolean get_dis_prop_cratio (CONFIG *p)
+{
+	return get_bit_value (p->on_off_status, 5);		
+}
+
+void set_dis_prop_cratio (CONFIG *p, gboolean data)
+{
+	g_assert ((data == 1) || (data == 0));
+	p->on_off_status = set_bit_value (p->on_off_status, 5, data);
+}
+
+/* 6位是sscan interpolation */
+gboolean get_dis_prop_sinterpolation (CONFIG *p)
+{
+	return get_bit_value (p->on_off_status, 6);		
+}
+
+void set_dis_prop_sinterpolation (CONFIG *p, gboolean data)
+{
+	g_assert ((data == 1) || (data == 0));
+	p->on_off_status = set_bit_value (p->on_off_status, 6, data);
+}
+
+/* 7位是strip chart orientation */
+gboolean get_dis_prop_strip_orientation (CONFIG *p)
+{
+	return get_bit_value (p->on_off_status, 7);		
+}
+
+void set_dis_prop_strip_orientation (CONFIG *p, gboolean data)
+{
+	g_assert ((data == 1) || (data == 0));
+	p->on_off_status = set_bit_value (p->on_off_status, 7, data);
+}
+
+guchar get_fft_color (CONFIG *p)
+{
+	return p->fft_color;
+}
+
+void set_fft_color (CONFIG *p, guchar data)
+{
+	g_assert (data < 4);
+	p->fft_color = data;
+}
+
+/* 8位自动检测探头 */
+gboolean get_auto_detect (CONFIG *p)
+{
+	return get_bit_value (p->on_off_status, 8);		
+}
+
+void set_auto_detect (CONFIG *p, gboolean data)
+{
+	g_assert ((data == 1) || (data == 0));
+	p->on_off_status = set_bit_value (p->on_off_status, 8, data);
+}
+
+/* 9位选择探头或者是自定义探头 */
+gboolean get_probe_select (CONFIG *p)
+{
+	return get_bit_value (p->on_off_status, 9);		
+}
+
+void set_probe_select (CONFIG *p, gboolean data)
+{
+	g_assert ((data == 1) || (data == 0));
+	p->on_off_status = set_bit_value (p->on_off_status, 9, data);
+}
+
+/* 10位选择探头FFT开关 */
+gboolean get_probe_fft (CONFIG *p)
+{
+	return get_bit_value (p->on_off_status, 10);		
+}
+
+void set_probe_fft (CONFIG *p, gboolean data)
+{
+	g_assert ((data == 1) || (data == 0));
+	p->on_off_status = set_bit_value (p->on_off_status, 10, data);
+}
+
+/* 11位选择聚焦法则自动计算开关 */
+gboolean get_auto_focal (CONFIG *p)
+{
+	return get_bit_value (p->on_off_status, 11);		
+}
+
+void set_auto_focal (CONFIG *p, gboolean data)
+{
+	g_assert ((data == 1) || (data == 0));
+	p->on_off_status = set_bit_value (p->on_off_status, 11, data);
+}
+
+
 /* group操作*/
 void grpcpy (CONFIG *p, guint dst, guint src)		/* 把src group 配置复制到 dst group */
 {

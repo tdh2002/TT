@@ -18,15 +18,19 @@ typedef struct FocusParameter
     //Define paramenters
     PROBEF_P        probe_p;
     WEDGEF_P        wedge_p;
-	WEDGEF_P        wedge_r;
+    WEDGEF_P        wedge_r;
     BEAM_ANGLE_P   beam_angle;
     SPECIMEN_P     specimen;
     FOCAL_POINT_P  focal_point;
     ELEMENT_SEL_P  element_sel;
-    
+     
     gint G_Time[256];
+    gint G_delay[256];
     gint timedelay[256][32];
     gint k;//the num of calculator 
+    gint tmp_k ;
+    gint is_draw_focus;
+    
 
 }PARAMETER, *PARAMETER_P;
 

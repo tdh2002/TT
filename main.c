@@ -29,7 +29,8 @@ static void set_config (guint groupid)
 	set_group_qty (pp->p_config, 1);
 	set_current_group (pp->p_config, groupid);
 	GROUP_VAL(group_mode) = PA_SCAN;
-	CFG(probe_select)=0;
+	set_probe_select (pp->p_config, CHOOSE_PROBE);
+	set_probe_fft (pp->p_config, NORMAL_OFF);
 	GROUP_VAL(scan_offset)=0;
 	GROUP_VAL(index_offset)=0;
 	GROUP_VAL(skew)=0;
@@ -38,8 +39,9 @@ static void set_config (guint groupid)
 
 	set_part_thickness (pp->p_config, GUINT_TO_POINTER (100));
 	set_part_diameter (pp->p_config, GUINT_TO_POINTER (1000));
+	set_auto_detect (pp->p_config, NORMAL_OFF);
 
-	CFG(auto_program)	=	AUTO_FOCAL_ON;
+	set_auto_focal (pp->p_config, NORMAL_ON);
 
 	set_voltage (pp->p_config, get_current_group(pp->p_config), VOLTAGE_LOW);
 	/* UT settings */
@@ -141,17 +143,6 @@ static void set_config (guint groupid)
 	set_overlay_cursor (pp->p_config, NORMAL_OFF);
 	set_overlay_overlay (pp->p_config, NORMAL_OFF);
 
-
-	CFG_ZOOM_POS(zoom_type)=0;
-	CFG_ZOOM_POS(start_usound)=1000;
-	CFG_ZOOM_POS(end_usound)=1000;
-	CFG_ZOOM_POS(range_usound)=1000;
-	CFG_ZOOM_POS(center_usound)=1000;
-	CFG_ZOOM_POS(start_amplitude)=10;
-	CFG_ZOOM_POS(end_amplitude)=10;
-	CFG_ZOOM_POS(range_amplitude)=10;
-	CFG_ZOOM_POS(center_amplitude)=10;
-
 	/**/
 	GROUP_VAL(col_select_pos)=0;  /*0 Amplitude*/
 	GROUP_VAL(col_start)   = 0.0;
@@ -162,15 +153,16 @@ static void set_config (guint groupid)
 	GROUP_VAL(col_max)           = 50000.0;
 	GROUP_VAL(col_mode)    = 0;  /*0 Exclusion*/
 
-	CFG(prop_scan)=0;/*0 A-Scan*/
+	set_dis_prop_scan (pp->p_config, DIS_PROP_SCAN_A);/*0 A-Scan*/
 	GROUP_VAL(ascan_envelope)	=	0; /*0 None*/
 	GROUP_VAL(ascan_appearance)	=	0; /*0 Hollow*/
 	GROUP_VAL(ascan_overlay)	=	0; /*0 None*/
-	CFG(optimum)=0; /*0 off*/
-	CFG(ratio)=0; /*0 off*/
-	CFG(interpolation)=0; /*0 off*/
-	CFG(fft_color)=0;/* 0 Yellow*/
+	set_dis_prop_boptimum (pp->p_config, NORMAL_OFF);
+	set_dis_prop_cratio (pp->p_config, NORMAL_OFF);
+	set_dis_prop_sinterpolation (pp->p_config, NORMAL_OFF);
+	set_dis_prop_strip_orientation (pp->p_config, NORMAL_OFF);
 
+	set_fft_color (pp->p_config, FFT_YELLOW); /* 0 Yellow*/
 
 	LAW_VAL (Elem_qty)		=	1;
 	LAW_VAL (First_tx_elem)	=	1;
@@ -537,8 +529,8 @@ void init_group_spi (guint group)
 	TMP(group_spi[group]).rx_time		= MAX (tt[3], TMP(group_spi[group]).sample_range);
 	TMP(group_spi[group]).gain1			= 0;
 
-	if (GROUP_VAL_POS(group, prf)  >= 250)
-			GROUP_VAL_POS(group, prf)  = 250;
+	if (GROUP_VAL_POS(group, prf)  >= 400)
+			GROUP_VAL_POS(group, prf)  = 400;
 /*		TMP(group_spi[group]).idel_time	= 
 			100000000 / (GROUP_VAL_POS(group, prf) / (10.0 * CFG(prf_compress))) - 2048 - TMP(group_spi[group]).rx_time;
 			*/

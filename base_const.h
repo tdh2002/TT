@@ -129,6 +129,23 @@
 #define	NORMAL_OFF	0
 #define	NORMAL_ON	1
 
+/* DISPPLAY properties scan 选项*/
+#define DIS_PROP_SCAN_A		0
+#define DIS_PROP_SCAN_B		1
+#define DIS_PROP_SCAN_C		2
+#define DIS_PROP_SCAN_S		3
+#define DIS_PROP_SCAN_FFT	4
+#define DIS_PROP_SCAN_STRIP	5
+
+/* Display properties fft color */
+#define FFT_YELLOW	0
+#define FFT_BLUE	1
+#define FFT_WHITE	2
+#define FFT_BLACK	3
+
+/*  */
+#define CHOOSE_PROBE 0
+#define DEFINE_PROBE 1
 
 /* Range of availage voltage (sPulseVoltagePA). 相控发射电压 */
 #define setup_VOLTAGE_MIN_PA   0x100 
