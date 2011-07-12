@@ -410,7 +410,7 @@ static void setup_para(PARAMETER_P p, guint group)
     p->element_sel->pri_axis_ape = LAW_VAL_POS (group, Elem_qty);
     p->element_sel->sec_axis_ape = 1;
     p->element_sel->primary_axis_s = LAW_VAL(First_tx_elem);
-	p->element_sel->primary_axis_e = LAW_VAL(Last_tx_elem);//
+	p->element_sel->primary_axis_e = LAW_VAL(Last_tx_elem)-LAW_VAL(Elem_qty)+1;//
 	p->element_sel->primary_axis_r = LAW_VAL(Elem_step);//
 //	g_print("test linear first num %d\n",p->element_sel->primary_axis_s);
 //	g_print ("\np->element_sel->pri_axis_ape = %f\n p->probe_p->ele_num_pri= %d\n",
@@ -419,19 +419,10 @@ static void setup_para(PARAMETER_P p, guint group)
 
 static void save_cal_law(gint offset, gint group, PARAMETER_P p)
 {
-	gint i, j;
-	int ElementStart = p->element_sel->primary_axis_s - 1;
-	int SelectColumn  = p->element_sel->pri_axis_ape     ;
-	int ElementStop  =   SelectColumn+ ElementStart      ;
-    for(i=0;i<p->k+1;i++)
-    {
-        //数组每行第一个元素保存 G_Delay 
-        g_print ("\nTimeDelay[%d]:%d\n",i,p->G_delay[i]);
-	    for(j = ElementStart; j< ElementStop ; j++)
-	     {
-		  g_print ("p->timedelay[%d][%d]:%d\n",i,j,p->timedelay[i][j]);   
-	     }
-    }   
+	gint i, j,k;
+	int ElementStart = LAW_VAL(First_tx_elem)-1;
+	int ElementStop  =   ElementStart + LAW_VAL(Elem_qty) ;
+
 	for (i = 0; i < TMP(beam_qty[group]); i++)
 	{
 		TMP(focal_law_all_beam[offset + i]).N_ActiveElements	= LAW_VAL_POS (group, Elem_qty);
@@ -449,17 +440,17 @@ static void save_cal_law(gint offset, gint group, PARAMETER_P p)
 		TMP(focal_law_all_beam[offset + i]).Index_offset	= GROUP_VAL_POS (group, index_offset) * 100;
 		TMP(focal_law_all_beam[offset + i]).G_delay			= 
 			GROUP_VAL_POS (group, wedge_delay)
-			+	GROUP_VAL_POS (group, wedge.Probe_delay) + p->G_Time[i];
+			+	GROUP_VAL_POS (group, wedge.Probe_delay) + p->G_delay[i];
 		TMP(focal_law_all_beam[offset + i]).F_depth			= LAW_VAL_POS (group, Focus_depth);
 		TMP(focal_law_all_beam[offset + i]).M_velocity		= GROUP_VAL_POS (group, velocity) / 100;
 
 
-		for (j = 0; j < TMP(focal_law_all_beam[offset + i]).N_ActiveElements; j++)
-		{
+		for(k=ElementStart,j = 0; k< ElementStop; k++,j++)//,j < TMP(focal_law_all_beam[offset + i]).N_ActiveElements
+		{ 
 			TMP(focal_law_all_elem[offset + i][j]).E_number = j + 1;
 			TMP(focal_law_all_elem[offset + i][j]).FL_gain	= GROUP_VAL_POS (group, gain) / 100;
-			TMP(focal_law_all_elem[offset + i][j]).T_delay	= p->timedelay[i][j];
-			TMP(focal_law_all_elem[offset + i][j]).R_delay	= p->timedelay[i][j];
+			TMP(focal_law_all_elem[offset + i][j]).T_delay	= p->timedelay[i][k];
+			TMP(focal_law_all_elem[offset + i][j]).R_delay	= p->timedelay[i][k];
 			TMP(focal_law_all_elem[offset + i][j]).Amplitude = CFG (voltage_pa); 
 			TMP(focal_law_all_elem[offset + i][j]).P_width	= GROUP_VAL_POS (group, pulser_width) / 100; 
 		} 
