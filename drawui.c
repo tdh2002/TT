@@ -4200,10 +4200,10 @@ void draw3_data0(DRAW_UI_P p)
 					{
 						if ((p->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 							draw3_pop_tt (data_700, NULL, 
-								menu_content[ENCODER+CFG(encoder)],
-								menu_content+ENCODER, 2, 0,CFG(encoder), 0);
+								menu_content[ENCODER+get_cur_encoder (pp->p_config)],
+								menu_content+ENCODER, 2, 0,get_cur_encoder (pp->p_config), 0);
 						else 
-							draw3_popdown (menu_content[ENCODER+CFG(encoder)], 0, 0);
+							draw3_popdown (menu_content[ENCODER+get_cur_encoder (pp->p_config)], 0, 0);
 					}
 					else
 					{
@@ -9561,10 +9561,10 @@ void draw3_data3(DRAW_UI_P p)
 								{
 									if ((p->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 										draw3_pop_tt (data_700, NULL, 
-											menu_content[ENCODER+CFG(encoder)],
-											menu_content+ENCODER, 2, 3,CFG(encoder), 0);
+											menu_content[ENCODER+get_cur_encoder (pp->p_config)],
+											menu_content+ENCODER, 2, 3,get_cur_encoder (pp->p_config), 0);
 									else 
-										draw3_popdown (menu_content[ENCODER+CFG(encoder)], 3, 0);
+										draw3_popdown (menu_content[ENCODER+get_cur_encoder (pp->p_config)], 3, 0);
 								}
 								else
 								{

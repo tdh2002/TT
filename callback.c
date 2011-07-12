@@ -4964,7 +4964,7 @@ void data_634 (GtkMenuItem *menuitem, gpointer data)
 
 void data_700 (GtkMenuItem *menuitem, gpointer data) /* Encoder */
 {
-	CFG(encoder) = (guchar) (GPOINTER_TO_UINT (data));
+	set_cur_encoder (pp->p_config, (guchar) (GPOINTER_TO_UINT (data)));
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
 }

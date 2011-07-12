@@ -183,6 +183,7 @@ static void set_config (guint groupid)
 	LAW_VAL (Depth_start)	=	2000;
 	LAW_VAL (Depth_end)	=	2000;
 
+	set_cur_encoder (pp->p_config, ENCODER_1);
 	CFG(polarity)=0;  /* 0 Normal */
 	CFG(e_type)=0;  /* 0 Clock/Dir */
 	CFG(encoder_resolution)=1000;

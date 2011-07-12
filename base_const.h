@@ -147,6 +147,10 @@
 #define CHOOSE_PROBE 0
 #define DEFINE_PROBE 1
 
+/* */
+#define ENCODER_1	0
+#define ENCODER_2	1 
+
 /* Range of availage voltage (sPulseVoltagePA). 相控发射电压 */
 #define setup_VOLTAGE_MIN_PA   0x100 
 #define	setup_VOLTAGE_MED_PA   0x101 

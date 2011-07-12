@@ -107,6 +107,18 @@ typedef struct _Wedge
 	gint	A6[107];
 } WEDGE, *WEDGE_P;
 
+struct _Encoder;
+typedef struct _Encoder st_Enc;
+
+struct _Encoder {
+	gchar Polarity;
+	gchar Type;
+	gchar Preset;
+	gchar Enable;
+	guint Resolution;
+	guint Origin;
+};
+
 struct _Part;
 typedef struct _Part st_PART;
 
@@ -387,16 +399,18 @@ typedef	struct _Config
 	9位	选择探头或者是自定义探头
 	10位 probe/part characterize FFT 开关
 	11位 聚集法则 auto_program 开关
+	12位 encoder 编码器当前选择 0表示编码器1 1表示编码器2
 	*/	
 	guchar	dis_prop_scan;		/* Display->Properties->Scan  6个 */
 	guchar	fft_color;			/* Display->Properties->fft_color */
 	guint	bcompress;			/* Display->Properties->compress */
 
-	guchar	encoder;
+	st_Enc	encoder1[setup_MAX_QTY_ENCODER];
 	guchar	polarity;
 	guchar	e_type;
 	guint	encoder_resolution;
 	gint	origin;
+
 	guchar	i_type;
 	guchar	i_scan;
 	guchar	i_index;
@@ -588,6 +602,10 @@ extern void		set_probe_fft (CONFIG *p, gboolean data);
 /* 选择聚焦法则自动计算开关 */
 extern gboolean get_auto_focal (CONFIG *p);
 extern void		set_auto_focal (CONFIG *p, gboolean data);
+
+/* 选择当前encoder 1或者2 */
+extern gboolean get_cur_encoder (CONFIG *p);
+extern void		set_cur_encoder (CONFIG *p, gboolean data);
 
 /* group操作 */
 extern void		grpcpy (CONFIG *p, guint src, guint dst);

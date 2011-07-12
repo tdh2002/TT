@@ -870,6 +870,17 @@ void set_auto_focal (CONFIG *p, gboolean data)
 	p->on_off_status = set_bit_value (p->on_off_status, 11, data);
 }
 
+/* 选择当前encoder 1或者2 */
+gboolean get_cur_encoder (CONFIG *p)
+{
+	return get_bit_value (p->on_off_status, 12);		
+}
+
+void set_cur_encoder (CONFIG *p, gboolean data)
+{
+	g_assert ((data == 1) || (data == 0));
+	p->on_off_status = set_bit_value (p->on_off_status, 12, data);
+}
 
 /* group操作*/
 void grpcpy (CONFIG *p, guint dst, guint src)		/* 把src group 配置复制到 dst group */
