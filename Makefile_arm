@@ -1,8 +1,7 @@
 
-export PATH=/stuff/tmp/sysroots/i686-linux/usr/armv7a/bin:$PATH
+PATH=/stuff/tmp/sysroots/i686-linux/usr/armv7a/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games
 
-
-CC = arm-angstrom-linux-gnueabi-gcc
+CC=arm-angstrom-linux-gnueabi-gcc
 
 CFLAGS=-D_REENTRANT -DARM -pthread \
 	   -I/stuff/tmp/sysroots/armv7a-angstrom-linux-gnueabi/usr/include/libxml2 \
@@ -29,4 +28,4 @@ main_arm: main.c draw_dialog.c drawui.c callback.c content_en.c drawfb.c file_op
 
 .PHONY:clean
 clean: 
-	rm -f *.o main
+	rm -f main
