@@ -1223,6 +1223,17 @@ gint open_config_file(GtkWidget *widget,	GdkEventButton *event,	gpointer       d
 	return TRUE; 
 }
 
+/* File Open 回调函数 */
+static void da_call_complex_dialog (GtkDialog *dialog, gint response_id, gpointer user_data)      
+{
+	if (GTK_RESPONSE_OK == response_id)  /* 保存信息 */
+		g_print ("OK_Pressed");
+	else if (GTK_RESPONSE_CANCEL == response_id) /* 取消 */
+		g_print ("CANCEL_Pressed");
+	gtk_widget_destroy (GTK_WIDGET (dialog));
+	change_keypress_event (KEYPRESS_MAIN);
+}
+
 /* 打开文件 */
 static void draw_file_open_main()
 { 
@@ -1415,6 +1426,9 @@ static void draw_file_open_main()
 	g_signal_connect (G_OBJECT (source_selection), "changed", G_CALLBACK(on_changed_open_config_file), (gpointer)source_list);
 
     //g_signal_connect(G_OBJECT(dialog),"destroy_event",G_CALLBACK(dialog_destroy),dialog);
+
+	g_signal_connect (G_OBJECT(dialog), "response",
+			G_CALLBACK(da_call_complex_dialog), NULL);/*发送退出信号*/
 
 	gtk_widget_show_all(dialog);
 
@@ -1830,6 +1844,9 @@ static void draw_save_setup_as()
 	g_signal_connect_after(G_OBJECT (eventbox_save), "button-press-event",G_CALLBACK(dialog_destroy), dialog);
 
 	g_signal_connect (G_OBJECT (source_selection), "changed", G_CALLBACK(on_changed_save_config_file), (gpointer)&save_file_name_struct);
+
+	g_signal_connect (G_OBJECT(dialog), "response",
+			G_CALLBACK(da_call_complex_dialog), NULL);/*发送退出信号*/
 	
 	gtk_widget_show_all(dialog);
 
@@ -1936,6 +1953,9 @@ static void draw_system_info ()
 	gtk_box_pack_start(GTK_BOX(vbox_first), vbox,FALSE,FALSE,0);
 
 	//gtk_widget_show_all(window);
+
+	g_signal_connect (G_OBJECT(dialog), "response",
+			G_CALLBACK(da_call_complex_dialog), NULL);/*发送退出信号*/
 
 	gtk_widget_show_all(dialog);
 
@@ -2295,6 +2315,9 @@ static void draw_file_manage ()
 	g_signal_connect(G_OBJECT(source_list),"row-activated",G_CALLBACK(cd_source_dir_path),&dir_path_label_struct);
 
 	g_signal_connect(G_OBJECT(target_list),"row-activated",G_CALLBACK(cd_target_dir_path),&dir_path_label_struct);
+
+	g_signal_connect (G_OBJECT(dialog), "response",
+			G_CALLBACK(da_call_complex_dialog), NULL);/*发送退出信号*/
 
 	gtk_widget_show_all(dialog);
 
@@ -2706,6 +2729,8 @@ static void draw_law_save ()
 	gtk_table_attach(GTK_TABLE(table), vbox_name, 0, 7, 5, 6, 
 			GTK_FILL | GTK_EXPAND, GTK_FILL | GTK_EXPAND, 0, 0);	/* 下方栏 */
 
+	g_signal_connect (G_OBJECT(dialog), "response",
+			G_CALLBACK(da_call_complex_dialog), NULL);/*发送退出信号*/
 
 	gtk_box_pack_start (GTK_BOX(vbox1), table, TRUE, TRUE, 5);
 	gtk_widget_show_all (dialog);
@@ -2856,6 +2881,10 @@ static void draw_law_read ()
 
 	gtk_table_attach(GTK_TABLE(table), ebox_close, 6, 7, 2, 3, 
 			GTK_FILL | GTK_EXPAND, GTK_FILL | GTK_EXPAND, 0, 0);	/* 侧边栏 */
+
+
+	g_signal_connect (G_OBJECT(dialog), "response",
+			G_CALLBACK(da_call_complex_dialog), NULL);/*发送退出信号*/
 
 	gtk_box_pack_start (GTK_BOX(vbox1), table, TRUE, TRUE, 5);
 	gtk_widget_show_all (dialog);
@@ -3604,6 +3633,9 @@ void draw_report_build()
 	//gtk_container_add(GTK_CONTAINER(window), vbox);
 
 	gtk_box_pack_start(GTK_BOX(vbox_first), vbox,FALSE,FALSE,0);
+
+	g_signal_connect (G_OBJECT(dialog), "response",
+			G_CALLBACK(da_call_complex_dialog), NULL);/*发送退出信号*/
 
 	//gtk_widget_show_all(window);
 

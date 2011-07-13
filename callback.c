@@ -2388,6 +2388,10 @@ static gint keypress_event_dialog(GtkWidget *widget, GdkEventKey *event)			/* �
 			gtk_dialog_response (GTK_DIALOG(widget), GTK_RESPONSE_OK);
 			return 0;
 			break;
+		case GDK_Escape:
+			gtk_dialog_response (GTK_DIALOG(widget), GTK_RESPONSE_CLOSE);
+			return 0;
+			break;
 		default:break;
 	}
 
@@ -4671,6 +4675,7 @@ void data_500 (GtkMenuItem *menuitem, gpointer data) /* 增加删除选择group 
 
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
+	draw_area_all ();
 }
 
 void data_501 (GtkMenuItem *menuitem, gpointer data) /* Probe/Part -> Select -> Group Mode 501 */
@@ -4798,6 +4803,8 @@ void data_600 (GtkMenuItem *menuitem, gpointer data)
 	}
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
+	draw_area_all ();
+	//gtk_widget_queue_draw (pp->vboxtable);
 }
 
 void data_601 (GtkSpinButton *spinbutton, gpointer data) /* connection_P P601 */
@@ -4989,6 +4996,8 @@ void data_710 (GtkMenuItem *menuitem, gpointer data) /* Scan -> Inspection -> ty
 	CFG(i_type) = (guchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
+	draw_area_all ();
+	//gtk_widget_queue_draw (pp->vboxtable);
 }
 
 void data_711 (GtkMenuItem *menuitem, gpointer data) /* Scan -> Inspection -> scan */
@@ -4996,7 +5005,9 @@ void data_711 (GtkMenuItem *menuitem, gpointer data) /* Scan -> Inspection -> sc
 	CFG(i_scan) = (guchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
+	gtk_widget_queue_draw (pp->vboxtable);
 	draw_area_all();
+
 }
 
 void data_712 (GtkMenuItem *menuitem, gpointer data) /* Scan -> Inspection -> Index */
@@ -5058,6 +5069,7 @@ void data_723 (GtkSpinButton *spinbutton, gpointer data) /*index_start*/
 		CFG(index_start) =  (guint) (gtk_spin_button_get_value (spinbutton)*1000.0);
 	else
 		CFG(index_start) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 / 0.03937 );
+	draw_area_all();
 }
 
 void data_724 (GtkSpinButton *spinbutton, gpointer data) /*index_end*/
@@ -5066,6 +5078,7 @@ void data_724 (GtkSpinButton *spinbutton, gpointer data) /*index_end*/
 		CFG(index_end) =  (guint) (gtk_spin_button_get_value (spinbutton)*1000.0);
 	else
 		CFG(index_end) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 / 0.03937 );
+	draw_area_all();
 }
 
 void data_725 (GtkSpinButton *spinbutton, gpointer data) /*index_resolution*/

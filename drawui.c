@@ -246,6 +246,7 @@ void main_menu_pop(guint action)
 		}
 		gtk_menu_item_select (GTK_MENU_ITEM (pp->menuitem[pp->pos]));
 		gtk_menu_item_set_label(GTK_MENU_ITEM (pp->menuitem_main), pp->con0_p[pp->pos]);
+		MENU_STATUS = MENU3_STOP;
 		draw_menu2(0);
 		draw_menu3(0, NULL);
 	}
@@ -266,6 +267,7 @@ void main_menu_pop(guint action)
 		}
 		gtk_menu_item_select (GTK_MENU_ITEM (pp->menuitem[pp->pos]));
 		gtk_menu_item_set_label(GTK_MENU_ITEM (pp->menuitem_main), pp->con0_p[pp->pos]);
+		MENU_STATUS = MENU3_STOP;
 		draw_menu2(0);
 		draw_menu3(0, NULL);
 	}
@@ -1065,15 +1067,15 @@ static gboolean draw_info(GtkWidget *widget, GdkEventExpose *event, gpointer dat
 	}
 	else if ((h>150) && (h<300))
 	{
-		prule->hrule1_copies = 50;
-		prule->hrule2_copies = 50;
+		prule->hrule1_copies = 40;
+		prule->hrule2_copies = 40;
 	}
-	else if ((h>100) && (h<150))
+/*	else if ((h>100) && (h<150))
 	{
 		prule->hrule1_copies = 30;
 		prule->hrule2_copies = 30;
-	}
-	else if ((h>50) && (h<100))
+	}*/
+	else if ((h>50) && (h<150))
 	{
 		prule->hrule1_copies = 20;
 		prule->hrule2_copies = 20;
@@ -1605,7 +1607,7 @@ if(!(prule->mask & 0x04))
 			case	A_SCAN:
 			case	A_SCAN_R:
 
-				if((CFG(display_pos) == A_S_CC_SCAN ) && (get_cscan_source(pp->p_config, 0)==4) && (GROUP_VAL(ut_unit) == UT_UNIT_TRUE_DEPTH) && (CFG(groupQty)==1))	/*A_S scan 在 true depth时， A scan 需要旋转90度*/
+				if((CFG(display_pos) == A_S_CC_SCAN ) && (get_cscan_source(pp->p_config, 0)==4) && (GROUP_VAL(ut_unit) == UT_UNIT_TRUE_DEPTH) && (get_display_group(pp->p_config) == DISPLAY_CURRENT_GROUP))	/*A_S scan 在 true depth时， A scan 需要旋转90度*/
 				{
 					cairo_set_source_rgba(cr,1.0,0.0,0.0,1.0);	/* A闸门为红色 */
 					cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(w-50)+20, (GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(h-20));
@@ -1614,12 +1616,12 @@ if(!(prule->mask & 0x04))
 
 					cairo_set_source_rgba(cr,0.0,1.0,0.0,1.0);	/* B闸门为绿色 */
 					cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(w-50)+20, (GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(h-20));
-					cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(w-50)+20, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[0].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(h-20));
+					cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(w-50)+20, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(h-20));
 					cairo_stroke(cr);
 
 					cairo_set_source_rgba(cr,1.0,1.0,0.0,1.0);	/* C闸门为黄色 */
 					cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[2].height) / 100.0)*(w-50)+20, (GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(h-20));
-					cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[2].height) / 100.0)*(w-50)+20, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[0].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(h-20));
+					cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[2].height) / 100.0)*(w-50)+20, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[2].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(h-20));
 					cairo_stroke(cr);
 				}
 				else	/*A Scan 需要旋转的情况除外*/
@@ -1676,7 +1678,8 @@ if(!(prule->mask & 0x04))
 
 			case	S_SCAN:
 			case	S_SCAN_A:
-					if ((GROUP_VAL(ut_unit) == UT_UNIT_SOUNDPATH) || (GROUP_VAL(ut_unit) == UT_UNIT_TIME))
+			case	S_SCAN_L:
+					if ((GROUP_VAL_POS(prule->group, ut_unit) == UT_UNIT_SOUNDPATH) || (GROUP_VAL_POS(prule->group, ut_unit) == UT_UNIT_TIME))
 					{
 						cairo_set_source_rgba(cr,1.0,0.0,0.0,1.0);	/* A闸门为红色   虚线 纵向*/
 						for(j=0; j<h-20; j+=5)
@@ -1757,7 +1760,7 @@ if(!(prule->mask & 0x04))
 
 	/* 画ruler */
 
-	if((prule->hmin1 != prule->hmax1) && (!(prule->mask & 0x08)))
+	if (!(prule->mask & 0x08))
 	{
 	//cairo_set_source_rgba(cr,0.72,0.94,0.1,1.0);    /* hruler1颜色为绿色 */
 
@@ -1768,32 +1771,41 @@ if(!(prule->mask & 0x04))
 	cairo_stroke(cr);
 	cairo_set_source_rgba(cr,0.0,0.0,0.0,1.0);	/* 标尺及单位颜色为黑色 */
 	cairo_set_font_size(cr,8);
+
 	cairo_save (cr);				/* 保存当前画笔 */
-	cairo_move_to (cr, 12, (h-30));	/*hruler1 单位 ％*/
-	cairo_rotate (cr, G_PI * 3/2);
-	cairo_show_text (cr, units[prule->h1_unit]);
-	//cairo_show_text (cr, "%");
+	if(prule->hmax1 > prule->hmin1)
+	{
+		cairo_move_to (cr, 12, (h-40));	/*hruler1 单位位置(底端) ％*/
+		cairo_rotate (cr, G_PI * 3/2);
+		cairo_show_text (cr, units[prule->h1_unit]);
+	}
+	else
+	{
+		cairo_move_to (cr, 12, 20);	/*hruler1 单位位置（顶端） ％*/
+		cairo_rotate (cr, G_PI * 3/2);
+		cairo_show_text (cr, units[prule->h1_unit]);
+	}
 	cairo_restore (cr);
 
 	i=0;
-	for( k=0;k<(h-20.0);k=k+(h-20.0)/prule->hrule1_copies)	/* hruler1 标尺 */
+	//for( k=0;k<(h-20.0);k=k+(h-20.0)/prule->hrule1_copies)	/* hruler1 标尺 */
+	for( k=h-20.0;k>0;k=k-(h-20.0)/prule->hrule1_copies)	/* hruler1 标尺 */
 	{
 		if(i%10 == 0)
 		{
-			cairo_save(cr);
+			cairo_save(cr);/* 保存当前画笔 */
 			cairo_move_to(cr,5,(int)k+0.5);
 			cairo_line_to(cr,20,(int)k+0.5);
 			cairo_stroke(cr);
 			cairo_move_to(cr,12,(int)k-3.5);
-			//		cairo_set_font_size(cr, 7);		/*设置字体大小*/
-			//		cairo_translate(cr,250,0);		/*平移*/
 			cairo_rotate(cr, G_PI * 3/2);		/*旋转270度*/
-			//if( prule->hmax1 > prule->hmin1 )
-				str=g_strdup_printf("%.*f",prule->h1_bit, prule->hmax1 - (float)((prule->hmax1-prule->hmin1)*i/(prule->hrule1_copies)));
-			//else
-				//str=g_strdup_printf("%.0f",(float)(prule->hmin1-prule->hmax1)*i/(prule->hrule1_copies));
-			cairo_show_text(cr,str);   		/*标签*/
-			cairo_restore(cr);
+			if(prule->hmax1 > prule->hmin1)
+				str=g_strdup_printf("%.*f",prule->h1_bit,  (float)(prule->hmax1-prule->hmin1)*i/(prule->hrule1_copies) );
+			else
+				str=g_strdup_printf("%.*f",prule->h1_bit,  prule->hmin1-(float)(prule->hmin1-prule->hmax1)*i/(prule->hrule1_copies) );
+
+			cairo_show_text(cr,str); 
+			cairo_restore(cr);/* 恢复当前画笔 */
 		}
 		else if(i%5 == 0)
 		{
@@ -1814,7 +1826,7 @@ if(!(prule->mask & 0x04))
 	}
 
 
-	if((prule->wmin1 != prule->wmax1) && (!(prule->mask & 0x01)))
+	if (!(prule->mask & 0x01))
 	{
 	//cairo_set_source_rgba(cr,0.72,0.94,0.1,1.0);    /* wruler颜色为绿色 */
 	cairo_set_source_rgba(cr,((prule->w_color)>>16)/255.0, (((prule->w_color)>>8)&0x00FF)/255.0, ((prule->w_color)&0xFF)/255.0, 1.0);
@@ -1863,7 +1875,7 @@ if(!(prule->mask & 0x04))
 	}
 
 
-	if((prule->hmin2 != prule->hmax2) && (!(prule->mask & 0x02)))
+	if (!(prule->mask & 0x02))
 	{
 
 	//cairo_set_source_rgba(cr,0.72,0.94,0.1,1.0);    /* hruler2颜色为绿色 */
@@ -1881,7 +1893,8 @@ if(!(prule->mask & 0x04))
 	cairo_restore(cr);
 
 		i=0;
-		for( k=0;k<h-20;k=k+(h-20.0)/prule->hrule2_copies )	/* hruler2 标尺 */
+		//for( k=0;k<h-20;k=k+(h-20.0)/prule->hrule2_copies )	/* hruler2 标尺 */
+		for( k=h-20.0;k>0;k=k-(h-20.0)/prule->hrule2_copies)	/* hruler2 标尺 */
 		{
 			if(i%10 == 0)
 			{
@@ -1895,7 +1908,7 @@ if(!(prule->mask & 0x04))
 			cairo_rotate(cr, G_PI * 3/2);		/*旋转270度*/
 			//		cairo_show_text(cr,"mm");   		/*标签*/
 			//str=g_strdup_printf("%d",(prule->hmax2-i));
-			str=g_strdup_printf("%.0f",prule->hmax2 - (float)(prule->hmax2-prule->hmin2)*i/(prule->hrule2_copies));
+			str=g_strdup_printf("%.0f",(float)(prule->hmax2-prule->hmin2)*i/(prule->hrule2_copies) );
 			cairo_show_text(cr,str);   		/*标签*/
 			cairo_restore(cr);
 			}
@@ -2218,7 +2231,7 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 		case A_SCAN:
 		case A_SCAN_R:
 
-			if((CFG(display_pos) == A_S_CC_SCAN ) && (get_cscan_source(pp->p_config, 0)==4) && (GROUP_VAL_POS(p->group, ut_unit) == UT_UNIT_TRUE_DEPTH) && (CFG(groupQty)==1))
+			if((CFG(display_pos) == A_S_CC_SCAN ) && (get_cscan_source(pp->p_config, 0)==4) && (GROUP_VAL_POS(p->group, ut_unit) == UT_UNIT_TRUE_DEPTH) && (get_display_group(pp->p_config) == DISPLAY_CURRENT_GROUP))
 			{	/*A_S scan 在 true depth时， A scan 需要旋转90度*/
 				if(get_unit(pp->p_config) == UNIT_MM) /* hrule1 */
 				{
@@ -2359,24 +2372,42 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 		case C_SCAN:
 		case CC_SCAN:
 		case CCC_SCAN:
-			if(LAW_VAL(Focal_type)==0)	/* hrule1 *//*灰色*/
+			if ((CFG(i_type) == 0) && (LAW_VAL(Focal_type)==AZIMUTHAL_SCAN))
+			{
+				//if(LAW_VAL(Focal_type)==AZIMUTHAL_SCAN)	/* hrule1 *//*灰色*/
+				//{
+					if(LAW_VAL (Angle_min) == LAW_VAL(Angle_max) )
+					{
+						p->hmin1 = LAW_VAL_POS (p->group, Angle_min) / 100.0;
+						p->hmax1 = LAW_VAL_POS (p->group, Angle_max) / 100.0 + 1.0;
+					}
+					else
+					{
+						p->hmin1 = LAW_VAL_POS (p->group, Angle_min) / 100.0;
+						p->hmax1 = LAW_VAL_POS (p->group, Angle_max) / 100.0;
+					}
+					p->h1_unit = UNIT_DEG;
+					p->h1_color = 0xB2C1C1;
+					p->h1_bit = 1;
+				//}
+			}
+
+			//else if(LAW_VAL(Focal_type)==LINEAR_SCAN) /*浅绿色0xADFBE3*/
+			else
 			{
 				if(LAW_VAL (Angle_min) == LAW_VAL(Angle_max) )
 				{
-					p->hmin1 = LAW_VAL_POS (p->group, Angle_min) / 100.0;
-					p->hmax1 = LAW_VAL_POS (p->group, Angle_max) / 100.0 + 1.0;
+					p->hmin1 = GROUP_VAL_POS(p->group, index_offset)/10.0 + CFG(index_start) / 1000.0;
+					p->hmax1 = GROUP_VAL_POS(p->group, index_offset)/10.0 + CFG(index_end) / 1000.0 + 0.5;
 				}
 				else
 				{
-					p->hmin1 = LAW_VAL_POS (p->group, Angle_min) / 100.0;
-					p->hmax1 = LAW_VAL_POS (p->group, Angle_max) / 100.0;
+					p->hmin1 = GROUP_VAL_POS(p->group, index_offset)/10.0 + CFG(index_start) / 1000.0;
+					p->hmax1 = GROUP_VAL_POS(p->group, index_offset)/10.0 + CFG(index_end) / 1000.0 ;
 				}
-				p->h1_unit = UNIT_DEG;
-				p->h1_color = 0xB2C1C1;
+				p->h1_unit = UNIT_MM;
+				p->h1_color = 0xADFBE3;
 				p->h1_bit = 1;
-			}
-			else
-			{
 			}
 
 			if((get_cscan_source(pp->p_config, 0)==0) || (get_cscan_source(pp->p_config, 0)==1))	/* hrule2 */
@@ -2386,6 +2417,7 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 				p->h2_unit = UNIT_BFH;
 				p->h2_color = 0xEDF169;	/*黄色*/
 			}
+
 			else
 			{
 				p->hmin2 = 0;
@@ -2394,19 +2426,20 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 				p->h2_color = 0xD6ABF1;	/*紫色*/
 			}
 
-			if(get_unit(pp->p_config) == UNIT_MM)	/* wrule */		/* 浅绿色 */
+			if(get_unit(pp->p_config) == UNIT_MM)	/* wrule */		/* 深绿色 */
 			{
 				p->wmin1 = GROUP_VAL_POS(p->group, scan_offset)/10.0 + CFG(scan_start)/1000.0;
 				p->wmax1 = GROUP_VAL_POS(p->group, scan_offset)/10.0 + CFG(scan_end)/1000.0;
 				p->w_unit = UNIT_MM;
-				p->w_color = 0xADFBE3;
+				p->w_color = 0x0AD5D3;
 			}
+
 			else
 			{
 				p->wmin1 = GROUP_VAL_POS(p->group, scan_offset)/10.0*0.03937 + CFG(scan_start)/1000.0*0.03937;
 				p->wmax1 = GROUP_VAL_POS(p->group, scan_offset)/10.0*0.03937 + CFG(scan_end)/1000.0*0.03937;
 				p->w_unit = UNIT_INCH;
-				p->w_color = 0xADFBE3;
+				p->w_color = 0x0AD5D3;
 			}
 
 			g_sprintf (p->title, "C scan|Gr %d|CH %0.1f|SK%0.1f|L%d", 
@@ -2580,7 +2613,6 @@ void draw_area_all()
 		switch (get_display_pos(pp->p_config))
 		{
 			case A_SCAN:
-				//pp->draw_area[0].scan_type	=	A_SCAN;
 				pp->draw_area[0].group	=	get_current_group(pp->p_config);
 				gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
 				set_drawarea_property (&(pp->draw_area[0]), A_SCAN, 0);
@@ -2590,8 +2622,6 @@ void draw_area_all()
 				/* 显示的位置 偏移等等 */
 				break;
 			case B_SCAN:
-				g_print ("bscan\n");
-				pp->draw_area[0].scan_type	=	B_SCAN;
 				pp->draw_area[0].group	=	get_current_group(pp->p_config);
 				gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
 				set_drawarea_property (&(pp->draw_area[0]), B_SCAN, 0);
@@ -2609,8 +2639,8 @@ void draw_area_all()
 				break;
 			case S_SCAN:
 				pp->draw_area[0].group	=	get_current_group(pp->p_config);
-				if ((GROUP_VAL(ut_unit) == UT_UNIT_SOUNDPATH) ||
-						(GROUP_VAL(ut_unit) == UT_UNIT_TIME))
+				if ((GROUP_VAL_POS(get_current_group(pp->p_config), ut_unit) == UT_UNIT_SOUNDPATH) ||
+						(GROUP_VAL_POS(get_current_group(pp->p_config), ut_unit) == UT_UNIT_TIME))
 				{
 					pp->draw_area[0].scan_type	=	S_SCAN;
 					gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
@@ -2619,7 +2649,7 @@ void draw_area_all()
 					gtk_widget_show (pp->vbox_area[0]);
 					set_scan_config (0, S_SCAN, 605, 605, 390, 0, 0, get_current_group(pp->p_config));
 				} 
-				else if (GROUP_VAL(ut_unit) == UT_UNIT_TRUE_DEPTH)
+				else if (GROUP_VAL_POS(get_current_group(pp->p_config), ut_unit) == UT_UNIT_TRUE_DEPTH)
 				{
 					if (LAW_VAL(Focal_type) == AZIMUTHAL_SCAN)
 					{
@@ -2643,19 +2673,22 @@ void draw_area_all()
 				break;
 			case A_B_SCAN:
 				pp->draw_area[0].group	=	get_current_group(pp->p_config);
-				pp->draw_area[0].scan_type	=	A_SCAN;
-				pp->draw_area[1].scan_type	=	B_SCAN;
+				pp->draw_area[1].group	=	get_current_group(pp->p_config);
+				//pp->draw_area[0].scan_type	=	A_SCAN;
+				//pp->draw_area[1].scan_type	=	B_SCAN;
 				gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
 				set_drawarea_property (&(pp->draw_area[0]), A_SCAN, 0x01);
 				draw_area_ (pp->vbox_area[0], &(pp->draw_area[0]), 655, 130);
 				set_drawarea_property (&(pp->draw_area[1]), B_SCAN, 0);
 				draw_area_ (pp->vbox_area[0], &(pp->draw_area[1]), 655, 295);
 				gtk_widget_show (pp->vbox_area[0]);
-				set_scan_config (0, A_SCAN, 605, 605, 100, 0, 0, get_current_group(pp->p_config));
+				set_scan_config (0, A_SCAN, 605, 605, 115, 0, 0, get_current_group(pp->p_config));
 				set_scan_config (1, B_SCAN, 605, 605, 260, 0, 130, get_current_group(pp->p_config));
 				break;
 			case A_B_C_SCAN:
 				pp->draw_area[0].group	=	get_current_group(pp->p_config);
+				pp->draw_area[1].group	=	get_current_group(pp->p_config);
+				pp->draw_area[2].group	=	get_current_group(pp->p_config);
 				gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
 				set_drawarea_property (&(pp->draw_area[0]), A_SCAN, 0x01);
 				draw_area_ (pp->vbox_area[0], &(pp->draw_area[0]), 655, 125);
@@ -2664,13 +2697,15 @@ void draw_area_all()
 				set_drawarea_property (&(pp->draw_area[2]), C_SCAN, 0);
 				draw_area_ (pp->vbox_area[0], &(pp->draw_area[2]), 655, 150);
 				gtk_widget_show (pp->vbox_area[0]);
-				set_scan_config (0, A_SCAN, 605, 605, 90, 0, 0, get_current_group(pp->p_config));
+				set_scan_config (0, A_SCAN, 605, 605, 110, 0, 0, get_current_group(pp->p_config));
 				set_scan_config (1, B_SCAN, 605, 605, 115, 0, 125, get_current_group(pp->p_config));
 				set_scan_config (2, C_SCAN, 605, 605, 115, 0, 275, get_current_group(pp->p_config));
 				break;
 			case A_B_S_SCAN:
 				pp->draw_area[0].group	=	get_current_group(pp->p_config);
-				if (GROUP_VAL(ut_unit) == UT_UNIT_TRUE_DEPTH)
+				pp->draw_area[1].group	=	get_current_group(pp->p_config);
+				pp->draw_area[2].group	=	get_current_group(pp->p_config);
+				if (GROUP_VAL_POS(get_current_group(pp->p_config), ut_unit) == UT_UNIT_TRUE_DEPTH)
 				{
 					gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->hbox_area[0], FALSE, FALSE, 0);
 					gtk_box_pack_start (GTK_BOX (pp->hbox_area[0]), pp->vbox_area[0], FALSE, FALSE, 0);
@@ -2691,7 +2726,7 @@ void draw_area_all()
 						set_scan_config (0, S_SCAN_A, 305, 250, 390, 0, 0, get_current_group(pp->p_config));
 					else if (LAW_VAL(Focal_type) == LINEAR_SCAN)
 						set_scan_config (0, S_SCAN_L, 305, 250, 390, 0, 0, get_current_group(pp->p_config));
-					set_scan_config (1, A_SCAN, 305, 305, 175, 300, 0, get_current_group(pp->p_config));
+					set_scan_config (1, A_SCAN, 305, 305, 195, 300, 0, get_current_group(pp->p_config));
 					set_scan_config (2, B_SCAN, 305, 305, 180, 300, 210, get_current_group(pp->p_config));
 				}
 				else
@@ -2704,13 +2739,14 @@ void draw_area_all()
 					set_drawarea_property (&(pp->draw_area[2]), B_SCAN, 0);
 					draw_area_ (pp->vbox_area[0], &(pp->draw_area[2]), 655, 150);
 					gtk_widget_show (pp->vbox_area[0]);
-					set_scan_config (0, A_SCAN, 605, 605, 90, 0, 0, get_current_group(pp->p_config));
-					set_scan_config (1, S_SCAN, 605, 605, 115, 0, 125, get_current_group(pp->p_config));
+					set_scan_config (0, A_SCAN, 605, 605, 110, 0, 0, get_current_group(pp->p_config));
+					set_scan_config (1, S_SCAN, 605, 605, 135, 0, 125, get_current_group(pp->p_config));
 					set_scan_config (2, B_SCAN, 605, 605, 115, 0, 275, get_current_group(pp->p_config));
 				}
 				break;
 			case A_C_CC_SCAN:
 				pp->draw_area[0].group	=	get_current_group(pp->p_config);
+				pp->draw_area[1].group	=	get_current_group(pp->p_config);
 				gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
 				if (get_cscan_source(pp->p_config, 1) == C_SCAN_OFF)
 				{
@@ -2730,67 +2766,69 @@ void draw_area_all()
 					set_drawarea_property (&(pp->draw_area[2]), CC_SCAN, 0);
 					draw_area_ (pp->vbox_area[0], &(pp->draw_area[2]), 655, 150);
 					set_scan_config (0, A_SCAN, 605, 605, 90, 0, 0, get_current_group(pp->p_config));
-					set_scan_config (1, C_SCAN, 605, 605, 115, 0, 125, get_current_group(pp->p_config));
+					set_scan_config (1, C_SCAN, 605, 605, 135, 0, 125, get_current_group(pp->p_config));
 					set_scan_config (2, CC_SCAN, 605, 605, 115, 0, 275, get_current_group(pp->p_config));
 				}
 				gtk_widget_show (pp->vbox_area[0]);
 				break;
 			case A_S_CC_SCAN:
 				pp->draw_area[0].group	=	get_current_group(pp->p_config);
+				pp->draw_area[1].group	=	get_current_group(pp->p_config);
+				pp->draw_area[2].group	=	get_current_group(pp->p_config);
 				if (get_cscan_source(pp->p_config, 0) == C_SCAN_OFF) /* c 扫描不存在的情况 */
 				{
-					if ((GROUP_VAL(ut_unit) == UT_UNIT_SOUNDPATH) ||
-							(GROUP_VAL(ut_unit) == UT_UNIT_TIME))
+					if ((GROUP_VAL_POS(get_current_group(pp->p_config), ut_unit) == UT_UNIT_SOUNDPATH) ||
+							(GROUP_VAL_POS(get_current_group(pp->p_config), ut_unit) == UT_UNIT_TIME))
 					{
-						pp->draw_area[0].scan_type	=	A_SCAN;
-						pp->draw_area[1].scan_type	=	S_SCAN;
+						//pp->draw_area[0].scan_type	=	A_SCAN;
+						//pp->draw_area[1].scan_type	=	S_SCAN;
 						gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
 						set_drawarea_property (&(pp->draw_area[0]), A_SCAN, 0x01);
 						draw_area_ (pp->vbox_area[0], &(pp->draw_area[0]), 655, 130);
 						set_drawarea_property (&(pp->draw_area[1]), S_SCAN, 0);
 						draw_area_ (pp->vbox_area[0], &(pp->draw_area[1]), 655, 295);
 						gtk_widget_show (pp->vbox_area[0]);
-						set_scan_config (0, A_SCAN, 605, 605, 95, 0, 0, get_current_group(pp->p_config));
+						set_scan_config (0, A_SCAN, 605, 605, 115, 0, 0, get_current_group(pp->p_config));
 						set_scan_config (1, S_SCAN, 605, 605, 260, 0, 130, get_current_group(pp->p_config));
 					}
-					else if (GROUP_VAL(ut_unit) == UT_UNIT_TRUE_DEPTH)
+					else if (GROUP_VAL_POS(get_current_group(pp->p_config), ut_unit) == UT_UNIT_TRUE_DEPTH)
 					{
 						if (LAW_VAL(Focal_type) == AZIMUTHAL_SCAN)
 						{
-							pp->draw_area[0].scan_type	=	A_SCAN_R;
-							pp->draw_area[1].scan_type	=	S_SCAN_A;
+							//pp->draw_area[0].scan_type	=	A_SCAN_R;
+							//pp->draw_area[1].scan_type	=	S_SCAN_A;
 							gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->hbox_area[0], FALSE, FALSE, 0);
 							set_drawarea_property (&(pp->draw_area[0]), A_SCAN_R, 0x06);
 							draw_area_ (pp->hbox_area[0], &(pp->draw_area[0]), 250, 425);
 							set_drawarea_property (&(pp->draw_area[1]), S_SCAN_A, 0);
 							draw_area_ (pp->hbox_area[0], &(pp->draw_area[1]), 405, 425);
 							gtk_widget_show (pp->hbox_area[0]);
-							set_scan_config (0, A_SCAN_R, 390, 200, 390, 0, 0, get_current_group(pp->p_config));
-							set_scan_config (1, S_SCAN_A, 390, 355, 390, 250, 0, get_current_group(pp->p_config));
+							set_scan_config (0, A_SCAN_R, 230, 230, 390, 0, 0, get_current_group(pp->p_config));
+							set_scan_config (1, S_SCAN_A, 230, 355, 390, 250, 0, get_current_group(pp->p_config));
 						} 
 						else if (LAW_VAL(Focal_type) == LINEAR_SCAN)
 						{
-							pp->draw_area[0].scan_type	=	A_SCAN_R;
-							pp->draw_area[1].scan_type	=	S_SCAN_L;
+							//pp->draw_area[0].scan_type	=	A_SCAN_R;
+							//pp->draw_area[1].scan_type	=	S_SCAN_L;
 							gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->hbox_area[0], FALSE, FALSE, 0);
 							set_drawarea_property (&(pp->draw_area[0]), A_SCAN_R, 0x06);
 							draw_area_ (pp->hbox_area[0], &(pp->draw_area[0]), 250, 425);
 							set_drawarea_property (&(pp->draw_area[1]), S_SCAN_L, 0x08);
 							draw_area_ (pp->hbox_area[0], &(pp->draw_area[1]), 405, 425);
 							gtk_widget_show (pp->hbox_area[0]);
-							set_scan_config (0, A_SCAN_R, 390, 200, 390, 0, 0, get_current_group(pp->p_config));
-							set_scan_config (1, S_SCAN_L, 390, 355, 390, 250, 0, get_current_group(pp->p_config));
+							set_scan_config (0, A_SCAN_R, 230, 230, 390, 0, 0, get_current_group(pp->p_config));
+							set_scan_config (1, S_SCAN_L, 230, 355, 390, 250, 0, get_current_group(pp->p_config));
 						}
 					}
 				}
 				else
 				{
-					if ((GROUP_VAL(ut_unit) == UT_UNIT_SOUNDPATH) ||
-							(GROUP_VAL(ut_unit) == UT_UNIT_TIME))
+					if ((GROUP_VAL_POS(get_current_group(pp->p_config), ut_unit) == UT_UNIT_SOUNDPATH) ||
+							(GROUP_VAL_POS(get_current_group(pp->p_config), ut_unit) == UT_UNIT_TIME))
 					{
-						pp->draw_area[0].scan_type	=	A_SCAN;
-						pp->draw_area[1].scan_type	=	S_SCAN;
-						pp->draw_area[2].scan_type	=	CCC_SCAN;
+						//pp->draw_area[0].scan_type	=	A_SCAN;
+						//pp->draw_area[1].scan_type	=	S_SCAN;
+						//pp->draw_area[2].scan_type	=	CCC_SCAN;
 						gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
 						set_drawarea_property (&(pp->draw_area[0]), A_SCAN, 0);
 						draw_area_ (pp->vbox_area[0], &(pp->draw_area[0]), 655, 125);
@@ -2800,18 +2838,18 @@ void draw_area_all()
 						draw_area_ (pp->vbox_area[0], &(pp->draw_area[2]), 655, 150);
 						gtk_widget_show (pp->vbox_area[0]);
 						set_scan_config (0, A_SCAN, 605, 605, 95, 0, 0, get_current_group(pp->p_config));
-						set_scan_config (1, S_SCAN, 605, 605, 115, 0, 125, get_current_group(pp->p_config));
+						set_scan_config (1, S_SCAN, 605, 605, 135, 0, 125, get_current_group(pp->p_config));
 						set_scan_config (2, CCC_SCAN, 605, 605, 115, 0, 275, get_current_group(pp->p_config));
 					}
-					else if (GROUP_VAL(ut_unit) == UT_UNIT_TRUE_DEPTH)
+					else if (GROUP_VAL_POS(get_current_group(pp->p_config), ut_unit) == UT_UNIT_TRUE_DEPTH)
 					{
 						gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->hbox_area[0], FALSE, FALSE, 0);
 						gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[1], FALSE, FALSE, 0);
 						if (LAW_VAL(Focal_type) == AZIMUTHAL_SCAN)
 						{
-							pp->draw_area[0].scan_type	=	A_SCAN_R;
-							pp->draw_area[1].scan_type	=	S_SCAN_A;
-							pp->draw_area[2].scan_type	=	CCC_SCAN;
+							//pp->draw_area[0].scan_type	=	A_SCAN_R;
+							//pp->draw_area[1].scan_type	=	S_SCAN_A;
+							//pp->draw_area[2].scan_type	=	CCC_SCAN;
 							set_drawarea_property (&(pp->draw_area[0]), A_SCAN_R, 0x06);
 							draw_area_ (pp->hbox_area[0], &(pp->draw_area[0]), 250, 275);
 							set_drawarea_property (&(pp->draw_area[1]), S_SCAN_A, 0);
@@ -2819,15 +2857,15 @@ void draw_area_all()
 							set_drawarea_property (&(pp->draw_area[2]), CCC_SCAN, 0);
 							draw_area_ (pp->vbox_area[1], &(pp->draw_area[2]), 655, 150);
 							gtk_widget_show (pp->hbox_area[0]);
-							set_scan_config (0, A_SCAN_R, 390, 200, 240, 0, 0, get_current_group(pp->p_config));
-							set_scan_config (1, S_SCAN_A, 390, 355, 240, 250, 0, get_current_group(pp->p_config));
-							set_scan_config (2, CCC_SCAN, 390, 605, 115, 0, 275, get_current_group(pp->p_config));
+							set_scan_config (0, A_SCAN_R, 230, 230, 240, 0, 0, get_current_group(pp->p_config));
+							set_scan_config (1, S_SCAN_A, 230, 355, 240, 250, 0, get_current_group(pp->p_config));
+							set_scan_config (2, CCC_SCAN, 230, 605, 115, 0, 275, get_current_group(pp->p_config));
 						} 
 						else if (LAW_VAL(Focal_type) == LINEAR_SCAN)
 						{
-							pp->draw_area[0].scan_type	=	A_SCAN_R;
-							pp->draw_area[1].scan_type	=	S_SCAN_L;
-							pp->draw_area[2].scan_type	=	CCC_SCAN;
+							//pp->draw_area[0].scan_type	=	A_SCAN_R;
+							//pp->draw_area[1].scan_type	=	S_SCAN_L;
+							//pp->draw_area[2].scan_type	=	CCC_SCAN;
 							set_drawarea_property (&(pp->draw_area[0]), A_SCAN_R, 0x06);
 							draw_area_ (pp->hbox_area[0], &(pp->draw_area[0]), 250, 275);
 							set_drawarea_property (&(pp->draw_area[1]), S_SCAN_L, 0);
@@ -2835,9 +2873,9 @@ void draw_area_all()
 							set_drawarea_property (&(pp->draw_area[2]), CCC_SCAN, 0);
 							draw_area_ (pp->vbox_area[1], &(pp->draw_area[2]), 655, 150);
 							gtk_widget_show (pp->hbox_area[0]);
-							set_scan_config (0, A_SCAN_R, 390, 200, 390, 0, 0, get_current_group(pp->p_config));
-							set_scan_config (1, S_SCAN_L, 390, 355, 390, 250, 0, get_current_group(pp->p_config));
-							set_scan_config (2, CCC_SCAN, 390, 605, 115, 0, 275, get_current_group(pp->p_config));
+							set_scan_config (0, A_SCAN_R, 230, 230, 240, 0, 0, get_current_group(pp->p_config));
+							set_scan_config (1, S_SCAN_L, 230, 355, 240, 250, 0, get_current_group(pp->p_config));
+							set_scan_config (2, CCC_SCAN, 230, 605, 115, 0, 275, get_current_group(pp->p_config));
 						}
 					}
 				}
@@ -2860,12 +2898,13 @@ void draw_area_all()
 							pp->draw_area[1].group	=	1;
 							gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
 							set_drawarea_property (&(pp->draw_area[0]), A_SCAN, 0);
+							g_sprintf (pp->draw_area[0].title, "multiple A scan");
 							draw_area_ (pp->vbox_area[0], &(pp->draw_area[0]), 655, 212);
 							set_drawarea_property (&(pp->draw_area[1]), A_SCAN, 0x10);
 							draw_area_ (pp->vbox_area[0], &(pp->draw_area[1]), 655, 213);
 							gtk_widget_show (pp->vbox_area[0]);
 							set_scan_config (0, A_SCAN, 615, 615, 178, 0, 0,  0);
-							set_scan_config (1, A_SCAN, 615, 615, 178, 0, 212, 1);
+							set_scan_config (1, A_SCAN, 615, 615, 193, 0, 212, 1);
 							/* 显示的位置 偏移等等 */
 							break;
 						case S_SCAN:
@@ -2910,6 +2949,7 @@ void draw_area_all()
 								gtk_box_pack_start (GTK_BOX (pp->hbox_area[0]), pp->vbox_area[0], FALSE, FALSE, 0);
 								gtk_box_pack_start (GTK_BOX (pp->hbox_area[0]), pp->vbox_area[1], FALSE, FALSE, 0);
 								set_drawarea_property (&(pp->draw_area[0]), A_SCAN, 0);
+								g_sprintf (pp->draw_area[0].title, "multiple A_C_CC_SCAN");
 								draw_area_(pp->vbox_area[0], &(pp->draw_area[0]), 327, 150);
 								set_drawarea_property (&(pp->draw_area[1]), C_SCAN, 0x10);
 								draw_area_(pp->vbox_area[0], &(pp->draw_area[1]), 327, 275);
@@ -2920,10 +2960,10 @@ void draw_area_all()
 								gtk_widget_show (pp->hbox_area[0]);
 								gtk_widget_show (pp->vbox_area[0]);
 								gtk_widget_show (pp->vbox_area[1]);
-								set_scan_config (0, A_SCAN, 615, 287, 115, 0, 0,  0);
-								set_scan_config (1, C_SCAN, 615, 287, 240, 0, 150, 0);
-								set_scan_config (2, A_SCAN, 615, 288, 115, 327, 0,  1);
-								set_scan_config (3, C_SCAN, 615, 288, 240, 327, 150, 1); 
+								set_scan_config (0, A_SCAN, 277, 277, 115, 0, 0,  0);
+								set_scan_config (1, C_SCAN, 277, 277, 255, 0, 150, 0);
+								set_scan_config (2, A_SCAN, 278, 278, 115, 327, 0,  1);
+								set_scan_config (3, C_SCAN, 278, 278, 255, 327,150, 1); 
 							}
 							else
 							{
@@ -2951,17 +2991,17 @@ void draw_area_all()
 								gtk_widget_show (pp->hbox_area[0]);
 								gtk_widget_show (pp->vbox_area[0]);
 								gtk_widget_show (pp->vbox_area[1]);
-								set_scan_config (0, A_SCAN, 615, 287, 106, 0, 0,  0);
-								set_scan_config (1, C_SCAN, 615, 287, 107, 0, 141, 0);
-								set_scan_config (2, CC_SCAN, 615, 287, 107, 0, 283, 0);
-								set_scan_config (3, A_SCAN, 615, 288, 106, 327, 0,  1);
-								set_scan_config (4, C_SCAN, 615, 288, 107, 327, 141, 1);
-								set_scan_config (5, CC_SCAN, 615, 288, 107, 327, 283, 1); 
+								set_scan_config (0, A_SCAN, 277, 277, 106, 0, 0,  0);
+								set_scan_config (1, C_SCAN, 277, 277, 142, 0, 141, 0);
+								set_scan_config (2, CC_SCAN, 277, 277, 122, 0, 283, 0);
+								set_scan_config (3, A_SCAN, 278, 278, 106, 327, 0,  1);
+								set_scan_config (4, C_SCAN, 278, 278, 142, 327, 141, 1);
+								set_scan_config (5, CC_SCAN, 278, 278, 122, 327, 283, 1); 
 							}
 							break;
 						case A_S_CC_SCAN:
-							if ((GROUP_VAL(ut_unit) == UT_UNIT_SOUNDPATH) ||
-									(GROUP_VAL(ut_unit) == UT_UNIT_TIME))
+							if ((GROUP_VAL( ut_unit) == UT_UNIT_SOUNDPATH) ||
+									(GROUP_VAL( ut_unit) == UT_UNIT_TIME))
 							{
 									pp->draw_area[0].scan_type	=	A_SCAN;
 									pp->draw_area[1].scan_type	=	S_SCAN;
@@ -3012,10 +3052,10 @@ void draw_area_all()
 									gtk_widget_show (pp->hbox_area[0]);
 									gtk_widget_show (pp->vbox_area[0]);
 									gtk_widget_show (pp->vbox_area[1]);
-									set_scan_config (0, pp->draw_area[0].scan_type, 615, 287, 115, 0, 0,  0);
-									set_scan_config (1, pp->draw_area[1].scan_type, 615, 287, 240, 0, 150, 0);
-									set_scan_config (2, pp->draw_area[3].scan_type, 615, 288, 115, 327, 0,  1);
-									set_scan_config (3, pp->draw_area[4].scan_type, 615, 288, 240, 327, 150, 1); 
+									set_scan_config (0, pp->draw_area[0].scan_type, 277, 277, 115, 0, 0,  0);
+									set_scan_config (1, pp->draw_area[1].scan_type, 277, 277, 255, 0, 150, 0);
+									set_scan_config (2, pp->draw_area[3].scan_type, 278, 278, 115, 327, 0,  1);
+									set_scan_config (3, pp->draw_area[4].scan_type, 278, 278, 255, 327, 150, 1); 
 							}
 							else
 							{
@@ -3044,12 +3084,12 @@ void draw_area_all()
 									gtk_widget_show (pp->hbox_area[0]);
 									gtk_widget_show (pp->vbox_area[0]);
 									gtk_widget_show (pp->vbox_area[1]);
-									set_scan_config (0, pp->draw_area[0].scan_type, 615, 287, 106, 0, 0,  0);
-									set_scan_config (1, pp->draw_area[1].scan_type, 615, 287, 107, 0, 141, 0);
-									set_scan_config (2, pp->draw_area[2].scan_type, 615, 287, 107, 0, 283, 0);
-									set_scan_config (3, pp->draw_area[3].scan_type, 615, 288, 106, 327, 0, 1);
-									set_scan_config (4, pp->draw_area[4].scan_type, 615, 288, 107, 327, 141,  1);
-									set_scan_config (5, pp->draw_area[5].scan_type, 615, 288, 107, 327, 283, 1);
+									set_scan_config (0, pp->draw_area[0].scan_type, 277, 277, 106, 0, 0,  0);
+									set_scan_config (1, pp->draw_area[1].scan_type, 277, 277, 122, 0, 141, 0);
+									set_scan_config (2, pp->draw_area[2].scan_type, 277, 277, 122, 0, 283, 0);
+									set_scan_config (3, pp->draw_area[3].scan_type, 278, 278, 106, 327, 0, 1);
+									set_scan_config (4, pp->draw_area[4].scan_type, 278, 278, 122, 327, 141,  1);
+									set_scan_config (5, pp->draw_area[5].scan_type, 278, 278, 122, 327, 283, 1);
 							}
 							break;
 						default:
@@ -3072,8 +3112,8 @@ void draw_area_all()
 							draw_area_ (pp->vbox_area[0], &(pp->draw_area[2]), 655, 142);
 							gtk_widget_show (pp->vbox_area[0]);
 							set_scan_config (0, A_SCAN, 615, 615, 106, 0, 0,  0);
-							set_scan_config (1, A_SCAN, 615, 615, 107, 0, 141, 1);
-							set_scan_config (2, A_SCAN, 615, 615, 107, 0, 283, 2);
+							set_scan_config (1, A_SCAN, 615, 615, 122, 0, 141, 1);
+							set_scan_config (2, A_SCAN, 615, 615, 122, 0, 283, 2);
 							break;
 						case S_SCAN:
 							if ((GROUP_VAL(ut_unit) == UT_UNIT_SOUNDPATH) ||
@@ -3109,9 +3149,9 @@ void draw_area_all()
 							set_drawarea_property (&(pp->draw_area[2]), pp->draw_area[2].scan_type, 0);
 							draw_area_ (pp->hbox_area[0], &(pp->draw_area[2]), 219, 425);
 							gtk_widget_show (pp->hbox_area[0]);
-							set_scan_config (0, pp->draw_area[0].scan_type, 390, 178, 390, 0, 0,  0);
-							set_scan_config (1, pp->draw_area[1].scan_type, 390, 178, 390, 218, 0, 1);
-							set_scan_config (2, pp->draw_area[2].scan_type, 390, 179, 390, 436, 0, 2);
+							set_scan_config (0, pp->draw_area[0].scan_type, 615, 178, 390, 0, 0,  0);
+							set_scan_config (1, pp->draw_area[1].scan_type, 615, 178, 390, 218, 0, 1);
+							set_scan_config (2, pp->draw_area[2].scan_type, 615, 179, 390, 436, 0, 2);
 							break;
 						case A_C_CC_SCAN:
 							if (get_cscan_source(pp->p_config, 1) == C_SCAN_OFF)
@@ -3142,12 +3182,12 @@ void draw_area_all()
 								gtk_widget_show (pp->vbox_area[0]);
 								gtk_widget_show (pp->vbox_area[1]);
 								gtk_widget_show (pp->vbox_area[2]);
-								set_scan_config (0, A_SCAN, 615, 178, 115, 0, 0,  0);
-								set_scan_config (1, C_SCAN, 615, 178, 240, 0, 150, 0);
-								set_scan_config (2, A_SCAN, 615, 178, 115, 218, 0,  1);
-								set_scan_config (3, C_SCAN, 615, 178, 240, 218, 150, 1); 
-								set_scan_config (4, A_SCAN, 615, 179, 115, 436, 0,  2);
-								set_scan_config (5, C_SCAN, 615, 179, 240, 436, 150, 2); 
+								set_scan_config (0, A_SCAN, 168, 168, 115, 0, 0,  0);
+								set_scan_config (1, C_SCAN, 168, 168, 255, 0, 150, 0);
+								set_scan_config (2, A_SCAN, 168, 168, 115, 218, 0,  1);
+								set_scan_config (3, C_SCAN, 168, 168, 255, 218, 150, 1); 
+								set_scan_config (4, A_SCAN, 169, 169, 115, 436, 0,  2);
+								set_scan_config (5, C_SCAN, 169, 169, 255, 436, 150, 2); 
 							}
 							else
 							{
@@ -3188,15 +3228,15 @@ void draw_area_all()
 								gtk_widget_show (pp->vbox_area[0]);
 								gtk_widget_show (pp->vbox_area[1]);
 								gtk_widget_show (pp->vbox_area[2]);
-								set_scan_config (0, A_SCAN, 615, 178, 106, 0, 0,  0);
-								set_scan_config (1, C_SCAN, 615, 178, 107, 0, 141, 0);
-								set_scan_config (2, CC_SCAN, 615, 178, 107, 0, 283, 0);
-								set_scan_config (3, A_SCAN, 615, 178, 106, 218, 0,  1);
-								set_scan_config (4, C_SCAN, 615, 178, 107, 218, 141, 1);
-								set_scan_config (5, CC_SCAN, 615, 178, 107, 218, 283, 1); 
-								set_scan_config (6, A_SCAN, 615, 179, 106, 436, 0,  2);
-								set_scan_config (7, C_SCAN, 615, 179, 107, 436, 141, 2);
-								set_scan_config (8, CC_SCAN, 615, 179, 107, 436, 283, 2); 
+								set_scan_config (0, A_SCAN, 168, 168, 106, 0, 0,  0);
+								set_scan_config (1, C_SCAN, 168, 168, 122, 0, 141, 0);
+								set_scan_config (2, CC_SCAN, 168, 168, 122, 0, 283, 0);
+								set_scan_config (3, A_SCAN, 168, 168, 106, 218, 0,  1);
+								set_scan_config (4, C_SCAN, 168, 168, 122, 218, 141, 1);
+								set_scan_config (5, CC_SCAN, 168, 168, 122, 218, 283, 1); 
+								set_scan_config (6, A_SCAN, 169, 169, 106, 436, 0,  2);
+								set_scan_config (7, C_SCAN, 169, 169, 122, 436, 141, 2);
+								set_scan_config (8, CC_SCAN, 169, 169, 122, 436, 283, 2); 
 							}
 							break;
 
@@ -3270,12 +3310,12 @@ void draw_area_all()
 									gtk_widget_show (pp->vbox_area[0]);
 									gtk_widget_show (pp->vbox_area[1]);
 									gtk_widget_show (pp->vbox_area[2]);
-									set_scan_config (0, pp->draw_area[0].scan_type, 615, 178, 115, 0, 0,  0);
-									set_scan_config (1, pp->draw_area[1].scan_type, 615, 178, 240, 0, 150, 0);
-									set_scan_config (2, pp->draw_area[3].scan_type, 615, 178, 115, 218, 0,  1);
-									set_scan_config (3, pp->draw_area[4].scan_type, 615, 178, 240, 218, 150, 1); 
-									set_scan_config (4, pp->draw_area[6].scan_type, 615, 179, 115, 436, 0,  2);
-									set_scan_config (5, pp->draw_area[7].scan_type, 615, 179, 240, 436, 150, 2); 
+									set_scan_config (0, pp->draw_area[0].scan_type, 168, 168, 115, 0, 0,  0);
+									set_scan_config (1, pp->draw_area[1].scan_type, 168, 168, 255, 0, 150, 0);
+									set_scan_config (2, pp->draw_area[3].scan_type, 168, 168, 115, 218, 0,  1);
+									set_scan_config (3, pp->draw_area[4].scan_type, 168, 168, 255, 218, 150, 1); 
+									set_scan_config (4, pp->draw_area[6].scan_type, 169, 169, 115, 436, 0,  2);
+									set_scan_config (5, pp->draw_area[7].scan_type, 169, 169, 255, 436, 150, 2); 
 							}
 							else
 							{
@@ -3317,15 +3357,15 @@ void draw_area_all()
 									gtk_widget_show (pp->vbox_area[0]);
 									gtk_widget_show (pp->vbox_area[1]);
 									gtk_widget_show (pp->vbox_area[2]);
-									set_scan_config (0, pp->draw_area[0].scan_type, 615, 178, 106, 0, 0,  0);
-									set_scan_config (1, pp->draw_area[1].scan_type, 615, 178, 107, 0, 141, 0);
-									set_scan_config (2, pp->draw_area[2].scan_type, 615, 178, 107, 0, 283, 0);
-									set_scan_config (3, pp->draw_area[3].scan_type, 615, 178, 106, 218, 0, 1);
-									set_scan_config (4, pp->draw_area[4].scan_type, 615, 178, 107, 218, 141,  1);
-									set_scan_config (5, pp->draw_area[5].scan_type, 615, 178, 107, 218, 283, 1);
-									set_scan_config (6, pp->draw_area[6].scan_type, 615, 179, 106, 436, 0, 2);
-									set_scan_config (7, pp->draw_area[7].scan_type, 615, 179, 107, 436, 141,  2);
-									set_scan_config (8, pp->draw_area[8].scan_type, 615, 179, 107, 436, 283, 2);
+									set_scan_config (0, pp->draw_area[0].scan_type, 168, 178, 106, 0, 0,  0);
+									set_scan_config (1, pp->draw_area[1].scan_type, 168, 178, 122, 0, 141, 0);
+									set_scan_config (2, pp->draw_area[2].scan_type, 168, 178, 122, 0, 283, 0);
+									set_scan_config (3, pp->draw_area[3].scan_type, 168, 178, 106, 218, 0, 1);
+									set_scan_config (4, pp->draw_area[4].scan_type, 168, 178, 122, 218, 141,  1);
+									set_scan_config (5, pp->draw_area[5].scan_type, 168, 178, 122, 218, 283, 1);
+									set_scan_config (6, pp->draw_area[6].scan_type, 169, 179, 106, 436, 0, 2);
+									set_scan_config (7, pp->draw_area[7].scan_type, 169, 179, 122, 436, 141,  2);
+									set_scan_config (8, pp->draw_area[8].scan_type, 169, 179, 122, 436, 283, 2);
 							}
 							break;
 
@@ -3354,10 +3394,10 @@ void draw_area_all()
 							gtk_widget_show (pp->vbox_area[0]);
 							gtk_widget_show (pp->hbox_area[0]);
 							gtk_widget_show (pp->hbox_area[1]);
-							set_scan_config (0, A_SCAN, 615, 287, 177, 0, 0,  0);
-							set_scan_config (1, A_SCAN, 615, 288, 177, 327, 0, 1);
-							set_scan_config (2, A_SCAN, 615, 287, 178, 0, 212, 2);
-							set_scan_config (3, A_SCAN, 615, 288, 178, 327, 212, 3);
+							set_scan_config (0, A_SCAN, 307, 307, 177, 0, 0,  0);
+							set_scan_config (1, A_SCAN, 278, 278, 177, 327, 0, 1);
+							set_scan_config (2, A_SCAN, 307, 307, 193, 0, 212, 2);
+							set_scan_config (3, A_SCAN, 278, 278, 193, 327, 212, 3);
 							break;
 						default:break;
 					}
@@ -3389,11 +3429,11 @@ void draw_area_all()
 							gtk_widget_show (pp->hbox_area[0]);
 							gtk_widget_show (pp->hbox_area[1]);
 							gtk_widget_show (pp->hbox_area[2]);
-							set_scan_config (0, A_SCAN, 615, 287, 106, 0, 0,  0);
-							set_scan_config (1, A_SCAN, 615, 288, 106, 327, 0, 1);
-							set_scan_config (2, A_SCAN, 615, 287, 107, 0, 141, 2);
-							set_scan_config (3, A_SCAN, 615, 288, 107, 327, 141, 3);
-							set_scan_config (4, A_SCAN, 615, 287, 107, 0, 283, 4);
+							set_scan_config (0, A_SCAN, 307, 307, 106, 0, 0,  0);
+							set_scan_config (1, A_SCAN, 278, 278, 106, 327, 0, 1);
+							set_scan_config (2, A_SCAN, 307, 307, 122, 0, 141, 2);
+							set_scan_config (3, A_SCAN, 278, 278, 122, 327, 141, 3);
+							set_scan_config (4, A_SCAN, 307, 307, 122, 0, 283, 4);
 							break;
 						default:break;
 					}
@@ -3428,12 +3468,12 @@ void draw_area_all()
 							gtk_widget_show (pp->hbox_area[0]);
 							gtk_widget_show (pp->hbox_area[1]);
 							gtk_widget_show (pp->hbox_area[2]);
-							set_scan_config (0, A_SCAN, 615, 287, 106, 0, 0,  0);
-							set_scan_config (1, A_SCAN, 615, 288, 106, 327, 0, 1);
-							set_scan_config (2, A_SCAN, 615, 287, 107, 0, 141, 2);
-							set_scan_config (3, A_SCAN, 615, 288, 107, 327, 141, 3);
-							set_scan_config (4, A_SCAN, 615, 287, 107, 0, 283, 4);
-							set_scan_config (5, A_SCAN, 615, 288, 107, 327, 283, 5);
+							set_scan_config (0, A_SCAN, 307, 307, 106, 0, 0,  0);
+							set_scan_config (1, A_SCAN, 278, 278, 106, 327, 0, 1);
+							set_scan_config (2, A_SCAN, 307, 307, 122, 0, 141, 2);
+							set_scan_config (3, A_SCAN, 278, 278, 122, 327, 141, 3);
+							set_scan_config (4, A_SCAN, 307, 307, 122, 0, 283, 4);
+							set_scan_config (5, A_SCAN, 278, 278, 122, 327, 283, 5);
 							break;
 						default:break;
 					}
@@ -3473,13 +3513,13 @@ void draw_area_all()
 							gtk_widget_show (pp->hbox_area[1]);
 							gtk_widget_show (pp->hbox_area[2]);
 							gtk_widget_show (pp->hbox_area[3]);
-							set_scan_config (0, A_SCAN, 615, 287, 71, 0, 0,  0);
-							set_scan_config (1, A_SCAN, 615, 288, 71, 327, 0, 1);
-							set_scan_config (2, A_SCAN, 615, 287, 71, 0, 106, 2);
-							set_scan_config (3, A_SCAN, 615, 288, 71, 327, 106, 3);
-							set_scan_config (4, A_SCAN, 615, 287, 71, 0, 212, 4);
-							set_scan_config (5, A_SCAN, 615, 288, 71, 327, 212,5);
-							set_scan_config (6, A_SCAN, 615, 287, 72, 0, 318, 6);
+							set_scan_config (0, A_SCAN, 307, 307, 71, 0, 0,  0);
+							set_scan_config (1, A_SCAN, 278, 278, 71, 327, 0, 1);
+							set_scan_config (2, A_SCAN, 307, 307, 86, 0, 106, 2);
+							set_scan_config (3, A_SCAN, 278, 278, 86, 327, 106, 3);
+							set_scan_config (4, A_SCAN, 307, 307, 86, 0, 212, 4);
+							set_scan_config (5, A_SCAN, 278, 278, 86, 327, 212,5);
+							set_scan_config (6, A_SCAN, 307, 307, 87, 0, 318, 6);
 							break;
 						default:break;
 					}
@@ -3522,14 +3562,14 @@ void draw_area_all()
 							gtk_widget_show (pp->hbox_area[1]);
 							gtk_widget_show (pp->hbox_area[2]);
 							gtk_widget_show (pp->hbox_area[3]);
-							set_scan_config (0, A_SCAN, 615, 287, 71, 0, 0, 0);
-							set_scan_config (1, A_SCAN, 615, 288, 71, 327, 0, 1);
-							set_scan_config (2, A_SCAN, 615, 287, 71, 0, 106, 2);
-							set_scan_config (3, A_SCAN, 615, 288, 71, 327, 106, 3);
-							set_scan_config (4, A_SCAN, 615, 287, 71, 0, 212, 4);
-							set_scan_config (5, A_SCAN, 615, 288, 71, 327, 212, 5);
-							set_scan_config (6, A_SCAN, 615, 287, 72, 0, 318,  6);
-							set_scan_config (7, A_SCAN, 615, 287, 72, 327, 318, 7);
+							set_scan_config (0, A_SCAN, 307, 307, 71, 0, 0,  0);
+							set_scan_config (1, A_SCAN, 278, 278, 71, 327, 0, 1);
+							set_scan_config (2, A_SCAN, 307, 307, 86, 0, 106, 2);
+							set_scan_config (3, A_SCAN, 278, 278, 86, 327, 106, 3);
+							set_scan_config (4, A_SCAN, 307, 307, 86, 0, 212, 4);
+							set_scan_config (5, A_SCAN, 278, 278, 86, 327, 212,5);
+							set_scan_config (6, A_SCAN, 307, 307, 87, 0, 318, 6);
+							set_scan_config (7, A_SCAN, 278, 278, 87, 327, 318, 7);
 							break;
 						default:break;
 					}
@@ -8253,11 +8293,11 @@ void draw3_data2(DRAW_UI_P p)
 						else if(get_display_pos(pp->p_config)==8)
 							/*Display 为 A-S-[C]*/
 						{
-							if (CFG(groupQty) == 1)
+							if (get_group_qty(pp->p_config) == 1)
 								menu_status = 0x01;
 							draw3_pop_tt (data_401, NULL, 
 									menu_content[GROUP_POS + get_display_group(pp->p_config)],
-									menu_content + GROUP_POS, 2, 2, get_display_group(pp->p_config), 0);
+									menu_content + GROUP_POS, 2, 2, get_display_group(pp->p_config), menu_status);
 							str = g_strdup_printf ("%s", con2_p[4][0][1]);	
 							gtk_label_set_text (GTK_LABEL (pp->label3[2]), str);
 
@@ -9042,6 +9082,8 @@ void draw3_data2(DRAW_UI_P p)
 
 					else if(CFG(i_type)==1)
 					{
+						if(CFG(i_scan)==0)
+							CFG(i_scan)=1;
 						/*if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 							draw3_pop_tt (data_712, NULL, 
 									menu_content[I_INDEX + CFG(i_index)],
@@ -9049,7 +9091,7 @@ void draw3_data2(DRAW_UI_P p)
 						else */
 						if(CFG(i_scan)==1)
 							draw3_popdown (menu_content[I_INDEX + 2], 2, 0);
-						else if(CFG(i_scan)==2)
+						else
 							draw3_popdown (menu_content[I_INDEX + 1], 2, 0);
 
 						gtk_widget_set_sensitive(pp->eventbox30[2],FALSE);
@@ -9089,7 +9131,8 @@ void draw3_data2(DRAW_UI_P p)
 						if(get_unit(pp->p_config) == UNIT_MM)
 						{
 							cur_value = CFG(scan_resolution)/1000.0;
-							lower = 1.0;
+							//cur_value = CFG(scanspeed)/100.0/get_prf();
+							lower = 0.08;
 							upper = 357.0;
 							step = tmpf;
 							digit = 2;
@@ -9099,6 +9142,7 @@ void draw3_data2(DRAW_UI_P p)
 						else
 						{
 							cur_value = CFG(scan_resolution)/1000.0*0.03937;
+							//cur_value = CFG(scanspeed)/100.0/get_prf()*0.03937;
 							lower = 0.001;
 							upper = 9.281;
 							step = tmpf/10.0;
@@ -9113,6 +9157,7 @@ void draw3_data2(DRAW_UI_P p)
 						if(get_unit(pp->p_config) == UNIT_MM)
 						{
 							cur_value = CFG(scan_resolution)/1000.0;
+							//cur_value = CFG(scanspeed)/100.0/get_prf();
 							digit = 2;
 							pos = 2;
 							unit = UNIT_MM;
@@ -9120,6 +9165,7 @@ void draw3_data2(DRAW_UI_P p)
 						else
 						{
 							cur_value = CFG(scan_resolution)/1000.0*0.03937;
+							//cur_value = CFG(scanspeed)/100.0/get_prf()*0.03937;
 							digit = 3;
 							pos = 2;
 							unit = UNIT_INCH;
@@ -11105,11 +11151,11 @@ void draw3_data3(DRAW_UI_P p)
 						if(get_display_pos(pp->p_config)==7)
 							/*Display 为 A-C-[C]*/
 						{
-							if (CFG(groupQty) == 1)
+							if (get_group_qty(pp->p_config) == 1)
 								menu_status = 0x01;
 							draw3_pop_tt (data_401, NULL, 
 									menu_content[GROUP_POS+get_display_group(pp->p_config)],
-									menu_content + GROUP_POS, 2, 3, get_display_group(pp->p_config), 0);
+									menu_content + GROUP_POS, 2, 3, get_display_group(pp->p_config), menu_status);
 							str = g_strdup_printf ("%s", con2_p[4][0][1]);	
 							gtk_label_set_text (GTK_LABEL (pp->label3[3]), str);
 

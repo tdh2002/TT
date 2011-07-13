@@ -493,8 +493,8 @@ const gchar *all_menu_content_en[] =
 	"Tin", "Epoxy resin", "Ice", "Nickel", "Plexiglass", "Polystyrene",
 	"Porcelain", "PVC", "Quartz glass", "Rubber vulcanized", "Teflon", "Water",	/* 24 个材料 */
 	
-	"Azimuthal Angular sector", "Linear  Linear sector", 
-	"Depth Depth sector", "Static Static sector",				
+	"Azimuthal    Angular sector", "Linear          Linear sector", 
+	"Depth          Depth sector", "Static          Static sector",				
 	"Azimuthal", "Linear", "Depth", "Static",				/* 410 Law config*/
 	"Half Path", "True Depth", "Projection ", "Focal Plane", "Automatic",
 	"Half Path", "True Depth", "Projection ", "Focal Plane", "Automatic",	/*  focalpoint type */
