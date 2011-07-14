@@ -336,14 +336,14 @@ static void setup_para(PARAMETER_P p, guint group)
     p->wedge_p->wg_trans_vel	= 0;
     p->wedge_p->wg_density= 7.8;/* 密度 */
     p->wedge_p->wg_heigh_fir	= GROUP_VAL_POS (group, wedge.Height) / 1000.0;	/*第一阵元高度mm*/
-    p->wedge_p->wg_pri_elem_offset_fir = 0;/*第一主轴阵元偏移mm*/
-    p->wedge_p->wg_sec_elem_offset_fir = 0;/*第一次轴阵元偏移mm*/
+    p->wedge_p->wg_pri_elem_offset_fir = GROUP_VAL_POS (group, wedge.Primary_offset) / 1000.0;/*11111111111第一主轴阵元偏移mm*/
+    p->wedge_p->wg_sec_elem_offset_fir = GROUP_VAL_POS (group, wedge.Secondary_offset) / 1000.0;/*11111111111第一次轴阵元偏移mm*/
     p->wedge_p->wg_pri_axis_reference = 0;/*主轴楔块参考位置mm*/
     p->wedge_p->wg_sec_axis_reference = 0;/*次轴楔块参考位置mm*/
     p->wedge_p->wg_length = 1;/*楔块长度mm*/
     p->wedge_p->wg_width = 1;/*楔块宽度mm*/
     p->wedge_p->wg_height = 1;/*楔块高mm*/
-	p->wedge_p->wg_separation = 0;
+    p->wedge_p->wg_separation = 0;
 
     p->wedge_r->wg_wedge_angle = GROUP_VAL_POS(group, wedge.Angle) / 10.0; /* 楔块角 度 */
     p->wedge_r->wg_roof_angle=0;/* 顶角 度*/
@@ -351,14 +351,14 @@ static void setup_para(PARAMETER_P p, guint group)
     p->wedge_r->wg_trans_vel = 3230;/*横波声速m/s*/
     p->wedge_r->wg_density= 7.8;/* 密度 */
     p->wedge_r->wg_heigh_fir	= GROUP_VAL_POS(group, wedge.Height) / 1000.0;	/*第一阵元高度mm*/
-    p->wedge_r->wg_pri_elem_offset_fir = 0;/*第一主轴阵元偏移mm*/
-    p->wedge_r->wg_sec_elem_offset_fir = 0;/*第一次轴阵元偏移mm*/
+    p->wedge_r->wg_pri_elem_offset_fir = GROUP_VAL_POS (group, wedge.Primary_offset) / 1000.0;/*11111111111第一主轴阵元偏移mm*/
+    p->wedge_r->wg_sec_elem_offset_fir = GROUP_VAL_POS (group, wedge.Secondary_offset) / 1000.0;/*11111111111第一次轴阵元偏移mm*/
     p->wedge_r->wg_pri_axis_reference = 0;/*主轴楔块参考位置mm*/
     p->wedge_r->wg_sec_axis_reference = 0;/*次轴楔块参考位置mm*/
     p->wedge_r->wg_length = 1;/*楔块长度mm*/
     p->wedge_r->wg_width = 1;/*楔块宽度mm*/
     p->wedge_r->wg_height = 1;/*楔块高度mm*/
-	p->wedge_r->wg_separation = 0;
+    p->wedge_r->wg_separation = 0;
 	
 	/* BEAM */
     p->beam_angle->beam_pri_steer_angle_start = 0 ;
@@ -401,7 +401,7 @@ static void setup_para(PARAMETER_P p, guint group)
 	/* 聚焦点 */
     p->focal_point->focal_focus_type = LAW_VAL(Focal_point_type);	/* 0 half path 1 TURE DEPTH */
 //  p->focal_point->focal_focus_point_start = LAW_VAL_POS (group, Focus_depth) / 1000.0;	/* type =0 是 声程 type =1 是深度 */
- 	p->focal_point->offset_start = LAW_VAL(Position_start)/1000.0 ;//true depth 何凡添加
+    p->focal_point->offset_start = LAW_VAL(Position_start)/1000.0 ;//true depth 何凡添加
     p->focal_point->focal_focus_point_start = LAW_VAL(Position_start)/ 1000.0;	/* type =0 是 声程 type =1 是深度 */
     p->focal_point->focal_focus_point_stop = LAW_VAL(Position_end)/ 1000.0; 
     p->focal_point->focal_focus_point_resolution = LAW_VAL(Position_step)/ 1000.0;
@@ -409,19 +409,19 @@ static void setup_para(PARAMETER_P p, guint group)
     
     p->element_sel->pri_axis_ape = LAW_VAL_POS (group, Elem_qty);
     p->element_sel->sec_axis_ape = 1;
-    p->element_sel->primary_axis_s = LAW_VAL(First_tx_elem);
-	p->element_sel->primary_axis_e = LAW_VAL(Last_tx_elem)-LAW_VAL(Elem_qty)+1;//
-	p->element_sel->primary_axis_r = LAW_VAL(Elem_step);//
-//	g_print("test linear first num %d\n",p->element_sel->primary_axis_s);
-//	g_print ("\np->element_sel->pri_axis_ape = %f\n p->probe_p->ele_num_pri= %d\n",
-//			p->element_sel->pri_axis_ape, p->probe_p->ele_num_pri);
+    p->element_sel->primary_axis_s = LAW_VAL_POS (group, First_tx_elem);
+    p->element_sel->primary_axis_e = LAW_VAL_POS (group, Last_tx_elem)-LAW_VAL_POS (group, Elem_qty)+1;//
+    p->element_sel->primary_axis_r = LAW_VAL_POS (group, Elem_step);//
+    g_print("#################3Element Start %d\n",p->element_sel->primary_axis_s);
+	g_print ("###############p->element_sel->pri_axis_ape = %d\n p->probe_p->ele_num_pri= %d\n",
+			p->element_sel->pri_axis_ape, p->probe_p->ele_num_pri);
 }
 
 static void save_cal_law(gint offset, gint group, PARAMETER_P p)
 {
 	gint i, j,k;
-	int ElementStart = LAW_VAL(First_tx_elem)-1;
-	int ElementStop  =   ElementStart + LAW_VAL(Elem_qty) ;
+	int ElementStart = LAW_VAL_POS (group, First_tx_elem)-1;
+	int ElementStop  = ElementStart + LAW_VAL_POS (group, Elem_qty) ;
 
 	for (i = 0; i < TMP(beam_qty[group]); i++)
 	{
@@ -453,6 +453,7 @@ static void save_cal_law(gint offset, gint group, PARAMETER_P p)
 			TMP(focal_law_all_elem[offset + i][j]).R_delay	= p->timedelay[i][k];
 			TMP(focal_law_all_elem[offset + i][j]).Amplitude = CFG (voltage_pa); 
 			TMP(focal_law_all_elem[offset + i][j]).P_width	= GROUP_VAL_POS (group, pulser_width) / 100; 
+			g_print("-----p->timedelay[%d][%d] =%d \n",i,k,p->timedelay[i][k]);
 		} 
 
 	} 
@@ -466,15 +467,15 @@ void cal_focal_law (guint group)
 	
 	p = (PARAMETER_P)g_malloc0(sizeof(PARAMETER));
 //	p = (PARAMETER_P)malloc(sizeof(PARAMETER));
-    PROBEF        probe_p;
-    WEDGEF        wedge_p;
-	WEDGEF        wedge_r;
-    BEAM_ANGLE   beam_angle;
-    SPECIMEN     specimen;
-    FOCAL_POINT  focal_point;
-    ELEMENT_SEL  element_sel;
+       PROBEF        probe_p;
+       WEDGEF        wedge_p;
+       WEDGEF        wedge_r;
+       BEAM_ANGLE   beam_angle;
+       SPECIMEN     specimen;
+       FOCAL_POINT  focal_point;
+       ELEMENT_SEL  element_sel;
 
-    p->probe_p	= &probe_p;
+       p->probe_p	= &probe_p;
 	p->wedge_p	= &wedge_p;
 	p->wedge_r	= &wedge_r;
 	p->beam_angle = &beam_angle;
@@ -485,9 +486,7 @@ void cal_focal_law (guint group)
     
 	setup_para(p, group);
 	/*  */
-	g_print ("3333\n");
 	focal_law(p, G_Delay);
-	g_print ("33333\n");
 
 	
 	/* 把聚集法则信息保存起来 */
@@ -5454,9 +5453,7 @@ void generate_focallaw()
 	TMP(group_spi[grp]).idel_time		= 
 		100000000 / (GROUP_VAL_POS(grp, prf) / 10) - 2048 - TMP(group_spi[grp]).rx_time;
 
-	g_print ("2111\n");
 	cal_focal_law (get_current_group(pp->p_config));
-	g_print ("2222\n");
 	send_focal_spi (get_current_group(pp->p_config));
 
 	//计算聚焦法则时，sumgain默认为Auto
@@ -5465,7 +5462,7 @@ void generate_focallaw()
 	else 
 		TMP(group_spi[grp]).sum_gain	= 
 			4096 / LAW_VAL_POS(grp, Elem_qty);					
-	g_print("\n sumgain = %d\n", TMP(group_spi[grp]).sum_gain);
+//	g_print("\n sumgain = %d\n", TMP(group_spi[grp]).sum_gain);
 
 	write_group_data (&TMP(group_spi[get_current_group(pp->p_config)]), get_current_group(pp->p_config));
 

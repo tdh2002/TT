@@ -28,4 +28,4 @@ main_arm: main.c draw_dialog.c drawui.c callback.c content_en.c drawfb.c file_op
 
 .PHONY:clean
 clean: 
-	rm -f main
+	rm -f main_arm

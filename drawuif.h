@@ -4,7 +4,6 @@
  
 #ifndef	__DRAW_UIF_H_
 #define	__DRAW_UIF_H_
-#include <gtk/gtk.h>
 #include <string.h>
 #include "datastruct.h"
 
@@ -24,12 +23,12 @@ typedef struct FocusParameter
     FOCAL_POINT_P  focal_point;
     ELEMENT_SEL_P  element_sel;
      
-    gint G_Time[256];
-    gint G_delay[256];
-    gint timedelay[256][32];
-    gint k;//the num of calculator 
-    gint tmp_k ;
-    gint is_draw_focus;
+    int G_Time[256];
+    int G_delay[256];
+    int timedelay[256][32];
+    int k;//the num of calculator 
+    int tmp_k ;
+    int is_draw_focus;
     
 
 }PARAMETER, *PARAMETER_P;
