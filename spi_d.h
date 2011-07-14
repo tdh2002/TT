@@ -64,7 +64,8 @@ typedef struct _Group_data
 
 	/* s_group_reg (7) */
 	unsigned int	gate_a_logic:8;			/* bit:0-7 闸门A 逻辑 */
-	unsigned int	gate_a_end:24;			/* bit:12-31 闸门A 结束 */
+	unsigned int	TT4:4;
+	unsigned int	gate_a_end:20;			/* bit:12-31 闸门A 结束 */
 
 	/* s_group_reg (8) */
 	unsigned int	gate_b_height:12;		/* bit:0-11 闸门B 高度 */
@@ -72,7 +73,8 @@ typedef struct _Group_data
 
 	/* s_group_reg (9) */
 	unsigned int	gate_b_logic:8;			/* bit:0-7 闸门B 逻辑 */
-	unsigned int	gate_b_end:24;			/* bit:12-31 闸门B 结束 */
+	unsigned int	TT5:4;
+	unsigned int	gate_b_end:20;			/* bit:12-31 闸门B 结束 */
 
 	/* s_group_reg (10) */
 	unsigned int	gate_i_height:12;		/* bit:0-11 闸门C 高度 */
@@ -80,7 +82,8 @@ typedef struct _Group_data
 
 	/* s_group_reg (11) */
 	unsigned int	gate_i_logic:8;			/* bit:0-7 闸门C 逻辑 */
-	unsigned int	gate_i_end:24;			/* bit:12-31 闸门C 结束 */
+	unsigned int	TT6:4;
+	unsigned int	gate_i_end:20;			/* bit:12-31 闸门C 结束 */
 
 	/* s_group_reg (11) */
 	unsigned int	voltage:8;			/* bit:0-7 发射电压 */

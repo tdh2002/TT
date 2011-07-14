@@ -400,6 +400,8 @@ typedef	struct _Config
 	10位 probe/part characterize FFT 开关
 	11位 聚集法则 auto_program 开关
 	12位 encoder 编码器当前选择 0表示编码器1 1表示编码器2
+	13位 空
+	14位
 	*/	
 	guchar	dis_prop_scan;		/* Display->Properties->Scan  6个 */
 	guchar	fft_color;			/* Display->Properties->fft_color */
@@ -606,6 +608,16 @@ extern void		set_auto_focal (CONFIG *p, gboolean data);
 /* 选择当前encoder 1或者2 */
 extern gboolean get_cur_encoder (CONFIG *p);
 extern void		set_cur_encoder (CONFIG *p, gboolean data);
+/* 设置encoder属性 */
+extern guchar	get_enc_polarity (CONFIG *p, gint enc_id);
+extern void		set_enc_polarity (CONFIG *p, guchar data, gint enc_id);
+extern guchar	get_enc_type (CONFIG *p, gint enc_id);
+extern void		set_enc_type (CONFIG *p, guchar data, gint enc_id);
+extern guint	get_enc_resolution (CONFIG *p, gint enc_id);
+extern void		set_enc_resolution (CONFIG *p, guint data, gint enc_id);
+extern guint	get_enc_origin (CONFIG *p, gint enc_id);
+extern void		set_enc_origin (CONFIG *p, guint data, gint enc_id);
+
 
 /* group操作 */
 extern void		grpcpy (CONFIG *p, guint src, guint dst);

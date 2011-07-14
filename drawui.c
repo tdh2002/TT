@@ -16000,7 +16000,7 @@ gpointer signal_thread1(gpointer arg)
 	/* 计算数据 */
 
 	/*  */
-	draw_field_value ();
+/*	draw_field_value ();*/
 	/* 复制波形到显存 */
 
 	pp->mark3 = 1;

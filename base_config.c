@@ -882,6 +882,37 @@ void set_cur_encoder (CONFIG *p, gboolean data)
 	p->on_off_status = set_bit_value (p->on_off_status, 12, data);
 }
 
+/* 设置encoder属性 */
+guchar get_enc_polarity (CONFIG *p, gint enc_id)
+{
+	g_assert ((enc_id == 1) || (enc_id ==0));
+	return p->encoder1[enc_id].Polarity;
+}
+
+void set_enc_polarity (CONFIG *p, guchar data, gint enc_id)
+{
+	g_assert ((enc_id == 1) || (enc_id ==0));
+	p->encoder1[enc_id].Polarity = data;
+}
+
+guchar get_enc_type (CONFIG *p, gint enc_id)
+{}
+
+void set_enc_type (CONFIG *p, guchar data, gint enc_id)
+{}
+
+guint get_enc_resolution (CONFIG *p, gint enc_id)
+{}
+
+void set_enc_resolution (CONFIG *p, guint data, gint enc_id)
+{}
+
+guint get_enc_origin (CONFIG *p, gint enc_id)
+{}
+
+void set_enc_origin (CONFIG *p, guint data, gint enc_id)
+{}
+
 /* group操作*/
 void grpcpy (CONFIG *p, guint dst, guint src)		/* 把src group 配置复制到 dst group */
 {
