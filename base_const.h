@@ -147,9 +147,38 @@
 #define CHOOSE_PROBE 0
 #define DEFINE_PROBE 1
 
-/* */
+/* 编码器的设置*/
 #define ENCODER_1	0
 #define ENCODER_2	1 
+/* encoder polarity */
+#define ENC_NORMAL	0
+#define ENC_INVERSE	1
+/* encoder type */
+#define ENC_CLOCK_DIR	0
+#define ENC_QUAD		1
+#define ENC_UP			2
+#define ENC_DOWN		3
+#define ENC_CLOCK_DIR_UP	4
+#define ENC_CLOCK_DIR_DOWN	5
+#define ENC_QUAD_UP		6
+#define ENC_QUAD_DOWN	7
+#define ENC_CLICKER		8
+
+/* inspection 设置 */
+#define TYPE_ONE_LINE	0 
+#define TYPE_RASTER		1
+#define TYPE_HELICOIDAL	2 
+
+#define	SCAN_TIME		0
+#define	SCAN_ENCODER1	1
+#define	SCAN_ENCODER2	2
+
+#define INDEX_AUTO		0
+#define INDEX_ENCODER1	1
+#define INDEX_ENCODER2	2
+#define INDEX_TOP_TURN	3
+#define INDEX_OFF		4
+
 
 /* Range of availage voltage (sPulseVoltagePA). 相控发射电压 */
 #define setup_VOLTAGE_MIN_PA   0x100 

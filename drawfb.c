@@ -317,9 +317,9 @@ void draw_a_scan_r (gushort *p, guint width, guint height,
 	for (i = 0; i < height - 1; i++)
 	{
 		fbline (p, 
-				xoffset + width * HEIGHT_TABLE[data[i]],
+				xoffset + width * HEIGHT_TABLE[255 - data[i]],
 				yoffset + i,
-				xoffset + width * HEIGHT_TABLE[data[i + 1]],
+				xoffset + width * HEIGHT_TABLE[255 - data[i + 1]],
 				yoffset + i + 1,
 				all_col_16[GROUP_VAL_POS(groupId, ascan_color)]);
 		/* 画包络 */
@@ -904,7 +904,7 @@ int DrawPixbuff(gushort *p,
        gint pointer ;
        gint pointer2;
        gint tempData ;
-       gint waveLength  = endWave - startWave + 1;
+       gint waveLength  = endWave - startWave;
        
        for(i = 0; i< height; i++)
        {
@@ -1038,8 +1038,8 @@ void draw_scan(guchar scan_num, guchar scan_type, guchar group,
 					xoff, yoff, group);
 			break;
 		case A_SCAN_R:
-			draw_a_scan_r(dot_temp1, TMP(a_scan_width), TMP(a_scan_height),
-					TMP(scan_data[group]) + TMP(a_scan_width) * TMP(beam_num[group]),
+			draw_a_scan_r (dot_temp1, TMP(a_scan_width), TMP(a_scan_height),
+					TMP(scan_data[group]) + TMP(a_scan_dot_qty) * TMP(beam_num[group]),
 					dot_temp, dot_temp, 
 					xoff, yoff, group);
 			break;

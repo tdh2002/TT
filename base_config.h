@@ -15,13 +15,6 @@
 #include "base_const.h"
 #include <gtk/gtk.h>
 
-/* display信息 */
-typedef struct _display_info
-{
-	guchar	display_group;		/*  0 All  1 current */
-
-} DISPLAY_INFO, *DISPLAY_INFO_P;
-
 /* 闸门信息 */
 typedef struct _gate_info
 {
@@ -408,11 +401,11 @@ typedef	struct _Config
 	guint	bcompress;			/* Display->Properties->compress */
 
 	st_Enc	encoder1[setup_MAX_QTY_ENCODER];
-	guchar	polarity;
-	guchar	e_type;
-	guint	encoder_resolution;
-	gint	origin;
 
+	guchar	inspection_type;	/* Scan->Inspection->Type On-line  Raster  Helicoidal */
+	guchar	inspection_scan;	/* Scan->Inspection->Scan Time  Encoder1,2  */
+	guchar	inspection_index;	/* Scan->Inspection->Index auto encoder1,2 topturn off  */
+	guint	inspection_scanspeed; /* Scan->Inspection->Index scanspeed */
 	guchar	i_type;
 	guchar	i_scan;
 	guchar	i_index;
@@ -617,6 +610,15 @@ extern guint	get_enc_resolution (CONFIG *p, gint enc_id);
 extern void		set_enc_resolution (CONFIG *p, guint data, gint enc_id);
 extern guint	get_enc_origin (CONFIG *p, gint enc_id);
 extern void		set_enc_origin (CONFIG *p, guint data, gint enc_id);
+/* 设置scan属性 */
+extern guchar	get_inspec_type (CONFIG *p);			
+extern void		set_inspec_type (CONFIG *p, guchar data);
+extern guchar	get_inspec_source (CONFIG *p);			
+extern void		set_inspec_source (CONFIG *p, guchar data);
+extern guchar	get_inspec_index (CONFIG *p);			
+extern void		set_inspec_index (CONFIG *p, guchar data);
+extern guint	get_inspec_speed (CONFIG *p);
+extern void		set_inspec_speed (CONFIG *p, guint data);
 
 
 /* group操作 */

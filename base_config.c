@@ -885,33 +885,98 @@ void set_cur_encoder (CONFIG *p, gboolean data)
 /* 设置encoder属性 */
 guchar get_enc_polarity (CONFIG *p, gint enc_id)
 {
-	g_assert ((enc_id == 1) || (enc_id ==0));
+	g_assert ((enc_id == 1) || (enc_id == 0));
 	return p->encoder1[enc_id].Polarity;
 }
 
 void set_enc_polarity (CONFIG *p, guchar data, gint enc_id)
 {
-	g_assert ((enc_id == 1) || (enc_id ==0));
+	g_assert ((enc_id == 1) || (enc_id == 0));
+	g_assert ((data == 1) || (data == 0));
 	p->encoder1[enc_id].Polarity = data;
 }
 
 guchar get_enc_type (CONFIG *p, gint enc_id)
-{}
+{
+	g_assert ((enc_id == 1) || (enc_id == 0));
+	return p->encoder1[enc_id].Type;
+}
 
 void set_enc_type (CONFIG *p, guchar data, gint enc_id)
-{}
+{
+	g_assert ((enc_id == 1) || (enc_id == 0));
+	g_assert (data < 9);
+	p->encoder1[enc_id].Type = data;
+}
 
 guint get_enc_resolution (CONFIG *p, gint enc_id)
-{}
+{
+	g_assert ((enc_id == 1) || (enc_id == 0));
+	return p->encoder1[enc_id].Resolution;
+}
 
 void set_enc_resolution (CONFIG *p, guint data, gint enc_id)
-{}
+{
+	g_assert ((enc_id == 1) || (enc_id == 0));
+	p->encoder1[enc_id].Resolution = data;
+}
 
 guint get_enc_origin (CONFIG *p, gint enc_id)
-{}
+{
+	g_assert ((enc_id == 1) || (enc_id == 0));
+	return p->encoder1[enc_id].Origin;
+}
 
 void set_enc_origin (CONFIG *p, guint data, gint enc_id)
-{}
+{
+	g_assert ((enc_id == 1) || (enc_id == 0));
+	p->encoder1[enc_id].Origin = data;
+}
+
+/* 设置scan属性 */
+guchar get_inspec_type (CONFIG *p)
+{
+	return p->inspection_type;
+}
+
+void set_inspec_type (CONFIG *p, guchar data)
+{
+	g_assert (data < 3);
+	p->inspection_type = data;
+}
+
+guchar get_inspec_source (CONFIG *p)
+{
+	return p->inspection_scan;
+}
+
+void set_inspec_source (CONFIG *p, guchar data)
+{
+	g_assert (data < 3);
+	p->inspection_scan = data;
+}
+
+guchar get_inspec_index (CONFIG *p)
+{
+	return p->inspection_index;
+}
+
+void set_inspec_index (CONFIG *p, guchar data)
+{
+	g_assert (data < 5);
+	p->inspection_index = data;
+}
+
+guint get_inspec_speed (CONFIG *p) 
+{
+	return p->inspection_scanspeed;
+}
+
+void set_inspec_speed (CONFIG *p, guint data)
+{
+	p->inspection_scanspeed = data;
+}
+
 
 /* group操作*/
 void grpcpy (CONFIG *p, guint dst, guint src)		/* 把src group 配置复制到 dst group */

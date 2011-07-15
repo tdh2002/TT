@@ -184,14 +184,17 @@ static void set_config (guint groupid)
 	LAW_VAL (Depth_end)	=	2000;
 
 	set_cur_encoder (pp->p_config, ENCODER_1);
-	CFG(polarity)=0;  /* 0 Normal */
-	CFG(e_type)=0;  /* 0 Clock/Dir */
-	CFG(encoder_resolution)=1000;
-	CFG(origin)=0;
+	set_enc_polarity (pp->p_config, ENC_NORMAL, get_cur_encoder (pp->p_config));
+	set_enc_type (pp->p_config, ENC_CLOCK_DIR, get_cur_encoder (pp->p_config));
+	set_enc_resolution (pp->p_config, 1000, get_cur_encoder (pp->p_config));
+	set_enc_origin (pp->p_config, 0, get_cur_encoder (pp->p_config));
+
+	set_inspec_type (pp->p_config, TYPE_ONE_LINE);
 	CFG(i_type)=0;  /* 0  One-Line Scan */
 	CFG(i_scan)=0;  /* 0 Time */
 	CFG(i_index)=1;  /* 1   Encoder 1 */
 	CFG(scanspeed)=10.0;
+
 	CFG(scanspeed_rpm)=10.0;
 	CFG(indexspeed)=10.0;
 	CFG(scan_start)=0.0;
@@ -466,6 +469,7 @@ void send_focal_spi (guint group)
 void init_group_spi (guint group)
 {
 	gint tmp = 0, tt[4];
+	gint temp_prf;
 	get_prf();
 	if (GROUP_VAL_POS(group, filter) == 0)
 	{
@@ -539,8 +543,10 @@ void init_group_spi (guint group)
 /*		TMP(group_spi[group]).idel_time	= 
 			100000000 / (GROUP_VAL_POS(group, prf) / (10.0 * CFG(prf_compress))) - 2048 - TMP(group_spi[group]).rx_time;
 			*/
+	temp_prf = TMP(beam_qty[group]) * GROUP_VAL_POS(group, prf);
 	TMP(group_spi[group]).idel_time		= 
-		100000000 / (GROUP_VAL_POS(group, prf) / 10) - 2048 - TMP(group_spi[group]).rx_time;
+/*		100000000 / (GROUP_VAL_POS(group, prf) / 10) - 2048 - TMP(group_spi[group]).rx_time;*/
+		100000000 / (temp_prf / (10)) - 2048 - TMP(group_spi[group]).rx_time;
 
 	TMP(group_spi[group]).gate_a_height	= GROUP_VAL_POS(group, gate[0].height);
 	TMP(group_spi[group]).gate_a_start	= GROUP_VAL_POS(group, gate[0].start) / 10;

@@ -2803,8 +2803,8 @@ void draw_area_all()
 							set_drawarea_property (&(pp->draw_area[1]), S_SCAN_A, 0);
 							draw_area_ (pp->hbox_area[0], &(pp->draw_area[1]), 405, 425);
 							gtk_widget_show (pp->hbox_area[0]);
-							set_scan_config (0, A_SCAN_R, 230, 230, 390, 0, 0, get_current_group(pp->p_config));
-							set_scan_config (1, S_SCAN_A, 230, 355, 390, 250, 0, get_current_group(pp->p_config));
+							set_scan_config (0, A_SCAN_R, 390, 230, 390, 0, 0, get_current_group(pp->p_config));
+							set_scan_config (1, S_SCAN_A, 390, 355, 390, 250, 0, get_current_group(pp->p_config));
 						} 
 						else if (LAW_VAL(Focal_type) == LINEAR_SCAN)
 						{
@@ -2816,8 +2816,8 @@ void draw_area_all()
 							set_drawarea_property (&(pp->draw_area[1]), S_SCAN_L, 0x08);
 							draw_area_ (pp->hbox_area[0], &(pp->draw_area[1]), 405, 425);
 							gtk_widget_show (pp->hbox_area[0]);
-							set_scan_config (0, A_SCAN_R, 230, 230, 390, 0, 0, get_current_group(pp->p_config));
-							set_scan_config (1, S_SCAN_L, 230, 355, 390, 250, 0, get_current_group(pp->p_config));
+							set_scan_config (0, A_SCAN_R, 390, 230, 390, 0, 0, get_current_group(pp->p_config));
+							set_scan_config (1, S_SCAN_L, 390, 355, 390, 250, 0, get_current_group(pp->p_config));
 						}
 					}
 				}
@@ -5929,10 +5929,10 @@ void draw3_data1(DRAW_UI_P p)
 					pp->x_pos = 596, pp->y_pos = 204-YOFFSET;
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 						draw3_pop_tt (data_701, NULL, 
-								menu_content[POLARITY + CFG(polarity)],
-								menu_content + POLARITY, 2, 1, CFG(polarity), 0);
+								menu_content[POLARITY + get_enc_polarity (pp->p_config, get_cur_encoder (pp->p_config))],
+								menu_content + POLARITY, 2, 1, get_enc_polarity (pp->p_config, get_cur_encoder (pp->p_config)), 0);
 					else 
-						draw3_popdown (menu_content[POLARITY + CFG(polarity)], 1, 0);
+						draw3_popdown (menu_content[POLARITY + get_enc_polarity (pp->p_config, get_cur_encoder (pp->p_config))], 1, 0);
 					if( ((CFG(i_type)==0) && (CFG(i_scan)==0)) || ((CFG(i_type)==2)&&(CFG(i_scan)==0)&& ((CFG(i_index)==0)||(CFG(i_index)==3))) )
 					{
 						gtk_widget_set_sensitive(pp->eventbox30[1],FALSE);
@@ -6700,7 +6700,7 @@ void draw3_data2(DRAW_UI_P p)
 								}
 								if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 								{
-									cur_value = CFG(origin)/1000.0;
+									cur_value = get_enc_origin (pp->p_config, get_cur_encoder (pp->p_config))/1000.0;
 									lower = -1000;
 									upper = 1000.00;
 									step = tmpf;
@@ -6711,7 +6711,7 @@ void draw3_data2(DRAW_UI_P p)
 								}
 								else 
 								{
-									cur_value = CFG(origin)/1000.0;
+									cur_value = get_enc_origin (pp->p_config, get_cur_encoder (pp->p_config))/1000.0;
 									digit = 2;
 									pos = 2;
 									unit = UNIT_MM;
@@ -6996,7 +6996,7 @@ void draw3_data2(DRAW_UI_P p)
 						case 4:
 							if (pp->ctype_pos == 0)
 							{
-								cur_value = CFG(encoder_resolution)/1000.0;
+								cur_value = get_enc_resolution (pp->p_config, get_cur_encoder (pp->p_config))/1000.0;
 								digit = 3;
 								pos = 2;
 								unit = UNIT_STEP_MM;
@@ -7419,7 +7419,7 @@ void draw3_data2(DRAW_UI_P p)
 						}
 						draw3_digit_stop (cur_value , units[unit], digit, pos, 0);
 					}
-					TMP(range_step_min) = ((gint)(tmpfm * 1000)+ 5) / 10 * 10;
+/*					TMP(range_step_min) = ((gint)(tmpfm * 1000)+ 5) / 10 * 10;*/
 					break;
 				case 1: /* Freq频带(Mhz)  P112 TAN1 */
 					pp->x_pos = 587, pp->y_pos = 288-YOFFSET;	
@@ -9054,17 +9054,16 @@ void draw3_data2(DRAW_UI_P p)
 					pp->x_pos = 540, pp->y_pos = 288-YOFFSET;
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 						draw3_pop_tt (data_702, NULL, 
-								menu_content[E_TYPE + CFG(e_type)],
-								menu_content + E_TYPE, 9, 2, CFG(e_type), 0);
+								menu_content[E_TYPE + get_enc_type (pp->p_config, get_cur_encoder (pp->p_config))],
+								menu_content + E_TYPE, 9, 2, get_enc_type (pp->p_config, get_cur_encoder (pp->p_config)), 0);
 					else 
-						draw3_popdown (menu_content[E_TYPE + CFG(e_type)], 2, 0);
+						draw3_popdown (menu_content[E_TYPE + get_enc_type (pp->p_config, get_cur_encoder (pp->p_config))], 2, 0);
 					if( ((CFG(i_type)==0) && (CFG(i_scan)==0)) || ((CFG(i_type)==2)&&(CFG(i_scan)==0)&& ((CFG(i_index)==0)||(CFG(i_index)==3))) )
 					{
 						gtk_widget_set_sensitive(pp->eventbox30[2],FALSE);
 						gtk_widget_set_sensitive(pp->eventbox31[2],FALSE);
 					}
 					break;
-
 				case 1:/*Scan -> Inspection -> Index p712 */
 					pp->x_pos = 570, pp->y_pos = 305;
 					if(CFG(i_type)==0)
@@ -11768,7 +11767,7 @@ void draw3_data3(DRAW_UI_P p)
 					}
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 					{
-						cur_value = CFG(encoder_resolution)/1000.0;
+						cur_value = get_enc_resolution (pp->p_config, get_cur_encoder (pp->p_config))/1000.0;
 						lower = 0.001;
 						upper = 100.00;
 						step = tmpf;
@@ -11779,7 +11778,7 @@ void draw3_data3(DRAW_UI_P p)
 					}
 					else 
 					{
-						cur_value = CFG(encoder_resolution)/1000.0;
+						cur_value = get_enc_resolution (pp->p_config, get_cur_encoder (pp->p_config))/1000.0;
 						digit = 3;
 						pos = 3;
 						unit = UNIT_STEP_MM;
@@ -13751,7 +13750,7 @@ void draw3_data4(DRAW_UI_P p)
 					}
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
 					{
-						cur_value = CFG(origin)/1000.0;
+						cur_value = get_enc_origin (pp->p_config, get_cur_encoder (pp->p_config))/1000.0;
 						lower = -1000;
 						upper = 1000.00;
 						step = tmpf;
@@ -13762,7 +13761,7 @@ void draw3_data4(DRAW_UI_P p)
 					}
 					else 
 					{
-						cur_value = CFG(origin)/1000.0;
+						cur_value = get_enc_origin (pp->p_config, get_cur_encoder (pp->p_config))/1000.0;
 						digit = 2;
 						pos = 4;
 						unit = UNIT_MM;
@@ -14107,8 +14106,6 @@ void draw3_data5(DRAW_UI_P p)
 						case 2:
 							if((pp->ctype_pos == 1) && (pp->cmode_pos == 0))
 							{
-
-
 								switch (TMP(range_reg))
 								{
 									case 0:	tmpf = GROUP_VAL(point_qty) / 100.0; break;
@@ -14187,7 +14184,7 @@ void draw3_data5(DRAW_UI_P p)
 									}
 									draw3_digit_stop (cur_value , units[unit], digit, pos, 11);
 								}
-								TMP(range_step_min) = ((gint)(tmpfm * 1000)+ 5) / 10 * 10;
+/*								TMP(range_step_min) = ((gint)(tmpfm * 1000)+ 5) / 10 * 10;*/
 							}
 
 							else if ((pp->ctype_pos == 1)&&(pp->cmode_pos == 2))
@@ -16000,7 +15997,10 @@ gpointer signal_thread1(gpointer arg)
 	/* 计算数据 */
 
 	/*  */
-/*	draw_field_value ();*/
+//	for (i = 0 ; i < 8; i++)
+//		g_print ("%08x\n", TMP(measure_data[0][i]));
+//	g_print ("\n");
+	draw_field_value ();
 	/* 复制波形到显存 */
 
 	pp->mark3 = 1;
@@ -16171,15 +16171,22 @@ gboolean on_finish(gpointer p)
 
 void draw_field_value ()
 {
+	gint	offset, k;
+	gfloat	ah;
 	gchar	*markup;
 	guint	*p_tmp = (guint *)(&TMP(measure_data_dis));
-	/* 4个测量值显示 */
+	for (offset = 0, k = 0 ; k < get_group_qty (pp->p_config); k++)
+		offset += TMP(beam_qty[k]);
+	ah = ((TMP(measure_data[offset + TMP(beam_num[get_current_group(pp->p_config)])][1]) >> 20) & 0xfff) / 4095.0;
+		/* 4个测量值显示 */
+//	markup = g_markup_printf_escaped ("<span foreground='white' font_desc='24'>%.2f</span>",
+//			p_tmp[get_reading_field1(pp->p_config)] / 100.0);
 	markup = g_markup_printf_escaped ("<span foreground='white' font_desc='24'>%.2f</span>",
-			p_tmp[get_reading_field1(pp->p_config)] / 100.0);
-//	gdk_threads_enter();
-//	gtk_label_set_markup (GTK_LABEL(pp->label[9]), markup);
-//	gdk_threads_leave();
-	g_idle_add(on_finish, markup);
+			ah);
+	gdk_threads_enter();
+	gtk_label_set_markup (GTK_LABEL(pp->label[9]), markup);
+	gdk_threads_leave();
+//	g_idle_add(on_finish, markup);
 	g_free (markup);
 
 }
