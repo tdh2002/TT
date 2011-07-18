@@ -2306,7 +2306,7 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 			//break;
 		case B_SCAN:
 			/* hrule1 */
-			if(CFG(i_scan)==0)	/* scan -> time */
+			if(get_inspec_source (pp->p_config)==0)	/* scan -> time */
 			{
 				p->hmin1 = 0;
 				p->hmax1 = 415 * 10.0/get_prf();
@@ -2372,7 +2372,7 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 		case C_SCAN:
 		case CC_SCAN:
 		case CCC_SCAN:
-			if ((CFG(i_type) == 0) && (LAW_VAL(Focal_type)==AZIMUTHAL_SCAN))
+			if ((get_inspec_type (pp->p_config) == 0) && (LAW_VAL(Focal_type)==AZIMUTHAL_SCAN))
 			{
 				//if(LAW_VAL(Focal_type)==AZIMUTHAL_SCAN)	/* hrule1 *//*灰色*/
 				//{
@@ -4236,7 +4236,7 @@ void draw3_data0(DRAW_UI_P p)
 			{
 				case 0:/*Scan -> Encoder -> Encoder p700 */
 					p->x_pos = 638, p->y_pos = 130-YOFFSET;
-					if ((CFG(i_type) == 1) || (CFG(i_type) == 2))
+					if ((get_inspec_type (pp->p_config) == 1) || (get_inspec_type (pp->p_config) == 2))
 					{
 						if ((p->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 							draw3_pop_tt (data_700, NULL, 
@@ -4247,8 +4247,8 @@ void draw3_data0(DRAW_UI_P p)
 					}
 					else
 					{
-						if ((CFG(i_scan) == 1) || (CFG(i_scan) == 2))
-							draw3_popdown (menu_content[ENCODER+(CFG(i_scan)-1)], 0, 0);
+						if ((get_inspec_source (pp->p_config) == 1) || (get_inspec_source (pp->p_config) == 2))
+							draw3_popdown (menu_content[ENCODER+(get_inspec_source (pp->p_config)-1)], 0, 0);
 						else
 							draw3_popdown (menu_content[ENCODER+ 0 ], 0, 0);
 						gtk_widget_set_sensitive(p->eventbox30[0],FALSE);
@@ -4260,10 +4260,10 @@ void draw3_data0(DRAW_UI_P p)
 					p->x_pos = 546, p->y_pos = 118-YOFFSET;
 					if ((p->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 						draw3_pop_tt (data_710, NULL, 
-								menu_content[I_TYPE+CFG(i_type)],
-								menu_content+I_TYPE, 3, 0,CFG(i_type), 0);
+								menu_content[I_TYPE+get_inspec_type (pp->p_config)],
+								menu_content+I_TYPE, 3, 0,get_inspec_type (pp->p_config), 0);
 					else 
-						draw3_popdown (menu_content[I_TYPE+CFG(i_type)], 0, 0);
+						draw3_popdown (menu_content[I_TYPE+get_inspec_type (pp->p_config)], 0, 0);
 					break;
 
 				case 2:/*Scan -> Area -> scan start p720 */
@@ -4275,7 +4275,7 @@ void draw3_data0(DRAW_UI_P p)
 						case 2:	tmpf = 0.1 * CFG(scan_resolution); break;
 						default:break;
 					}
-					if(CFG(i_type)==0 || CFG(i_type)==1)
+					if(get_inspec_type (pp->p_config)==0 || get_inspec_type (pp->p_config)==1)
 						/* Inspection -> Type 选择 One-Line Scan \ Raster Scan  时 */
 					{
 						if ((p->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
@@ -4532,7 +4532,7 @@ void draw3_data1(DRAW_UI_P p)
 					draw3_popdown (NULL, 1, 1);
 					if(pp->ctype_pos == 0)
 					{
-						if((CFG(i_type)==0)&&(CFG(i_scan)==0))/*Type选择one-Line Scan   &&   Scan选择Time时，此键不可调*/
+						if((get_inspec_type (pp->p_config)==0)&&(get_inspec_source (pp->p_config)==0))/*Type选择one-Line Scan   &&   Scan选择Time时，此键不可调*/
 						{
 							gtk_widget_set_sensitive(pp->eventbox30[1],FALSE);
 							gtk_widget_set_sensitive(pp->eventbox31[1],FALSE);
@@ -5933,7 +5933,7 @@ void draw3_data1(DRAW_UI_P p)
 								menu_content + POLARITY, 2, 1, get_enc_polarity (pp->p_config, get_cur_encoder (pp->p_config)), 0);
 					else 
 						draw3_popdown (menu_content[POLARITY + get_enc_polarity (pp->p_config, get_cur_encoder (pp->p_config))], 1, 0);
-					if( ((CFG(i_type)==0) && (CFG(i_scan)==0)) || ((CFG(i_type)==2)&&(CFG(i_scan)==0)&& ((CFG(i_index)==0)||(CFG(i_index)==3))) )
+					if( ((get_inspec_type (pp->p_config)==0) && (get_inspec_source (pp->p_config)==0)) || ((get_inspec_type (pp->p_config)==2)&&(get_inspec_source (pp->p_config)==0)&& ((get_inspec_index (pp->p_config)==0)||(get_inspec_index (pp->p_config)==3))) )
 					{
 						gtk_widget_set_sensitive(pp->eventbox30[1],FALSE);
 						gtk_widget_set_sensitive(pp->eventbox31[1],FALSE);
@@ -5944,17 +5944,17 @@ void draw3_data1(DRAW_UI_P p)
 					pp->x_pos = 580, pp->y_pos = 201-YOFFSET;
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 					{
-						if(CFG(i_type)==1)
+						if(get_inspec_type (pp->p_config)==1)
 							draw3_pop_tt (data_711, NULL, 
-									menu_content[I_SCAN+CFG(i_scan)],
-									menu_content+I_SCAN, 3, 1, CFG(i_scan), 0x01);
+									menu_content[I_SCAN+get_inspec_source (pp->p_config)],
+									menu_content+I_SCAN, 3, 1, get_inspec_source (pp->p_config), 0x01);
 						else
 							draw3_pop_tt (data_711, NULL, 
-									menu_content[I_SCAN+CFG(i_scan)],
-									menu_content+I_SCAN, 3, 1, CFG(i_scan), 0);
+									menu_content[I_SCAN+get_inspec_source (pp->p_config)],
+									menu_content+I_SCAN, 3, 1, get_inspec_source (pp->p_config), 0);
 					}
 					else 
-						draw3_popdown (menu_content[I_SCAN+CFG(i_scan)], 1, 0);
+						draw3_popdown (menu_content[I_SCAN+get_inspec_source (pp->p_config)], 1, 0);
 					break;
 
 				case 2:/*Scan -> Area -> scan end  p721 */
@@ -5967,7 +5967,7 @@ void draw3_data1(DRAW_UI_P p)
 						default:break;
 					}
 
-					if(CFG(i_type)==0 || CFG(i_type)==1)
+					if(get_inspec_type (pp->p_config)==0 || get_inspec_type (pp->p_config)==1)
 						/* Inspection -> Type 选择 One-Line Scan \ Raster Scan  时 */
 					{
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
@@ -9058,7 +9058,7 @@ void draw3_data2(DRAW_UI_P p)
 								menu_content + E_TYPE, 9, 2, get_enc_type (pp->p_config, get_cur_encoder (pp->p_config)), 0);
 					else 
 						draw3_popdown (menu_content[E_TYPE + get_enc_type (pp->p_config, get_cur_encoder (pp->p_config))], 2, 0);
-					if( ((CFG(i_type)==0) && (CFG(i_scan)==0)) || ((CFG(i_type)==2)&&(CFG(i_scan)==0)&& ((CFG(i_index)==0)||(CFG(i_index)==3))) )
+					if( ((get_inspec_type (pp->p_config)==0) && (get_inspec_source (pp->p_config)==0)) || ((get_inspec_type (pp->p_config)==2)&&(get_inspec_source (pp->p_config)==0)&& ((get_inspec_index (pp->p_config)==0)||(get_inspec_index (pp->p_config)==3))) )
 					{
 						gtk_widget_set_sensitive(pp->eventbox30[2],FALSE);
 						gtk_widget_set_sensitive(pp->eventbox31[2],FALSE);
@@ -9066,7 +9066,7 @@ void draw3_data2(DRAW_UI_P p)
 					break;
 				case 1:/*Scan -> Inspection -> Index p712 */
 					pp->x_pos = 570, pp->y_pos = 305;
-					if(CFG(i_type)==0)
+					if(get_inspec_type (pp->p_config)==0)
 					{
 						/*if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 							draw3_pop_tt (data_712, NULL, 
@@ -9079,16 +9079,16 @@ void draw3_data2(DRAW_UI_P p)
 						gtk_widget_set_sensitive(pp->eventbox31[2],FALSE);
 					}
 
-					else if(CFG(i_type)==1)
+					else if(get_inspec_type (pp->p_config)==1)
 					{
-						if(CFG(i_scan)==0)
-							CFG(i_scan)=1;
+						if(get_inspec_source (pp->p_config)==0)
+							set_inspec_source (pp->p_config, SCAN_ENCODER1);
 						/*if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 							draw3_pop_tt (data_712, NULL, 
-									menu_content[I_INDEX + CFG(i_index)],
-									menu_content + I_INDEX, 5, 2, CFG(i_index), 0);
+									menu_content[I_INDEX + get_inspec_index (pp->p_config)],
+									menu_content + I_INDEX, 5, 2, get_inspec_index (pp->p_config), 0);
 						else */
-						if(CFG(i_scan)==1)
+						if(get_inspec_source (pp->p_config)==1)
 							draw3_popdown (menu_content[I_INDEX + 2], 2, 0);
 						else
 							draw3_popdown (menu_content[I_INDEX + 1], 2, 0);
@@ -9100,19 +9100,19 @@ void draw3_data2(DRAW_UI_P p)
 					{
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 						{
-							if(CFG(i_scan)==1)
+							if(get_inspec_source (pp->p_config)==1)
 								menu_status = 0x12;
-							else if(CFG(i_scan)==2)
+							else if(get_inspec_source (pp->p_config)==2)
 								menu_status = 0x14;
 							else
 								menu_status = 0x10;
 
 							draw3_pop_tt (data_712, NULL, 
-									menu_content[I_INDEX + CFG(i_index)],
-									menu_content + I_INDEX, 5, 2, CFG(i_index), menu_status);
+									menu_content[I_INDEX + get_inspec_index (pp->p_config)],
+									menu_content + I_INDEX, 5, 2, get_inspec_index (pp->p_config), menu_status);
 						}
 						else 
-							draw3_popdown (menu_content[I_INDEX + CFG(i_index)], 2, 0);
+							draw3_popdown (menu_content[I_INDEX + get_inspec_index (pp->p_config)], 2, 0);
 					}
 					break;
 
@@ -9130,7 +9130,7 @@ void draw3_data2(DRAW_UI_P p)
 						if(get_unit(pp->p_config) == UNIT_MM)
 						{
 							cur_value = CFG(scan_resolution)/1000.0;
-							//cur_value = CFG(scanspeed)/100.0/get_prf();
+							//cur_value = get_inspec_speed (pp->p_config)/100.0/get_prf();
 							lower = 0.08;
 							upper = 357.0;
 							step = tmpf;
@@ -9141,7 +9141,7 @@ void draw3_data2(DRAW_UI_P p)
 						else
 						{
 							cur_value = CFG(scan_resolution)/1000.0*0.03937;
-							//cur_value = CFG(scanspeed)/100.0/get_prf()*0.03937;
+							//cur_value = get_inspec_speed (pp->p_config)/100.0/get_prf()*0.03937;
 							lower = 0.001;
 							upper = 9.281;
 							step = tmpf/10.0;
@@ -9156,7 +9156,7 @@ void draw3_data2(DRAW_UI_P p)
 						if(get_unit(pp->p_config) == UNIT_MM)
 						{
 							cur_value = CFG(scan_resolution)/1000.0;
-							//cur_value = CFG(scanspeed)/100.0/get_prf();
+							//cur_value = get_inspec_speed (pp->p_config)/100.0/get_prf();
 							digit = 2;
 							pos = 2;
 							unit = UNIT_MM;
@@ -9164,7 +9164,7 @@ void draw3_data2(DRAW_UI_P p)
 						else
 						{
 							cur_value = CFG(scan_resolution)/1000.0*0.03937;
-							//cur_value = CFG(scanspeed)/100.0/get_prf()*0.03937;
+							//cur_value = get_inspec_speed (pp->p_config)/100.0/get_prf()*0.03937;
 							digit = 3;
 							pos = 2;
 							unit = UNIT_INCH;
@@ -9602,7 +9602,7 @@ void draw3_data3(DRAW_UI_P p)
 						case 1:
 							if(pp->ctype_pos == 0)
 							{
-								if ((CFG(i_type) == 1) || (CFG(i_type) == 2))
+								if ((get_inspec_type (pp->p_config) == 1) || (get_inspec_type (pp->p_config) == 2))
 								{
 									if ((p->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 										draw3_pop_tt (data_700, NULL, 
@@ -9613,8 +9613,8 @@ void draw3_data3(DRAW_UI_P p)
 								}
 								else
 								{
-									if ((CFG(i_scan) == 1) || (CFG(i_scan) == 2))
-										draw3_popdown (menu_content[ENCODER+(CFG(i_scan)-1)], 3, 0);
+									if ((get_inspec_source (pp->p_config) == 1) || (get_inspec_source (pp->p_config) == 2))
+										draw3_popdown (menu_content[ENCODER+(get_inspec_source (pp->p_config)-1)], 3, 0);
 									else
 										draw3_popdown (menu_content[ENCODER+ 0 ], 3, 0);
 									gtk_widget_set_sensitive(p->eventbox30[3],FALSE);
@@ -11784,7 +11784,7 @@ void draw3_data3(DRAW_UI_P p)
 						unit = UNIT_STEP_MM;
 						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					}
-					if( ((CFG(i_type)==0) && (CFG(i_scan)==0)) || ((CFG(i_type)==2)&&(CFG(i_scan)==0)&& ((CFG(i_index)==0)||(CFG(i_index)==3))) )
+					if( ((get_inspec_type (pp->p_config)==0) && (get_inspec_source (pp->p_config)==0)) || ((get_inspec_type (pp->p_config)==2)&&(get_inspec_source (pp->p_config)==0)&& ((get_inspec_index (pp->p_config)==0)||(get_inspec_index (pp->p_config)==3))) )
 					{
 						gtk_widget_set_sensitive(pp->eventbox30[3],FALSE);
 						gtk_widget_set_sensitive(pp->eventbox31[3],FALSE);
@@ -11799,7 +11799,7 @@ void draw3_data3(DRAW_UI_P p)
 						default:break;
 					}
 
-					if(CFG(i_scan)==0)
+					if(get_inspec_source (pp->p_config)==0)
 						content_pos=0;
 					else
 						content_pos=6;
@@ -11808,7 +11808,7 @@ void draw3_data3(DRAW_UI_P p)
 					{
 						if(UNIT_MM == get_unit(pp->p_config))
 						{
-							cur_value = CFG(scanspeed) / 1000.0;
+							cur_value = get_inspec_speed (pp->p_config) / 1000.0;
 							lower = 1.0;
 							upper = 6000.0;
 							step = tmpf;
@@ -11818,7 +11818,7 @@ void draw3_data3(DRAW_UI_P p)
 						}
 						else
 						{
-							cur_value = CFG(scanspeed) / 1000.0 * 0.03937;
+							cur_value = get_inspec_speed (pp->p_config) / 1000.0 * 0.03937;
 							lower = 0.039;
 							upper = 236.220;
 							step = tmpf;
@@ -11832,14 +11832,14 @@ void draw3_data3(DRAW_UI_P p)
 					{
 						if(UNIT_MM == get_unit(pp->p_config))
 						{
-							cur_value = CFG(scanspeed)/1000.0;
+							cur_value = get_inspec_speed (pp->p_config)/1000.0;
 							digit = 2;
 							pos = 3;
 							unit = UNIT_MM_S;
 						}
 						else
 						{
-							cur_value = CFG(scanspeed)/1000.0 * 0.03937;
+							cur_value = get_inspec_speed (pp->p_config)/1000.0 * 0.03937;
 							digit = 3;
 							pos = 3;
 							unit = UNIT_INCH_S;
@@ -11856,7 +11856,7 @@ void draw3_data3(DRAW_UI_P p)
 						case 2:	tmpf = 0.1 * CFG(index_resolution); break;
 						default:break;
 					}
-					if(CFG(i_type)==1 || CFG(i_type)==2)
+					if(get_inspec_type (pp->p_config)==1 || get_inspec_type (pp->p_config)==2)
 						/* Inspection -> Type 选择 Helicoidal Scan \ Raster Scan  时 */
 					{
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
@@ -13767,7 +13767,7 @@ void draw3_data4(DRAW_UI_P p)
 						unit = UNIT_MM;
 						draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 					}
-					if( ((CFG(i_type)==0) && (CFG(i_scan)==0)) || ((CFG(i_type)==2)&&(CFG(i_scan)==0)&& ((CFG(i_index)==0)||(CFG(i_index)==3))) )
+					if( ((get_inspec_type (pp->p_config)==0) && (get_inspec_source (pp->p_config)==0)) || ((get_inspec_type (pp->p_config)==2)&&(get_inspec_source (pp->p_config)==0)&& ((get_inspec_index (pp->p_config)==0)||(get_inspec_index (pp->p_config)==3))) )
 					{
 						gtk_widget_set_sensitive(pp->eventbox30[4],FALSE);
 						gtk_widget_set_sensitive(pp->eventbox31[4],FALSE);
@@ -13775,7 +13775,7 @@ void draw3_data4(DRAW_UI_P p)
 					break;
 
 				case 1: /* Max.Scan Speed p714 */
-					if(CFG(i_type)==2)
+					if(get_inspec_type (pp->p_config)==2)
 					{
 						/* 当前步进 */
 						switch (TMP(scanspeed_rpm_reg))
@@ -13786,7 +13786,7 @@ void draw3_data4(DRAW_UI_P p)
 							default:break;
 						}
 
-						if(CFG(i_scan)==0)
+						if(get_inspec_source (pp->p_config)==0)
 							content_pos=0;
 						else
 							content_pos=6;
@@ -13828,7 +13828,7 @@ void draw3_data4(DRAW_UI_P p)
 						default:break;
 					}
 
-					if(CFG(i_type)==1 || CFG(i_type)==2)
+					if(get_inspec_type (pp->p_config)==1 || get_inspec_type (pp->p_config)==2)
 						/* Inspection -> Type 选择 Helicoidal Scan \ Raster Scan  时 */
 					{
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
@@ -15296,14 +15296,14 @@ void draw3_data5(DRAW_UI_P p)
 			{
 				case 0:/*Scan -> Encodr -> preset p705 */
 					draw3_popdown(NULL,5,1);
-					if( ((CFG(i_type)==0) && (CFG(i_scan)==0)) || ((CFG(i_type)==2)&&(CFG(i_scan)==0)&& ((CFG(i_index)==0)||(CFG(i_index)==3))) )
+					if( ((get_inspec_type (pp->p_config)==0) && (get_inspec_source (pp->p_config)==0)) || ((get_inspec_type (pp->p_config)==2)&&(get_inspec_source (pp->p_config)==0)&& ((get_inspec_index (pp->p_config)==0)||(get_inspec_index (pp->p_config)==3))) )
 					{
 						gtk_widget_set_sensitive(pp->eventbox30[5],FALSE);
 						gtk_widget_set_sensitive(pp->eventbox31[5],FALSE);
 					}
 					break;
 				case 1: /* Max.Index  Speed  p715 */
-					if(CFG(i_type)==2)
+					if(get_inspec_type (pp->p_config)==2)
 					{
 						/* 当前步进 */
 						switch (TMP(indexspeed_reg))
@@ -15314,7 +15314,7 @@ void draw3_data5(DRAW_UI_P p)
 							default:break;
 						}
 
-						if(CFG(i_scan)==0)
+						if(get_inspec_source (pp->p_config)==0)
 							content_pos=0;
 						else
 							content_pos=7;
@@ -15359,7 +15359,7 @@ void draw3_data5(DRAW_UI_P p)
 						default:break;
 					}
 
-					if(CFG(i_type)==1 || CFG(i_type)==2)
+					if(get_inspec_type (pp->p_config)==1 || get_inspec_type (pp->p_config)==2)
 						/* Inspection -> Type 选择 Helicoidal Scan \ Raster Scan  时 */
 					{
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 5))

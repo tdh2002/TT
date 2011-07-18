@@ -190,10 +190,9 @@ static void set_config (guint groupid)
 	set_enc_origin (pp->p_config, 0, get_cur_encoder (pp->p_config));
 
 	set_inspec_type (pp->p_config, TYPE_ONE_LINE);
-	CFG(i_type)=0;  /* 0  One-Line Scan */
-	CFG(i_scan)=0;  /* 0 Time */
-	CFG(i_index)=1;  /* 1   Encoder 1 */
-	CFG(scanspeed)=10.0;
+	set_inspec_source (pp->p_config, SCAN_TIME);
+	set_inspec_index (pp->p_config, INDEX_ENCODER1);
+	set_inspec_speed (pp->p_config, 10);
 
 	CFG(scanspeed_rpm)=10.0;
 	CFG(indexspeed)=10.0;

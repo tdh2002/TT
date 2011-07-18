@@ -5015,7 +5015,7 @@ void data_704 (GtkSpinButton *spinbutton, gpointer data) /* Origin */
 
 void data_710 (GtkMenuItem *menuitem, gpointer data) /* Scan -> Inspection -> type */
 {
-	CFG(i_type) = (guchar) (GPOINTER_TO_UINT (data));
+	set_inspec_type (pp->p_config, (guchar) (GPOINTER_TO_UINT (data)));
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
 	draw_area_all ();
@@ -5024,7 +5024,7 @@ void data_710 (GtkMenuItem *menuitem, gpointer data) /* Scan -> Inspection -> ty
 
 void data_711 (GtkMenuItem *menuitem, gpointer data) /* Scan -> Inspection -> scan */
 {
-	CFG(i_scan) = (guchar) (GPOINTER_TO_UINT (data));
+	set_inspec_source (pp->p_config, (guchar) (GPOINTER_TO_UINT (data)));
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
 	gtk_widget_queue_draw (pp->vboxtable);
@@ -5034,7 +5034,7 @@ void data_711 (GtkMenuItem *menuitem, gpointer data) /* Scan -> Inspection -> sc
 
 void data_712 (GtkMenuItem *menuitem, gpointer data) /* Scan -> Inspection -> Index */
 {
-	CFG(i_index) = (guchar) (GPOINTER_TO_UINT (data));
+	set_inspec_index (pp->p_config,(guchar) (GPOINTER_TO_UINT (data)));
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
 }
@@ -5042,9 +5042,9 @@ void data_712 (GtkMenuItem *menuitem, gpointer data) /* Scan -> Inspection -> In
 void data_713 (GtkSpinButton *spinbutton, gpointer data) /*scan_speed*/
 {
 	if(UNIT_MM == get_unit(pp->p_config))
-		CFG(scanspeed) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
+		set_inspec_speed (pp->p_config,	(guint) (gtk_spin_button_get_value (spinbutton) * 1000.0));
 	else
-		CFG(scanspeed) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 / 0.03937 );
+		set_inspec_speed (pp->p_config, (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 / 0.03937 ));
 }
 
 void data_714 (GtkSpinButton *spinbutton, gpointer data) /*scan_speed*/
