@@ -4,14 +4,14 @@
  */
 
 #include "drawui.h"
-#include "drawuif.h"		/* 计算聚焦法则的头文件 */
+#include "focallaw.h"		/* 计算聚焦法则的头文件 */
 #include "base_config.h"
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
 #include <gdk/gdkkeysyms.h>
 
-extern void focal_law(gpointer data,gint *TimeDelay);/*回调函数*/
+extern void focal_law(gpointer data);/*回调函数*/
 
 static int handler_key(guint keyval, gpointer data);
 
@@ -336,8 +336,8 @@ static void setup_para(PARAMETER_P p, guint group)
     p->wedge_p->wg_trans_vel	= 0;
     p->wedge_p->wg_density= 7.8;/* 密度 */
     p->wedge_p->wg_heigh_fir	= GROUP_VAL_POS (group, wedge.Height) / 1000.0;	/*第一阵元高度mm*/
-    p->wedge_p->wg_pri_elem_offset_fir = GROUP_VAL_POS (group, wedge.Primary_offset) / 1000.0;/*11111111111第一主轴阵元偏移mm*/
-    p->wedge_p->wg_sec_elem_offset_fir = GROUP_VAL_POS (group, wedge.Secondary_offset) / 1000.0;/*11111111111第一次轴阵元偏移mm*/
+    p->wedge_p->wg_pri_elem_offset_fir = fabs(GROUP_VAL_POS (group, wedge.Primary_offset) / 1000.0);/*11111111111第一主轴阵元偏移mm*/
+    p->wedge_p->wg_sec_elem_offset_fir = fabs(GROUP_VAL_POS (group, wedge.Secondary_offset) / 1000.0);/*11111111111第一次轴阵元偏移mm*/
     p->wedge_p->wg_pri_axis_reference = 0;/*主轴楔块参考位置mm*/
     p->wedge_p->wg_sec_axis_reference = 0;/*次轴楔块参考位置mm*/
     p->wedge_p->wg_length = 1;/*楔块长度mm*/
@@ -398,23 +398,26 @@ static void setup_para(PARAMETER_P p, guint group)
     p->specimen->Inspection_od_id[0] = 0;  
     p->specimen->Inspection_od_id[1] = 1;  
 
-	/* 聚焦点 */
+    /* 聚焦点 */
     p->focal_point->focal_focus_type = LAW_VAL(Focal_point_type);	/* 0 half path 1 TURE DEPTH */
-//  p->focal_point->focal_focus_point_start = LAW_VAL_POS (group, Focus_depth) / 1000.0;	/* type =0 是 声程 type =1 是深度 */
-    p->focal_point->offset_start = LAW_VAL(Position_start)/1000.0 ;//true depth 何凡添加
+//  p->focal_point->focal_focus_point_start = LAW_VAL_POS (group, Focus_depth) / 1000.0;	/* type =0 是 声程 type =1 是深度 */   
     p->focal_point->focal_focus_point_start = LAW_VAL(Position_start)/ 1000.0;	/* type =0 是 声程 type =1 是深度 */
     p->focal_point->focal_focus_point_stop = LAW_VAL(Position_end)/ 1000.0; 
     p->focal_point->focal_focus_point_resolution = LAW_VAL(Position_step)/ 1000.0;
-//	g_print("focal point parament %d %f %f %f\n",p->focal_point->focal_focus_type,p->focal_point->focal_focus_point_start,p->focal_point->focal_focus_point_stop,p->focal_point->focal_focus_point_resolution);
+    p->focal_point->offset_start = LAW_VAL(Position_start)/1000.0 ;//true depth 何凡添加
+    p->focal_point->offset_end = 0;//
+    p->focal_point->depth_start = 0;//
+    p->focal_point->depth_end = 0;//
     
     p->element_sel->pri_axis_ape = LAW_VAL_POS (group, Elem_qty);
     p->element_sel->sec_axis_ape = 1;
     p->element_sel->primary_axis_s = LAW_VAL_POS (group, First_tx_elem);
     p->element_sel->primary_axis_e = LAW_VAL_POS (group, Last_tx_elem)-LAW_VAL_POS (group, Elem_qty)+1;//
     p->element_sel->primary_axis_r = LAW_VAL_POS (group, Elem_step);//
-    g_print("#################3Element Start %d\n",p->element_sel->primary_axis_s);
-	g_print ("###############p->element_sel->pri_axis_ape = %d\n p->probe_p->ele_num_pri= %d\n",
-			p->element_sel->pri_axis_ape, p->probe_p->ele_num_pri);
+
+    p->location->rotation_x = 0;
+    p->location->rotation_y = 0;
+    p->location->rotation_z = 90;
 }
 
 static void save_cal_law(gint offset, gint group, PARAMETER_P p)
@@ -453,7 +456,6 @@ static void save_cal_law(gint offset, gint group, PARAMETER_P p)
 			TMP(focal_law_all_elem[offset + i][j]).R_delay	= p->timedelay[i][k];
 			TMP(focal_law_all_elem[offset + i][j]).Amplitude = CFG (voltage_pa); 
 			TMP(focal_law_all_elem[offset + i][j]).P_width	= GROUP_VAL_POS (group, pulser_width) / 100; 
-			g_print("-----p->timedelay[%d][%d] =%d \n",i,k,p->timedelay[i][k]);
 		} 
 
 	} 
@@ -461,7 +463,6 @@ static void save_cal_law(gint offset, gint group, PARAMETER_P p)
 
 void cal_focal_law (guint group)
 {
-	gint G_Delay[256*33];
 	gint offset, k;
 	PARAMETER_P p;
 	
@@ -474,19 +475,21 @@ void cal_focal_law (guint group)
        SPECIMEN     specimen;
        FOCAL_POINT  focal_point;
        ELEMENT_SEL  element_sel;
+       LOCATION     location;
 
-       p->probe_p	= &probe_p;
+        p->probe_p	= &probe_p;
 	p->wedge_p	= &wedge_p;
 	p->wedge_r	= &wedge_r;
 	p->beam_angle = &beam_angle;
 	p->specimen	= &specimen;
 	p->focal_point = &focal_point;
 	p->element_sel = &element_sel;
+        p->location = &location;
 	p->k = 0 ;	            
     
 	setup_para(p, group);
 	/*  */
-	focal_law(p, G_Delay);
+	focal_law(p);
 
 	
 	/* 把聚集法则信息保存起来 */
