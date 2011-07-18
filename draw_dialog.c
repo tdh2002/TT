@@ -3708,7 +3708,7 @@ gboolean load_dialog_menu3_7(GtkWidget *widget,GdkEventButton *event,gpointer *u
 		{
 			if ( strcmp(menu->tmp_char[i],"") != 0 )
 			{
-				gtk_event_box_set_visible_window(menu->tmp_hbox[i],TRUE);
+				gtk_event_box_set_visible_window(GTK_EVENT_BOX(menu->tmp_hbox[i]),TRUE);
 
 				gtk_widget_set_sensitive(menu->tmp_hbox[i],TRUE);
 
@@ -3716,7 +3716,7 @@ gboolean load_dialog_menu3_7(GtkWidget *widget,GdkEventButton *event,gpointer *u
 			}
 			else
 			{
-				gtk_event_box_set_visible_window(menu->tmp_hbox[i],FALSE);
+				gtk_event_box_set_visible_window(GTK_EVENT_BOX(menu->tmp_hbox[i]),FALSE);
 	
 				gtk_widget_set_sensitive(menu->tmp_hbox[i],FALSE);
 
@@ -3725,7 +3725,7 @@ gboolean load_dialog_menu3_7(GtkWidget *widget,GdkEventButton *event,gpointer *u
         
 			update_widget_bg(menu->tmp_hbox[i], /*backpic[1]*/1);
 
-			gtk_label_set_text(menu->tmp_label[i],menu->tmp_char[i]);
+			gtk_label_set_text(GTK_LABEL(menu->tmp_label[i]),menu->tmp_char[i]);
 		}
 	}
 
@@ -3735,7 +3735,7 @@ gboolean load_dialog_menu3_7(GtkWidget *widget,GdkEventButton *event,gpointer *u
 		{
 			if ( strcmp(menu->tmp_char[i],"") != 0 )
 			{
-				gtk_event_box_set_visible_window(menu->tmp_hbox[i],TRUE);
+				gtk_event_box_set_visible_window(GTK_EVENT_BOX(menu->tmp_hbox[i]),TRUE);
 
 				gtk_widget_set_sensitive(menu->tmp_hbox[i],TRUE);
                 
@@ -3746,7 +3746,7 @@ gboolean load_dialog_menu3_7(GtkWidget *widget,GdkEventButton *event,gpointer *u
 			}
 			else
 			{
-				gtk_event_box_set_visible_window(menu->tmp_hbox[i],FALSE);
+				gtk_event_box_set_visible_window(GTK_EVENT_BOX(menu->tmp_hbox[i]),FALSE);
 	
 				gtk_widget_set_sensitive(menu->tmp_hbox[i],FALSE);
 
@@ -3755,7 +3755,7 @@ gboolean load_dialog_menu3_7(GtkWidget *widget,GdkEventButton *event,gpointer *u
         
 			update_widget_bg(menu->tmp_hbox[i], /*backpic[1]*/1);
 
-			gtk_label_set_text(menu->tmp_label[i],menu->tmp_char[i]);
+			gtk_label_set_text(GTK_LABEL(menu->tmp_label[i]),menu->tmp_char[i]);
 		}
 	}
 
@@ -3765,7 +3765,7 @@ gboolean load_dialog_menu3_7(GtkWidget *widget,GdkEventButton *event,gpointer *u
 		{
 			if ( strcmp(menu->tmp_char[i],"") != 0 )
 			{
-				gtk_event_box_set_visible_window(menu->tmp_hbox[i],TRUE);
+				gtk_event_box_set_visible_window(GTK_EVENT_BOX(menu->tmp_hbox[i]),TRUE);
 
 				gtk_widget_set_sensitive(menu->tmp_hbox[i],TRUE);
                 
@@ -3776,7 +3776,7 @@ gboolean load_dialog_menu3_7(GtkWidget *widget,GdkEventButton *event,gpointer *u
 			}
 			else
 			{
-				gtk_event_box_set_visible_window(menu->tmp_hbox[i],FALSE);
+				gtk_event_box_set_visible_window(GTK_EVENT_BOX(menu->tmp_hbox[i]),FALSE);
 	
 				gtk_widget_set_sensitive(menu->tmp_hbox[i],FALSE);
 
@@ -3785,7 +3785,7 @@ gboolean load_dialog_menu3_7(GtkWidget *widget,GdkEventButton *event,gpointer *u
         
 			update_widget_bg(menu->tmp_hbox[i], /*backpic[1]*/1);
 
-			gtk_label_set_text(menu->tmp_label[i],menu->tmp_char[i]);
+			gtk_label_set_text(GTK_LABEL(menu->tmp_label[i]),menu->tmp_char[i]);
 		}
 	}
 
@@ -3795,7 +3795,7 @@ gboolean load_dialog_menu3_7(GtkWidget *widget,GdkEventButton *event,gpointer *u
 		{
 			if ( strcmp(menu->tmp_char[i],"") != 0 )
 			{
-				gtk_event_box_set_visible_window(menu->tmp_hbox[i],TRUE);
+				gtk_event_box_set_visible_window(GTK_EVENT_BOX(menu->tmp_hbox[i]),TRUE);
 
 				gtk_widget_set_sensitive(menu->tmp_hbox[i],TRUE);
 
@@ -3803,7 +3803,7 @@ gboolean load_dialog_menu3_7(GtkWidget *widget,GdkEventButton *event,gpointer *u
 			}
 			else
 			{
-				gtk_event_box_set_visible_window(menu->tmp_hbox[i],FALSE);
+				gtk_event_box_set_visible_window(GTK_EVENT_BOX(menu->tmp_hbox[i]),FALSE);
 	
 				gtk_widget_set_sensitive(menu->tmp_hbox[i],FALSE);
 
@@ -3812,7 +3812,7 @@ gboolean load_dialog_menu3_7(GtkWidget *widget,GdkEventButton *event,gpointer *u
         
 			update_widget_bg(menu->tmp_hbox[i], /*backpic[1]*/1);
 
-			gtk_label_set_text(menu->tmp_label[i],menu->tmp_char[i]);
+			gtk_label_set_text(GTK_LABEL(menu->tmp_label[i]),menu->tmp_char[i]);
 		}
 	}
 
@@ -3842,13 +3842,7 @@ gboolean callback_box_3_7_1(GtkWidget *widget,GdkEventButton *event,gpointer *us
 
 	int pos;
 
-    GtkWidget *entry;
-
-	gchar *entry_text;
-
-	pos = ( * (define_probe_p->pos_tmp) );
-
-	entry =  define_probe_p->entry_tmp;
+	pos = (*(define_probe_p->pos_tmp));
 
 	//browse -> select and close
 	if (pos == 2)
@@ -3861,9 +3855,8 @@ gboolean callback_box_3_7_1(GtkWidget *widget,GdkEventButton *event,gpointer *us
 	{
 		g_printf("new -> serial number\n");
 
-        entry_text = gtk_entry_get_text(entry);
-
-		memcpy(define_probe_p->probe_p_tmp->Serial,entry_text,20);
+		memcpy (define_probe_p->probe_p_tmp->Serial,
+				gtk_entry_get_text(GTK_ENTRY(define_probe_p->entry_tmp)),20);
 
 		g_printf("%s\n",define_probe_p->probe_p_tmp->Serial);
 	}
@@ -3935,8 +3928,6 @@ gboolean callback_box_3_7_4(GtkWidget *widget,GdkEventButton *event,gpointer *us
 
 	_DEFINE_PROBE_P define_probe_p = (_DEFINE_PROBE_P) user_data;
 
-	guint grp = get_current_group(pp->p_config);
-	
 	int pos;
 
 	pos = ( * (define_probe_p->pos_tmp) );
@@ -4132,13 +4123,13 @@ void draw_define_probe()
 
 		if ( strcmp(char_2_1_1_1_2[i],"") != 0 )
 		{
-			gtk_event_box_set_visible_window(vbox_2_1_1_1_2[i],TRUE);
+			gtk_event_box_set_visible_window(GTK_EVENT_BOX(vbox_2_1_1_1_2[i]),TRUE);
 		
 			gtk_widget_set_sensitive(vbox_2_1_1_1_2[i],TRUE);
 		}
 		else
 		{
-			gtk_event_box_set_visible_window(vbox_2_1_1_1_2[i],FALSE);
+			gtk_event_box_set_visible_window(GTK_EVENT_BOX(vbox_2_1_1_1_2[i]),FALSE);
 		
 			gtk_widget_set_sensitive(vbox_2_1_1_1_2[i],FALSE);
 		}
@@ -4162,13 +4153,13 @@ void draw_define_probe()
 
 		if ( strcmp(char_1_1_3_1_1[i],"") != 0 )
 		{
-			gtk_event_box_set_visible_window(vbox_1_1_3_1_1[i],TRUE);
+			gtk_event_box_set_visible_window(GTK_EVENT_BOX(vbox_1_1_3_1_1[i]),TRUE);
 		
 			gtk_widget_set_sensitive(vbox_1_1_3_1_1[i],TRUE);
 		}
 		else
 		{
-			gtk_event_box_set_visible_window(vbox_1_1_3_1_1[i],FALSE);
+			gtk_event_box_set_visible_window(GTK_EVENT_BOX(vbox_1_1_3_1_1[i]),FALSE);
 		
 			gtk_widget_set_sensitive(vbox_1_1_3_1_1[i],FALSE);
 		}

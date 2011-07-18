@@ -33,11 +33,14 @@
 #include <sys/mman.h>
 #include <linux/fb.h>
 #include <linux/kd.h>
+#include <sys/ioctl.h>
 
 char SOURCE_FILE_NAME[FILE_NAME_MAX];
 char SOURCE_FILE_PATH[FILE_NAME_MAX];
 char TARGET_FILE_NAME[FILE_NAME_MAX];
 char TARGET_FILE_PATH[FILE_NAME_MAX];
+
+void screen_to_file();
 
 /* 探头 PA opp UT oup  */
 void read_probe_file (const gchar *file_path, PROBE_P p)
@@ -1527,7 +1530,7 @@ static int snap2png(const char * filename, int quality, FBInfo* fb)
 	unsigned char* line = NULL;
 	for( ; i < height; i++ )
 	{
-		line = (char*)fb->bits + i * width * fb_bpp(fb);
+		line = fb->bits + i * width * fb_bpp(fb);
 		for(j = 0; j < width; j++, line += fb_bpp(fb))
 		{
 			int offset = j * 3;

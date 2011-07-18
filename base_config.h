@@ -406,10 +406,7 @@ typedef	struct _Config
 	guchar	inspection_scan;	/* Scan->Inspection->Scan Time  Encoder1,2  */
 	guchar	inspection_index;	/* Scan->Inspection->Index auto encoder1,2 topturn off  */
 	guint	inspection_scanspeed; /* Scan->Inspection->Index scanspeed */
-	guchar	i_type;
-	guchar	i_scan;
-	guchar	i_index;
-	guint	scanspeed;
+
 	guint	scanspeed_rpm;
 	guint	indexspeed;
 
