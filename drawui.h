@@ -621,5 +621,10 @@ extern void send_focal_spi (guint group);
 extern void update_widget_bg(GtkWidget *widget, int i);
 extern void draw3_data1(DRAW_UI_P p) ;
 
+
+extern void draw3_pop_tt (void (*fun)(GtkMenuItem*, gpointer),
+		gpointer p,	const gchar *cur_value,	const gchar *content[],
+		guint qty, gint pos, guint pop_pos, guint menu_status);
+
 #endif
 

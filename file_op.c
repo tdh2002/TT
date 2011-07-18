@@ -25,6 +25,14 @@
 #include <string.h>
 #include <glib/gprintf.h>
 
+#include <png.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <jpeglib.h>
+#include <sys/mman.h>
+#include <linux/fb.h>
+#include <linux/kd.h>
 
 char SOURCE_FILE_NAME[FILE_NAME_MAX];
 char SOURCE_FILE_PATH[FILE_NAME_MAX];
@@ -961,92 +969,282 @@ void report_build_setup(char *file_name,int group)
 
     fprintf(fp,"<TR>\n");
     fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">N/A</TD>\n");
-    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\"></TD>\n");
-    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\"></TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%.1f dB</TD>\n",GROUP_VAL_POS(group,gain) / 100.0);
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%s</TD>\n",menu_content[ TX_RX_MODE + (GROUP_VAL_POS(group,tx_rxmode))]);
     fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">N/A</TD>\n");
     fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%d 0.01m/s</TD>\n",GROUP_VAL_POS(group,velocity));
-    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\"></TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%f ns</TD>\n",GROUP_VAL_POS(group,pulser_width) / 100.0);
     fprintf(fp,"</TR>\n\n");
 
-#if 0
-<TR>
-    <TD CLASS = "GENERAL_CELL">45 (Low)</TD>
-	<TD CLASS = "GENERAL_CELL">20.00 dB</TD>
-	<TD CLASS = "GENERAL_CELL">PE (Pulse-Echo)</TD>
-	<TD CLASS = "GENERAL_CELL">Longitudinal</TD>
-    <TD CLASS = "GENERAL_CELL">5890.0 m/s</TD>
-    <TD CLASS = "GENERAL_CELL">100.00 ns</TD>
-</TR>
+    fprintf(fp,"<TR>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\"><B>Scan Offset</B></TD>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\"><B>Index Offset</B></TD>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\"><B>Skew</B></TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\"><B></B></TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\"><B>&nbsp;</B></TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\"><B>&nbsp;</B></TD>\n");
+    fprintf(fp,"</TR>\n\n");
 
+    fprintf(fp,"<TR>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%d</TD>\n",GROUP_VAL_POS(group,scan_offset));
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%d</TD>\n",GROUP_VAL_POS(group,index_offset));
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%d</TD>\n",GROUP_VAL_POS(group,skew));
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\"></TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">&nbsp;</TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">&nbsp;</TD>\n");
+    fprintf(fp,"</TR>\n");
 
-<TR>
-    <TD CLASS = "GENERAL_CELL"><B>Scan Offset</B></TD>
-	<TD CLASS = "GENERAL_CELL"><B>Index Offset</B></TD>
-	<TD CLASS = "GENERAL_CELL"><B>Skew</B></TD>
-    <TD CLASS = "GENERAL_CELL"><B></B></TD>
-    <TD CLASS = "GENERAL_CELL"><B>&nbsp;</B></TD>
-    <TD CLASS = "GENERAL_CELL"><B>&nbsp;</B></TD>
-</TR>
+    fprintf(fp,"</TABLE>\n\n");
 
-<TR>
-    <TD CLASS = "GENERAL_CELL">0.00 mm</TD>
-	<TD CLASS = "GENERAL_CELL">0.00 mm</TD>
-	<TD CLASS = "GENERAL_CELL">90.0º</TD>
-    <TD CLASS = "GENERAL_CELL"></TD>
-    <TD CLASS = "GENERAL_CELL">&nbsp;</TD>
-    <TD CLASS = "GENERAL_CELL">&nbsp;</TD>
-</TR>
-</TABLE>
+    fprintf(fp,"<HR>\n\n");
 
-<HR>
+    fprintf(fp,"<TABLE>\n");
 
-<TABLE>
-<TR>
-    <TD CLASS = "GENERAL_CELL"><B>Gate</B></TD>
-	<TD CLASS = "GENERAL_CELL"><B>Start</B></TD>
-	<TD CLASS = "GENERAL_CELL"><B>Width</B></TD>
-	<TD CLASS = "GENERAL_CELL"><B>Threshold</B></TD>
-    <TD CLASS = "GENERAL_CELL"><B>Synchro</B></TD>
-    <TD CLASS = "GENERAL_CELL"><B>&nbsp;</B></TD>
-</TR>
+    fprintf(fp,"<TR>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\"><B>Gate</B></TD>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\"><B>Start</B></TD>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\"><B>Width</B></TD>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\"><B>Threshold</B></TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\"><B>Synchro</B></TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\"><B>&nbsp;</B></TD>\n");
+    fprintf(fp,"</TR>\n\n");
 
-<TR>
-    <TD CLASS = "GENERAL_CELL">I</TD>
-	<TD CLASS = "GENERAL_CELL">-0.01 mm</TD>
-	<TD CLASS = "GENERAL_CELL">19.99 mm</TD>
-	<TD CLASS = "GENERAL_CELL">20.00 %</TD>
-	<TD CLASS = "GENERAL_CELL">Pulse</TD>
-    <TD CLASS = "GENERAL_CELL">&nbsp;</TD>
-</TR>
+    fprintf(fp,"<TR>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">I</TD>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%d ns</TD>\n",pp->p_config->group[group].gate[2].start);
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%d ns</TD>\n",pp->p_config->group[group].gate[2].width);
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%d</TD>\n",pp->p_config->group[group].gate[2].height);
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%s</TD>\n",menu_content[SYNCHRO + pp->p_config->group[group].gate[2].synchro]);
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">&nbsp;</TD>\n");
+    fprintf(fp,"</TR>\n\n");
 
-<TR>
-    <TD CLASS = "GENERAL_CELL">A</TD>
-	<TD CLASS = "GENERAL_CELL">19.98 mm</TD>
-	<TD CLASS = "GENERAL_CELL">29.99 mm</TD>
-	<TD CLASS = "GENERAL_CELL">25.00 %</TD>
-	<TD CLASS = "GENERAL_CELL">Pulse</TD>
-    <TD CLASS = "GENERAL_CELL">&nbsp;</TD>
-</TR>
+    fprintf(fp,"<TR>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">A</TD>");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%d ns</TD>\n",pp->p_config->group[group].gate[0].start);
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%d ns</TD>\n",pp->p_config->group[group].gate[0].width);
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%d</TD>\n",pp->p_config->group[group].gate[0].height);
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%s</TD>\n",menu_content[SYNCHRO + pp->p_config->group[group].gate[0].synchro]);
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">&nbsp;</TD>\n");
+    fprintf(fp,"</TR>\n\n");
 
-<TR>
-    <TD CLASS = "GENERAL_CELL">B</TD>
-	<TD CLASS = "GENERAL_CELL">39.98 mm</TD>
-	<TD CLASS = "GENERAL_CELL">19.99 mm</TD>
-	<TD CLASS = "GENERAL_CELL">30.00 %</TD>
-	<TD CLASS = "GENERAL_CELL">Pulse</TD>
-    <TD CLASS = "GENERAL_CELL">&nbsp;</TD>
-</TR>
-#endif
+    fprintf(fp,"<TR>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">B</TD>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%d ns</TD>\n",pp->p_config->group[group].gate[1].start);
+	fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%d ns</TD>\n",pp->p_config->group[group].gate[1].width);
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%d</TD>\n",pp->p_config->group[group].gate[1].height);
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%s</TD>\n",menu_content[SYNCHRO + pp->p_config->group[group].gate[1].synchro]);
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">&nbsp;</TD>\n");
+    fprintf(fp,"</TR>\n\n");
+
     fprintf(fp,"</TABLE>\n");
 
+    fprintf(fp,"</TD></TR>\n");
+    fprintf(fp,"</TABLE>\n\n");
 
+    fclose(fp);
+}
 
+void report_build_calculator(char *file_name,int group)
+{
+    FILE *fp = NULL;
+    
+    fp = fopen(file_name,"r+");
 
+    if (fp == NULL)
+    {
+        return ;
+    }
+
+    fseek(fp,0,SEEK_END);
+
+    fprintf(fp,"<BR>\n");
+    fprintf(fp,"Calculator\n");
+    fprintf(fp,"<TABLE WIDTH=\"690\" BORDER=\"1\">\n");
+    fprintf(fp,"<TR><TD>\n");
+    
+    fprintf(fp,"<TABLE>\n");
+
+    fprintf(fp,"<TR><TD CLASS = \"GENERAL_CELL\"><B>Used Element Qty.</B></TD>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\"><B>First TX Element</B></TD>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\"><B>Last TX Element</B></TD>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\"><B>First RX Element</B></TD>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\"><B>Last RX Element</B></TD>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\"><B>Resolution</B></TD>\n");
+    fprintf(fp,"</TR>\n\n");
+
+    fprintf(fp,"<TR><TD CLASS = \"GENERAL_CELL\">%d</TD>\n",LAW_VAL_POS(group,Elem_qty));
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%d</TD>\n",LAW_VAL_POS(group,First_tx_elem));
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%d</TD>\n",LAW_VAL_POS(group,Last_tx_elem));
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%d</TD>\n",LAW_VAL_POS(group,First_rx_elem));
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%d</TD>\n",LAW_VAL_POS(group,Last_rx_elem));
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%d</TD>\n",LAW_VAL_POS(group,Elem_step));
+    fprintf(fp,"</TR>\n\n");
+
+    fprintf(fp,"</TABLE>\n\n");
+
+    fprintf(fp,"<TABLE>\n\n");
+
+    fprintf(fp,"<TR><TD CLASS = \"GENERAL_CELL\"><B>Wave Type</B></TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\"><B>Start Angle</B></TD>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\"><B>Stop Angle</B></TD>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\"><B>Angle Resolution</B></TD>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\"><B>Focal Depth</B></TD>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\"><B>Law Configuration</B></TD>\n");
+    fprintf(fp,"</TR>\n\n");
+
+    fprintf(fp,"<TR><TD CLASS = \"GENERAL_CELL\">%s</TD>\n",menu_content[WAVE_TYPE + LAW_VAL_POS(group,Wave_type)]);
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%d</TD>\n",LAW_VAL_POS(group,Angle_min));
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%d</TD>\n",LAW_VAL_POS(group,Angle_max));
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%f</TD>\n",LAW_VAL_POS(group,Angle_step) / 100.0);
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%d</TD>\n",LAW_VAL_POS(group,Focal_type));
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\"></TD>\n");
+    fprintf(fp,"</TR>\n\n");
+
+    fprintf(fp,"</TABLE>\n\n");
+
+    fprintf(fp,"</TD></TR>\n");
+    fprintf(fp,"</TABLE>\n\n\n");
+
+    fclose(fp);
+}
+
+void report_build_part(char *file_name,int group)
+{
+    FILE *fp = NULL;
+
+    fp = fopen(file_name,"r+");
+
+    if (fp == NULL)
+    {
+        return ;
+    }
+
+    fseek(fp,0,SEEK_END);
+
+    fprintf(fp,"<BR>\n");
+    fprintf(fp,"Part\n");
+    fprintf(fp,"<TABLE WIDTH=\"690\" BORDER=\"1\">\n");
+    fprintf(fp,"<TR><TD>\n");
+
+    fprintf(fp,"<TABLE>\n\n");
+
+    fprintf(fp,"<TR><TD CLASS = \"GENERAL_CELL\"><B>Material</B></TD>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\"><B>Geometry</B></TD>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\"><B>Thickness</B></TD>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\"><B></B></TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\"><B>&nbsp;</B></TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\"><B>&nbsp;</B></TD>\n");
+    fprintf(fp,"</TR>\n");
+
+    fprintf(fp,"<TR><TD CLASS = \"GENERAL_CELL\">%s</TD>\n",menu_content[MATERIAL + get_part_material(pp->p_config)]);
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%s</TD>\n",menu_content[GEOMETRY + get_part_geometry(pp->p_config)]);
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%.2f</TD>\n",get_part_thickness(pp->p_config) / 1000.0);
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\"></TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">&nbsp;</TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">&nbsp;</TD>\n");
+    fprintf(fp,"</TR>\n");
+    fprintf(fp,"</TABLE>\n");
 
     fprintf(fp,"</TD></TR>\n");
     fprintf(fp,"</TABLE>\n");
+    
+    fclose(fp);
+}
 
+void report_build_scan_area(char *file_name,int group)
+{
+    FILE *fp = NULL;
 
+    fp = fopen(file_name,"r+");
+
+    if (fp == NULL)
+    {
+        return ;
+    }
+	
+	fseek(fp,0,SEEK_END);
+
+	fprintf(fp,"<BR>\n");
+    fprintf(fp,"Scan Area\n");
+    
+    fprintf(fp,"<TABLE WIDTH=\"690\" BORDER=\"1\">\n");
+    fprintf(fp,"<TR><TD>\n");
+	fprintf(fp,"<TABLE>\n");
+	fprintf(fp,"<TR><TD>\n");
+    fprintf(fp,"<TABLE>\n\n");
+    
+    fprintf(fp,"<TR>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\"><B>Scan Start</B></TD>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\"><B>Scan Length</B></TD>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\"><B>Scan Resolution</B></TD>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\"><B>  Index Start</B></TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\"><B>Index Length</B></TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\"><B>Index Resolution</B></TD>\n");
+    fprintf(fp,"</TR>\n");
+
+    fprintf(fp,"<TR>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%.2f</TD>\n",pp->p_config->scan_start / 1000.0);
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%.2f</TD>\n",pp->p_config->scan_end / 1000.0);
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%.2f</TD>\n",pp->p_config->scan_resolution / 1000.0);
+
+	//if ()
+	fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%.2f</TD>\n",pp->p_config->index_start / 1000.0);
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%.2f</TD>\n",pp->p_config->index_end / 1000.0);
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%.2f</TD>\n",pp->p_config->index_resolution / 1000.0);
+    fprintf(fp,"</TR>\n\n");
+
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\"><B>Synchro</B></TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\"><B>Scan Speed</B></TD>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\"><B>&nbsp;</B></TD>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\"><B>&nbsp;</B></TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\"><B>&nbsp;</B></TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\"><B>&nbsp;</B></TD>\n");
+    fprintf(fp,"</TR>\n\n");
+
+    fprintf(fp,"<TR>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\"></TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\"></TD>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">&nbsp;</TD>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">&nbsp;</TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">&nbsp;</TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">&nbsp;</TD>\n");
+    fprintf(fp,"</TR>\n\n");
+
+    fprintf(fp,"</TABLE>\n");
+    fprintf(fp,"</TD></TR>\n");
+    fprintf(fp,"</TABLE>\n\n");
+
+    fprintf(fp,"<HR>\n");
+    fprintf(fp,"<TABLE>\n");
+    fprintf(fp,"<TR><TD>\n"); 
+    fprintf(fp,"<TABLE>\n\n");
+
+    fprintf(fp,"<TR><TD CLASS = \"GENERAL_CELL\"><B>Axis</B></TD>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\"><B>Encoder</B></TD>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\"><B>Encoder Type</B></TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\"><B>Encoder Resolution</B></TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\"><B>Polarity</B></TD>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\"><B>&nbsp;</B></TD></TR>\n\n");
+
+    fprintf(fp,"<TR><TD CLASS = \"GENERAL_CELL\"></TD>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\"></TD>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\"></TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\"></TD>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\"></TD>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\"><B>&nbsp;</B></TD></TR>\n\n");
+
+    fprintf(fp,"<TR><TD CLASS = \"GENERAL_CELL\"></TD>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\"></TD>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\"></TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\"></TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\"></TD>\n");
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\"><B>&nbsp;</B></TD></TR>\n\n");
+
+    fprintf(fp,"</TABLE>\n");
+    fprintf(fp,"</TD></TR>\n");
+    fprintf(fp,"</TABLE>\n");
+    fprintf(fp,"</TD></TR>\n");
+    fprintf(fp,"</TABLE>\n\n");
 
     fclose(fp);
 }
@@ -1059,11 +1257,18 @@ void report_build_group_config(char *file_name,int group)
 
     report_build_setup(file_name,group);
 
-    //report_build_calculator(file_name,group);
+    report_build_calculator(file_name,group);
 
-    //report_build_part(file_name,group);
+    report_build_part(file_name,group);
 
-    //report_build_scan_area(file_name,group);
+    report_build_scan_area(file_name,group);
+}
+
+void report_build_image(char *file_name)
+{
+     assert(file_name != NULL);
+
+	 screen_to_file();
 }
 
 void report_build_end(char *file_name)
@@ -1083,4 +1288,286 @@ void report_build_end(char *file_name)
     fprintf(fp,"</html>\n");
 
     fclose(fp);
+}
+
+struct _FBInfo;
+typedef struct _FBInfo FBInfo;
+typedef int (*UnpackPixel)(FBInfo* fb, unsigned char* pixel, 
+	unsigned char* r, unsigned char* g, unsigned char* b);
+
+struct _FBInfo
+{
+	int fd;
+	UnpackPixel unpack;
+	unsigned char *bits;
+	struct fb_fix_screeninfo fi;
+	struct fb_var_screeninfo vi;
+};
+
+#define fb_width(fb)  ((fb)->vi.xres)
+#define fb_height(fb) ((fb)->vi.yres)
+#define fb_bpp(fb)    ((fb)->vi.bits_per_pixel>>3)
+#define fb_size(fb)   ((fb)->vi.xres * (fb)->vi.yres * fb_bpp(fb))
+
+static int fb_unpack_rgb565(FBInfo* fb, unsigned char* pixel, 
+	unsigned char* r, unsigned char* g, unsigned char* b)
+{
+	unsigned short color = *(unsigned short*)pixel;
+
+	*r = ((color >> 11) & 0xff) << 3;
+	*g = ((color >> 5) & 0xff)  << 2;
+	*b = (color & 0xff )<< 3;
+
+	return 0;
+}
+
+static int fb_unpack_rgb24(FBInfo* fb, unsigned char* pixel, 
+	unsigned char* r, unsigned char* g, unsigned char* b)
+{
+	*r = pixel[fb->vi.red.offset>>3];
+	*g = pixel[fb->vi.green.offset>>3];
+	*b = pixel[fb->vi.blue.offset>>3];
+
+	return 0;
+}
+
+static int fb_unpack_argb32(FBInfo* fb, unsigned char* pixel, 
+	unsigned char* r, unsigned char* g, unsigned char* b)
+{
+	*r = pixel[fb->vi.red.offset>>3];
+	*g = pixel[fb->vi.green.offset>>3];
+	*b = pixel[fb->vi.blue.offset>>3];
+
+	return 0;
+}
+
+static int fb_unpack_none(FBInfo* fb, unsigned char* pixel, 
+	unsigned char* r, unsigned char* g, unsigned char* b)
+{
+	*r = *g = *b = 0;
+
+	return 0;
+}
+
+static void set_pixel_unpacker(FBInfo* fb)
+{
+	if(fb_bpp(fb) == 2)
+	{
+		fb->unpack = fb_unpack_rgb565;
+	}
+	else if(fb_bpp(fb) == 3)
+	{
+		fb->unpack = fb_unpack_rgb24;
+	}
+	else if(fb_bpp(fb) == 4)
+	{
+		fb->unpack = fb_unpack_argb32;
+	}
+	else
+	{
+		fb->unpack = fb_unpack_none;
+		printf("%s: not supported format.\n", __func__);
+	}
+
+	return;
+}
+
+static int fb_open(FBInfo* fb, const char* fbfilename)
+{
+	fb->fd = open(fbfilename, O_RDWR);
+
+	if (fb->fd < 0)
+	{
+		fprintf(stderr, "can't open %s\n", fbfilename);
+
+		return -1;
+	}
+
+	if (ioctl(fb->fd, FBIOGET_FSCREENINFO, &fb->fi) < 0)
+		goto fail;
+
+	if (ioctl(fb->fd, FBIOGET_VSCREENINFO, &fb->vi) < 0)
+		goto fail;
+
+	fb->bits = mmap(0, fb_size(fb), PROT_READ | PROT_WRITE, MAP_SHARED, fb->fd, 0);
+
+	if (fb->bits == MAP_FAILED)
+		goto fail;
+
+	printf("---------------framebuffer---------------\n");
+	printf("%s: \n  width : %8d\n  height: %8d\n  bpp   : %8d\n  r(%2d, %2d)\n  g(%2d, %2d)\n  b(%2d, %2d)\n",
+		fbfilename, fb_width(fb), fb_height(fb), fb_bpp(fb), 
+		fb->vi.red.offset, fb->vi.red.length,
+		fb->vi.green.offset, fb->vi.green.length,
+		fb->vi.blue.offset, fb->vi.blue.length);
+	printf("-----------------------------------------\n");
+
+	set_pixel_unpacker(fb);
+
+	return 0;
+
+fail:
+	printf("%s is not a framebuffer.\n", fbfilename);
+	close(fb->fd);
+
+	return -1;
+}
+
+static void fb_close(FBInfo* fb)
+{
+	munmap(fb->bits, fb_size(fb));
+	close(fb->fd);
+
+	return;
+}
+
+static int snap2jpg(const char * filename, int quality, FBInfo* fb)
+{
+	int row_stride = 0; 
+	FILE * outfile = NULL;
+	JSAMPROW row_pointer[1] = {0};
+	struct jpeg_error_mgr jerr;
+	struct jpeg_compress_struct cinfo;
+
+	memset(&jerr, 0x00, sizeof(jerr));
+	memset(&cinfo, 0x00, sizeof(cinfo));
+
+	cinfo.err = jpeg_std_error(&jerr);
+	jpeg_create_compress(&cinfo);
+
+	if ((outfile = fopen(filename, "wb+")) == NULL) 
+	{
+		fprintf(stderr, "can't open %s\n", filename);
+
+		return -1;
+	}
+
+	jpeg_stdio_dest(&cinfo, outfile);
+	cinfo.image_width = fb_width(fb);
+	cinfo.image_height = fb_height(fb);
+	cinfo.input_components = 3;
+	cinfo.in_color_space = JCS_RGB;
+	jpeg_set_defaults(&cinfo);
+	jpeg_set_quality(&cinfo, quality, TRUE);
+	jpeg_start_compress(&cinfo, TRUE);
+
+	row_stride = fb_width(fb) * 2;
+	JSAMPLE* image_buffer = malloc(3 * fb_width(fb));
+
+	while (cinfo.next_scanline < cinfo.image_height) 
+	{
+		int i = 0;
+		int offset = 0;
+		unsigned char* line = fb->bits + cinfo.next_scanline * fb_width(fb) * fb_bpp(fb);
+
+		for(i = 0; i < fb_width(fb); i++, offset += 3, line += fb_bpp(fb))
+		{
+			fb->unpack(fb, line, image_buffer+offset, image_buffer + offset + 1, image_buffer + offset + 2);
+		}
+
+		row_pointer[0] = image_buffer;
+		(void) jpeg_write_scanlines(&cinfo, row_pointer, 1);
+	}
+
+	jpeg_finish_compress(&cinfo);
+	fclose(outfile);
+
+	jpeg_destroy_compress(&cinfo);
+
+	return 0;
+}
+
+//Ref: http://blog.chinaunix.net/space.php?uid=15059847&do=blog&cuid=2040565
+static int snap2png(const char * filename, int quality, FBInfo* fb)
+{
+	FILE *outfile;
+	if ((outfile = fopen(filename, "wb+")) == NULL)
+	{
+		fprintf(stderr, "can't open %s\n", filename);
+		return -1;
+	}
+
+	/* prepare the standard PNG structures */
+	png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING,0,0,0);
+	
+	png_infop info_ptr = png_create_info_struct(png_ptr);
+
+	/* setjmp() must be called in every function that calls a PNG-reading libpng function */
+	if (setjmp(png_jmpbuf(png_ptr)))
+	{
+		png_destroy_write_struct(&png_ptr, &info_ptr);
+		fclose(outfile);
+		return -1;
+	}
+
+	/* initialize the png structure */
+	png_init_io(png_ptr, outfile);
+
+	//
+	int width = 0;
+	int height = 0;
+	int bit_depth = 8;
+	int color_type = PNG_COLOR_TYPE_RGB;
+	int interlace = 0;
+	width = fb_width(fb);
+	height = fb_height(fb);
+
+	png_set_IHDR (png_ptr, info_ptr, width, height, bit_depth, color_type,
+					(!interlace) ? PNG_INTERLACE_NONE : PNG_INTERLACE_ADAM7,
+					PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
+
+	/* write the file header information */
+	png_write_info(png_ptr, info_ptr);
+
+	png_bytep row_pointers[height];
+	png_byte* image_buffer = malloc(3 * width);
+
+	int i = 0;
+	int j = 0;
+	unsigned char* line = NULL;
+	for( ; i < height; i++ )
+	{
+		line = (char*)fb->bits + i * width * fb_bpp(fb);
+		for(j = 0; j < width; j++, line += fb_bpp(fb))
+		{
+			int offset = j * 3;
+			fb->unpack(fb, line, image_buffer+offset, image_buffer+offset+1, image_buffer+offset+2);
+		}
+		row_pointers[i] = image_buffer;
+		png_write_rows(png_ptr, &row_pointers[i], 1);
+	}
+	
+	png_destroy_write_struct(&png_ptr, &info_ptr);
+
+	fclose(outfile);
+
+	return 0;
+
+}
+
+void screen_to_file() 
+{
+	FBInfo fb;
+	const char* filename   = "fb.jpg";
+	const char* fbfilename = "/dev/fb1";
+
+
+	//filename   = argv[1];
+	//fbfilename = argv[2];
+
+	memset(&fb, 0x00, sizeof(fb));
+	if (fb_open(&fb, fbfilename) == 0)
+	{
+		if(strstr(filename, ".png") != NULL)
+		{
+			snap2png(filename, 100, &fb);
+		}
+		else
+		{
+			snap2jpg(filename, 100, &fb);
+		}
+		fb_close(&fb);
+	}
+
+	return ;
 }

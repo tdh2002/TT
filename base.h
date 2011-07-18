@@ -610,6 +610,23 @@ typedef struct __dir_path_label
 	GtkWidget *target_label;
 }_dir_path_label, *_dir_path_label_p;
 
+typedef struct __load_menu3_7
+{
+    char *tmp_char[7];
+	GtkWidget *tmp_label[7];
+	GtkWidget *tmp_hbox[7];
+	GtkWidget *tmp_entry[7];
+	int tmp_pos;
+	int *value;
+}_load_menu3_7, *_load_menu3_7_p;
+
+typedef struct __DEFINE_PROBE
+{
+	int *pos_tmp;
+	GtkWidget *entry_tmp;
+	PROBE_P probe_p_tmp;
+} _DEFINE_PROBE, *_DEFINE_PROBE_P;
+
 #define CUR_POS (pp->pos2[pp->pos][pp->pos1[pp->pos]])      /* 0,1,2,3,4,5 */
 #define CUR_POS_P(p) (p->pos2[p->pos][p->pos1[p->pos]])      /* 0,1,2,3,4,5 */
 #define CFG(a)	(pp->p_config->a)

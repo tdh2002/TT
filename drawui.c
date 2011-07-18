@@ -561,7 +561,7 @@ void draw_menu3 (gint pa, gpointer pt)
  * pop_pos 弹出菜单选中的位置
  * menu_status 标志当前menu_item是否可以选择 0-31 位 0是第一个 1是第二个....
  */
-static void draw3_pop_tt (void (*fun)(GtkMenuItem*, gpointer),
+void draw3_pop_tt (void (*fun)(GtkMenuItem*, gpointer),
 		gpointer p,	const gchar *cur_value,	const gchar *content[],
 		guint qty, gint pos, guint pop_pos, guint menu_status)
 {
@@ -11265,7 +11265,7 @@ void draw3_data3(DRAW_UI_P p)
 						{
 							draw3_popdown(NULL,3,1);
 							g_sprintf (temp,"%s", con2_p[5][0][6]);
-							gtk_label_set_text (GTK_LABEL (pp->label3[3]), temp);
+							gtk_label_set_text (GTK_LABEL (pp->label3[3]), temp);	
 						}
 
 						gtk_widget_set_sensitive(pp->eventbox30[3],FALSE);
@@ -11288,9 +11288,14 @@ void draw3_data3(DRAW_UI_P p)
 						}
 						else if( get_probe_select (pp->p_config)==1 )
 						{
-							draw3_popdown(NULL,3,1);
-							g_sprintf (temp,"%s", con2_p[5][0][6]);
-							gtk_label_set_text (GTK_LABEL (pp->label3[3]), temp);
+							if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
+							{
+								draw_dialog_all (DIALOG_DEFINE_PROBE);
+							}
+							else
+							{	
+								draw3_popdown(GROUP_VAL(probe.Model), 3,0);
+							}
 						}
 					}
 					if( GROUP_VAL(group_mode) && get_auto_detect (pp->p_config))	/* 自动检测开启时同时又在PA模式时，探头不可选 */

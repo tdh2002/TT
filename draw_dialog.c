@@ -23,6 +23,8 @@
 #include <assert.h>
 #include <unistd.h>
 
+#define YOFFSET  26
+
 enum
 {
 	LIST_ITEM = 0,
@@ -1459,7 +1461,7 @@ int on_changed_save_config_file(GtkTreeSelection *selection,	gpointer       data
 
 	char *value_name;
 
-	//int temp;
+    //int temp;
 
     GtkWidget *entry_name;
     
@@ -3570,6 +3572,8 @@ void draw_report_build()
         report_build_group_config(file_name,i);
     }
 
+	//report_build_image(file_name);
+
     report_build_end(file_name);
 
 	dialog = gtk_dialog_new_with_buttons ("Dialog_Wedge", window,
@@ -3690,6 +3694,608 @@ static void draw_file_name ()
 	gtk_widget_show_all(dialog);
 }
 
+gboolean load_dialog_menu3_7(GtkWidget *widget,GdkEventButton *event,gpointer *user_data)
+{
+    _load_menu3_7_p menu = (_load_menu3_7_p)user_data;
+
+    int i;
+	
+	*(menu->value) = menu->tmp_pos;
+
+	if (menu->tmp_pos == 2)
+	{
+		for(i=0;i<7;i++)
+		{
+			if ( strcmp(menu->tmp_char[i],"") != 0 )
+			{
+				gtk_event_box_set_visible_window(menu->tmp_hbox[i],TRUE);
+
+				gtk_widget_set_sensitive(menu->tmp_hbox[i],TRUE);
+
+				gtk_widget_hide(menu->tmp_entry[i]);
+			}
+			else
+			{
+				gtk_event_box_set_visible_window(menu->tmp_hbox[i],FALSE);
+	
+				gtk_widget_set_sensitive(menu->tmp_hbox[i],FALSE);
+
+				gtk_widget_hide(menu->tmp_entry[i]);
+			}
+        
+			update_widget_bg(menu->tmp_hbox[i], /*backpic[1]*/1);
+
+			gtk_label_set_text(menu->tmp_label[i],menu->tmp_char[i]);
+		}
+	}
+
+	if(menu->tmp_pos == 3)
+	{
+		for(i=0;i<7;i++)
+		{
+			if ( strcmp(menu->tmp_char[i],"") != 0 )
+			{
+				gtk_event_box_set_visible_window(menu->tmp_hbox[i],TRUE);
+
+				gtk_widget_set_sensitive(menu->tmp_hbox[i],TRUE);
+                
+				if (i == 0)
+					gtk_widget_hide(menu->tmp_entry[i]);
+				else
+					gtk_widget_show(menu->tmp_entry[i]);
+			}
+			else
+			{
+				gtk_event_box_set_visible_window(menu->tmp_hbox[i],FALSE);
+	
+				gtk_widget_set_sensitive(menu->tmp_hbox[i],FALSE);
+
+				gtk_widget_hide(menu->tmp_entry[i]);
+			}
+        
+			update_widget_bg(menu->tmp_hbox[i], /*backpic[1]*/1);
+
+			gtk_label_set_text(menu->tmp_label[i],menu->tmp_char[i]);
+		}
+	}
+
+	if(menu->tmp_pos == 4)
+	{
+		for(i=0;i<7;i++)
+		{
+			if ( strcmp(menu->tmp_char[i],"") != 0 )
+			{
+				gtk_event_box_set_visible_window(menu->tmp_hbox[i],TRUE);
+
+				gtk_widget_set_sensitive(menu->tmp_hbox[i],TRUE);
+                
+				if (i == 0)
+					gtk_widget_hide(menu->tmp_entry[i]);
+				else
+					gtk_widget_show(menu->tmp_entry[i]);
+			}
+			else
+			{
+				gtk_event_box_set_visible_window(menu->tmp_hbox[i],FALSE);
+	
+				gtk_widget_set_sensitive(menu->tmp_hbox[i],FALSE);
+
+				gtk_widget_hide(menu->tmp_entry[i]);
+			}
+        
+			update_widget_bg(menu->tmp_hbox[i], /*backpic[1]*/1);
+
+			gtk_label_set_text(menu->tmp_label[i],menu->tmp_char[i]);
+		}
+	}
+
+	if(menu->tmp_pos == 5)
+	{
+		for(i=0;i<7;i++)
+		{
+			if ( strcmp(menu->tmp_char[i],"") != 0 )
+			{
+				gtk_event_box_set_visible_window(menu->tmp_hbox[i],TRUE);
+
+				gtk_widget_set_sensitive(menu->tmp_hbox[i],TRUE);
+
+				gtk_widget_hide(menu->tmp_entry[i]);
+			}
+			else
+			{
+				gtk_event_box_set_visible_window(menu->tmp_hbox[i],FALSE);
+	
+				gtk_widget_set_sensitive(menu->tmp_hbox[i],FALSE);
+
+				gtk_widget_hide(menu->tmp_entry[i]);
+			}
+        
+			update_widget_bg(menu->tmp_hbox[i], /*backpic[1]*/1);
+
+			gtk_label_set_text(menu->tmp_label[i],menu->tmp_char[i]);
+		}
+	}
+
+	return FALSE;
+}
+
+gboolean callback_box_3_7_0(GtkWidget *widget,GdkEventButton *event,gpointer *user_data)
+{
+    _DEFINE_PROBE_P define_probe_p = (_DEFINE_PROBE_P) user_data;
+
+	int pos;
+
+	pos = ( * (define_probe_p->pos_tmp) );
+
+	//new -> save || edit -> save
+	if ( (pos == 3) || (pos == 4) )
+	{
+       g_printf("new ->save || edit -> save\n");		
+	}
+	
+	return FALSE;
+}
+
+gboolean callback_box_3_7_1(GtkWidget *widget,GdkEventButton *event,gpointer *user_data)
+{
+	_DEFINE_PROBE_P define_probe_p = (_DEFINE_PROBE_P) user_data;
+
+	int pos;
+
+    GtkWidget *entry;
+
+	gchar *entry_text;
+
+	pos = ( * (define_probe_p->pos_tmp) );
+
+	entry =  define_probe_p->entry_tmp;
+
+	//browse -> select and close
+	if (pos == 2)
+	{
+		g_print("browse -> select and close\n");
+	}
+
+    //new -> serial number
+	if (pos == 3)
+	{
+		g_printf("new -> serial number\n");
+
+        entry_text = gtk_entry_get_text(entry);
+
+		memcpy(define_probe_p->probe_p_tmp->Serial,entry_text,20);
+
+		g_printf("%s\n",define_probe_p->probe_p_tmp->Serial);
+	}
+
+	//edit -> freq
+	if (pos == 4)
+	{
+		g_printf("edit -> freq\n");
+	}
+
+	//manage -> change serial number
+	if (pos == 5)
+	{
+		g_printf("manage -> change serial number\n");
+	}
+
+	return FALSE;
+} 
+
+gboolean callback_box_3_7_2(GtkWidget *widget,GdkEventButton *event,gpointer *user_data)
+{ 
+	_DEFINE_PROBE_P define_probe_p = (_DEFINE_PROBE_P) user_data;
+
+	int pos;
+
+	pos = ( * (define_probe_p->pos_tmp) );
+
+	//edit -> ref point
+	if (pos == 4)
+	{
+		g_printf("edit -> ref point\n");
+	}
+
+	//manage -> delete
+	if (pos == 5)
+	{
+		g_printf("manage -> delete\n");
+	}
+
+    return FALSE;
+}
+
+gboolean callback_box_3_7_3(GtkWidget *widget,GdkEventButton *event,gpointer *user_data)
+{ 
+	
+	_DEFINE_PROBE_P define_probe_p = (_DEFINE_PROBE_P) user_data;
+
+	int pos;
+
+	pos = ( * (define_probe_p->pos_tmp) );	
+
+	//edit -> probe type
+	if(pos == 4)
+	{
+		g_printf("edit -> probe type\n");
+	}
+
+	//manage -> copy
+	if (pos == 5)
+	{
+		g_printf("manage -> copy\n");
+	}
+
+    return FALSE;
+}
+
+gboolean callback_box_3_7_4(GtkWidget *widget,GdkEventButton *event,gpointer *user_data)
+{
+
+	_DEFINE_PROBE_P define_probe_p = (_DEFINE_PROBE_P) user_data;
+
+	guint grp = get_current_group(pp->p_config);
+	
+	int pos;
+
+	pos = ( * (define_probe_p->pos_tmp) );
+
+	//new -> model
+	if (pos == 3)
+	{
+		g_printf("new -> model\n");
+	
+		//pp->x_pos = 586, pp->y_pos = 373 - YOFFSET;
+		//if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
+		//{
+			//draw3_pop_tt (data_113, NULL, 
+			//	menu_content[VOLTAGE + 3 + get_voltage(pp->p_config, grp)],
+			//	menu_content + VOLTAGE, 3, 3, get_voltage (pp->p_config, grp), 
+			//	((pp->p_config->group[grp].group_mode) == PA_SCAN) ? 4 : 0);
+		//}
+		//else 
+		//{
+			//draw3_popdown (menu_content[VOLTAGE + 3 + get_voltage (pp->p_config, grp)], 3, 0);
+		//}
+
+	}
+
+	//edit -> element
+	if (pos == 4)
+	{
+		g_printf("edit -> element\n");
+	}
+
+	//manage -> import / export
+	if (pos == 5)
+	{
+		g_printf("manage ->import / export\n");
+	}
+
+	return FALSE;
+}
+
+gboolean callback_box_3_7_5(GtkWidget *widget,GdkEventButton *event,gpointer *user_data)
+{
+
+	_DEFINE_PROBE_P define_probe_p = (_DEFINE_PROBE_P) user_data;
+
+	int pos;
+
+	pos = ( * (define_probe_p->pos_tmp) );
+
+	//edit -> picth
+	if (pos == 4)
+	{
+		g_printf("edit -> picth\n");
+	}
+
+	return FALSE;
+}
+
+gboolean callback_box_3_7_6(GtkWidget *widget,GdkEventButton *event,gpointer *user_data)
+{
+
+	_DEFINE_PROBE_P define_probe_p = (_DEFINE_PROBE_P) user_data;
+
+	int pos;
+
+	pos = ( * (define_probe_p->pos_tmp) );
+
+	//manage -> preview
+	if (pos == 5)
+	{
+		g_printf("manage -> preview\n");
+	}
+
+	return FALSE;
+}
+
+void draw_define_probe()
+{	
+	GtkWindow *window = GTK_WINDOW (pp->window);
+
+	GtkWidget *dialog;
+
+	GtkWidget *vbox_first;
+
+	GtkWidget *vbox;
+
+	GtkWidget *vbox_1;
+
+	GtkWidget *hbox_1_1;
+
+	GtkWidget *list_sw;
+
+	GtkWidget *view_sw;
+
+	GtkWidget *hbox_1_1_3;
+
+	GtkWidget *vbox_1_1_3_1;
+
+    GtkWidget *vbox_1_1_3_1_1[6];
+
+    GtkWidget *label_1_1_3_1_1[6];
+
+    char *char_1_1_3_1_1[6] = {"","Close","Browse","New","Edit","Manage"};
+
+	GtkWidget *vbox_2;
+
+	GtkWidget *hbox_2_1;
+
+	GtkWidget *hbox_2_1_1[7];
+
+	GtkWidget *vbox_2_1_1_1[7];
+
+	GtkWidget *entry_2_1_1_1_1[7];
+
+	GtkWidget *vbox_2_1_1_1_2[7];
+
+	GtkWidget *label_2_1_1_1_2[7];
+    //默认菜单
+	char *char_2_1_1_1_2[7] = {"","Select and Close","","","","",""};
+    //browse的子菜单
+    char *Browse_SubMenu[7] = {"","Select and Close","","","","",""};
+	//new的子菜单
+	char *New_SubMenu[7] = {"Save","Serial Number","","","Model","",""};
+	//edit的子菜单
+	char *Edit_SubMenu[7] = {"Save","freq (MHz)","Ref.Point","Probe Type","Element Qty","Picth (mm)", ""};
+	//manage的子菜单
+	char *Manage_SubMenu[7] = {"","Change Serial #","Delete","Copy","Import/Export","","Preview"};
+
+	int i;
+    
+	static _load_menu3_7 new_menu;
+	static _load_menu3_7 browse_menu;
+	static _load_menu3_7 edit_menu;
+	static _load_menu3_7 manage_menu;
+
+	static int pos;
+
+	static _DEFINE_PROBE define_probe[7];
+
+	static PROBE probe;
+
+	//新建窗口以及各属性设置
+	dialog = gtk_dialog_new_with_buttons ("Dialog_Wedge", window,
+			GTK_DIALOG_MODAL |	GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_NO_SEPARATOR,
+			NULL, NULL,
+			NULL, NULL,
+			NULL);
+
+	gtk_window_set_decorated (GTK_WINDOW (dialog), FALSE);			/*不可以装饰*/
+
+	gtk_widget_set_size_request(GTK_WIDGET (dialog), 800, 600);
+    
+	//新建各种容器
+	vbox_first = GTK_WIDGET (GTK_DIALOG(dialog)->vbox);
+	
+	vbox = gtk_vbox_new(FALSE,0); 
+	
+	vbox_1 = gtk_vbox_new(FALSE,0);
+
+	hbox_1_1 = gtk_hbox_new(FALSE,0);
+
+	hbox_1_1_3 = gtk_hbox_new(FALSE,0);
+
+	vbox_1_1_3_1 = gtk_vbox_new(FALSE,0);
+
+	vbox_2 = gtk_vbox_new(FALSE,0);
+	
+	hbox_2_1 = gtk_hbox_new(FALSE,0);
+
+    //
+	for (i=0;i<7;i++)
+	{
+		hbox_2_1_1[i] = gtk_hbox_new(FALSE,0);
+
+		vbox_2_1_1_1[i] = gtk_vbox_new(FALSE,0);
+
+		entry_2_1_1_1_1[i] = gtk_entry_new();
+
+	    gtk_widget_set_size_request(GTK_WIDGET(entry_2_1_1_1_1[i]),114,25);
+
+		gtk_box_pack_start(GTK_BOX(vbox_2_1_1_1[i]),entry_2_1_1_1_1[i], FALSE, FALSE, 0);
+
+		gtk_box_pack_start(GTK_BOX(hbox_2_1_1[i]),vbox_2_1_1_1[i],FALSE,FALSE,0);
+
+		gtk_box_pack_start(GTK_BOX(hbox_2_1),hbox_2_1_1[i],FALSE,FALSE,0);
+
+	}
+
+
+	//画三级菜单
+	for(i=0;i<7;i++)
+	{
+		vbox_2_1_1_1_2[i] = gtk_event_box_new();
+
+		if ( strcmp(char_2_1_1_1_2[i],"") != 0 )
+		{
+			gtk_event_box_set_visible_window(vbox_2_1_1_1_2[i],TRUE);
+		
+			gtk_widget_set_sensitive(vbox_2_1_1_1_2[i],TRUE);
+		}
+		else
+		{
+			gtk_event_box_set_visible_window(vbox_2_1_1_1_2[i],FALSE);
+		
+			gtk_widget_set_sensitive(vbox_2_1_1_1_2[i],FALSE);
+		}
+
+	    gtk_widget_set_size_request(GTK_WIDGET(vbox_2_1_1_1_2[i]),114,85);
+		update_widget_bg(vbox_2_1_1_1_2[i], /*backpic[1]*/1);
+		label_2_1_1_1_2[i] = gtk_label_new(char_2_1_1_1_2[i]);
+		gtk_widget_modify_fg (label_2_1_1_1_2[i], GTK_STATE_NORMAL, &color_black);
+		gtk_label_set_justify(GTK_LABEL(label_2_1_1_1_2[i]), GTK_JUSTIFY_CENTER);
+		gtk_container_add(GTK_CONTAINER(vbox_2_1_1_1_2[i]), label_2_1_1_1_2[i]);
+		gtk_box_pack_start(GTK_BOX(vbox_2_1_1_1[i]),vbox_2_1_1_1_2[i], FALSE, FALSE, 0);
+	} 
+
+	//默认
+	pos = 2;
+	
+	//画二级菜单
+	for(i=0;i<6;i++)
+	{
+		vbox_1_1_3_1_1[i] = gtk_event_box_new();
+
+		if ( strcmp(char_1_1_3_1_1[i],"") != 0 )
+		{
+			gtk_event_box_set_visible_window(vbox_1_1_3_1_1[i],TRUE);
+		
+			gtk_widget_set_sensitive(vbox_1_1_3_1_1[i],TRUE);
+		}
+		else
+		{
+			gtk_event_box_set_visible_window(vbox_1_1_3_1_1[i],FALSE);
+		
+			gtk_widget_set_sensitive(vbox_1_1_3_1_1[i],FALSE);
+		}
+
+		gtk_widget_set_size_request(GTK_WIDGET(vbox_1_1_3_1_1[i]),115,86);
+		update_widget_bg(vbox_1_1_3_1_1[i], /*backpic[1]*/1);
+		label_1_1_3_1_1[i] = gtk_label_new(char_1_1_3_1_1[i]);
+		gtk_widget_modify_fg (label_1_1_3_1_1[i], GTK_STATE_NORMAL, &color_black);
+		gtk_label_set_justify(GTK_LABEL(label_1_1_3_1_1[i]), GTK_JUSTIFY_CENTER);
+		gtk_container_add(GTK_CONTAINER(vbox_1_1_3_1_1[i]), label_1_1_3_1_1[i]);
+		gtk_box_pack_start(GTK_BOX(vbox_1_1_3_1),vbox_1_1_3_1_1[i], FALSE, FALSE, 0);
+	}
+    
+	//探头的类型的滚动窗口
+	list_sw = gtk_scrolled_window_new (NULL, NULL);
+	
+	gtk_widget_set_size_request(GTK_WIDGET(list_sw),300,514);
+	
+	//探头简介的滚动窗口
+	view_sw = gtk_scrolled_window_new (NULL, NULL);
+
+	gtk_widget_set_size_request(GTK_WIDGET(view_sw),385,514);
+
+	//二级菜单的响应
+	
+    //close
+	g_signal_connect(G_OBJECT (vbox_1_1_3_1_1[1]), "button-press-event",G_CALLBACK(dialog_destroy), dialog);
+
+	//browse
+	for (i = 0;i<7;i++)
+	{
+		browse_menu.tmp_char[i] = Browse_SubMenu[i];
+		browse_menu.tmp_label[i] = label_2_1_1_1_2[i];
+		browse_menu.tmp_hbox[i] = vbox_2_1_1_1_2[i];
+		browse_menu.tmp_entry[i] = entry_2_1_1_1_1[i];
+		browse_menu.tmp_pos = 2;
+		browse_menu.value = &pos;
+	}
+
+	g_signal_connect(G_OBJECT (vbox_1_1_3_1_1[2]), "button-press-event",G_CALLBACK(load_dialog_menu3_7),(gpointer)&browse_menu);
+	
+	//new
+	for (i = 0;i<7;i++)
+	{ 
+		new_menu.tmp_char[i] = New_SubMenu[i];
+		new_menu.tmp_label[i] = label_2_1_1_1_2[i];
+		new_menu.tmp_hbox[i] = vbox_2_1_1_1_2[i];
+		new_menu.tmp_entry[i] = entry_2_1_1_1_1[i];
+		new_menu.tmp_pos = 3;
+		new_menu.value = &pos;
+	}
+
+	g_signal_connect(G_OBJECT (vbox_1_1_3_1_1[3]), "button-press-event",G_CALLBACK(load_dialog_menu3_7), (gpointer)&new_menu);	
+	
+	//edit
+	for (i = 0;i<7;i++)
+	{ 
+		edit_menu.tmp_char[i] = Edit_SubMenu[i];
+		edit_menu.tmp_label[i] = label_2_1_1_1_2[i];
+		edit_menu.tmp_hbox[i] = vbox_2_1_1_1_2[i];
+		edit_menu.tmp_entry[i] = entry_2_1_1_1_1[i];
+		edit_menu.tmp_pos = 4;
+		edit_menu.value = &pos;
+	}
+	
+	g_signal_connect(G_OBJECT (vbox_1_1_3_1_1[4]), "button-press-event",G_CALLBACK(load_dialog_menu3_7),(gpointer)&edit_menu);
+	
+	//manage
+	for (i = 0;i<7;i++)
+	{ 
+		manage_menu.tmp_char[i] = Manage_SubMenu[i];
+		manage_menu.tmp_label[i] = label_2_1_1_1_2[i];
+		manage_menu.tmp_hbox[i] = vbox_2_1_1_1_2[i];
+		manage_menu.tmp_entry[i] = entry_2_1_1_1_1[i];
+		manage_menu.tmp_pos = 5;
+		manage_menu.value = &pos;
+	}
+
+	g_signal_connect(G_OBJECT (vbox_1_1_3_1_1[5]),"button-press-event",G_CALLBACK(load_dialog_menu3_7),(gpointer)&manage_menu);
+
+	for (i=0;i<7;i++)
+	{
+		define_probe[i].pos_tmp =  &pos;
+		define_probe[i].probe_p_tmp = &probe;
+		define_probe[i].entry_tmp = entry_2_1_1_1_1[i];
+	}
+	//三级菜单的响应
+	g_signal_connect(G_OBJECT(vbox_2_1_1_1_2[0]),"button-press-event",G_CALLBACK(callback_box_3_7_0),(gpointer)&define_probe[0]);
+
+	g_signal_connect(G_OBJECT(vbox_2_1_1_1_2[1]),"button-press-event",G_CALLBACK(callback_box_3_7_1),(gpointer)&define_probe[1]);
+	
+	g_signal_connect(G_OBJECT(vbox_2_1_1_1_2[2]),"button-press-event",G_CALLBACK(callback_box_3_7_2),(gpointer)&define_probe[2]);
+
+	g_signal_connect(G_OBJECT(vbox_2_1_1_1_2[3]),"button-press-event",G_CALLBACK(callback_box_3_7_3),(gpointer)&define_probe[3]);
+
+	g_signal_connect(G_OBJECT(vbox_2_1_1_1_2[4]),"button-press-event",G_CALLBACK(callback_box_3_7_4),(gpointer)&define_probe[4]);
+
+	g_signal_connect(G_OBJECT(vbox_2_1_1_1_2[5]),"button-press-event",G_CALLBACK(callback_box_3_7_5),(gpointer)&define_probe[5]);
+
+	g_signal_connect(G_OBJECT(vbox_2_1_1_1_2[6]),"button-press-event",G_CALLBACK(callback_box_3_7_6),(gpointer)&define_probe[6]);
+
+	//排版
+	gtk_box_pack_start(GTK_BOX(hbox_1_1_3),vbox_1_1_3_1,FALSE,FALSE,0);
+
+	gtk_box_pack_start(GTK_BOX(hbox_1_1),list_sw,FALSE,FALSE,0);
+
+	gtk_box_pack_start(GTK_BOX(hbox_1_1),view_sw,FALSE,FALSE,0);
+
+	gtk_box_pack_start(GTK_BOX(hbox_1_1),hbox_1_1_3,FALSE,FALSE,0);
+
+	gtk_box_pack_start(GTK_BOX(vbox_1),hbox_1_1, FALSE, FALSE, 0);
+	
+	gtk_box_pack_start(GTK_BOX(vbox),vbox_1, FALSE, FALSE, 0);
+
+	//gtk_box_pack_start(GTK_BOX(hbox_2_1),hbox_2_1_1,FALSE,FALSE,0);
+
+	gtk_box_pack_start(GTK_BOX(vbox_2),hbox_2_1, FALSE, FALSE, 0);
+
+	gtk_box_pack_start(GTK_BOX(vbox),vbox_2, FALSE, FALSE, 0);
+	
+	gtk_box_pack_start(GTK_BOX(vbox_first), vbox,FALSE,FALSE,0);
+	
+	//显示窗口
+	gtk_widget_show_all(dialog);
+
+	return ;
+}
 
 /*
  * 弹出的dialog
@@ -3734,6 +4340,7 @@ void draw_dialog_all (guint type)
         case DIALOG_DATE:	draw_date();break;
         case DIALOG_REPORT_BUILD:	draw_report_build();break;
 		case DIALOG_FILE_NAME:	draw_file_name();break;
+		case DIALOG_DEFINE_PROBE:	draw_define_probe();break;
 		default:break;
 	}
 

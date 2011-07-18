@@ -24,8 +24,9 @@
 #define DIALOG_TIME				17
 #define DIALOG_DATE				18
 #define DIALOG_REPORT_BUILD		19
+#define DIALOG_DEFINE_PROBE		20
 
-#define DIALOG_FILE_NAME		20
+#define DIALOG_FILE_NAME		21
 
 extern void draw_dialog_all (guint type);
 
