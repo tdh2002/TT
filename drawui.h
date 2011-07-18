@@ -605,6 +605,7 @@ extern void draw3_pressed1(gfloat step, guint digit);
 extern void da_call_remark (GtkDialog *dialog, gint response_id, gpointer user_data);
 extern void da_call_edit_notes (GtkDialog *dialog, gint response_id, gpointer user_data);
 extern void da_call_edit_header (GtkDialog *dialog, gint response_id, gpointer user_data);
+extern void da_call_file_name (GtkDialog *dialog, gint response_id, gpointer user_data);
 
 
 extern void dialog_destroy(GtkWidget *widget,	GdkEventButton *event,	gpointer       data);

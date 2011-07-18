@@ -391,7 +391,7 @@ typedef struct Draw_interface
 
 	GtkWidget		*eventbox30[6];                 /* */
 	GtkWidget		*eventbox31[6];     /* 三级菜单 二个 eventbox + 一个lable + 一个data + 一个 spinbutton data和spinbutton同时只能有一个显示*/
-	GtkWidget		*entry;
+	//GtkWidget		*entry;
 	GtkWidget		*label3[6];         /* data 是lable   */
 	GtkWidget		*data3[6];			/* */
 	GtkWidget		*eventbox32[6];                 /* */

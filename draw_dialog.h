@@ -25,6 +25,8 @@
 #define DIALOG_DATE				18
 #define DIALOG_REPORT_BUILD		19
 
+#define DIALOG_FILE_NAME		20
+
 extern void draw_dialog_all (guint type);
 
 #endif

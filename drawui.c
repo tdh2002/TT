@@ -622,7 +622,7 @@ static void draw3_pop_tt (void (*fun)(GtkMenuItem*, gpointer),
 	gtk_widget_hide (pp->button_add);
 	gtk_widget_hide (pp->button_sub);
 	gtk_widget_hide (pp->vscale);
-	gtk_widget_hide (GTK_WIDGET (pp->entry));
+	//gtk_widget_hide (GTK_WIDGET (pp->entry));
 
 	pp->menu3_qty = qty;
 	pp->menu3_poppos = pop_pos;
@@ -710,7 +710,7 @@ static void draw3_pop_tt_on (void (*fun)(GtkMenuItem*, gpointer),
 	gtk_widget_hide (pp->button_add);
 	gtk_widget_hide (pp->button_sub);
 	gtk_widget_hide (pp->vscale);
-	gtk_widget_hide (GTK_WIDGET (pp->entry));
+	//gtk_widget_hide (GTK_WIDGET (pp->entry));
 
 	pp->menu3_qty = qty;
 	pp->menu3_poppos = pop_pos;
@@ -796,7 +796,7 @@ static void draw3_popdown (const gchar *cur_value, guint pos, guint big_menu)
 	gtk_widget_hide (pp->button_add);
 	gtk_widget_hide (pp->button_sub);
 	gtk_widget_hide (pp->vscale);
-	gtk_widget_hide (GTK_WIDGET (pp->entry));
+	//gtk_widget_hide (GTK_WIDGET (pp->entry));
 
 
 	change_keypress_event (KEYPRESS_MAIN);
@@ -881,7 +881,7 @@ static void draw3_popdown_offset (const gchar *cur_value, guint pos, guint big_m
 	gtk_widget_hide (pp->button_add);
 	gtk_widget_hide (pp->button_sub);
 	gtk_widget_hide (pp->vscale);
-	gtk_widget_hide (GTK_WIDGET (pp->entry));
+	//gtk_widget_hide (GTK_WIDGET (pp->entry));
 
 
 	change_keypress_event (KEYPRESS_MAIN);
@@ -947,7 +947,7 @@ static void draw3_digit_pressed (void (*fun)(GtkSpinButton*, gpointer), const gc
 	gtk_widget_show (pp->button_add);
 	gtk_widget_show (pp->button_sub);
 	gtk_widget_show (pp->vscale);
-	gtk_widget_hide (GTK_WIDGET (pp->entry));
+	//gtk_widget_hide (GTK_WIDGET (pp->entry));
 
 	if (str)
 		g_free(str);
@@ -1012,7 +1012,7 @@ static void draw3_digit_stop(gfloat cur_value, const gchar *unit,
 	gtk_widget_hide (pp->button_add);
 	gtk_widget_hide (pp->button_sub);
 	gtk_widget_hide (pp->vscale);
-	gtk_widget_hide (GTK_WIDGET (pp->entry));
+	//gtk_widget_hide (GTK_WIDGET (pp->entry));
 
 	change_keypress_event (KEYPRESS_MAIN);
 
@@ -1032,12 +1032,14 @@ static gboolean draw_info(GtkWidget *widget, GdkEventExpose *event, gpointer dat
 
 
 	gtk_widget_get_size_request (widget, &w, &h);
+g_print("\nw= %d\n h= %d",w,h);
 
+/*
 	if (prule->mask == 0x08)
     {
 		w = w + 20;
     }
-	else if ((prule->mask == 0x06) || (prule->mask == 0x16))
+	else*/ if ((prule->mask == 0x06) || (prule->mask == 0x16))
 	{
     	w = w + 30;
     }
@@ -2608,7 +2610,7 @@ void draw_area_all()
 		memset (TMP(scan_type), 0xff, 16);
 	}
 
-	if (get_display_group(pp->p_config) == DISPLAY_CURRENT_GROUP) 
+	if ((get_display_group(pp->p_config) == DISPLAY_CURRENT_GROUP) || (get_group_qty(pp->p_config)==1))
 	{
 		switch (get_display_pos(pp->p_config))
 		{
@@ -4119,7 +4121,10 @@ void draw3_data0(DRAW_UI_P p)
 							temp_beam = temp_beam / TMP(beam_skew_num) - 1;
 							lower = MAX (((gint)(LAW_VAL (Angle_max)) - 
 										(gint)(temp_beam * LAW_VAL(Angle_step))) / 100.0, -89.9);
-							upper = LAW_VAL (Angle_max) / 100.0;
+							if(gtk_widget_get_sensitive(pp->eventbox30[1]))
+								upper = LAW_VAL (Angle_max) / 100.0;
+							else
+								upper = 89.9;
 							step = tmpf;
 							digit = 1;
 							pos = 0;
@@ -5759,11 +5764,11 @@ void draw3_data1(DRAW_UI_P p)
 									case 2:	tmpf = 10.0; break;
 									default:break;
 								}
-								cur_value = LAW_VAL(Position_start) / 1000.0;
+								cur_value = LAW_VAL(Position_start) / 100.0;
 								lower = 0.1;
 								upper = 10000.0;
 								step = tmpf;
-								digit = 2;
+								digit = 1;
 								pos = 1;
 								unit = UNIT_MM;
 
@@ -5809,8 +5814,8 @@ void draw3_data1(DRAW_UI_P p)
 							if((LAW_VAL(Focal_point_type)==HALFPATH_P)||(LAW_VAL(Focal_point_type)==DEPTH_P))
 								/*type为half path 或 true depth 时*/
 							{
-								cur_value = LAW_VAL(Position_start) / 1000.0;
-								digit = 2;
+								cur_value = LAW_VAL(Position_start) / 100.0;
+								digit = 1;
 								pos = 1;
 								unit = UNIT_MM;
 								draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
@@ -6064,37 +6069,16 @@ void draw3_data1(DRAW_UI_P p)
 					break;
 
 				case 1:/*File -> report -> file name p811 */
-					/* 格式化字符串 */
-					g_sprintf (temp,"%s", con2_p[8][1][1]);
-					gtk_label_set_text (GTK_LABEL (pp->label3[1]), temp);
-
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 					{
-						update_widget_bg(pp->eventbox30[1], /*backpic[6]*/ 6);
+						draw_dialog_all (DIALOG_FILE_NAME);
 					}
 					else
 					{
-						update_widget_bg(pp->eventbox30[1], /*backpic[7]*/ 7);
+						draw3_popdown (CFG(file_name_info), 1, 0);
 					}
-
-					gtk_widget_set_size_request (GTK_WIDGET(pp->entry), 115, 29);
-					gtk_box_pack_start(GTK_BOX (pp->vbox221[1]),pp->entry,FALSE,FALSE,0);
-					gtk_widget_modify_base(GTK_WIDGET (pp->entry), GTK_STATE_NORMAL, &color_text_base);
-					//gtk_widget_modify_text(GTK_WIDGET (pp->entry), GTK_STATE_NORMAL, &color_yellow);
-					gtk_widget_modify_fg(GTK_WIDGET (pp->entry), GTK_STATE_NORMAL, &color_white);
-
-
-
-					//gtk_widget_modify_bg (pp->eventbox30[1], GTK_STATE_NORMAL, &color_button1);
-					//gtk_label_set_text (GTK_LABEL (pp->data3[1]), "Report####");
-					//gtk_widget_modify_bg (pp->eventbox31[1], GTK_STATE_NORMAL, &color_button1);
-
-					/* 显示和隐藏控件 */
-					gtk_widget_show (pp->eventbox30[1]);
-					gtk_widget_hide (pp->eventbox31[1]);
-					gtk_widget_show (GTK_WIDGET (pp->entry));
-					//gtk_widget_show (pp->data3[1]);
 					break;
+
 
 				case 2:/*File -> format -> probe  p821 */
 					draw3_popdown (menu_content[OFF_ON + CFG(format_probe)], 1, 0);
@@ -16227,7 +16211,7 @@ void init_ui(DRAW_UI_P p)
 	p->hbox211		= gtk_hbox_new(FALSE, 0);
 	p->vboxtable	= gtk_vbox_new(FALSE, 0);
 	p->sw			= gtk_scrolled_window_new(NULL, NULL);
-	pp->entry 		= gtk_entry_new();
+	//pp->entry 		= gtk_entry_new();
 
 	p->hbox212		= gtk_hbox_new(FALSE, 0);	
 

@@ -3645,6 +3645,52 @@ void draw_report_build()
 
 }
 
+/* File Name */
+static void draw_file_name ()
+{
+	GtkWindow *win = GTK_WINDOW (pp->window);
+	GtkWidget *dialog;
+	GtkWidget *vbox1;	/* 指向dialog的vbox */
+	GtkWidget *sw;		/* 第一个scroll 备注只要一个sw */
+	GtkWidget *label;
+	GtkWidget *view;
+	GtkTextBuffer *TextBuffer;
+	//	GtkWidgetClass *widget_window_class1;
+	const gchar *buf = (const gchar *)(CFG(file_name_info));
+
+	label = gtk_label_new("File name");
+	dialog = gtk_dialog_new_with_buttons("Dialog_file_name", win,
+			GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_NO_SEPARATOR,
+			GTK_STOCK_OK, GTK_RESPONSE_OK,
+			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+			NULL);
+	gtk_window_set_decorated (GTK_WINDOW (dialog), FALSE);			/*不可以装饰*/
+
+	gtk_widget_set_size_request(GTK_WIDGET (dialog), 300, 100);
+	vbox1 = GTK_WIDGET (GTK_DIALOG(dialog)->vbox);
+	sw = gtk_scrolled_window_new(NULL, NULL);
+
+	gtk_widget_set_size_request(sw, 300, 30);
+	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW(sw),
+			GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw),
+			GTK_SHADOW_ETCHED_IN);
+
+	gtk_box_pack_start(GTK_BOX(vbox1), label, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox1), sw, FALSE, FALSE, 5);
+	view = gtk_text_view_new ();
+	gtk_container_add (GTK_CONTAINER (sw), view);
+	TextBuffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
+	gtk_text_view_set_wrap_mode (GTK_TEXT_VIEW (view), GTK_WRAP_WORD_CHAR);
+	gtk_text_buffer_set_text (TextBuffer, buf, -1);
+
+	g_signal_connect (G_OBJECT(dialog), "response",
+			G_CALLBACK(da_call_file_name), (gpointer) (TextBuffer));
+
+	gtk_widget_show_all(dialog);
+}
+
+
 /*
  * 弹出的dialog
  * 0 记事本 备注等等
@@ -3687,6 +3733,7 @@ void draw_dialog_all (guint type)
         case DIALOG_TIME:	draw_time();break;
         case DIALOG_DATE:	draw_date();break;
         case DIALOG_REPORT_BUILD:	draw_report_build();break;
+		case DIALOG_FILE_NAME:	draw_file_name();break;
 		default:break;
 	}
 

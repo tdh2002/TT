@@ -4834,12 +4834,20 @@ void data_601 (GtkSpinButton *spinbutton, gpointer data) /* connection_P P601 */
 /* min_angle P610 */
 void data_610 (GtkSpinButton *spinbutton, gpointer data)
 {
-	gtk_spin_button_set_value (spinbutton, 
-			rounding(LAW_VAL(Angle_max),
-				(gint)(gtk_spin_button_get_value (spinbutton) * 100.0), 
-				(LAW_VAL(Angle_step) + 5) / 10 * 10) / 100.0);
-	LAW_VAL(Angle_min) = (gshort)
-		(gtk_spin_button_get_value (spinbutton) * 100.0);
+	if(gtk_widget_get_sensitive(pp->eventbox30[1]))
+	{
+		gtk_spin_button_set_value (spinbutton, 
+				rounding(LAW_VAL(Angle_max),
+					(gint)(gtk_spin_button_get_value (spinbutton) * 100.0), 
+					(LAW_VAL(Angle_step) + 5) / 10 * 10) / 100.0);
+		LAW_VAL(Angle_min) = (gshort)
+			(gtk_spin_button_get_value (spinbutton) * 100.0);
+	}
+	else
+	{
+		LAW_VAL(Angle_min) = (gshort)
+			(gtk_spin_button_get_value (spinbutton) * 100.0);
+	}
 	draw_area_all();
 }
 
@@ -4902,7 +4910,7 @@ void data_620 (GtkMenuItem *menuitem, gpointer data)
 
 void data_621 (GtkSpinButton *spinbutton, gpointer data) /* Position start P621 */
 {
-	LAW_VAL(Position_start) = (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
+	LAW_VAL(Position_start) = (guint) (gtk_spin_button_get_value (spinbutton) * 100.0);
 }
 
 void data_6211 (GtkSpinButton *spinbutton, gpointer data) /* Offset start P621 */
@@ -5410,6 +5418,31 @@ void da_call_edit_header (GtkDialog *dialog, gint response_id, gpointer user_dat
 
 		Data = gtk_text_buffer_get_text (TextBuffer, &start, &end, FALSE);
 		memcpy (CFG(edit_header_info), Data, sizeof(CFG(edit_header_info)));
+
+		g_free (Data);
+		g_print ("OK_Pressed");
+	}
+	else if (GTK_RESPONSE_CANCEL == response_id) /* 取消 */
+		g_print ("CANCEL_Pressed");
+	gtk_widget_destroy (GTK_WIDGET (dialog));
+	change_keypress_event (KEYPRESS_MAIN);
+}
+
+/* File name 2个按键的处理 一个是保存一个是取消 */
+void da_call_file_name (GtkDialog *dialog, gint response_id, gpointer user_data)      
+{
+	GtkTextBuffer *TextBuffer = (GTK_TEXT_BUFFER (user_data));
+	if (GTK_RESPONSE_OK == response_id)  /* 保存信息 */
+	{
+		GtkTextIter start, end;
+		gchar *Data;
+
+		gtk_text_buffer_get_start_iter (TextBuffer, &start);
+		gtk_text_buffer_get_end_iter (TextBuffer, &end);
+
+		Data = gtk_text_buffer_get_text (TextBuffer, &start, &end, FALSE);
+		memcpy (CFG(file_name_info), Data, sizeof(CFG(file_name_info)));
+		gtk_label_set_text(pp->data3[1],CFG(file_name_info));
 
 		g_free (Data);
 		g_print ("OK_Pressed");
