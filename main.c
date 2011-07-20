@@ -193,9 +193,9 @@ static void set_config (guint groupid)
 	set_inspec_source (pp->p_config, SCAN_TIME);
 	set_inspec_index (pp->p_config, INDEX_ENCODER1);
 	set_inspec_speed (pp->p_config, 10);
+	set_inspec_rpmspeed (pp->p_config, 10);
+	set_inspec_indexspeed (pp->p_config, 10);
 
-	CFG(scanspeed_rpm)=10.0;
-	CFG(indexspeed)=10.0;
 	CFG(scan_start)=0.0;
 	CFG(scan_end)=346.0;
 	CFG(scan_resolution)=100.0;

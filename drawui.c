@@ -13782,7 +13782,7 @@ void draw3_data4(DRAW_UI_P p)
 
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
 						{
-							cur_value = CFG(scanspeed_rpm)/10.0;
+							cur_value = get_inspec_rpmspeed (pp->p_config)/10.0;
 							lower = 0.0;
 							upper = 1000.0;
 							step = tmpf;
@@ -13793,7 +13793,7 @@ void draw3_data4(DRAW_UI_P p)
 						}
 						else 
 						{
-							cur_value = CFG(scanspeed_rpm)/10.0;
+							cur_value = get_inspec_rpmspeed (pp->p_config)/10.0;
 							digit = 1;
 							pos = 4;
 							unit = UNIT_RPM;
@@ -15310,7 +15310,7 @@ void draw3_data5(DRAW_UI_P p)
 
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 5))
 						{
-							cur_value = CFG(indexspeed)/10.0;
+							cur_value = get_inspec_indexspeed (pp->p_config)/10.0;
 							lower = 0.0;
 							upper = 1000.0;
 							step = tmpf;
@@ -15321,7 +15321,7 @@ void draw3_data5(DRAW_UI_P p)
 						}
 						else 
 						{
-							cur_value = CFG(indexspeed)/10.0;
+							cur_value = get_inspec_indexspeed (pp->p_config)/10.0;
 							digit = 1;
 							pos = 5;
 							unit = UNIT_RPM;
@@ -15987,7 +15987,7 @@ gpointer signal_thread1(gpointer arg)
 
 	/*  */
 //	for (i = 0 ; i < 8; i++)
-//		g_print ("%08x\n", TMP(measure_data[0][i]));
+//		g_print ("%08x\n", TMP(measure_data[0][1]));
 //	g_print ("\n");
 	draw_field_value ();
 	/* 复制波形到显存 */
@@ -16161,22 +16161,30 @@ gboolean on_finish(gpointer p)
 void draw_field_value ()
 {
 	gint	offset, k;
-	gfloat	ah;
-	gchar	*markup;
+	gfloat	ah, as;
+	gchar	*markup, *markup1;
 	guint	*p_tmp = (guint *)(&TMP(measure_data_dis));
-	for (offset = 0, k = 0 ; k < get_group_qty (pp->p_config); k++)
+	for (offset = 0, k = 0 ; k < get_current_group (pp->p_config); k++)
 		offset += TMP(beam_qty[k]);
-	ah = ((TMP(measure_data[offset + TMP(beam_num[get_current_group(pp->p_config)])][1]) >> 20) & 0xfff) / 4095.0;
+	ah = ((TMP(measure_data[offset + TMP(beam_num[get_current_group(pp->p_config)])][1]) >> 20) & 0xfff) 
+		/ 40.95;
+	as = ((TMP(measure_data[offset + TMP(beam_num[get_current_group(pp->p_config)])][1])) & 0xfffff) 
+		/ 1000.0;
 		/* 4个测量值显示 */
 //	markup = g_markup_printf_escaped ("<span foreground='white' font_desc='24'>%.2f</span>",
 //			p_tmp[get_reading_field1(pp->p_config)] / 100.0);
-	markup = g_markup_printf_escaped ("<span foreground='white' font_desc='24'>%.2f</span>",
-			ah);
+//	g_print ("offset=%d TMP(beam_qty)=%d, beam_num=%d, ah=%.2f\n", 
+//			offset, TMP(beam_qty[get_current_group(pp->p_config)]),
+//			TMP(beam_num[get_current_group(pp->p_config)]), ah);
+	markup = g_markup_printf_escaped ("<span foreground='white' font_desc='24'>%.2f</span>", ah);
+	markup1 = g_markup_printf_escaped ("<span foreground='white' font_desc='24'>%.2f</span>", as);
 	gdk_threads_enter();
 	gtk_label_set_markup (GTK_LABEL(pp->label[9]), markup);
+	gtk_label_set_markup (GTK_LABEL(pp->label[11]), markup1);
 	gdk_threads_leave();
 //	g_idle_add(on_finish, markup);
 	g_free (markup);
+	g_free (markup1);
 
 }
 

@@ -5060,12 +5060,12 @@ void data_713 (GtkSpinButton *spinbutton, gpointer data) /*scan_speed*/
 
 void data_714 (GtkSpinButton *spinbutton, gpointer data) /*scan_speed*/
 {
-	pp->p_config->scanspeed_rpm =  (guint) (gtk_spin_button_get_value (spinbutton) * 10.0);
+	set_inspec_rpmspeed (pp->p_config, (guint) (gtk_spin_button_get_value (spinbutton) * 10.0));
 }
 
 void data_715 (GtkSpinButton *spinbutton, gpointer data) /*index_speed*/
 {
-	CFG(indexspeed) =  (guint) (gtk_spin_button_get_value (spinbutton) * 10.0);
+	set_inspec_indexspeed (pp->p_config, (guint) (gtk_spin_button_get_value (spinbutton) * 10.0));
 }
 
 void data_720 (GtkSpinButton *spinbutton, gpointer data) /*scan_start*/
@@ -5445,7 +5445,7 @@ void da_call_file_name (GtkDialog *dialog, gint response_id, gpointer user_data)
 
 		Data = gtk_text_buffer_get_text (TextBuffer, &start, &end, FALSE);
 		memcpy (CFG(file_name_info), Data, sizeof(CFG(file_name_info)));
-		gtk_label_set_text(pp->data3[1],CFG(file_name_info));
+		gtk_label_set_text (GTK_LABEL (pp->data3[1]), CFG(file_name_info));
 
 		g_free (Data);
 		g_print ("OK_Pressed");

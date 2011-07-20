@@ -405,17 +405,17 @@ typedef	struct _Config
 	guchar	inspection_type;	/* Scan->Inspection->Type On-line  Raster  Helicoidal */
 	guchar	inspection_scan;	/* Scan->Inspection->Scan Time  Encoder1,2  */
 	guchar	inspection_index;	/* Scan->Inspection->Index auto encoder1,2 topturn off  */
-	guint	inspection_scanspeed; /* Scan->Inspection->Index scanspeed */
+	guint	inspection_scanspeed;	/* Scan->Inspection->Index scanspeed */
+	guint	inspection_rpmscanspeed;/* Scan->Inspection->Index rpm scanspeed */
+	guint	inspection_indexspeed;	/* Scan->Inspection->Index rpm scanspeed */
 
-	guint	scanspeed_rpm;
-	guint	indexspeed;
+	gint	scan_start;			/* Scan -> Area -> Scan start*/
+	gint	scan_end;			/* Scan -> Area -> Scan end*/
+	guint	scan_resolution;	/* Scan -> Area -> Scan resolution*/
+	gint	index_start;		/* Scan -> Area -> index_start*/
+	gint	index_end;			/* Scan -> Area -> index_end*/
+	guint	index_resolution;	/* Scan -> Area -> index_resolution*/
 
-	gint	scan_start;                    /* Scan -> Area -> Scan start*/
-	gint	scan_end;                      /* Scan -> Area -> Scan end*/
-	guint	scan_resolution;               /* Scan -> Area -> Scan resolution*/
-	gint	index_start;                   /* Scan -> Area -> index_start*/
-	gint	index_end;                     /* Scan -> Area -> index_end*/
-	guint	index_resolution;              /* Scan -> Area -> index_resolution*/
 	guchar	start_mode;                    /* Scan -> Start -> start mode*/
 	guchar	pause;                         /* Scan -> Start -> pause*/
 	guchar	storage;                       /* Scan -> Data  -> storage*/
@@ -443,7 +443,7 @@ typedef	struct _Config
 
 	guchar	edit_notes_info[256];
 	guchar	edit_header_info[256];
-	guchar	file_name_info[50];
+	gchar	file_name_info[50];
 } CONFIG, *CONFIG_P;
 
 /* fetch material info of current config 获取当前配置中材料的信息 */
@@ -617,6 +617,10 @@ extern guchar	get_inspec_index (CONFIG *p);
 extern void		set_inspec_index (CONFIG *p, guchar data);
 extern guint	get_inspec_speed (CONFIG *p);
 extern void		set_inspec_speed (CONFIG *p, guint data);
+extern guint	get_inspec_rpmspeed (CONFIG *p);
+extern void		set_inspec_rpmspeed (CONFIG *p, guint data);
+extern guint	get_inspec_indexspeed (CONFIG *p);
+extern void		set_inspec_indexspeed (CONFIG *p, guint data);
 
 
 /* group操作 */

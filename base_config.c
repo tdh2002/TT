@@ -977,6 +977,25 @@ void set_inspec_speed (CONFIG *p, guint data)
 	p->inspection_scanspeed = data;
 }
 
+guint get_inspec_rpmspeed (CONFIG *p)
+{
+	return p->inspection_rpmscanspeed;
+}
+
+void set_inspec_rpmspeed (CONFIG *p, guint data)
+{
+	p->inspection_rpmscanspeed = data;
+}
+
+guint get_inspec_indexspeed (CONFIG *p)
+{
+	return p->inspection_indexspeed;
+}
+
+void set_inspec_indexspeed (CONFIG *p, guint data)
+{
+	p->inspection_indexspeed = data;
+}
 
 /* group操作*/
 void grpcpy (CONFIG *p, guint dst, guint src)		/* 把src group 配置复制到 dst group */
