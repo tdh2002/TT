@@ -191,7 +191,7 @@ static void set_config (guint groupid)
 
 	set_inspec_type (pp->p_config, TYPE_ONE_LINE);
 	set_inspec_source (pp->p_config, SCAN_TIME);
-	set_inspec_index (pp->p_config, INDEX_ENCODER1);
+	set_inspec_index (pp->p_config, INDEX_AUTO);
 	set_inspec_speed (pp->p_config, 10);
 	set_inspec_rpmspeed (pp->p_config, 10);
 	set_inspec_indexspeed (pp->p_config, 10);

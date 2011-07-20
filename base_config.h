@@ -409,37 +409,37 @@ typedef	struct _Config
 	guint	inspection_rpmscanspeed;/* Scan->Inspection->Index rpm scanspeed */
 	guint	inspection_indexspeed;	/* Scan->Inspection->Index rpm scanspeed */
 
-	gint	scan_start;			/* Scan -> Area -> Scan start*/
-	gint	scan_end;			/* Scan -> Area -> Scan end*/
-	guint	scan_resolution;	/* Scan -> Area -> Scan resolution*/
-	gint	index_start;		/* Scan -> Area -> index_start*/
-	gint	index_end;			/* Scan -> Area -> index_end*/
-	guint	index_resolution;	/* Scan -> Area -> index_resolution*/
+	gint	scan_start;			/* Scan->Area->Scan start*/
+	gint	scan_end;			/* Scan->Area->Scan end*/
+	guint	scan_resolution;	/* Scan->Area->Scan resolution*/
+	gint	index_start;		/* Scan->Area->index_start*/
+	gint	index_end;			/* Scan->Area->index_end*/
+	guint	index_resolution;	/* Scan->Area->index_resolution*/
 
-	guchar	start_mode;                    /* Scan -> Start -> start mode*/
-	guchar	pause;                         /* Scan -> Start -> pause*/
-	guchar	storage;                       /* Scan -> Data  -> storage*/
-	guchar	inspec_data;                   /* Scan -> Data  -> Inspec.data*/
+	guchar	start_mode;                    /* Scan->Start->start mode*/
+	guchar	pause;                         /* Scan->Start->pause*/
+	guchar	storage;                       /* Scan->Data ->storage*/
+	guchar	inspec_data;                   /* Scan->Data ->Inspec.data*/
 
-	guchar	file_storage;                  /* File -> File -> Storage*/
-	guchar	save_mode;                     /* File -> File -> save mode */
+	guchar	file_storage;                  /* File->File->Storage*/
+	guchar	save_mode;                     /* File->File->save mode */
 	guchar	templa;
-	guchar	paper_size;                    /* File -> Report -> paper size */
-	guchar	format_userfield;              /* File -> Format -> UserField*/
-	guchar	format_probe;                  /* File -> Format -> probe*/
-	guchar	format_setup;                  /* File -> Format -> setup*/
-	guchar	format_note;                   /* File -> Format -> note*/
-	guchar	view;                         /* File -> Format -> view*/
-	guchar	file_select;                  /* File -> User Field -> file_select*/
-	guchar	enable;                       /* File -> User Field -> enable*/
+	guchar	paper_size;                    /* File->Report->paper size */
+	guchar	format_userfield;              /* File->Format->UserField*/
+	guchar	format_probe;                  /* File->Format->probe*/
+	guchar	format_setup;                  /* File->Format->setup*/
+	guchar	format_note;                   /* File->Format->note*/
+	guchar	view;                         /* File->Format->view*/
+	guchar	file_select;                  /* File->User Field->file_select*/
+	guchar	enable;                       /* File->User Field->enable*/
 
-	guchar	scheme;                       /* Preferences -> Pref. -> Scheme */
-	guchar	gate_mode;                    /* Preferences -> Pref. -> Gate Mode */
-	guchar	select_key;                    /* Preferences -> Pref. -> Select Key */
-	guchar	assign_key;                    /* Preferences -> Pref. -> Assign Key */
+	guchar	scheme;                       /* Preferences->Pref.->Scheme */
+	guchar	gate_mode;                    /* Preferences->Pref.->Gate Mode */
+	guchar	select_key;                    /* Preferences->Pref.->Select Key */
+	guchar	assign_key;                    /* Preferences->Pref.->Assign Key */
 	guchar	assign_key_p;
-	guchar	mouse;                       /* Preferences -> Options -> mouse*/
-	guchar	remote_desktop;                       /* Preferences -> Options -> mouse*/
+	guchar	mouse;                       /* Preferences->Options->mouse*/
+	guchar	remote_desktop;                       /* Preferences->Options->mouse*/
 
 	guchar	edit_notes_info[256];
 	guchar	edit_header_info[256];
@@ -608,7 +608,7 @@ extern guint	get_enc_resolution (CONFIG *p, gint enc_id);
 extern void		set_enc_resolution (CONFIG *p, guint data, gint enc_id);
 extern guint	get_enc_origin (CONFIG *p, gint enc_id);
 extern void		set_enc_origin (CONFIG *p, guint data, gint enc_id);
-/* 设置scan属性 */
+/* 设置 scan inspection 属性 */
 extern guchar	get_inspec_type (CONFIG *p);			
 extern void		set_inspec_type (CONFIG *p, guchar data);
 extern guchar	get_inspec_source (CONFIG *p);			

@@ -16,8 +16,8 @@
 #include <linux/fb.h>
 
 #define MEM_DEVICE "/dev/mem"
-#define TTY_DEVICE "/dev/ttyO1"
-#define TTY_DEVICE1 "/dev/ttyO0"
+#define TTY_DEVICE "/dev/ttyS1"
+#define TTY_DEVICE1 "/dev/ttyS0"
 
 #define COLOR_STEP 32     /*    4  8  16  32  64*/
 #define COLOR_SHIFT 5     /*    2  3   4   5   6*/
