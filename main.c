@@ -196,16 +196,22 @@ static void set_config (guint groupid)
 	set_inspec_rpmspeed (pp->p_config, 10);
 	set_inspec_indexspeed (pp->p_config, 10);
 
-	CFG(scan_start)=0.0;
-	CFG(scan_end)=346.0;
-	CFG(scan_resolution)=100.0;
-	CFG(index_start)=1.0;
-	CFG(index_end)=1.0;
-	CFG(index_resolution)=100.0;
+	set_area_scanstart (pp->p_config, 0);
+	set_area_scanend (pp->p_config, 346);
+	set_area_scanresolution (pp->p_config, 100);
+	set_area_indexstart (pp->p_config, 1);
+	set_area_indexend (pp->p_config, 1);
+	set_area_indexresolution (pp->p_config, 100);
 
-	CFG(start_mode)=0; /*0 Reset All*/
-	CFG(pause)=0; 		/*0 off*/
-	CFG(storage)=0;   /* 0 Last */
+	set_start_mode (pp->p_config, RESET_ALL);
+	set_start_pause (pp->p_config, NORMAL_OFF);
+
+	set_data_storage (pp->p_config, STORAGE_LAST);
+	set_data_inspec_data (pp->p_config, INSPEC_DATA_ALL_A_C);
+
+	set_file_storage (pp->p_config, STORAGE_CARD);
+	set_file_save_mode (pp->p_config, SAVE_MODE_INSPEC_DATA);
+
 
 	/* 探头信息 */
 	GROUP_VAL(probe.Elem_qty)	= 32; /*  */
@@ -236,7 +242,8 @@ static void set_config (guint groupid)
  	pp->cmode_pos = 2;
 	pp->cstart_qty = 1;
 
-	CFG(paper_size) = 2;	/*paper墨认选择A4*/
+	set_report_template (pp->p_config, REPORT_COMPLETE);
+	set_report_paper_size (pp->p_config, PAPER_A4);
 	GROUP_GATE_POS(height) = 20; /*闸门默认高度为20*/
 
 }

@@ -997,6 +997,167 @@ void set_inspec_indexspeed (CONFIG *p, guint data)
 	p->inspection_indexspeed = data;
 }
 
+/* 设置 scan area 属性 */
+gint get_area_scanstart (CONFIG *p)
+{
+	return p->inspection_scan_start;
+}
+
+void set_area_scanstart (CONFIG *p, gint data)
+{
+	p->inspection_scan_start = data;
+}
+
+gint get_area_scanend (CONFIG *p)
+{
+	return p->inspection_scan_end;
+}
+
+void set_area_scanend (CONFIG *p, gint data)
+{
+	p->inspection_scan_end = data;
+}
+
+gint get_area_scanresolution (CONFIG *p)
+{
+	return p->inspection_scan_resolution;
+}
+
+void set_area_scanresolution (CONFIG *p, gint data)
+{
+	p->inspection_scan_resolution = data;
+}
+
+gint get_area_indexstart (CONFIG *p)
+{
+	return p->inspection_index_start;
+}
+
+void set_area_indexstart (CONFIG *p, gint data)
+{
+	p->inspection_index_start = data;
+}
+
+gint get_area_indexend (CONFIG *p)
+{
+	return p->inspection_index_end;
+}
+
+void set_area_indexend (CONFIG *p, gint data)
+{
+	p->inspection_index_end = data;
+}
+
+gint get_area_indexresolution (CONFIG *p)
+{
+	return p->inspection_index_resolution;
+}
+
+void set_area_indexresolution (CONFIG *p, gint data)
+{
+	p->inspection_index_resolution = data;
+}
+
+/* 设置 scan start */
+guchar get_start_mode (CONFIG *p)
+{
+	return (get_bit_value (p->on_off_status, 14) | 
+		(get_bit_value (p->on_off_status, 15) << 1));		
+}
+
+void set_start_mode (CONFIG *p, guchar data)
+{
+	g_assert ((data == 2) ||(data == 1) || (data == 0));
+	p->on_off_status = set_bit_value (p->on_off_status, 14, (data & 0x01));
+	p->on_off_status = set_bit_value (p->on_off_status, 15, (data & 0x02) >> 1);
+}
+
+gboolean get_start_pause (CONFIG *p)
+{
+	return get_bit_value (p->on_off_status, 16);
+}
+
+void set_start_pause (CONFIG *p, gboolean data)
+{
+	g_assert ((data == 1) || (data == 0));
+	p->on_off_status = set_bit_value (p->on_off_status, 16, data);
+}
+
+/* 设置 scan Data */
+guchar get_data_storage (CONFIG *p)
+{
+	return (get_bit_value (p->on_off_status, 17) | 
+		(get_bit_value (p->on_off_status, 18) << 1));		
+}
+
+void set_data_storage (CONFIG *p, guchar data)
+{
+	g_assert ((data == 3) || (data == 2) ||(data == 1) || (data == 0));
+	p->on_off_status = set_bit_value (p->on_off_status, 17, (data & 0x01));
+	p->on_off_status = set_bit_value (p->on_off_status, 18, (data & 0x02) >> 1);
+}
+
+gboolean get_data_inspec_data (CONFIG *p)
+{
+	return get_bit_value (p->on_off_status, 19);
+}
+
+void set_data_inspec_data (CONFIG *p, gboolean data)
+{
+	g_assert ((data == 1) || (data == 0));
+	p->on_off_status = set_bit_value (p->on_off_status, 19, data);
+}
+
+/* 设置 file->file */
+guchar get_file_storage (CONFIG *p)
+{
+	return (get_bit_value (p->on_off_status, 20) | 
+		(get_bit_value (p->on_off_status, 21) << 1));		
+}
+
+void set_file_storage (CONFIG *p, guchar data)
+{
+	g_assert ((data == 3) || (data == 2) ||(data == 1) || (data == 0));
+	p->on_off_status = set_bit_value (p->on_off_status, 20, (data & 0x01));
+	p->on_off_status = set_bit_value (p->on_off_status, 21, (data & 0x02) >> 1);
+}
+
+guchar get_file_save_mode (CONFIG *p)
+{
+	return (get_bit_value (p->on_off_status, 22) | 
+		(get_bit_value (p->on_off_status, 23) << 1));		
+}
+
+void set_file_save_mode (CONFIG *p, guchar data)
+{
+	g_assert ((data == 3) || (data == 2) ||(data == 1) || (data == 0));
+	p->on_off_status = set_bit_value (p->on_off_status, 22, (data & 0x01));
+	p->on_off_status = set_bit_value (p->on_off_status, 23, (data & 0x02) >> 1);
+}
+
+/* 设置 file->report */
+gboolean get_report_template (CONFIG *p)
+{
+	return get_bit_value (p->on_off_status, 24);
+}
+
+void set_report_template (CONFIG *p, gboolean data)
+{
+	g_assert ((data == 1) || (data == 0));
+	p->on_off_status = set_bit_value (p->on_off_status, 24, data);
+}
+
+guchar get_report_paper_size (CONFIG *p)
+{
+	return p->report_paper_size;
+}
+
+void set_report_paper_size (CONFIG *p, guchar data)
+{
+	g_assert (data < 4);
+	p->report_paper_size = data;;
+}
+
 /* group操作*/
 void grpcpy (CONFIG *p, guint dst, guint src)		/* 把src group 配置复制到 dst group */
 {

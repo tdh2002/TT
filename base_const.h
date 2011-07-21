@@ -179,6 +179,35 @@
 #define INDEX_TOP_TURN	3
 #define INDEX_OFF		4
 
+#define RESET_ALL		0
+#define RESET_ENCODER	1
+#define RESET_DATA		2
+
+#define STORAGE_LAST	0
+#define STORAGE_A_PERCENT		1
+#define STORAGE_MAX_THICKNESS	2
+#define STORAGE_MIN_THICKNESS	2
+
+#define INSPEC_DATA_ALL_A_C		0
+#define INSPEC_DATA_ALL_C		1
+
+/* File 设置 */
+#define STORAGE_CARD	0
+#define STORAGE_INTERNAL_MEM	1
+#define STORAGE_USB1	2
+#define STORAGE_USB2	3
+
+#define SAVE_MODE_INSPEC_DATA	0
+#define SAVE_MODE_INSPEC_TABLE	1
+#define SAVE_MODE_SCREEN	2
+#define SAVE_MODE_REPORT	3
+
+#define REPORT_COMPLETE	0
+
+#define PAPER_LETTER	0
+#define PAPER_LEGAL		1
+#define PAPER_A4		2
+#define PAPER_B4		3
 
 /* Range of availage voltage (sPulseVoltagePA). 相控发射电压 */
 #define setup_VOLTAGE_MIN_PA   0x100 

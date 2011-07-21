@@ -394,8 +394,25 @@ typedef	struct _Config
 	11位 聚集法则 auto_program 开关
 	12位 encoder 编码器当前选择 0表示编码器1 1表示编码器2
 	13位 空
-	14位
+	14-15位 Scan->Start->start mode 00 reset all  01 reset encoder 10 reset data
+	16位 Scan->start->pause 0 关 1 开
+	17-18位 Scan->Data->Storage 00 01 10 11
+	19位 Scan->Data->Inspec Data 0 1
+	20-21 File->File->Storage 保存在什么地方  00 01 10 11
+	22-23 File->File->Save Mode 保存什么数据 00 01 10 11
+	24位 File->Report->Template
+	25位 File->Format->User field
+	26位 File->Format->Probe
+	27位 File->Format->Setup
+	28位 File->Format->Note
+	29-30位 File->Format->View 00 01 10 11
 	*/	
+	guchar	format_userfield;              /* File->Format->UserField*/
+	guchar	format_probe;                  /* File->Format->probe*/
+	guchar	format_setup;                  /* File->Format->setup*/
+	guchar	format_note;                   /* File->Format->note*/
+	guchar	view;                         /* File->Format->view*/
+
 	guchar	dis_prop_scan;		/* Display->Properties->Scan  6个 */
 	guchar	fft_color;			/* Display->Properties->fft_color */
 	guint	bcompress;			/* Display->Properties->compress */
@@ -409,27 +426,15 @@ typedef	struct _Config
 	guint	inspection_rpmscanspeed;/* Scan->Inspection->Index rpm scanspeed */
 	guint	inspection_indexspeed;	/* Scan->Inspection->Index rpm scanspeed */
 
-	gint	scan_start;			/* Scan->Area->Scan start*/
-	gint	scan_end;			/* Scan->Area->Scan end*/
-	guint	scan_resolution;	/* Scan->Area->Scan resolution*/
-	gint	index_start;		/* Scan->Area->index_start*/
-	gint	index_end;			/* Scan->Area->index_end*/
-	guint	index_resolution;	/* Scan->Area->index_resolution*/
+	gint	inspection_scan_start;		/* Scan->Area->Scan start*/
+	gint	inspection_scan_end;		/* Scan->Area->Scan end*/
+	gint	inspection_scan_resolution;	/* Scan->Area->Scan resolution*/
+	gint	inspection_index_start;		/* Scan->Area->Index start*/
+	gint	inspection_index_end;		/* Scan->Area->Index end*/
+	gint	inspection_index_resolution;/* Scan->Area->Index resolution*/
 
-	guchar	start_mode;                    /* Scan->Start->start mode*/
-	guchar	pause;                         /* Scan->Start->pause*/
-	guchar	storage;                       /* Scan->Data ->storage*/
-	guchar	inspec_data;                   /* Scan->Data ->Inspec.data*/
+	guchar	report_paper_size;			/* File->Report->paper size */
 
-	guchar	file_storage;                  /* File->File->Storage*/
-	guchar	save_mode;                     /* File->File->save mode */
-	guchar	templa;
-	guchar	paper_size;                    /* File->Report->paper size */
-	guchar	format_userfield;              /* File->Format->UserField*/
-	guchar	format_probe;                  /* File->Format->probe*/
-	guchar	format_setup;                  /* File->Format->setup*/
-	guchar	format_note;                   /* File->Format->note*/
-	guchar	view;                         /* File->Format->view*/
 	guchar	file_select;                  /* File->User Field->file_select*/
 	guchar	enable;                       /* File->User Field->enable*/
 
@@ -621,8 +626,61 @@ extern guint	get_inspec_rpmspeed (CONFIG *p);
 extern void		set_inspec_rpmspeed (CONFIG *p, guint data);
 extern guint	get_inspec_indexspeed (CONFIG *p);
 extern void		set_inspec_indexspeed (CONFIG *p, guint data);
+/* 设置 scan area 属性 */
+extern gint		get_area_scanstart (CONFIG *p);
+extern void		set_area_scanstart (CONFIG *p, gint data);
+extern gint		get_area_scanend (CONFIG *p);
+extern void		set_area_scanend (CONFIG *p, gint data);
+extern gint		get_area_scanresolution (CONFIG *p);
+extern void		set_area_scanresolution (CONFIG *p, gint data);
+extern gint		get_area_indexstart (CONFIG *p);
+extern void		set_area_indexstart (CONFIG *p, gint data);
+extern gint		get_area_indexend (CONFIG *p);
+extern void		set_area_indexend (CONFIG *p, gint data);
+extern gint		get_area_indexresolution (CONFIG *p);
+extern void		set_area_indexresolution (CONFIG *p, gint data);
+/* 设置 scan start */
+extern guchar	get_start_mode (CONFIG *p);
+extern void		set_start_mode (CONFIG *p, guchar data);
+extern gboolean get_start_pause (CONFIG *p);
+extern void		set_start_pause (CONFIG *p, gboolean data);
+/* 设置 scan Data */
+extern guchar	get_data_storage (CONFIG *p);
+extern void		set_data_storage (CONFIG *p, guchar data);
+extern gboolean get_data_inspec_data (CONFIG *p);
+extern void		set_data_inspec_data (CONFIG *p, gboolean data);
 
+/* 设置 file->file */
+extern guchar	get_file_storage (CONFIG *p);
+extern void		set_file_storage (CONFIG *p, guchar data);
+extern guchar	get_file_save_mode (CONFIG *p);
+extern void		set_file_save_mode (CONFIG *p, guchar data);
 
+/* 设置 file->report */
+extern gboolean	get_report_template (CONFIG *p);
+extern void		set_report_template (CONFIG *p, gboolean data);
+extern guchar	get_report_paper_size (CONFIG *p);
+extern void		set_report_paper_size (CONFIG *p, guchar data);
+
+/* 设置 file->format */
+extern gboolean	get_report_format_userfield (CONFIG *p);
+extern void		set_report_format_userfield (CONFIG *p, gboolean data);
+extern gboolean	get_report_format_probe (CONFIG *p);
+extern void		set_report_format_probe (CONFIG *p, gboolean data);
+extern gboolean	get_report_format_setup (CONFIG *p);
+extern void		set_report_format_setup (CONFIG *p, gboolean data);
+extern gboolean	get_report_format_note (CONFIG *p);
+extern void		set_report_format_note (CONFIG *p, gboolean data);
+extern guchar	get_report_format_view (CONFIG *p);
+extern void		set_report_format_view (CONFIG *p, guchar data);
+
+#if 0
+	guchar	format_userfield;              /* File->Format->UserField*/
+	guchar	format_probe;                  /* File->Format->probe*/
+	guchar	format_setup;                  /* File->Format->setup*/
+	guchar	format_note;                   /* File->Format->note*/
+	guchar	view;                         /* File->Format->view*/
+#endif
 /* group操作 */
 extern void		grpcpy (CONFIG *p, guint src, guint dst);
 

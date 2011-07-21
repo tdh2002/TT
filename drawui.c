@@ -1429,15 +1429,15 @@ if(!(prule->mask & 0x04))
 			case C_SCAN:
 				cairo_set_source_rgba(cr,1.0,0.5,0.5,1.0);/*红色cursor*/
 				/* 当前值除以最大值再乘以窗口宽度*/
-				cairo_move_to (cr, 20+(w-50)*(GROUP_VAL(s_reference)/100.0-GROUP_VAL(scan_offset)/10.0-CFG(scan_start)/1000.0)/(CFG(scan_end)/1000.0-CFG(scan_start)/1000.0), 0);
-				cairo_line_to (cr, 20+(w-50)*(GROUP_VAL(s_reference)/100.0-GROUP_VAL(scan_offset)/10.0-CFG(scan_start)/1000.0)/(CFG(scan_end)/1000.0-CFG(scan_start)/1000.0), h-20);
+				cairo_move_to (cr, 20+(w-50)*(GROUP_VAL(s_reference)/100.0-GROUP_VAL(scan_offset)/10.0-get_area_scanstart (pp->p_config)/1000.0)/(get_area_scanend (pp->p_config)/1000.0-get_area_scanstart (pp->p_config)/1000.0), 0);
+				cairo_line_to (cr, 20+(w-50)*(GROUP_VAL(s_reference)/100.0-GROUP_VAL(scan_offset)/10.0-get_area_scanstart (pp->p_config)/1000.0)/(get_area_scanend (pp->p_config)/1000.0-get_area_scanstart (pp->p_config)/1000.0), h-20);
 				cairo_stroke (cr);
 				cairo_set_source_rgba(cr,0.678,0.984,0.89,1.0);/*显示当前值的绿色框*/
-				cairo_rectangle(cr,20+(w-50)*(GROUP_VAL(s_reference)/100.0-GROUP_VAL(scan_offset)/10.0-CFG(scan_start)/1000.0)/(CFG(scan_end)/1000.0-CFG(scan_start)/1000.0)+1,0,30,13);
+				cairo_rectangle(cr,20+(w-50)*(GROUP_VAL(s_reference)/100.0-GROUP_VAL(scan_offset)/10.0-get_area_scanstart (pp->p_config)/1000.0)/(get_area_scanend (pp->p_config)/1000.0-get_area_scanstart (pp->p_config)/1000.0)+1,0,30,13);
 				cairo_fill (cr);
 				cairo_stroke (cr);
 				cairo_set_source_rgba(cr,0.0,0.0,0.0,1.0);/*当前值*/
-				cairo_move_to(cr,20+(w-50)*(GROUP_VAL(s_reference)/100.0-GROUP_VAL(scan_offset)/10.0-CFG(scan_start)/1000.0)/(CFG(scan_end)/1000.0-CFG(scan_start)/1000.0)+3,10);
+				cairo_move_to(cr,20+(w-50)*(GROUP_VAL(s_reference)/100.0-GROUP_VAL(scan_offset)/10.0-get_area_scanstart (pp->p_config)/1000.0)/(get_area_scanend (pp->p_config)/1000.0-get_area_scanstart (pp->p_config)/1000.0)+3,10);
 
 				if(get_unit(pp->p_config)==UNIT_MM)
 					str=g_strdup_printf("%.2f",GROUP_VAL(s_reference)/100.0);
@@ -1448,15 +1448,15 @@ if(!(prule->mask & 0x04))
 
 				cairo_set_source_rgba(cr,0.5,1.0,0.5,1.0);/*绿色cursor*/
 				/* 当前值除以最大值再乘以窗口宽度 */
-				cairo_move_to (cr, 20+(w-50)*(GROUP_VAL(s_measure)/100.0-GROUP_VAL(scan_offset)/10.0-CFG(scan_start)/1000.0)/(CFG(scan_end)/1000.0-CFG(scan_start)/1000.0), 0);
-				cairo_line_to (cr, 20+(w-50)*(GROUP_VAL(s_measure)/100.0-GROUP_VAL(scan_offset)/10.0-CFG(scan_start)/1000.0)/(CFG(scan_end)/1000.0-CFG(scan_start)/1000.0), h-20);
+				cairo_move_to (cr, 20+(w-50)*(GROUP_VAL(s_measure)/100.0-GROUP_VAL(scan_offset)/10.0-get_area_scanstart (pp->p_config)/1000.0)/(get_area_scanend (pp->p_config)/1000.0-get_area_scanstart (pp->p_config)/1000.0), 0);
+				cairo_line_to (cr, 20+(w-50)*(GROUP_VAL(s_measure)/100.0-GROUP_VAL(scan_offset)/10.0-get_area_scanstart (pp->p_config)/1000.0)/(get_area_scanend (pp->p_config)/1000.0-get_area_scanstart (pp->p_config)/1000.0), h-20);
 				cairo_stroke (cr);
 				cairo_set_source_rgba(cr,0.678,0.984,0.89,1.0);/*显示当前值的绿色框*/
-				cairo_rectangle(cr,20+(w-50)*(GROUP_VAL(s_measure)/100.0-GROUP_VAL(scan_offset)/10.0-CFG(scan_start)/1000.0)/(CFG(scan_end)/1000.0-CFG(scan_start)/1000.0)+1,0,30,13);
+				cairo_rectangle(cr,20+(w-50)*(GROUP_VAL(s_measure)/100.0-GROUP_VAL(scan_offset)/10.0-get_area_scanstart (pp->p_config)/1000.0)/(get_area_scanend (pp->p_config)/1000.0-get_area_scanstart (pp->p_config)/1000.0)+1,0,30,13);
 				cairo_fill (cr);
 				cairo_stroke (cr);
 				cairo_set_source_rgba(cr,0.0,0.0,0.0,1.0);/*当前值*/
-				cairo_move_to(cr,20+(w-50)*(GROUP_VAL(s_measure)/100.0-GROUP_VAL(scan_offset)/10.0-CFG(scan_start)/1000.0)/(CFG(scan_end)/1000.0-CFG(scan_start)/1000.0)+3,10);
+				cairo_move_to(cr,20+(w-50)*(GROUP_VAL(s_measure)/100.0-GROUP_VAL(scan_offset)/10.0-get_area_scanstart (pp->p_config)/1000.0)/(get_area_scanend (pp->p_config)/1000.0-get_area_scanstart (pp->p_config)/1000.0)+3,10);
 				if(get_unit(pp->p_config)==UNIT_MM)
 					str=g_strdup_printf("%.2f",GROUP_VAL(s_measure)/100.0);
 				else
@@ -2320,16 +2320,16 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 			{
 				if(get_unit(pp->p_config) == UNIT_MM)
 				{
-					p->hmin1 = GROUP_VAL_POS(p->group, scan_offset)/10.0 + CFG(scan_start)/1000.0;
-					p->hmax1 = GROUP_VAL_POS(p->group, scan_offset)/10.0 + CFG(scan_end)/1000.0;
+					p->hmin1 = GROUP_VAL_POS(p->group, scan_offset)/10.0 + get_area_scanstart (pp->p_config)/1000.0;
+					p->hmax1 = GROUP_VAL_POS(p->group, scan_offset)/10.0 + get_area_scanend (pp->p_config)/1000.0;
 					p->h1_unit = UNIT_MM;
 					p->h1_color = 0x0AD5D3;
 					p->h1_bit = 0;
 				}
 				else
 				{
-					p->hmin1 = GROUP_VAL_POS(p->group, scan_offset)/10.0*0.03937 + CFG(scan_start)/1000.0*0.03937;
-					p->hmax1 = GROUP_VAL_POS(p->group, scan_offset)/10.0*0.03937 + CFG(scan_end)/1000.0*0.03937;
+					p->hmin1 = GROUP_VAL_POS(p->group, scan_offset)/10.0*0.03937 + get_area_scanstart (pp->p_config)/1000.0*0.03937;
+					p->hmax1 = GROUP_VAL_POS(p->group, scan_offset)/10.0*0.03937 + get_area_scanend (pp->p_config)/1000.0*0.03937;
 					p->h1_unit = UNIT_INCH;
 					p->h1_color = 0x0AD5D3;	/*深绿色*/
 					p->h1_bit = 0;
@@ -2399,13 +2399,13 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 			{
 				if(LAW_VAL (Angle_min) == LAW_VAL(Angle_max) )
 				{
-					p->hmin1 = GROUP_VAL_POS(p->group, index_offset)/10.0 + CFG(index_start) / 1000.0;
-					p->hmax1 = GROUP_VAL_POS(p->group, index_offset)/10.0 + CFG(index_end) / 1000.0 + 0.5;
+					p->hmin1 = GROUP_VAL_POS(p->group, index_offset)/10.0 + get_area_indexstart (pp->p_config) / 1000.0;
+					p->hmax1 = GROUP_VAL_POS(p->group, index_offset)/10.0 + get_area_indexend (pp->p_config) / 1000.0 + 0.5;
 				}
 				else
 				{
-					p->hmin1 = GROUP_VAL_POS(p->group, index_offset)/10.0 + CFG(index_start) / 1000.0;
-					p->hmax1 = GROUP_VAL_POS(p->group, index_offset)/10.0 + CFG(index_end) / 1000.0 ;
+					p->hmin1 = GROUP_VAL_POS(p->group, index_offset)/10.0 + get_area_indexstart (pp->p_config) / 1000.0;
+					p->hmax1 = GROUP_VAL_POS(p->group, index_offset)/10.0 + get_area_indexend (pp->p_config) / 1000.0 ;
 				}
 				p->h1_unit = UNIT_MM;
 				p->h1_color = 0xADFBE3;
@@ -2430,16 +2430,16 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 
 			if(get_unit(pp->p_config) == UNIT_MM)	/* wrule */		/* 深绿色 */
 			{
-				p->wmin1 = GROUP_VAL_POS(p->group, scan_offset)/10.0 + CFG(scan_start)/1000.0;
-				p->wmax1 = GROUP_VAL_POS(p->group, scan_offset)/10.0 + CFG(scan_end)/1000.0;
+				p->wmin1 = GROUP_VAL_POS(p->group, scan_offset)/10.0 + get_area_scanstart (pp->p_config)/1000.0;
+				p->wmax1 = GROUP_VAL_POS(p->group, scan_offset)/10.0 + get_area_scanend (pp->p_config)/1000.0;
 				p->w_unit = UNIT_MM;
 				p->w_color = 0x0AD5D3;
 			}
 
 			else
 			{
-				p->wmin1 = GROUP_VAL_POS(p->group, scan_offset)/10.0*0.03937 + CFG(scan_start)/1000.0*0.03937;
-				p->wmax1 = GROUP_VAL_POS(p->group, scan_offset)/10.0*0.03937 + CFG(scan_end)/1000.0*0.03937;
+				p->wmin1 = GROUP_VAL_POS(p->group, scan_offset)/10.0*0.03937 + get_area_scanstart (pp->p_config)/1000.0*0.03937;
+				p->wmax1 = GROUP_VAL_POS(p->group, scan_offset)/10.0*0.03937 + get_area_scanend (pp->p_config)/1000.0*0.03937;
 				p->w_unit = UNIT_INCH;
 				p->w_color = 0x0AD5D3;
 			}
@@ -4275,9 +4275,9 @@ void draw3_data0(DRAW_UI_P p)
 					/* 当前步进 */
 					switch (TMP(scan_start_reg))
 					{
-						case 0:	tmpf = 0.001 * CFG(scan_resolution); break;
-						case 1:	tmpf = 0.01 * CFG(scan_resolution); break;
-						case 2:	tmpf = 0.1 * CFG(scan_resolution); break;
+						case 0:	tmpf = 0.001 * get_area_scanresolution (pp->p_config); break;
+						case 1:	tmpf = 0.01 * get_area_scanresolution (pp->p_config); break;
+						case 2:	tmpf = 0.1 * get_area_scanresolution (pp->p_config); break;
 						default:break;
 					}
 					if(get_inspec_type (pp->p_config)==0 || get_inspec_type (pp->p_config)==1)
@@ -4287,7 +4287,7 @@ void draw3_data0(DRAW_UI_P p)
 						{
 							if(get_unit(pp->p_config) == UNIT_MM)
 							{
-								cur_value = CFG(scan_start)/1000.0;
+								cur_value = get_area_scanstart (pp->p_config)/1000.0;
 								lower = -99999.0;
 								upper = 99999.0;
 								step = tmpf;
@@ -4297,7 +4297,7 @@ void draw3_data0(DRAW_UI_P p)
 							}
 							else
 							{
-								cur_value = CFG(scan_start)/1000.0*0.03937;
+								cur_value = get_area_scanstart (pp->p_config)/1000.0*0.03937;
 								lower = -99999.0*0.03937;
 								upper = 99999.0*0.03937;
 								step = tmpf*0.03937;
@@ -4312,14 +4312,14 @@ void draw3_data0(DRAW_UI_P p)
 						{
 							if(get_unit(pp->p_config) == UNIT_MM)
 							{
-								cur_value = CFG(scan_start)/1000.0;
+								cur_value = get_area_scanstart (pp->p_config)/1000.0;
 								digit = 2;
 								pos = 0;
 								unit = UNIT_MM;
 							}
 							else
 							{
-								cur_value = CFG(scan_start)/1000.0*0.03937;
+								cur_value = get_area_scanstart (pp->p_config)/1000.0*0.03937;
 								digit = 3;
 								pos = 0;
 								unit = UNIT_INCH;
@@ -4331,14 +4331,14 @@ void draw3_data0(DRAW_UI_P p)
 					{
 						if(get_unit(pp->p_config) == UNIT_MM)
 						{
-							CFG(scan_start) = 0;
+							set_area_scanstart (pp->p_config, 0);
 							digit = 0;
 							pos = 0;
 							unit = UNIT_MM;
 						}
 						else
 						{
-							CFG(scan_start) = 0;
+							set_area_scanstart (pp->p_config, 0);
 							digit = 0;
 							pos = 0;
 							unit = UNIT_INCH;
@@ -4355,10 +4355,10 @@ void draw3_data0(DRAW_UI_P p)
 					p->x_pos = 550, p->y_pos = 118-YOFFSET;
 					if ((p->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 						draw3_pop_tt (data_730, NULL, 
-								menu_content[START_MODE+CFG(start_mode)],
-								menu_content+START_MODE, 3, 0,CFG(start_mode), 0);
+								menu_content[START_MODE+get_start_mode (pp->p_config)],
+								menu_content+START_MODE, 3, 0,get_start_mode (pp->p_config), 0);
 					else 
-						draw3_popdown (menu_content[START_MODE+CFG(start_mode)], 0, 0);
+						draw3_popdown (menu_content[START_MODE+get_start_mode (pp->p_config)], 0, 0);
 
 					break;
 
@@ -4366,10 +4366,10 @@ void draw3_data0(DRAW_UI_P p)
 					p->x_pos = 550, p->y_pos = 118-YOFFSET;
 					if ((p->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 						draw3_pop_tt (data_740, NULL, 
-								menu_content[STORAGE+CFG(storage)],
-								menu_content+STORAGE, 4, 0,CFG(storage), 0);
+								menu_content[STORAGE+get_data_storage (pp->p_config)],
+								menu_content+STORAGE, 4, 0,get_data_storage (pp->p_config), 0);
 					else 
-						draw3_popdown (menu_content[STORAGE+CFG(storage)], 0, 0);
+						draw3_popdown (menu_content[STORAGE+get_data_storage (pp->p_config)], 0, 0);
 
 					break;
 
@@ -4383,10 +4383,10 @@ void draw3_data0(DRAW_UI_P p)
 					p->x_pos = 442, p->y_pos = 118-YOFFSET;
 					if ((p->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 						draw3_pop_tt (data_800, NULL, 
-								menu_content[F_STORAGE_P+CFG(file_storage)],
-								menu_content+F_STORAGE, 2, 0,CFG(file_storage), 0);
+								menu_content[F_STORAGE_P+get_file_storage (pp->p_config)],
+								menu_content+F_STORAGE, 2, 0,get_file_storage (pp->p_config), 0);
 					else 
-						draw3_popdown (menu_content[F_STORAGE_P+CFG(file_storage)], 0, 0);
+						draw3_popdown (menu_content[F_STORAGE_P+get_file_storage (pp->p_config)], 0, 0);
 
 					break;
 
@@ -4394,10 +4394,10 @@ void draw3_data0(DRAW_UI_P p)
 					p->x_pos = 502, p->y_pos = 100;
 					if ((p->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 						draw3_pop_tt (data_810, NULL, 
-								menu_content[TEMPLA_P+CFG(templa)],
-								menu_content+TEMPLA, 1, 0,CFG(templa), 0);
+								menu_content[TEMPLA_P+get_report_template (pp->p_config)],
+								menu_content+TEMPLA, 1, 0,get_report_template (pp->p_config), 0);
 					else 
-						draw3_popdown (menu_content[TEMPLA_P+CFG(templa)], 0, 0);
+						draw3_popdown (menu_content[TEMPLA_P+get_report_template (pp->p_config)], 0, 0);
 
 
 					break;
@@ -4626,7 +4626,8 @@ void draw3_data1(DRAW_UI_P p)
 							if (UNIT_MM == get_unit(pp->p_config))
 							{
 								cur_value = (GROUP_VAL(start) / 1000.0) * (GROUP_VAL(velocity) / 200000.0);   /* 当前显示的范围数值mm */
-								lower = (BEAM_INFO(0,beam_delay) /1000.0) * GROUP_VAL(velocity) / 200000.0;
+//								lower = (BEAM_INFO(0,beam_delay) /1000.0) * GROUP_VAL(velocity) / 200000.0;
+								lower = 0;
 								upper =	(MAX_RANGE_US - GROUP_VAL(range) / 1000.0) * (GROUP_VAL(velocity) / 200000.0);
 								step = tmpf * (GROUP_VAL(velocity) / 200000.0);
 								(step < 0.01) ? (step = 0.01) : (step = step);
@@ -4637,7 +4638,8 @@ void draw3_data1(DRAW_UI_P p)
 							else
 							{
 								cur_value = (GROUP_VAL(start) / 1000.0) * 0.03937 * (GROUP_VAL(velocity) / 200000.0); /* 当前显示的范围inch */
-								lower = (BEAM_INFO(0,beam_delay) / 1000.0) * 0.03937 * GROUP_VAL(velocity) / 200000.0;
+//								lower = (BEAM_INFO(0,beam_delay) / 1000.0) * 0.03937 * GROUP_VAL(velocity) / 200000.0;
+								lower = 0;
 								upper =	(MAX_RANGE_US - GROUP_VAL(range) / 1000.0 ) * 0.03937 * GROUP_VAL(velocity) / 200000.0;
 								step = tmpf * 0.03937 * GROUP_VAL(velocity) / 200000.0;
 								digit = 3;
@@ -5966,9 +5968,9 @@ void draw3_data1(DRAW_UI_P p)
 					/* 当前步进 */
 					switch (TMP(scan_end_reg))
 					{
-						case 0:	tmpf = 0.001 * CFG(scan_resolution); break;
-						case 1:	tmpf = 0.01 * CFG(scan_resolution); break;
-						case 2:	tmpf = 0.1 * CFG(scan_resolution); break;
+						case 0:	tmpf = 0.001 * get_area_scanresolution (pp->p_config); break;
+						case 1:	tmpf = 0.01 * get_area_scanresolution (pp->p_config); break;
+						case 2:	tmpf = 0.1 * get_area_scanresolution (pp->p_config); break;
 						default:break;
 					}
 
@@ -5979,8 +5981,8 @@ void draw3_data1(DRAW_UI_P p)
 						{
 							if(get_unit(pp->p_config) == UNIT_MM)
 							{
-								cur_value = CFG(scan_end)/1000.0;
-								lower = CFG(scan_start)/1000.0;
+								cur_value = get_area_scanend (pp->p_config)/1000.0;
+								lower = get_area_scanstart (pp->p_config)/1000.0;
 								upper = 100000.0;
 								step = tmpf;
 								digit = 2;
@@ -5989,8 +5991,8 @@ void draw3_data1(DRAW_UI_P p)
 							}
 							else
 							{
-								cur_value = CFG(scan_end)/1000.0 * 0.03937;
-								lower = CFG(scan_start)/1000.0 * 0.03937;
+								cur_value = get_area_scanend (pp->p_config)/1000.0 * 0.03937;
+								lower = get_area_scanstart (pp->p_config)/1000.0 * 0.03937;
 								upper = 100000.0;
 								step = tmpf*0.03937;
 								digit = 3;
@@ -6003,14 +6005,14 @@ void draw3_data1(DRAW_UI_P p)
 						{
 							if(get_unit(pp->p_config) == UNIT_MM)
 							{
-								cur_value = CFG(scan_end)/1000.0;
+								cur_value = get_area_scanend (pp->p_config)/1000.0;
 								digit = 2;
 								pos = 1;
 								unit = UNIT_MM;
 							}
 							else
 							{
-								cur_value = CFG(scan_end)/1000.0*0.03937;
+								cur_value = get_area_scanend (pp->p_config)/1000.0*0.03937;
 								digit = 3;
 								pos = 1;
 								unit = UNIT_INCH;
@@ -6018,18 +6020,18 @@ void draw3_data1(DRAW_UI_P p)
 							draw3_digit_stop (cur_value, units[unit], digit, pos, 0);
 						}
 					}
-					else  /* Inspection -> Type 选择 Helicoidal Scan  时  ????CFG(scan_start)的值有待确定 */
+					else  /* Inspection -> Type 选择 Helicoidal Scan  时  ????get_area_scanstart (pp->p_config)的值有待确定 */
 					{
 						if(get_unit(pp->p_config) == UNIT_MM)
 						{
-							CFG(scan_start) = 346.0;
+							set_area_scanstart (pp->p_config, 346);
 							digit = 2;
 							pos = 1;
 							unit = UNIT_MM;
 						}
 						else
 						{
-							CFG(scan_start) = 346.0*0.03937;
+							set_area_scanstart (pp->p_config, 346.0*0.03937);
 							digit = 3;
 							pos = 1;
 							unit = UNIT_INCH;
@@ -6041,17 +6043,17 @@ void draw3_data1(DRAW_UI_P p)
 					}
 					break;
 				case 3:/*Scan -> start -> pause  p731 */
-					draw3_popdown (menu_content[OFF_ON + CFG(pause)], 1, 0);
+					draw3_popdown (menu_content[OFF_ON + get_start_pause (pp->p_config)], 1, 0);
 					break;
 
 				case 4:/*Scan -> data -> inspec.data  p741 */
 					pp->x_pos = 545, pp->y_pos = 202;
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 						draw3_pop_tt (data_741, NULL, 
-								menu_content[INSPEC_DATA + CFG(inspec_data)],
-								menu_content + INSPEC_DATA, 2, 1, CFG(inspec_data), 0);
+								menu_content[INSPEC_DATA + get_data_inspec_data (pp->p_config)],
+								menu_content + INSPEC_DATA, 2, 1, get_data_inspec_data (pp->p_config), 0);
 					else 
-						draw3_popdown (menu_content[INSPEC_DATA + CFG(inspec_data)], 1, 0);
+						draw3_popdown (menu_content[INSPEC_DATA + get_data_inspec_data (pp->p_config)], 1, 0);
 
 
 					break;
@@ -9113,7 +9115,7 @@ void draw3_data2(DRAW_UI_P p)
 					{
 						if(get_unit(pp->p_config) == UNIT_MM)
 						{
-							cur_value = CFG(scan_resolution)/1000.0;
+							cur_value = get_area_scanresolution (pp->p_config)/1000.0;
 							//cur_value = get_inspec_speed (pp->p_config)/100.0/get_prf();
 							lower = 0.08;
 							upper = 357.0;
@@ -9124,7 +9126,7 @@ void draw3_data2(DRAW_UI_P p)
 						}
 						else
 						{
-							cur_value = CFG(scan_resolution)/1000.0*0.03937;
+							cur_value = get_area_scanresolution (pp->p_config)/1000.0*0.03937;
 							//cur_value = get_inspec_speed (pp->p_config)/100.0/get_prf()*0.03937;
 							lower = 0.001;
 							upper = 9.281;
@@ -9139,7 +9141,7 @@ void draw3_data2(DRAW_UI_P p)
 					{
 						if(get_unit(pp->p_config) == UNIT_MM)
 						{
-							cur_value = CFG(scan_resolution)/1000.0;
+							cur_value = get_area_scanresolution (pp->p_config)/1000.0;
 							//cur_value = get_inspec_speed (pp->p_config)/100.0/get_prf();
 							digit = 2;
 							pos = 2;
@@ -9147,7 +9149,7 @@ void draw3_data2(DRAW_UI_P p)
 						}
 						else
 						{
-							cur_value = CFG(scan_resolution)/1000.0*0.03937;
+							cur_value = get_area_scanresolution (pp->p_config)/1000.0*0.03937;
 							//cur_value = get_inspec_speed (pp->p_config)/100.0/get_prf()*0.03937;
 							digit = 3;
 							pos = 2;
@@ -9159,7 +9161,7 @@ void draw3_data2(DRAW_UI_P p)
 
 
 				case 3:/*Scan -> start -> start  p732 */
-					if (CFG(pause)==0)
+					if (get_start_pause (pp->p_config)==0)
 						draw3_popdown(NULL,2,1);
 					else
 					{
@@ -9192,10 +9194,10 @@ void draw3_data2(DRAW_UI_P p)
 					pp->x_pos = 605, pp->y_pos = 287-YOFFSET;
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 						draw3_pop_tt (data_812, NULL, 
-								menu_content[PAPER_SIZE+CFG(paper_size)],
-								menu_content+PAPER_SIZE, 4, 2,CFG(paper_size), 0x0b);
+								menu_content[PAPER_SIZE+get_report_paper_size (pp->p_config)],
+								menu_content+PAPER_SIZE, 4, 2,get_report_paper_size (pp->p_config), 0x0b);
 					else 
-						draw3_popdown (menu_content[PAPER_SIZE+CFG(paper_size)], 2, 0);
+						draw3_popdown (menu_content[PAPER_SIZE+get_report_paper_size (pp->p_config)], 2, 0);
 					//gtk_widget_set_sensitive(pp->eventbox30[2],FALSE);
 					//gtk_widget_set_sensitive(pp->eventbox31[2],FALSE);
 
@@ -11840,9 +11842,9 @@ void draw3_data3(DRAW_UI_P p)
 					/* 当前步进 */
 					switch (TMP(index_start_reg))
 					{
-						case 0:	tmpf = 0.001 * CFG(index_resolution); break;
-						case 1:	tmpf = 0.01 * CFG(index_resolution); break;
-						case 2:	tmpf = 0.1 * CFG(index_resolution); break;
+						case 0:	tmpf = 0.001 * get_area_indexresolution (pp->p_config); break;
+						case 1:	tmpf = 0.01 * get_area_indexresolution (pp->p_config); break;
+						case 2:	tmpf = 0.1 * get_area_indexresolution (pp->p_config); break;
 						default:break;
 					}
 					if(get_inspec_type (pp->p_config)==1 || get_inspec_type (pp->p_config)==2)
@@ -11852,7 +11854,7 @@ void draw3_data3(DRAW_UI_P p)
 						{
 							if(get_unit(pp->p_config) == UNIT_MM)
 							{
-								cur_value = CFG(index_start)/1000.0;
+								cur_value = get_area_indexstart (pp->p_config)/1000.0;
 								lower = -99999.0;
 								upper = 99999.0;
 								step = tmpf;
@@ -11862,7 +11864,7 @@ void draw3_data3(DRAW_UI_P p)
 							}
 							else
 							{
-								cur_value = CFG(index_start) / 1000.0 * 0.03937;
+								cur_value = get_area_indexstart (pp->p_config) / 1000.0 * 0.03937;
 								lower = -99999.0 * 0.03937;
 								upper = 99999.0 * 0.03937;
 								step = tmpf*0.03937;
@@ -11876,14 +11878,14 @@ void draw3_data3(DRAW_UI_P p)
 						{
 							if(get_unit(pp->p_config) == UNIT_MM)
 							{
-								cur_value = CFG(index_start)/1000.0;
+								cur_value = get_area_indexstart (pp->p_config)/1000.0;
 								digit = 2;
 								pos = 3;
 								unit = UNIT_MM;
 							}
 							else
 							{
-								cur_value = CFG(index_start)/1000*0.03937;
+								cur_value = get_area_indexstart (pp->p_config)/1000*0.03937;
 								digit = 3;
 								pos = 3;
 								unit = UNIT_INCH;
@@ -11896,14 +11898,14 @@ void draw3_data3(DRAW_UI_P p)
 					{
 						if(get_unit(pp->p_config) == UNIT_MM)
 						{
-							cur_value = CFG(index_start);
+							cur_value = get_area_indexstart (pp->p_config);
 							digit = 2;
 							pos = 3;
 							unit = UNIT_MM;
 						}
 						else
 						{
-							cur_value = CFG(index_start)/1000*0.03937;
+							cur_value = get_area_indexstart (pp->p_config)/1000*0.03937;
 							digit = 3;
 							pos = 3;
 							unit = UNIT_INCH;
@@ -11930,19 +11932,7 @@ void draw3_data3(DRAW_UI_P p)
 		case 8:
 			switch (pp->pos1[8])
 			{
-				case 0:/*File -> File -> save data p803 */
-					if(!CFG(file_storage))
-						draw3_popdown(NULL,3,1);
-					else
-					{
-						draw3_popdown(NULL,3,1);
-						gtk_widget_set_sensitive (pp->eventbox30[3], FALSE);
-						gtk_widget_set_sensitive (pp->eventbox31[3], FALSE);
-					}
-					gtk_widget_set_sensitive(pp->eventbox30[3],FALSE);
-					gtk_widget_set_sensitive(pp->eventbox31[3],FALSE);
-					break;
-
+				case 0:draw3_popdown(NULL,3,1);break;/*File -> File -> save data p803 */
 				case 1:/*File -> report -> build p813 */
 					draw3_popdown(NULL,3,1);
 					//gtk_widget_set_sensitive(pp->eventbox30[3],FALSE);
@@ -13811,9 +13801,9 @@ void draw3_data4(DRAW_UI_P p)
 					/* 当前步进 */
 					switch (pp->p_tmp_config->index_end_reg)
 					{
-						case 0:	tmpf = 0.001 * CFG(index_resolution); break;
-						case 1:	tmpf = 0.01 * CFG(index_resolution); break;
-						case 2:	tmpf = 0.1 * CFG(index_resolution); break;
+						case 0:	tmpf = 0.001 * get_area_indexresolution (pp->p_config); break;
+						case 1:	tmpf = 0.01 * get_area_indexresolution (pp->p_config); break;
+						case 2:	tmpf = 0.1 * get_area_indexresolution (pp->p_config); break;
 						default:break;
 					}
 
@@ -13824,8 +13814,8 @@ void draw3_data4(DRAW_UI_P p)
 						{
 							if( get_unit(pp->p_config) == UNIT_MM )
 							{
-								cur_value = CFG(index_end)/1000.0;
-								lower = CFG(index_start)/1000.0;
+								cur_value = get_area_indexend (pp->p_config)/1000.0;
+								lower = get_area_indexstart (pp->p_config)/1000.0;
 								upper = 100000.0;
 								step = tmpf;
 								digit = 2;
@@ -13834,8 +13824,8 @@ void draw3_data4(DRAW_UI_P p)
 							}
 							else
 							{
-								cur_value = CFG(index_end)/1000.0*0.03937;
-								lower = CFG(index_start)/1000.0*0.03937;
+								cur_value = get_area_indexend (pp->p_config)/1000.0*0.03937;
+								lower = get_area_indexstart (pp->p_config)/1000.0*0.03937;
 								upper = 100000.0*0.03937;
 								step = tmpf*0.03937;
 								digit = 3;
@@ -13848,14 +13838,14 @@ void draw3_data4(DRAW_UI_P p)
 						{
 							if( get_unit(pp->p_config) == UNIT_MM )
 							{
-								cur_value = CFG(index_end)/1000.0;
+								cur_value = get_area_indexend (pp->p_config)/1000.0;
 								digit = 2;
 								pos = 4;
 								unit = UNIT_MM;
 							}
 							else
 							{
-								cur_value = CFG(index_end)/1000.0*0.03937;
+								cur_value = get_area_indexend (pp->p_config)/1000.0*0.03937;
 								digit = 3;
 								pos = 4;
 								unit = UNIT_INCH;
@@ -13869,14 +13859,14 @@ void draw3_data4(DRAW_UI_P p)
 					{
 						if( get_unit(pp->p_config) == UNIT_MM )
 						{
-							cur_value = CFG(index_end);
+							cur_value = get_area_indexend (pp->p_config);
 							digit = 2;
 							pos = 4;
 							unit = UNIT_MM;
 						}
 						else
 						{
-							cur_value = CFG(index_end)/1000.0*0.03937;
+							cur_value = get_area_indexend (pp->p_config)/1000.0*0.03937;
 							digit = 3;
 							pos = 4;
 							unit = UNIT_INCH;
@@ -13906,27 +13896,13 @@ void draw3_data4(DRAW_UI_P p)
 			{
 				case 0:/*File -> File -> save mode  p804 */
 					pp->x_pos = 540, pp->y_pos = 456-YOFFSET;
-					if(!CFG(file_storage))
-					{
-						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
-							draw3_pop_tt (data_804, NULL, 
-									menu_content[SAVE_MODE+CFG(save_mode)],
-									menu_content+SAVE_MODE, 4, 4, CFG(save_mode), 0);
-						else 
-							draw3_popdown (menu_content[SAVE_MODE+CFG(save_mode)], 4, 0);
-					}
-
-					else
-					{
-						draw3_popdown (menu_content[SAVE_MODE+CFG(save_mode)], 4, 0);
-						gtk_widget_set_sensitive (pp->eventbox30[4], FALSE);
-						gtk_widget_set_sensitive (pp->eventbox31[4], FALSE);
-					}
-					gtk_widget_set_sensitive(pp->eventbox30[4],FALSE);
-					gtk_widget_set_sensitive(pp->eventbox31[4],FALSE);
-
+					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
+						draw3_pop_tt (data_804, NULL, 
+								menu_content[SAVE_MODE+get_file_save_mode (pp->p_config)],
+								menu_content+SAVE_MODE, 4, 4, get_file_save_mode (pp->p_config), 0);
+					else 
+						draw3_popdown (menu_content[SAVE_MODE+get_file_save_mode (pp->p_config)], 4, 0);
 					break;
-
 				case 1:
 					if ( !con2_p[8][1][4] )
 						gtk_widget_hide (pp->eventbox30[4]);
@@ -15355,7 +15331,7 @@ void draw3_data5(DRAW_UI_P p)
 						{
 							if( get_unit(pp->p_config) == UNIT_MM )
 							{
-								cur_value = CFG(index_resolution)/1000.0;
+								cur_value = get_area_indexresolution (pp->p_config)/1000.0;
 								lower = 0.01;
 								upper = 99999.0;
 								step = tmpf;
@@ -15365,7 +15341,7 @@ void draw3_data5(DRAW_UI_P p)
 							}
 							else
 							{
-								cur_value = CFG(index_resolution)/1000.0*0.03937;
+								cur_value = get_area_indexresolution (pp->p_config)/1000.0*0.03937;
 								lower = 0.001;
 								upper = 99999.0 * 0.03937;
 								step = tmpf/10.0;
@@ -15379,14 +15355,14 @@ void draw3_data5(DRAW_UI_P p)
 						{
 							if( get_unit(pp->p_config) == UNIT_MM )
 							{
-								cur_value = CFG(index_resolution)/1000.0;
+								cur_value = get_area_indexresolution (pp->p_config)/1000.0;
 								digit = 2;
 								pos = 5;
 								unit = UNIT_MM;
 							}
 							else
 							{
-								cur_value = CFG(index_resolution)/1000.0 * 0.03937;
+								cur_value = get_area_indexresolution (pp->p_config)/1000.0 * 0.03937;
 								digit = 3;
 								pos = 5;
 								unit = UNIT_INCH;
@@ -15399,14 +15375,14 @@ void draw3_data5(DRAW_UI_P p)
 					{
 						if( get_unit(pp->p_config) == UNIT_MM )
 						{
-							cur_value = CFG(index_resolution)/1000.0;
+							cur_value = get_area_indexresolution (pp->p_config)/1000.0;
 							digit = 2;
 							pos = 5;
 							unit = UNIT_MM;
 						}
 						else
 						{
-							cur_value = CFG(index_resolution)/1000.0 * 0.03937;
+							cur_value = get_area_indexresolution (pp->p_config)/1000.0 * 0.03937;
 							digit = 3;
 							pos = 5;
 							unit = UNIT_INCH;
@@ -15435,31 +15411,8 @@ void draw3_data5(DRAW_UI_P p)
 		case 8:
 			switch (pp->pos1[8])
 			{
-				case 0:/*File -> File -> file name  p805 */
-					if(!CFG(file_storage))
-					{
-						/* 格式化字符串 */
-						g_sprintf (temp,"%s", con2_p[8][0][5]);
-
-						/* 设置label */
-						gtk_label_set_text (GTK_LABEL (pp->label3[5]), temp);
-						gtk_label_set_text (GTK_LABEL (pp->data3[5]), "Data####");
-
-						/* 显示和隐藏控件 */
-						gtk_widget_show (pp->eventbox30[5]);
-						gtk_widget_show (pp->eventbox31[5]);
-						gtk_widget_show (pp->data3[5]);
-
-					}
-					else
-					{						
-						gtk_widget_set_sensitive (pp->eventbox30[5], FALSE);
-						gtk_widget_set_sensitive (pp->eventbox31[5], FALSE);
-					}
-					gtk_widget_set_sensitive(pp->eventbox30[5],FALSE);
-					gtk_widget_set_sensitive(pp->eventbox31[5],FALSE);
-					break;
-
+				case 0: /*File -> File -> file name  p805 */
+					draw3_popdown ("Data####", 5, 0); break;
 				case 1:
 					if ( !con2_p[8][1][5] )
 						gtk_widget_hide (pp->eventbox30[5]);
@@ -15925,6 +15878,7 @@ gpointer signal_thread1(gpointer arg)
 {
 	gint i, j, k, offset, offset1;
 	guint *temp1 = (guint *)(pp->p_beam_data + 0x800000);
+	guint temp2 = (pp->p_beam_data + 3);
 	pp->mark3 = 0;
 
 	/*	g_thread_create (signal_thread, NULL, FALSE, NULL);*/
@@ -15942,14 +15896,14 @@ gpointer signal_thread1(gpointer arg)
 					offset += (GROUP_VAL_POS(k, point_qty) + 32) * TMP(beam_qty[k]);
 					offset1 += TMP(beam_qty[k]);
 				}
-				memcpy (TMP(measure_data[offset1 + j]), (void *)(pp->p_beam_data + offset +
+				memcpy (TMP(measure_data[offset1 + j]), (void *)(temp2 + offset +
 							(GROUP_VAL_POS(i, point_qty) + 32) * j + GROUP_VAL_POS(i, point_qty)), 32);
 
 				if (GROUP_VAL_POS(i, point_qty) <= TMP(a_scan_dot_qty))
 				{
 					/* 只插值当前显示的A扫描 其余不插值 */
 					interpolation_data (
-							(DOT_TYPE *)(pp->p_beam_data + offset +
+							(DOT_TYPE *)(temp2 + offset +
 								(GROUP_VAL_POS(i, point_qty) + 32) * j),
 							TMP(scan_data[i] + TMP(a_scan_dot_qty) * j), 
 							GROUP_VAL_POS(i, point_qty),
@@ -15958,7 +15912,7 @@ gpointer signal_thread1(gpointer arg)
 				else if (GROUP_VAL_POS(i, point_qty) > TMP(a_scan_dot_qty))
 				{
 					compress_data (
-							(DOT_TYPE *)(pp->p_beam_data + offset +
+							(DOT_TYPE *)(temp2 + offset +
 								(GROUP_VAL_POS(i, point_qty) + 32) * j),
 							TMP(scan_data[i] + TMP(a_scan_dot_qty) * j), 
 							GROUP_VAL_POS(i, point_qty),
@@ -15987,7 +15941,13 @@ gpointer signal_thread1(gpointer arg)
 
 	/*  */
 //	for (i = 0 ; i < 8; i++)
-//		g_print ("%08x\n", TMP(measure_data[0][1]));
+		g_print ("1 %08x\n", TMP(measure_data[0][0]));
+		g_print ("1 %08x\n", TMP(measure_data[0][1]));
+		g_print ("1 %08x\n", TMP(measure_data[0][2]));
+		g_print ("2 %08x\n", TMP(measure_data[1][0]));
+		g_print ("2 %08x\n", TMP(measure_data[1][1]));
+		g_print ("2 %08x\n", TMP(measure_data[1][2]));
+		g_print ("\n");
 //	g_print ("\n");
 	draw_field_value ();
 	/* 复制波形到显存 */

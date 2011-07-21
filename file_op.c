@@ -1186,14 +1186,14 @@ void report_build_scan_area(char *file_name,int group)
     fprintf(fp,"</TR>\n");
 
     fprintf(fp,"<TR>\n");
-    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%.2f</TD>\n",pp->p_config->scan_start / 1000.0);
-    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%.2f</TD>\n",pp->p_config->scan_end / 1000.0);
-    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%.2f</TD>\n",pp->p_config->scan_resolution / 1000.0);
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%.2f</TD>\n", get_area_scanstart (pp->p_config) / 1000.0);
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%.2f</TD>\n", get_area_scanend (pp->p_config) / 1000.0);
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%.2f</TD>\n", get_area_scanresolution (pp->p_config) / 1000.0);
 
 	//if ()
-	fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%.2f</TD>\n",pp->p_config->index_start / 1000.0);
-    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%.2f</TD>\n",pp->p_config->index_end / 1000.0);
-    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%.2f</TD>\n",pp->p_config->index_resolution / 1000.0);
+	fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%.2f</TD>\n", get_area_indexstart (pp->p_config) / 1000.0);
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%.2f</TD>\n", get_area_indexend (pp->p_config) / 1000.0);
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%.2f</TD>\n", get_area_indexresolution (pp->p_config) / 1000.0);
     fprintf(fp,"</TR>\n\n");
 
     fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\"><B>Synchro</B></TD>\n");
