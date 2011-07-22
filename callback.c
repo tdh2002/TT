@@ -299,6 +299,8 @@ void data_9131 (GtkMenuItem *menuitem, gpointer data);
 //void data_923 (GtkMenuItem *menuitem, gpointer data);
 void data_930 (GtkMenuItem *menuitem, gpointer data);
 
+void data_dialog (GtkMenuItem *menuitem, gpointer data);
+
 gboolean eventbox2_function0 (GtkWidget *widget, GdkEventButton *event,	gpointer data);
 
 /*   */
@@ -5266,6 +5268,11 @@ void data_901 (GtkSpinButton *spinbutton, gpointer data) /*scan_resolution*/
 	set_bright (pp->p_config, (guchar) (gtk_spin_button_get_value (spinbutton)));
 }
 
+
+void data_dialog(GtkMenuItem *menuitem, gpointer data) /* Define Probe -> probe type*/
+{
+	CFG(probe_type) = (guchar) (GPOINTER_TO_UINT (data));
+}
 
 /*  */
 void send_dsp_data (guint data_type, guint value)

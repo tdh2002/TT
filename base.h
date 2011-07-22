@@ -402,6 +402,7 @@ typedef struct Draw_interface
 	GtkWidget		*menu_bar3;
 	GtkWidget		*root_menu3;
 	GtkWidget		*menu_item3[64];
+	GtkWidget		*menu_dialog[20];
 
 	GtkWidget		*window;
 	GtkWidget		*win_keyboard;

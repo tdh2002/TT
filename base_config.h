@@ -447,6 +447,8 @@ typedef	struct _Config
 	gchar	edit_notes_info[256];
 	gchar	edit_header_info[256];
 	gchar	file_name_info[50];
+
+	guchar	probe_type;
 } CONFIG, *CONFIG_P;
 
 /* fetch material info of current config 获取当前配置中材料的信息 */

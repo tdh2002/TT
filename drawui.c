@@ -1612,35 +1612,54 @@ if(!(prule->mask & 0x04))
 				if((CFG(display_pos) == A_S_CC_SCAN ) && (get_cscan_source(pp->p_config, 0)==4) && (GROUP_VAL(ut_unit) == UT_UNIT_TRUE_DEPTH) && (get_display_group(pp->p_config) == DISPLAY_CURRENT_GROUP))	/*A_S scan 在 true depth时， A scan 需要旋转90度*/
 				{
 					cairo_set_source_rgba(cr,1.0,0.0,0.0,1.0);	/* A闸门为红色 */
-					cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(w-50)+20, (GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(h-20));
-					cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(w-50)+20, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[0].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(h-20));
+					cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(w-50)+20, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(h-20));
+					cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(w-50)+20, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[0].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(h-20));
 					cairo_stroke(cr);
 
 					cairo_set_source_rgba(cr,0.0,1.0,0.0,1.0);	/* B闸门为绿色 */
-					cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(w-50)+20, (GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(h-20));
-					cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(w-50)+20, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(h-20));
+					cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(w-50)+20, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(h-20));
+					cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(w-50)+20, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(h-20));
 					cairo_stroke(cr);
 
 					cairo_set_source_rgba(cr,1.0,1.0,0.0,1.0);	/* C闸门为黄色 */
-					cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[2].height) / 100.0)*(w-50)+20, (GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(h-20));
-					cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[2].height) / 100.0)*(w-50)+20, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[2].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(h-20));
+					cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[2].height) / 100.0)*(w-50)+20, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(h-20));
+					cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[2].height) / 100.0)*(w-50)+20, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[2].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(h-20));
 					cairo_stroke(cr);
 				}
 				else	/*A Scan 需要旋转的情况除外*/
 				{
 					cairo_set_source_rgba(cr,1.0,0.0,0.0,1.0);	/* A闸门为红色 */
-					cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(h-20) );
-					cairo_line_to(cr, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[0].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(h-20) );
+					cairo_move_to(cr, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(h-20) );
+					cairo_line_to(cr, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[0].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(h-20) );
+
+					cairo_move_to(cr, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(h-20)-3 );
+					cairo_line_to(cr, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(h-20)+3 );/*A闸门左端点*/
+
+					cairo_move_to(cr, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[0].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(h-20)-3 );
+					cairo_line_to(cr, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[0].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(h-20)+3 );/*A闸门右端点*/
 					cairo_stroke(cr);
 
 					cairo_set_source_rgba(cr,0.0,1.0,0.0,1.0);	/* B闸门为绿色 */
-					cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(h-20) );
-					cairo_line_to(cr, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(h-20) );
+					cairo_move_to(cr, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(h-20) );
+					cairo_line_to(cr, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(h-20) );
+
+					cairo_move_to(cr, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(h-20)-3 );
+					cairo_line_to(cr, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(h-20)+3 );/*B闸门左端点*/
+
+					cairo_move_to(cr, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(h-20)-3 );
+					cairo_line_to(cr, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(h-20)+3 );/*B闸门右端点*/
 					cairo_stroke(cr);
 
 					cairo_set_source_rgba(cr,1.0,1.0,0.0,1.0);	/* C闸门为黄色 */
-					cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[2].height) / 100.0)*(h-20) );
-					cairo_line_to(cr, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[2].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[2].height) / 100.0)*(h-20) );
+					cairo_move_to(cr, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[2].height) / 100.0)*(h-20) );
+					cairo_line_to(cr, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[2].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[2].height) / 100.0)*(h-20) );
+
+					cairo_move_to(cr, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[2].height) / 100.0)*(h-20)-3 );
+					cairo_line_to(cr, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[2].height) / 100.0)*(h-20)+3 );/*C闸门左端点*/
+
+					cairo_move_to(cr, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[2].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[2].height) / 100.0)*(h-20)-3 );
+					cairo_line_to(cr, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[2].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[2].height) / 100.0)*(h-20)+3 );/*C闸门右端点*/
+
 					cairo_stroke(cr);
 				}
 					break;
@@ -1649,30 +1668,30 @@ if(!(prule->mask & 0x04))
 					cairo_set_source_rgba(cr,1.0,0.0,0.0,1.0);	/* A闸门为红色   虚线 纵向 */
 					for(j=0; j<h-20; j+=5)
 					{
-						cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20, j );
-						cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20, j+2.5 );
-						cairo_move_to(cr, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[0].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20,j);
-						cairo_line_to(cr, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[0].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20,j+2.5);
+						cairo_move_to(cr, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20, j );
+						cairo_line_to(cr, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20, j+2.5 );
+						cairo_move_to(cr, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[0].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20,j);
+						cairo_line_to(cr, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[0].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20,j+2.5);
 					}
 					cairo_stroke(cr);
 
 					cairo_set_source_rgba(cr,0.0,1.0,0.0,1.0);	/* B闸门为绿色   虚线  纵向*/
 					for(j=0; j<h-20; j+=5)
 					{
-						cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20, j );
-						cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20, j+2.5 );
-						cairo_move_to(cr, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20,j);
-						cairo_line_to(cr, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20,j+2.5);
+						cairo_move_to(cr, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20, j );
+						cairo_line_to(cr, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20, j+2.5 );
+						cairo_move_to(cr, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20,j);
+						cairo_line_to(cr, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20,j+2.5);
 					}
 					cairo_stroke(cr);
 
 					cairo_set_source_rgba(cr,1.0,1.0,0.0,1.0);	/* C闸门为黄色   虚线  纵向*/
 					for(j=0; j<h-20; j+=5)
 					{
-						cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20, j );
-						cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20, j+2.5 );
-						cairo_move_to(cr, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[2].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20,j);
-						cairo_line_to(cr, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[2].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20,j+2.5);
+						cairo_move_to(cr, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20, j );
+						cairo_line_to(cr, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20, j+2.5 );
+						cairo_move_to(cr, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[2].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20,j);
+						cairo_line_to(cr, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[2].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20,j+2.5);
 					}
 					cairo_stroke(cr);
 
@@ -1686,30 +1705,30 @@ if(!(prule->mask & 0x04))
 						cairo_set_source_rgba(cr,1.0,0.0,0.0,1.0);	/* A闸门为红色   虚线 纵向*/
 						for(j=0; j<h-20; j+=5)
 						{
-						cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20, j );
-						cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20, j+2.5 );
-						cairo_move_to(cr, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[0].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20,j);
-						cairo_line_to(cr, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[0].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20,j+2.5);
+						cairo_move_to(cr, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20, j );
+						cairo_line_to(cr, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20, j+2.5 );
+						cairo_move_to(cr, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[0].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20,j);
+						cairo_line_to(cr, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[0].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20,j+2.5);
 						}
 						cairo_stroke(cr);
 
 						cairo_set_source_rgba(cr,0.0,1.0,0.0,1.0);	/* B闸门为绿色   虚线 纵向 */
 						for(j=0; j<h-20; j+=5)
 						{
-						cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20, j );
-						cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20, j+2.5 );
-						cairo_move_to(cr, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20,j);
-						cairo_line_to(cr, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20,j+2.5);
+						cairo_move_to(cr, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20, j );
+						cairo_line_to(cr, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20, j+2.5 );
+						cairo_move_to(cr, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20,j);
+						cairo_line_to(cr, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20,j+2.5);
 						}
 						cairo_stroke(cr);
 
 						cairo_set_source_rgba(cr,1.0,1.0,0.0,1.0);	/* C闸门为黄色   虚线 纵向 */
 						for(j=0; j<h-20; j+=5)
 						{
-						cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20, j );
-						cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20, j+2.5 );
-						cairo_move_to(cr, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[2].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20,j);
-						cairo_line_to(cr, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[2].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20,j+2.5);
+						cairo_move_to(cr, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20, j );
+						cairo_line_to(cr, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20, j+2.5 );
+						cairo_move_to(cr, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[2].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20,j);
+						cairo_line_to(cr, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[2].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50)+20,j+2.5);
 						}
 						cairo_stroke(cr);
 
@@ -1719,30 +1738,30 @@ if(!(prule->mask & 0x04))
 						cairo_set_source_rgba(cr,1.0,0.0,0.0,1.0);	/* A闸门为红色   虚线 横向*/
 						for(j=20; j<w-30; j+=5)
 						{
-						cairo_move_to(cr, j, (GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(h-20));
-						cairo_line_to(cr, j+2.5, (GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(h-20));
-						cairo_move_to(cr, j, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[0].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50));
-						cairo_line_to(cr, j+2.5,((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[0].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50));
+						cairo_move_to(cr, j, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(h-20));
+						cairo_line_to(cr, j+2.5, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(h-20));
+						cairo_move_to(cr, j, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[0].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50));
+						cairo_line_to(cr, j+2.5,((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[0].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50));
 						}
 						cairo_stroke(cr);
 
 						cairo_set_source_rgba(cr,0.0,1.0,0.0,1.0);	/* B闸门为绿色   虚线 横向*/
 						for(j=20; j<w-30; j+=5)
 						{
-						cairo_move_to(cr, j, (GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(h-20));
-						cairo_line_to(cr, j+2.5, (GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(h-20));
-						cairo_move_to(cr, j, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50));
-						cairo_line_to(cr, j+2.5,((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50));
+						cairo_move_to(cr, j, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(h-20));
+						cairo_line_to(cr, j+2.5, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(h-20));
+						cairo_move_to(cr, j, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50));
+						cairo_line_to(cr, j+2.5,((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50));
 						}
 						cairo_stroke(cr);
 
 						cairo_set_source_rgba(cr,1.0,1.0,0.0,1.0);	/* C闸门为黄色   虚线 横向*/
 						for(j=20; j<w-30; j+=5)
 						{
-						cairo_move_to(cr, j, (GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(h-20));
-						cairo_line_to(cr, j+2.5, (GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(h-20));
-						cairo_move_to(cr, j, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[2].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50));
-						cairo_line_to(cr, j+2.5,((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[2].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50));
+						cairo_move_to(cr, j, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(h-20));
+						cairo_line_to(cr, j+2.5, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(h-20));
+						cairo_move_to(cr, j, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[2].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50));
+						cairo_line_to(cr, j+2.5,((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[2].width) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(w-50));
 						}
 						cairo_stroke(cr);
 
@@ -11296,8 +11315,10 @@ void draw3_data3(DRAW_UI_P p)
 							}
 							else
 							{	
-								draw3_popdown(GROUP_VAL(probe.Model), 3,0);
+								draw3_popdown(GROUP_VAL(probe.Model), 3,1);
 							}
+							g_sprintf (temp,"%s", con2_p[5][0][6]);
+							gtk_label_set_text (GTK_LABEL (pp->label3[3]), temp);
 						}
 					}
 					if( GROUP_VAL(group_mode) && get_auto_detect (pp->p_config))	/* 自动检测开启时同时又在PA模式时，探头不可选 */

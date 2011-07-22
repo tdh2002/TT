@@ -533,6 +533,7 @@ const gchar *all_menu_content_en[] =
 	"API-DL", "AWS-D1.5",				/* Select Code */
 	"Radius", "Depth", "Thickness",		/* Echo type */
 	"Compressive", "Tensile",			/* Weld type */
+	"Custom", "Angle Beam", "Contact", "Immersion",	/* Probe Type */
 	""
 };
 

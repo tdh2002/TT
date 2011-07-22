@@ -31,6 +31,18 @@ enum
 	N_COLUMNS
 };
 
+
+GtkWidget *entry_2_1_1_1_1[7];
+
+void set_dialog_menu_position(GtkMenu *menu, gint *x, gint *y,
+		gboolean *push_in, gpointer status_icon)
+{
+	*x = pp->x_pos;
+	*y = pp->y_pos;
+	return;
+}
+
+
 _my_ip_set entry_ip;
 _my_mask_set entry_mask;
 void cd_source_dir_path (GtkTreeView *tree_view,GtkTreePath *path,GtkTreeViewColumn *column,gpointer user_data);
@@ -3694,6 +3706,54 @@ static void draw_file_name ()
 	gtk_widget_show_all(dialog);
 }
 
+
+
+
+void draw_menu3_pop (void (*fun)(GtkMenuItem*, gpointer),
+		gpointer p,	const gchar *cur_value,	const gchar *content[],
+		guint qty, gint pos, guint pop_pos )
+{
+	gint i;
+	GtkMenu *menu;
+
+	//update_widget_bg(pp->eventbox30[z], /*backpic[6]*/ 6);
+	for (i = 0; i < 20; i++) 
+	{
+		if (pp->menu_dialog[i]) 
+		{
+			gtk_widget_destroy(pp->menu_dialog[i]);
+			pp->menu_dialog[i] = NULL;
+		}
+		else 
+			break;
+	}
+
+	for (i = 0; i < qty; i++ )
+	{
+		pp->menu_dialog[i] = gtk_menu_item_new_with_label (content[i]);
+		gtk_menu_shell_append (GTK_MENU_SHELL (pp->menu3), pp->menu_dialog[i]);
+		g_signal_connect (pp->menu_dialog[i], "activate",
+				G_CALLBACK(fun), (GUINT_TO_POINTER (i)));
+
+		gtk_widget_show (pp->menu_dialog[i]);
+	}
+	gtk_menu_item_select (GTK_MENU_ITEM (pp->menu_dialog[pop_pos]));
+
+	menu = GTK_MENU (pp->menu3);
+
+	gtk_menu_popup (menu, NULL, NULL, 
+			(GtkMenuPositionFunc)set_dialog_menu_position,
+			NULL,
+			0,
+			gtk_get_current_event_time());
+	
+	gtk_label_set_text (GTK_LABEL (entry_2_1_1_1_1[pos]), cur_value);
+
+
+	return ;
+}
+
+
 gboolean load_dialog_menu3_7(GtkWidget *widget,GdkEventButton *event,gpointer *user_data)
 {
     _load_menu3_7_p menu = (_load_menu3_7_p)user_data;
@@ -3912,6 +3972,12 @@ gboolean callback_box_3_7_3(GtkWidget *widget,GdkEventButton *event,gpointer *us
 	if(pos == 4)
 	{
 		g_printf("edit -> probe type\n");
+					pp->x_pos = 350, pp->y_pos = 470;
+						draw_menu3_pop (data_dialog, NULL, 
+								menu_content[PROBETYPE + CFG(probe_type)],
+								menu_content + PROBETYPE, 4, 4, CFG(probe_type));
+//gtk_widget_hide(entry_2_1_1_1_1[3]);
+
 	}
 
 	//manage -> copy
@@ -4039,7 +4105,7 @@ void draw_define_probe()
 
 	GtkWidget *vbox_2_1_1_1[7];
 
-	GtkWidget *entry_2_1_1_1_1[7];
+
 
 	GtkWidget *vbox_2_1_1_1_2[7];
 
@@ -4134,7 +4200,7 @@ void draw_define_probe()
 			gtk_widget_set_sensitive(vbox_2_1_1_1_2[i],FALSE);
 		}
 
-	    gtk_widget_set_size_request(GTK_WIDGET(vbox_2_1_1_1_2[i]),114,85);
+	    gtk_widget_set_size_request(GTK_WIDGET(vbox_2_1_1_1_2[i]),114,60);
 		update_widget_bg(vbox_2_1_1_1_2[i], /*backpic[1]*/1);
 		label_2_1_1_1_2[i] = gtk_label_new(char_2_1_1_1_2[i]);
 		gtk_widget_modify_fg (label_2_1_1_1_2[i], GTK_STATE_NORMAL, &color_black);

@@ -210,6 +210,7 @@
 #define SCODE		(CMODE + 4)
 #define ECHOTYPE	(SCODE + 2)
 #define WELDTYPE	(ECHOTYPE + 3)
+#define PROBETYPE	(WELDTYPE + 2)
 //#define LAW_CONFIG	(WGROUP + 3)
 //#define L_CONFIG	(LAW_CONFIG + 4)
 
@@ -587,6 +588,8 @@ extern void data_913 (GtkMenuItem *menuitem, gpointer data);
 extern void data_9131 (GtkMenuItem *menuitem, gpointer data);
 //extern void data_923 (GtkMenuItem *menuitem, gpointer data);
 extern void data_930 (GtkMenuItem *menuitem, gpointer data);
+
+extern void data_dialog (GtkMenuItem *menuitem, gpointer data);
 
 extern gboolean foo (GtkAccelGroup *accel_group, GObject *acceleratable,
 		guint keyval, GdkModifierType modifier, gpointer data);
