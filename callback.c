@@ -841,7 +841,7 @@ void b3_fun0(gpointer pt)
 			switch (p->pos1[8])
 			{
 				case 2: 
-					CFG(format_userfield) = !CFG(format_userfield); /* P820 */
+					set_report_format_userfield (pp->p_config,!get_report_format_userfield (pp->p_config)); /* P820 */
 					break; 
 				default:break;
 			}
@@ -1194,7 +1194,7 @@ void b3_fun1(gpointer p)
 			switch (pp->pos1[8])
 			{
 				case 2: 
-					CFG(format_probe)= !CFG(format_probe);/* P821 */
+					set_report_format_probe (pp->p_config, !get_report_format_probe (pp->p_config));/* P821 */
 					break;
 				case 3: 
 					CFG(enable)= !CFG(enable);/* P831 */
@@ -1410,7 +1410,7 @@ void b3_fun2(gpointer p)
 			switch (pp->pos1[8])
 			{
 				case 2: 
-					CFG(format_setup)= !CFG(format_setup);/* P822 */
+					set_report_format_setup (pp->p_config,  !get_report_format_setup (pp->p_config));/* P822 */
 					break;
 				default:break;
 			}
@@ -1683,7 +1683,7 @@ void b3_fun3(gpointer p)
 			switch (pp->pos1[8])
 			{
 				case 2: 
-					CFG(format_note)= !CFG(format_note);/* P823 */
+					set_report_format_note (pp->p_config, !get_report_format_note (pp->p_config));/* P823 */
 					break;
 				default:break;
 			}
@@ -5193,7 +5193,7 @@ void data_812 (GtkMenuItem *menuitem, gpointer data) /* P812 File->Report->paper
 
 void data_824 (GtkMenuItem *menuitem, gpointer data) /* File->Format->view*/
 {
-	pp->p_config->view = (gchar) (GPOINTER_TO_UINT (data));
+	set_report_format_view (pp->p_config, (guchar) (GPOINTER_TO_UINT (data)));
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
 }
@@ -5216,16 +5216,10 @@ void data_900(GtkMenuItem *menuitem, gpointer data) /* Preferences->Pref.->Units
 
 void data_903(GtkMenuItem *menuitem, gpointer data) /* Preferences->Pref.->scheme */
 {
-	CFG(scheme) = (guchar) (GPOINTER_TO_UINT (data));
-	pp->pos_pos = MENU3_STOP;
-	draw_menu3(0, NULL);
 }
 
 void data_904(GtkMenuItem *menuitem, gpointer data) /* Preferences->Pref.->gate mode */
 {
-	CFG(gate_mode) = (guchar) (GPOINTER_TO_UINT (data));
-	pp->pos_pos = MENU3_STOP;
-	draw_menu3(0, NULL);
 }
 
 void data_912(GtkMenuItem *menuitem, gpointer data) /* Preferences->system->select key */

@@ -212,6 +212,11 @@ static void set_config (guint groupid)
 	set_file_storage (pp->p_config, STORAGE_CARD);
 	set_file_save_mode (pp->p_config, SAVE_MODE_INSPEC_DATA);
 
+	set_report_format_userfield (pp->p_config, NORMAL_OFF);
+	set_report_format_probe (pp->p_config, NORMAL_OFF);
+	set_report_format_setup (pp->p_config, NORMAL_OFF);
+	set_report_format_note (pp->p_config, NORMAL_OFF);
+	set_report_format_view (pp->p_config, FILE_VIEW_TABLE);
 
 	/* 探头信息 */
 	GROUP_VAL(probe.Elem_qty)	= 32; /*  */

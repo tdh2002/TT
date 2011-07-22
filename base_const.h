@@ -209,6 +209,11 @@
 #define PAPER_A4		2
 #define PAPER_B4		3
 
+
+#define FILE_VIEW_TABLE	0
+#define FILE_VIEW_CURRENT_LAYOUT	1
+#define	FILE_VIEW_OFF	2
+
 /* Range of availage voltage (sPulseVoltagePA). 相控发射电压 */
 #define setup_VOLTAGE_MIN_PA   0x100 
 #define	setup_VOLTAGE_MED_PA   0x101 

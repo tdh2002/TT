@@ -407,11 +407,6 @@ typedef	struct _Config
 	28位 File->Format->Note
 	29-30位 File->Format->View 00 01 10 11
 	*/	
-	guchar	format_userfield;              /* File->Format->UserField*/
-	guchar	format_probe;                  /* File->Format->probe*/
-	guchar	format_setup;                  /* File->Format->setup*/
-	guchar	format_note;                   /* File->Format->note*/
-	guchar	view;                         /* File->Format->view*/
 
 	guchar	dis_prop_scan;		/* Display->Properties->Scan  6个 */
 	guchar	fft_color;			/* Display->Properties->fft_color */
@@ -435,19 +430,22 @@ typedef	struct _Config
 
 	guchar	report_paper_size;			/* File->Report->paper size */
 
-	guchar	file_select;                  /* File->User Field->file_select*/
-	guchar	enable;                       /* File->User Field->enable*/
+	guchar	userfield_select;			/* File->User Field->select 当前选择userfield编号 */
+	guchar	userfield_select_enable;	/* File->User Field->select userfield 使能状态 */
+	gchar	user_label[10][25];
+	gchar	user_label_content[10][25];
 
-	guchar	scheme;                       /* Preferences->Pref.->Scheme */
-	guchar	gate_mode;                    /* Preferences->Pref.->Gate Mode */
-	guchar	select_key;                    /* Preferences->Pref.->Select Key */
-	guchar	assign_key;                    /* Preferences->Pref.->Assign Key */
+	guchar	file_select;				/* File->User Field->file_select*/
+	guchar	enable;						/* File->User Field->enable*/
+
+	guchar	select_key;		/* Preferences->Pref.->Select Key */
+	guchar	assign_key;		/* Preferences->Pref.->Assign Key */
 	guchar	assign_key_p;
-	guchar	mouse;                       /* Preferences->Options->mouse*/
-	guchar	remote_desktop;                       /* Preferences->Options->mouse*/
+	guchar	mouse;			/* Preferences->Options->mouse*/
+	guchar	remote_desktop;	/* Preferences->Options->mouse*/
 
-	guchar	edit_notes_info[256];
-	guchar	edit_header_info[256];
+	gchar	edit_notes_info[256];
+	gchar	edit_header_info[256];
 	gchar	file_name_info[50];
 } CONFIG, *CONFIG_P;
 
@@ -674,13 +672,6 @@ extern void		set_report_format_note (CONFIG *p, gboolean data);
 extern guchar	get_report_format_view (CONFIG *p);
 extern void		set_report_format_view (CONFIG *p, guchar data);
 
-#if 0
-	guchar	format_userfield;              /* File->Format->UserField*/
-	guchar	format_probe;                  /* File->Format->probe*/
-	guchar	format_setup;                  /* File->Format->setup*/
-	guchar	format_note;                   /* File->Format->note*/
-	guchar	view;                         /* File->Format->view*/
-#endif
 /* group操作 */
 extern void		grpcpy (CONFIG *p, guint src, guint dst);
 

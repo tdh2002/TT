@@ -1158,6 +1158,65 @@ void set_report_paper_size (CONFIG *p, guchar data)
 	p->report_paper_size = data;;
 }
 
+/* 设置 file->format */
+gboolean get_report_format_userfield (CONFIG *p)
+{
+	return get_bit_value (p->on_off_status, 25);
+}
+
+void set_report_format_userfield (CONFIG *p, gboolean data)
+{
+	g_assert ((data == 1) || (data == 0));
+	p->on_off_status = set_bit_value (p->on_off_status, 25, data);
+}
+
+gboolean get_report_format_probe (CONFIG *p)
+{
+	return get_bit_value (p->on_off_status, 26);
+}
+
+void set_report_format_probe (CONFIG *p, gboolean data)
+{
+	g_assert ((data == 1) || (data == 0));
+	p->on_off_status = set_bit_value (p->on_off_status, 26, data);
+}
+
+gboolean get_report_format_setup (CONFIG *p)
+{
+	return get_bit_value (p->on_off_status, 27);
+}
+
+void set_report_format_setup (CONFIG *p, gboolean data)
+{
+	g_assert ((data == 1) || (data == 0));
+	p->on_off_status = set_bit_value (p->on_off_status, 27, data);
+}
+
+gboolean get_report_format_note (CONFIG *p)
+{
+	return get_bit_value (p->on_off_status, 28);
+}
+
+void set_report_format_note (CONFIG *p, gboolean data)
+{
+	g_assert ((data == 1) || (data == 0));
+	p->on_off_status = set_bit_value (p->on_off_status, 28, data);
+}
+
+guchar get_report_format_view (CONFIG *p)
+{
+	return (get_bit_value (p->on_off_status, 29) | 
+		(get_bit_value (p->on_off_status, 30) << 1));		
+}
+
+void set_report_format_view (CONFIG *p, guchar data)
+{
+	g_assert ((data == 2) ||(data == 1) || (data == 0));
+	p->on_off_status = set_bit_value (p->on_off_status, 29, (data & 0x01));
+	p->on_off_status = set_bit_value (p->on_off_status, 30, (data & 0x02) >> 1);
+}
+
+
 /* group操作*/
 void grpcpy (CONFIG *p, guint dst, guint src)		/* 把src group 配置复制到 dst group */
 {

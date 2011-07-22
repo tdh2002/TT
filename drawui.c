@@ -4403,7 +4403,7 @@ void draw3_data0(DRAW_UI_P p)
 					break;
 
 				case 2:/*File -> format -> user field  p820 */
-					draw3_popdown (menu_content[OFF_ON + CFG(format_userfield)], 0, 0);
+					draw3_popdown (menu_content[OFF_ON + get_report_format_userfield (pp->p_config)], 0, 0);
 					break;
 
 				case 3:/*File -> user field -> select  p830 */
@@ -6083,7 +6083,7 @@ void draw3_data1(DRAW_UI_P p)
 
 
 				case 2:/*File -> format -> probe  p821 */
-					draw3_popdown (menu_content[OFF_ON + CFG(format_probe)], 1, 0);
+					draw3_popdown (menu_content[OFF_ON + get_report_format_probe (pp->p_config)], 1, 0);
 					break;
 
 				case 3:/*File -> user field -> enable  p831 */
@@ -9204,7 +9204,7 @@ void draw3_data2(DRAW_UI_P p)
 					break;
 
 				case 2:/* File -> format -> setup  p822 */
-					draw3_popdown (menu_content[OFF_ON + CFG(format_setup)], 2, 0);
+					draw3_popdown (menu_content[OFF_ON + get_report_format_setup (pp->p_config)], 2, 0);
 					break;
 
 				case 3:/*File -> user field -> label p832 */
@@ -9222,9 +9222,9 @@ void draw3_data2(DRAW_UI_P p)
 			switch (pp->pos1[9])
 			{
 				case 0:/*preferences -> pref. -> scheme  p902 */
-					draw3_popdown (NULL, 2, 1);
-					gtk_widget_set_sensitive(pp->eventbox30[2],FALSE);
-					gtk_widget_set_sensitive(pp->eventbox31[2],FALSE);
+					if ( !con2_p[9][0][2] )
+						gtk_widget_hide (pp->eventbox30[2]);
+					gtk_widget_hide (pp->eventbox31[2]);
 					break;
 
 				case 1:/*Preferences -> system -> select key  p912 */
@@ -11944,7 +11944,7 @@ void draw3_data3(DRAW_UI_P p)
 					break;
 
 				case 2:/*File -> format -> Note  p823 */
-					draw3_popdown (menu_content[OFF_ON + CFG(format_note)], 3, 0);
+					draw3_popdown (menu_content[OFF_ON + get_report_format_note (pp->p_config)], 3, 0);
 					break;
 				case 3:/*File -> user field -> content  p833*/
 					draw3_popdown (menu_content[U_CONTENT + CFG(file_select)], 3, 0);
@@ -11962,17 +11962,9 @@ void draw3_data3(DRAW_UI_P p)
 			switch (pp->pos1[9])
 			{
 				case 0:/*preferences -> pref. -> scheme  p903 */
-					pp->x_pos = 588, pp->y_pos = 392-YOFFSET;
-					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
-						draw3_pop_tt (data_903, NULL, 
-								menu_content[SCHEME + CFG(scheme)],
-								menu_content+SCHEME, 2, 3, CFG(scheme), 0);
-					else 
-						draw3_popdown (menu_content[SCHEME + CFG(scheme)], 3, 0);
-
-					gtk_widget_set_sensitive(pp->eventbox30[3],FALSE);
-					gtk_widget_set_sensitive(pp->eventbox31[3],FALSE);
-
+					if ( !con2_p[9][0][3] )
+						gtk_widget_hide (pp->eventbox30[3]);
+					gtk_widget_hide (pp->eventbox31[3]);
 					break;
 
 				case 1:/*Preferences -> system -> assign key  p913 */
@@ -13912,10 +13904,10 @@ void draw3_data4(DRAW_UI_P p)
 					pp->x_pos = 547, pp->y_pos = 456-YOFFSET;
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
 						draw3_pop_tt (data_824, NULL, 
-								menu_content[VIEW+CFG(view)],
-								menu_content+VIEW, 3, 4, CFG(view), 0);
+								menu_content[VIEW+get_report_format_view (pp->p_config)],
+								menu_content+VIEW, 3, 4, get_report_format_view (pp->p_config), 0);
 					else 
-						draw3_popdown (menu_content[VIEW+CFG(view)], 4, 0);
+						draw3_popdown (menu_content[VIEW+get_report_format_view (pp->p_config)], 4, 0);
 
 					break;
 
@@ -13936,16 +13928,9 @@ void draw3_data4(DRAW_UI_P p)
 			switch (pp->pos1[9])
 			{
 				case 0:/*preferences -> pref. -> gate mode   p904 */
-					pp->x_pos = 572, pp->y_pos = 484-YOFFSET;
-					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
-						draw3_pop_tt (data_904, NULL, 
-								menu_content[GATE_M + CFG(gate_mode)],
-								menu_content+GATE_M, 2, 4, CFG(gate_mode), 0);
-					else 
-						draw3_popdown (menu_content[GATE_M + CFG(gate_mode)], 4, 0);
-					gtk_widget_set_sensitive(pp->eventbox30[4],FALSE);
-					gtk_widget_set_sensitive(pp->eventbox31[4],FALSE);
-
+					if ( !con2_p[9][0][4] )
+						gtk_widget_hide (pp->eventbox30[4]);
+					gtk_widget_hide (pp->eventbox31[4]);
 					break;
 				case 1:
 					if ( !con2_p[9][1][4] )
