@@ -218,6 +218,20 @@ static void set_config (guint groupid)
 	set_report_format_note (pp->p_config, NORMAL_OFF);
 	set_report_format_view (pp->p_config, FILE_VIEW_TABLE);
 
+	set_report_userfield_select (pp->p_config, 0);
+	set_report_userfield_enable (pp->p_config, FALSE, 0);
+	set_report_userfield_enable (pp->p_config, FALSE, 1);
+	set_report_userfield_enable (pp->p_config, FALSE, 2);
+	set_report_userfield_enable (pp->p_config, FALSE, 3);
+	set_report_userfield_enable (pp->p_config, FALSE, 4);
+	set_report_userfield_enable (pp->p_config, FALSE, 5);
+	set_report_userfield_enable (pp->p_config, FALSE, 6);
+	set_report_userfield_enable (pp->p_config, FALSE, 7);
+	set_report_userfield_enable (pp->p_config, FALSE, 8);
+	set_report_userfield_enable (pp->p_config, FALSE, 9);
+	set_report_userfield_label (pp->p_config, "Author", 0);
+	set_report_userfield_content (pp->p_config, "TanDenghua", 0);
+
 	/* 探头信息 */
 	GROUP_VAL(probe.Elem_qty)	= 32; /*  */
 	/*	memcpy (GROUP_VAL(probe.Name), "5L64-A2", 8);*/ /* 探头名字 */
@@ -551,12 +565,9 @@ void init_group_spi (guint group)
 
 	if (GROUP_VAL_POS(group, prf)  >= 400)
 			GROUP_VAL_POS(group, prf)  = 400;
-/*		TMP(group_spi[group]).idel_time	= 
-			100000000 / (GROUP_VAL_POS(group, prf) / (10.0 * CFG(prf_compress))) - 2048 - TMP(group_spi[group]).rx_time;
-			*/
+
 	temp_prf = TMP(beam_qty[group]) * GROUP_VAL_POS(group, prf);
 	TMP(group_spi[group]).idel_time		= 
-/*		100000000 / (GROUP_VAL_POS(group, prf) / 10) - 2048 - TMP(group_spi[group]).rx_time;*/
 		100000000 / (temp_prf / (10)) - 2048 - TMP(group_spi[group]).rx_time;
 
 	TMP(group_spi[group]).gate_a_height	= GROUP_VAL_POS(group, gate[0].height);

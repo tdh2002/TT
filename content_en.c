@@ -59,7 +59,7 @@ static const gchar *content_en28[] = {
 
 static const gchar *content_en29[] = {
 	/* 二级菜单第9页 */
-	"Pref.", "System", "Service", "Options", "Network"
+	"Pref.", "System", "Service", "Network", NULL
 };
 
 
@@ -338,23 +338,24 @@ static const gchar *content_en290[] = {
 
 static const gchar *content_en291[] = {
 	/* 二级菜单第9页下的第1页三级菜单 */
-	"Clock Set \n(HH:MM:SS)", "Date Set", "Select Key", "Assign Key", NULL, NULL
+	"Clock Set \n(HH:MM:SS)", "Date Set", NULL, NULL, NULL, NULL
 };
 
 static const gchar *content_en292[] = {
 	/* 二级菜单第9页下的第2页三级菜单 */
-	"  System Info  ", "  File Manager ","  Import/Export  ", NULL, NULL, NULL
+	"  System Info  ", "  File Manager ", NULL, NULL, NULL, NULL
 };
 
 static const gchar *content_en293[] = {
 	/* 二级菜单第9页下的第3页三级菜单 */
-	"  Mouse  ", "  Option Key ","  Remote Desktop  ", NULL, NULL,NULL
+/*	"  Mouse  ", "  Option Key ","  Remote Desktop  ", NULL, NULL,NULL*/
+	"  IP Address  ", "  Subnet Mask ", NULL, NULL, NULL, NULL
 };
 
 static const gchar *content_en294[] = {
 	/* 二级菜单第9页下的第4页三级菜单 */
 	/*"  DHCP  ","  IP Address  ", "  Subnet Mask ","  Apply  ", "  Remote Pc  ", "  Connect  "*/
-	"  IP Address  ", "  Subnet Mask ", "  Apply  ", NULL, NULL, NULL
+	"  IP Address  ", "  Subnet Mask ", NULL, NULL, NULL, NULL
 };
 
 const gchar **content1_en[] = 

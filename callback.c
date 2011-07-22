@@ -456,7 +456,7 @@ static void save_cal_law(gint offset, gint group, PARAMETER_P p)
 			TMP(focal_law_all_elem[offset + i][j]).FL_gain	= GROUP_VAL_POS (group, gain) / 100;
 			TMP(focal_law_all_elem[offset + i][j]).T_delay	= p->timedelay[i][k];
 			TMP(focal_law_all_elem[offset + i][j]).R_delay	= p->timedelay[i][k];
-			TMP(focal_law_all_elem[offset + i][j]).Amplitude = CFG (voltage_pa); 
+			TMP(focal_law_all_elem[offset + i][j]).Amplitude = get_voltage (pp->p_config, get_current_group(pp->p_config)); 
 			TMP(focal_law_all_elem[offset + i][j]).P_width	= GROUP_VAL_POS (group, pulser_width) / 100; 
 		} 
 
@@ -816,7 +816,7 @@ void b3_fun0(gpointer pt)
 			switch (p->pos1[3])
 			{
 				case 2: 
-					CFG(display_table) = !CFG(display_table); /* P320 */
+					set_display_table (pp->p_config, !get_display_table(pp->p_config)); /* P320 */
 					break; 
 				default:break;
 			}
@@ -1161,7 +1161,7 @@ void b3_fun1(gpointer p)
 			switch (pp->pos1[3])
 			{
 				case 2: 
-					CFG(entry_image)= !CFG(entry_image);/* P321 */
+					set_entry_image (pp->p_config, !get_entry_image (pp->p_config));/* P321 */
 					break;
 				default:break;
 			}
@@ -1199,7 +1199,9 @@ void b3_fun1(gpointer p)
 					set_report_format_probe (pp->p_config, !get_report_format_probe (pp->p_config));/* P821 */
 					break;
 				case 3: 
-					CFG(enable)= !CFG(enable);/* P831 */
+					set_report_userfield_enable (pp->p_config, 
+							!get_report_userfield_enable (pp->p_config, get_report_userfield_select (pp->p_config)),
+							 get_report_userfield_select (pp->p_config));
 					break;
 				default:break;
 			}
@@ -1420,9 +1422,7 @@ void b3_fun2(gpointer p)
 		case 9:
 			switch (pp->pos1[9])
 			{
-				case 3: 
-					CFG(remote_desktop)= !CFG(remote_desktop);/* P932 */
-					break;
+				case 3:break;
 				default:break;
 			}
 			break;
@@ -1643,7 +1643,7 @@ void b3_fun2(gpointer p)
 
 void b3_fun3(gpointer p)
 {
-	gint	grp = CFG (groupId);
+	gint	grp = get_current_group (pp->p_config);
 	/* 之前的位置 */
 	pp->pos_last2 = pp->pos2[pp->pos][pp->pos1[pp->pos]];
 	pp->pos2[pp->pos][pp->pos1[pp->pos]] = 3;
@@ -3485,10 +3485,6 @@ void data_1151 (GtkSpinButton *spinbutton, gpointer data) /* PRF P115 */
 	g_free(markup);
 	if (GROUP_VAL_POS(grp, prf) >= 400)
 		GROUP_VAL_POS(grp, prf) = 400;
-	/*
-		TMP(group_spi[grp]).idel_time		= 
-			100000000 / (GROUP_VAL_POS(grp, prf) / (10.0 * CFG(prf_compress))) - 2048 - TMP(group_spi[grp]).rx_time;
-			*/
 	temp_prf = TMP(beam_qty[get_current_group(pp->p_config)]) * GROUP_VAL_POS(grp, prf);
 	TMP(group_spi[grp]).idel_time	= 
 		100000000 / (temp_prf / (10)) - 2048 - TMP(group_spi[grp]).rx_time;
@@ -5200,9 +5196,9 @@ void data_824 (GtkMenuItem *menuitem, gpointer data) /* File->Format->view*/
 	draw_menu3(0, NULL);
 }
 
-void data_830(GtkMenuItem *menuitem, gpointer data) /* File->User Field->select */
+void data_830(GtkMenuItem *menuitem, gpointer data) /* P830 File->User Field->select */
 {
-	pp->p_config->file_select = (gchar) (GPOINTER_TO_UINT (data));
+	set_report_userfield_select (pp->p_config, (guchar) (GPOINTER_TO_UINT (data)));
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
 }
@@ -5226,52 +5222,28 @@ void data_904(GtkMenuItem *menuitem, gpointer data) /* Preferences->Pref.->gate 
 
 void data_912(GtkMenuItem *menuitem, gpointer data) /* Preferences->system->select key */
 {
-	CFG(select_key) = (guchar) (GPOINTER_TO_UINT (data));
-	pp->pos_pos = MENU3_STOP;
-	draw_menu3(0, NULL);
 }
 
 void data_913(GtkMenuItem *menuitem, gpointer data) /* Preferences->system->assign key*/
 {
-	CFG(assign_key) = (guchar) (GPOINTER_TO_UINT (data));
-	pp->pos_pos = MENU3_STOP;
-	draw_menu3(0, NULL);
 }
 
 void data_9131(GtkMenuItem *menuitem, gpointer data) /* Preferences->system->assign key*/
 {
-	CFG(assign_key_p) = (guchar) (GPOINTER_TO_UINT (data));
-	pp->pos_pos = MENU3_STOP;
-	draw_menu3(0, NULL);
 }
-
-# if 0
-void data_923(GtkMenuItem *menuitem, gpointer data) /* Preferences->system->assign key*/
-{
-	pp->p_config->startup_mode = (gchar) (GPOINTER_TO_UINT (data));
-	pp->pos_pos = MENU3_STOP;
-	draw_menu3(0, NULL);
-}
-#endif
 
 void data_930(GtkMenuItem *menuitem, gpointer data) /* Preferences->system->assign key*/
 {
-	pp->p_config->mouse = (guchar) (GPOINTER_TO_UINT (data));
-	pp->pos_pos = MENU3_STOP;
-	draw_menu3 (0, NULL);
 }
-
-
 
 void data_901 (GtkSpinButton *spinbutton, gpointer data) /*scan_resolution*/
 {
 	set_bright (pp->p_config, (guchar) (gtk_spin_button_get_value (spinbutton)));
 }
 
-
 void data_dialog(GtkMenuItem *menuitem, gpointer data) /* Define Probe -> probe type*/
 {
-	CFG(probe_type) = (guchar) (GPOINTER_TO_UINT (data));
+	set_probe_type (pp->p_config, (guchar) (GPOINTER_TO_UINT (data)));
 }
 
 /*  */
@@ -5416,7 +5388,7 @@ void da_call_edit_notes (GtkDialog *dialog, gint response_id, gpointer user_data
 		gtk_text_buffer_get_end_iter (TextBuffer, &end);
 
 		Data = gtk_text_buffer_get_text (TextBuffer, &start, &end, FALSE);
-		memcpy (CFG(edit_notes_info), Data, sizeof(CFG(edit_notes_info)));
+		set_edit_notes_info (pp->p_config, Data);
 
 		g_free (Data);
 		g_print ("OK_Pressed");
@@ -5440,7 +5412,7 @@ void da_call_edit_header (GtkDialog *dialog, gint response_id, gpointer user_dat
 		gtk_text_buffer_get_end_iter (TextBuffer, &end);
 
 		Data = gtk_text_buffer_get_text (TextBuffer, &start, &end, FALSE);
-		memcpy (CFG(edit_header_info), Data, sizeof(CFG(edit_header_info)));
+		set_header_info (pp->p_config, Data);
 
 		g_free (Data);
 		g_print ("OK_Pressed");
@@ -5464,8 +5436,8 @@ void da_call_file_name (GtkDialog *dialog, gint response_id, gpointer user_data)
 		gtk_text_buffer_get_end_iter (TextBuffer, &end);
 
 		Data = gtk_text_buffer_get_text (TextBuffer, &start, &end, FALSE);
-		memcpy (CFG(file_name_info), Data, sizeof(CFG(file_name_info)));
-		gtk_label_set_text (GTK_LABEL (pp->data3[1]), CFG(file_name_info));
+		set_file_name_info (pp->p_config, Data);
+		gtk_label_set_text (GTK_LABEL (pp->data3[1]), get_file_name_info (pp->p_config));
 
 		g_free (Data);
 		g_print ("OK_Pressed");
@@ -5495,7 +5467,7 @@ void generate_focallaw()
 {
 	gint	i, j;
 	guint	temp_beam;
-	gint	grp = CFG (groupId);
+	gint	grp = get_current_group (pp->p_config);
 	gint temp_prf;
 	
 	temp_beam = 1;

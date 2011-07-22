@@ -711,7 +711,7 @@ static void draw_edit_notes ()
 	GtkWidget *view;
 	GtkTextBuffer *TextBuffer;
 	//	GtkWidgetClass *widget_window_class1;
-	const gchar *buf = (const gchar *)(CFG(edit_notes_info));
+	const gchar *buf = (const gchar *)(get_edit_notes_info (pp->p_config));
 
 	label = gtk_label_new("Notes");
 	dialog = gtk_dialog_new_with_buttons("Notes", win,
@@ -758,7 +758,7 @@ static void draw_edit_header ()
 	GtkWidget *view;
 	GtkTextBuffer *TextBuffer;
 	//	GtkWidgetClass *widget_window_class1;
-	const gchar *buf = (const gchar *)(CFG(edit_header_info));
+	const gchar *buf = (const gchar *)(get_header_info (pp->p_config));
 
 	label = gtk_label_new("Header");
 	dialog = gtk_dialog_new_with_buttons("Dialog_edit_notes", win,
@@ -3579,7 +3579,7 @@ void draw_report_build()
 
     report_build_header(file_name);
 
-    for(i=0;i<CFG(groupQty);i++)
+    for (i = 0; i < get_group_qty (pp->p_config); i++)
     {
         report_build_group_config(file_name,i);
     }
@@ -3672,7 +3672,7 @@ static void draw_file_name ()
 	GtkWidget *view;
 	GtkTextBuffer *TextBuffer;
 	//	GtkWidgetClass *widget_window_class1;
-	const gchar *buf = (const gchar *)(CFG(file_name_info));
+	const gchar *buf = (const gchar *)(get_file_name_info (pp->p_config));
 
 	label = gtk_label_new("File name");
 	dialog = gtk_dialog_new_with_buttons("Dialog_file_name", win,
@@ -3974,8 +3974,8 @@ gboolean callback_box_3_7_3(GtkWidget *widget,GdkEventButton *event,gpointer *us
 		g_printf("edit -> probe type\n");
 					pp->x_pos = 350, pp->y_pos = 470;
 						draw_menu3_pop (data_dialog, NULL, 
-								menu_content[PROBETYPE + CFG(probe_type)],
-								menu_content + PROBETYPE, 4, 4, CFG(probe_type));
+								menu_content[PROBETYPE + get_probe_type(pp->p_config)],
+								menu_content + PROBETYPE, 4, 4, get_probe_type(pp->p_config));
 //gtk_widget_hide(entry_2_1_1_1_1[3]);
 
 	}

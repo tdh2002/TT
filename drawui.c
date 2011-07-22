@@ -1609,7 +1609,7 @@ if(!(prule->mask & 0x04))
 			case	A_SCAN:
 			case	A_SCAN_R:
 
-				if((CFG(display_pos) == A_S_CC_SCAN ) && (get_cscan_source(pp->p_config, 0)==4) && (GROUP_VAL(ut_unit) == UT_UNIT_TRUE_DEPTH) && (get_display_group(pp->p_config) == DISPLAY_CURRENT_GROUP))	/*A_S scan 在 true depth时， A scan 需要旋转90度*/
+				if((get_display_pos (pp->p_config) == A_S_CC_SCAN ) && (get_cscan_source(pp->p_config, 0)==4) && (GROUP_VAL(ut_unit) == UT_UNIT_TRUE_DEPTH) && (get_display_group(pp->p_config) == DISPLAY_CURRENT_GROUP))	/*A_S scan 在 true depth时， A scan 需要旋转90度*/
 				{
 					cairo_set_source_rgba(cr,1.0,0.0,0.0,1.0);	/* A闸门为红色 */
 					cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(w-50)+20, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(GROUP_VAL_POS(prule->group,start) / 1000.0))/(GROUP_VAL_POS(prule->group,range) / 1000.0)*(h-20));
@@ -2252,7 +2252,7 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 		case A_SCAN:
 		case A_SCAN_R:
 
-			if((CFG(display_pos) == A_S_CC_SCAN ) && (get_cscan_source(pp->p_config, 0)==4) && (GROUP_VAL_POS(p->group, ut_unit) == UT_UNIT_TRUE_DEPTH) && (get_display_group(pp->p_config) == DISPLAY_CURRENT_GROUP))
+			if((get_display_pos (pp->p_config) == A_S_CC_SCAN ) && (get_cscan_source(pp->p_config, 0)==4) && (GROUP_VAL_POS(p->group, ut_unit) == UT_UNIT_TRUE_DEPTH) && (get_display_group(pp->p_config) == DISPLAY_CURRENT_GROUP))
 			{	/*A_S scan 在 true depth时， A scan 需要旋转90度*/
 				if(get_unit(pp->p_config) == UNIT_MM) /* hrule1 */
 				{
@@ -4429,10 +4429,10 @@ void draw3_data0(DRAW_UI_P p)
 					p->x_pos = 630, p->y_pos = 118-YOFFSET;
 					if ((p->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 						draw3_pop_tt (data_830, NULL, 
-								menu_content[F_SELECT+CFG(file_select)],
-								menu_content+F_SELECT, 10, 0,CFG(file_select), 0);
+								menu_content[F_SELECT+get_report_userfield_select (pp->p_config)],
+								menu_content+F_SELECT, 10, 0,get_report_userfield_select (pp->p_config), 0);
 					else 
-						draw3_popdown (menu_content[F_SELECT+CFG(file_select)], 0, 0);
+						draw3_popdown (menu_content[F_SELECT+get_report_userfield_select (pp->p_config)], 0, 0);
 					break;
 				case 4:/*File -> notes-> edit notes  p840 */
 					if ((p->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
@@ -4466,20 +4466,7 @@ void draw3_data0(DRAW_UI_P p)
 						draw_dialog_all(DIALOG_SYSTEM_INFO);
 					draw3_popdown(NULL,0,1);
 					break;
-				case 3:/*Preferences -> options -> mouse  p930 */
-					p->x_pos = 560, p->y_pos = 118-YOFFSET;
-					if ((p->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
-						draw3_pop_tt (data_930, NULL, 
-								menu_content[MOUSE+CFG(mouse)],
-								menu_content+MOUSE, 3, 0,CFG(mouse), 0);
-					else 
-						draw3_popdown (menu_content[MOUSE+CFG(mouse)], 0, 0);
-					gtk_widget_set_sensitive(p->eventbox30[0],FALSE);
-					gtk_widget_set_sensitive(p->eventbox31[0],FALSE);
-
-					break;
-
-				case 4:/*Preferences -> network -> IP Address  p940*/
+				case 3:/*Preferences -> network -> IP Address  p930*/
 					/* 格式化字符串 */
 					if ((p->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 					{
@@ -4506,8 +4493,11 @@ void draw3_data0(DRAW_UI_P p)
 					gtk_widget_show (p->eventbox31[0]);
 					gtk_widget_show (p->data3[0]);
 
-					//gtk_widget_set_sensitive(p->eventbox30[0],FALSE);
-					//gtk_widget_set_sensitive(p->eventbox31[0],FALSE);
+					break;
+				case 4:/*Preferences -> options -> mouse  p940 */
+					if ( !con2_p[9][4][0] )
+						gtk_widget_hide (pp->eventbox30[0]);
+					gtk_widget_hide (pp->eventbox31[0]);
 					break;
 				default:break;
 			}
@@ -6096,7 +6086,7 @@ void draw3_data1(DRAW_UI_P p)
 					}
 					else
 					{
-						draw3_popdown (CFG(file_name_info), 1, 0);
+						draw3_popdown (get_file_name_info (pp->p_config), 1, 0);
 					}
 					break;
 
@@ -6106,7 +6096,7 @@ void draw3_data1(DRAW_UI_P p)
 					break;
 
 				case 3:/*File -> user field -> enable  p831 */
-					draw3_popdown (menu_content[OFF_ON + CFG(enable)], 1, 0);
+					draw3_popdown (menu_content[OFF_ON + get_report_userfield_enable (pp->p_config, get_report_userfield_select (pp->p_config))], 1, 0);
 					break;
 
 				case 4:/*File -> notes-> edit header p841 */
@@ -6169,16 +6159,8 @@ void draw3_data1(DRAW_UI_P p)
 						draw_dialog_all(DIALOG_FILE_MANAGE);
 					draw3_popdown(NULL,1,1);
 					break;
-				case 3:/*Preferences -> options -> Option Key  p931 */
-
-					draw3_popdown(NULL,1,1);
-					gtk_widget_set_sensitive(pp->eventbox30[1],FALSE);
-					gtk_widget_set_sensitive(pp->eventbox31[1],FALSE);
-					break;
-
-				case 4:/*Preferences -> Network -> IP Address  p941*/
+				case 3:/*Preferences -> Network -> IP Address  p931*/
 					/* 格式化字符串 */
-
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 					{
 						draw_dialog_all (DIALOG_MASK);
@@ -6200,6 +6182,11 @@ void draw3_data1(DRAW_UI_P p)
 					gtk_widget_show (pp->eventbox30[1]);
 					gtk_widget_show (pp->eventbox31[1]);
 					gtk_widget_show (pp->data3[1]);
+					break;
+				case 4:/*Preferences -> options -> Option Key  p941 */
+					if ( !con2_p[9][4][1] )
+						gtk_widget_hide (pp->eventbox30[1]);
+					gtk_widget_hide (pp->eventbox31[1]);
 					break;
 				default:break;
 			}
@@ -8751,7 +8738,7 @@ void draw3_data2(DRAW_UI_P p)
 							}
 							if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 							{
-								if(UNIT_MM == CFG(unit))
+								if(UNIT_MM == get_unit (pp->p_config))
 								{
 									cur_value = get_part_diameter(pp->p_config) / 1000.0;
 									lower = 2.0 * get_part_thickness(pp->p_config) / 1000.0 + 10.0;
@@ -8775,7 +8762,7 @@ void draw3_data2(DRAW_UI_P p)
 							}
 							else 
 							{
-								if(UNIT_MM == CFG(unit))
+								if(UNIT_MM == get_unit (pp->p_config))
 								{
 									cur_value = get_part_diameter(pp->p_config) / 1000.0;
 									digit = 2;
@@ -9227,7 +9214,7 @@ void draw3_data2(DRAW_UI_P p)
 					break;
 
 				case 3:/*File -> user field -> label p832 */
-					draw3_popdown (menu_content[U_LABEL + CFG(file_select)], 2, 0);
+					draw3_popdown (menu_content[U_LABEL + get_report_userfield_select (pp->p_config)], 2, 0);
 					break;
 				case 4:
 					if ( !con2_p[8][4][2] )
@@ -9247,38 +9234,28 @@ void draw3_data2(DRAW_UI_P p)
 					break;
 
 				case 1:/*Preferences -> system -> select key  p912 */
-					pp->x_pos = 611, pp->y_pos = 295-YOFFSET;
-					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
-						draw3_pop_tt (data_912, NULL, 
-								menu_content[SELECT_K + CFG(select_key)],
-								menu_content+SELECT_K, 9, 2,CFG(select_key), 0);
-					else 
-						draw3_popdown (menu_content[SELECT_K+CFG(select_key)], 2, 0);
-					gtk_widget_set_sensitive(pp->eventbox30[2],FALSE);
-					gtk_widget_set_sensitive(pp->eventbox31[2],FALSE);
-
-
+					if ( !con2_p[9][1][2] )
+						gtk_widget_hide (pp->eventbox30[2]);
+					gtk_widget_hide (pp->eventbox31[2]);
 					break;
 
 
 				case 2:/*Preferences -> service -> Import/Export p922 */
-					draw3_popdown(NULL,2,1);
-					gtk_widget_set_sensitive(pp->eventbox30[2],FALSE);
-					gtk_widget_set_sensitive(pp->eventbox31[2],FALSE);
+					if ( !con2_p[9][2][2] )
+						gtk_widget_hide (pp->eventbox30[2]);
+					gtk_widget_hide (pp->eventbox31[2]);
 					break;
 
 				case 3:/*Preferences -> Options -> Remote Desktop p932 */
-					draw3_popdown (menu_content[OFF_ON+CFG(remote_desktop)], 2, 0);
-					gtk_widget_set_sensitive(pp->eventbox30[2],FALSE);
-					gtk_widget_set_sensitive(pp->eventbox31[2],FALSE);
+					if ( !con2_p[9][3][2] )
+						gtk_widget_hide (pp->eventbox30[2]);
+					gtk_widget_hide (pp->eventbox31[2]);
 					break;
 
 				case 4:/*Preferences -> network -> Apply p942 */
-					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
-						draw_warning(1, "test");
-					draw3_popdown(NULL,2,1);
-					gtk_widget_set_sensitive(pp->eventbox30[2],FALSE);
-					gtk_widget_set_sensitive(pp->eventbox31[2],FALSE);
+					if ( !con2_p[9][4][2] )
+						gtk_widget_hide (pp->eventbox30[2]);
+					gtk_widget_hide (pp->eventbox31[2]);
 					break;
 				default:break;
 			}
@@ -11968,7 +11945,7 @@ void draw3_data3(DRAW_UI_P p)
 					draw3_popdown (menu_content[OFF_ON + get_report_format_note (pp->p_config)], 3, 0);
 					break;
 				case 3:/*File -> user field -> content  p833*/
-					draw3_popdown (menu_content[U_CONTENT + CFG(file_select)], 3, 0);
+					draw3_popdown (menu_content[U_CONTENT + get_report_userfield_select (pp->p_config)], 3, 0);
 					break;
 
 				case 4:
@@ -11987,31 +11964,11 @@ void draw3_data3(DRAW_UI_P p)
 						gtk_widget_hide (pp->eventbox30[3]);
 					gtk_widget_hide (pp->eventbox31[3]);
 					break;
-
 				case 1:/*Preferences -> system -> assign key  p913 */
-					pp->x_pos = 547, pp->y_pos = 260-YOFFSET;
-					if(CFG(select_key)<5)
-					{
-						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
-							draw3_pop_tt (data_913, NULL, 
-									menu_content[ASSIGN_K + CFG(assign_key)],
-									menu_content+ASSIGN_K, 16, 3, CFG(assign_key), 0);
-						else 
-							draw3_popdown (menu_content[ASSIGN_K + CFG(assign_key)], 3, 0);
-					}
-					else
-					{
-						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
-							draw3_pop_tt (data_9131, NULL, 
-									menu_content[ASSIGN_K_P + CFG(assign_key_p)],
-									menu_content+ASSIGN_K_P, 5, 3, CFG(assign_key_p), 0);
-						else 
-							draw3_popdown (menu_content[ASSIGN_K_P + CFG(assign_key_p)], 3, 0);
-					}
-					gtk_widget_set_sensitive(pp->eventbox30[3],FALSE);
-					gtk_widget_set_sensitive(pp->eventbox31[3],FALSE);
+					if ( !con2_p[9][1][3] )
+						gtk_widget_hide (pp->eventbox30[3]);
+					gtk_widget_hide (pp->eventbox31[3]);
 					break;
-
 				case 2:/*Preferences -> service -> Import/Export  p923 */
 					if ( !con2_p[9][2][3] )
 						gtk_widget_hide (pp->eventbox30[3]);
@@ -15947,13 +15904,13 @@ gpointer signal_thread1(gpointer arg)
 
 	/*  */
 //	for (i = 0 ; i < 8; i++)
-		g_print ("1 %08x\n", TMP(measure_data[0][0]));
-		g_print ("1 %08x\n", TMP(measure_data[0][1]));
-		g_print ("1 %08x\n", TMP(measure_data[0][2]));
-		g_print ("2 %08x\n", TMP(measure_data[1][0]));
-		g_print ("2 %08x\n", TMP(measure_data[1][1]));
-		g_print ("2 %08x\n", TMP(measure_data[1][2]));
-		g_print ("\n");
+//		g_print ("1 %08x\n", TMP(measure_data[0][0]));
+//		g_print ("1 %08x\n", TMP(measure_data[0][1]));
+//		g_print ("1 %08x\n", TMP(measure_data[0][2]));
+//		g_print ("2 %08x\n", TMP(measure_data[1][0]));
+//		g_print ("2 %08x\n", TMP(measure_data[1][1]));
+//		g_print ("2 %08x\n", TMP(measure_data[1][2]));
+//		g_print ("\n");
 //	g_print ("\n");
 	draw_field_value ();
 	/* 复制波形到显存 */

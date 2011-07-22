@@ -630,10 +630,10 @@ typedef struct __DEFINE_PROBE
 
 #define CUR_POS (pp->pos2[pp->pos][pp->pos1[pp->pos]])      /* 0,1,2,3,4,5 */
 #define CUR_POS_P(p) (p->pos2[p->pos][p->pos1[p->pos]])      /* 0,1,2,3,4,5 */
-#define CFG(a)	(pp->p_config->a)
+#define CCFG(a)	(pp->p_config->a)
 
-#define GROUP_VAL_POS(a, b)	(CFG(group[a].b))				/* a表示哪个group b是返回哪个值 */
-#define GROUP_VAL(a)  (CFG(group[CFG(groupId)].a))
+#define GROUP_VAL_POS(a, b)	(CCFG(group[a].b))				/* a表示哪个group b是返回哪个值 */
+#define GROUP_VAL(a)  (CCFG(group[CCFG(groupId)].a))
 
 #define LAW_VAL_POS(a, b)  (GROUP_VAL_POS(a,law_info).b)
 #define LAW_VAL(a)  (GROUP_VAL(law_info).a)
@@ -642,10 +642,7 @@ typedef struct __DEFINE_PROBE
 
 #define GROUP_GATE_POS(a)   GROUP_VAL(gate[GROUP_VAL(gate_pos)].a)
 
-#define CFG_ANALOG_POS(a) CFG(analog[CFG(output_pos - 3)].a)
 #define GROUP_CURSORS_POS(a) GROUP_VAL(cursors_info[GROUP_VAL(selection)-5].a)
-#define CFG_DISPLAY_POS(a)  CFG(display[CFG(display_pos)].a)
-
 
 #define TMP(a)  (pp->p_tmp_config->a)
 #define TMP_CBA(a) (TMP(wizard_calibration).a)

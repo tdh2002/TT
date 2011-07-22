@@ -431,18 +431,9 @@ typedef	struct _Config
 	guchar	report_paper_size;			/* File->Report->paper size */
 
 	guchar	userfield_select;			/* File->User Field->select 当前选择userfield编号 */
-	guchar	userfield_select_enable;	/* File->User Field->select userfield 使能状态 */
+	guint	userfield_select_enable;	/* File->User Field->select userfield 使能状态 */
 	gchar	user_label[10][25];
 	gchar	user_label_content[10][25];
-
-	guchar	file_select;				/* File->User Field->file_select*/
-	guchar	enable;						/* File->User Field->enable*/
-
-	guchar	select_key;		/* Preferences->Pref.->Select Key */
-	guchar	assign_key;		/* Preferences->Pref.->Assign Key */
-	guchar	assign_key_p;
-	guchar	mouse;			/* Preferences->Options->mouse*/
-	guchar	remote_desktop;	/* Preferences->Options->mouse*/
 
 	gchar	edit_notes_info[256];
 	gchar	edit_header_info[256];
@@ -673,6 +664,36 @@ extern gboolean	get_report_format_note (CONFIG *p);
 extern void		set_report_format_note (CONFIG *p, gboolean data);
 extern guchar	get_report_format_view (CONFIG *p);
 extern void		set_report_format_view (CONFIG *p, guchar data);
+
+/* 设置 file->userfield */
+extern guchar	get_report_userfield_select (CONFIG *p);
+extern void		set_report_userfield_select (CONFIG *p, guchar data);
+extern gboolean	get_report_userfield_enable (CONFIG *p, gint select_pos);
+extern void		set_report_userfield_enable (CONFIG *p, gboolean data, gint select_pos);
+extern const gchar	*get_report_userfield_label (CONFIG *p, gint select_pos);
+extern void		set_report_userfield_label (CONFIG *p, const gchar *label, gint select_pos);
+extern const gchar	*get_report_userfield_content (CONFIG *p, gint select_pos);
+extern void		set_report_userfield_content (CONFIG *p, const gchar *content, gint select_pos);
+
+/* 保存配置信息 */
+extern const gchar	*get_edit_notes_info (CONFIG *p);
+extern void		set_edit_notes_info (CONFIG *p, const gchar *content);
+extern const gchar	*get_header_info (CONFIG *p);
+extern void		set_header_info (CONFIG *p, const gchar *content);
+extern const gchar	*get_file_name_info (CONFIG *p);
+extern void		set_file_name_info (CONFIG *p, const gchar *content);
+
+#if 0
+	gchar	edit_notes_info[256];
+	gchar	edit_header_info[256];
+	gchar	file_name_info[50];
+
+#endif
+
+/* gll probe_type */
+extern guchar	get_probe_type (CONFIG *p);
+extern void		set_probe_type (CONFIG *p, guchar data);
+
 
 /* group操作 */
 extern void		grpcpy (CONFIG *p, guint src, guint dst);

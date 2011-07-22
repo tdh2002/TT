@@ -1216,6 +1216,102 @@ void set_report_format_view (CONFIG *p, guchar data)
 	p->on_off_status = set_bit_value (p->on_off_status, 30, (data & 0x02) >> 1);
 }
 
+/* 设置 file->userfield */
+guchar get_report_userfield_select (CONFIG *p)
+{
+	return p->userfield_select;
+}
+
+void set_report_userfield_select (CONFIG *p, guchar data)
+{
+	g_assert (data < 10);
+	p->userfield_select = data; 
+}
+
+gboolean get_report_userfield_enable (CONFIG *p, gint select_pos)
+{
+	g_assert (select_pos < 10);
+	return ((p->userfield_select_enable & (0x01 << select_pos)) != 0);
+}
+
+void set_report_userfield_enable (CONFIG *p, gboolean data, gint select_pos)
+{
+	g_assert (select_pos < 10);
+	g_assert ((data == 1) || (data ==0));
+	p->userfield_select_enable = 
+		((p->userfield_select_enable & ~(0x1 << select_pos)) | (data << select_pos));
+}
+
+const gchar *get_report_userfield_label (CONFIG *p, gint select_pos)
+{
+	g_assert (select_pos < 10);
+	return p->user_label[select_pos];
+}
+
+void set_report_userfield_label (CONFIG *p, const gchar *label, gint select_pos)
+{
+	g_assert (select_pos < 10);
+	g_assert (label);
+	strcpy (p->user_label[select_pos], label);
+}
+
+const gchar *get_report_userfield_content (CONFIG *p, gint select_pos)
+{
+	g_assert (select_pos < 10);
+	return p->user_label_content[select_pos];
+}
+
+void set_report_userfield_content (CONFIG *p, const gchar *content, gint select_pos)
+{
+	g_assert (select_pos < 10);
+	g_assert (content);
+	strcpy (p->user_label_content[select_pos], content);
+}
+
+/* 保存配置信息 */
+const gchar *get_edit_notes_info (CONFIG *p)
+{
+	return p->edit_notes_info;
+}
+
+void set_edit_notes_info (CONFIG *p, const gchar *content)
+{
+	g_assert (content);
+	strcpy (p->edit_notes_info, content);
+}
+
+const gchar *get_header_info (CONFIG *p)
+{
+	return p->edit_header_info;
+}
+
+void set_header_info (CONFIG *p, const gchar *content)
+{
+	g_assert (content);
+	strcpy (p->edit_header_info, content);
+}
+
+const gchar *get_file_name_info (CONFIG *p)
+{
+	return p->file_name_info;
+}
+
+void set_file_name_info (CONFIG *p, const gchar *content)
+{
+	g_assert (content);
+	strcpy (p->file_name_info, content);
+}
+
+/* gll probe_type */
+guchar get_probe_type (CONFIG *p)
+{
+	return p->probe_type;
+}
+
+void set_probe_type (CONFIG *p, guchar data)
+{
+	p->probe_type = data;
+}
 
 /* group操作*/
 void grpcpy (CONFIG *p, guint dst, guint src)		/* 把src group 配置复制到 dst group */
