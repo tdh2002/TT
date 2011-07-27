@@ -85,7 +85,7 @@ typedef struct _Group_data
 	unsigned int	TT6:4;
 	unsigned int	gate_i_end:20;			/* bit:12-31 闸门C 结束 */
 
-	/* s_group_reg (11) */
+	/* s_group_reg (12) */
 	unsigned int	voltage:8;			/* bit:0-7 发射电压 */
 	unsigned int	damping:2;			/* bit:8-9 阻尼 */
 	unsigned int	TT8:10;				/**/

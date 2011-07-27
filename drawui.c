@@ -16085,7 +16085,7 @@ void draw_field_value ()
 {
 	gint	offset, k;
 	gfloat	ah, as;
-	gchar	*markup, *markup1;
+	gchar	*markup, *markup1 ,*markup2 ,*markup3;
 	guint	*p_tmp = (guint *)(&TMP(measure_data_dis));
 	for (offset = 0, k = 0 ; k < get_current_group (pp->p_config); k++)
 		offset += TMP(beam_qty[k]);
@@ -16101,9 +16101,13 @@ void draw_field_value ()
 //			TMP(beam_num[get_current_group(pp->p_config)]), ah);
 	markup = g_markup_printf_escaped ("<span foreground='white' font_desc='24'>%.2f</span>", ah);
 	markup1 = g_markup_printf_escaped ("<span foreground='white' font_desc='24'>%.2f</span>", as);
+	markup2 = g_markup_printf_escaped ("<span foreground='white' font_desc='24'>%.2f</span>", as);
+	markup3 = g_markup_printf_escaped ("<span foreground='white' font_desc='24'>%.2f</span>", as);
 	gdk_threads_enter();
 	gtk_label_set_markup (GTK_LABEL(pp->label[9]), markup);
 	gtk_label_set_markup (GTK_LABEL(pp->label[11]), markup1);
+	gtk_label_set_markup (GTK_LABEL(pp->label[13]), markup2);
+	gtk_label_set_markup (GTK_LABEL(pp->label[15]), markup3);
 	gdk_threads_leave();
 //	g_idle_add(on_finish, markup);
 	g_free (markup);

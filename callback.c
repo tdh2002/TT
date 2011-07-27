@@ -3843,9 +3843,9 @@ void data_2021 (GtkMenuItem *menuitem, gpointer data)	/* 闸门同步 */
 
 	if (GROUP_VAL (gate[GROUP_VAL(gate_pos)].synchro) == 0)
 		tmp = (tmp & 0xfffffff3) | 0x00;
-	else if (GROUP_VAL (gate[GROUP_VAL(gate_pos)].synchro) == 0)
+	else if (GROUP_VAL (gate[GROUP_VAL(gate_pos)].synchro) == 1)
 		tmp = (tmp & 0xfffffff3) | 0x0c;
-	else if (GROUP_VAL (gate[GROUP_VAL(gate_pos)].synchro) == 0)
+	else if (GROUP_VAL (gate[GROUP_VAL(gate_pos)].synchro) == 2)
 		tmp = (tmp & 0xfffffff3) | 0x04;
 	
 	if (GROUP_VAL(gate_pos) == GATE_A)
@@ -3915,9 +3915,9 @@ void data_2031 (GtkMenuItem *menuitem, gpointer data)	/* 波峰或者前沿 测�
 		tmp = TMP(group_spi[group]).gate_i_logic;
 
 	if (GROUP_VAL (gate[GROUP_VAL(gate_pos)].measure) == 0)
-		tmp = (tmp & 0xfffffffc) | 0x00;
-	else if (GROUP_VAL (gate[GROUP_VAL(gate_pos)].measure) == 0)
 		tmp = (tmp & 0xfffffffc) | 0x01;
+	else if (GROUP_VAL (gate[GROUP_VAL(gate_pos)].measure) == 1)
+		tmp = (tmp & 0xfffffffc) | 0x00;
 	
 	if (GROUP_VAL(gate_pos) == GATE_A)
 		TMP(group_spi[group]).gate_a_logic = tmp;
@@ -3932,21 +3932,21 @@ void data_2031 (GtkMenuItem *menuitem, gpointer data)	/* 波峰或者前沿 测�
 void data_204 (GtkSpinButton *spinbutton, gpointer data) /* 闸门高度 P204 */
 {
 	guint group = get_current_group(pp->p_config);
-	GROUP_VAL(gate[GROUP_VAL(gate_pos)].height) =  (guchar) (gtk_spin_button_get_value (spinbutton) );
-
+	GROUP_VAL(gate[GROUP_VAL(gate_pos)].height) =  (guchar) ( gtk_spin_button_get_value (spinbutton));
 	if (GROUP_VAL(gate_pos) == GATE_A)
 	{
-		TMP(group_spi[group]).gate_a_height	= GROUP_VAL_POS(group, gate[0].height);
+		TMP(group_spi[group]).gate_a_height	= GROUP_VAL_POS(group, gate[0].height)*4095*0.01;
 	}
 	else if (GROUP_VAL(gate_pos) == GATE_B)
 	{
-		TMP(group_spi[group]).gate_b_height	= GROUP_VAL_POS(group, gate[1].height);
+		TMP(group_spi[group]).gate_b_height	= GROUP_VAL_POS(group, gate[1].height)*4095*0.01;
 	}
 	else if (GROUP_VAL(gate_pos) == GATE_I)
 	{
-		TMP(group_spi[group]).gate_i_height	= GROUP_VAL_POS(group, gate[2].height);
+		TMP(group_spi[group]).gate_i_height	= GROUP_VAL_POS(group, gate[2].height)*4095*0.01;
 	}
 
+    g_print("--------------------------gate_a_height=%d ",TMP(group_spi[group]).gate_a_height);
 	send_spi_data (group);
 	gtk_widget_queue_draw (pp->vboxtable);
 }

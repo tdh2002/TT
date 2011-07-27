@@ -24,7 +24,7 @@
 
 #include "spi_d.h"
 #define TT_DEBUG 0
-#define DEBUG 1
+#define DEBUG 0
 
 static int fd_array, fd_normal;
 static int fd_gpio;
@@ -192,6 +192,10 @@ int write_group_data (group_data_spi *p, unsigned int group)
 	printf ("rx_time= %d\n", tmp);
 	tmp = p->sample_start;
 	printf ("sample_start= %d\n", tmp);
+	tmp = p->gate_a_height;
+	printf ("gate_a_height= %d\n", tmp);
+	tmp = p->voltage;
+	printf ("voltage= %d\n", tmp);
 #endif
 
 	p->offset = 16 * group;
