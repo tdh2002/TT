@@ -13,103 +13,139 @@
 #define __BASE_CONFIG_H_
 
 #include "base_const.h"
-#include <gtk/gtk.h>
 
 /* 闸门信息 */
 typedef struct _gate_info
 {
-	guchar	parameters;		/* 调节模式 0 Positions 1 Mode */
-	guchar	synchro;        /* 同步 */
-	guchar	measure;        /*  */
-	guchar	rectifier_freq; /* 射频 */
-	gchar	height;
-	gchar	tt[3];
-	gint	start;			/* 单位ns */
-	guint	width;
+	unsigned char	parameters;		/* 调节模式 0 Positions 1 Mode */
+	unsigned char	synchro;        /* 同步 */
+	unsigned char	measure;        /*  */
+	unsigned char	rectifier_freq; /* 射频 */
+	char	height;
+	char	tt[3];
+	int	start;			/* 单位ns */
+	unsigned int	width;
 } GATE_INFO, *GATE_INFO_P;
 
+
+struct _output_info;
+typedef struct _output_info OUTPUT_INFO1;
+
 /* 输出信息 */
-typedef struct _output_info 
+struct _output_info 
 {
-	gushort	alarm_info;		/* 状态 表示16个alarm信号的状态 */
-	guchar	count;    	    /**/
-	guchar	sound;          /**/
-	guint	delay;			/* 单位ns */
-	guint	holdtime;       /* 单位ns */
-} OUTPUT_INFO1, *OUTPUT_INFO_P1;
+	unsigned short	alarm_info;		/* 状态 表示16个alarm信号的状态 */
+	unsigned char	count;    	    /**/
+	unsigned char	sound;          /**/
+	unsigned int	delay;			/* 单位ns */
+	unsigned int	holdtime;       /* 单位ns */
+};
 
 /* 光标信息 */
 typedef struct _cursors_info 
 {
-	gshort	angle;
-	gushort	amplitude;
-	gushort	UT;
-	gchar	tt[2];
-	gint	scan;
-	gint	index;
+	short	angle;
+	unsigned short	amplitude;
+	unsigned short	UT;
+	char	tt[2];
+	int	scan;
+	int	index;
 } CURSORS_INFO, *CURSORS_INFO_P;
+
+struct _simple_Probe;
+typedef struct _simple_Probe st_simple_Probe;
+
+struct _simple_Probe
+{
+	char	Model[20];			/* 探头名字 */
+	char	Serial[20];			/* 探头名字 */
+	unsigned char	PA_probe_type;		/* 探头类型 1 是Custom 3 是angle beam 5 是 Contact 6是Immersion */
+	unsigned char	Elem_qty;			/* 阵元数 */
+	unsigned short	Frequency;			/* 频率 */
+	unsigned short	Reference_Point;	/*  */
+	unsigned int	Pitch;				/* 阵元中心间距 0.001mm 为单位 范围是0.01~65.00mm UT 是Elemet_size */
+};
+
+struct _simple_Wedge;
+typedef struct _simple_Wedge st_simple_Wedge;
+
+struct _simple_Wedge
+{
+	char	Wave_type;		/* 1 是L 2 是 S */
+	char	Model[20];		/* 共用 楔块名字 */
+	char	Serial[20];		/* 共用 楔块名字 */
+	char	Orientation;	/* 1 Normal 0 reversal*/
+	unsigned short	Angle;			/* 共用 角度单位0.1度 */
+	unsigned short	Probe_delay; 	/* UT ns为单位 */
+	int	Ref_point;		/* UT 使用 */
+	unsigned int	Height;			/* 单位微米 */
+	unsigned int	Velocity_UT;
+	unsigned int	Velocity_PA;	/* 速度 mm/s */
+	int	Primary_offset;	/* 微米 */
+	unsigned int	Secondary_offset;	/* 微米 */
+};
 
 /* 探头(Probe)  516 byte 如果探头是unknown 必须给一个参数 */
 typedef struct _Probe
 {
 	/*PA 时候先读走4个字节*/
-	gchar	A1[2];
-	guchar	PA_probe_type;	/* 探头类型 1 是Custom 3 是angle beam 5 是 Contact 6是Immersion */
-	gchar	A10;
-	guchar	UT_probe_type;	/* 探头类型 1 n/a 0 converntional */
-	gchar	A11;
-	gchar	Model[20];		/* 探头名字 */
-	gchar	Serial[20];		/* 探头名字 */
-	guchar	Elem_qty;		/* 阵元数 */
-	guchar	Freq2;			/* UT 时候 频率是 freq2 << 8 + elem_qty */
-	guint	Pitch;			/* 阵元中心间距 0.001mm 为单位 范围是0.01~65.00mm UT 是Elemet_size */
-	guint	A3;
-	gushort A4;
-	gushort	Frequency;		/* 频率 */
-	guint	A5[75];
-	gushort A6;
-	gushort A7;
-	gushort A8;
-	gushort	Reference_Point; /*  */
-	guint	A9[36];
+	char	A1[2];
+	unsigned char	PA_probe_type;	/* 探头类型 1 是Custom 3 是angle beam 5 是 Contact 6是Immersion */
+	char	A10;
+	unsigned char	UT_probe_type;	/* 探头类型 1 n/a 0 converntional */
+	char	A11;
+	char	Model[20];		/* 探头名字 */
+	char	Serial[20];		/* 探头名字 */
+	unsigned char	Elem_qty;		/* 阵元数 */
+	unsigned char	Freq2;			/* UT 时候 频率是 freq2 << 8 + elem_qty */
+	unsigned int	Pitch;			/* 阵元中心间距 0.001mm 为单位 范围是0.01~65.00mm UT 是Elemet_size */
+	unsigned int	A3;
+	unsigned short A4;
+	unsigned short	Frequency;		/* 频率 */
+	unsigned int	A5[75];
+	unsigned short A6;
+	unsigned short A7;
+	unsigned short A8;
+	unsigned short	Reference_Point; /*  */
+	unsigned int	A9[36];
 } PROBE, *PROBE_P;
 
 /*楔块 (Wedge)*/
 typedef struct _Wedge
 {
-	guchar	A1[2];			/* 0x03000300 PA 0x01000100 UT*/
-	gchar	Wave_type;		/* 1 是L 2 是 S */
-	gchar	A11;
-	gchar	Model[20];		/* 共用 楔块名字 */
-	gchar	Serial[20];		/* 共用 楔块名字 */
-	gushort	Angle;			/* 共用 角度单位0.1度 */
-	gushort	A7;
-	gushort	Probe_delay; 	/* UT ns为单位 */
-	gchar	A2;
-	gchar	A10;			/* UT 1 SW 0 LW*/
-	gint	Ref_point;		/* UT 使用 */
+	unsigned char	A1[2];			/* 0x03000300 PA 0x01000100 UT*/
+	char	Wave_type;		/* 1 是L 2 是 S */
+	char	A11;
+	char	Model[20];		/* 共用 楔块名字 */
+	char	Serial[20];		/* 共用 楔块名字 */
+	unsigned short	Angle;			/* 共用 角度单位0.1度 */
+	unsigned short	A7;
+	unsigned short	Probe_delay; 	/* UT ns为单位 */
+	char	A2;
+	char	A10;			/* UT 1 SW 0 LW*/
+	int	Ref_point;		/* UT 使用 */
 	/*这个地方 得 多读一个字节 */
-	guint	Height;			/* 单位微米 */
-	guint	Velocity_UT;
-	guint	A8;
-	guint	Velocity_PA;	/* 速度 mm/s */
-	gchar	Orientation;	/* 1 Normal 0 reversal*/
-	gchar	A4[3];
-	gint	Primary_offset;	/* 微米 */
-	guint	Secondary_offset;	/* 微米 */
-	gint	A6[107];
+	unsigned int	Height;			/* 单位微米 */
+	unsigned int	Velocity_UT;
+	unsigned int	A8;
+	unsigned int	Velocity_PA;	/* 速度 mm/s */
+	char	Orientation;	/* 1 Normal 0 reversal*/
+	char	A4[3];
+	int	Primary_offset;	/* 微米 */
+	unsigned int	Secondary_offset;	/* 微米 */
+	int	A6[107];
 } WEDGE, *WEDGE_P;
 
 struct _Encoder;
 typedef struct _Encoder st_Enc;
 
 struct _Encoder {
-	gchar Polarity;
-	gchar Type;
-	gchar Preset;
-	gchar Enable;
-	guint Resolution;
-	guint Origin;
+	char Polarity;
+	char Type;
+	char Preset;
+	char Enable;
+	unsigned int Resolution;
+	unsigned int Origin;
 };
 
 struct _Part;
@@ -118,55 +154,55 @@ typedef struct _Part st_PART;
 /* 工件 (Part) 12字节 已经全部移走只有CONFIG结构体用到了它 等待隐藏 */
 struct _Part
 {
-	guchar	Geometry;		/* 几何形状 FLAT/ID/OD/BALL */
-	guchar	Material_pos;	/* 材料 */
-	guchar	tt[2];			/* 保留 */
-	guint	Thickness;		/* 厚度 */
-	guint	Diameter;		/* 直径 */
+	unsigned char	Geometry;		/* 几何形状 FLAT/ID/OD/BALL */
+	unsigned char	Material_pos;	/* 材料 */
+	unsigned char	tt[2];			/* 保留 */
+	unsigned int	Thickness;		/* 厚度 */
+	unsigned int	Diameter;		/* 直径 */
 };
 
 /* 一个阵元的聚焦信息*/
 typedef struct _law_elem
 {
-	guchar	E_number;
-	guchar	Amplitude;		/* 电压 单位V */
-	gushort	FL_gain;		/* Focal Gain 0.1db单位 */
-	gushort	R_delay;		/*  */
-	gushort	T_delay;		/* 0-25560 单位 ns 65535不活动状态 */
-	gushort	P_width;		/* 50-500 单位ns*/
-	guchar	tt[2];
+	unsigned char	E_number;
+	unsigned char	Amplitude;		/* 电压 单位V */
+	unsigned short	FL_gain;		/* Focal Gain 0.1db单位 */
+	unsigned short	R_delay;		/*  */
+	unsigned short	T_delay;		/* 0-25560 单位 ns 65535不活动状态 */
+	unsigned short	P_width;		/* 50-500 单位ns*/
+	unsigned char	tt[2];
 }LAW_ELEM, *LAW_ELEM_P;
 
 /* 一条beam的聚焦信息 */
 typedef struct _law_beam
 {
-	/*    gchar Version[32];	*/
-	/*    gint  N_laws;			*/
+	/*    char Version[32];	*/
+	/*    int  N_laws;			*/
 
-	guchar	N_ActiveElements;	/* 同时激发的阵元数 */
-	guchar	cycle;
-	guchar	sumgain;			/*  */
-	guchar	mode;				/* 0 T/R 1 Pulse-echo*/
-	guchar	filter;				/* 0 no filter 1 0.5-5 2 2-10 3 5-15 */
-	guchar	T_first;
-	guchar	R_first;
-	gchar	tt;					/* 占位置 */
-	gushort	frequency;			/* 频率0.001Mhz 为单位 */
-	gshort	R_angle;
-	gushort	S_angle;
-	gchar	tt1[2];				/* 占位置 */
-	guint	Scan_offset;		/* 单位 0.001 mm*/
-	guint	Index_offset;		/* 单位 0.001 mm*/
-	gint	G_delay;			/* 单位ns Wedge Delay + Law Delay */
-	gint	beam_delay;			/* 单位ns Law Delay */
-	gint	F_depth;			/* 单位 微粒 */
-	guint	M_velocity;			/* 单位 m/s */
+	unsigned char	N_ActiveElements;	/* 同时激发的阵元数 */
+	unsigned char	cycle;
+	unsigned char	sumgain;			/*  */
+	unsigned char	mode;				/* 0 T/R 1 Pulse-echo*/
+	unsigned char	filter;				/* 0 no filter 1 0.5-5 2 2-10 3 5-15 */
+	unsigned char	T_first;
+	unsigned char	R_first;
+	char	tt;					/* 占位置 */
+	unsigned short	frequency;			/* 频率0.001Mhz 为单位 */
+	short	R_angle;
+	unsigned short	S_angle;
+	char	tt1[2];				/* 占位置 */
+	unsigned int	Scan_offset;		/* 单位 0.001 mm*/
+	unsigned int	Index_offset;		/* 单位 0.001 mm*/
+	int	G_delay;			/* 单位ns Wedge Delay + Law Delay */
+	int	beam_delay;			/* 单位ns Law Delay */
+	int	F_depth;			/* 单位 微粒 */
+	unsigned int	M_velocity;			/* 单位 m/s */
 }LAW_BEAM, *LAW_BEAM_P;
 
 typedef struct _law_focal
 {
-	gchar		version[16];
-	gshort		beam_qty;		/* 这个focal有几个beam */
+	char		version[16];
+	short		beam_qty;		/* 这个focal有几个beam */
 	LAW_BEAM_P	*law_beam_p;
 	LAW_ELEM_P	*law_elem_p;
 } LAW_FOCAL, *LAW_FOCAL_P;
@@ -174,211 +210,208 @@ typedef struct _law_focal
 /* 聚焦法则信息(law_info) */
 typedef struct _law_info
 {
-	guchar	Focal_type;			/* 聚焦类型 */
-	guchar	Focal_point_type;	/* 聚焦类型 */
-	guchar	Tx_connect;			/* pulser该法则的探头发射第一个阵元其连接口的编号 */
-	guchar	Rx_connect;			/* receiver */
-	guchar	Elem_qty;			/* 聚焦阵元数 */
-	gshort	First_tx_elem;		/* 法则使用的第一个发射阵元 收发分离时候 tx rx 不一样 */
-	gshort	First_rx_elem;		/* 法则使用的第一个接收阵元 */
-	guchar	Last_tx_elem;		/* 法则使用的最后一个发射阵元 */
-	guchar	Last_rx_elem;		/* 法则使用的最后一个接收阵元 */
-	guchar	Elem_step;			/* 线扫时候可以设置阵元间隔 */
-	guchar	Wave_type;			/* 纵波 或者 横波 */
-	guchar	res1;
-	gshort	Angle_min;			/* PA 时候是开始角度 UT时候记录探头角度 */
-	gshort	Angle_max;			/* 扇扫时候可以设置的角度 0.01度为单位 */
-	gushort	Angle_step;			/* 扇扫时候可以设置的角度步进 */
-	gshort	Angle_beam_skew_min;		
-	gshort	Angle_beam_skew_max;		
-	gushort	Angle_beam_skew_step;	/* 2D的时候beam skew angle */
-	gushort	law_index_start;		/* 聚焦法则索引 计算出来的 */
-	gushort law_index_end;			/*  */
-	guint	Focus_depth;			/* 扇扫时候为声程 线扫是深度 0.001mm为单位 */
-	guint	Position_start;
-	guint	Position_end;
-	guint	Position_step;
-	guint	Offset_start;
-	guint	Depth_start;
-	guint	Offset_end;
-	guint	Depth_end;
+	unsigned char	Focal_type;			/* 聚焦类型 */
+	unsigned char	Focal_point_type;	/* 聚焦类型 */
+	unsigned char	Tx_connect;			/* pulser该法则的探头发射第一个阵元其连接口的编号 */
+	unsigned char	Rx_connect;			/* receiver */
+	unsigned char	Elem_qty;			/* 聚焦阵元数 */
+	short	First_tx_elem;		/* 法则使用的第一个发射阵元 收发分离时候 tx rx 不一样 */
+	short	First_rx_elem;		/* 法则使用的第一个接收阵元 */
+	unsigned char	Last_tx_elem;		/* 法则使用的最后一个发射阵元 */
+	unsigned char	Last_rx_elem;		/* 法则使用的最后一个接收阵元 */
+	unsigned char	Elem_step;			/* 线扫时候可以设置阵元间隔 */
+	unsigned char	Wave_type;			/* 纵波 或者 横波 */
+	unsigned char	res1;
+	short	Angle_min;			/* PA 时候是开始角度 UT时候记录探头角度 */
+	short	Angle_max;			/* 扇扫时候可以设置的角度 0.01度为单位 */
+	unsigned short	Angle_step;			/* 扇扫时候可以设置的角度步进 */
+	short	Angle_beam_skew_min;		
+	short	Angle_beam_skew_max;		
+	unsigned short	Angle_beam_skew_step;	/* 2D的时候beam skew angle */
+	unsigned short	law_index_start;		/* 聚焦法则索引 计算出来的 */
+	unsigned short law_index_end;			/*  */
+	unsigned int	Focus_depth;			/* 扇扫时候为声程 线扫是深度 0.001mm为单位 */
+	unsigned int	Position_start;
+	unsigned int	Position_end;
+	unsigned int	Position_step;
+	unsigned int	Offset_start;
+	unsigned int	Depth_start;
+	unsigned int	Offset_end;
+	unsigned int	Depth_end;
 } LAW_INFO, *LAW_INFO_P;
 
 /*测量数据 (MEASURE_DATA)*/
 typedef struct _Measure_data
 {
-	guint	a_height;
-	guint	AdBA;
-	guint	AdBr;
-	guint	b_height;
-	guint	BdBB;
-	guint	BdBr;
-	guint	a_position;
-	guint	b_position;
-	guint	i_position;
-	guint	iw_position;
-	guint	TA;
-	guint	ML;
-	guint	TT[47];
-	gint	SA;
+	unsigned int	a_height;
+	unsigned int	AdBA;
+	unsigned int	AdBr;
+	unsigned int	b_height;
+	unsigned int	BdBB;
+	unsigned int	BdBr;
+	unsigned int	a_position;
+	unsigned int	b_position;
+	unsigned int	i_position;
+	unsigned int	iw_position;
+	unsigned int	TA;
+	unsigned int	ML;
+	unsigned int	TT[47];
+	int	SA;
 } MEASURE_DATA, *MEASURE_DATA_P;
 
+struct _Group;
+typedef struct _Group GROUP;
+
 /* 组信息 */
-typedef struct _Group 
+struct _Group 
 {
 	/* 基本设置 */
-	guint	wedge_delay;	/* 楔款延时 单位 ns */
-	guint	range;			/* 显示范围 单位 ns */
-	gint	start;			/* 扫描延时 单位 ns */
-	gushort	gain;			/* 实际增益 单位 0.01dB */
-	gushort	gainr;			/* 参考增益 单位 0.01dB */
-	guint	velocity;		/* 实际声速 单位 0.01m/s  */
-	guchar	db_ref;			/* 参考增益开关 0 off 1 on */
+	unsigned int	wedge_delay;	/* 楔款延时 单位 ns */
+	unsigned int	range;			/* 显示范围 单位 ns */
+	int	start;			/* 扫描延时 单位 ns */
+	unsigned short	gain;			/* 实际增益 单位 0.01dB */
+	unsigned short	gainr;			/* 参考增益 单位 0.01dB */
+	unsigned int	velocity;		/* 实际声速 单位 0.01m/s  */
+	unsigned char	db_ref;			/* 参考增益开关 0 off 1 on */
 	/* 发射接收 */
-	guchar	pulser;			/* 1~ 128 - elem_qty(聚焦阵元数最大为32) + 1 
+	unsigned char	pulser;			/* 1~ 128 - elem_qty(聚焦阵元数最大为32) + 1 
 							   指定发射阵元 与机器配置相关我们是128阵元最大,
 							   Probe 的Auto Program 选择On 以后不可以调节 值与connect P 一样 */
-	guchar  receiver;		/* 接收阵元 必须是 PR 模式才能调节 */
-	guchar	filter;			/* 滤波 */
-	guchar	rectifier;		/* 检波  */
-	guchar	averaging;		/* 平均 */
-	guchar	video_filter;	/* 视频滤波*/
+	unsigned char  receiver;		/* 接收阵元 必须是 PR 模式才能调节 */
+	unsigned char	filter;			/* 滤波 */
+	unsigned char	rectifier;		/* 检波  */
+	unsigned char	averaging;		/* 平均 */
+	unsigned char	video_filter;	/* 视频滤波*/
 
-	guchar  tx_rxmode;		/* 收发模式 */
-	guchar	freq_pos;		/* 频率选择模式是指定还是自己输入 */
-	guchar	pw_pos;			/* 脉冲宽度选择模式 */
-	guchar	prf_pos;		/* 脉冲宽度选择模式 */
-	gushort	frequency;		/* 以0.001Mhz 也就是Khz 1MHz~20MHz 为单位 当探头学选unknown 时候才可以调节 */
-	gushort	pulser_width;	/* 30~500ns 2.5ns为步进*/
+	unsigned char  tx_rxmode;		/* 收发模式 */
+	unsigned char	freq_pos;		/* 频率选择模式是指定还是自己输入 */
+	unsigned char	pw_pos;			/* 脉冲宽度选择模式 */
+	unsigned char	prf_pos;		/* 脉冲宽度选择模式 */
+	unsigned short	frequency;		/* 以0.001Mhz 也就是Khz 1MHz~20MHz 为单位 当探头学选unknown 时候才可以调节 */
+	unsigned short	pulser_width;	/* 30~500ns 2.5ns为步进*/
 
-	guint	prf;			/* 重复频率 1-20000Hz 取值为10~200000 */
+	unsigned int	prf;			/* 重复频率 1-20000Hz 取值为10~200000 */
 
-	guchar	point_qty_pos;	/* 点个数 位置 */
-	guchar	sum_gain_pos;	/**/
-	guchar  gate_pos;		/* A , B , I 当前修改的是哪个闸门 */
-	gushort	point_qty;		/* 点个数 */
-	gushort	sum_gain;
-	gushort	gain_offset;
+	unsigned char	point_qty_pos;	/* 点个数 位置 */
+	unsigned char	sum_gain_pos;	/**/
+	unsigned char  gate_pos;		/* A , B , I 当前修改的是哪个闸门 */
+	unsigned short	point_qty;		/* 点个数 */
+	unsigned short	sum_gain;
+	unsigned short	gain_offset;
 
 	GATE_INFO    gate[setup_MAX_GATE];	/* gate[0] A , gate[1] B , gate[2] I */
 
-	guchar	mode_pos;		/*Gate/Alarm->Sizing Curves->Mode*/
-	guchar	curve_pos;		/*Gate/Alarm->Sizing Curves->Curve*/
-	gushort ref_ampl;
-	gushort ref_ampl_offset;
-	gushort curve_step;
-	gushort ref_gain;
-	guint   position;
-	guchar  point_pos;
-	guint   amplitude;
-	gushort mat_atten;
-	guint   delay;
-	gushort tcg_gain;
+	unsigned char	mode_pos;		/*Gate/Alarm->Sizing Curves->Mode*/
+	unsigned char	curve_pos;		/*Gate/Alarm->Sizing Curves->Curve*/
+	unsigned short ref_ampl;
+	unsigned short ref_ampl_offset;
+	unsigned short curve_step;
+	unsigned short ref_gain;
+	unsigned int   position;
+	unsigned char  point_pos;
+	unsigned int   amplitude;
+	unsigned short mat_atten;
+	unsigned int   delay;
+	unsigned short tcg_gain;
 
-	guchar	ut_unit;		/*检测单位 时间2 声程1  实际深度0 .*/
+	unsigned char	ut_unit;		/*检测单位 时间2 声程1  实际深度0 .*/
 
-	guchar	group_mode;     /* 组工作模式  0 UT or 1 PA*/
+	unsigned char	group_mode;     /* 组工作模式  0 UT or 1 PA*/
 	LAW_INFO	law_info;	/* 聚焦法则的信息  */
 	PROBE	probe;
 	WEDGE	wedge;
 
-	guchar	selection;
-	gushort	per_reference;	/* 参考光标的高度 */
-	gushort	per_measure;	/* 测量光标的高度 */
-	guint	u_reference;	/* 参考光标在超声轴的位置 */
-	guint	u_measure;		/* 测量光标在超声轴的位置 */
-	gint	s_reference;	/* 参考光标在扫描轴的位置 */	     
-	gint	s_measure;		/* 测量光标在扫描轴的位置 */
-	guchar	data_link;
-	gint	i_reference;	/* 参考光标在指数轴的位置 */
-	gint	i_measure;		/* 测量光标在指数轴的位置 */
-	gushort	s_refmeas;
-	gushort	cursors_angle;
+	unsigned char	selection;
+	unsigned short	per_reference;	/* 参考光标的高度 */
+	unsigned short	per_measure;	/* 测量光标的高度 */
+	unsigned int	u_reference;	/* 参考光标在超声轴的位置 */
+	unsigned int	u_measure;		/* 测量光标在超声轴的位置 */
+	int	s_reference;	/* 参考光标在扫描轴的位置 */	     
+	int	s_measure;		/* 测量光标在扫描轴的位置 */
+	unsigned char	data_link;
+	int	i_reference;	/* 参考光标在指数轴的位置 */
+	int	i_measure;		/* 测量光标在指数轴的位置 */
+	unsigned short	s_refmeas;
+	unsigned short	cursors_angle;
 	CURSORS_INFO	cursors_info[4];
-	guchar	source;
+	unsigned char	source;
 
-	guchar	col_select_pos;	/* 0 Amplitude  1 TOFD  2 Depth 共3个*/
-	guchar	col_start;
-	guchar	col_end;                    
-	guchar	col_contrast;                                     
-	guchar	col_brightness;                     
-	guint	col_min;                          
-	guint	col_max;                           
-	guchar	col_mode; 
+	unsigned char	col_select_pos;	/* 0 Amplitude  1 TOFD  2 Depth 共3个*/
+	unsigned char	col_start;
+	unsigned char	col_end;                    
+	unsigned char	col_contrast;                                     
+	unsigned char	col_brightness;                     
+	unsigned int	col_min;                          
+	unsigned int	col_max;                           
+	unsigned char	col_mode; 
 
 	/* Display Ascan的设置 */
-	guchar	ascan_color;		/**/
-	guchar	ascan_envelope;		/* 0 None 1 Infinite */
-	guchar	ascan_source;		/**/
-	guchar	ascan_appearance;	/**/
-	guchar	ascan_overlay;		/**/
+	unsigned char	ascan_color;		/**/
+	unsigned char	ascan_envelope;		/* 0 None 1 Infinite */
+	unsigned char	ascan_source;		/**/
+	unsigned char	ascan_appearance;	/**/
+	unsigned char	ascan_overlay;		/**/
 
 	/*	COL_SELECT_INFO	col_select[3];*/ /* Amplitude TOFD Depth 3个*/
 
 	/*波束 beam*/
-	gint	scan_offset;		/**/
-	gint	index_offset;		/**/
-	gint	angle;				/**/
-	gushort	skew;				/**/
-	guchar  skew_pos;
+	int	scan_offset;		/**/
+	int	index_offset;		/**/
+	int	angle;				/**/
+	unsigned short	skew;				/**/
+	unsigned char  skew_pos;
 
-	gint	agate_start;
-	guint	agate_width;
+	int	agate_start;
+	unsigned int	agate_width;
 
-} GROUP, *GROUP_P;
+};
+
+struct _Config;
+typedef struct _Config CONFIG;
 
 /*配置信息 (CONFIG)*/
-typedef	struct _Config 
+struct _Config 
 {
-	guchar	groupId;			/* 当前group 0-7 */
-	guchar	groupQty;			/* 共有几个group  1-8 */
-	guchar	voltage_pa;			/* PA UT 的电压 */
-	guchar	voltage_ut;	
-	guchar	language;			/* 语言 */
-	guchar	reject;		        /* 抑制 */
-/*显示*/
-	guchar	display_pos;		/* 显示模式 A B C A+B A+B+C A+S ... */
-	guchar	display_group;		/* 显示所有group还是 当前 */
-	guchar	c_scan_pos;			/* c扫描的source*/
-	guchar	data1;				/* Strip Chart A 的DATA */
-	guchar	data2;				/*  */
-	guchar	dis_mode;			/* Strip Chart A 时候的模式 */
-	guint	dis_range;			/* Strip Chart A 时候的显示范围 */
-
-	guchar	alarm_pos;          /* 当前选择报警信息 0~15 */
-	guchar	output_pos;			/* 选择输出0~4 */
-	guchar	analog1[2];			/* Analog 2个 0-2位表示group 3-4位是data */
-	gushort	alarm_info[16];		/* 存储alarm 配置的信息 */
+	unsigned char	groupId;			/* 当前group 0-7 */
+	unsigned char	groupQty;			/* 共有几个group  1-8 */
+	unsigned char	voltage_pa;			/* PA UT 的电压 */
+	unsigned char	voltage_ut;	
+	unsigned char	language;			/* 语言 */
+	unsigned char	reject;		        /* 抑制 */
+	unsigned char	display_pos;		/* 显示模式 A B C A+B A+B+C A+S ... */
+	unsigned char	display_group;		/* 显示所有group还是 当前 */
+	unsigned char	c_scan_pos;			/* c扫描的source*/
+	unsigned char	data1;				/* Strip Chart A 的DATA */
+	unsigned char	data2;				/*  */
+	unsigned char	dis_mode;			/* Strip Chart A 时候的模式 */
+	unsigned int	dis_range;			/* Strip Chart A 时候的显示范围 */
+	unsigned char	bright;				/* 亮度 0~100 */
+	unsigned char	alarm_pos;          /* 当前选择报警信息 0~15 */
+	unsigned char	output_pos;			/* 选择输出0~4 */
+	unsigned char	analog1[2];			/* Analog 2个 0-2位表示group 3-4位是data */
+	unsigned short	alarm_info[16];		/* 存储alarm 配置的信息 */
+	unsigned char	list;				/* Measurements->Reading->list filed  测量的list选项 */
+	unsigned char	field[4];			/* 4个测量值选择 */
 	OUTPUT_INFO1 output1[3];	/* 输出信息 output[0],output[1],output[2] */
-
 	GROUP	group[setup_MAX_GROUP_QTY];			/* */
-//	MEASURE_DATA	measure_data;
+/*	MEASURE_DATA	measure_data;*/
 	st_PART	part;				/* 被检测工件	*/
-	/*选项*/
-	guchar	bright;				/* 亮度 0~100 */
-
-	gushort	year;
-	guchar	month;
-	guchar	day;
-	guchar	hour;
-	guchar	minitue;
-	guchar	second;
-	guchar	unit;				/* 0 mm 1 inch */
-
-	guchar	list;				/* Measurements->Reading->list filed  测量的list选项 */
-	guchar	field[4];			/* 4个测量值选择 */
-
-	guchar	display_table;		/* Measurements->Table->display table 测量数据保存显示  ON or OFF */
-	guchar	entry_image;		/* Measurements->Table->entry image   ON or OFF */
-	guint	cur_entry;			/* Measurements->Table->Select Entry 增加一组测量数据(entry)  */
-	guint	entry_qty;			/* Measurements->Table->Select Entry 删除一组测量数组 */
-
-	guint	min_thickness;		/* Measurements->Thickness->min */
-	guint	max_thickness;		/* Measurements->Thickness->max */
-	guchar	echo_qty;			/* Measurements->Thickness->echo_qty */
-
-	guchar	grid;				/* Display->overlay->grid 网格选项 */
-	guint	on_off_status;		
+	unsigned short	year;
+	unsigned char	month;
+	unsigned char	day;
+	unsigned char	hour;
+	unsigned char	minitue;
+	unsigned char	second;
+	unsigned char	unit;				/* 0 mm 1 inch */
+	unsigned int	cur_entry;			/* Measurements->Table->Select Entry 增加一组测量数据(entry)  */
+	unsigned int	entry_qty;			/* Measurements->Table->Select Entry 删除一组测量数组 */
+	unsigned int	min_thickness;		/* Measurements->Thickness->min */
+	unsigned int	max_thickness;		/* Measurements->Thickness->max */
+	unsigned char	echo_qty;			/* Measurements->Thickness->echo_qty */
+	unsigned char	grid;				/* Display->overlay->grid 网格选项 */
+	unsigned char	dis_prop_scan;		/* Display->Properties->Scan  6个 */
+	unsigned char	fft_color;			/* Display->Properties->fft_color */
+	unsigned int	on_off_status;		
 	/* 保存各种ON OFF 菜单的值
 	0位 Display->overlay->sizing curves 曲线的显示开关
 	1位 Display->overlay->gate 闸门的显示开关 
@@ -407,300 +440,305 @@ typedef	struct _Config
 	28位 File->Format->Note
 	29-30位 File->Format->View 00 01 10 11
 	*/	
-
-	guchar	dis_prop_scan;		/* Display->Properties->Scan  6个 */
-	guchar	fft_color;			/* Display->Properties->fft_color */
-	guint	bcompress;			/* Display->Properties->compress */
-
+	unsigned int	on_off_status1;		
+	/*
+	0位 Measurements->Table->display table 测量数据保存显示  ON or OFF 
+	1位 Measurements->Table->entry image   ON or OFF 
+	*/
+	unsigned int	bcompress;			/* Display->Properties->compress */
 	st_Enc	encoder1[setup_MAX_QTY_ENCODER];
-
-	guchar	inspection_type;	/* Scan->Inspection->Type On-line  Raster  Helicoidal */
-	guchar	inspection_scan;	/* Scan->Inspection->Scan Time  Encoder1,2  */
-	guchar	inspection_index;	/* Scan->Inspection->Index auto encoder1,2 topturn off  */
-	guint	inspection_scanspeed;	/* Scan->Inspection->Index scanspeed */
-	guint	inspection_rpmscanspeed;/* Scan->Inspection->Index rpm scanspeed */
-	guint	inspection_indexspeed;	/* Scan->Inspection->Index rpm scanspeed */
-
-	gint	inspection_scan_start;		/* Scan->Area->Scan start*/
-	gint	inspection_scan_end;		/* Scan->Area->Scan end*/
-	gint	inspection_scan_resolution;	/* Scan->Area->Scan resolution*/
-	gint	inspection_index_start;		/* Scan->Area->Index start*/
-	gint	inspection_index_end;		/* Scan->Area->Index end*/
-	gint	inspection_index_resolution;/* Scan->Area->Index resolution*/
-
-	guchar	report_paper_size;			/* File->Report->paper size */
-
-	guchar	userfield_select;			/* File->User Field->select 当前选择userfield编号 */
-	guint	userfield_select_enable;	/* File->User Field->select userfield 使能状态 */
-	gchar	user_label[10][25];
-	gchar	user_label_content[10][25];
-
-	gchar	edit_notes_info[256];
-	gchar	edit_header_info[256];
-	gchar	file_name_info[50];
-
-	guchar	probe_type;
-} CONFIG, *CONFIG_P;
+	unsigned char	report_paper_size;	/* File->Report->paper size */
+	unsigned char	inspection_type;	/* Scan->Inspection->Type On-line  Raster  Helicoidal */
+	unsigned char	inspection_scan;	/* Scan->Inspection->Scan Time  Encoder1,2  */
+	unsigned char	inspection_index;	/* Scan->Inspection->Index auto encoder1,2 topturn off  */
+	unsigned int	inspection_scanspeed;	/* Scan->Inspection->Index scanspeed */
+	unsigned int	inspection_rpmscanspeed;/* Scan->Inspection->Index rpm scanspeed */
+	unsigned int	inspection_indexspeed;	/* Scan->Inspection->Index rpm scanspeed */
+	int	inspection_scan_start;		/* Scan->Area->Scan start*/
+	int	inspection_scan_end;		/* Scan->Area->Scan end*/
+	int	inspection_scan_resolution;	/* Scan->Area->Scan resolution*/
+	int	inspection_index_start;		/* Scan->Area->Index start*/
+	int	inspection_index_end;		/* Scan->Area->Index end*/
+	int	inspection_index_resolution;/* Scan->Area->Index resolution*/
+	unsigned int	userfield_select_enable;	/* File->User Field->select userfield 使能状态 */
+	char	user_label[10][25];
+	char	user_label_content[10][25];
+	char	edit_notes_info[256];
+	char	edit_header_info[256];
+	char	file_name_info[50];
+	unsigned char	probe_type;
+	unsigned char	userfield_select;			/* File->User Field->select 当前选择userfield编号 */
+};
 
 /* fetch material info of current config 获取当前配置中材料的信息 */
-extern gchar	*get_material_name (CONFIG *p);
-extern guint	get_material_lw (CONFIG *p);
-extern guint	get_material_sw (CONFIG *p);
+extern char	*get_material_name (CONFIG *p);
+extern unsigned int	get_material_lw (CONFIG *p);
+extern unsigned int	get_material_sw (CONFIG *p);
 
 /* part operations 工件的操作 */
-extern guchar	get_part_geometry (CONFIG *p);
-extern void		set_part_geometry (CONFIG *p, gpointer data);
-extern guchar	get_part_material (CONFIG *p);
-extern void		set_part_material (CONFIG *p, gpointer data);
-extern guint	get_part_thickness (CONFIG *p);
-extern void		set_part_thickness (CONFIG *p, gpointer data);
-extern guint	get_part_diameter (CONFIG *p);
-extern void		set_part_diameter (CONFIG *p, gpointer data);
+extern unsigned char	get_part_geometry (CONFIG *p);
+extern void		set_part_geometry (CONFIG *p, void* data);
+extern unsigned char	get_part_material (CONFIG *p);
+extern void		set_part_material (CONFIG *p, void* data);
+extern unsigned int	get_part_thickness (CONFIG *p);
+extern void		set_part_thickness (CONFIG *p, void* data);
+extern unsigned int	get_part_diameter (CONFIG *p);
+extern void		set_part_diameter (CONFIG *p, void* data);
 
-/* 配置信息的操作 */
-extern guchar	get_current_group (CONFIG *p);
-extern void		set_current_group (CONFIG *p, guchar data);
-extern guchar	get_group_qty (CONFIG *p);
-extern void		set_group_qty (CONFIG *p, guchar data);
-extern guchar	get_voltage (CONFIG *p, guint group_num);
-extern void		set_voltage (CONFIG *p, guint group_num, guchar data);
-extern guchar	get_language (CONFIG *p);
-extern void		set_language (CONFIG *p, guchar data);
-extern guchar	get_reject (CONFIG *p);
-extern void		set_reject (CONFIG *p, guchar data);
-extern guchar	get_display_pos (CONFIG *p);
-extern void		set_display_pos (CONFIG *p, guchar data);
-extern guchar	get_display_group (CONFIG *p);
-extern void		set_display_group (CONFIG *p, guchar data);
-extern guchar	get_cscan_source (CONFIG *p, guint pos);
-extern void		set_cscan_source (CONFIG *p, guchar data, guint pos);
-extern guchar	get_stripscan_data1 (CONFIG *p);
-extern guchar	get_stripscan_data2 (CONFIG *p);
-extern guchar	get_stripscan_mode (CONFIG *p);
-extern guint	get_stripscan_disrange (CONFIG *p);
-extern void		set_stripscan_data1 (CONFIG *p, guchar data);
-extern void		set_stripscan_data2 (CONFIG *p, guchar data);
-extern void		set_stripscan_mode (CONFIG *p, guchar data);
-extern void		set_stripscan_disrange (CONFIG *p, guint data);
+/* 配置信息的操作start */
+extern unsigned char	get_current_group (CONFIG *p);
+extern void		set_current_group (CONFIG *p, unsigned char data);
+extern unsigned char	get_group_qty (CONFIG *p);
+extern void		set_group_qty (CONFIG *p, unsigned char data);
+extern unsigned char	get_voltage (CONFIG *p, unsigned int group_num);
+extern void		set_voltage (CONFIG *p, unsigned int group_num, unsigned char data);
+extern unsigned char	get_language (CONFIG *p);
+extern void		set_language (CONFIG *p, unsigned char data);
+extern unsigned char	get_reject (CONFIG *p);
+extern void		set_reject (CONFIG *p, unsigned char data);
+extern unsigned char	get_display_pos (CONFIG *p);
+extern void		set_display_pos (CONFIG *p, unsigned char data);
+extern unsigned char	get_display_group (CONFIG *p);
+extern void		set_display_group (CONFIG *p, unsigned char data);
+extern unsigned char	get_cscan_source (CONFIG *p, unsigned int pos);
+extern void		set_cscan_source (CONFIG *p, unsigned char data, unsigned int pos);
+extern unsigned char	get_stripscan_data1 (CONFIG *p);
+extern unsigned char	get_stripscan_data2 (CONFIG *p);
+extern unsigned char	get_stripscan_mode (CONFIG *p);
+extern unsigned int	get_stripscan_disrange (CONFIG *p);
+extern void		set_stripscan_data1 (CONFIG *p, unsigned char data);
+extern void		set_stripscan_data2 (CONFIG *p, unsigned char data);
+extern void		set_stripscan_mode (CONFIG *p, unsigned char data);
+extern void		set_stripscan_disrange (CONFIG *p, unsigned int data);
 /* ALARM */
-extern guchar	get_alarm_pos (CONFIG *p);
-extern guchar	get_alarm_groupa (CONFIG *p);
-extern guchar	get_alarm_groupb (CONFIG *p);
-extern guchar	get_alarm_conditiona (CONFIG *p);
-extern guchar	get_alarm_conditionb (CONFIG *p);
-extern guchar	get_alarm_operator (CONFIG *p);
-extern void		set_alarm_pos (CONFIG *p, guchar data);
-extern void		set_alarm_groupa (CONFIG *p, guchar data);
-extern void		set_alarm_groupb (CONFIG *p, guchar data);
-extern void		set_alarm_conditiona (CONFIG *p, guchar data);
-extern void		set_alarm_conditionb (CONFIG *p, guchar data);
-extern void		set_alarm_operator (CONFIG *p, guchar data);
+extern unsigned char	get_alarm_pos (CONFIG *p);
+extern unsigned char	get_alarm_groupa (CONFIG *p);
+extern unsigned char	get_alarm_groupb (CONFIG *p);
+extern unsigned char	get_alarm_conditiona (CONFIG *p);
+extern unsigned char	get_alarm_conditionb (CONFIG *p);
+extern unsigned char	get_alarm_operator (CONFIG *p);
+extern void		set_alarm_pos (CONFIG *p, unsigned char data);
+extern void		set_alarm_groupa (CONFIG *p, unsigned char data);
+extern void		set_alarm_groupb (CONFIG *p, unsigned char data);
+extern void		set_alarm_conditiona (CONFIG *p, unsigned char data);
+extern void		set_alarm_conditionb (CONFIG *p, unsigned char data);
+extern void		set_alarm_operator (CONFIG *p, unsigned char data);
 /* OUTPUT */
-extern guchar	get_output_pos (CONFIG *p);
-extern gushort	get_output_alarm (CONFIG *p);
-extern gushort	get_1output_alarm_pos (CONFIG *p);
-extern guchar	get_output_alarm_qty (CONFIG *p);
-extern guchar	get_output_alarm_pos (CONFIG *p, guint pos);
-extern void		set_output_pos (CONFIG *p, guchar data);
-extern void		set_output_alarm (CONFIG *p, guchar data, guint pos);
-extern guchar	get_output_count (CONFIG *p);
-extern guchar	get_output_sound (CONFIG *p);
-extern void		set_output_count (CONFIG *p, guchar data);
-extern void		set_output_sound (CONFIG *p, guchar data);
-extern guint	get_output_delay (CONFIG *p);
-extern guint	get_output_holdtime (CONFIG *p);
-extern void		set_output_delay (CONFIG *p, guint data);
-extern void		set_output_holdtime (CONFIG *p, guint data);
-extern guchar	get_output_group (CONFIG *p);
-extern guchar	get_output_data (CONFIG *p);
-extern void		set_output_group (CONFIG *p, guchar data);
-extern void		set_output_data (CONFIG *p, guchar data);
+extern unsigned char	get_output_pos (CONFIG *p);
+extern unsigned short	get_output_alarm (CONFIG *p);
+extern unsigned short	get_1output_alarm_pos (CONFIG *p);
+extern unsigned char	get_output_alarm_qty (CONFIG *p);
+extern unsigned char	get_output_alarm_pos (CONFIG *p, unsigned int pos);
+extern void		set_output_pos (CONFIG *p, unsigned char data);
+extern void		set_output_alarm (CONFIG *p, unsigned char data, unsigned int pos);
+extern unsigned char	get_output_count (CONFIG *p);
+extern unsigned char	get_output_sound (CONFIG *p);
+extern void		set_output_count (CONFIG *p, unsigned char data);
+extern void		set_output_sound (CONFIG *p, unsigned char data);
+extern unsigned int	get_output_delay (CONFIG *p);
+extern unsigned int	get_output_holdtime (CONFIG *p);
+extern void		set_output_delay (CONFIG *p, unsigned int data);
+extern void		set_output_holdtime (CONFIG *p, unsigned int data);
+extern unsigned char	get_output_group (CONFIG *p);
+extern unsigned char	get_output_data (CONFIG *p);
+extern void		set_output_group (CONFIG *p, unsigned char data);
+extern void		set_output_data (CONFIG *p, unsigned char data);
 
 /* 设置获取亮度 */
-extern guchar	get_bright (CONFIG *p);			
-extern void		set_bright (CONFIG *p, guchar data);
+extern unsigned char	get_bright (CONFIG *p);			
+extern void		set_bright (CONFIG *p, unsigned char data);
 /* Reading list field 设置当前读取的数值 */
-extern guchar	get_reading_list (CONFIG *p);			
-extern void		set_reading_list (CONFIG *p, guchar data);
-extern guchar	get_reading_field1 (CONFIG *p);			
-extern void		set_reading_field1 (CONFIG *p, guchar data);
-extern guchar	get_reading_field2 (CONFIG *p);			
-extern void		set_reading_field2 (CONFIG *p, guchar data);
-extern guchar	get_reading_field3 (CONFIG *p);			
-extern void		set_reading_field3 (CONFIG *p, guchar data);
-extern guchar	get_reading_field4 (CONFIG *p);			
-extern void		set_reading_field4 (CONFIG *p, guchar data);
+extern unsigned char	get_reading_list (CONFIG *p);			
+extern void		set_reading_list (CONFIG *p, unsigned char data);
+extern unsigned char	get_reading_field1 (CONFIG *p);			
+extern void		set_reading_field1 (CONFIG *p, unsigned char data);
+extern unsigned char	get_reading_field2 (CONFIG *p);			
+extern void		set_reading_field2 (CONFIG *p, unsigned char data);
+extern unsigned char	get_reading_field3 (CONFIG *p);			
+extern void		set_reading_field3 (CONFIG *p, unsigned char data);
+extern unsigned char	get_reading_field4 (CONFIG *p);			
+extern void		set_reading_field4 (CONFIG *p, unsigned char data);
 /* 单位 */
-extern guchar	get_unit (CONFIG *p);			
-extern void		set_unit (CONFIG *p, guchar data);
+extern unsigned char	get_unit (CONFIG *p);			
+extern void		set_unit (CONFIG *p, unsigned char data);
 /*  */
-extern guchar	get_display_table (CONFIG *p);			
-extern void		set_display_table (CONFIG *p, guchar data);
-extern guchar	get_entry_image (CONFIG *p);			
-extern void		set_entry_image (CONFIG *p, guchar data);
-extern guint	get_cur_entry (CONFIG *p);			
-extern void		set_cur_entry (CONFIG *p, guint data);
-extern guint	get_entry_qty (CONFIG *p);			
-extern void		set_entry_qty (CONFIG *p, guint data);
-extern guint	get_min_thickness (CONFIG *p);			
-extern void		set_min_thickness (CONFIG *p, guint data);
-extern guint	get_max_thickness (CONFIG *p);			
-extern void		set_max_thickness (CONFIG *p, guint data);
-extern guchar	get_echo_qty (CONFIG *p);			
-extern void		set_echo_qty (CONFIG *p, guchar data);
+extern unsigned char	get_display_table (CONFIG *p);			
+extern void		set_display_table (CONFIG *p, unsigned char data);
+extern unsigned char	get_entry_image (CONFIG *p);			
+extern void		set_entry_image (CONFIG *p, unsigned char data);
+extern unsigned int	get_cur_entry (CONFIG *p);			
+extern void		set_cur_entry (CONFIG *p, unsigned int data);
+extern unsigned int	get_entry_qty (CONFIG *p);			
+extern void		set_entry_qty (CONFIG *p, unsigned int data);
+extern unsigned int	get_min_thickness (CONFIG *p);			
+extern void		set_min_thickness (CONFIG *p, unsigned int data);
+extern unsigned int	get_max_thickness (CONFIG *p);			
+extern void		set_max_thickness (CONFIG *p, unsigned int data);
+extern unsigned char	get_echo_qty (CONFIG *p);			
+extern void		set_echo_qty (CONFIG *p, unsigned char data);
 
 /* Display Overlay */
-extern guchar	get_overlay_grid (CONFIG *p);			
-extern void		set_overlay_grid (CONFIG *p, guchar data);
-extern gboolean get_overlay_sizing_curves (CONFIG *p);
-extern void		set_overlay_sizing_curves (CONFIG *p, gboolean data);
-extern gboolean get_overlay_gate (CONFIG *p);
-extern void		set_overlay_gate (CONFIG *p, gboolean data);
-extern gboolean get_overlay_cursor (CONFIG *p);
-extern void		set_overlay_cursor (CONFIG *p, gboolean data);
-extern gboolean get_overlay_overlay (CONFIG *p);
-extern void		set_overlay_overlay (CONFIG *p, gboolean data);
+extern unsigned char	get_overlay_grid (CONFIG *p);			
+extern void		set_overlay_grid (CONFIG *p, unsigned char data);
+extern int get_overlay_sizing_curves (CONFIG *p);
+extern void		set_overlay_sizing_curves (CONFIG *p, int data);
+extern int get_overlay_gate (CONFIG *p);
+extern void		set_overlay_gate (CONFIG *p, int data);
+extern int get_overlay_cursor (CONFIG *p);
+extern void		set_overlay_cursor (CONFIG *p, int data);
+extern int get_overlay_overlay (CONFIG *p);
+extern void		set_overlay_overlay (CONFIG *p, int data);
 /* Display Properties */
-extern guchar	get_dis_prop_scan (CONFIG *p);			
-extern void		set_dis_prop_scan (CONFIG *p, guchar data);
-extern guint	get_b_compress (CONFIG *p);			
-extern void		set_b_compress (CONFIG *p, guint data);
-extern gboolean get_dis_prop_boptimum (CONFIG *p);
-extern void		set_dis_prop_boptimum (CONFIG *p, gboolean data);
-extern gboolean get_dis_prop_cratio (CONFIG *p);
-extern void		set_dis_prop_cratio (CONFIG *p, gboolean data);
-extern gboolean get_dis_prop_sinterpolation (CONFIG *p);
-extern void		set_dis_prop_sinterpolation (CONFIG *p, gboolean data);
-extern gboolean get_dis_prop_strip_orientation (CONFIG *p);
-extern void		set_dis_prop_strip_orientation (CONFIG *p, gboolean data);
-extern guchar	get_fft_color (CONFIG *p);			
-extern void		set_fft_color (CONFIG *p, guchar data);
+extern unsigned char	get_dis_prop_scan (CONFIG *p);			
+extern void		set_dis_prop_scan (CONFIG *p, unsigned char data);
+extern unsigned int	get_b_compress (CONFIG *p);			
+extern void		set_b_compress (CONFIG *p, unsigned int data);
+extern int get_dis_prop_boptimum (CONFIG *p);
+extern void		set_dis_prop_boptimum (CONFIG *p, int data);
+extern int get_dis_prop_cratio (CONFIG *p);
+extern void		set_dis_prop_cratio (CONFIG *p, int data);
+extern int get_dis_prop_sinterpolation (CONFIG *p);
+extern void		set_dis_prop_sinterpolation (CONFIG *p, int data);
+extern int get_dis_prop_strip_orientation (CONFIG *p);
+extern void		set_dis_prop_strip_orientation (CONFIG *p, int data);
+extern unsigned char	get_fft_color (CONFIG *p);			
+extern void		set_fft_color (CONFIG *p, unsigned char data);
 
 /* 自动检测探头 */
-extern gboolean get_auto_detect (CONFIG *p);
-extern void		set_auto_detect (CONFIG *p, gboolean data);
+extern int get_auto_detect (CONFIG *p);
+extern void		set_auto_detect (CONFIG *p, int data);
 
 /* 选择探头或者是自定义探头 */
-extern gboolean get_probe_select (CONFIG *p);
-extern void		set_probe_select (CONFIG *p, gboolean data);
+extern int get_probe_select (CONFIG *p);
+extern void		set_probe_select (CONFIG *p, int data);
 
 /* 选择探头FFT开关 */
-extern gboolean get_probe_fft (CONFIG *p);
-extern void		set_probe_fft (CONFIG *p, gboolean data);
+extern int get_probe_fft (CONFIG *p);
+extern void		set_probe_fft (CONFIG *p, int data);
 
 /* 选择聚焦法则自动计算开关 */
-extern gboolean get_auto_focal (CONFIG *p);
-extern void		set_auto_focal (CONFIG *p, gboolean data);
+extern int get_auto_focal (CONFIG *p);
+extern void		set_auto_focal (CONFIG *p, int data);
 
 /* 选择当前encoder 1或者2 */
-extern gboolean get_cur_encoder (CONFIG *p);
-extern void		set_cur_encoder (CONFIG *p, gboolean data);
+extern int get_cur_encoder (CONFIG *p);
+extern void		set_cur_encoder (CONFIG *p, int data);
 /* 设置encoder属性 */
-extern guchar	get_enc_polarity (CONFIG *p, gint enc_id);
-extern void		set_enc_polarity (CONFIG *p, guchar data, gint enc_id);
-extern guchar	get_enc_type (CONFIG *p, gint enc_id);
-extern void		set_enc_type (CONFIG *p, guchar data, gint enc_id);
-extern guint	get_enc_resolution (CONFIG *p, gint enc_id);
-extern void		set_enc_resolution (CONFIG *p, guint data, gint enc_id);
-extern guint	get_enc_origin (CONFIG *p, gint enc_id);
-extern void		set_enc_origin (CONFIG *p, guint data, gint enc_id);
+extern unsigned char	get_enc_polarity (CONFIG *p, int enc_id);
+extern void		set_enc_polarity (CONFIG *p, unsigned char data, int enc_id);
+extern unsigned char	get_enc_type (CONFIG *p, int enc_id);
+extern void		set_enc_type (CONFIG *p, unsigned char data, int enc_id);
+extern unsigned int	get_enc_resolution (CONFIG *p, int enc_id);
+extern void		set_enc_resolution (CONFIG *p, unsigned int data, int enc_id);
+extern unsigned int	get_enc_origin (CONFIG *p, int enc_id);
+extern void		set_enc_origin (CONFIG *p, unsigned int data, int enc_id);
 /* 设置 scan inspection 属性 */
-extern guchar	get_inspec_type (CONFIG *p);			
-extern void		set_inspec_type (CONFIG *p, guchar data);
-extern guchar	get_inspec_source (CONFIG *p);			
-extern void		set_inspec_source (CONFIG *p, guchar data);
-extern guchar	get_inspec_index (CONFIG *p);			
-extern void		set_inspec_index (CONFIG *p, guchar data);
-extern guint	get_inspec_speed (CONFIG *p);
-extern void		set_inspec_speed (CONFIG *p, guint data);
-extern guint	get_inspec_rpmspeed (CONFIG *p);
-extern void		set_inspec_rpmspeed (CONFIG *p, guint data);
-extern guint	get_inspec_indexspeed (CONFIG *p);
-extern void		set_inspec_indexspeed (CONFIG *p, guint data);
+extern unsigned char	get_inspec_type (CONFIG *p);			
+extern void		set_inspec_type (CONFIG *p, unsigned char data);
+extern unsigned char	get_inspec_source (CONFIG *p);			
+extern void		set_inspec_source (CONFIG *p, unsigned char data);
+extern unsigned char	get_inspec_index (CONFIG *p);			
+extern void		set_inspec_index (CONFIG *p, unsigned char data);
+extern unsigned int	get_inspec_speed (CONFIG *p);
+extern void		set_inspec_speed (CONFIG *p, unsigned int data);
+extern unsigned int	get_inspec_rpmspeed (CONFIG *p);
+extern void		set_inspec_rpmspeed (CONFIG *p, unsigned int data);
+extern unsigned int	get_inspec_indexspeed (CONFIG *p);
+extern void		set_inspec_indexspeed (CONFIG *p, unsigned int data);
 /* 设置 scan area 属性 */
-extern gint		get_area_scanstart (CONFIG *p);
-extern void		set_area_scanstart (CONFIG *p, gint data);
-extern gint		get_area_scanend (CONFIG *p);
-extern void		set_area_scanend (CONFIG *p, gint data);
-extern gint		get_area_scanresolution (CONFIG *p);
-extern void		set_area_scanresolution (CONFIG *p, gint data);
-extern gint		get_area_indexstart (CONFIG *p);
-extern void		set_area_indexstart (CONFIG *p, gint data);
-extern gint		get_area_indexend (CONFIG *p);
-extern void		set_area_indexend (CONFIG *p, gint data);
-extern gint		get_area_indexresolution (CONFIG *p);
-extern void		set_area_indexresolution (CONFIG *p, gint data);
+extern int		get_area_scanstart (CONFIG *p);
+extern void		set_area_scanstart (CONFIG *p, int data);
+extern int		get_area_scanend (CONFIG *p);
+extern void		set_area_scanend (CONFIG *p, int data);
+extern int		get_area_scanresolution (CONFIG *p);
+extern void		set_area_scanresolution (CONFIG *p, int data);
+extern int		get_area_indexstart (CONFIG *p);
+extern void		set_area_indexstart (CONFIG *p, int data);
+extern int		get_area_indexend (CONFIG *p);
+extern void		set_area_indexend (CONFIG *p, int data);
+extern int		get_area_indexresolution (CONFIG *p);
+extern void		set_area_indexresolution (CONFIG *p, int data);
 /* 设置 scan start */
-extern guchar	get_start_mode (CONFIG *p);
-extern void		set_start_mode (CONFIG *p, guchar data);
-extern gboolean get_start_pause (CONFIG *p);
-extern void		set_start_pause (CONFIG *p, gboolean data);
+extern unsigned char	get_start_mode (CONFIG *p);
+extern void		set_start_mode (CONFIG *p, unsigned char data);
+extern int get_start_pause (CONFIG *p);
+extern void		set_start_pause (CONFIG *p, int data);
 /* 设置 scan Data */
-extern guchar	get_data_storage (CONFIG *p);
-extern void		set_data_storage (CONFIG *p, guchar data);
-extern gboolean get_data_inspec_data (CONFIG *p);
-extern void		set_data_inspec_data (CONFIG *p, gboolean data);
+extern unsigned char	get_data_storage (CONFIG *p);
+extern void		set_data_storage (CONFIG *p, unsigned char data);
+extern int get_data_inspec_data (CONFIG *p);
+extern void		set_data_inspec_data (CONFIG *p, int data);
 
 /* 设置 file->file */
-extern guchar	get_file_storage (CONFIG *p);
-extern void		set_file_storage (CONFIG *p, guchar data);
-extern guchar	get_file_save_mode (CONFIG *p);
-extern void		set_file_save_mode (CONFIG *p, guchar data);
+extern unsigned char	get_file_storage (CONFIG *p);
+extern void		set_file_storage (CONFIG *p, unsigned char data);
+extern unsigned char	get_file_save_mode (CONFIG *p);
+extern void		set_file_save_mode (CONFIG *p, unsigned char data);
 
 /* 设置 file->report */
-extern gboolean	get_report_template (CONFIG *p);
-extern void		set_report_template (CONFIG *p, gboolean data);
-extern guchar	get_report_paper_size (CONFIG *p);
-extern void		set_report_paper_size (CONFIG *p, guchar data);
+extern int	get_report_template (CONFIG *p);
+extern void		set_report_template (CONFIG *p, int data);
+extern unsigned char	get_report_paper_size (CONFIG *p);
+extern void		set_report_paper_size (CONFIG *p, unsigned char data);
 
 /* 设置 file->format */
-extern gboolean	get_report_format_userfield (CONFIG *p);
-extern void		set_report_format_userfield (CONFIG *p, gboolean data);
-extern gboolean	get_report_format_probe (CONFIG *p);
-extern void		set_report_format_probe (CONFIG *p, gboolean data);
-extern gboolean	get_report_format_setup (CONFIG *p);
-extern void		set_report_format_setup (CONFIG *p, gboolean data);
-extern gboolean	get_report_format_note (CONFIG *p);
-extern void		set_report_format_note (CONFIG *p, gboolean data);
-extern guchar	get_report_format_view (CONFIG *p);
-extern void		set_report_format_view (CONFIG *p, guchar data);
+extern int	get_report_format_userfield (CONFIG *p);
+extern void		set_report_format_userfield (CONFIG *p, int data);
+extern int	get_report_format_probe (CONFIG *p);
+extern void		set_report_format_probe (CONFIG *p, int data);
+extern int	get_report_format_setup (CONFIG *p);
+extern void		set_report_format_setup (CONFIG *p, int data);
+extern int	get_report_format_note (CONFIG *p);
+extern void		set_report_format_note (CONFIG *p, int data);
+extern unsigned char	get_report_format_view (CONFIG *p);
+extern void		set_report_format_view (CONFIG *p, unsigned char data);
 
 /* 设置 file->userfield */
-extern guchar	get_report_userfield_select (CONFIG *p);
-extern void		set_report_userfield_select (CONFIG *p, guchar data);
-extern gboolean	get_report_userfield_enable (CONFIG *p, gint select_pos);
-extern void		set_report_userfield_enable (CONFIG *p, gboolean data, gint select_pos);
-extern const gchar	*get_report_userfield_label (CONFIG *p, gint select_pos);
-extern void		set_report_userfield_label (CONFIG *p, const gchar *label, gint select_pos);
-extern const gchar	*get_report_userfield_content (CONFIG *p, gint select_pos);
-extern void		set_report_userfield_content (CONFIG *p, const gchar *content, gint select_pos);
+extern unsigned char	get_report_userfield_select (CONFIG *p);
+extern void		set_report_userfield_select (CONFIG *p, unsigned char data);
+extern int	get_report_userfield_enable (CONFIG *p, int select_pos);
+extern void		set_report_userfield_enable (CONFIG *p, int data, int select_pos);
+extern const char	*get_report_userfield_label (CONFIG *p, int select_pos);
+extern void		set_report_userfield_label (CONFIG *p, const char *label, int select_pos);
+extern const char	*get_report_userfield_content (CONFIG *p, int select_pos);
+extern void		set_report_userfield_content (CONFIG *p, const char *content, int select_pos);
 
 /* 保存配置信息 */
-extern const gchar	*get_edit_notes_info (CONFIG *p);
-extern void		set_edit_notes_info (CONFIG *p, const gchar *content);
-extern const gchar	*get_header_info (CONFIG *p);
-extern void		set_header_info (CONFIG *p, const gchar *content);
-extern const gchar	*get_file_name_info (CONFIG *p);
-extern void		set_file_name_info (CONFIG *p, const gchar *content);
+extern const char	*get_edit_notes_info (CONFIG *p);
+extern void		set_edit_notes_info (CONFIG *p, const char *content);
+extern const char	*get_header_info (CONFIG *p);
+extern void		set_header_info (CONFIG *p, const char *content);
+extern const char	*get_file_name_info (CONFIG *p);
+extern void		set_file_name_info (CONFIG *p, const char *content);
+/* gll probe_type */
+extern unsigned char	get_probe_type (CONFIG *p);
+extern void		set_probe_type (CONFIG *p, unsigned char data);
+/* 配置信息的操作end */
+
+
+
+/* Group 参数的保存读取 */
+extern unsigned int get_wedge_delay (CONFIG *p, int group_id);
+extern void set_wedge_delay (CONFIG *p, int group_id, unsigned int data);
 
 #if 0
-	gchar	edit_notes_info[256];
-	gchar	edit_header_info[256];
-	gchar	file_name_info[50];
-
+	/* 基本设置 */
+	unsigned int	wedge_delay;	/* 楔款延时 单位 ns */
+	unsigned int	range;			/* 显示范围 单位 ns */
+	int	start;			/* 扫描延时 单位 ns */
+	unsigned short	gain;			/* 实际增益 单位 0.01dB */
+	unsigned short	gainr;			/* 参考增益 单位 0.01dB */
+	unsigned int	velocity;		/* 实际声速 单位 0.01m/s  */
+	unsigned char	db_ref;			/* 参考增益开关 0 off 1 on */
 #endif
-
-/* gll probe_type */
-extern guchar	get_probe_type (CONFIG *p);
-extern void		set_probe_type (CONFIG *p, guchar data);
 
 
 /* group操作 */
-extern void		grpcpy (CONFIG *p, guint src, guint dst);
+extern void		grpcpy (CONFIG *p, unsigned int src, unsigned int dst);
 
 /***
 #define	VAL_GRP_ID	0x0001
-extern gint	*get_cfg_val (CONFIG *p, gint val_type, gint grp);
+extern int	*get_cfg_val (CONFIG *p, int val_type, int grp);
 ***/
 
 #endif

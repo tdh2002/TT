@@ -270,7 +270,7 @@ static void set_config (guint groupid)
 int main (int argc, char *argv[])
 {
 	DRAW_UI_P		p_ui;					
-	CONFIG_P		p_config;				
+	CONFIG			*p_config;				
 	TMP_CONFIG_P	p_tmp_config;					
 	GtkWidget		*window;
 	GdkColor		color_black_     = {0x0, 0x0, 0x0, 0x0};
@@ -285,7 +285,7 @@ int main (int argc, char *argv[])
 
 	/* 封装后需要条用函数初始化 */
 	p_ui		= (DRAW_UI_P)malloc(sizeof(DRAW_UI));
-	p_config	= (CONFIG_P)malloc(sizeof(CONFIG));
+	p_config	= (CONFIG *)malloc(sizeof(CONFIG));
 	p_tmp_config	= (TMP_CONFIG_P)malloc(sizeof(TMP_CONFIG));
 
 	if (!p_ui)	return 0;

@@ -431,7 +431,7 @@ typedef struct Draw_interface
 	const gchar **field;
 	const gchar **field_unit;
 
-	CONFIG_P		p_config;			/**/
+	CONFIG		*p_config;			/**/
 	TMP_CONFIG_P	p_tmp_config;		/**/
 	guint		p_beam_data;
 	gpointer	p_a_scan_data[4];
@@ -630,6 +630,7 @@ typedef struct __DEFINE_PROBE
 
 #define CUR_POS (pp->pos2[pp->pos][pp->pos1[pp->pos]])      /* 0,1,2,3,4,5 */
 #define CUR_POS_P(p) (p->pos2[p->pos][p->pos1[p->pos]])      /* 0,1,2,3,4,5 */
+
 #define CCFG(a)	(pp->p_config->a)
 
 #define GROUP_VAL_POS(a, b)	(CCFG(group[a].b))				/* a表示哪个group b是返回哪个值 */
