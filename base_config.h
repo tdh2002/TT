@@ -215,21 +215,21 @@ typedef struct _law_info
 	unsigned char	Tx_connect;			/* pulser该法则的探头发射第一个阵元其连接口的编号 */
 	unsigned char	Rx_connect;			/* receiver */
 	unsigned char	Elem_qty;			/* 聚焦阵元数 */
-	short	First_tx_elem;		/* 法则使用的第一个发射阵元 收发分离时候 tx rx 不一样 */
-	short	First_rx_elem;		/* 法则使用的第一个接收阵元 */
+	short	        First_tx_elem;		/* 法则使用的第一个发射阵元 收发分离时候 tx rx 不一样 */
+	short	        First_rx_elem;		/* 法则使用的第一个接收阵元 */
 	unsigned char	Last_tx_elem;		/* 法则使用的最后一个发射阵元 */
 	unsigned char	Last_rx_elem;		/* 法则使用的最后一个接收阵元 */
 	unsigned char	Elem_step;			/* 线扫时候可以设置阵元间隔 */
 	unsigned char	Wave_type;			/* 纵波 或者 横波 */
 	unsigned char	res1;
-	short	Angle_min;			/* PA 时候是开始角度 UT时候记录探头角度 */
-	short	Angle_max;			/* 扇扫时候可以设置的角度 0.01度为单位 */
+	short	        Angle_min;			/* PA 时候是开始角度 UT时候记录探头角度 */
+	short	        Angle_max;			/* 扇扫时候可以设置的角度 0.01度为单位 */
 	unsigned short	Angle_step;			/* 扇扫时候可以设置的角度步进 */
-	short	Angle_beam_skew_min;		
-	short	Angle_beam_skew_max;		
+	short	        Angle_beam_skew_min;		
+	short	        Angle_beam_skew_max;		
 	unsigned short	Angle_beam_skew_step;	/* 2D的时候beam skew angle */
 	unsigned short	law_index_start;		/* 聚焦法则索引 计算出来的 */
-	unsigned short law_index_end;			/*  */
+	unsigned short  law_index_end;			/*  */
 	unsigned int	Focus_depth;			/* 扇扫时候为声程 线扫是深度 0.001mm为单位 */
 	unsigned int	Position_start;
 	unsigned int	Position_end;
@@ -243,20 +243,28 @@ typedef struct _law_info
 /*测量数据 (MEASURE_DATA)*/
 typedef struct _Measure_data
 {
-	unsigned int	a_height;
-	unsigned int	AdBA;
-	unsigned int	AdBr;
-	unsigned int	b_height;
-	unsigned int	BdBB;
-	unsigned int	BdBr;
-	unsigned int	a_position;
-	unsigned int	b_position;
-	unsigned int	i_position;
-	unsigned int	iw_position;
-	unsigned int	TA;
-	unsigned int	ML;
-	unsigned int	TT[47];
-	int	SA;
+	//目前用到的
+	unsigned int	a_height;//%A
+	unsigned int	b_height;//%B
+	unsigned int	a_position;//A^
+	unsigned int	b_position;//B^
+	unsigned int    i_position;//I/
+	unsigned int	a_ref_position;//RA^
+	unsigned int	b_ref_position;//RB^
+	unsigned int	a_probe_front;//PA^
+	unsigned int	b_probe_front;//PB^
+	unsigned int	a_depth;//DA^
+	unsigned int	b_depth;//DB^
+	unsigned int	a_sound_path;//SA^
+	unsigned int	b_sound_path;//SB^
+	unsigned int	a_volu_position_i;//ViA
+	unsigned int	b_volu_position_i;//ViB
+	unsigned int	a_volu_position_s;//VsA
+	unsigned int	b_volu_position_s;//VsB
+	unsigned int	a_leg;//LA
+	unsigned int	b_leg;//LB
+    
+	//其他待添加
 } MEASURE_DATA, *MEASURE_DATA_P;
 
 struct _Group;
@@ -392,9 +400,9 @@ struct _Config
 	unsigned short	alarm_info[16];		/* 存储alarm 配置的信息 */
 	unsigned char	list;				/* Measurements->Reading->list filed  测量的list选项 */
 	unsigned char	field[4];			/* 4个测量值选择 */
-	OUTPUT_INFO1 output1[3];	/* 输出信息 output[0],output[1],output[2] */
-	GROUP	group[setup_MAX_GROUP_QTY];			/* */
-/*	MEASURE_DATA	measure_data;*/
+	OUTPUT_INFO1    output1[3];	/* 输出信息 output[0],output[1],output[2] */
+	GROUP	        group[setup_MAX_GROUP_QTY];			/* */
+	MEASURE_DATA	measure_data[setup_MAX_LAW_QTY];//保存多个聚焦法则的测量数据
 	st_PART	part;				/* 被检测工件	*/
 	unsigned short	year;
 	unsigned char	month;

@@ -218,7 +218,7 @@ typedef struct tmp_config
 
 	DOT_TYPE	scan_data[setup_MAX_GROUP_QTY][640*400];
 	guint		measure_data[setup_MAX_LAW_QTY][8];
-	MEASURE_DATA	measure_data_dis;
+	gfloat     field[4];//保存4个field最后用于显示的值
 
 	gushort	special_col_amp[3];		/* 特殊颜色 */
 	gushort	color_amp[256];			/* 调色板信息 */

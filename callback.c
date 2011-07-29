@@ -425,11 +425,21 @@ static void setup_para(PARAMETER_P p, guint group)
 static void save_cal_law(gint offset, gint group, PARAMETER_P p)
 {
 	gint i, j,k;
-	int ElementStart = LAW_VAL_POS (group, First_tx_elem)-1;
-	int ElementStop  = ElementStart + LAW_VAL_POS (group, Elem_qty) ;
+	gint ElementStart;
+	gint ElementStop ;
 
 	for (i = 0; i < TMP(beam_qty[group]); i++)
 	{
+		if(LAW_VAL_POS(group, Focal_type) == 1)//Linear
+		{
+			ElementStart = LAW_VAL_POS (group, First_tx_elem) + i*LAW_VAL_POS (group, Elem_step) - 1 ;
+			ElementStop  = ElementStart + LAW_VAL_POS (group, Elem_qty) ;
+		}
+		else
+		{
+			ElementStart = LAW_VAL_POS (group, First_tx_elem) - 1 ;
+			ElementStop  = ElementStart + LAW_VAL_POS (group, Elem_qty) ;
+		}
 		TMP(focal_law_all_beam[offset + i]).N_ActiveElements	= LAW_VAL_POS (group, Elem_qty);
 		TMP(focal_law_all_beam[offset + i]).frequency		= GROUP_VAL_POS (group, frequency);
 		TMP(focal_law_all_beam[offset + i]).cycle			= 1; 
@@ -819,6 +829,11 @@ void b3_fun0(gpointer pt)
 					set_display_table (pp->p_config, !get_display_table(pp->p_config)); /* P320 */
 					break; 
 				default:break;
+			 }
+			break;
+		case 4:
+			switch(p->pos1[4])
+			{
 			}
 			break;
 		case 5:
@@ -4457,6 +4472,7 @@ void data_400 (GtkMenuItem *menuitem, gpointer data) /* Display->Selection->disp
 			break;
 		default:break;
 	}
+	generate_focallaw();
 	draw_menu3 (0, NULL);
 	draw_area_all ();
 }
@@ -4867,6 +4883,11 @@ void data_610 (GtkSpinButton *spinbutton, gpointer data)
 		LAW_VAL(Angle_min) = (gshort)
 			(gtk_spin_button_get_value (spinbutton) * 100.0);
 	}
+	//防止最大角比最小角要小 引起断错误
+	if(LAW_VAL(Angle_min) > LAW_VAL(Angle_max))
+	{
+		LAW_VAL(Angle_max) = LAW_VAL(Angle_min);
+	}
 	draw_area_all();
 }
 
@@ -4975,19 +4996,34 @@ void data_624 (GtkSpinButton *spinbutton, gpointer data) /* Position Step P624 *
 void data_630 (GtkSpinButton *spinbutton, gpointer data) 
 {
 	LAW_VAL (Elem_qty) = (guchar) (gtk_spin_button_get_value (spinbutton));
-	LAW_VAL (Last_tx_elem) = (guchar) (LAW_VAL (First_tx_elem) + LAW_VAL (Elem_qty)) - 1;
+	if(LAW_VAL(Focal_type) == 0)//Azimuthal
+			LAW_VAL (Last_tx_elem) = (guchar) (LAW_VAL (First_tx_elem) + LAW_VAL (Elem_qty)) - 1;
+	else//Linear
+	{
+		if( LAW_VAL (Last_tx_elem) < ((guchar) (LAW_VAL (First_tx_elem) + LAW_VAL (Elem_qty)) - 1) )
+				LAW_VAL (Last_tx_elem) = (guchar) (LAW_VAL (First_tx_elem) + LAW_VAL (Elem_qty)) - 1;
+	}
 }
 
 /* first_element 第一个接收阵元 */
 void data_631 (GtkSpinButton *spinbutton, gpointer data) 
 {
 	LAW_VAL(First_tx_elem) =  (guchar) (gtk_spin_button_get_value (spinbutton));
-	LAW_VAL (Last_tx_elem) = (guchar) (LAW_VAL (First_tx_elem) + LAW_VAL (Elem_qty)) - 1;
+	if(LAW_VAL(Focal_type) == 0)//Azimuthal
+			LAW_VAL (Last_tx_elem) = (guchar) (LAW_VAL (First_tx_elem) + LAW_VAL (Elem_qty)) - 1;
+	else//Linear
+	{
+		if( LAW_VAL (Last_tx_elem) < ((guchar) (LAW_VAL (First_tx_elem) + LAW_VAL (Elem_qty)) - 1) )
+				LAW_VAL (Last_tx_elem) = (guchar) (LAW_VAL (First_tx_elem) + LAW_VAL (Elem_qty)) - 1;
+	}
 }
 /* last_element 最后一个阵元编号 */
 void data_632 (GtkSpinButton *spinbutton, gpointer data) 
 {
-	LAW_VAL(Last_tx_elem) =  (guchar) (gtk_spin_button_get_value (spinbutton));
+	if( LAW_VAL (Last_tx_elem) < ((guchar) (LAW_VAL (First_tx_elem) + LAW_VAL (Elem_qty)) - 1) )
+			LAW_VAL (Last_tx_elem) = (guchar) (LAW_VAL (First_tx_elem) + LAW_VAL (Elem_qty)) - 1;
+	else
+			LAW_VAL(Last_tx_elem) =  (guchar) (gtk_spin_button_get_value (spinbutton));
 }
 
 void data_633 (GtkSpinButton *spinbutton, gpointer data) /*element_step*/

@@ -10,7 +10,7 @@
 #include <malloc.h>
 
 #define MAXNUM 256
-#define ELE_NUM 32
+#define ELE_NUM 128
 
 
 /*保存聚焦法则所需变量*/
