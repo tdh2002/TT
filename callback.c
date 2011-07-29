@@ -1146,7 +1146,7 @@ void b3_fun1(gpointer p)
 					if (GROUP_VAL(db_ref))
 						markup = g_markup_printf_escaped (
 								"<span foreground='white' font_desc='16'>%0.1f(%0.1f)</span>",
-								(GROUP_VAL(gain) - GROUP_VAL(gainr)) / 100.0, GROUP_VAL(gainr) / 100.0);
+								((int)(GROUP_VAL(gain)) - (int)(GROUP_VAL(gainr))) / 100.0, GROUP_VAL(gainr) / 100.0);
 					else
 						markup = g_markup_printf_escaped ("<span foreground='white' font_desc='24'>%0.1f</span>",	GROUP_VAL(gain) / 100.0 );
 					gtk_label_set_markup (GTK_LABEL(pp->label[GAIN_VALUE]),markup);
@@ -3221,12 +3221,11 @@ void data_100 (GtkSpinButton *spinbutton, gpointer data) /* 增益Gain P100 */
 	gchar *markup;
 	gint grp = get_current_group(pp->p_config);
 	gint gain = ((gint)(gtk_spin_button_get_value(spinbutton) * 100) + 5) / 10 * 10;
-	gtk_spin_button_set_value (spinbutton, gain / 100.0);
 
 	if (GROUP_VAL(db_ref))
-		GROUP_VAL(gain) = (gushort) (gtk_spin_button_get_value (spinbutton) * 100 + GROUP_VAL(gainr));
+		GROUP_VAL(gain) = (gushort) (gain + GROUP_VAL(gainr));
 	else
-		GROUP_VAL(gain) = (gushort) (gtk_spin_button_get_value (spinbutton) * 100);
+		GROUP_VAL(gain) = (gushort) (gain);
 
 	if (GROUP_VAL(db_ref))
 		markup = g_markup_printf_escaped (
@@ -3260,7 +3259,7 @@ void data_101 (GtkSpinButton *spinbutton, gpointer data) /*Start 扫描延时 P1
 		GROUP_VAL(start) = (gint) (gtk_spin_button_get_value (spinbutton) * 1000.0) ; 
 
 //	g_print ("\n%d\n", GROUP_VAL(start));
-	GROUP_VAL(start) =  (GROUP_VAL(start) + 5);
+	GROUP_VAL(start) =  ((GROUP_VAL(start) + 5) / 10) * 10;
  	draw_area_all ();
 	TMP(group_spi[grp]).sample_start	= (GROUP_VAL_POS (grp, start) + 
 		GROUP_VAL_POS(grp, wedge_delay)) / 10;		

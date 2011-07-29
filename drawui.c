@@ -926,9 +926,9 @@ static void draw3_digit_pressed (void (*fun)(GtkSpinButton*, gpointer), const gc
 	update_widget_bg(pp->eventbox30[z], /*backpic[6]*/ 6);
 	//	widget_window_class->key_press_event = window_keypress_event_orig;
 	/* 一个信号能对应多个回调函数，所以先把对应的回调函数取消 */
-	if (g_signal_handler_is_connected (G_OBJECT (pp->sbutton[z]), pp->signal_id))
-		g_signal_handler_disconnect (G_OBJECT (pp->sbutton[z]), pp->signal_id);
-	pp->signal_id = g_signal_connect (G_OBJECT(pp->sbutton[z]), "value-changed", G_CALLBACK(fun), (gpointer) (pp));
+	if (g_signal_handler_is_connected (G_OBJECT (pp->sbutton[z]), pp->signal_id[z]))
+		g_signal_handler_disconnect (G_OBJECT (pp->sbutton[z]), pp->signal_id[z]);
+	pp->signal_id[z] = g_signal_connect (G_OBJECT(pp->sbutton[z]), "value-changed", G_CALLBACK(fun), (gpointer) (pp));
 	/* 设置值的范围 */
 	pp->adj = gtk_spin_button_get_adjustment (GTK_SPIN_BUTTON (pp->sbutton[z]));
 	gtk_adjustment_configure (pp->adj, cur_value, lower, upper, step , 10.0, 0.0);
@@ -972,8 +972,8 @@ static void draw3_digit_stop(gfloat cur_value, const gchar *unit,
 	y = pp->pos1[x];
 	z = pos;
 
-	if (g_signal_handler_is_connected (G_OBJECT (pp->sbutton[z]), pp->signal_id))
-		g_signal_handler_disconnect (G_OBJECT (pp->sbutton[z]), pp->signal_id);
+	if (g_signal_handler_is_connected (G_OBJECT (pp->sbutton[z]), pp->signal_id[z]))
+		g_signal_handler_disconnect (G_OBJECT (pp->sbutton[z]), pp->signal_id[z]);
 	if (!unit )
 		str = g_strdup_printf ("%s", con2_p[x][y][content_pos ? content_pos : pos]);	
 	else
@@ -3697,8 +3697,8 @@ void draw3_data0(DRAW_UI_P p)
 						content_pos = 0;
 					if ((p->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 					{
-						cur_value = (GROUP_VAL(gain) - GROUP_VAL(gainr) * GROUP_VAL(db_ref)) / 100.0; 
-						lower = 0.0 - GROUP_VAL(gainr) * GROUP_VAL(db_ref) / 100.0 ;
+						cur_value = ((int)(GROUP_VAL(gain)) - (int)(GROUP_VAL(gainr) * GROUP_VAL(db_ref))) / 100.0; 
+						lower = 0.0 - (int)(GROUP_VAL(gainr)) * GROUP_VAL(db_ref) / 100.0 ;
 						upper = GAIN_MAX - GROUP_VAL(gainr) * GROUP_VAL(db_ref) / 100.0 ;
 						step = tmpf;
 						digit = 1;

@@ -335,6 +335,7 @@ int main (int argc, char *argv[])
 			g_print("success open config file\n");
 		}
 	}
+
 	/* 读取颜色 amp toft depth */
 	read_palette_file ("source/system/Sample/Palette/ONDT_Amplitude.pal",
 			TMP(t_special_col), TMP(t_color));  /*   */

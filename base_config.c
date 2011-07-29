@@ -617,7 +617,7 @@ unsigned char get_display_table (CONFIG *p)
 void set_display_table (CONFIG *p, unsigned char data)
 {
 	assert ((data == 1) || (data == 0));
-	p->on_off_status = set_bit_value (p->on_off_status1, 0, data);
+	p->on_off_status1 = set_bit_value (p->on_off_status1, 0, data);
 }
 
 unsigned char get_entry_image (CONFIG *p)
@@ -628,7 +628,7 @@ unsigned char get_entry_image (CONFIG *p)
 void set_entry_image (CONFIG *p, unsigned char data)
 {
 	assert ((data == 1) || (data == 0));
-	p->on_off_status = set_bit_value (p->on_off_status1, 1, data);
+	p->on_off_status1 = set_bit_value (p->on_off_status1, 1, data);
 }
 
 unsigned int get_entry_qty (CONFIG *p)
@@ -1318,14 +1318,71 @@ void set_probe_type (CONFIG *p, unsigned char data)
 
 
 /* Group 参数的保存读取 */
-unsigned int get_wedge_delay (CONFIG *p, int group_id)
+unsigned int get_group_wedge_delay (CONFIG *p, int group_id)
+{
+	return p->group[group_id].wedge_delay;
+}
+
+void set_group_wedge_delay (CONFIG *p, int group_id, unsigned int data)
+{
+	p->group[group_id].wedge_delay = data;
+}
+
+unsigned int get_group_range (CONFIG *p, int group_id)
+{
+	return p->group[group_id].range;
+}
+
+void set_group_range (CONFIG *p, int group_id, unsigned int data)
+{
+	p->group[group_id].range = data;
+}
+
+int get_group_start (CONFIG *p, int group_id)
+{
+	return p->group[group_id].start; 
+}
+
+void set_group_start (CONFIG *p, int group_id, int data)
+{
+	p->group[group_id].start = data;
+}
+
+unsigned short get_group_gain (CONFIG *p, int group_id)
+{
+	return p->group[group_id].gain; 
+}
+
+void set_group_gain (CONFIG *p, int group_id, unsigned short data)
+{
+	p->group[group_id].gain = data; 
+}
+
+unsigned short get_group_gainr (CONFIG *p, int group_id)
+{
+	return p->group[group_id].gainr; 
+}
+
+void set_group_gainr (CONFIG *p, int group_id, unsigned short data)
+{
+	p->group[group_id].gainr = data; 
+}
+
+unsigned int get_group_velocity (CONFIG *p, int group_id)
 {
 }
 
-void set_wedge_delay (CONFIG *p, int group_id, unsigned int data)
+void set_group_velocity (CONFIG *p, int group_id, unsigned int data)
 {
 }
 
+int get_group_db_ref (CONFIG *p, int group_id)
+{
+}
+
+void set_group_db_ref (CONFIG *p, int group_id, int data)
+{
+}
 
 /* group操作*/
 void grpcpy (CONFIG *p, unsigned int dst, unsigned int src)		/* 把src group 配置复制到 dst group */

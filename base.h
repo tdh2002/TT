@@ -440,7 +440,7 @@ typedef struct Draw_interface
 	gpointer	p_s_scan_data[4];
 	guint		scan_count;
 
-	gulong		signal_id;
+	gulong		signal_id[6];
 
 	GtkWidget	*label_probe;	/* dialog 最下面一排信息   无 probe wedge之分 */
 	GtkTreeSelection *selection; 

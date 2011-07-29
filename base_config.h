@@ -268,7 +268,7 @@ struct _Group
 	/* 基本设置 */
 	unsigned int	wedge_delay;	/* 楔款延时 单位 ns */
 	unsigned int	range;			/* 显示范围 单位 ns */
-	int	start;			/* 扫描延时 单位 ns */
+	int	start;						/* 扫描延时 单位 ns */
 	unsigned short	gain;			/* 实际增益 单位 0.01dB */
 	unsigned short	gainr;			/* 参考增益 单位 0.01dB */
 	unsigned int	velocity;		/* 实际声速 单位 0.01m/s  */
@@ -718,8 +718,20 @@ extern void		set_probe_type (CONFIG *p, unsigned char data);
 
 
 /* Group 参数的保存读取 */
-extern unsigned int get_wedge_delay (CONFIG *p, int group_id);
-extern void set_wedge_delay (CONFIG *p, int group_id, unsigned int data);
+extern unsigned int get_group_wedge_delay (CONFIG *p, int group_id);
+extern void set_group_wedge_delay (CONFIG *p, int group_id, unsigned int data);
+extern unsigned int get_group_range (CONFIG *p, int group_id);
+extern void set_group_range (CONFIG *p, int group_id, unsigned int data);
+extern int get_group_start (CONFIG *p, int group_id);
+extern void set_group_start (CONFIG *p, int group_id, int data);
+extern unsigned short get_group_gain (CONFIG *p, int group_id);
+extern void set_group_gain (CONFIG *p, int group_id, unsigned short data);
+extern unsigned short get_group_gainr (CONFIG *p, int group_id);
+extern void set_group_gainr (CONFIG *p, int group_id, unsigned short data);
+extern unsigned int get_group_velocity (CONFIG *p, int group_id);
+extern void set_group_velocity (CONFIG *p, int group_id, unsigned int data);
+extern int get_group_db_ref (CONFIG *p, int group_id);
+extern void set_group_db_ref (CONFIG *p, int group_id, int data);
 
 #if 0
 	/* 基本设置 */
