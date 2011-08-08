@@ -240,6 +240,7 @@ typedef struct tmp_config
 
 	guint	beam_num[setup_MAX_GROUP_QTY];		/* Group 显示的beam编号 */
 	guint	beam_qty[setup_MAX_GROUP_QTY];		/* Group beam总数量	*/
+	gfloat   field_distance[setup_MAX_GROUP_QTY];/* 每束中心正元到出射点的距离 */
 	guint	angle_num;						/* 几个angle */
 	guint	beam_skew_num;					/* 几个beam_skew */
 
@@ -297,6 +298,7 @@ typedef struct tmp_config
     //GdkPixbuf *pixbuf_[18];
 	CALIBRATION wizard_calibration;
 
+	double Junction;
 } TMP_CONFIG, *TMP_CONFIG_P;
 
 /*画图区域*/
@@ -522,6 +524,8 @@ typedef struct Draw_interface
 
 	gfloat	swmin;
 	gfloat	swmax;
+
+	gint    G_delay[256];//保存每一个beam的延时
 } DRAW_UI, *DRAW_UI_P;
 
 typedef struct _MY_SIGNAL_TMP 

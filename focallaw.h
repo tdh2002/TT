@@ -10,7 +10,7 @@
 #include <malloc.h>
 
 #define MAXNUM 256
-#define ELE_NUM 128
+#define ELE_NUM 32
 
 
 /*保存聚焦法则所需变量*/
@@ -146,8 +146,7 @@ typedef struct FocusParameter
     ELEMENT_SEL_P  element_sel;
     LOCATION_P     location;
       
-    //*** 坐标信息用于以后opengl显示  ***//
-	//Beam Information
+    //Beam Information
     double   BeamExitPoint_x[MAXNUM];
     double   BeamExitPoint_y[MAXNUM];
     double   BeamExitPoint_z[MAXNUM];
@@ -182,7 +181,8 @@ typedef struct FocusParameter
     int k;//the num of calculator 
     int tmp_k ;//临时变量
     int is_draw_focus;//标志位
-    
+    double Junction  ;   // junction height of beams, for draw fan scan
+	unsigned int field_distance[MAXNUM];//每一束的中心正元到出射点间的距离
 
 }PARAMETER, *PARAMETER_P;
 

@@ -50,6 +50,9 @@ GdkColor	color_rule      = {0x0, 0xc300, 0xf000, 0x1d00};
 GROUP g_tmp_group_struct;
 
 sem_t sem;
+pthread_mutex_t draw_thread_mutex;
+pthread_cond_t  draw_thread_signal;
+volatile int *DMA_MARK ;
 
 #if 0
 static char *keyboard_display[] = 
@@ -5776,7 +5779,7 @@ void draw3_data1(DRAW_UI_P p)
 									case 2:	tmpf = 10.0; break;
 									default:break;
 								}
-								cur_value = LAW_VAL(Position_start) / 100.0;
+								cur_value = LAW_VAL(Position_start) / 1000.0;
 								lower = 0.1;
 								upper = 10000.0;
 								step = tmpf;
@@ -5826,7 +5829,7 @@ void draw3_data1(DRAW_UI_P p)
 							if((LAW_VAL(Focal_point_type)==HALFPATH_P)||(LAW_VAL(Focal_point_type)==DEPTH_P))
 								/*type为half path 或 true depth 时*/
 							{
-								cur_value = LAW_VAL(Position_start) / 100.0;
+								cur_value = LAW_VAL(Position_start) / 1000.0;
 								digit = 1;
 								pos = 1;
 								unit = UNIT_MM;
@@ -7939,7 +7942,7 @@ void draw3_data2(DRAW_UI_P p)
 								field1, 60, 2, get_reading_field1(pp->p_config), 0);
 					else 
 						draw3_popdown (field[get_reading_field1(pp->p_config)], 2, 0);
-					g_printf("\n--------->field_index=%d\n",CCFG(field[0]));
+//					g_printf("\n--------->field_index=%d\n",CCFG(field[0]));
 					break;
 				case 1:/*Measurements -> Cursors -> Scan p312 */
 					if(!GROUP_VAL(selection))
@@ -15482,6 +15485,7 @@ static void	compress_data (DOT_TYPE *source_data, DOT_TYPE *target_data,
 	}
 }
 
+
 static void interpolation_data (DOT_TYPE *source_data, DOT_TYPE *target_data,
 		gint qty1, gint qty2)
 {
@@ -15492,10 +15496,11 @@ static void interpolation_data (DOT_TYPE *source_data, DOT_TYPE *target_data,
 	{
 		for (i = 0 ; i < qty1 ; i++)
 		{
+			gint tmp = (((gint)(source_data[i + 1]) - (gint)(source_data[i])) / (qty2 / qty1));
 			for (t1 = i * qty2 / qty1, t2 = (i + 1) * qty2 /qty1, j = t1; j < t2; j++)
 			{
 				target_data[j] = (guchar)((gint)(source_data[i]) + 
-						(j - t1) * ((gint)(source_data[i + 1]) - (gint)(source_data[i])) / (qty2 / qty1));
+						(j - t1) * tmp);//((gint)(source_data[i + 1]) - (gint)(source_data[i])) / (qty2 / qty1));
 			}
 		}
 	}
@@ -15823,264 +15828,159 @@ void process_key_press (gchar key)
 void calc_measure_data()
 {
 	gint offset,k;
-	for (offset = 0, k = 0 ; k < get_current_group (pp->p_config); k++)
-		offset += TMP(beam_qty[k]);
-	gint index = offset + TMP(beam_num[get_current_group(pp->p_config)]);
+	gint l,n;
 
-	switch( CCFG(field[0]) )//field1
+	gint grp = get_current_group(pp->p_config);//当前group
+	for (offset = 0, k = 0 ; k < grp; k++)
+		offset += TMP(beam_qty[k]);
+	gint index = offset + TMP(beam_num[grp]);	
+	gint i = TMP(beam_num[grp]);//当前beam
+	gfloat a = ( (gfloat)(LAW_VAL_POS (grp, Angle_min) + LAW_VAL_POS (grp, Angle_step)*i)/100.0 )*G_PI/180.0;//当前折射角
+	gfloat thickness = (gfloat)(get_part_thickness(pp->p_config)/1000.0);//工件厚度	
+//	printf("----->distance[%d]=%f a=%f thickness=%f\n",i,TMP(field_distance[i]),a,thickness);
+
+	for(l=0;l<4;l++)//4个field
 	{
-		case 0://A%
-			CCFG(measure_data[index]).a_height = ((TMP(measure_data[index][1])>>20) & 0xfff)/40.95;//取出闸门高12位数据
-			TMP(field[0]) = CCFG(measure_data[index]).a_height;
-			break;
-		case 3://B%
-			CCFG(measure_data[index]).b_height = ((TMP(measure_data[index][2])>>20) & 0xfff)/40.95;
-			TMP(field[0]) = CCFG(measure_data[index]).b_height;
-			break;
-		case 6://A^
-			CCFG(measure_data[index]).a_position = ((TMP(measure_data[index][1])) & 0xfffff)/1000.0;//取出闸门低20位数据
-			TMP(field[0]) = CCFG(measure_data[index]).a_position;
-			break;
-		case 7://B^
-			CCFG(measure_data[index]).b_position = ((TMP(measure_data[index][2])) & 0xfffff)/1000.0;
-			TMP(field[0]) = CCFG(measure_data[index]).b_position;
-			break;
-		case 8://I/
-			CCFG(measure_data[index]).i_position = ((TMP(measure_data[index][3])) & 0xfffff)/1000.0;
-			TMP(field[0]) = CCFG(measure_data[index]).i_position;
-			break;
-		case 27://RA
-			CCFG(measure_data[index]).a_position = 0;
-			break;
-		case 28://RB
-			CCFG(measure_data[index]).b_position = 0;
-			break;
-		case 29://PA
-			CCFG(measure_data[index]).i_position = 0;
-			break;
-		case 30://PB
-			CCFG(measure_data[index]).i_position = 0;
-			break;
-		case 31://DA^
-			if (LAW_VAL (Focal_type) == AZIMUTHAL_SCAN)
-			{
-			
-			}
-			else if(LAW_VAL (Focal_type) == LINEAR_SCAN) 
-			{
+		switch( CCFG(field[l]) )//field1
+		{
+			case 0://A%
+				CCFG(measure_data[index]).a_height = (gint)(((TMP(measure_data[index][1])>>20) & 0xfff)/20.47);//满屏时200% 4095 
+				TMP(field[l]) = CCFG(measure_data[index]).a_height;
+				break;
+			case 3://B%
+				CCFG(measure_data[index]).b_height = (gint)(((TMP(measure_data[index][2])>>20) & 0xfff)/20.47);
+				TMP(field[l]) = CCFG(measure_data[index]).b_height;
+				break;
+			case 6://A^
+				if(GROUP_VAL(ut_unit)==1)//Time
+					CCFG(measure_data[index]).a_position = (gint)(((TMP(measure_data[index][1])) & 0xfffff)/100.0);//直接显示时间微妙
+				else
+					CCFG(measure_data[index]).a_position = (gint)(((TMP(measure_data[index][1])) & 0xfffff)*GROUP_VAL(velocity)/20000000.0);//距离模式s= time * velo/2
+				TMP(field[l]) = CCFG(measure_data[index]).a_position;
+				break;
+			case 7://B^
+				if(GROUP_VAL(ut_unit)==1)
+					CCFG(measure_data[index]).b_position = (gint)(((TMP(measure_data[index][2])) & 0xfffff)/100.0);//直接显示时间微妙
+				else
+					CCFG(measure_data[index]).b_position = (gint)(((TMP(measure_data[index][2])) & 0xfffff)*GROUP_VAL(velocity)/20000000.0);
+				TMP(field[l]) = CCFG(measure_data[index]).b_position;
+				break;
+			case 8://I/
+				if(GROUP_VAL(ut_unit)==1)
+					CCFG(measure_data[index]).i_position = (gint)(((TMP(measure_data[index][3])) & 0xfffff)/100.0);//直接显示时间微妙
+				else
+					CCFG(measure_data[index]).i_position = (gint)(((TMP(measure_data[index][3])) & 0xfffff)*GROUP_VAL(velocity)/20000000.0);
+				TMP(field[l]) = CCFG(measure_data[index]).i_position;
+				break;
+			case 27://RA
+				break;
+			case 28://RB
+				break;
+			case 29://PA
+				break;
+			case 30://PB
+				break;
+			case 31://DA^
+				/********先计算SA^***********/
 				switch(GROUP_VAL(ut_unit))	
 				{
 					case 0://Sound Path
-						break;
+						//CCFG(measure_data[index]).a_sound_path = ((TMP(measure_data[index][1])) & 0xfffff)/100.0;//=A^
+						//break;
 					case 1://Time
+						CCFG(measure_data[index]).a_sound_path = (gint)(((TMP(measure_data[index][1])) & 0xfffff)*GROUP_VAL(velocity)/20000000.0);//Time(A^)*声速/2
 						break;
 					case 2://True Depth
-						CCFG(measure_data[index]).a_depth = CCFG(measure_data[index]).a_position;
+						CCFG(measure_data[index]).a_sound_path = (gint)(((TMP(measure_data[index][1])) & 0xfffff)*GROUP_VAL(velocity)/(cos(a)*20000000.0) +TMP(field_distance[i]));//=DA^/cos(a)+distance				
 						break;
 				}
-			}
-			else if(LAW_VAL (Focal_type) == DEPTH_SCAN) 
-			{
-				//待添加
-			}
-			else if(LAW_VAL (Focal_type) == STATIC_SCAN) 
-			{
-				//待添加
-			}
-			TMP(field[0]) = CCFG(measure_data[index]).a_position;
-			break;
-		case 32://DB^
-			break;
-		case 33://SA^
-			break;
-		case 34://SB^
-			break;
-		case 35://ViA
-			break;
-		case 36://ViB
-			break;
-		case 37://VsA
-			break;
-		case 38://VsB
-			break;
-		case 39://LA
-			break;
-		case 40://LB
-			break;
-		default :
-			break;
-	 }
-	switch( CCFG(field[1]) )//field2
-	{
-		case 0://A%
-			CCFG(measure_data[index]).a_height = ((TMP(measure_data[index][1])>>20) & 0xfff)/40.95;//取出闸门高12位数据
-			TMP(field[1]) = CCFG(measure_data[index]).a_height;
-			break;
-		case 3://B%
-			CCFG(measure_data[index]).b_height = ((TMP(measure_data[index][2])>>20) & 0xfff)/40.95;
-			TMP(field[1]) = CCFG(measure_data[index]).b_height;
-			break;
-		case 6://A^
-			CCFG(measure_data[index]).a_position = ((TMP(measure_data[index][1])) & 0xfffff)/1000.0;//取出闸门低20位数据
-			TMP(field[1]) = CCFG(measure_data[index]).a_position;
-			break;
-		case 7://B^
-			CCFG(measure_data[index]).b_position = ((TMP(measure_data[index][2])) & 0xfffff)/1000.0;
-			TMP(field[1]) = CCFG(measure_data[index]).b_position;
-			break;
-		case 8://I/
-			CCFG(measure_data[index]).i_position = ((TMP(measure_data[index][3])) & 0xfffff)/1000.0;
-			TMP(field[1]) = CCFG(measure_data[index]).i_position;
-			break;
-		case 27://RA
-			CCFG(measure_data[index]).a_position = 0;
-			break;
-		case 28://RB
-			CCFG(measure_data[index]).b_position = 0;
-			break;
-		case 29://PA
-			CCFG(measure_data[index]).i_position = 0;
-			break;
-		case 30://PB
-			CCFG(measure_data[index]).i_position = 0;
-			break;
-		case 31://DA^
-			break;
-		case 32://DB^
-			break;
-		case 33://SA^
-			break;
-		case 34://SB^
-			break;
-		case 35://ViA
-			break;
-		case 36://ViB
-			break;
-		case 37://VsA
-			break;
-		case 38://VsB
-			break;
-		case 39://LA
-			break;
-		case 40://LB
-			break;
-		default :
-			break;
-	 }
-	switch( CCFG(field[2]) )//field3
-	{
-		case 0://A%
-			CCFG(measure_data[index]).a_height = ((TMP(measure_data[index][1])>>20) & 0xfff)/40.95;//取出闸门高12位数据
-			TMP(field[2]) = CCFG(measure_data[index]).a_height;
-			break;
-		case 3://B%
-			CCFG(measure_data[index]).b_height = ((TMP(measure_data[index][2])>>20) & 0xfff)/40.95;
-			TMP(field[2]) = CCFG(measure_data[index]).b_height;
-			break;
-		case 6://A^
-			CCFG(measure_data[index]).a_position = ((TMP(measure_data[index][1])) & 0xfffff)/1000.0;//取出闸门低20位数据
-			TMP(field[2]) = CCFG(measure_data[index]).a_position;
-			break;
-		case 7://B^
-			CCFG(measure_data[index]).b_position = ((TMP(measure_data[index][2])) & 0xfffff)/1000.0;
-			TMP(field[2]) = CCFG(measure_data[index]).b_position;
-			break;
-		case 8://I/
-			CCFG(measure_data[index]).i_position = ((TMP(measure_data[index][3])) & 0xfffff)/1000.0;
-			TMP(field[2]) = CCFG(measure_data[index]).i_position;
-			break;
-		case 27://RA
-			CCFG(measure_data[index]).a_position = 0;
-			break;
-		case 28://RB
-			CCFG(measure_data[index]).b_position = 0;
-			break;
-		case 29://PA
-			CCFG(measure_data[index]).i_position = 0;
-			break;
-		case 30://PB
-			CCFG(measure_data[index]).i_position = 0;
-			break;
-		case 31://DA^
-			break;
-		case 32://DB^
-			break;
-		case 33://SA^
-			break;
-		case 34://SB^
-			break;
-		case 35://ViA
-			break;
-		case 36://ViB
-			break;
-		case 37://VsA
-			break;
-		case 38://VsB
-			break;
-		case 39://LA
-			break;
-		case 40://LB
-			break;
-		default :
-			break;
-	 }
-	switch( CCFG(field[3]) )//field4
-	{
-		case 0://A%
-			CCFG(measure_data[index]).a_height = ((TMP(measure_data[index][1])>>20) & 0xfff)/40.95;//取出闸门高12位数据
-			TMP(field[3]) = CCFG(measure_data[index]).a_height;
-			break;
-		case 3://B%
-			CCFG(measure_data[index]).b_height = ((TMP(measure_data[index][2])>>20) & 0xfff)/40.95;
-			TMP(field[3]) = CCFG(measure_data[index]).b_height;
-			break;
-		case 6://A^
-			CCFG(measure_data[index]).a_position = ((TMP(measure_data[index][1])) & 0xfffff)/1000.0;//取出闸门低20位数据
-			TMP(field[3]) = CCFG(measure_data[index]).a_position;
-			break;
-		case 7://B^
-			CCFG(measure_data[index]).b_position = ((TMP(measure_data[index][2])) & 0xfffff)/1000.0;
-			TMP(field[3]) = CCFG(measure_data[index]).b_position;
-			break;
-		case 8://I/
-			CCFG(measure_data[index]).i_position = ((TMP(measure_data[index][3])) & 0xfffff)/1000.0;
-			TMP(field[3]) = CCFG(measure_data[index]).i_position;
-			break;
-		case 27://RA
-			CCFG(measure_data[index]).a_position = 0;
-			break;
-		case 28://RB
-			CCFG(measure_data[index]).b_position = 0;
-			break;
-		case 29://PA
-			CCFG(measure_data[index]).i_position = 0;
-			break;
-		case 30://PB
-			CCFG(measure_data[index]).i_position = 0;
-			break;
-		case 31://DA^
-			break;
-		case 32://DB^
-			break;
-		case 33://SA^
-			break;
-		case 34://SB^
-			break;
-		case 35://ViA
-			break;
-		case 36://ViB
-			break;
-		case 37://VsA
-			break;
-		case 38://VsB
-			break;
-		case 39://LA
-			break;
-		case 40://LB
-			break;
-		default :
-			break;
-	 }
+				/******由SA^计算DA^*************/	
+				n = (gint)((CCFG(measure_data[index]).a_sound_path -TMP(field_distance[i]))*cos(a)/thickness);//反射次数
+				if( n%2 == 0 )
+				{
+					CCFG(measure_data[index]).a_depth = (gint)((CCFG(measure_data[index]).a_sound_path -TMP(field_distance[i]))*cos(a) - thickness);
+				}
+				else
+				{
+					CCFG(measure_data[index]).a_depth =  (gint)((n+1)*thickness - (CCFG(measure_data[index]).a_sound_path -TMP(field_distance[i]))*cos(a));
+				}
+				TMP(field[l]) = CCFG(measure_data[index]).a_depth;
+				break;
+			case 32://DB^
+				/********先计算SA^***********/
+				switch(GROUP_VAL(ut_unit))	
+				{
+					case 0://Sound Path
+						//CCFG(measure_data[index]).b_sound_path = ((TMP(measure_data[index][2])) & 0xfffff)/100.0;//=A^
+						//break;
+					case 1://Time
+						CCFG(measure_data[index]).b_sound_path = (gint)(((TMP(measure_data[index][2])) & 0xfffff)*GROUP_VAL(velocity)/20000000.0);//Time(A^)*声速/2
+						break;
+					case 2://True Depth
+						CCFG(measure_data[index]).b_sound_path = (gint)(((TMP(measure_data[index][2])) & 0xfffff)*GROUP_VAL(velocity)/(cos(a)*20000000.0) +TMP(field_distance[i]));//=DA^/cos(a)+distance				
+						break;
+				}
+				/******由SA^计算DA^*************/	
+				n = (gint)((CCFG(measure_data[index]).a_sound_path -TMP(field_distance[i]))*cos(a)/thickness);//反射次数
+				if( n%2 == 0 )
+				{
+					CCFG(measure_data[index]).b_depth = (gint)((CCFG(measure_data[index]).b_sound_path -TMP(field_distance[i]))*cos(a) - thickness);
+				}
+				else
+				{
+					CCFG(measure_data[index]).b_depth =  (gint)((n+1)*thickness - (CCFG(measure_data[index]).b_sound_path -TMP(field_distance[i]))*cos(a));
+				}
+				TMP(field[l]) = CCFG(measure_data[index]).b_depth;
+				break;
+			case 33://SA^
+				switch(GROUP_VAL(ut_unit))	
+				{
+					case 0://Sound Path
+						CCFG(measure_data[index]).a_sound_path = (gint)(((TMP(measure_data[index][1])) & 0xfffff)*GROUP_VAL(velocity)/20000000.0);//Time(A^)*声速/2
+						break;
+					case 1://Time
+						CCFG(measure_data[index]).a_sound_path = (gint)(((TMP(measure_data[index][1])) & 0xfffff)/100.0);//=A^
+						break;
+					case 2://True Depth
+						CCFG(measure_data[index]).a_sound_path = (gint)(((TMP(measure_data[index][1])) & 0xfffff)*GROUP_VAL(velocity)/(cos(a)*20000000.0) +TMP(field_distance[i]));//=DA^/cos(a)+distance				
+						break;
+				}
+				TMP(field[l]) = CCFG(measure_data[index]).a_sound_path;
+				break;
+			case 34://SB^
+				switch(GROUP_VAL(ut_unit))	
+				{
+					case 0://Sound Path
+						CCFG(measure_data[index]).b_sound_path = (gint)(((TMP(measure_data[index][2])) & 0xfffff)*GROUP_VAL(velocity)/20000000.0);//Time(A^)*声速/2
+						break;
+					case 1://Time
+						CCFG(measure_data[index]).b_sound_path = (gint)(((TMP(measure_data[index][2])) & 0xfffff)/100.0);//=A^
+						break;
+					case 2://True Depth
+						CCFG(measure_data[index]).b_sound_path = (gint)(((TMP(measure_data[index][2])) & 0xfffff)*GROUP_VAL(velocity)/(cos(a)*20000000.0) +TMP(field_distance[i]));//=DA^/cos(a)+distance			
+						break;
+				}
+				TMP(field[l]) = CCFG(measure_data[index]).b_sound_path;
+				break;
+			case 35://ViA
+				break;
+			case 36://ViB
+				break;
+			case 37://VsA
+				break;
+			case 38://VsB
+				break;
+			case 39://LA
+				break;
+			case 40://LB
+				break;
+			default :
+				break;
+		 }
+	}
+	
+	
+
 }
 
 /* 用来用户按键信息 */
@@ -16101,13 +16001,14 @@ gpointer signal_thread1(gpointer arg)
 {
 	gint i, j, k, offset, offset1;
 	guint *temp1=NULL ;
-	temp1 = (guint *)(pp->p_beam_data + 0x800000);
+	//temp1 = (guint *)(pp->p_beam_data + 0x800000);
+//	DMA_MARK = (int*)(pp->p_beam_data + 0x800000)  ;
 	guint temp2 = (pp->p_beam_data + 3);
 	pp->mark3 = 0;
 
 	/*	g_thread_create (signal_thread, NULL, FALSE, NULL);*/
 
-	if (temp1[0] == 0)
+	if (*DMA_MARK== 0)
 	{
 		for (i = 0 ; i < get_group_qty(pp->p_config); i++)
 		{
@@ -16146,6 +16047,7 @@ gpointer signal_thread1(gpointer arg)
 			}
 			for (k = 0; ((k < 16) && (TMP(scan_type[k]) != 0xff)); k++)
 			{
+				printf("\n width=%d  height=%d \n",TMP(a_scan_width),TMP(a_scan_height));
 				if (TMP(scan_group[k]) == i)
 					draw_scan(k, TMP(scan_type[k]), TMP(scan_group[k]), 
 							TMP(scan_xpos[k]), TMP(scan_ypos[k]), dot_temp, 
@@ -16153,7 +16055,7 @@ gpointer signal_thread1(gpointer arg)
 				//						dot_temp1);
 			}
 		}
-		temp1[0] = 1;
+		*DMA_MARK = 1;
 	}
 	else 
 	{
@@ -16171,6 +16073,8 @@ gpointer signal_thread1(gpointer arg)
 /* 读取波形数据 并画出来 */
 static gboolean time_handler2 (GtkWidget *widget)
 {
+	GError *err = NULL;
+    
 	if (pp->mark2)
 	{
 		pp->mark2 = 0;
@@ -16178,12 +16082,108 @@ static gboolean time_handler2 (GtkWidget *widget)
 	}
 	if (pp->mark3)
 	{
-		g_thread_create (signal_thread1, NULL, FALSE, NULL);
+		g_thread_create (signal_thread1, NULL, FALSE, &err);
+
 	}
 	return TRUE;
 }
 
-static void *thread_func(void *arg) 
+static void signal_scan_thread(void)
+{
+	while(1)
+	{
+		if(*DMA_MARK==0)
+		{
+                     pthread_mutex_lock(&draw_thread_mutex);
+		             pthread_cond_signal(&draw_thread_signal);
+            	     pthread_mutex_unlock(&draw_thread_mutex);
+					//sem_post(&sem) ;
+		}
+		if(*DMA_MARK>2){ printf("DMA_MARK = %d \n", *DMA_MARK) ; *DMA_MARK=0; }
+		usleep(40000);
+	 ;}
+}
+
+static void key_message_thread(void)
+{
+	char key = 0;
+    while(1)
+	{
+	    if (read(pp->fd_key, &key, 1) > 0) 
+	    {	
+		     process_key_press (key);
+	    }
+		usleep(50000);
+    }
+}
+
+static void draw_frame_thread(void)
+{
+
+	gint i, j, k, offset, offset1;
+	//guint *temp1 = (guint *)(pp->p_beam_data + 0x800000);
+	guint temp2 = (pp->p_beam_data + 3);
+	//pp->mark3 = 0;
+    unsigned int BeamInfoHeader;
+	while (1)
+	{
+	     pthread_cond_wait( &draw_thread_signal, &draw_thread_mutex);
+		//sem_trywait(&sem);
+		for (i = 0 ; i < get_group_qty(pp->p_config); i++)
+		{
+			/* 获取数据 */
+			/* 这里需要压缩数据 或者 插值数据 这里只有一个beam 同时最多处理256beam */
+			for	(j = 0 ; j < TMP(beam_qty[i]); j++)
+			{  
+				for (offset = 0, offset1 = 0, k = 0 ; k < i; k++)
+				{
+					offset += (GROUP_VAL_POS(k, point_qty) + 32) * TMP(beam_qty[k]);
+					offset1 += TMP(beam_qty[k]);
+				}
+				memcpy (TMP(measure_data[offset1 + j]), (void *)(temp2 + offset +
+							(GROUP_VAL_POS(i, point_qty) + 32) * j + GROUP_VAL_POS(i, point_qty)), 32);
+
+				BeamInfoHeader = *((int*)(TMP(measure_data[offset1+j])));
+				//BeamInfoHeader &= 0x1fff ;
+				printf("Beam info header is %x\n",BeamInfoHeader );
+				
+				if (GROUP_VAL_POS(i, point_qty) <= TMP(a_scan_dot_qty))
+				{
+					/* 只插值当前显示的A扫描 其余不插值 */
+					interpolation_data (
+							(DOT_TYPE *)(temp2 + offset +
+								(GROUP_VAL_POS(i, point_qty) + 32) * j),
+							TMP(scan_data[i] + TMP(a_scan_dot_qty) * j), 
+							GROUP_VAL_POS(i, point_qty),
+							TMP(a_scan_dot_qty));
+				}
+				else if (GROUP_VAL_POS(i, point_qty) > TMP(a_scan_dot_qty))
+				{
+					compress_data (
+							(DOT_TYPE *)(temp2 + offset +
+								(GROUP_VAL_POS(i, point_qty) + 32) * j),
+							TMP(scan_data[i] + TMP(a_scan_dot_qty) * j), 
+							GROUP_VAL_POS(i, point_qty),
+							TMP(a_scan_dot_qty), 
+							GROUP_VAL_POS(i, rectifier));
+				}
+			}
+			for (k = 0; ((k < 16) && (TMP(scan_type[k]) != 0xff)); k++)
+			{	
+				if (TMP(scan_group[k]) == i)
+					draw_scan(k, TMP(scan_type[k]), TMP(scan_group[k]), 
+							TMP(scan_xpos[k]), TMP(scan_ypos[k]), dot_temp, 
+						TMP(fb1_addr) + 768*400);
+				//						dot_temp1);
+			}
+		}
+		*DMA_MARK = 1  ;
+		calc_measure_data();//计算数据
+		draw_field_value ();
+	}
+}
+
+static void thread_func(void *arg) 
 { 
 	gint i, j, k, offset, offset1;
 	guint *temp1 = (guint *)(pp->p_beam_data + 0x800000);
@@ -16276,7 +16276,10 @@ void change_language (guint lang, DRAW_UI_P p)
 			p->list1	= list1_en;
 			p->field1	= field1_en;
 			p->field	= field_en;
-			p->field_unit	= field_unit_en;
+			if(GROUP_VAL(ut_unit)==1)//Time
+				p->field_unit	= field_unit_en;
+			else//
+				p->field_unit	= field_unit_en_mm;
 
 			con0_p	= content_en10;
 			con1_p	= content1_en;
@@ -16332,11 +16335,11 @@ gboolean on_finish(gpointer p)
 
 void draw_field_value ()
 {
-	gint	offset, k;
+//	gint	offset, k;
 	gchar	*markup0, *markup1 ,*markup2 ,*markup3;
-	for (offset = 0, k = 0 ; k < get_current_group (pp->p_config); k++)
-		offset += TMP(beam_qty[k]);
-	gint index = offset + TMP(beam_num[get_current_group(pp->p_config)]);
+//	for (offset = 0, k = 0 ; k < get_current_group (pp->p_config); k++)
+//		offset += TMP(beam_qty[k]);
+//	gint index = offset + TMP(beam_num[get_current_group(pp->p_config)]);
 	/* 4个测量值显示 */
 	markup0 = g_markup_printf_escaped ("<span foreground='white' font_desc='24'>%.2f</span>", TMP(field[0]));
 	markup1 = g_markup_printf_escaped ("<span foreground='white' font_desc='24'>%.2f</span>", TMP(field[1]));
@@ -16360,9 +16363,9 @@ void init_ui(DRAW_UI_P p)
 {
 	gint	i;
 	gchar	*markup;
-	pthread_t tid; 
+	pthread_t tid0 , tid1, tid2; 
 	sem_init(&sem,0,0);
-
+	int ret;
 	p_drawui_c = p;
 
 	all_bg_pic_in_mem();
@@ -16760,9 +16763,26 @@ void init_ui(DRAW_UI_P p)
 #if ARM
 /*	g_thread_create (signal_thread, NULL, FALSE, NULL);*/
 /*	g_thread_create (signal_thread1, NULL, FALSE, NULL);*/
-	g_timeout_add (50, (GSourceFunc) time_handler2, NULL);/////////////////////////////////////////
+//	g_timeout_add (50, (GSourceFunc) time_handler2, NULL);/////////////////////////////////////////
 /*	pthread_create (&tid, NULL, thread_func, NULL);
 	pthread_create (&tid, NULL, thread_func1, NULL);*/
+	DMA_MARK = (int*)(pp->p_beam_data + 0x800000)  ;
+    printf("DMA_MAKR is %d \n", *DMA_MARK);	
+	ret = pthread_create (&tid0, NULL, (void*)key_message_thread, NULL);
+	if(ret){
+		perror("in1:");
+	    return;
+	}
+	ret = pthread_create (&tid1, NULL, (void*)draw_frame_thread, NULL);
+        if(ret){
+		perror("in1:");
+	    return;
+	}
+	ret = pthread_create (&tid2, NULL, (void*)signal_scan_thread, NULL);	
+	if(ret){
+		perror("in1:");
+	    return;
+	}
 #endif
 
 	g_timeout_add (1000, (GSourceFunc) time_handler1, NULL);

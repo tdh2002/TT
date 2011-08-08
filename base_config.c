@@ -1370,6 +1370,7 @@ void set_group_gainr (CONFIG *p, int group_id, unsigned short data)
 
 unsigned int get_group_velocity (CONFIG *p, int group_id)
 {
+	return 0;
 }
 
 void set_group_velocity (CONFIG *p, int group_id, unsigned int data)
@@ -1378,6 +1379,7 @@ void set_group_velocity (CONFIG *p, int group_id, unsigned int data)
 
 int get_group_db_ref (CONFIG *p, int group_id)
 {
+	return 0;
 }
 
 void set_group_db_ref (CONFIG *p, int group_id, int data)

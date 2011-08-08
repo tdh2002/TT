@@ -21,10 +21,10 @@ CFLAGS=-D_REENTRANT -DARM -pthread \
 	   -pthread -lgtk-x11-2.0 -lgdk-x11-2.0 -latk-1.0 -lpangoft2-1.0 -lgdk_pixbuf-2.0 \
 	   -lm -lpangocairo-1.0 -lcairo -lgio-2.0 -lpango-1.0 -lfreetype -lfontconfig \
 	   -lgobject-2.0 -lgmodule-2.0 -lgthread-2.0 -lrt -lglib-2.0 -lwebkitgtk-1.0 \
-	   -lsoup-2.4 -lxml2 -lfakekey
+	   -lsoup-2.4 -lxml2 -lfakekey 
 
 main_arm: main.c draw_dialog.c drawui.c callback.c content_en.c drawfb.c file_op.c base_config.c spi_d.c draw_dialog.h base_config.h file_op.h drawui.h base.h language.h drawfb.h spi_d.h
-	$(CC) main.c draw_dialog.c drawui.c callback.c content_en.c drawfb.c file_op.c base_config.c spi_d.c focallaw_arm.o -o main_arm $(CFLAGS) -Wall
+	$(CC) main.c draw_dialog.c drawui.c callback.c content_en.c drawfb.c file_op.c base_config.c spi_d.c focallaw_arm.o -o main_arm $(CFLAGS) -Wall -g
 
 .PHONY:clean
 clean: 

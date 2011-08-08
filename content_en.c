@@ -592,12 +592,21 @@ const gchar *field_en[]		=
 };
 const gchar *field_unit_en[]		=
 {
-	"%", "dB", "dB", "%", "dB", "dB", "%", "%", "%", "%", 
-	"%", "dB", "dB", "%", "dB", "dB", "%", "%", "%", "%", 
-	"%", "dB", "dB", "%", "dB", "dB", "%", "%", "%", "%", 
-	"%", "dB", "dB", "%", "dB", "dB", "%", "%", "%", "%", 
-	"%", "dB", "dB", "%", "dB", "dB", "%", "%", "%", "%", 
-	"%", "dB", "dB", "%", "dB", "dB", "%", "%", "%", "%" 
+	"%", "dB", "dB",  "%", "dB",  "dB", "us", "us", "us", "us", 
+	"mm", "%",  "%",  "%", "%",   "us", "us", "us", "us", "us", 
+	"us", "mm", "mm", "mm", "mm", "mm", "mm", "mm", "mm", "mm", 
+	"mm", "mm", "mm", "mm", "mm", "mm", "mm", "mm", "mm", "mm", 
+	"  ", "  ", "%",  "%",  "us", "mm", "mm", "mm", "mm", "dB", 
+	"dB", "dB", "dB", "  ", "  ", "  ", "  ", "X",  "%",  "%" 
+};
+const gchar *field_unit_en_mm[]		=
+{
+	"%", "dB", "dB",  "%", "dB",  "dB", "mm", "mm", "mm", "mm", 
+	"mm", "%",  "%",  "%", "%",   "mm", "mm", "mm", "mm", "mm", 
+	"mm", "mm", "mm", "mm", "mm", "mm", "mm", "mm", "mm", "mm", 
+	"mm", "mm", "mm", "mm", "mm", "mm", "mm", "mm", "mm", "mm", 
+	"  ", "  ", "%",  "%",  "mm", "mm", "mm", "mm", "mm", "dB", 
+	"dB", "dB", "dB", "  ", "  ", "  ", "  ", "X",  "%",  "%" 
 };
 /*{"A%", "AdBA", "AdBr", "B%"};
  * */
