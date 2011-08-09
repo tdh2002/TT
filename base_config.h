@@ -280,7 +280,10 @@ struct _Group
 	unsigned short	gain;			/* 实际增益 单位 0.01dB */
 	unsigned short	gainr;			/* 参考增益 单位 0.01dB */
 	unsigned int	velocity;		/* 实际声速 单位 0.01m/s  */
-	unsigned char	db_ref;			/* 参考增益开关 0 off 1 on */
+	unsigned int	on_off_status;
+	/* 保存各种ON OFF 菜单的值
+	0位 dB_ref 开关
+	*/	
 	/* 发射接收 */
 	unsigned char	pulser;			/* 1~ 128 - elem_qty(聚焦阵元数最大为32) + 1 
 							   指定发射阵元 与机器配置相关我们是128阵元最大,

@@ -1370,20 +1370,23 @@ void set_group_gainr (CONFIG *p, int group_id, unsigned short data)
 
 unsigned int get_group_velocity (CONFIG *p, int group_id)
 {
-	return 0;
+	return p->group[group_id].velocity; 
 }
 
 void set_group_velocity (CONFIG *p, int group_id, unsigned int data)
 {
+	p->group[group_id].velocity = data;
 }
 
 int get_group_db_ref (CONFIG *p, int group_id)
 {
-	return 0;
+	return get_bit_value (p->group[group_id].on_off_status, 0);		
 }
 
 void set_group_db_ref (CONFIG *p, int group_id, int data)
 {
+	assert ((data == 1) || (data == 0));
+	p->group[group_id].on_off_status = set_bit_value (p->group[group_id].on_off_status, 0, data);
 }
 
 /* group操作*/

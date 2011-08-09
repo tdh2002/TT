@@ -1036,7 +1036,6 @@ static gboolean draw_info(GtkWidget *widget, GdkEventExpose *event, gpointer dat
 
 
 	gtk_widget_get_size_request (widget, &w, &h);
-g_print("\nw= %d\n h= %d",w,h);
 
 /*
 	if (prule->mask == 0x08)
@@ -3695,15 +3694,15 @@ void draw3_data0(DRAW_UI_P p)
 						case 4:	tmpf = 6.0; break;
 						default:break;
 					}
-					if (GROUP_VAL(db_ref))
+					if (get_group_db_ref (pp->p_config, get_current_group (pp->p_config)))
 						content_pos = 6;
 					else
 						content_pos = 0;
 					if ((p->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 					{
-						cur_value = ((int)(GROUP_VAL(gain)) - (int)(GROUP_VAL(gainr) * GROUP_VAL(db_ref))) / 100.0; 
-						lower = 0.0 - (int)(GROUP_VAL(gainr)) * GROUP_VAL(db_ref) / 100.0 ;
-						upper = GAIN_MAX - GROUP_VAL(gainr) * GROUP_VAL(db_ref) / 100.0 ;
+						cur_value = ((int)(GROUP_VAL(gain)) - (int)(GROUP_VAL(gainr) * get_group_db_ref (pp->p_config, get_current_group (pp->p_config)))) / 100.0; 
+						lower = 0.0 - (int)(GROUP_VAL(gainr)) * get_group_db_ref (pp->p_config, get_current_group (pp->p_config)) / 100.0 ;
+						upper = GAIN_MAX - GROUP_VAL(gainr) * get_group_db_ref (pp->p_config, get_current_group (pp->p_config)) / 100.0 ;
 						step = tmpf;
 						digit = 1;
 						pos = 0;
@@ -3713,7 +3712,7 @@ void draw3_data0(DRAW_UI_P p)
 					}
 					else 
 					{
-						cur_value = (GROUP_VAL(gain) - GROUP_VAL(gainr) * GROUP_VAL(db_ref)) / 100.0; 
+						cur_value = (GROUP_VAL(gain) - GROUP_VAL(gainr) * get_group_db_ref (pp->p_config, get_current_group (pp->p_config))) / 100.0; 
 						digit = 1;
 						pos = 0;
 						unit = UNIT_DB;
@@ -5574,16 +5573,16 @@ void draw3_data1(DRAW_UI_P p)
 						case 4:	tmpf = 6.0; break;
 						default:break;
 					}
-					if (GROUP_VAL(db_ref))
+					if (get_group_db_ref (pp->p_config, get_current_group (pp->p_config)))
 						content_pos = 6;
 					else
 						content_pos = 0;
 
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 					{
-						cur_value = (GROUP_VAL(gain) - GROUP_VAL(gainr) * GROUP_VAL(db_ref)) / 100.0; 
-						lower = 0.0 - GROUP_VAL(gainr) * GROUP_VAL(db_ref) / 100.0 ;
-						upper = 80.0 - GROUP_VAL(gainr) * GROUP_VAL(db_ref) / 100.0 ;
+						cur_value = (GROUP_VAL(gain) - GROUP_VAL(gainr) * get_group_db_ref (pp->p_config, get_current_group (pp->p_config))) / 100.0; 
+						lower = 0.0 - GROUP_VAL(gainr) * get_group_db_ref (pp->p_config, get_current_group (pp->p_config)) / 100.0 ;
+						upper = 80.0 - GROUP_VAL(gainr) * get_group_db_ref (pp->p_config, get_current_group (pp->p_config)) / 100.0 ;
 						step = tmpf;
 						digit = 1;
 						pos = 1;
@@ -5593,7 +5592,7 @@ void draw3_data1(DRAW_UI_P p)
 					}
 					else 
 					{
-						cur_value = (GROUP_VAL(gain) - GROUP_VAL(gainr) * GROUP_VAL(db_ref)) / 100.0; 
+						cur_value = (GROUP_VAL(gain) - GROUP_VAL(gainr) * get_group_db_ref (pp->p_config, get_current_group (pp->p_config))) / 100.0; 
 						digit = 1;
 						pos = 1;
 						unit = UNIT_DB;
@@ -7091,9 +7090,9 @@ void draw3_data2(DRAW_UI_P p)
 								}
 								if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 								{
-									cur_value = (GROUP_VAL(gain) - GROUP_VAL(gainr) * GROUP_VAL(db_ref)) / 100.0;
-									lower = 0.0 - GROUP_VAL(gainr) * GROUP_VAL(db_ref) / 100.0 ;
-									upper = GAIN_MAX - GROUP_VAL(gainr) * GROUP_VAL(db_ref) / 100.0 ;
+									cur_value = (GROUP_VAL(gain) - GROUP_VAL(gainr) * get_group_db_ref (pp->p_config, get_current_group (pp->p_config))) / 100.0;
+									lower = 0.0 - GROUP_VAL(gainr) * get_group_db_ref (pp->p_config, get_current_group (pp->p_config)) / 100.0 ;
+									upper = GAIN_MAX - GROUP_VAL(gainr) * get_group_db_ref (pp->p_config, get_current_group (pp->p_config)) / 100.0 ;
 									step = tmpf;
 									digit = 1;
 									pos = 2;
@@ -7103,7 +7102,7 @@ void draw3_data2(DRAW_UI_P p)
 								}
 								else
 								{
-									cur_value = (GROUP_VAL(gain) - GROUP_VAL(gainr) * GROUP_VAL(db_ref)) / 100.0;
+									cur_value = (GROUP_VAL(gain) - GROUP_VAL(gainr) * get_group_db_ref (pp->p_config, get_current_group (pp->p_config))) / 100.0;
 									digit = 1;
 									pos = 2;
 									unit = UNIT_DB;
@@ -7206,9 +7205,9 @@ void draw3_data2(DRAW_UI_P p)
 								}
 								if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 								{
-									cur_value = (GROUP_VAL(gain) - GROUP_VAL(gainr) * GROUP_VAL(db_ref)) / 100.0;
-									lower = 0.0 - GROUP_VAL(gainr) * GROUP_VAL(db_ref) / 100.0 ;
-									upper = GAIN_MAX - GROUP_VAL(gainr) * GROUP_VAL(db_ref) / 100.0 ;
+									cur_value = (GROUP_VAL(gain) - GROUP_VAL(gainr) * get_group_db_ref (pp->p_config, get_current_group (pp->p_config))) / 100.0;
+									lower = 0.0 - GROUP_VAL(gainr) * get_group_db_ref (pp->p_config, get_current_group (pp->p_config)) / 100.0 ;
+									upper = GAIN_MAX - GROUP_VAL(gainr) * get_group_db_ref (pp->p_config, get_current_group (pp->p_config)) / 100.0 ;
 									step = tmpf;
 									digit = 1;
 									pos = 2;
@@ -7218,7 +7217,7 @@ void draw3_data2(DRAW_UI_P p)
 								}
 								else
 								{
-									cur_value = (GROUP_VAL(gain) - GROUP_VAL(gainr) * GROUP_VAL(db_ref)) / 100.0;
+									cur_value = (GROUP_VAL(gain) - GROUP_VAL(gainr) * get_group_db_ref (pp->p_config, get_current_group (pp->p_config))) / 100.0;
 									digit = 1;
 									pos = 2;
 									unit = UNIT_DB;
@@ -7298,9 +7297,9 @@ void draw3_data2(DRAW_UI_P p)
 									}
 									if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 									{
-										cur_value = (GROUP_VAL(gain) - GROUP_VAL(gainr) * GROUP_VAL(db_ref)) / 100.0;
-										lower = 0.0 - GROUP_VAL(gainr) * GROUP_VAL(db_ref) / 100.0 ;
-										upper = GAIN_MAX - GROUP_VAL(gainr) * GROUP_VAL(db_ref) / 100.0 ;
+										cur_value = (GROUP_VAL(gain) - GROUP_VAL(gainr) * get_group_db_ref (pp->p_config, get_current_group (pp->p_config))) / 100.0;
+										lower = 0.0 - GROUP_VAL(gainr) * get_group_db_ref (pp->p_config, get_current_group (pp->p_config)) / 100.0 ;
+										upper = GAIN_MAX - GROUP_VAL(gainr) * get_group_db_ref (pp->p_config, get_current_group (pp->p_config)) / 100.0 ;
 										step = tmpf;
 										digit = 1;
 										pos = 2;
@@ -7310,7 +7309,7 @@ void draw3_data2(DRAW_UI_P p)
 									}
 									else
 									{
-										cur_value = (GROUP_VAL(gain) - GROUP_VAL(gainr) * GROUP_VAL(db_ref)) / 100.0;
+										cur_value = (GROUP_VAL(gain) - GROUP_VAL(gainr) * get_group_db_ref (pp->p_config, get_current_group (pp->p_config))) / 100.0;
 										digit = 1;
 										pos = 2;
 										unit = UNIT_DB;
@@ -7526,7 +7525,7 @@ void draw3_data2(DRAW_UI_P p)
 					}
 					break;
 				case 4:/* dB Ref 开关 P142 */
-					draw3_popdown (menu_content[OFF_ON + GROUP_VAL(db_ref)], 2, 0);
+					draw3_popdown (menu_content[OFF_ON + get_group_db_ref (pp->p_config, get_current_group (pp->p_config))], 2, 0);
 					break;
 				default:break;
 			}
@@ -9648,9 +9647,9 @@ void draw3_data3(DRAW_UI_P p)
 
 								if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 								{
-									cur_value = (GROUP_VAL(gain) - GROUP_VAL(gainr) * GROUP_VAL(db_ref)) / 100.0;
-									lower = 0.0 - GROUP_VAL(gainr) * GROUP_VAL(db_ref) / 100.0 ;
-									upper = GAIN_MAX - GROUP_VAL(gainr) * GROUP_VAL(db_ref) / 100.0 ;
+									cur_value = (GROUP_VAL(gain) - GROUP_VAL(gainr) * get_group_db_ref (pp->p_config, get_current_group (pp->p_config))) / 100.0;
+									lower = 0.0 - GROUP_VAL(gainr) * get_group_db_ref (pp->p_config, get_current_group (pp->p_config)) / 100.0 ;
+									upper = GAIN_MAX - GROUP_VAL(gainr) * get_group_db_ref (pp->p_config, get_current_group (pp->p_config)) / 100.0 ;
 									step = tmpf;
 									digit = 1;
 									pos = 3;
@@ -9660,7 +9659,7 @@ void draw3_data3(DRAW_UI_P p)
 								}
 								else
 								{
-									cur_value = (GROUP_VAL(gain) - GROUP_VAL(gainr) * GROUP_VAL(db_ref)) / 100.0;
+									cur_value = (GROUP_VAL(gain) - GROUP_VAL(gainr) * get_group_db_ref (pp->p_config, get_current_group (pp->p_config))) / 100.0;
 									digit = 1;
 									pos = 3;
 									unit = UNIT_DB;
@@ -12606,9 +12605,9 @@ void draw3_data4(DRAW_UI_P p)
 							}
 							if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
 							{
-								cur_value = (GROUP_VAL(gain) - GROUP_VAL(gainr) * GROUP_VAL(db_ref)) / 100.0; 
-								lower = 0.0 - GROUP_VAL(gainr) * GROUP_VAL(db_ref) / 100.0 ;
-								upper = GAIN_MAX - GROUP_VAL(gainr) * GROUP_VAL(db_ref) / 100.0 ;
+								cur_value = (GROUP_VAL(gain) - GROUP_VAL(gainr) * get_group_db_ref (pp->p_config, get_current_group (pp->p_config))) / 100.0; 
+								lower = 0.0 - GROUP_VAL(gainr) * get_group_db_ref (pp->p_config, get_current_group (pp->p_config)) / 100.0 ;
+								upper = GAIN_MAX - GROUP_VAL(gainr) * get_group_db_ref (pp->p_config, get_current_group (pp->p_config)) / 100.0 ;
 								step = tmpf;
 								digit = 1;
 								pos = 4;
@@ -12618,7 +12617,7 @@ void draw3_data4(DRAW_UI_P p)
 							}
 							else 
 							{
-								cur_value = (GROUP_VAL(gain) - GROUP_VAL(gainr) * GROUP_VAL(db_ref)) / 100.0; 
+								cur_value = (GROUP_VAL(gain) - GROUP_VAL(gainr) * get_group_db_ref (pp->p_config, get_current_group (pp->p_config))) / 100.0; 
 								digit = 1;
 								pos = 4;
 								unit = UNIT_DB;
@@ -16549,7 +16548,7 @@ void init_ui(DRAW_UI_P p)
 	gtk_box_pack_start (GTK_BOX (p->hbox111), pp->event[0], FALSE, FALSE, 0);
 	gtk_widget_set_size_request (GTK_WIDGET(pp->event[0]), 60, 45);
 	update_widget_bg(pp->event[0], /*backpic[3]*/ 3);
-	if (GROUP_VAL(db_ref))
+	if (get_group_db_ref (pp->p_config, get_current_group (pp->p_config)))
 		tt_label_show_string (pp->label[0], con2_p[1][0][6], "\n", "(dB)", "white", 10);
 	else
 		tt_label_show_string (pp->label[0], con2_p[1][0][0], "\n", "(dB)", "white", 10);

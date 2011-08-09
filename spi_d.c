@@ -197,14 +197,15 @@ int write_group_data (group_data_spi *p, unsigned int group)
 	tmp = p->voltage;
 	printf ("voltage= %d\n", tmp);
 #endif
-
+	
 	p->offset = 16 * group;
 	p->addr = 0x2;
 	little_to_big ((unsigned int *)(p1), sizeof(group_data_spi) / 4);
-	
+#if ARM	
 /*	ioctl (fd_gpio, GPIO43_LOW, &i);*/ /* 发送group参数不复位 */
 	i = write (fd_array, (unsigned char *)(p1), sizeof(group_data_spi));
 /*	ioctl (fd_gpio, GPIO43_HIGH, &i);*/
+#endif
 	return 0;
 }
 
@@ -233,10 +234,11 @@ int write_focal_data (focal_data_spi *p, unsigned int beam_num)
 	p->offset = 64 * beam_num;
 	p->addr = 0x1;
 	little_to_big ((unsigned int *)(p1), sizeof(focal_data_spi) / 4);
-
+#if ARM
 	ioctl (fd_gpio, GPIO43_LOW, &i);
 	i = write (fd_array, (unsigned char *)(p1), sizeof(focal_data_spi));
 	ioctl (fd_gpio, GPIO43_HIGH, &i);
+#endif
 
 	return 0;
 }

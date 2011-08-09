@@ -48,7 +48,7 @@ static void set_config (guint groupid)
 	GROUP_VAL(velocity)	= 592000;	/* 5920m/s */ 
 	GROUP_VAL(gain)         = 10;
 	GROUP_VAL(gainr)        = 0;
-	GROUP_VAL(db_ref)	= GAINR_OFF;
+	set_group_db_ref (pp->p_config, get_current_group(pp->p_config), NORMAL_OFF);
 	GROUP_VAL(wedge_delay)  = 0;	/*  */
 	GROUP_VAL(range)        = 10000;		/* 10μs */
 	GROUP_VAL(start)        = 0.0;
@@ -427,7 +427,7 @@ void send_focal_spi (guint group)
 	guint tmp,index,channel_index_num,cnt;
 	for (offset = 0, k = 0 ; k < group; k++)
 		offset += TMP(beam_qty[k]);
-	for (k = offset; k < beam_qty; k++)
+	for (k = offset; k < offset + beam_qty; k++)
 	{   
 		TMP(focal_spi[k]).group	= group;
 		TMP(focal_spi[k]).all_beam_info	= get_beam_qty() - 1;

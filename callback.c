@@ -42,6 +42,7 @@ void cba_ultrasound_wedgedelay();
 void cba_ultrasound_sensitivity();
 void cba_ultrasound_TCG();
 
+float tttmp;
 
 //把group向导的设置参数保存起来
 _group_wizard g_group_wizard_struct;
@@ -770,7 +771,7 @@ void b3_fun0(gpointer pt)
 	/* 之前的位置 */
 	p->pos_last2 = p->pos2[p->pos][p->pos1[p->pos]];
 	p->pos2[p->pos][p->pos1[p->pos]] = 0;
-
+	
 	/* 单击处理 */
 	switch (p->pos)
 	{
@@ -958,6 +959,7 @@ void b3_fun0(gpointer pt)
 	draw_menu2 (0);
 	draw_menu3 (0, p);                          /**/
 
+	tttmp = gtk_spin_button_get_value (GTK_SPIN_BUTTON (pp->sbutton[0]));
 	return ;
 }
 
@@ -1160,7 +1162,7 @@ void b3_fun1(gpointer p)
 				case 4: 
 					GROUP_VAL(gainr) = GROUP_VAL(gain);
 					pp->pos_pos = MENU3_STOP;
-					if (GROUP_VAL(db_ref))
+					if (get_group_db_ref (pp->p_config, get_current_group (pp->p_config)))
 						markup = g_markup_printf_escaped (
 								"<span foreground='white' font_desc='16'>%0.1f(%0.1f)</span>",
 								((int)(GROUP_VAL(gain)) - (int)(GROUP_VAL(gainr))) / 100.0, GROUP_VAL(gainr) / 100.0);
@@ -1378,6 +1380,7 @@ void b3_fun1(gpointer p)
 	draw_menu2(0);
 	draw_menu3(0, NULL);                          /**/
 
+	tttmp = gtk_spin_button_get_value (GTK_SPIN_BUTTON (pp->sbutton[1]));
 	return ;
 }
 
@@ -1394,9 +1397,10 @@ void b3_fun2(gpointer p)
 			switch (pp->pos1[1])
 			{
 				case 4: 
-					GROUP_VAL(db_ref) = !GROUP_VAL(db_ref);
+					set_group_db_ref (pp->p_config, get_current_group(pp->p_config), 
+							!get_group_db_ref (pp->p_config, get_current_group(pp->p_config)));
 					pp->pos_pos = MENU3_STOP;
-					if (GROUP_VAL(db_ref))
+					if (get_group_db_ref (pp->p_config, get_current_group (pp->p_config)))
 					{
 						tt_label_show_string (pp->label[GAIN_LABEL], con2_p[1][0][7], "\n", "(dB)", "white", 10);
 						markup = g_markup_printf_escaped (
@@ -1655,6 +1659,7 @@ void b3_fun2(gpointer p)
 	draw_menu2(0);
 	draw_menu3(0, NULL);                          /**/
 
+	tttmp = gtk_spin_button_get_value (GTK_SPIN_BUTTON (pp->sbutton[2]));
 	return ;
 }
 
@@ -1942,6 +1947,7 @@ void b3_fun3(gpointer p)
 	draw_menu2(0);
 	draw_menu3(0, NULL);                          /**/
 
+	tttmp = gtk_spin_button_get_value (GTK_SPIN_BUTTON (pp->sbutton[3]));
 	return ;
 }
 
@@ -2160,6 +2166,7 @@ void b3_fun4(gpointer p)
 	draw_menu2(0);
 	draw_menu3(0, NULL);                          /**/
 
+	tttmp = gtk_spin_button_get_value (GTK_SPIN_BUTTON (pp->sbutton[4]));
 	return ;
 }
 
@@ -2352,6 +2359,7 @@ void b3_fun5(gpointer p)
 	draw_menu2(0);
 	draw_menu3(0, NULL);                          /**/
 
+	tttmp = gtk_spin_button_get_value (GTK_SPIN_BUTTON (pp->sbutton[5]));
 	return ;
 }
 
@@ -2616,6 +2624,7 @@ static int handler_key(guint keyval, gpointer data)
 						pp->pos_pos = MENU2_STOP;
 						break;
 					case MENU3_PRESSED:
+						gtk_spin_button_set_value (GTK_SPIN_BUTTON (pp->sbutton[CUR_POS]), tttmp);
 						pp->pos_pos = MENU3_STOP;
 						break;
 					default:break;
@@ -2654,10 +2663,12 @@ static int handler_key(guint keyval, gpointer data)
 					else
 						pp->pos_pos = MENU3_STOP;
 
+	tttmp = gtk_spin_button_get_value (GTK_SPIN_BUTTON (pp->sbutton[CUR_POS]));
 					/* 按下的动作在这里实现 */
 					break;
 				case MENU3_PRESSED:
 					pp->pos_pos = MENU3_STOP;
+	tttmp = gtk_spin_button_get_value (GTK_SPIN_BUTTON (pp->sbutton[CUR_POS]));
 					break;
 				default:break;
 				}
@@ -3242,12 +3253,12 @@ void data_100 (GtkSpinButton *spinbutton, gpointer data) /* 增益Gain P100 */
 	gint grp = get_current_group(pp->p_config);
 	gint gain = ((gint)(gtk_spin_button_get_value(spinbutton) * 100) + 5) / 10 * 10;
 
-	if (GROUP_VAL(db_ref))
+	if (get_group_db_ref (pp->p_config, get_current_group (pp->p_config)))
 		GROUP_VAL(gain) = (gushort) (gain + GROUP_VAL(gainr));
 	else
 		GROUP_VAL(gain) = (gushort) (gain);
 
-	if (GROUP_VAL(db_ref))
+	if (get_group_db_ref (pp->p_config, get_current_group (pp->p_config)))
 		markup = g_markup_printf_escaped (
 				"<span foreground='white' font_desc='16'>%0.1f(%0.1f)</span>",
 				(GROUP_VAL(gain) - GROUP_VAL(gainr)) / 100.0, GROUP_VAL(gainr) / 100.0);
@@ -3259,7 +3270,7 @@ void data_100 (GtkSpinButton *spinbutton, gpointer data) /* 增益Gain P100 */
 	g_free(markup);
 	TMP(group_spi[grp]).gain = GROUP_VAL (gain) / 10;
 	write_group_data (&TMP(group_spi[grp]), grp);
-//	g_print("------>click gain<-----------gain:%d beam_qty:%d \n",GROUP_VAL(gain)/100,(int)(LAW_VAL(Elem_qty)));
+//	g_print("------>click gain<-----------gain:%.1f beam_qty:%d \n",GROUP_VAL(gain)/100,(int)(LAW_VAL(Elem_qty)));
 	/* 发送给硬件 */
 }
 
