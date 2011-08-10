@@ -10,10 +10,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <gdk/gdkkeysyms.h>
+#include <pthread.h>
 
 extern void focal_law(gpointer data);/*回调函数*/
 
 static int handler_key(guint keyval, gpointer data);
+static int thread_set_DB_eighty_percent(gpointer data);
 
 extern const gchar ****con2_p;
 
@@ -768,6 +770,8 @@ static inline void data_process(guchar* data, guint pa)
 void b3_fun0(gpointer pt)
 {
 	DRAW_UI_P p = (DRAW_UI_P) (pt);
+	pthread_t thread_id;
+	int ret;
 	/* 之前的位置 */
 	p->pos_last2 = p->pos2[p->pos][p->pos1[p->pos]];
 	p->pos2[p->pos][p->pos1[p->pos]] = 0;
@@ -820,7 +824,12 @@ void b3_fun0(gpointer pt)
 			switch (p->pos1[1])
 			{
 				case 4: 
-					g_print ("set 80%% \n");
+					ret = pthread_create (&thread_id, NULL, (void*)thread_set_DB_eighty_percent, p);
+					if(ret){
+						perror("in1:");
+					    return;
+					}
+//					g_print ("set 80%% \n");
 					break; /* P140 自动80%  */
 				default:break;
 			}
@@ -3280,14 +3289,19 @@ void data_101 (GtkSpinButton *spinbutton, gpointer data) /*Start 扫描延时 P1
 	gint tt[4];
 	gint grp = get_current_group(pp->p_config);
 	gint temp_prf;
+	guint minAngle,maxAngle,TopAngle;
+
+	minAngle = LAW_VAL (Angle_min);
+	maxAngle = LAW_VAL (Angle_max);
+	TopAngle = MAX(fabs(minAngle),fabs(maxAngle));
 	if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 	{
 		if (UNIT_MM == get_unit(pp->p_config))
 			set_group_start (pp->p_config, grp,
-					(gint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / (get_group_velocity (pp->p_config, get_current_group(pp->p_config)) / 100000.0)));
+					(gint) (gtk_spin_button_get_value (spinbutton)*cos(TopAngle) * 2000.0 / (get_group_velocity (pp->p_config, get_current_group(pp->p_config)) / 100000.0)));
 		else  /* 英寸 */
 			set_group_start (pp->p_config, grp,
-					(gint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / ( 0.03937 * get_group_velocity (pp->p_config, get_current_group(pp->p_config)) / 100000.0)));
+					(gint) (gtk_spin_button_get_value (spinbutton)*cos(TopAngle) * 2000.0 / ( 0.03937 * get_group_velocity (pp->p_config, get_current_group(pp->p_config)) / 100000.0)));
 	}
 	else /* 显示方式为时间 */
 		set_group_start (pp->p_config, grp, (gint) (gtk_spin_button_get_value (spinbutton) * 1000.0)); 
@@ -3320,15 +3334,26 @@ void data_102 (GtkSpinButton *spinbutton, gpointer data) /*Range 范围 P102 */
 	gint grp = get_current_group(pp->p_config);
 	gint tt[4];
 	gint temp_prf;
+	guint minAngle,maxAngle,BottomAngle;
+
+	minAngle = LAW_VAL (Angle_min);
+	maxAngle = LAW_VAL (Angle_max);
+	if(maxAngle*minAngle > 0)
+		BottomAngle = MIN(fabs(minAngle),fabs(maxAngle));
+	else
+		BottomAngle = MAX(fabs(minAngle),fabs(maxAngle));
+//	gint range = ((gint)(gtk_spin_button_get_value(spinbutton) * 1000) + 5) / 10 * 10;
+
+//	((GROUP_VAL(point_qty) * 100) + 5) / 10 * 10;
 
 	if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 	{
 		if (UNIT_MM == get_unit(pp->p_config))
 			set_group_range (pp->p_config, grp,
-					(guint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / (get_group_velocity (pp->p_config, get_current_group(pp->p_config)) / 100000.0)));
+					(guint) (gtk_spin_button_get_value (spinbutton)*cos(BottomAngle) * 2000.0 / (get_group_velocity (pp->p_config, get_current_group(pp->p_config)) / 100000.0)));
 		else  /* 英寸 */
 			set_group_range (pp->p_config, grp,
-					(guint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / ( 0.03937 * get_group_velocity (pp->p_config, get_current_group(pp->p_config)) / 100000.0)));
+					(guint) (gtk_spin_button_get_value (spinbutton)*cos(BottomAngle) * 2000.0 / ( 0.03937 * get_group_velocity (pp->p_config, get_current_group(pp->p_config)) / 100000.0)));
 	}
 	else /* 显示方式为时间 */
 		set_group_range (pp->p_config, grp, gtk_spin_button_get_value (spinbutton) * 1000); 
@@ -5658,3 +5683,29 @@ void cba_ultrasound_TCG()
 
 }
 
+static int thread_set_DB_eighty_percent(gpointer data)
+{
+	DRAW_UI_P pp = (DRAW_UI_P) data;
+	int i = 10;
+	int k;
+	int offset = 0;
+	float scale   ;
+	int grp = pp->p_config->groupId ;   //当前group
+
+	for (k = 0 ; k < grp; k++)
+		offset += TMP(beam_qty[k]);
+
+	int index = offset + TMP(beam_num[grp]);
+
+	while(i)
+	{
+		if(fabs(DO_NOT_USE_CCFG(measure_data[index]).a_height-160) <=3 )  break  ;
+		scale =  160.0/DO_NOT_USE_CCFG(measure_data[index]).a_height  ;
+		GROUP_VAL (gain) =  GROUP_VAL (gain) * scale ;
+		TMP(group_spi[grp]).gain = GROUP_VAL (gain) / 10;
+		write_group_data (&TMP(group_spi[grp]), grp);
+		i--;
+		usleep(400000);
+	}
+    return 0;
+}

@@ -50,8 +50,8 @@ GdkColor	color_rule      = {0x0, 0xc300, 0xf000, 0x1d00};
 GROUP g_tmp_group_struct;
 
 sem_t sem;
-pthread_mutex_t draw_thread_mutex;
-pthread_cond_t  draw_thread_signal;
+pthread_mutex_t draw_thread_mutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t  draw_thread_signal = PTHREAD_COND_INITIALIZER;
 volatile int *DMA_MARK ;
 
 #if 0
@@ -1969,8 +1969,8 @@ static gboolean draw_other_info (GtkWidget *widget, GdkEventExpose *event, gpoin
 	/* 清空背景 */
 	cairo_rectangle (cr , 0, 0, 115, 65);
 	cairo_fill (cr);
-	/* 第一个电池 需要根据电量来改变颜色 */
 
+	/* 第一个电池 需要根据电量来改变颜色 */
 	cairo_set_source_rgba (cr, 1, 1, 1, 1);
 
 	cairo_move_to (cr, 0, 3);
@@ -2018,10 +2018,19 @@ static gboolean draw_other_info (GtkWidget *widget, GdkEventExpose *event, gpoin
 	cairo_move_to (cr, 55, y2 + 5);
 	cairo_line_to (cr, 55, y2 + 10);
 
+	/* 更新电池信息 */
+	switch(pp->battery[9])//电池1
+	{
+		case 0x00://没连接
+			break;
+		case 0x01://放电
+			break;
+		case 0x02://充电
+			break;
+	}
+
 	cairo_stroke (cr);
-
 	cairo_destroy(cr);//销毁画笔
-
 	return TRUE;
 }
 
@@ -7941,7 +7950,7 @@ void draw3_data2(DRAW_UI_P p)
 								field1, 60, 2, get_reading_field1(pp->p_config), 0);
 					else 
 						draw3_popdown (field[get_reading_field1(pp->p_config)], 2, 0);
-//					g_printf("\n--------->field_index=%d\n",CCFG(field[0]));
+//					g_printf("\n--------->field_index=%d\n",DO_NOT_USE_CCFG(field[0]));
 					break;
 				case 1:/*Measurements -> Cursors -> Scan p312 */
 					if(!GROUP_VAL(selection))
@@ -15504,7 +15513,7 @@ static void interpolation_data (DOT_TYPE *source_data, DOT_TYPE *target_data,
 		}
 	}
 }
-
+/*
 static void interpolation_data1 (DOT_TYPE *source_data, DOT_TYPE *target_data,
 		gint qty1, gint qty2)
 {
@@ -15514,7 +15523,7 @@ static void interpolation_data1 (DOT_TYPE *source_data, DOT_TYPE *target_data,
 		target_data[i] = 0x80;
 	}
 }
-
+*/
 #endif
 
 #if 0
@@ -15823,6 +15832,7 @@ void process_key_press (gchar key)
 	}
 }
 
+
 /* 计算测量数值 */
 void calc_measure_data()
 {
@@ -15840,36 +15850,36 @@ void calc_measure_data()
 
 	for(l=0;l<4;l++)//4个field
 	{
-		switch( CCFG(field[l]) )//field1
+		switch( DO_NOT_USE_CCFG(field[l]) )//field1
 		{
 			case 0://A%
-				CCFG(measure_data[index]).a_height = (gint)(((TMP(measure_data[index][1])>>20) & 0xfff)/20.47);//满屏时200% 4095 
-				TMP(field[l]) = CCFG(measure_data[index]).a_height;
+				DO_NOT_USE_CCFG(measure_data[index]).a_height = (gint)(((TMP(measure_data[index][1])>>20) & 0xfff)/20.47);//满屏时200% 4095 
+				TMP(field[l]) = DO_NOT_USE_CCFG(measure_data[index]).a_height;
 				break;
 			case 3://B%
-				CCFG(measure_data[index]).b_height = (gint)(((TMP(measure_data[index][2])>>20) & 0xfff)/20.47);
-				TMP(field[l]) = CCFG(measure_data[index]).b_height;
+				DO_NOT_USE_CCFG(measure_data[index]).b_height = (gint)(((TMP(measure_data[index][2])>>20) & 0xfff)/20.47);
+				TMP(field[l]) = DO_NOT_USE_CCFG(measure_data[index]).b_height;
 				break;
 			case 6://A^
 				if(GROUP_VAL(ut_unit)==1)//Time
-					CCFG(measure_data[index]).a_position = (gint)(((TMP(measure_data[index][1])) & 0xfffff)/100.0);//直接显示时间微妙
+					DO_NOT_USE_CCFG(measure_data[index]).a_position = (gint)(((TMP(measure_data[index][1])) & 0xfffff)/100.0);//直接显示时间微妙
 				else
-					CCFG(measure_data[index]).a_position = (gint)(((TMP(measure_data[index][1])) & 0xfffff)*get_group_velocity (pp->p_config, get_current_group(pp->p_config))/20000000.0);//距离模式s= time * velo/2
-				TMP(field[l]) = CCFG(measure_data[index]).a_position;
+					DO_NOT_USE_CCFG(measure_data[index]).a_position = (gint)(((TMP(measure_data[index][1])) & 0xfffff)*get_group_velocity (pp->p_config, get_current_group(pp->p_config))/20000000.0);//距离模式s= time * velo/2
+				TMP(field[l]) = DO_NOT_USE_CCFG(measure_data[index]).a_position;
 				break;
 			case 7://B^
 				if(GROUP_VAL(ut_unit)==1)
-					CCFG(measure_data[index]).b_position = (gint)(((TMP(measure_data[index][2])) & 0xfffff)/100.0);//直接显示时间微妙
+					DO_NOT_USE_CCFG(measure_data[index]).b_position = (gint)(((TMP(measure_data[index][2])) & 0xfffff)/100.0);//直接显示时间微妙
 				else
-					CCFG(measure_data[index]).b_position = (gint)(((TMP(measure_data[index][2])) & 0xfffff)*get_group_velocity (pp->p_config, get_current_group(pp->p_config))/20000000.0);
-				TMP(field[l]) = CCFG(measure_data[index]).b_position;
+					DO_NOT_USE_CCFG(measure_data[index]).b_position = (gint)(((TMP(measure_data[index][2])) & 0xfffff)*get_group_velocity (pp->p_config, get_current_group(pp->p_config))/20000000.0);
+				TMP(field[l]) = DO_NOT_USE_CCFG(measure_data[index]).b_position;
 				break;
 			case 8://I/
 				if(GROUP_VAL(ut_unit)==1)
-					CCFG(measure_data[index]).i_position = (gint)(((TMP(measure_data[index][3])) & 0xfffff)/100.0);//直接显示时间微妙
+					DO_NOT_USE_CCFG(measure_data[index]).i_position = (gint)(((TMP(measure_data[index][3])) & 0xfffff)/100.0);//直接显示时间微妙
 				else
-					CCFG(measure_data[index]).i_position = (gint)(((TMP(measure_data[index][3])) & 0xfffff)*get_group_velocity (pp->p_config, get_current_group(pp->p_config))/20000000.0);
-				TMP(field[l]) = CCFG(measure_data[index]).i_position;
+					DO_NOT_USE_CCFG(measure_data[index]).i_position = (gint)(((TMP(measure_data[index][3])) & 0xfffff)*get_group_velocity (pp->p_config, get_current_group(pp->p_config))/20000000.0);
+				TMP(field[l]) = DO_NOT_USE_CCFG(measure_data[index]).i_position;
 				break;
 			case 27://RA
 				break;
@@ -15884,82 +15894,82 @@ void calc_measure_data()
 				switch(GROUP_VAL(ut_unit))	
 				{
 					case 0://Sound Path
-						//CCFG(measure_data[index]).a_sound_path = ((TMP(measure_data[index][1])) & 0xfffff)/100.0;//=A^
+						//DO_NOT_USE_CCFG(measure_data[index]).a_sound_path = ((TMP(measure_data[index][1])) & 0xfffff)/100.0;//=A^
 						//break;
 					case 1://Time
-						CCFG(measure_data[index]).a_sound_path = (gint)(((TMP(measure_data[index][1])) & 0xfffff)*get_group_velocity (pp->p_config, get_current_group(pp->p_config))/20000000.0);//Time(A^)*声速/2
+						DO_NOT_USE_CCFG(measure_data[index]).a_sound_path = (gint)(((TMP(measure_data[index][1])) & 0xfffff)*get_group_velocity (pp->p_config, get_current_group(pp->p_config))/20000000.0);//Time(A^)*声速/2
 						break;
 					case 2://True Depth
-						CCFG(measure_data[index]).a_sound_path = (gint)(((TMP(measure_data[index][1])) & 0xfffff)*get_group_velocity (pp->p_config, get_current_group(pp->p_config))/(cos(a)*20000000.0) +TMP(field_distance[i]));//=DA^/cos(a)+distance				
+						DO_NOT_USE_CCFG(measure_data[index]).a_sound_path = (gint)(((TMP(measure_data[index][1])) & 0xfffff)*get_group_velocity (pp->p_config, get_current_group(pp->p_config))/(cos(a)*20000000.0) +TMP(field_distance[i]));//=DA^/cos(a)+distance				
 						break;
 				}
 				/******由SA^计算DA^*************/	
-				n = (gint)((CCFG(measure_data[index]).a_sound_path -TMP(field_distance[i]))*cos(a)/thickness);//反射次数
+				n = (gint)((DO_NOT_USE_CCFG(measure_data[index]).a_sound_path -TMP(field_distance[i]))*cos(a)/thickness);//反射次数
 				if( n%2 == 0 )
 				{
-					CCFG(measure_data[index]).a_depth = (gint)((CCFG(measure_data[index]).a_sound_path -TMP(field_distance[i]))*cos(a) - thickness);
+					DO_NOT_USE_CCFG(measure_data[index]).a_depth = (gint)((DO_NOT_USE_CCFG(measure_data[index]).a_sound_path -TMP(field_distance[i]))*cos(a) - thickness);
 				}
 				else
 				{
-					CCFG(measure_data[index]).a_depth =  (gint)((n+1)*thickness - (CCFG(measure_data[index]).a_sound_path -TMP(field_distance[i]))*cos(a));
+					DO_NOT_USE_CCFG(measure_data[index]).a_depth =  (gint)((n+1)*thickness - (DO_NOT_USE_CCFG(measure_data[index]).a_sound_path -TMP(field_distance[i]))*cos(a));
 				}
-				TMP(field[l]) = CCFG(measure_data[index]).a_depth;
+				TMP(field[l]) = DO_NOT_USE_CCFG(measure_data[index]).a_depth;
 				break;
 			case 32://DB^
 				/********先计算SA^***********/
 				switch(GROUP_VAL(ut_unit))	
 				{
 					case 0://Sound Path
-						//CCFG(measure_data[index]).b_sound_path = ((TMP(measure_data[index][2])) & 0xfffff)/100.0;//=A^
+						//DO_NOT_USE_CCFG(measure_data[index]).b_sound_path = ((TMP(measure_data[index][2])) & 0xfffff)/100.0;//=A^
 						//break;
 					case 1://Time
-						CCFG(measure_data[index]).b_sound_path = (gint)(((TMP(measure_data[index][2])) & 0xfffff)*get_group_velocity (pp->p_config, get_current_group(pp->p_config))/20000000.0);//Time(A^)*声速/2
+						DO_NOT_USE_CCFG(measure_data[index]).b_sound_path = (gint)(((TMP(measure_data[index][2])) & 0xfffff)*get_group_velocity (pp->p_config, get_current_group(pp->p_config))/20000000.0);//Time(A^)*声速/2
 						break;
 					case 2://True Depth
-						CCFG(measure_data[index]).b_sound_path = (gint)(((TMP(measure_data[index][2])) & 0xfffff)*get_group_velocity (pp->p_config, get_current_group(pp->p_config))/(cos(a)*20000000.0) +TMP(field_distance[i]));//=DA^/cos(a)+distance				
+						DO_NOT_USE_CCFG(measure_data[index]).b_sound_path = (gint)(((TMP(measure_data[index][2])) & 0xfffff)*get_group_velocity (pp->p_config, get_current_group(pp->p_config))/(cos(a)*20000000.0) +TMP(field_distance[i]));//=DA^/cos(a)+distance				
 						break;
 				}
 				/******由SA^计算DA^*************/	
-				n = (gint)((CCFG(measure_data[index]).a_sound_path -TMP(field_distance[i]))*cos(a)/thickness);//反射次数
+				n = (gint)((DO_NOT_USE_CCFG(measure_data[index]).a_sound_path -TMP(field_distance[i]))*cos(a)/thickness);//反射次数
 				if( n%2 == 0 )
 				{
-					CCFG(measure_data[index]).b_depth = (gint)((CCFG(measure_data[index]).b_sound_path -TMP(field_distance[i]))*cos(a) - thickness);
+					DO_NOT_USE_CCFG(measure_data[index]).b_depth = (gint)((DO_NOT_USE_CCFG(measure_data[index]).b_sound_path -TMP(field_distance[i]))*cos(a) - thickness);
 				}
 				else
 				{
-					CCFG(measure_data[index]).b_depth =  (gint)((n+1)*thickness - (CCFG(measure_data[index]).b_sound_path -TMP(field_distance[i]))*cos(a));
+					DO_NOT_USE_CCFG(measure_data[index]).b_depth =  (gint)((n+1)*thickness - (DO_NOT_USE_CCFG(measure_data[index]).b_sound_path -TMP(field_distance[i]))*cos(a));
 				}
-				TMP(field[l]) = CCFG(measure_data[index]).b_depth;
+				TMP(field[l]) = DO_NOT_USE_CCFG(measure_data[index]).b_depth;
 				break;
 			case 33://SA^
 				switch(GROUP_VAL(ut_unit))	
 				{
 					case 0://Sound Path
-						CCFG(measure_data[index]).a_sound_path = (gint)(((TMP(measure_data[index][1])) & 0xfffff)*get_group_velocity (pp->p_config, get_current_group(pp->p_config))/20000000.0);//Time(A^)*声速/2
+						DO_NOT_USE_CCFG(measure_data[index]).a_sound_path = (gint)(((TMP(measure_data[index][1])) & 0xfffff)*get_group_velocity (pp->p_config, get_current_group(pp->p_config))/20000000.0);//Time(A^)*声速/2
 						break;
 					case 1://Time
-						CCFG(measure_data[index]).a_sound_path = (gint)(((TMP(measure_data[index][1])) & 0xfffff)/100.0);//=A^
+						DO_NOT_USE_CCFG(measure_data[index]).a_sound_path = (gint)(((TMP(measure_data[index][1])) & 0xfffff)/100.0);//=A^
 						break;
 					case 2://True Depth
-						CCFG(measure_data[index]).a_sound_path = (gint)(((TMP(measure_data[index][1])) & 0xfffff)*get_group_velocity (pp->p_config, get_current_group(pp->p_config))/(cos(a)*20000000.0) +TMP(field_distance[i]));//=DA^/cos(a)+distance				
+						DO_NOT_USE_CCFG(measure_data[index]).a_sound_path = (gint)(((TMP(measure_data[index][1])) & 0xfffff)*get_group_velocity (pp->p_config, get_current_group(pp->p_config))/(cos(a)*20000000.0) +TMP(field_distance[i]));//=DA^/cos(a)+distance				
 						break;
 				}
-				TMP(field[l]) = CCFG(measure_data[index]).a_sound_path;
+				TMP(field[l]) = DO_NOT_USE_CCFG(measure_data[index]).a_sound_path;
 				break;
 			case 34://SB^
 				switch(GROUP_VAL(ut_unit))	
 				{
 					case 0://Sound Path
-						CCFG(measure_data[index]).b_sound_path = (gint)(((TMP(measure_data[index][2])) & 0xfffff)*get_group_velocity (pp->p_config, get_current_group(pp->p_config))/20000000.0);//Time(A^)*声速/2
+						DO_NOT_USE_CCFG(measure_data[index]).b_sound_path = (gint)(((TMP(measure_data[index][2])) & 0xfffff)*get_group_velocity (pp->p_config, get_current_group(pp->p_config))/20000000.0);//Time(A^)*声速/2
 						break;
 					case 1://Time
-						CCFG(measure_data[index]).b_sound_path = (gint)(((TMP(measure_data[index][2])) & 0xfffff)/100.0);//=A^
+						DO_NOT_USE_CCFG(measure_data[index]).b_sound_path = (gint)(((TMP(measure_data[index][2])) & 0xfffff)/100.0);//=A^
 						break;
 					case 2://True Depth
-						CCFG(measure_data[index]).b_sound_path = (gint)(((TMP(measure_data[index][2])) & 0xfffff)*get_group_velocity (pp->p_config, get_current_group(pp->p_config))/(cos(a)*20000000.0) +TMP(field_distance[i]));//=DA^/cos(a)+distance			
+						DO_NOT_USE_CCFG(measure_data[index]).b_sound_path = (gint)(((TMP(measure_data[index][2])) & 0xfffff)*get_group_velocity (pp->p_config, get_current_group(pp->p_config))/(cos(a)*20000000.0) +TMP(field_distance[i]));//=DA^/cos(a)+distance			
 						break;
 				}
-				TMP(field[l]) = CCFG(measure_data[index]).b_sound_path;
+				TMP(field[l]) = DO_NOT_USE_CCFG(measure_data[index]).b_sound_path;
 				break;
 			case 35://ViA
 				break;
@@ -15982,110 +15992,7 @@ void calc_measure_data()
 
 }
 
-/* 用来用户按键信息 */
-gpointer signal_thread(gpointer arg) 
-{
-	char key = 0;
 
-	if (read(pp->fd_key, &key, 1) > 0) 
-	{	
-		process_key_press (key);
-	}
-
-	pp->mark2 = 1;
-	return NULL;
-}
-
-gpointer signal_thread1(gpointer arg) 
-{
-	gint i, j, k, offset, offset1;
-	guint *temp1=NULL ;
-	//temp1 = (guint *)(pp->p_beam_data + 0x800000);
-//	DMA_MARK = (int*)(pp->p_beam_data + 0x800000)  ;
-	guint temp2 = (pp->p_beam_data + 3);
-	pp->mark3 = 0;
-
-	/*	g_thread_create (signal_thread, NULL, FALSE, NULL);*/
-
-	if (*DMA_MARK== 0)
-	{
-		for (i = 0 ; i < get_group_qty(pp->p_config); i++)
-		{
-			/* 获取数据 */
-			/* 这里需要压缩数据 或者 插值数据 这里只有一个beam 同时最多处理256beam */
-			for	(j = 0 ; j < TMP(beam_qty[i]); j++)
-			{  
-				for (offset = 0, offset1 = 0, k = 0 ; k < i; k++)
-				{
-					offset += (GROUP_VAL_POS(k, point_qty) + 32) * TMP(beam_qty[k]);
-					offset1 += TMP(beam_qty[k]);
-				}
-				memcpy (TMP(measure_data[offset1 + j]), (void *)(temp2 + offset +
-							(GROUP_VAL_POS(i, point_qty) + 32) * j + GROUP_VAL_POS(i, point_qty)), 32);
-
-				if (GROUP_VAL_POS(i, point_qty) <= TMP(a_scan_dot_qty))
-				{
-					/* 只插值当前显示的A扫描 其余不插值 */
-					interpolation_data (
-							(DOT_TYPE *)(temp2 + offset +
-								(GROUP_VAL_POS(i, point_qty) + 32) * j),
-							TMP(scan_data[i] + TMP(a_scan_dot_qty) * j), 
-							GROUP_VAL_POS(i, point_qty),
-							TMP(a_scan_dot_qty));
-				}
-				else if (GROUP_VAL_POS(i, point_qty) > TMP(a_scan_dot_qty))
-				{
-					compress_data (
-							(DOT_TYPE *)(temp2 + offset +
-								(GROUP_VAL_POS(i, point_qty) + 32) * j),
-							TMP(scan_data[i] + TMP(a_scan_dot_qty) * j), 
-							GROUP_VAL_POS(i, point_qty),
-							TMP(a_scan_dot_qty), 
-							GROUP_VAL_POS(i, rectifier));
-				}
-			}
-			for (k = 0; ((k < 16) && (TMP(scan_type[k]) != 0xff)); k++)
-			{
-				printf("\n width=%d  height=%d \n",TMP(a_scan_width),TMP(a_scan_height));
-				if (TMP(scan_group[k]) == i)
-					draw_scan(k, TMP(scan_type[k]), TMP(scan_group[k]), 
-							TMP(scan_xpos[k]), TMP(scan_ypos[k]), dot_temp, 
-						TMP(fb1_addr) + 768*400);
-				//						dot_temp1);
-			}
-		}
-		*DMA_MARK = 1;
-	}
-	else 
-	{
-		pp->mark3 = 1;
-		return NULL;
-	}
-
-	calc_measure_data();//计算数据
-	draw_field_value ();
-	/* 复制波形到显存 */
-	pp->mark3 = 1;
-	return NULL;
-}
-
-/* 读取波形数据 并画出来 */
-static gboolean time_handler2 (GtkWidget *widget)
-{
-	GError *err = NULL;
-    
-	if (pp->mark2)
-	{
-		pp->mark2 = 0;
-		g_thread_create (signal_thread, NULL, FALSE, NULL);
-	}
-	if (pp->mark3)
-	{
-		g_thread_create (signal_thread1, NULL, FALSE, &err);
-
-	}
-	return TRUE;
-}
 
 static void signal_scan_thread(void)
 {
@@ -16098,19 +16005,34 @@ static void signal_scan_thread(void)
             	     pthread_mutex_unlock(&draw_thread_mutex);
 					//sem_post(&sem) ;
 		}
-		if(*DMA_MARK>2){ printf("DMA_MARK = %d \n", *DMA_MARK) ; *DMA_MARK=0; }
+		if(*DMA_MARK>2){ printf("DMA_MARK = %d \n", *DMA_MARK) ; *DMA_MARK=1; }
 		usleep(40000);
-	 ;}
+	}
 }
 
 static void key_message_thread(void)
 {
 	char key = 0;
+	char bar[3] = {0};
     while(1)
 	{
 	    if (read(pp->fd_key, &key, 1) > 0) 
 	    {	
 		     process_key_press (key);
+			 //读取电池信息	
+			 if(key == 0xaa)
+			 {
+				if( read(pp->fd_key, bar, 3) >0 )
+				{
+					if( (bar[0]==0xaa) && (bar[1]==0xaa) && (bar[2]==0xaa) )
+					{
+						//将所有电池信息全部读取出来
+						read(pp->fd_key, pp->battery, 11);
+						printf("read battery info successfully \n");
+					}
+				}
+			 }
+			//
 	    }
 		usleep(50000);
     }
@@ -16120,14 +16042,12 @@ static void draw_frame_thread(void)
 {
 
 	gint i, j, k, offset, offset1;
-	//guint *temp1 = (guint *)(pp->p_beam_data + 0x800000);
 	guint temp2 = (pp->p_beam_data + 3);
-	//pp->mark3 = 0;
     unsigned int BeamInfoHeader;
 	while (1)
 	{
-	     pthread_cond_wait( &draw_thread_signal, &draw_thread_mutex);
-		//sem_trywait(&sem);
+//		while(*DMA_MARK != 0)
+			pthread_cond_wait( &draw_thread_signal, &draw_thread_mutex);
 		for (i = 0 ; i < get_group_qty(pp->p_config); i++)
 		{
 			/* 获取数据 */
@@ -16175,87 +16095,13 @@ static void draw_frame_thread(void)
 						TMP(fb1_addr) + 768*400);
 				//						dot_temp1);
 			}
-		}
+ 		}
 		*DMA_MARK = 1  ;
 		calc_measure_data();//计算数据
 		draw_field_value ();
 	}
 }
 
-static void thread_func(void *arg) 
-{ 
-	gint i, j, k, offset, offset1;
-	guint *temp1 = (guint *)(pp->p_beam_data + 0x800000);
-	pp->mark3 = 0;
-
-	while (1) 
-	{ 
-/*		sem_wait(&sem);*/
-/*		g_print ("caoni ma\n");*/
-		if (temp1[0] == 0)
-		{
-			for (i = 0 ; i < get_group_qty(pp->p_config); i++)
-			{
-				/* 获取数据 */
-				/* 这里需要压缩数据 或者 插值数据 这里只有一个beam 同时最多处理256beam */
-				for	(j = 0 ; j < TMP(beam_qty[i]); j++)
-				{  
-					for (offset = 0, offset1 = 0, k = 0 ; k < i; k++)
-					{
-						offset += (GROUP_VAL_POS(k, point_qty) + 32) * TMP(beam_qty[k]);
-						offset1 += TMP(beam_qty[k]);
-					}
-					memcpy (TMP(measure_data[offset1 + j]), (void *)(pp->p_beam_data + offset +
-								(GROUP_VAL_POS(i, point_qty) + 32) * j + GROUP_VAL_POS(i, point_qty)), 32);
-
-					if (GROUP_VAL_POS(i, point_qty) <= TMP(a_scan_dot_qty))
-					{
-						/* 只插值当前显示的A扫描 其余不插值 */
-						interpolation_data (
-								(DOT_TYPE *)(pp->p_beam_data + offset +
-									(GROUP_VAL_POS(i, point_qty) + 32) * j),
-								TMP(scan_data[i] + TMP(a_scan_dot_qty) * j), 
-								GROUP_VAL_POS(i, point_qty),
-								TMP(a_scan_dot_qty));
-					}
-					else if (GROUP_VAL_POS(i, point_qty) > TMP(a_scan_dot_qty))
-					{
-						compress_data (
-								(DOT_TYPE *)(pp->p_beam_data + offset +
-									(GROUP_VAL_POS(i, point_qty) + 32) * j),
-								TMP(scan_data[i] + TMP(a_scan_dot_qty) * j), 
-								GROUP_VAL_POS(i, point_qty),
-								TMP(a_scan_dot_qty), 
-								GROUP_VAL_POS(i, rectifier));
-					}
-				}
-				for (k = 0; ((k < 16) && (TMP(scan_type[k]) != 0xff)); k++)
-				{
-					if (TMP(scan_group[k]) == i)
-						draw_scan(k, TMP(scan_type[k]), TMP(scan_group[k]), 
-								TMP(scan_xpos[k]), TMP(scan_ypos[k]), dot_temp, 
-								TMP(fb1_addr) + 768*400);
-					//						dot_temp1);
-				}
-			}
-			temp1[0] = 1;
-		}
-		usleep(20000);
-	}
-}
-
-static void *thread_func1(void *arg) 
-{ 
-	char key = 0;
-	while (1) 
-	{
-		if (read(pp->fd_key, &key, 1) > 0) 
-		{	
-			process_key_press (key);
-		}
-		usleep(20000);
-	}
-}
 
 #endif
 
@@ -16773,7 +16619,7 @@ void init_ui(DRAW_UI_P p)
 	    return;
 	}
 	ret = pthread_create (&tid1, NULL, (void*)draw_frame_thread, NULL);
-        if(ret){
+    if(ret){
 		perror("in1:");
 	    return;
 	}

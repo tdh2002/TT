@@ -22,11 +22,24 @@
 #define COLOR_STEP 32     /*    4  8  16  32  64*/
 #define COLOR_SHIFT 5     /*    2  3   4   5   6*/
 #define MIN_DRAW_FAN_ANGLE_STEP    3
+#define MAX_GROUP_QTY   8
+#define MAX_BEAM_QTY    256
 
-static gchar*	pDraw  = NULL;          // 是否扇形区域 
-static guchar*	pAngleZoom = NULL; // 处于哪个角度区间 
-static guchar*	pDrawRate = NULL; // 填充比例 
-static gint*	pDataNo = NULL; // 数据在数组中的列号 
+typedef struct _Point
+{
+	int x;
+	int y;
+}POINT, *P_POINT;
+
+
+static POINT CurrentLine_top [MAX_GROUP_QTY][MAX_BEAM_QTY];
+static POINT CurrentLine_bottom [MAX_GROUP_QTY][MAX_BEAM_QTY];
+
+static gchar*	pDraw[MAX_GROUP_QTY]      = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL}; // 是否扇形区域
+static guchar*	pAngleZoom[MAX_GROUP_QTY] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL}; // 处于哪个角度区间
+static guchar*	pDrawRate[MAX_GROUP_QTY]  = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL}; // 填充比例
+static gint*	pDataNo[MAX_GROUP_QTY]    = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL}; // 数据在数组中的列号
+
 static int fd_fb;
 struct fb_var_screeninfo vinfo;
 
@@ -431,7 +444,8 @@ void draw_c_scan (gushort *p, gint width, gint height, DOT_TYPE *data, DOT_TYPE 
 //  endAngle     : 扫描终止角度
 //  StartWave    : 波形起始
 //  WaveLength   : 波形长度
-int CalcFanScan_new (gdouble startAngle, gdouble endAngle, gdouble stepAngle, double StartFocusDepth, double FocusEnd, double JunctionOffset, int DataLength, int width, int height)
+int CalcFanScan_new (gdouble startAngle, gdouble endAngle, gdouble stepAngle, double StartFocusDepth,
+		                     double FocusEnd, double JunctionOffset, int DataLength, int width, int height, guchar group)
 {
        
        //int endWave =   StartWave + WaveLength                ;
@@ -469,16 +483,21 @@ int CalcFanScan_new (gdouble startAngle, gdouble endAngle, gdouble stepAngle, do
        gdouble tAngle                 ;
        int iAngle                     ;
       
-       //double TempStartLength         ;
 	   double TempLength              ; 
 	   double templength              ;
 	   double BeamStartLength[256]    ;
 	   double BeamEndLength[256]      ;
        // 为全局指针分配内存 
-       pDraw        = (char*) malloc (width*height)                        ;
-       pAngleZoom   = (unsigned char*)malloc(width*height)                 ;
-       pDrawRate    = (unsigned char*)malloc(width*height)                 ;
-       pDataNo      = (int*) malloc(sizeof(int)*width*height)              ;
+
+	   if(pDraw[group] != NULL)       { free(pDraw[group]);  pDraw[group] = NULL ;}
+	   if(pAngleZoom[group] != NULL)  { free(pAngleZoom[group]);  pAngleZoom[group] = NULL ;}
+	   if(pDrawRate[group] != NULL)   { free(pDrawRate[group]);  pDrawRate[group] = NULL ;}
+	   if(pDataNo[group] != NULL)     { free(pDataNo[group]);  pDataNo[group] = NULL ;}
+
+       pDraw[group]        = (char*) malloc (width*height)                        ;
+       pAngleZoom[group]   = (unsigned char*)malloc(width*height)                 ;
+       pDrawRate[group]    = (unsigned char*)malloc(width*height)                 ;
+       pDataNo[group]      = (int*) malloc(sizeof(int)*width*height)              ;
 
        a1  = startAngle * G_PI/180.0                                       ;
        a2  = endAngle   * G_PI/180.0                                       ;
@@ -508,7 +527,7 @@ int CalcFanScan_new (gdouble startAngle, gdouble endAngle, gdouble stepAngle, do
 			   yTopmost = JunctionOffset + StartFocusDepth * cos(-a1) ;
 			
             TempLength  = StartFocusDepth + FocusRange                ;
-			templength  = StartFocusDepth                             ;		
+			templength  = StartFocusDepth                             ;
 	   }
 	   else if (a1 < 0 && a2 < 0)
 	   {
@@ -550,7 +569,11 @@ int CalcFanScan_new (gdouble startAngle, gdouble endAngle, gdouble stepAngle, do
        {
              tempx = xScale * (sin(a1+i*a3)*(JunctionOffset/cos(a1+i*a3)+TempLength)+xOrg)                  ;
              tempy = yScale * (cos(a1+i*a3)*(JunctionOffset/cos(a1+i*a3)+TempLength)+yOrg)                  ;
-            
+             //****************************************************************************
+             //keep the location for angle line drawing
+             CurrentLine_bottom[group][i].x = (int)tempx ;
+             CurrentLine_bottom[group][i].y = (int)tempy ;
+             //****************************************************************************
              tempx = tempx  -  xOrgS																		;
              tempy = tempy  -  yOrgS																		;
              if(tempy != 0)
@@ -561,6 +584,11 @@ int CalcFanScan_new (gdouble startAngle, gdouble endAngle, gdouble stepAngle, do
              BeamEndLength[i]   = sqrt(tempx*tempx+tempy*tempy)                                             ;
 			 tempx = xScale * (sin(a1+i*a3)*(JunctionOffset/cos(a1+i*a3)+templength)+xOrg)                  ;
 			 tempy = yScale * (cos(a1+i*a3)*(JunctionOffset/cos(a1+i*a3)+templength)+yOrg)                  ;
+             //****************************************************************************
+             //keep the location for angle line drawing
+             CurrentLine_top[group][i].x = (int)tempx ;
+             CurrentLine_top[group][i].y = (int)tempy ;
+             //****************************************************************************
              tempx = tempx  -  xOrgS																		;
              tempy = tempy  -  yOrgS																		;
 			 BeamStartLength[i] = sqrt(tempx*tempx+tempy*tempy)                                             ;
@@ -578,21 +606,21 @@ int CalcFanScan_new (gdouble startAngle, gdouble endAngle, gdouble stepAngle, do
                          tempx = xScale * (sin(a1+i*_a3)*(JunctionOffset/cos(a1+i*_a3)+TempLength)+xOrg)                  ;
                          tempy = yScale * (cos(a1+i*_a3)*(JunctionOffset/cos(a1+i*_a3)+TempLength)+yOrg)                  ;
                         
-                         tempx = tempx  -  xOrgS																		;
-                         tempy = tempy  -  yOrgS																		;
+                         tempx = tempx  -  xOrgS																		  ;
+                         tempy = tempy  -  yOrgS																		  ;
                          if(tempy != 0)
-                                _pScalesAngle[i] = atan(tempx/tempy)														;
-                         else pScalesAngle[i] = tempx>0 ? G_PI/2.0 : -G_PI/2.0											;
-                         pScales[i] = sqrt(tempx*tempx+tempy*tempy)/(JunctionOffset/cos(a1+i*_a3)+TempLength)            ;
+                                _pScalesAngle[i] = atan(tempx/tempy)												      ;
+                         else pScalesAngle[i] = tempx>0 ? G_PI/2.0 : -G_PI/2.0											  ;
+                         pScales[i] = sqrt(tempx*tempx+tempy*tempy)/(JunctionOffset/cos(a1+i*_a3)+TempLength)             ;
                         
-                         BeamEndLength[i]   = sqrt(tempx*tempx+tempy*tempy)                                             ;
+                         BeamEndLength[i]   = sqrt(tempx*tempx+tempy*tempy)                                               ;
             			 tempx = xScale * (sin(a1+i*_a3)*(JunctionOffset/cos(a1+i*_a3)+templength)+xOrg)                  ;
             			 tempy = yScale * (cos(a1+i*_a3)*(JunctionOffset/cos(a1+i*_a3)+templength)+yOrg)                  ;
-                         tempx = tempx  -  xOrgS																		;
-                         tempy = tempy  -  yOrgS																		;
-            			 BeamStartLength[i] = sqrt(tempx*tempx+tempy*tempy)                                             ;
+                         tempx = tempx  -  xOrgS																		  ;
+                         tempy = tempy  -  yOrgS																		  ;
+            			 BeamStartLength[i] = sqrt(tempx*tempx+tempy*tempy)                                               ;
                 }
-                _pScalesAngle[_RowNo - 1] = pScalesAngle[ RowNo - 1]             ;
+                _pScalesAngle[_RowNo - 1] = pScalesAngle[ RowNo - 1]                                                      ;
        }
 
        a1 = pScalesAngle[0]          ;
@@ -608,29 +636,29 @@ int CalcFanScan_new (gdouble startAngle, gdouble endAngle, gdouble stepAngle, do
                   tLength = sqrt(xxx*xxx + yyy*yyy)     ;
                   tAngle  = asin(xxx/tLength)           ;
                   if(tAngle > a2|| tAngle < a1)  
-                    {  pDraw[i*width+ j] = 0; continue ;}
+                    {  pDraw[group][i*width+ j] = 0; continue ;}
                   iAngle = 0                            ;
                   while(tAngle>=pScalesAngle[iAngle]&&tAngle<a2)
                   {
                         iAngle++                        ;
                   }
                   iAngle--                              ;
-                  pAngleZoom[i*width+j] = iAngle        ;
-                  tempScale = (tAngle - pScalesAngle[iAngle])/(pScalesAngle[iAngle+1] - pScalesAngle[iAngle])  ;
-                  if(tempScale > 1) tempScale = 1                                                              ;
-                  pDrawRate[i*width+j] = (unsigned char)( tempScale * COLOR_STEP )                             ;
+                  pAngleZoom[group][i*width+j] = iAngle        ;
+                  tempScale = (tAngle - pScalesAngle[iAngle])/(pScalesAngle[iAngle+1] - pScalesAngle[iAngle])         ;
+                  if(tempScale > 1) tempScale = 1                                                                     ;
+                  pDrawRate[group][i*width+j] = (unsigned char)( tempScale * COLOR_STEP )                             ;
                   if(stepAngle <= MIN_DRAW_FAN_ANGLE_STEP)
                   {
                               startWaveS = BeamStartLength[iAngle] * ( 1 - tempScale )  + BeamStartLength[iAngle+1] * tempScale      ;
-                              endWaveS   = BeamEndLength[iAngle]   * ( 1 - tempScale )  + BeamEndLength[iAngle+1] * tempScale          ;
-                              tempScale = pScales[iAngle]*(1-tempScale)+pScales[iAngle+1]*tempScale        ;
-                              pDataNo[i*width+j] = (int)( DataLength * (tLength-startWaveS)/(endWaveS - startWaveS) )                  ;
+                              endWaveS   = BeamEndLength[iAngle]   * ( 1 - tempScale )  + BeamEndLength[iAngle+1] * tempScale        ;
+                              tempScale = pScales[iAngle]*(1-tempScale)+pScales[iAngle+1]*tempScale                                  ;
+                              pDataNo[group][i*width+j] = (int)( DataLength * (tLength-startWaveS)/(endWaveS - startWaveS) )         ;
                               if(tLength > endWaveS || tLength<startWaveS) 
                               { 
-                                      pDraw [i*width + j]= 0 ;
+                                      pDraw[group][i*width + j]= 0 ;
                                       continue               ;
                               }
-                              pDraw [i*width + j]= 255       ;
+                              pDraw[group][i*width + j]= 255       ;
                   }
                   else
                   {
@@ -645,19 +673,21 @@ int CalcFanScan_new (gdouble startAngle, gdouble endAngle, gdouble stepAngle, do
                               startWaveS = BeamStartLength[iAngle] * ( 1 - tempScale )  + BeamStartLength[iAngle+1] * tempScale      ;
                               endWaveS   = BeamEndLength[iAngle]   * ( 1 - tempScale )  + BeamEndLength[iAngle+1] * tempScale          ;
                               tempScale =  pScales[iAngle] * (1- tempScale) +  pScales[iAngle+1]*tempScale                      ;
-                              pDataNo[i*width+j] = (int)(DataLength * (tLength-startWaveS)/(endWaveS - startWaveS) )            ;
-                              if(tLength > endWaveS || tLength<startWaveS) { pDraw [ i * width + j]= 0 ; continue  ;}
-                              pDraw [i*width + j]= 255                                                                          ;
+                              pDataNo[group][i*width+j] = (int)(DataLength * (tLength-startWaveS)/(endWaveS - startWaveS) )            ;
+                              if(tLength > endWaveS || tLength<startWaveS) { pDraw[group][ i * width + j]= 0 ; continue  ;}
+                              pDraw [group][i*width + j]= 255                                                                          ;
                   }
              }
        }
+
+
 
        free(pScales);
 	   free(pScalesAngle);
 	   free(_pScalesAngle) ;
 	   return 0;
 }
-
+#if 0
 int CalcFanScan(gdouble startAngle, gdouble endAngle,
 		gdouble stepAngle, gint StartWave, gint endWave,
 	    gint width, gint height)
@@ -829,10 +859,12 @@ int CalcFanScan(gdouble startAngle, gdouble endAngle,
 	   return 0;
 }
 
+#endif
+
 int DrawPixbuff(gushort *p,
 		guint xoffset, guint yoffset,
 		gint widstep, gint width, gint height,
-		gint startWave, gint endWave, DOT_TYPE *WaveData)
+		gint startWave, gint endWave, DOT_TYPE *WaveData, guchar group)
 {   
        gint	i, j;
        gint pointer ;
@@ -845,16 +877,21 @@ int DrawPixbuff(gushort *p,
              for(j = 0; j < width; j++)
              {
                       pointer = i*width +j ;
-                      if(pDraw[pointer] != 0)
+                      if(pDraw[group][pointer] != 0)
                       { 
-                           pointer2 = (int)(pAngleZoom[pointer] * waveLength + pDataNo[pointer]);
-                           tempData = (int)(WaveData[pointer2] * (COLOR_STEP - pDrawRate[pointer]) +
-								   WaveData[pointer2 + waveLength]*pDrawRate[pointer] ) ;
+                           pointer2 = (int)(pAngleZoom[group][pointer] * waveLength + pDataNo[group][pointer]);
+                           tempData = (int)(WaveData[pointer2] * (COLOR_STEP - pDrawRate[group][pointer]) +
+								   WaveData[pointer2 + waveLength]*pDrawRate[group][pointer] ) ;
 						   fbdot (p, xoffset + j, yoffset + i - 1, TMP(color_amp[tempData>>COLOR_SHIFT]));
 					  }
              }
        }
-		
+
+       //draw current angle line
+       i= pp->p_tmp_config->beam_num[group] ;
+       fbline(p, xoffset+CurrentLine_top[group][i].x, yoffset+CurrentLine_top[group][i].y, xoffset+CurrentLine_bottom[group][i].x,
+    		                              yoffset+CurrentLine_bottom[group][i].y,  0x001f );
+
 	   //	   g_print("pDraw[1] = %d", pDraw[pointer]);
 	   return 0;
 }
@@ -872,13 +909,17 @@ void draw_s_scan (gushort *p, guint width, guint height, DOT_TYPE *data, DOT_TYP
 				if (height < beam_qty)
 				{
 					/* 压缩s扫描 */
-					for (i = 0 ; i < height ; i++)		
+					for (i = 0 ; i < height ; i++)
+					{
+						temp = width * i * beam_qty / height;
 						for (k = 0; k < width - 1; k++)
 						{
-							temp = width * i * beam_qty / height;
-								fbdot (p, xoffset + k, yoffset + i,
+
+						   fbdot (p, xoffset + k, yoffset + i,
 										TMP(color_amp[data1[temp + k]]));
 						}
+					}
+
 				}
 				else if (height == beam_qty)
 				{
@@ -899,12 +940,17 @@ void draw_s_scan (gushort *p, guint width, guint height, DOT_TYPE *data, DOT_TYP
 										TMP(color_amp[data1[width * i + k]]));
 							}
 				}
+				//*********************************
+				// draw current angle line (VPA)
+				temp = pp->p_tmp_config->beam_num[groupId] * height / beam_qty ;
+				fblinex(p, yoffset + temp, xoffset, xoffset+width , 0x001f);
+				//***********************************
 				break;
 		case  UT_UNIT_TRUE_DEPTH:
-				if ((!pp->sscan_mark) && pDraw)
+				if ((!pp->sscan_mark) && pDraw[groupId])
 				{
 					DrawPixbuff(p, xoffset, yoffset, width, width, height,
-							0, TMP(a_scan_dot_qty),  data1);
+							0, TMP(a_scan_dot_qty),  data1, groupId);
 				}
 				break;
 		default:break;
@@ -925,18 +971,20 @@ void draw_s_scan_r (gushort *p, guint width, guint height, DOT_TYPE *data, DOT_T
 				{
 					/* 压缩s扫描 */
 					for (i = 0 ; i < height ; i++)		
+					{
+						temp = width * i * TMP(beam_qty[groupId]) / height;
 						for (k = 0; k < width - 1; k++)
 						{
-							temp = width * i * TMP(beam_qty[groupId]) / height;
-								fbdot (p, xoffset + k, yoffset + i,
+							fbdot (p, xoffset + k, yoffset + i,
 										TMP(color_amp[data1[temp + k]]));
 						}
+					}
 				}
 				else if (height == TMP(beam_qty[groupId]))
 				{
 					/* 不变 */
 					for (i = 0; i < TMP(beam_qty[groupId]); i++)
-							for (k = 0; k < width - 1; k++)
+						for (k = 0; k < width - 1; k++)
 								fbdot (p, xoffset + k, yoffset + i,
 										TMP(color_amp[data1[width * i + k]]));
 				}
@@ -1010,13 +1058,11 @@ void draw_scan(guchar scan_num, guchar scan_type, guchar group,
 				//		LAW_VAL(Angle_min) / 100.0,
 				//		LAW_VAL(Angle_max) /100.0,	/*  */
 				//		LAW_VAL(Angle_step) / 100.0, TMP(a_scan_dot_qty),
-				//	    TMP(s_scan_width), TMP(s_scan_height));
-                                TMP(group_spi[group]).sample_start ;		
-	                        TMP(group_spi[group]).sample_range ;	
+				//	    TMP(s_scan_width), TMP(s_scan_height));	
 				CalcFanScan_new (LAW_VAL(Angle_min)/100.0, LAW_VAL(Angle_max)/100.0, LAW_VAL(Angle_step)/100.0, 
 						TMP(group_spi[group]).sample_start* get_group_velocity (pp->p_config, group)/100000, 
 						TMP(group_spi[group]).sample_range* get_group_velocity (pp->p_config, group)/100000, 
-						TMP(Junction), TMP(a_scan_dot_qty),TMP(s_scan_width),TMP(s_scan_height));
+                        TMP(Junction), TMP(a_scan_dot_qty),TMP(s_scan_width),TMP(s_scan_height), group);
 
 				pp->sscan_mark = 0;
 				/* 清空这块显示区 背景暂定黑色 可以全部一起清空 */

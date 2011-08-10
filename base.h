@@ -489,6 +489,7 @@ typedef struct Draw_interface
 	GtkWidget *sw1;		/* 第二个scroll 探头 楔块 聚焦法则 setup 等需要2个sw */
 	int		fd_key;		/* 串口设备 */
 	int		fd_key1;		/* 串口设备 */
+	char    battery[11];   /* 保存电池信息 */
 
 	guchar  iter_qty;       /* treeview 中 iter 的个数 */
 	guchar  iter_pos;	/* treeview 中 iter 的位置 */
@@ -635,10 +636,10 @@ typedef struct __DEFINE_PROBE
 #define CUR_POS (pp->pos2[pp->pos][pp->pos1[pp->pos]])      /* 0,1,2,3,4,5 */
 #define CUR_POS_P(p) (p->pos2[p->pos][p->pos1[p->pos]])      /* 0,1,2,3,4,5 */
 
-#define CCFG(a)	(pp->p_config->a)
+#define DO_NOT_USE_CCFG(a)	(pp->p_config->a)
 
-#define GROUP_VAL_POS(a, b)	(CCFG(group[a].b))				/* a表示哪个group b是返回哪个值 */
-#define GROUP_VAL(a)  (CCFG(group[CCFG(groupId)].a))
+#define GROUP_VAL_POS(a, b)	(DO_NOT_USE_CCFG(group[a].b))				/* a表示哪个group b是返回哪个值 */
+#define GROUP_VAL(a)  (DO_NOT_USE_CCFG(group[DO_NOT_USE_CCFG(groupId)].a))
 
 #define LAW_VAL_POS(a, b)  (GROUP_VAL_POS(a,law_info).b)
 #define LAW_VAL(a)  (GROUP_VAL(law_info).a)
