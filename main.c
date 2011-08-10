@@ -49,15 +49,16 @@ static void set_config (guint groupid)
 	GROUP_VAL(gain)         = 10;
 	GROUP_VAL(gainr)        = 0;
 	set_group_db_ref (pp->p_config, get_current_group(pp->p_config), NORMAL_OFF);
-	GROUP_VAL(wedge_delay)  = 0;	/*  */
-	GROUP_VAL(range)        = 10000;		/* 10μs */
+	set_group_wedge_delay (pp->p_config, get_current_group(pp->p_config), 0);
+	set_group_range (pp->p_config, get_current_group(pp->p_config), 10000);
+
 	GROUP_VAL(start)        = 0.0;
 	GROUP_VAL(pulser)       = 1;			/* 1表示第一个探头接口 1-128 */
 	GROUP_VAL(receiver)     = 1;			/* 1表示第一个探头接口 1-128 */
 	GROUP_VAL(tx_rxmode)	= PULSE_ECHO;	/* 收发模式 */
 	GROUP_VAL(freq_pos)		= 0;			/* 0是1Mhz	*/
-	GROUP_VAL(frequency)	= 5000;			/* 频率 */
-	GROUP_VAL(pw_pos)		= 0;			/* 0是Atuo	*/
+	GROUP_VAL(frequency)	= 1000;			/* 频率 */
+	GROUP_VAL(pw_pos)		= 1;			/* 0是Atuo	*/
 	GROUP_VAL(prf_pos)		= 3;			/* 0是Atuo Max*/
 	GROUP_VAL(pulser_width)	= 10000;		/* 脉冲宽度 30ns */
 	GROUP_VAL(prf)			= 200;			/* 重复频率 60*/
@@ -435,10 +436,10 @@ void send_focal_spi (guint group)
 
 		TMP(focal_spi[k]).beam_delay	= TMP(focal_law_all_beam[k].G_delay) / 10;
 		/*UT Settings->Pulser->Tx/Rx mode*/		
-		if (GROUP_VAL(tx_rxmode) == PULSE_ECHO )//单个探头收发模式
+		if (GROUP_VAL(tx_rxmode) == PULSE_ECHO )/*单个探头收发模式*/
 		{  
 			GROUP_VAL_POS(group, receiver) = GROUP_VAL_POS(group, pulser);
-			if(LAW_VAL_POS(group, Focal_type) == 1)//Linear
+			if(LAW_VAL_POS(group, Focal_type) == 1)/*Linear*/
 			{
 				TMP(focal_spi[k]).rx_sel	= 
 					channel_select((guint)(GROUP_VAL_POS(group, pulser))+ (guint)(LAW_VAL_POS(group, First_tx_elem))+(k-offset)*LAW_VAL_POS(group, Elem_step)-1 ); //何凡修改 
@@ -476,7 +477,7 @@ void send_focal_spi (guint group)
 			enabler = (cnt >> (32-channel_index_num)) | (cnt<<channel_index_num);//循环左移channel_index_num位 ，使能控制
 		
 		}	
-		else //其他模式
+		else 
 		{
 
 		}		
@@ -531,8 +532,8 @@ void init_group_spi (guint group)
 	TMP(group_spi[group]).video_filter	= GROUP_VAL_POS(group, video_filter);
 	TMP(group_spi[group]).rectifier		= GROUP_VAL_POS(group, rectifier);
 	TMP(group_spi[group]).compress_rato	= 
-		((GROUP_VAL_POS(group, range) / 10.0) / GROUP_VAL_POS(group, point_qty)) > 1 ? 
-		((GROUP_VAL_POS(group, range) / 10.0) / GROUP_VAL_POS(group, point_qty)) : 1;
+		((get_group_range (pp->p_config, group) / 10.0) / GROUP_VAL_POS(group, point_qty)) > 1 ? 
+		((get_group_range (pp->p_config, group) / 10.0) / GROUP_VAL_POS(group, point_qty)) : 1;
 	TMP(group_spi[group]).gain			= GROUP_VAL_POS(group, gain) / 10;
 
 	TMP(group_spi[group]).tcg_point_qty	= 0;		/* 未完成 */
@@ -541,16 +542,16 @@ void init_group_spi (guint group)
 	TMP(group_spi[group]).UT1			= (GROUP_VAL_POS (group, group_mode) == 0) ? 1 : 0;		
 	TMP(group_spi[group]).PA			= (GROUP_VAL_POS (group, group_mode) == 1) ? 1 : 0;		
 	TMP(group_spi[group]).sample_start	= (GROUP_VAL_POS (group, start) + 
-		GROUP_VAL_POS(group, wedge_delay)) / 10;		
+			get_group_wedge_delay (pp->p_config, group)) / 10;
 
-//	if (GROUP_VAL_POS(group, probe.Elem_qty) == 1)	
+
 	if (LAW_VAL_POS(group, Elem_qty) == 1)	
 		TMP(group_spi[group]).sum_gain	= 4095;	
 	else 
 		TMP(group_spi[group]).sum_gain	= 
 			4096 / GROUP_VAL_POS(group, probe.Elem_qty);	
 	TMP(group_spi[group]).sample_range	= TMP(group_spi[group]).sample_start + 
-		GROUP_VAL_POS(group, range) / 10;		
+		get_group_range (pp->p_config, group) / 10;		
 
 	TMP(group_spi[group]).beam_qty		= TMP(beam_qty[group]) - 1; 
 	TMP(group_spi[group]).sample_offset	= 0;

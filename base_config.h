@@ -274,7 +274,7 @@ typedef struct _Group GROUP;
 struct _Group 
 {
 	/* 基本设置 */
-	unsigned int	wedge_delay;	/* 楔款延时 单位 ns */
+	unsigned int	wedge_delay1;	/* 楔款延时 单位 ns */
 	unsigned int	range;			/* 显示范围 单位 ns */
 	int	start;						/* 扫描延时 单位 ns */
 	unsigned short	gain;			/* 实际增益 单位 0.01dB */

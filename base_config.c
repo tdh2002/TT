@@ -1320,12 +1320,12 @@ void set_probe_type (CONFIG *p, unsigned char data)
 /* Group 参数的保存读取 */
 unsigned int get_group_wedge_delay (CONFIG *p, int group_id)
 {
-	return p->group[group_id].wedge_delay;
+	return p->group[group_id].wedge_delay1;
 }
 
 void set_group_wedge_delay (CONFIG *p, int group_id, unsigned int data)
 {
-	p->group[group_id].wedge_delay = data;
+	p->group[group_id].wedge_delay1 = data;
 }
 
 unsigned int get_group_range (CONFIG *p, int group_id)

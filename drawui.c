@@ -10270,7 +10270,7 @@ void draw3_data3(DRAW_UI_P p)
 					}
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 					{
-						cur_value = GROUP_VAL(wedge_delay) / 1000.0;
+						cur_value = get_group_wedge_delay (pp->p_config, get_current_group(pp->p_config)) / 1000.0;
 						lower = 0.0;
 						upper = 1000.0;
 						step = tmpf;
@@ -10281,7 +10281,7 @@ void draw3_data3(DRAW_UI_P p)
 					}
 					else 
 					{
-						cur_value = GROUP_VAL(wedge_delay) / 1000.0;
+						cur_value = get_group_wedge_delay (pp->p_config, get_current_group(pp->p_config)) / 1000.0;
 						digit = 2;
 						pos = 3;
 						unit = UNIT_US;

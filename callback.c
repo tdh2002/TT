@@ -455,7 +455,7 @@ static void save_cal_law(gint offset, gint group, PARAMETER_P p)
 		TMP(focal_law_all_beam[offset + i]).Scan_offset		= GROUP_VAL_POS (group, scan_offset) * 100;
 		TMP(focal_law_all_beam[offset + i]).Index_offset	= GROUP_VAL_POS (group, index_offset) * 100;
 		TMP(focal_law_all_beam[offset + i]).G_delay			= 
-			GROUP_VAL_POS (group, wedge_delay)
+			get_group_wedge_delay (pp->p_config, group)
 			+	GROUP_VAL_POS (group, wedge.Probe_delay) + p->G_delay[i];
 		TMP(focal_law_all_beam[offset + i]).F_depth			= LAW_VAL_POS (group, Focus_depth);
 		TMP(focal_law_all_beam[offset + i]).M_velocity		= GROUP_VAL_POS (group, velocity) / 100;
@@ -954,12 +954,12 @@ void b3_fun0(gpointer pt)
 		}
 
 	}
-
+	else
+	tttmp = gtk_spin_button_get_value (GTK_SPIN_BUTTON (pp->sbutton[0]));
 	p->pos_pos = MENU3_PRESSED;
 	draw_menu2 (0);
 	draw_menu3 (0, p);                          /**/
 
-	tttmp = gtk_spin_button_get_value (GTK_SPIN_BUTTON (pp->sbutton[0]));
 	return ;
 }
 
@@ -2663,12 +2663,10 @@ static int handler_key(guint keyval, gpointer data)
 					else
 						pp->pos_pos = MENU3_STOP;
 
-	tttmp = gtk_spin_button_get_value (GTK_SPIN_BUTTON (pp->sbutton[CUR_POS]));
 					/* 按下的动作在这里实现 */
 					break;
 				case MENU3_PRESSED:
 					pp->pos_pos = MENU3_STOP;
-	tttmp = gtk_spin_button_get_value (GTK_SPIN_BUTTON (pp->sbutton[CUR_POS]));
 					break;
 				default:break;
 				}
@@ -2676,6 +2674,7 @@ static int handler_key(guint keyval, gpointer data)
 				{
 					draw_menu2(0);
 					draw_menu3(0, NULL);
+	tttmp = gtk_spin_button_get_value (GTK_SPIN_BUTTON (pp->sbutton[CUR_POS]));
 				}
 			}
 			break;
@@ -3293,7 +3292,7 @@ void data_101 (GtkSpinButton *spinbutton, gpointer data) /*Start 扫描延时 P1
 	GROUP_VAL(start) =  ((GROUP_VAL(start) + 5) / 10) * 10;
  	draw_area_all ();
 	TMP(group_spi[grp]).sample_start	= (GROUP_VAL_POS (grp, start) + 
-		GROUP_VAL_POS(grp, wedge_delay)) / 10;		
+			get_group_wedge_delay (pp->p_config, grp)) / 10;
 	TMP(group_spi[grp]).sample_range	= TMP(group_spi[grp]).sample_start + 
 		GROUP_VAL_POS(grp, range) / 10;		
 	tt[0] = (GROUP_VAL_POS(grp, gate[0].start) +	GROUP_VAL_POS (grp, gate[0].width));
@@ -3362,10 +3361,12 @@ void data_103 (GtkSpinButton *spinbutton, gpointer data) /*楔块延时  P103 */
 	gint tt[4];
 	gint grp = get_current_group(pp->p_config);
 	gint temp_prf;
-	GROUP_VAL(wedge_delay) = (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0) ;
+
+	set_group_wedge_delay (pp->p_config, get_current_group(pp->p_config),
+			(guint) (gtk_spin_button_get_value (spinbutton) * 1000.0));
 
 	TMP(group_spi[grp]).sample_start	= (GROUP_VAL_POS (grp, start) + 
-		GROUP_VAL_POS(grp, wedge_delay)) / 10;		
+			get_group_wedge_delay (pp->p_config, grp)) / 10;
 	TMP(group_spi[grp]).sample_range	= TMP(group_spi[grp]).sample_start + 
 		GROUP_VAL_POS(grp, range) / 10;		
 	tt[0] = (GROUP_VAL_POS(grp, gate[0].start) +	GROUP_VAL_POS (grp, gate[0].width));
@@ -3441,13 +3442,14 @@ void data_112 (GtkMenuItem *menuitem, gpointer data) /* 频率 Freq P112 */
 	{
 		pp->pos_pos = MENU3_STOP;
 		draw_menu3(0, NULL);
-		send_dsp_data (FREQUENCY_DSP, (guint) (GROUP_VAL(frequency)));
+		gtk_spin_button_set_value (GTK_SPIN_BUTTON (pp->sbutton[2]), GROUP_VAL(frequency) / 1000.0);
 	}
 	else
 	{
 		pp->mark_pop_change = 1;
 		pp->pos_pos = MENU3_PRESSED;
 		draw_menu3(0, NULL);
+		tttmp = gtk_spin_button_get_value (GTK_SPIN_BUTTON (pp->sbutton[2]));
 	}
 	/* 发送给硬件 */
 }
