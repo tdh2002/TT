@@ -878,6 +878,7 @@ void b3_fun0(gpointer pt)
 		default:break;
 	}
 
+
 	/* 处理微调 */
 	if ((p->pos_last2 == p->pos2[p->pos][p->pos1[p->pos]]) && 
 			(p->pos_pos == MENU3_PRESSED))
@@ -984,6 +985,7 @@ void b3_fun1(gpointer p)
 	/* 一次点击处理 */
 	switch (pp->pos)
 	{
+		tttmp = gtk_spin_button_get_value (GTK_SPIN_BUTTON (pp->sbutton[1]));
 		case 0:
 			switch (pp->pos1[0])
 			{
@@ -1385,12 +1387,11 @@ void b3_fun1(gpointer p)
 			default:break;
 		}
 	}
-
+	else
+		tttmp = gtk_spin_button_get_value (GTK_SPIN_BUTTON (pp->sbutton[1]));
 	pp->pos_pos = MENU3_PRESSED;
 	draw_menu2(0);
 	draw_menu3(0, NULL);                          /**/
-
-	tttmp = gtk_spin_button_get_value (GTK_SPIN_BUTTON (pp->sbutton[1]));
 	return ;
 }
 
@@ -1664,12 +1665,11 @@ void b3_fun2(gpointer p)
 			default:break;
 		}
 	}
-
+	else
+		tttmp = gtk_spin_button_get_value (GTK_SPIN_BUTTON (pp->sbutton[2]));
 	pp->pos_pos = MENU3_PRESSED;
 	draw_menu2(0);
 	draw_menu3(0, NULL);                          /**/
-
-	tttmp = gtk_spin_button_get_value (GTK_SPIN_BUTTON (pp->sbutton[2]));
 	return ;
 }
 
@@ -1952,12 +1952,11 @@ void b3_fun3(gpointer p)
 			default:break;
 		}
 	}
-
+	else
+		tttmp = gtk_spin_button_get_value (GTK_SPIN_BUTTON (pp->sbutton[3]));
 	pp->pos_pos = MENU3_PRESSED;
 	draw_menu2(0);
 	draw_menu3(0, NULL);                          /**/
-
-	tttmp = gtk_spin_button_get_value (GTK_SPIN_BUTTON (pp->sbutton[3]));
 	return ;
 }
 
@@ -2171,12 +2170,12 @@ void b3_fun4(gpointer p)
 
 		}
 	}
-
+	else
+		tttmp = gtk_spin_button_get_value (GTK_SPIN_BUTTON (pp->sbutton[4]));
 	pp->pos_pos = MENU3_PRESSED;
 	draw_menu2(0);
 	draw_menu3(0, NULL);                          /**/
 
-	tttmp = gtk_spin_button_get_value (GTK_SPIN_BUTTON (pp->sbutton[4]));
 	return ;
 }
 
@@ -2364,12 +2363,12 @@ void b3_fun5(gpointer p)
 			default:break;
 		}
 	}
-
+	else
+		tttmp = gtk_spin_button_get_value (GTK_SPIN_BUTTON (pp->sbutton[5]));
 	pp->pos_pos = MENU3_PRESSED;
 	draw_menu2(0);
 	draw_menu3(0, NULL);                          /**/
 
-	tttmp = gtk_spin_button_get_value (GTK_SPIN_BUTTON (pp->sbutton[5]));
 	return ;
 }
 
@@ -2647,6 +2646,7 @@ static int handler_key(guint keyval, gpointer data)
 			}
 			break;
 		case GDK_Return:	/*回车键*/
+
 			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
 			{
 				main_menu_pop(MENU_ENTER);/*选中当前主菜单，并收回主菜单条*/
@@ -3467,6 +3467,7 @@ void data_112 (GtkMenuItem *menuitem, gpointer data) /* 频率 Freq P112 */
 	guint temp = GPOINTER_TO_UINT (data);
 	GROUP_VAL(freq_pos) = (guchar) (GPOINTER_TO_UINT (data));
 	GROUP_VAL(frequency) = get_freq();
+
 	if (!GROUP_VAL(pw_pos))
 		GROUP_VAL(pulser_width) = GROUP_VAL(frequency) * 2.0; /* 改变脉冲宽度 */
 	if (temp != 12)
@@ -3514,20 +3515,25 @@ void data_114 (GtkMenuItem *menuitem, gpointer data) /* PW */
 	guint temp = GPOINTER_TO_UINT (data);
 	GROUP_VAL(pw_pos) = temp;
 	GROUP_VAL(pulser_width) = get_pw();
+
 	if (temp == AUTO_SET)
 	{
 		pp->pos_pos = MENU3_STOP;
 		draw_menu3(0, NULL);
 		send_dsp_data (PW_DSP, GROUP_VAL(pulser_width) / 250) ;  /* 以2.5ns 为单位发出信息 */
+		gtk_spin_button_set_value (GTK_SPIN_BUTTON (pp->sbutton[4]), GROUP_VAL(pulser_width) / 100.0);
+
 	}
 	else
 	{
 		pp->mark_pop_change = 1;
 		pp->pos_pos = MENU3_PRESSED;
 		draw_menu3(0, NULL);
+		tttmp = gtk_spin_button_get_value (GTK_SPIN_BUTTON (pp->sbutton[4]));
 	}
 	send_focal_spi (get_current_group(pp->p_config));
 	/* 发送给硬件 */
+
 }
 
 void data_1151 (GtkSpinButton *spinbutton, gpointer data) /* PRF P115 */
@@ -3570,12 +3576,14 @@ void data_115 (GtkMenuItem *menuitem, gpointer data) /* PRF */
 	{
 		pp->pos_pos = MENU3_STOP;
 		draw_menu3(0, NULL);
+		gtk_spin_button_set_value (GTK_SPIN_BUTTON (pp->sbutton[5]), get_prf() / 10.0);
 	}
 	else
 	{
 		pp->mark_pop_change = 1;
 		pp->pos_pos = MENU3_PRESSED;
 		draw_menu3(0, NULL);
+		tttmp = gtk_spin_button_get_value (GTK_SPIN_BUTTON (pp->sbutton[5]));
 	}
 
 	if (GROUP_VAL_POS(grp, prf)  >= 400)
@@ -3750,12 +3758,14 @@ void data_143 (GtkMenuItem *menuitem, gpointer data) /* point qty P143 */
 		MENU_STATUS = MENU3_STOP;
 		draw_menu3(0, NULL);
 		send_dsp_data (POINT_QTY_DSP, get_point_qty());
+		gtk_spin_button_set_value (GTK_SPIN_BUTTON (pp->sbutton[3]), GROUP_VAL(point_qty));
 	}
 	else
 	{
 		pp->mark_pop_change = 1;
 		MENU_STATUS = MENU3_PRESSED;
 		draw_menu3(0, NULL);
+		tttmp = gtk_spin_button_get_value (GTK_SPIN_BUTTON (pp->sbutton[3]));
 	}
 
 	TMP(group_spi[grp]).compress_rato	= 
@@ -3805,12 +3815,14 @@ void data_145 (GtkMenuItem *menuitem, gpointer data) /* Sum Gain */
 		MENU_STATUS = MENU3_STOP;
 		draw_menu3(0, NULL);
 /*		send_dsp_data (SUM_GAIN_DSP, get_sum_gain());*/
+		gtk_spin_button_set_value (GTK_SPIN_BUTTON (pp->sbutton[5]), GROUP_VAL(sum_gain)/100.0);
 	}
 	else
 	{
 		pp->mark_pop_change = 1;
 		MENU_STATUS = MENU3_PRESSED;
 		draw_menu3(0, NULL);
+		tttmp = gtk_spin_button_get_value (GTK_SPIN_BUTTON (pp->sbutton[5]));
 	}
 
 	/* 发送给硬件 */
@@ -4777,6 +4789,12 @@ void data_500 (GtkMenuItem *menuitem, gpointer data) /* 增加删除选择group 
 		default:break;
 	}
 
+	if(!GROUP_VAL(group_mode)) /*group mode 选择UT时，focal law 不可用*/
+		gtk_widget_set_sensitive(pp->menuitem[6],FALSE);
+	else
+		gtk_widget_set_sensitive(pp->menuitem[6],TRUE);
+
+
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
 	draw_area_all ();
@@ -4832,12 +4850,14 @@ void data_512 (GtkMenuItem *menuitem, gpointer data) /* Skew (deg) */
 	{
 		pp->pos_pos = MENU3_STOP;
 		draw_menu3(0, NULL);
+		gtk_spin_button_set_value (GTK_SPIN_BUTTON (pp->sbutton[2]), GROUP_VAL(skew)/100.0);
 	}
 	else
 	{
 		pp->mark_pop_change = 1;
 		pp->pos_pos = MENU3_PRESSED;
 		draw_menu3(0, NULL);
+		tttmp = gtk_spin_button_get_value (GTK_SPIN_BUTTON (pp->sbutton[2]));
 	}
 }
 

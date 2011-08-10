@@ -438,7 +438,6 @@ void menuitem_function (GtkMenuItem *menuitem, gpointer data)
 		case 6:
 		case 7:
 		case 8:
-		case 9:
 			p->menu2_qty = 5;
 			break;
 		case 0:
@@ -447,6 +446,7 @@ void menuitem_function (GtkMenuItem *menuitem, gpointer data)
 		case 2:
 		case 4:
 		case 5:
+		case 9:
 			p->menu2_qty = 4;
 			break;
 		default:break;
@@ -1615,18 +1615,37 @@ if(!(prule->mask & 0x04))
 				if((get_display_pos (pp->p_config) == A_S_CC_SCAN ) && (get_cscan_source(pp->p_config, 0)==4) && (GROUP_VAL(ut_unit) == UT_UNIT_TRUE_DEPTH) && (get_display_group(pp->p_config) == DISPLAY_CURRENT_GROUP))	/*A_S scan 在 true depth时， A scan 需要旋转90度*/
 				{
 					cairo_set_source_rgba(cr,1.0,0.0,0.0,1.0);	/* A闸门为红色 */
+
 					cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(w-50)+20, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_start (pp->p_config, prule->group) / 1000.0))/(get_group_range (pp->p_config, prule->group) / 1000.0)*(h-20));
 					cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(w-50)+20, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_start (pp->p_config, prule->group) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[0].width) / 1000.0))/(get_group_range (pp->p_config, prule->group) / 1000.0)*(h-20));
+
+					cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(w-50)+17, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_start (pp->p_config, prule->group) / 1000.0))/(get_group_range (pp->p_config, prule->group) / 1000.0)*(h-20));
+					cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(w-50)+23, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_start (pp->p_config, prule->group) / 1000.0))/(get_group_range (pp->p_config, prule->group) / 1000.0)*(h-20));/*A闸门上端点*/
+
+					cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(w-50)+17, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_start (pp->p_config, prule->group) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[0].width) / 1000.0))/(get_group_range (pp->p_config, prule->group) / 1000.0)*(h-20));
+					cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(w-50)+23, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_start (pp->p_config, prule->group) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[0].width) / 1000.0))/(get_group_range (pp->p_config, prule->group) / 1000.0)*(h-20));/*A闸门下端点*/
 					cairo_stroke(cr);
 
 					cairo_set_source_rgba(cr,0.0,1.0,0.0,1.0);	/* B闸门为绿色 */
 					cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(w-50)+20, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_start (pp->p_config, prule->group) / 1000.0))/(get_group_range (pp->p_config, prule->group) / 1000.0)*(h-20));
 					cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(w-50)+20, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_start (pp->p_config, prule->group) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(get_group_range (pp->p_config, prule->group) / 1000.0)*(h-20));
+
+					cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(w-50)+17, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_start (pp->p_config, prule->group) / 1000.0))/(get_group_range (pp->p_config, prule->group) / 1000.0)*(h-20));
+					cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(w-50)+23, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_start (pp->p_config, prule->group) / 1000.0))/(get_group_range (pp->p_config, prule->group) / 1000.0)*(h-20));/*B闸门上端点*/
+
+					cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(w-50)+17, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_start (pp->p_config, prule->group) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(get_group_range (pp->p_config, prule->group) / 1000.0)*(h-20));
+					cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(w-50)+23, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_start (pp->p_config, prule->group) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(get_group_range (pp->p_config, prule->group) / 1000.0)*(h-20));/*B闸门下端点*/
 					cairo_stroke(cr);
 
 					cairo_set_source_rgba(cr,1.0,1.0,0.0,1.0);	/* C闸门为黄色 */
 					cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[2].height) / 100.0)*(w-50)+20, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)-(get_group_start (pp->p_config, prule->group) / 1000.0))/(get_group_range (pp->p_config, prule->group) / 1000.0)*(h-20));
 					cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[2].height) / 100.0)*(w-50)+20, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)-(get_group_start (pp->p_config, prule->group) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[2].width) / 1000.0))/(get_group_range (pp->p_config, prule->group) / 1000.0)*(h-20));
+
+					cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[2].height) / 100.0)*(w-50)+17, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)-(get_group_start (pp->p_config, prule->group) / 1000.0))/(get_group_range (pp->p_config, prule->group) / 1000.0)*(h-20));
+					cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[2].height) / 100.0)*(w-50)+23, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)-(get_group_start (pp->p_config, prule->group) / 1000.0))/(get_group_range (pp->p_config, prule->group) / 1000.0)*(h-20));/*C闸门上端点*/
+
+					cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[2].height) / 100.0)*(w-50)+17, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)-(get_group_start (pp->p_config, prule->group) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[2].width) / 1000.0))/(get_group_range (pp->p_config, prule->group) / 1000.0)*(h-20));
+					cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[2].height) / 100.0)*(w-50)+23, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)-(get_group_start (pp->p_config, prule->group) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[2].width) / 1000.0))/(get_group_range (pp->p_config, prule->group) / 1000.0)*(h-20));/*C闸门下端点*/
 					cairo_stroke(cr);
 				}
 				else	/*A Scan 需要旋转的情况除外*/
@@ -1743,8 +1762,9 @@ if(!(prule->mask & 0x04))
 						{
 						cairo_move_to(cr, j, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_start (pp->p_config, prule->group) / 1000.0))/(get_group_range (pp->p_config, prule->group) / 1000.0)*(h-20));
 						cairo_line_to(cr, j+2.5, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_start (pp->p_config, prule->group) / 1000.0))/(get_group_range (pp->p_config, prule->group) / 1000.0)*(h-20));
-						cairo_move_to(cr, j, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_start (pp->p_config, prule->group) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[0].width) / 1000.0))/(get_group_range (pp->p_config, prule->group) / 1000.0)*(w-50));
-						cairo_line_to(cr, j+2.5,((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_start (pp->p_config, prule->group) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[0].width) / 1000.0))/(get_group_range (pp->p_config, prule->group) / 1000.0)*(w-50));
+						cairo_move_to(cr, j, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_start (pp->p_config, prule->group) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[0].width) / 1000.0))/(get_group_range (pp->p_config, prule->group) / 1000.0)*(h-20));
+						cairo_line_to(cr, j+2.5,((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_start (pp->p_config, prule->group) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[0].width) / 1000.0))/(get_group_range (pp->p_config, prule->group) / 1000.0)*(h-20));
+
 						}
 						cairo_stroke(cr);
 
@@ -1753,18 +1773,21 @@ if(!(prule->mask & 0x04))
 						{
 						cairo_move_to(cr, j, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_start (pp->p_config, prule->group) / 1000.0))/(get_group_range (pp->p_config, prule->group) / 1000.0)*(h-20));
 						cairo_line_to(cr, j+2.5, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_start (pp->p_config, prule->group) / 1000.0))/(get_group_range (pp->p_config, prule->group) / 1000.0)*(h-20));
-						cairo_move_to(cr, j, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_start (pp->p_config, prule->group) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(get_group_range (pp->p_config, prule->group) / 1000.0)*(w-50));
-						cairo_line_to(cr, j+2.5,((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_start (pp->p_config, prule->group) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(get_group_range (pp->p_config, prule->group) / 1000.0)*(w-50));
+						cairo_move_to(cr, j, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_start (pp->p_config, prule->group) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(get_group_range (pp->p_config, prule->group) / 1000.0)*(h-20));
+						cairo_line_to(cr, j+2.5,((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_start (pp->p_config, prule->group) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(get_group_range (pp->p_config, prule->group) / 1000.0)*(h-20));
 						}
 						cairo_stroke(cr);
 
 						cairo_set_source_rgba(cr,1.0,1.0,0.0,1.0);	/* C闸门为黄色   虚线 横向*/
 						for(j=20; j<w-30; j+=5)
 						{
-						cairo_move_to(cr, j, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)-(get_group_start (pp->p_config, prule->group) / 1000.0))/(get_group_range (pp->p_config, prule->group) / 1000.0)*(h-20));
+						cairo_move_to(cr, j, 
+								((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0) - 
+								 (get_group_start (pp->p_config, prule->group) / 1000.0)) / 
+								(get_group_range (pp->p_config, prule->group) / 1000.0)*(h-20));
 						cairo_line_to(cr, j+2.5, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)-(get_group_start (pp->p_config, prule->group) / 1000.0))/(get_group_range (pp->p_config, prule->group) / 1000.0)*(h-20));
-						cairo_move_to(cr, j, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)-(get_group_start (pp->p_config, prule->group) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[2].width) / 1000.0))/(get_group_range (pp->p_config, prule->group) / 1000.0)*(w-50));
-						cairo_line_to(cr, j+2.5,((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)-(get_group_start (pp->p_config, prule->group) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[2].width) / 1000.0))/(get_group_range (pp->p_config, prule->group) / 1000.0)*(w-50));
+						cairo_move_to(cr, j, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)-(get_group_start (pp->p_config, prule->group) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[2].width) / 1000.0))/(get_group_range (pp->p_config, prule->group) / 1000.0)*(h-20));
+						cairo_line_to(cr, j+2.5,((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)-(get_group_start (pp->p_config, prule->group) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[2].width) / 1000.0))/(get_group_range (pp->p_config, prule->group) / 1000.0)*(h-20));
 						}
 						cairo_stroke(cr);
 
@@ -7460,6 +7483,7 @@ void draw3_data2(DRAW_UI_P p)
 							str = g_strdup_printf ("%0.2f", GROUP_VAL(frequency) / 1000.0);
 							draw3_pop_tt (data_112, NULL, str,
 									menu_content + FREQUENCY, 13, 2, GROUP_VAL(freq_pos), 0);
+
 							g_free (str);
 						}
 					}
@@ -11198,6 +11222,7 @@ void draw3_data3(DRAW_UI_P p)
 
 				case 1:/*Display -> Overlay -> gate  p413 */
 					draw3_popdown(menu_content[OFF_ON + get_overlay_gate (pp->p_config)],3,0);
+					gtk_widget_queue_draw(pp->vboxtable);
 					break;
 
 				case 2:/* Load color 调色板 P423 */
@@ -16313,6 +16338,7 @@ void init_ui(DRAW_UI_P p)
 		p->data3[i]      = gtk_label_new("");
 		pp->adj = (GtkAdjustment *) gtk_adjustment_new (10.0, 0.0, 74.0, 0.1, 10.0, 0.0);
 		pp->sbutton[i] = gtk_spin_button_new (pp->adj, 0, 1);
+ 		gtk_spin_button_set_numeric(pp->sbutton[i], 1);
 
 		gtk_widget_set_size_request(GTK_WIDGET(p->eventbox30[i]), 114, 60);
 		gtk_widget_set_size_request(GTK_WIDGET(p->eventbox31[i]), 114, 25);       
