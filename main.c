@@ -21,13 +21,15 @@
 DRAW_UI_P	pp;
 void init_group_spi (guint group);
 void send_focal_spi (guint group);
+extern float tttmp;
+extern void generate_focallaw(int grp);
 
 /* 测试用的初始值 */
 static void set_config (guint groupid)
 {
 	gint i;
 	set_group_qty (pp->p_config, 1);
-	set_current_group (pp->p_config, groupid);
+	set_current_group (pp->p_config, groupid, 0);
 	GROUP_VAL(group_mode) = PA_SCAN;
 	set_probe_select (pp->p_config, CHOOSE_PROBE);
 	set_probe_fft (pp->p_config, NORMAL_OFF);
@@ -43,16 +45,16 @@ static void set_config (guint groupid)
 
 	set_auto_focal (pp->p_config, NORMAL_ON);
 
-	set_voltage (pp->p_config, get_current_group(pp->p_config), VOLTAGE_LOW);
+	set_voltage (pp->p_config, groupid, VOLTAGE_LOW);
 	/* UT settings */
-	GROUP_VAL(velocity)	= 592000;	/* 5920m/s */ 
-	GROUP_VAL(gain)         = 10;
-	GROUP_VAL(gainr)        = 0;
-	set_group_db_ref (pp->p_config, get_current_group(pp->p_config), NORMAL_OFF);
-	set_group_wedge_delay (pp->p_config, get_current_group(pp->p_config), 0);
-	set_group_range (pp->p_config, get_current_group(pp->p_config), 10000);
+	set_group_velocity (pp->p_config, groupid, 592000);	/* 5920m/s */ 
+	set_group_gain (pp->p_config, groupid, 10);
+	set_group_gainr (pp->p_config, groupid, 0);
+	set_group_db_ref (pp->p_config, groupid, NORMAL_OFF);
+	set_group_wedge_delay (pp->p_config, groupid, 0);
+	set_group_range (pp->p_config, groupid, 10000);
+	set_group_start (pp->p_config, groupid, 0);
 
-	GROUP_VAL(start)        = 0.0;
 	GROUP_VAL(pulser)       = 1;			/* 1表示第一个探头接口 1-128 */
 	GROUP_VAL(receiver)     = 1;			/* 1表示第一个探头接口 1-128 */
 	GROUP_VAL(tx_rxmode)	= PULSE_ECHO;	/* 收发模式 */
@@ -337,6 +339,8 @@ int main (int argc, char *argv[])
 		}
 	}
 
+	tttmp = get_group_gain (pp->p_config, get_current_group(pp->p_config)) / 100.0;
+
 	/* 读取颜色 amp toft depth */
 	read_palette_file ("source/system/Sample/Palette/ONDT_Amplitude.pal",
 			TMP(t_special_col), TMP(t_color));  /*   */
@@ -399,9 +403,9 @@ int main (int argc, char *argv[])
 	/* 初始化要冲送给fpga的值 */
 	for (i = get_group_qty(pp->p_config) ; i != 0; i--)
 	{
+		generate_focallaw (i - 1);
 		init_group_spi (i - 1);
 		write_group_data (&TMP(group_spi[i - 1]), i - 1);
-		cal_focal_law(i - 1);
 		send_focal_spi (i - 1);
 		g_print ("group %d config init complete\n", i);
 	}
@@ -534,14 +538,14 @@ void init_group_spi (guint group)
 	TMP(group_spi[group]).compress_rato	= 
 		((get_group_range (pp->p_config, group) / 10.0) / GROUP_VAL_POS(group, point_qty)) > 1 ? 
 		((get_group_range (pp->p_config, group) / 10.0) / GROUP_VAL_POS(group, point_qty)) : 1;
-	TMP(group_spi[group]).gain			= GROUP_VAL_POS(group, gain) / 10;
+	TMP(group_spi[group]).gain			= get_group_gain (pp->p_config, group) / 10.0;
 
 	TMP(group_spi[group]).tcg_point_qty	= 0;		/* 未完成 */
 	TMP(group_spi[group]).tcg_en		= 0;		/* 未完成 */
 	TMP(group_spi[group]).UT2			= (GROUP_VAL_POS (group, group_mode) == 2) ? 1 : 0;		
 	TMP(group_spi[group]).UT1			= (GROUP_VAL_POS (group, group_mode) == 0) ? 1 : 0;		
 	TMP(group_spi[group]).PA			= (GROUP_VAL_POS (group, group_mode) == 1) ? 1 : 0;		
-	TMP(group_spi[group]).sample_start	= (GROUP_VAL_POS (group, start) + 
+	TMP(group_spi[group]).sample_start	= (get_group_start (pp->p_config, group) + 
 			get_group_wedge_delay (pp->p_config, group)) / 10;
 
 
@@ -631,5 +635,4 @@ void init_group_spi (guint group)
 	TMP(group_spi[group]).voltage = get_voltage (pp->p_config, group);	
 
 }
-
 

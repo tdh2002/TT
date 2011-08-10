@@ -35,7 +35,7 @@ guint get_filter ();
 guint get_max_point_qty();
 
 /*add by hefan */
-void generate_focallaw();
+void generate_focallaw(int grp);
 guint cba_encoder();
 gchar cba_ultrasound_velocity();
 void cba_ultrasound_wedgedelay();
@@ -386,8 +386,8 @@ static void setup_para(PARAMETER_P p, guint group)
 	p->beam_angle->beam_angle_sel = 0;//只有Refracted angle一种情况 何凡修改
 
 	/* 样本 */
-    p->specimen->speci_longitudinal_wave	= GROUP_VAL_POS (group, velocity) / 100.0;	/*样本纵波声速 */  
-    p->specimen->speci_transverse_wave		= GROUP_VAL_POS (group, velocity) / 100.0;	/*样本横波声速 */
+    p->specimen->speci_longitudinal_wave	= get_group_velocity (pp->p_config ,group) / 100;
+    p->specimen->speci_transverse_wave		= get_group_velocity (pp->p_config ,group) / 100;
     //
 //    p->specimen->speci_length_flat = 0;
 //    p->specimen->speci_height_flat = 0;
@@ -458,7 +458,7 @@ static void save_cal_law(gint offset, gint group, PARAMETER_P p)
 			get_group_wedge_delay (pp->p_config, group)
 			+	GROUP_VAL_POS (group, wedge.Probe_delay) + p->G_delay[i];
 		TMP(focal_law_all_beam[offset + i]).F_depth			= LAW_VAL_POS (group, Focus_depth);
-		TMP(focal_law_all_beam[offset + i]).M_velocity		= GROUP_VAL_POS (group, velocity) / 100;
+		TMP(focal_law_all_beam[offset + i]).M_velocity		= get_group_velocity (pp->p_config ,group) / 100;
 		
 		TMP(field_distance[i]) = (gfloat)(p->field_distance[i]);//每束 中心正元到出射点的距离 单位mm
 		pp->G_delay[i] = (gint)p->G_delay[i];////保存每一个beam的延时
@@ -466,7 +466,7 @@ static void save_cal_law(gint offset, gint group, PARAMETER_P p)
 		for(k=ElementStart,j = 0; k< ElementStop; k++,j++)//,j < TMP(focal_law_all_beam[offset + i]).N_ActiveElements
 		{ 
 			TMP(focal_law_all_elem[offset + i][j]).E_number = j + 1;
-			TMP(focal_law_all_elem[offset + i][j]).FL_gain	= GROUP_VAL_POS (group, gain) / 100;
+			TMP(focal_law_all_elem[offset + i][j]).FL_gain	= get_group_gain (pp->p_config, group) / 100;
 			TMP(focal_law_all_elem[offset + i][j]).T_delay	= p->timedelay[i][k];
 			TMP(focal_law_all_elem[offset + i][j]).R_delay	= p->timedelay[i][k];
 			TMP(focal_law_all_elem[offset + i][j]).Amplitude = get_voltage (pp->p_config, get_current_group(pp->p_config)); 
@@ -955,7 +955,7 @@ void b3_fun0(gpointer pt)
 
 	}
 	else
-	tttmp = gtk_spin_button_get_value (GTK_SPIN_BUTTON (pp->sbutton[0]));
+		tttmp = gtk_spin_button_get_value (GTK_SPIN_BUTTON (pp->sbutton[0]));
 	p->pos_pos = MENU3_PRESSED;
 	draw_menu2 (0);
 	draw_menu3 (0, p);                          /**/
@@ -990,7 +990,7 @@ void b3_fun1(gpointer p)
 						{
 							pp->fstart_qty = 1;
 							//生成聚焦法则
-							generate_focallaw();
+							generate_focallaw(get_current_group (pp->p_config));
 						}					
 						break;
 					case 2://Calibration
@@ -1070,7 +1070,7 @@ void b3_fun1(gpointer p)
 											(pp->cstart_qty) =1;
 											//在此调用声速校准函数->此处校准之后的声速用于Wedge Delay校准
 											//在此设定一个标志位，用于Wedge Delay校准
-											GROUP_VAL(velocity) = cba_ultrasound_velocity();
+											set_group_velocity (pp->p_config, get_current_group(pp->p_config), cba_ultrasound_velocity());
 										} 
 										break;
 									case 1://Wedge Delay
@@ -1160,14 +1160,15 @@ void b3_fun1(gpointer p)
 			switch (pp->pos1[1])
 			{
 				case 4: 
-					GROUP_VAL(gainr) = GROUP_VAL(gain);
+					set_group_gainr (pp->p_config, get_current_group(pp->p_config),
+							get_group_gain(pp->p_config, get_current_group(pp->p_config)));
 					pp->pos_pos = MENU3_STOP;
 					if (get_group_db_ref (pp->p_config, get_current_group (pp->p_config)))
 						markup = g_markup_printf_escaped (
 								"<span foreground='white' font_desc='16'>%0.1f(%0.1f)</span>",
-								((int)(GROUP_VAL(gain)) - (int)(GROUP_VAL(gainr))) / 100.0, GROUP_VAL(gainr) / 100.0);
+								((int)(get_group_gain (pp->p_config, get_current_group(pp->p_config))) - (int)(get_group_gainr (pp->p_config, get_current_group(pp->p_config)))) / 100.0, get_group_gainr (pp->p_config, get_current_group(pp->p_config)) / 100.0);
 					else
-						markup = g_markup_printf_escaped ("<span foreground='white' font_desc='24'>%0.1f</span>",	GROUP_VAL(gain) / 100.0 );
+						markup = g_markup_printf_escaped ("<span foreground='white' font_desc='24'>%0.1f</span>",	get_group_gain (pp->p_config, get_current_group(pp->p_config)) / 100.0 );
 					gtk_label_set_markup (GTK_LABEL(pp->label[GAIN_VALUE]),markup);
 
 					g_free(markup);
@@ -1405,13 +1406,13 @@ void b3_fun2(gpointer p)
 						tt_label_show_string (pp->label[GAIN_LABEL], con2_p[1][0][7], "\n", "(dB)", "white", 10);
 						markup = g_markup_printf_escaped (
 								"<span foreground='white' font_desc='16'>%0.1f(%0.1f)</span>",
-								(GROUP_VAL(gain) - GROUP_VAL(gainr)) / 100.0, GROUP_VAL(gainr) / 100.0);
+								(get_group_gain (pp->p_config, get_current_group(pp->p_config)) - get_group_gainr (pp->p_config, get_current_group(pp->p_config))) / 100.0, get_group_gainr (pp->p_config, get_current_group(pp->p_config)) / 100.0);
 					}
 					else
 					{
 						tt_label_show_string (pp->label[GAIN_LABEL], con2_p[1][0][0], "\n", "(dB)", "white", 10);
 						markup = g_markup_printf_escaped ("<span foreground='white' font_desc='24'>%0.1f</span>",
-								GROUP_VAL(gain) / 100.0 );
+								get_group_gain (pp->p_config, get_current_group(pp->p_config)) / 100.0 );
 					}
 					gtk_label_set_markup (GTK_LABEL(pp->label[GAIN_VALUE]),markup);
 					g_free(markup);
@@ -1698,7 +1699,7 @@ void b3_fun3(gpointer p)
 			{
 				case 4:
 					/* 计算聚焦法则 P643 */
-					generate_focallaw();
+							generate_focallaw(get_current_group (pp->p_config));
 					break;  
 				default:break;
 			}
@@ -3253,23 +3254,24 @@ void data_100 (GtkSpinButton *spinbutton, gpointer data) /* 增益Gain P100 */
 	gint gain = ((gint)(gtk_spin_button_get_value(spinbutton) * 100) + 5) / 10 * 10;
 
 	if (get_group_db_ref (pp->p_config, get_current_group (pp->p_config)))
-		GROUP_VAL(gain) = (gushort) (gain + GROUP_VAL(gainr));
+		set_group_gain (pp->p_config, grp,
+				(gshort) (gain + get_group_gainr(pp->p_config, grp)));
 	else
-		GROUP_VAL(gain) = (gushort) (gain);
+		set_group_gain (pp->p_config, grp, (gshort) (gain));
 
 	if (get_group_db_ref (pp->p_config, get_current_group (pp->p_config)))
 		markup = g_markup_printf_escaped (
 				"<span foreground='white' font_desc='16'>%0.1f(%0.1f)</span>",
-				(GROUP_VAL(gain) - GROUP_VAL(gainr)) / 100.0, GROUP_VAL(gainr) / 100.0);
+				(get_group_gain (pp->p_config, get_current_group(pp->p_config)) - get_group_gainr (pp->p_config, get_current_group(pp->p_config))) / 100.0, get_group_gainr (pp->p_config, get_current_group(pp->p_config)) / 100.0);
 	else
 		markup = g_markup_printf_escaped ("<span foreground='white' font_desc='24'>%0.1f</span>",
-				GROUP_VAL(gain) / 100.0 );
+				get_group_gain (pp->p_config, get_current_group(pp->p_config)) / 100.0 );
 	gtk_label_set_markup (GTK_LABEL(pp->label[GAIN_VALUE]),markup);
 
 	g_free(markup);
-	TMP(group_spi[grp]).gain = GROUP_VAL (gain) / 10;
+	TMP(group_spi[grp]).gain = get_group_gain (pp->p_config, get_current_group(pp->p_config)) / 10;
 	write_group_data (&TMP(group_spi[grp]), grp);
-//	g_print("------>click gain<-----------gain:%.1f beam_qty:%d \n",GROUP_VAL(gain)/100,(int)(LAW_VAL(Elem_qty)));
+//	g_print("------>click gain<-----------gain:%.1f beam_qty:%d \n",get_group_gain (pp->p_config, get_current_group(pp->p_config))/100,(int)(LAW_VAL(Elem_qty)));
 	/* 发送给硬件 */
 }
 
@@ -3281,20 +3283,23 @@ void data_101 (GtkSpinButton *spinbutton, gpointer data) /*Start 扫描延时 P1
 	if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 	{
 		if (UNIT_MM == get_unit(pp->p_config))
-			GROUP_VAL(start) = (gint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / (GROUP_VAL(velocity) / 100000.0));
+			set_group_start (pp->p_config, grp,
+					(gint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / (get_group_velocity (pp->p_config, get_current_group(pp->p_config)) / 100000.0)));
 		else  /* 英寸 */
-			GROUP_VAL(start) = (gint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / ( 0.03937 * GROUP_VAL(velocity) / 100000.0));
+			set_group_start (pp->p_config, grp,
+					(gint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / ( 0.03937 * get_group_velocity (pp->p_config, get_current_group(pp->p_config)) / 100000.0)));
 	}
 	else /* 显示方式为时间 */
-		GROUP_VAL(start) = (gint) (gtk_spin_button_get_value (spinbutton) * 1000.0) ; 
+		set_group_start (pp->p_config, grp, (gint) (gtk_spin_button_get_value (spinbutton) * 1000.0)); 
 
-//	g_print ("\n%d\n", GROUP_VAL(start));
-	GROUP_VAL(start) =  ((GROUP_VAL(start) + 5) / 10) * 10;
+	
+	set_group_start (pp->p_config, grp,
+			((get_group_start (pp->p_config, grp) + 5) / 10 ) * 10);
  	draw_area_all ();
-	TMP(group_spi[grp]).sample_start	= (GROUP_VAL_POS (grp, start) + 
+	TMP(group_spi[grp]).sample_start	= (get_group_start (pp->p_config, grp) +
 			get_group_wedge_delay (pp->p_config, grp)) / 10;
 	TMP(group_spi[grp]).sample_range	= TMP(group_spi[grp]).sample_start + 
-		GROUP_VAL_POS(grp, range) / 10;		
+		get_group_range (pp->p_config, grp) / 10;		
 	tt[0] = (GROUP_VAL_POS(grp, gate[0].start) +	GROUP_VAL_POS (grp, gate[0].width));
 	tt[1] = (GROUP_VAL_POS(grp, gate[1].start) +	GROUP_VAL_POS (grp, gate[1].width));
 	tt[2] = (GROUP_VAL_POS(grp, gate[2].start) +	GROUP_VAL_POS (grp, gate[2].width));
@@ -3315,30 +3320,28 @@ void data_102 (GtkSpinButton *spinbutton, gpointer data) /*Range 范围 P102 */
 	gint grp = get_current_group(pp->p_config);
 	gint tt[4];
 	gint temp_prf;
-//	gint range = ((gint)(gtk_spin_button_get_value(spinbutton) * 1000) + 5) / 10 * 10;
 
-//	((GROUP_VAL(point_qty) * 100) + 5) / 10 * 10;
-
-//	gtk_spin_button_set_value (spinbutton, rounding(0, range, TMP(range_step_min)) / 1000.0);
-	
 	if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 	{
 		if (UNIT_MM == get_unit(pp->p_config))
-			GROUP_VAL(range) = (guint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / (GROUP_VAL(velocity) / 100000.0));
+			set_group_range (pp->p_config, grp,
+					(guint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / (get_group_velocity (pp->p_config, get_current_group(pp->p_config)) / 100000.0)));
 		else  /* 英寸 */
-			GROUP_VAL(range) = (guint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / ( 0.03937 * GROUP_VAL(velocity) / 100000.0));
+			set_group_range (pp->p_config, grp,
+					(guint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / ( 0.03937 * get_group_velocity (pp->p_config, get_current_group(pp->p_config)) / 100000.0)));
 	}
 	else /* 显示方式为时间 */
-		GROUP_VAL(range) = gtk_spin_button_get_value (spinbutton) * 1000.0 ; 
+		set_group_range (pp->p_config, grp, gtk_spin_button_get_value (spinbutton) * 1000); 
 
-	GROUP_VAL(range) = rounding(0, GROUP_VAL(range), GROUP_VAL(point_qty) * 10);
+	set_group_range (pp->p_config, grp,
+		rounding(0, get_group_range(pp->p_config, grp), GROUP_VAL(point_qty) * 10));
 
 	draw_area_all ();
 	TMP(group_spi[grp]).compress_rato	= 
-		((GROUP_VAL_POS(grp, range) / 10.0) / GROUP_VAL_POS(grp, point_qty)) > 1 ? 
-		((GROUP_VAL_POS(grp, range) / 10.0) / GROUP_VAL_POS(grp, point_qty)) : 1;
+		((get_group_range (pp->p_config, grp) / 10.0) / GROUP_VAL_POS(grp, point_qty)) > 1 ? 
+		((get_group_range (pp->p_config, grp) / 10.0) / GROUP_VAL_POS(grp, point_qty)) : 1;
 	TMP(group_spi[grp]).sample_range	= TMP(group_spi[grp]).sample_start + 
-		GROUP_VAL_POS(grp, range) / 10;		
+		get_group_range (pp->p_config, grp) / 10;		
 	tt[0] = (GROUP_VAL_POS(grp, gate[0].start) + GROUP_VAL_POS (grp, gate[0].width));
 	tt[1] = (GROUP_VAL_POS(grp, gate[1].start) + GROUP_VAL_POS (grp, gate[1].width));
 	tt[2] = (GROUP_VAL_POS(grp, gate[2].start) + GROUP_VAL_POS (grp, gate[2].width));
@@ -3365,10 +3368,10 @@ void data_103 (GtkSpinButton *spinbutton, gpointer data) /*楔块延时  P103 */
 	set_group_wedge_delay (pp->p_config, get_current_group(pp->p_config),
 			(guint) (gtk_spin_button_get_value (spinbutton) * 1000.0));
 
-	TMP(group_spi[grp]).sample_start	= (GROUP_VAL_POS (grp, start) + 
+	TMP(group_spi[grp]).sample_start	= (get_group_start (pp->p_config, grp) +
 			get_group_wedge_delay (pp->p_config, grp)) / 10;
 	TMP(group_spi[grp]).sample_range	= TMP(group_spi[grp]).sample_start + 
-		GROUP_VAL_POS(grp, range) / 10;		
+		get_group_range (pp->p_config, grp) / 10;		
 	tt[0] = (GROUP_VAL_POS(grp, gate[0].start) +	GROUP_VAL_POS (grp, gate[0].width));
 	tt[1] = (GROUP_VAL_POS(grp, gate[1].start) +	GROUP_VAL_POS (grp, gate[1].width));
 	tt[2] = (GROUP_VAL_POS(grp, gate[2].start) +	GROUP_VAL_POS (grp, gate[2].width));
@@ -3386,10 +3389,13 @@ void data_103 (GtkSpinButton *spinbutton, gpointer data) /*楔块延时  P103 */
 
 void data_104 (GtkSpinButton *spinbutton, gpointer data) /*声速 P104 */
 {
+	gint grp = get_current_group(pp->p_config);
+
 	if (UNIT_MM == get_unit(pp->p_config))
-		GROUP_VAL(velocity) = (guint) (gtk_spin_button_get_value (spinbutton) * 100);
+		set_group_velocity (pp->p_config, grp, (gtk_spin_button_get_value (spinbutton) * 100));
 	else   /* 英寸/微秒 */
-		GROUP_VAL(velocity) = (guint) (gtk_spin_button_get_value (spinbutton) * 25400 * 100 );
+		set_group_velocity (pp->p_config, grp,
+				(guint) (gtk_spin_button_get_value (spinbutton) * 25400 * 100));
 
  	draw_area_all ();
 	/*发送给硬件*/
@@ -3677,16 +3683,16 @@ void data_1431 (GtkSpinButton *spinbutton, gpointer data) /* point qty P143 */
 	GROUP_VAL(point_qty) =  (guint)(gtk_spin_button_get_value (spinbutton));
 	get_prf();
 
-	if (GROUP_VAL(point_qty) * 10 > GROUP_VAL(range))
-		GROUP_VAL(range) = GROUP_VAL(point_qty) * 10;
+	if ((GROUP_VAL(point_qty) * 10) > (get_group_range (pp->p_config, grp) / 10))	
+		set_group_range (pp->p_config, grp, GROUP_VAL(point_qty) * 10);
 	else
-		GROUP_VAL(range) = rounding(0, GROUP_VAL(range), GROUP_VAL(point_qty) * 10);
+		set_group_range (pp->p_config, grp, rounding(0, get_group_range(pp->p_config, grp), GROUP_VAL(point_qty) * 10));
 
 	TMP(group_spi[grp]).compress_rato	= 
-		((GROUP_VAL_POS(grp, range) / 10.0) / GROUP_VAL_POS(grp, point_qty)) > 1 ? 
-		((GROUP_VAL_POS(grp, range) / 10.0) / GROUP_VAL_POS(grp, point_qty)) : 1;
+		((get_group_range (pp->p_config, grp) / 10.0) / GROUP_VAL_POS(grp, point_qty)) > 1 ? 
+		((get_group_range (pp->p_config, grp) / 10.0) / GROUP_VAL_POS(grp, point_qty)) : 1;
 	TMP(group_spi[grp]).sample_range	= TMP(group_spi[grp]).sample_start + 
-		GROUP_VAL_POS(grp, range) / 10;		
+		get_group_range (pp->p_config, grp) / 10;		
 	tt[0] = (GROUP_VAL_POS(grp, gate[0].start) + GROUP_VAL_POS (grp, gate[0].width));
 	tt[1] = (GROUP_VAL_POS(grp, gate[1].start) + GROUP_VAL_POS (grp, gate[1].width));
 	tt[2] = (GROUP_VAL_POS(grp, gate[2].start) + GROUP_VAL_POS (grp, gate[2].width));
@@ -3710,10 +3716,10 @@ void data_143 (GtkMenuItem *menuitem, gpointer data) /* point qty P143 */
 	GROUP_VAL(point_qty_pos) = temp;
 	GROUP_VAL(point_qty) = get_point_qty();
 	get_prf();
-	if (GROUP_VAL(point_qty) * 10 > GROUP_VAL(range))
-		GROUP_VAL(range) = GROUP_VAL(point_qty) * 10;
+	if ((GROUP_VAL(point_qty) * 10) > (get_group_range (pp->p_config, grp) / 10))	
+		set_group_range (pp->p_config, grp, GROUP_VAL(point_qty) * 10);
 	else
-		GROUP_VAL(range) = rounding(0, GROUP_VAL(range), GROUP_VAL(point_qty) * 10);
+		set_group_range (pp->p_config, grp, rounding(0, get_group_range(pp->p_config, grp), GROUP_VAL(point_qty) * 10));
 	if (temp != 4)
 	{
 		MENU_STATUS = MENU3_STOP;
@@ -3728,10 +3734,10 @@ void data_143 (GtkMenuItem *menuitem, gpointer data) /* point qty P143 */
 	}
 
 	TMP(group_spi[grp]).compress_rato	= 
-		((GROUP_VAL_POS(grp, range) / 10.0) / GROUP_VAL_POS(grp, point_qty)) > 1 ? 
-		((GROUP_VAL_POS(grp, range) / 10.0) / GROUP_VAL_POS(grp, point_qty)) : 1;
+		((get_group_range (pp->p_config, grp) / 10.0) / GROUP_VAL_POS(grp, point_qty)) > 1 ? 
+		((get_group_range (pp->p_config, grp) / 10.0) / GROUP_VAL_POS(grp, point_qty)) : 1;
 	TMP(group_spi[grp]).sample_range	= TMP(group_spi[grp]).sample_start + 
-		GROUP_VAL_POS(grp, range) / 10;		
+		get_group_range (pp->p_config, grp) / 10;		
 	tt[0] = (GROUP_VAL_POS(grp, gate[0].start) + GROUP_VAL_POS (grp, gate[0].width));
 	tt[1] = (GROUP_VAL_POS(grp, gate[1].start) + GROUP_VAL_POS (grp, gate[1].width));
 	tt[2] = (GROUP_VAL_POS(grp, gate[2].start) + GROUP_VAL_POS (grp, gate[2].width));
@@ -3820,9 +3826,9 @@ void data_202 (GtkSpinButton *spinbutton, gpointer data)	/* 闸门开始位置 P
 	if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 	{
 		if (UNIT_MM == get_unit(pp->p_config))
-			GROUP_GATE_POS(start) = (gint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / (GROUP_VAL(velocity) / 100000.0));
+			GROUP_GATE_POS(start) = (gint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / (get_group_velocity (pp->p_config, get_current_group(pp->p_config)) / 100000.0));
 		else  /* 英寸 */
-			GROUP_GATE_POS(start) = (gint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / ( 0.03937 * GROUP_VAL(velocity) / 100000.0));
+			GROUP_GATE_POS(start) = (gint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / ( 0.03937 * get_group_velocity (pp->p_config, get_current_group(pp->p_config)) / 100000.0));
 	}
 	else /* 显示方式为时间 */
 		GROUP_GATE_POS(start) = (gint) (gtk_spin_button_get_value (spinbutton) * 1000.0) ; 
@@ -3899,9 +3905,9 @@ void data_203 (GtkSpinButton *spinbutton, gpointer data) /* 闸门宽度 P203 */
 	if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 	{
 		if (UNIT_MM == get_unit(pp->p_config))
-			GROUP_GATE_POS(width) = (guint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / (GROUP_VAL(velocity) / 100000.0));
+			GROUP_GATE_POS(width) = (guint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / (get_group_velocity (pp->p_config, get_current_group(pp->p_config)) / 100000.0));
 		else  /* 英寸 */
-			GROUP_GATE_POS(width) = (guint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / ( 0.03937 * GROUP_VAL(velocity) / 100000.0));
+			GROUP_GATE_POS(width) = (guint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / ( 0.03937 * get_group_velocity (pp->p_config, get_current_group(pp->p_config)) / 100000.0));
 	}
 	else /* 显示方式为时间 */
 		GROUP_GATE_POS(width) = (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0) ; 
@@ -4321,7 +4327,7 @@ void data_313 (GtkSpinButton *spinbutton, gpointer data) /* */
 			GROUP_VAL(u_reference) =  (guint) (gtk_spin_button_get_value (spinbutton)*1000.0/0.03937);
 	}
 	else
-		GROUP_VAL(u_reference) =  (guint) (gtk_spin_button_get_value (spinbutton)/(GROUP_VAL(velocity))*200.0);
+		GROUP_VAL(u_reference) =  (guint) (gtk_spin_button_get_value (spinbutton)/(get_group_velocity (pp->p_config, get_current_group(pp->p_config)))*200.0);
 
 #endif
 
@@ -4329,9 +4335,9 @@ void data_313 (GtkSpinButton *spinbutton, gpointer data) /* */
 	if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 	{
 		if (UNIT_MM == get_unit(pp->p_config))
-			GROUP_VAL(u_reference) = (guint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / (GROUP_VAL(velocity) / 100000.0));
+			GROUP_VAL(u_reference) = (guint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / (get_group_velocity (pp->p_config, get_current_group(pp->p_config)) / 100000.0));
 		else  /* 英寸 */
-			GROUP_VAL(u_reference) = (guint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / ( 0.03937 * GROUP_VAL(velocity) / 100000.0));
+			GROUP_VAL(u_reference) = (guint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / ( 0.03937 * get_group_velocity (pp->p_config, get_current_group(pp->p_config)) / 100000.0));
 	}
 	else /* 显示方式为时间 */
 		GROUP_VAL(u_reference) = gtk_spin_button_get_value (spinbutton) * 1000.0 ; 
@@ -4377,9 +4383,9 @@ void data_314 (GtkSpinButton *spinbutton, gpointer data) /* */
 	if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 	{
 		if (UNIT_MM == get_unit(pp->p_config))
-			GROUP_VAL(u_measure) = (guint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / (GROUP_VAL(velocity) / 100000.0));
+			GROUP_VAL(u_measure) = (guint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / (get_group_velocity (pp->p_config, get_current_group(pp->p_config)) / 100000.0));
 		else  /* 英寸 */
-			GROUP_VAL(u_measure) = (guint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / ( 0.03937 * GROUP_VAL(velocity) / 100000.0));
+			GROUP_VAL(u_measure) = (guint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / ( 0.03937 * get_group_velocity (pp->p_config, get_current_group(pp->p_config)) / 100000.0));
 	}
 	else /* 显示方式为时间 */
 		GROUP_VAL(u_measure) = gtk_spin_button_get_value (spinbutton) * 1000.0 ; 
@@ -4490,7 +4496,7 @@ void data_400 (GtkMenuItem *menuitem, gpointer data) /* Display->Selection->disp
 			break;
 		default:break;
 	}
-	generate_focallaw();
+							generate_focallaw(get_current_group (pp->p_config));
 	draw_menu3 (0, NULL);
 	draw_area_all ();
 }
@@ -4726,7 +4732,7 @@ void data_500 (GtkMenuItem *menuitem, gpointer data) /* 增加删除选择group 
 		case 0:
 			set_group_qty (pp->p_config, get_group_qty(pp->p_config) + 1);
 			grpcpy (pp->p_config, get_group_qty(pp->p_config) - 1, 0);
-			set_current_group(pp->p_config, get_group_qty(pp->p_config) - 1);
+			set_current_group (pp->p_config, get_group_qty(pp->p_config) - 1, 1);
 			break;						/* 增加*/
 		case 1:
 		case 2:
@@ -4737,11 +4743,11 @@ void data_500 (GtkMenuItem *menuitem, gpointer data) /* 增加删除选择group 
 		case 7:
 		case 8:
 			/* 把参数切换到当前选择的group 未完成 */
-			set_current_group(pp->p_config, temp - 1);
+			set_current_group(pp->p_config, temp - 1, 1);
 			break;
 		case 9:
-			set_group_qty(pp->p_config, get_group_qty(pp->p_config) - 1);
-			set_current_group(pp->p_config, get_group_qty(pp->p_config) - 1);
+			set_group_qty (pp->p_config, get_group_qty(pp->p_config) - 1);
+			set_current_group (pp->p_config, get_group_qty(pp->p_config) - 1, 1);
 			break;
 		default:break;
 	}
@@ -4812,7 +4818,8 @@ void data_512 (GtkMenuItem *menuitem, gpointer data) /* Skew (deg) */
 
 void data_521 (GtkSpinButton *spinbutton, gpointer data) /*gain */
 {
-	GROUP_VAL(gain) =  (guint) (gtk_spin_button_get_value (spinbutton) * 10.0);
+	set_group_gain (pp->p_config, get_current_group(pp->p_config), 
+		(gshort) (gtk_spin_button_get_value (spinbutton) * 10.0));
 }
 
 void data_522 (GtkSpinButton *spinbutton, gpointer data) /*agate_start */
@@ -5021,7 +5028,7 @@ void data_630 (GtkSpinButton *spinbutton, gpointer data)
 		if( LAW_VAL (Last_tx_elem) < ((guchar) (LAW_VAL (First_tx_elem) + LAW_VAL (Elem_qty)) - 1) )
 				LAW_VAL (Last_tx_elem) = (guchar) (LAW_VAL (First_tx_elem) + LAW_VAL (Elem_qty)) - 1;
 	}
-//	g_print("------>elem_qty<-----------gain:%d beam_qty:%d \n",GROUP_VAL(gain)/100,(int)(LAW_VAL(Elem_qty)));
+//	g_print("------>elem_qty<-----------gain:%d beam_qty:%d \n",get_group_gain (pp->p_config, get_current_group(pp->p_config))/100,(int)(LAW_VAL(Elem_qty)));
 }
 
 /* first_element 第一个接收阵元 */
@@ -5054,10 +5061,11 @@ void data_633 (GtkSpinButton *spinbutton, gpointer data) /*element_step*/
 void data_634 (GtkMenuItem *menuitem, gpointer data) 
 {
 	guint temp = (guchar) (GPOINTER_TO_UINT (data));
+	gint grp = get_current_group (pp->p_config);
 	if (temp == 0)
-		GROUP_VAL (velocity) = get_material_lw (pp->p_config);
+		set_group_velocity (pp->p_config, grp, get_material_lw (pp->p_config));
 	else if (temp == 1) 
-		GROUP_VAL (velocity) = get_material_sw (pp->p_config);
+		set_group_velocity (pp->p_config, grp, get_material_sw (pp->p_config));
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
 }
@@ -5517,11 +5525,10 @@ void send_spi_data (gint group)
 //*********生存聚焦法则************
 //  2011.6.25 何凡添加
 //*********生存聚焦法则************
-void generate_focallaw()
+void generate_focallaw(int grp)
 {
 	gint	i, j;
 	guint	temp_beam;
-	gint	grp = get_current_group (pp->p_config);
 	gint temp_prf;
 	
 	temp_beam = 1;
@@ -5622,13 +5629,13 @@ void cba_ultrasound_wedgedelay()
 		switch(pp->echotype_pos)
 		{
 			case 0://radius
-				TMP_CBA(wd_delay[i]) = (TMP_CBA(wd_radius[i])- pp->radiusa)/ GROUP_VAL(velocity);
+				TMP_CBA(wd_delay[i]) = (TMP_CBA(wd_radius[i])- pp->radiusa)/ get_group_velocity (pp->p_config, get_current_group(pp->p_config));
 				break;
 			case 1://depth
-				TMP_CBA(wd_delay[i]) = (TMP_CBA(wd_depth[i])- pp->deptha)/ GROUP_VAL(velocity);
+				TMP_CBA(wd_delay[i]) = (TMP_CBA(wd_depth[i])- pp->deptha)/ get_group_velocity (pp->p_config, get_current_group(pp->p_config));
 				break;
 			case 2://thickness
-				TMP_CBA(wd_delay[i]) = (TMP_CBA(wd_thickness[i])- pp->thickness1)/ GROUP_VAL(velocity);
+				TMP_CBA(wd_delay[i]) = (TMP_CBA(wd_thickness[i])- pp->thickness1)/ get_group_velocity (pp->p_config, get_current_group(pp->p_config));
 				break;
 		}
 		

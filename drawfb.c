@@ -1014,8 +1014,9 @@ void draw_scan(guchar scan_num, guchar scan_type, guchar group,
                                 TMP(group_spi[group]).sample_start ;		
 	                        TMP(group_spi[group]).sample_range ;	
 				CalcFanScan_new (LAW_VAL(Angle_min)/100.0, LAW_VAL(Angle_max)/100.0, LAW_VAL(Angle_step)/100.0, 
-						TMP(group_spi[group]).sample_start*GROUP_VAL_POS(group, velocity)/100000, TMP(group_spi[group]).sample_range*GROUP_VAL_POS(group, velocity)/100000, 
-                                                TMP(Junction), TMP(a_scan_dot_qty),TMP(s_scan_width),TMP(s_scan_height));
+						TMP(group_spi[group]).sample_start* get_group_velocity (pp->p_config, group)/100000, 
+						TMP(group_spi[group]).sample_range* get_group_velocity (pp->p_config, group)/100000, 
+						TMP(Junction), TMP(a_scan_dot_qty),TMP(s_scan_width),TMP(s_scan_height));
 
 				pp->sscan_mark = 0;
 				/* 清空这块显示区 背景暂定黑色 可以全部一起清空 */

@@ -263,7 +263,7 @@ typedef struct _Measure_data
 	unsigned int	b_volu_position_s;//VsB
 	unsigned int	a_leg;//LA
 	unsigned int	b_leg;//LB
-    
+
 	//其他待添加
 } MEASURE_DATA, *MEASURE_DATA_P;
 
@@ -274,27 +274,27 @@ typedef struct _Group GROUP;
 struct _Group 
 {
 	/* 基本设置 */
-	unsigned int	wedge_delay1;	/* 楔款延时 单位 ns */
+	unsigned int	wedge_delay;	/* 楔款延时 单位 ns */
 	unsigned int	range;			/* 显示范围 单位 ns */
-	int	start;						/* 扫描延时 单位 ns */
-	unsigned short	gain;			/* 实际增益 单位 0.01dB */
-	unsigned short	gainr;			/* 参考增益 单位 0.01dB */
+	int				start;			/* 扫描延时 单位 ns XX*/ 
+	short			gain;			/* 实际增益 单位 0.01dB */
+	short			gainr;			/* 参考增益 单位 0.01dB */
 	unsigned int	velocity;		/* 实际声速 单位 0.01m/s  */
 	unsigned int	on_off_status;
 	/* 保存各种ON OFF 菜单的值
-	0位 dB_ref 开关
-	*/	
+	   0位 dB_ref 开关
+	   */	
 	/* 发射接收 */
 	unsigned char	pulser;			/* 1~ 128 - elem_qty(聚焦阵元数最大为32) + 1 
-							   指定发射阵元 与机器配置相关我们是128阵元最大,
-							   Probe 的Auto Program 选择On 以后不可以调节 值与connect P 一样 */
-	unsigned char  receiver;		/* 接收阵元 必须是 PR 模式才能调节 */
+									   指定发射阵元 与机器配置相关我们是128阵元最大,
+									   Probe 的Auto Program 选择On 以后不可以调节 值与connect P 一样 */
+	unsigned char	receiver;		/* 接收阵元 必须是 PR 模式才能调节 */
 	unsigned char	filter;			/* 滤波 */
 	unsigned char	rectifier;		/* 检波  */
 	unsigned char	averaging;		/* 平均 */
 	unsigned char	video_filter;	/* 视频滤波*/
 
-	unsigned char  tx_rxmode;		/* 收发模式 */
+	unsigned char	tx_rxmode;		/* 收发模式 */
 	unsigned char	freq_pos;		/* 频率选择模式是指定还是自己输入 */
 	unsigned char	pw_pos;			/* 脉冲宽度选择模式 */
 	unsigned char	prf_pos;		/* 脉冲宽度选择模式 */
@@ -305,43 +305,43 @@ struct _Group
 
 	unsigned char	point_qty_pos;	/* 点个数 位置 */
 	unsigned char	sum_gain_pos;	/**/
-	unsigned char  gate_pos;		/* A , B , I 当前修改的是哪个闸门 */
+	unsigned char	gate_pos;		/* A , B , I 当前修改的是哪个闸门 */
 	unsigned short	point_qty;		/* 点个数 */
 	unsigned short	sum_gain;
 	unsigned short	gain_offset;
 
-	GATE_INFO    gate[setup_MAX_GATE];	/* gate[0] A , gate[1] B , gate[2] I */
+	GATE_INFO		gate[setup_MAX_GATE];	/* gate[0] A , gate[1] B , gate[2] I */
 
 	unsigned char	mode_pos;		/*Gate/Alarm->Sizing Curves->Mode*/
 	unsigned char	curve_pos;		/*Gate/Alarm->Sizing Curves->Curve*/
-	unsigned short ref_ampl;
-	unsigned short ref_ampl_offset;
-	unsigned short curve_step;
-	unsigned short ref_gain;
-	unsigned int   position;
-	unsigned char  point_pos;
-	unsigned int   amplitude;
-	unsigned short mat_atten;
-	unsigned int   delay;
-	unsigned short tcg_gain;
+	unsigned short	ref_ampl;
+	unsigned short	ref_ampl_offset;
+	unsigned short	curve_step;
+	unsigned short	ref_gain;
+	unsigned int	position;
+	unsigned char	point_pos;
+	unsigned int	amplitude;
+	unsigned short	mat_atten;
+	unsigned int	delay;
+	unsigned short	tcg_gain;
 
 	unsigned char	ut_unit;		/*检测单位 时间2 声程1  实际深度0 .*/
 
 	unsigned char	group_mode;     /* 组工作模式  0 UT or 1 PA*/
-	LAW_INFO	law_info;	/* 聚焦法则的信息  */
-	PROBE	probe;
-	WEDGE	wedge;
+	LAW_INFO		law_info;	/* 聚焦法则的信息  */
+	PROBE			probe;
+	WEDGE			wedge;
 
 	unsigned char	selection;
 	unsigned short	per_reference;	/* 参考光标的高度 */
 	unsigned short	per_measure;	/* 测量光标的高度 */
 	unsigned int	u_reference;	/* 参考光标在超声轴的位置 */
 	unsigned int	u_measure;		/* 测量光标在超声轴的位置 */
-	int	s_reference;	/* 参考光标在扫描轴的位置 */	     
-	int	s_measure;		/* 测量光标在扫描轴的位置 */
+	int				s_reference;	/* 参考光标在扫描轴的位置 */	     
+	int				s_measure;		/* 测量光标在扫描轴的位置 */
 	unsigned char	data_link;
-	int	i_reference;	/* 参考光标在指数轴的位置 */
-	int	i_measure;		/* 测量光标在指数轴的位置 */
+	int				i_reference;	/* 参考光标在指数轴的位置 */
+	int				i_measure;		/* 测量光标在指数轴的位置 */
 	unsigned short	s_refmeas;
 	unsigned short	cursors_angle;
 	CURSORS_INFO	cursors_info[4];
@@ -366,15 +366,14 @@ struct _Group
 	/*	COL_SELECT_INFO	col_select[3];*/ /* Amplitude TOFD Depth 3个*/
 
 	/*波束 beam*/
-	int	scan_offset;		/**/
-	int	index_offset;		/**/
-	int	angle;				/**/
+	int				scan_offset;		/**/
+	int				index_offset;		/**/
+	int				angle;				/**/
 	unsigned short	skew;				/**/
-	unsigned char  skew_pos;
+	unsigned char	skew_pos;
 
-	int	agate_start;
+	int				agate_start;
 	unsigned int	agate_width;
-
 };
 
 struct _Config;
@@ -424,38 +423,38 @@ struct _Config
 	unsigned char	fft_color;			/* Display->Properties->fft_color */
 	unsigned int	on_off_status;		
 	/* 保存各种ON OFF 菜单的值
-	0位 Display->overlay->sizing curves 曲线的显示开关
-	1位 Display->overlay->gate 闸门的显示开关 
-	2位 Display->overlay->cursor  标尺显示开关 
-	3位 Display->overlay->overlay 什么的显示开关? 
-	4位 Display->Properties->Bscan.optimum B扫描最优开关 
-	5位 Display->Properties->Cscan.ratio1:1 C扫描开关 
-	6位 Display->Properties->Sscan.interpolation S扫描插值开关 
-	7位 Display->Properties->Stripchart.orientation Strip chart 方向 0垂直 1水平 
-	8位 探头自动检测开关 
-	9位	选择探头或者是自定义探头
-	10位 probe/part characterize FFT 开关
-	11位 聚集法则 auto_program 开关
-	12位 encoder 编码器当前选择 0表示编码器1 1表示编码器2
-	13位 空
-	14-15位 Scan->Start->start mode 00 reset all  01 reset encoder 10 reset data
-	16位 Scan->start->pause 0 关 1 开
-	17-18位 Scan->Data->Storage 00 01 10 11
-	19位 Scan->Data->Inspec Data 0 1
-	20-21 File->File->Storage 保存在什么地方  00 01 10 11
-	22-23 File->File->Save Mode 保存什么数据 00 01 10 11
-	24位 File->Report->Template
-	25位 File->Format->User field
-	26位 File->Format->Probe
-	27位 File->Format->Setup
-	28位 File->Format->Note
-	29-30位 File->Format->View 00 01 10 11
-	*/	
+	   0位 Display->overlay->sizing curves 曲线的显示开关
+	   1位 Display->overlay->gate 闸门的显示开关 
+	   2位 Display->overlay->cursor  标尺显示开关 
+	   3位 Display->overlay->overlay 什么的显示开关? 
+	   4位 Display->Properties->Bscan.optimum B扫描最优开关 
+	   5位 Display->Properties->Cscan.ratio1:1 C扫描开关 
+	   6位 Display->Properties->Sscan.interpolation S扫描插值开关 
+	   7位 Display->Properties->Stripchart.orientation Strip chart 方向 0垂直 1水平 
+	   8位 探头自动检测开关 
+	   9位	选择探头或者是自定义探头
+	   10位 probe/part characterize FFT 开关
+	   11位 聚集法则 auto_program 开关
+	   12位 encoder 编码器当前选择 0表示编码器1 1表示编码器2
+	   13位 空
+	   14-15位 Scan->Start->start mode 00 reset all  01 reset encoder 10 reset data
+	   16位 Scan->start->pause 0 关 1 开
+	   17-18位 Scan->Data->Storage 00 01 10 11
+	   19位 Scan->Data->Inspec Data 0 1
+	   20-21 File->File->Storage 保存在什么地方  00 01 10 11
+	   22-23 File->File->Save Mode 保存什么数据 00 01 10 11
+	   24位 File->Report->Template
+	   25位 File->Format->User field
+	   26位 File->Format->Probe
+	   27位 File->Format->Setup
+	   28位 File->Format->Note
+	   29-30位 File->Format->View 00 01 10 11
+	   */	
 	unsigned int	on_off_status1;		
 	/*
-	0位 Measurements->Table->display table 测量数据保存显示  ON or OFF 
-	1位 Measurements->Table->entry image   ON or OFF 
-	*/
+	   0位 Measurements->Table->display table 测量数据保存显示  ON or OFF 
+	   1位 Measurements->Table->entry image   ON or OFF 
+	   */
 	unsigned int	bcompress;			/* Display->Properties->compress */
 	st_Enc	encoder1[setup_MAX_QTY_ENCODER];
 	unsigned char	report_paper_size;	/* File->Report->paper size */
@@ -498,7 +497,7 @@ extern void		set_part_diameter (CONFIG *p, void* data);
 
 /* 配置信息的操作start */
 extern unsigned char	get_current_group (CONFIG *p);
-extern void		set_current_group (CONFIG *p, unsigned char data);
+extern void		set_current_group (CONFIG *p, unsigned char data, int cal);
 extern unsigned char	get_group_qty (CONFIG *p);
 extern void		set_group_qty (CONFIG *p, unsigned char data);
 extern unsigned char	get_voltage (CONFIG *p, unsigned int group_num);
@@ -735,24 +734,16 @@ extern unsigned int get_group_range (CONFIG *p, int group_id);
 extern void set_group_range (CONFIG *p, int group_id, unsigned int data);
 extern int get_group_start (CONFIG *p, int group_id);
 extern void set_group_start (CONFIG *p, int group_id, int data);
-extern unsigned short get_group_gain (CONFIG *p, int group_id);
-extern void set_group_gain (CONFIG *p, int group_id, unsigned short data);
-extern unsigned short get_group_gainr (CONFIG *p, int group_id);
-extern void set_group_gainr (CONFIG *p, int group_id, unsigned short data);
+extern short get_group_gain (CONFIG *p, int group_id);
+extern void set_group_gain (CONFIG *p, int group_id, short data);
+extern short get_group_gainr (CONFIG *p, int group_id);
+extern void set_group_gainr (CONFIG *p, int group_id, short data);
 extern unsigned int get_group_velocity (CONFIG *p, int group_id);
 extern void set_group_velocity (CONFIG *p, int group_id, unsigned int data);
 extern int get_group_db_ref (CONFIG *p, int group_id);
 extern void set_group_db_ref (CONFIG *p, int group_id, int data);
 
 #if 0
-	/* 基本设置 */
-	unsigned int	wedge_delay;	/* 楔款延时 单位 ns */
-	unsigned int	range;			/* 显示范围 单位 ns */
-	int	start;			/* 扫描延时 单位 ns */
-	unsigned short	gain;			/* 实际增益 单位 0.01dB */
-	unsigned short	gainr;			/* 参考增益 单位 0.01dB */
-	unsigned int	velocity;		/* 实际声速 单位 0.01m/s  */
-	unsigned char	db_ref;			/* 参考增益开关 0 off 1 on */
 #endif
 
 
@@ -762,6 +753,6 @@ extern void		grpcpy (CONFIG *p, unsigned int src, unsigned int dst);
 /***
 #define	VAL_GRP_ID	0x0001
 extern int	*get_cfg_val (CONFIG *p, int val_type, int grp);
-***/
+ ***/
 
 #endif

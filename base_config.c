@@ -4,9 +4,15 @@
  */
 
 #include "base_config.h"
+#include "base.h"
 #include <string.h>
 #include <stdio.h>
 #include <assert.h>
+
+extern void init_group_spi (unsigned int group);
+extern void send_focal_spi (unsigned int group);
+extern DRAW_UI_P pp;					
+extern void generate_focallaw(int grp);
 
 /* 材料 (Material) 28Byte OK */
 typedef struct _Material 
@@ -120,10 +126,17 @@ unsigned char get_current_group (CONFIG *p)	/* 当前p活动的group 0-7 */
 	return	p->groupId;
 }
 
-void set_current_group (CONFIG *p, unsigned char data)	/* 设置p当前活动的group */
+void set_current_group (CONFIG *p, unsigned char data, int cal)	/* 设置p当前活动的group */
 {
 	assert (data < 8);
 	p->groupId = data;
+	if (cal)
+	{
+		generate_focallaw (data);
+		init_group_spi (data);
+		write_group_data (&TMP(group_spi[data]), data);
+		send_focal_spi (data);
+	}
 }
 
 unsigned char get_group_qty (CONFIG *p)	/* 取得p当前group数量 */
@@ -1320,12 +1333,12 @@ void set_probe_type (CONFIG *p, unsigned char data)
 /* Group 参数的保存读取 */
 unsigned int get_group_wedge_delay (CONFIG *p, int group_id)
 {
-	return p->group[group_id].wedge_delay1;
+	return p->group[group_id].wedge_delay;
 }
 
 void set_group_wedge_delay (CONFIG *p, int group_id, unsigned int data)
 {
-	p->group[group_id].wedge_delay1 = data;
+	p->group[group_id].wedge_delay = data;
 }
 
 unsigned int get_group_range (CONFIG *p, int group_id)
@@ -1348,22 +1361,22 @@ void set_group_start (CONFIG *p, int group_id, int data)
 	p->group[group_id].start = data;
 }
 
-unsigned short get_group_gain (CONFIG *p, int group_id)
+short get_group_gain (CONFIG *p, int group_id)
 {
 	return p->group[group_id].gain; 
 }
 
-void set_group_gain (CONFIG *p, int group_id, unsigned short data)
+void set_group_gain (CONFIG *p, int group_id, short data)
 {
 	p->group[group_id].gain = data; 
 }
 
-unsigned short get_group_gainr (CONFIG *p, int group_id)
+short get_group_gainr (CONFIG *p, int group_id)
 {
 	return p->group[group_id].gainr; 
 }
 
-void set_group_gainr (CONFIG *p, int group_id, unsigned short data)
+void set_group_gainr (CONFIG *p, int group_id, short data)
 {
 	p->group[group_id].gainr = data; 
 }
