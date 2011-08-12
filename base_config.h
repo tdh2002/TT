@@ -106,7 +106,7 @@ typedef struct _Probe
 	char	Model[20];		/* 探头名字 */
 	char	Serial[20];		/* 探头名字 */
 	unsigned char	Elem_qty;		/* 阵元数 */
-	unsigned char	Freq2;			/* UT 时候 频率是 freq2 << 8 + elem_qty */
+	unsigned char	Freq2;			/* UT 时候 频率是 (freq2 << 8) + elem_qty */
 	unsigned int	Pitch;			/* 阵元中心间距 0.001mm 为单位 范围是0.01~65.00mm UT 是Elemet_size */
 	unsigned int	A3;
 	unsigned short A4;

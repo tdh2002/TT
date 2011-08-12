@@ -31,9 +31,6 @@ enum
 	N_COLUMNS
 };
 
-
-GtkWidget *entry_2_1_1_1_1[7];
-
 void set_dialog_menu_position(GtkMenu *menu, gint *x, gint *y,
 		gboolean *push_in, gpointer status_icon)
 {
@@ -45,6 +42,7 @@ void set_dialog_menu_position(GtkMenu *menu, gint *x, gint *y,
 
 _my_ip_set entry_ip;
 _my_mask_set entry_mask;
+PROBE g_tmp_probe;
 void cd_source_dir_path (GtkTreeView *tree_view,GtkTreePath *path,GtkTreeViewColumn *column,gpointer user_data);
 void cd_target_dir_path (GtkTreeView *tree_view,GtkTreePath *path,GtkTreeViewColumn *column,gpointer user_data);
 
@@ -3706,7 +3704,143 @@ static void draw_file_name ()
 	gtk_widget_show_all(dialog);
 }
 
+/*  UserField label 2个按键的处理 一个是保存一个是取消 */
+void da_call_userfield_label (GtkDialog *dialog, gint response_id, gpointer user_data)      
+{
+	GtkTextBuffer *TextBuffer = (GTK_TEXT_BUFFER (user_data));
+	if (GTK_RESPONSE_OK == response_id)  /* 保存信息 */
+	{
+		GtkTextIter start, end;
+		gchar *Data;
 
+		gtk_text_buffer_get_start_iter (TextBuffer, &start);
+		gtk_text_buffer_get_end_iter (TextBuffer, &end);
+
+		Data = gtk_text_buffer_get_text (TextBuffer, &start, &end, FALSE);
+		set_report_userfield_label (pp->p_config, Data, get_report_userfield_select (pp->p_config));
+		gtk_label_set_text (GTK_LABEL (pp->data3[2]), Data);
+
+		g_free (Data);
+		g_print ("OK_Pressed");
+	}
+	else if (GTK_RESPONSE_CANCEL == response_id) /* 取消 */
+		g_print ("CANCEL_Pressed");
+	gtk_widget_destroy (GTK_WIDGET (dialog));
+	change_keypress_event (KEYPRESS_MAIN);
+}
+/* UserField label */
+static void draw_userfield_label()
+{
+	GtkWindow *win = GTK_WINDOW (pp->window);
+	GtkWidget *dialog;
+	GtkWidget *vbox1;	/* 指向dialog的vbox */
+	GtkWidget *sw;		/* 第一个scroll 备注只要一个sw */
+	GtkWidget *label;
+	GtkWidget *view;
+	GtkTextBuffer *TextBuffer;
+	//	GtkWidgetClass *widget_window_class1;
+	const gchar *buf = (const gchar *)(get_report_userfield_label (pp->p_config, get_report_userfield_select (pp->p_config)));
+
+	label = gtk_label_new("Userfield label");
+	dialog = gtk_dialog_new_with_buttons("Dialog_userfield_label", win,
+			GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_NO_SEPARATOR,
+			GTK_STOCK_OK, GTK_RESPONSE_OK,
+			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+			NULL);
+	gtk_window_set_decorated (GTK_WINDOW (dialog), FALSE);			/*不可以装饰*/
+
+	gtk_widget_set_size_request(GTK_WIDGET (dialog), 300, 100);
+	vbox1 = GTK_WIDGET (GTK_DIALOG(dialog)->vbox);
+	sw = gtk_scrolled_window_new(NULL, NULL);
+
+	gtk_widget_set_size_request(sw, 300, 30);
+	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW(sw),
+			GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw),
+			GTK_SHADOW_ETCHED_IN);
+
+	gtk_box_pack_start(GTK_BOX(vbox1), label, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox1), sw, FALSE, FALSE, 5);
+	view = gtk_text_view_new ();
+	gtk_container_add (GTK_CONTAINER (sw), view);
+	TextBuffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
+	gtk_text_view_set_wrap_mode (GTK_TEXT_VIEW (view), GTK_WRAP_WORD_CHAR);
+	gtk_text_buffer_set_text (TextBuffer, buf, -1);
+
+	g_signal_connect (G_OBJECT(dialog), "response",
+			G_CALLBACK(da_call_userfield_label), (gpointer) (TextBuffer));
+
+	gtk_widget_show_all(dialog);
+}
+
+/*  UserField content 2个按键的处理 一个是保存一个是取消 */
+void da_call_userfield_content (GtkDialog *dialog, gint response_id, gpointer user_data)      
+{
+	GtkTextBuffer *TextBuffer = (GTK_TEXT_BUFFER (user_data));
+	if (GTK_RESPONSE_OK == response_id)  /* 保存信息 */
+	{
+		GtkTextIter start, end;
+		gchar *Data;
+
+		gtk_text_buffer_get_start_iter (TextBuffer, &start);
+		gtk_text_buffer_get_end_iter (TextBuffer, &end);
+
+		Data = gtk_text_buffer_get_text (TextBuffer, &start, &end, FALSE);
+		set_report_userfield_content (pp->p_config, Data, get_report_userfield_select (pp->p_config));
+		gtk_label_set_text (GTK_LABEL (pp->data3[3]), Data);
+
+		g_free (Data);
+		g_print ("OK_Pressed");
+	}
+	else if (GTK_RESPONSE_CANCEL == response_id) /* 取消 */
+		g_print ("CANCEL_Pressed");
+	gtk_widget_destroy (GTK_WIDGET (dialog));
+	change_keypress_event (KEYPRESS_MAIN);
+}
+/* UserField content */
+static void draw_userfield_content()
+{
+	GtkWindow *win = GTK_WINDOW (pp->window);
+	GtkWidget *dialog;
+	GtkWidget *vbox1;	/* 指向dialog的vbox */
+	GtkWidget *sw;		/* 第一个scroll 备注只要一个sw */
+	GtkWidget *label;
+	GtkWidget *view;
+	GtkTextBuffer *TextBuffer;
+	//	GtkWidgetClass *widget_window_class1;
+	const gchar *buf = (const gchar *)(get_report_userfield_content (pp->p_config, get_report_userfield_select (pp->p_config)));
+
+	label = gtk_label_new("Userfield content");
+	dialog = gtk_dialog_new_with_buttons("Dialog_userfield_content", win,
+			GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_NO_SEPARATOR,
+			GTK_STOCK_OK, GTK_RESPONSE_OK,
+			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+			NULL);
+	gtk_window_set_decorated (GTK_WINDOW (dialog), FALSE);			/*不可以装饰*/
+
+	gtk_widget_set_size_request(GTK_WIDGET (dialog), 300, 100);
+	vbox1 = GTK_WIDGET (GTK_DIALOG(dialog)->vbox);
+	sw = gtk_scrolled_window_new(NULL, NULL);
+
+	gtk_widget_set_size_request(sw, 300, 30);
+	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW(sw),
+			GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw),
+			GTK_SHADOW_ETCHED_IN);
+
+	gtk_box_pack_start(GTK_BOX(vbox1), label, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox1), sw, FALSE, FALSE, 5);
+	view = gtk_text_view_new ();
+	gtk_container_add (GTK_CONTAINER (sw), view);
+	TextBuffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
+	gtk_text_view_set_wrap_mode (GTK_TEXT_VIEW (view), GTK_WRAP_WORD_CHAR);
+	gtk_text_buffer_set_text (TextBuffer, buf, -1);
+
+	g_signal_connect (G_OBJECT(dialog), "response",
+			G_CALLBACK(da_call_userfield_content), (gpointer) (TextBuffer));
+
+	gtk_widget_show_all(dialog);
+}
 
 
 void draw_menu3_pop (void (*fun)(GtkMenuItem*, gpointer),
@@ -3746,327 +3880,230 @@ void draw_menu3_pop (void (*fun)(GtkMenuItem*, gpointer),
 			NULL,
 			0,
 			gtk_get_current_event_time());
-	
-	gtk_label_set_text (GTK_LABEL (entry_2_1_1_1_1[pos]), cur_value);
-
 
 	return ;
 }
 
-
-gboolean load_dialog_menu3_7(GtkWidget *widget,GdkEventButton *event,gpointer *user_data)
+static void signal_define_probe(GtkDialog *dialog, gint response_id, gpointer user_data)
 {
-    _load_menu3_7_p menu = (_load_menu3_7_p)user_data;
 
-    int i;
-	
-	*(menu->value) = menu->tmp_pos;
+	_Open_UT_PA_File_P  open_ut_pa_file_p = (_Open_UT_PA_File_P)user_data;
 
-	if (menu->tmp_pos == 2)
-	{
-		for(i=0;i<7;i++)
+	const gchar *buf;
+
+	char *file_path = NULL;
+
+	char file_name[256];
+
+    int pos;
+
+    char pa_pos[4] = {1,3,5,6};
+
+	int id;
+
+    //点击了确认
+    if (GTK_RESPONSE_OK == response_id)
+    {
+		//
+		if (GROUP_VAL(group_mode) == PA_SCAN)		
 		{
-			if ( strcmp(menu->tmp_char[i],"") != 0 )
-			{
-				gtk_event_box_set_visible_window(GTK_EVENT_BOX(menu->tmp_hbox[i]),TRUE);
-
-				gtk_widget_set_sensitive(menu->tmp_hbox[i],TRUE);
-
-				gtk_widget_hide(menu->tmp_entry[i]);
-			}
-			else
-			{
-				gtk_event_box_set_visible_window(GTK_EVENT_BOX(menu->tmp_hbox[i]),FALSE);
+			buf = gtk_entry_get_text(GTK_ENTRY(open_ut_pa_file_p->Model_Entry));
+			strcpy(g_tmp_probe.Model,buf);
 	
-				gtk_widget_set_sensitive(menu->tmp_hbox[i],FALSE);
+			buf = gtk_entry_get_text(GTK_ENTRY(open_ut_pa_file_p->Serial_Entry));
+			strcpy(g_tmp_probe.Serial,buf);
 
-				gtk_widget_hide(menu->tmp_entry[i]);
-			}
-        
-			update_widget_bg(menu->tmp_hbox[i], /*backpic[1]*/1);
+			pos = gtk_combo_box_get_active(GTK_COMBO_BOX(open_ut_pa_file_p->Probe_Type_Combo));
 
-			gtk_label_set_text(GTK_LABEL(menu->tmp_label[i]),menu->tmp_char[i]);
+			g_tmp_probe.PA_probe_type =  pa_pos[pos];
+
+ 			buf = gtk_entry_get_text(GTK_ENTRY(open_ut_pa_file_p->Frequency_Entry));
+
+			g_tmp_probe.Frequency = (unsigned short)( atof(buf) * 1000 );
+
+			buf = gtk_entry_get_text(GTK_ENTRY(open_ut_pa_file_p->Element_Qty_Entry));
+
+			g_tmp_probe.Elem_qty = atoi(buf);
+
+			buf = gtk_entry_get_text(GTK_ENTRY(open_ut_pa_file_p->Ref_Point_Entry));
+
+			g_tmp_probe.Reference_Point = (unsigned short)( atof(buf) * 1000 );
+
+			buf = gtk_entry_get_text(GTK_ENTRY(open_ut_pa_file_p->Pitch_Entry));
+
+			g_tmp_probe.Pitch = (unsigned int) ( atof(buf) * 1000 );
 		}
-	}
-
-	if(menu->tmp_pos == 3)
-	{
-		for(i=0;i<7;i++)
+		else if (GROUP_VAL(group_mode) == UT_SCAN)
 		{
-			if ( strcmp(menu->tmp_char[i],"") != 0 )
-			{
-				gtk_event_box_set_visible_window(GTK_EVENT_BOX(menu->tmp_hbox[i]),TRUE);
-
-				gtk_widget_set_sensitive(menu->tmp_hbox[i],TRUE);
-                
-				if (i == 0)
-					gtk_widget_hide(menu->tmp_entry[i]);
-				else
-					gtk_widget_show(menu->tmp_entry[i]);
-			}
-			else
-			{
-				gtk_event_box_set_visible_window(GTK_EVENT_BOX(menu->tmp_hbox[i]),FALSE);
+			buf = gtk_entry_get_text(GTK_ENTRY(open_ut_pa_file_p->Model_Entry));
+			strcpy(g_tmp_probe.Model,buf);
 	
-				gtk_widget_set_sensitive(menu->tmp_hbox[i],FALSE);
+			buf = gtk_entry_get_text(GTK_ENTRY(open_ut_pa_file_p->Serial_Entry));
+			strcpy(g_tmp_probe.Serial,buf);
 
-				gtk_widget_hide(menu->tmp_entry[i]);
-			}
-        
-			update_widget_bg(menu->tmp_hbox[i], /*backpic[1]*/1);
+			buf = gtk_entry_get_text(GTK_ENTRY(open_ut_pa_file_p->Frequency_Entry));
 
-			gtk_label_set_text(GTK_LABEL(menu->tmp_label[i]),menu->tmp_char[i]);
+			g_tmp_probe.Frequency = (unsigned short) ( atof(buf) * 1000 );
+
+			g_tmp_probe.Freq2 = (g_tmp_probe.Frequency & 0xff00) >> 8;
+
+			g_tmp_probe.Elem_qty = g_tmp_probe.Frequency & 0xff;
+
+			buf = gtk_entry_get_text(GTK_ENTRY(open_ut_pa_file_p->Element_Size_Entry));
+
+            g_tmp_probe.Pitch = (unsigned int) ( atof(buf) * 1000 );
+
+			g_tmp_probe.UT_probe_type = 1;
 		}
-	}
 
-	if(menu->tmp_pos == 4)
-	{
-		for(i=0;i<7;i++)
+		if ( GROUP_VAL(group_mode) == PA_SCAN )
 		{
-			if ( strcmp(menu->tmp_char[i],"") != 0 )
-			{
-				gtk_event_box_set_visible_window(GTK_EVENT_BOX(menu->tmp_hbox[i]),TRUE);
+			file_path = PA_PROBE_USER_PATH;
+    	}
+    	else if ( GROUP_VAL(group_mode) == UT_SCAN )
+    	{
+			file_path = UT_PROBE_USER_PATH;
+    	}
+		
+		strcpy(file_name,file_path);
 
-				gtk_widget_set_sensitive(menu->tmp_hbox[i],TRUE);
-                
-				if (i == 0)
-					gtk_widget_hide(menu->tmp_entry[i]);
-				else
-					gtk_widget_show(menu->tmp_entry[i]);
-			}
-			else
-			{
-				gtk_event_box_set_visible_window(GTK_EVENT_BOX(menu->tmp_hbox[i]),FALSE);
+		strcat(file_name,g_tmp_probe.Model);
+
+		if ( GROUP_VAL(group_mode) == PA_SCAN )
+			strcat(file_name,".opp");
+		else if ( GROUP_VAL(group_mode) == UT_SCAN )
+			strcat(file_name,".oup");
+
+		save_probe_file(file_name,&g_tmp_probe);
+
+		id = get_current_group(pp->p_config);
+
+		memcpy(&pp->p_config->group[id].probe,&g_tmp_probe,sizeof(struct _Group));		
+
+		pp->p_config->group[id].frequency = g_tmp_probe.Frequency;
+
+        //关闭对话框
+        gtk_widget_destroy (GTK_WIDGET (dialog));
+		change_keypress_event (KEYPRESS_MAIN);
+
+    }
+    //点击了取消按钮
+    else if (GTK_RESPONSE_CANCEL == response_id)
+    {
+        //关闭对话框
+		gtk_widget_destroy (GTK_WIDGET (dialog));
+		change_keypress_event (KEYPRESS_MAIN);
+    }
+}
+
+int on_changed_open_ut_pa_file(GtkTreeSelection *selection,	gpointer       data)
+{
+	char *file_path = NULL;
+
+	char file_name[256];
+
+	GtkTreeIter source_iter;
+
+	GtkTreeSelection *source_selection; 
+
+	GtkTreeModel *source_model;
+
+	GtkWidget *source_list;
 	
-				gtk_widget_set_sensitive(menu->tmp_hbox[i],FALSE);
+	int value;
 
-				gtk_widget_hide(menu->tmp_entry[i]);
-			}
-        
-			update_widget_bg(menu->tmp_hbox[i], /*backpic[1]*/1);
+	char *value_name;
 
-			gtk_label_set_text(GTK_LABEL(menu->tmp_label[i]),menu->tmp_char[i]);
-		}
-	}
+    char buf[256];
 
-	if(menu->tmp_pos == 5)
+	int pa_pos[7] ={0,0,0,1,0,2,3};
+
+	_Open_UT_PA_File_P  open_ut_pa_file_p = (_Open_UT_PA_File_P)data;  
+
+	source_list = open_ut_pa_file_p->list;
+
+	source_model = gtk_tree_view_get_model(GTK_TREE_VIEW(source_list));
+
+	source_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(source_list));
+
+	value = gtk_tree_model_get_iter_from_string (source_model, &source_iter, "0");
+
+	if ( GROUP_VAL(group_mode) == PA_SCAN )
 	{
-		for(i=0;i<7;i++)
+		file_path = PA_PROBE_USER_PATH;
+    }
+    else if ( GROUP_VAL(group_mode) == UT_SCAN )
+    {
+		file_path = UT_PROBE_USER_PATH;
+    }
+
+	while(value)   
+	{
+		if (gtk_tree_selection_iter_is_selected(source_selection,&source_iter))
 		{
-			if ( strcmp(menu->tmp_char[i],"") != 0 )
+			gtk_tree_model_get(source_model, &source_iter, 0, &value_name,  -1);
+	        		
+			memset(file_name,0,sizeof(file_name));    
+
+			strcpy(file_name,file_path);
+
+			strcat(file_name,value_name);
+
+			read_probe_file(file_name,&g_tmp_probe);
+
+            if ( GROUP_VAL(group_mode) == UT_SCAN )
 			{
-				gtk_event_box_set_visible_window(GTK_EVENT_BOX(menu->tmp_hbox[i]),TRUE);
+				gtk_entry_set_text(GTK_ENTRY(open_ut_pa_file_p->Model_Entry),g_tmp_probe.Model);
 
-				gtk_widget_set_sensitive(menu->tmp_hbox[i],TRUE);
+				gtk_entry_set_text(GTK_ENTRY(open_ut_pa_file_p->Serial_Entry),g_tmp_probe.Serial);
 
-				gtk_widget_hide(menu->tmp_entry[i]);
+				sprintf(buf,"%.3f", g_tmp_probe.Frequency / 1000.0);
+
+				gtk_entry_set_text(GTK_ENTRY(open_ut_pa_file_p->Frequency_Entry),buf);
+
+				sprintf(buf,"%.3f", g_tmp_probe.Pitch / 1000.0);
+
+				gtk_entry_set_text(GTK_ENTRY(open_ut_pa_file_p->Element_Size_Entry),buf);
 			}
-			else
+			else if( GROUP_VAL(group_mode) == PA_SCAN )
 			{
-				gtk_event_box_set_visible_window(GTK_EVENT_BOX(menu->tmp_hbox[i]),FALSE);
-	
-				gtk_widget_set_sensitive(menu->tmp_hbox[i],FALSE);
+				gtk_entry_set_text(GTK_ENTRY(open_ut_pa_file_p->Model_Entry),g_tmp_probe.Model);
 
-				gtk_widget_hide(menu->tmp_entry[i]);
+				gtk_entry_set_text(GTK_ENTRY(open_ut_pa_file_p->Serial_Entry),g_tmp_probe.Serial);
+
+				gtk_combo_box_set_active(GTK_COMBO_BOX(open_ut_pa_file_p->Probe_Type_Combo),pa_pos[g_tmp_probe.PA_probe_type]);
+
+				sprintf(buf,"%.3f", g_tmp_probe.Frequency / 1000.0);
+
+				gtk_entry_set_text(GTK_ENTRY(open_ut_pa_file_p->Frequency_Entry),buf);
+				
+				sprintf(buf,"%d", g_tmp_probe.Elem_qty);
+
+				gtk_entry_set_text(GTK_ENTRY(open_ut_pa_file_p->Element_Qty_Entry),buf);
+
+				sprintf(buf,"%.3f",  g_tmp_probe.Reference_Point / 1000.0);
+
+				gtk_entry_set_text(GTK_ENTRY(open_ut_pa_file_p->Ref_Point_Entry),buf);
+
+				sprintf(buf,"%.3f",  g_tmp_probe.Pitch / 1000.0);
+
+				gtk_entry_set_text(GTK_ENTRY(open_ut_pa_file_p->Pitch_Entry),buf);
+
 			}
-        
-			update_widget_bg(menu->tmp_hbox[i], /*backpic[1]*/1);
 
-			gtk_label_set_text(GTK_LABEL(menu->tmp_label[i]),menu->tmp_char[i]);
+			value = gtk_tree_model_iter_next(source_model,&source_iter);            
+
+			g_free(value_name);
+
 		}
-	}
-
-	return FALSE;
-}
-
-gboolean callback_box_3_7_0(GtkWidget *widget,GdkEventButton *event,gpointer *user_data)
-{
-    _DEFINE_PROBE_P define_probe_p = (_DEFINE_PROBE_P) user_data;
-
-	int pos;
-
-	pos = ( * (define_probe_p->pos_tmp) );
-
-	//new -> save || edit -> save
-	if ( (pos == 3) || (pos == 4) )
-	{
-       g_printf("new ->save || edit -> save\n");		
-	}
-	
-	return FALSE;
-}
-
-gboolean callback_box_3_7_1(GtkWidget *widget,GdkEventButton *event,gpointer *user_data)
-{
-	_DEFINE_PROBE_P define_probe_p = (_DEFINE_PROBE_P) user_data;
-
-	int pos;
-
-	pos = (*(define_probe_p->pos_tmp));
-
-	//browse -> select and close
-	if (pos == 2)
-	{
-		g_print("browse -> select and close\n");
-	}
-
-    //new -> serial number
-	if (pos == 3)
-	{
-		g_printf("new -> serial number\n");
-
-		memcpy (define_probe_p->probe_p_tmp->Serial,
-				gtk_entry_get_text(GTK_ENTRY(define_probe_p->entry_tmp)),20);
-
-		g_printf("%s\n",define_probe_p->probe_p_tmp->Serial);
-	}
-
-	//edit -> freq
-	if (pos == 4)
-	{
-		g_printf("edit -> freq\n");
-	}
-
-	//manage -> change serial number
-	if (pos == 5)
-	{
-		g_printf("manage -> change serial number\n");
-	}
-
-	return FALSE;
-} 
-
-gboolean callback_box_3_7_2(GtkWidget *widget,GdkEventButton *event,gpointer *user_data)
-{ 
-	_DEFINE_PROBE_P define_probe_p = (_DEFINE_PROBE_P) user_data;
-
-	int pos;
-
-	pos = ( * (define_probe_p->pos_tmp) );
-
-	//edit -> ref point
-	if (pos == 4)
-	{
-		g_printf("edit -> ref point\n");
-	}
-
-	//manage -> delete
-	if (pos == 5)
-	{
-		g_printf("manage -> delete\n");
-	}
-
-    return FALSE;
-}
-
-gboolean callback_box_3_7_3(GtkWidget *widget,GdkEventButton *event,gpointer *user_data)
-{ 
-	
-	_DEFINE_PROBE_P define_probe_p = (_DEFINE_PROBE_P) user_data;
-
-	int pos;
-
-	pos = ( * (define_probe_p->pos_tmp) );	
-
-	//edit -> probe type
-	if(pos == 4)
-	{
-		g_printf("edit -> probe type\n");
-					pp->x_pos = 350, pp->y_pos = 470;
-						draw_menu3_pop (data_dialog, NULL, 
-								menu_content[PROBETYPE + get_probe_type(pp->p_config)],
-								menu_content + PROBETYPE, 4, 4, get_probe_type(pp->p_config));
-//gtk_widget_hide(entry_2_1_1_1_1[3]);
+		else
+		{
+			value = gtk_tree_model_iter_next(source_model,&source_iter);
+		} 
 
 	}
 
-	//manage -> copy
-	if (pos == 5)
-	{
-		g_printf("manage -> copy\n");
-	}
-
-    return FALSE;
-}
-
-gboolean callback_box_3_7_4(GtkWidget *widget,GdkEventButton *event,gpointer *user_data)
-{
-
-	_DEFINE_PROBE_P define_probe_p = (_DEFINE_PROBE_P) user_data;
-
-	int pos;
-
-	pos = ( * (define_probe_p->pos_tmp) );
-
-	//new -> model
-	if (pos == 3)
-	{
-		g_printf("new -> model\n");
-	
-		//pp->x_pos = 586, pp->y_pos = 373 - YOFFSET;
-		//if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
-		//{
-			//draw3_pop_tt (data_113, NULL, 
-			//	menu_content[VOLTAGE + 3 + get_voltage(pp->p_config, grp)],
-			//	menu_content + VOLTAGE, 3, 3, get_voltage (pp->p_config, grp), 
-			//	((pp->p_config->group[grp].group_mode) == PA_SCAN) ? 4 : 0);
-		//}
-		//else 
-		//{
-			//draw3_popdown (menu_content[VOLTAGE + 3 + get_voltage (pp->p_config, grp)], 3, 0);
-		//}
-
-	}
-
-	//edit -> element
-	if (pos == 4)
-	{
-		g_printf("edit -> element\n");
-	}
-
-	//manage -> import / export
-	if (pos == 5)
-	{
-		g_printf("manage ->import / export\n");
-	}
-
-	return FALSE;
-}
-
-gboolean callback_box_3_7_5(GtkWidget *widget,GdkEventButton *event,gpointer *user_data)
-{
-
-	_DEFINE_PROBE_P define_probe_p = (_DEFINE_PROBE_P) user_data;
-
-	int pos;
-
-	pos = ( * (define_probe_p->pos_tmp) );
-
-	//edit -> picth
-	if (pos == 4)
-	{
-		g_printf("edit -> picth\n");
-	}
-
-	return FALSE;
-}
-
-gboolean callback_box_3_7_6(GtkWidget *widget,GdkEventButton *event,gpointer *user_data)
-{
-
-	_DEFINE_PROBE_P define_probe_p = (_DEFINE_PROBE_P) user_data;
-
-	int pos;
-
-	pos = ( * (define_probe_p->pos_tmp) );
-
-	//manage -> preview
-	if (pos == 5)
-	{
-		g_printf("manage -> preview\n");
-	}
-
-	return FALSE;
+	return TRUE;
 }
 
 void draw_define_probe()
@@ -4077,68 +4114,79 @@ void draw_define_probe()
 
 	GtkWidget *vbox_first;
 
-	GtkWidget *vbox;
+	GtkWidget *full_screen_box;
 
-	GtkWidget *vbox_1;
+	GtkWidget *left_box;
 
-	GtkWidget *hbox_1_1;
+	GtkWidget *right_box;
 
 	GtkWidget *list_sw;
 
-	GtkWidget *view_sw;
+	GtkWidget *Model_Box;
 
-	GtkWidget *hbox_1_1_3;
+    GtkWidget *Model_Entry;
 
-	GtkWidget *vbox_1_1_3_1;
+	GtkWidget *Model_Label;
 
-    GtkWidget *vbox_1_1_3_1_1[6];
+	GtkWidget *Serial_Box;
 
-    GtkWidget *label_1_1_3_1_1[6];
+	GtkWidget *Serial_Entry;
 
-    char *char_1_1_3_1_1[6] = {"","Close","Browse","New","Edit","Manage"};
+	GtkWidget *Serial_Label;
 
-	GtkWidget *vbox_2;
+	GtkWidget *Probe_Type_Box;
 
-	GtkWidget *hbox_2_1;
+	GtkWidget *Probe_Type_Combo;
 
-	GtkWidget *hbox_2_1_1[7];
+	GtkWidget *Probe_Type_Label;
 
-	GtkWidget *vbox_2_1_1_1[7];
+	GtkWidget *Frequency_Box;
 
+	GtkWidget *Frequency_Entry;
 
+	GtkWidget *Frequency_Label;
 
-	GtkWidget *vbox_2_1_1_1_2[7];
+	GtkWidget *Element_Qty_Box;
 
-	GtkWidget *label_2_1_1_1_2[7];
-    //默认菜单
-	char *char_2_1_1_1_2[7] = {"","Select and Close","","","","",""};
-    //browse的子菜单
-    char *Browse_SubMenu[7] = {"","Select and Close","","","","",""};
-	//new的子菜单
-	char *New_SubMenu[7] = {"Save","Serial Number","","","Model","",""};
-	//edit的子菜单
-	char *Edit_SubMenu[7] = {"Save","freq (MHz)","Ref.Point","Probe Type","Element Qty","Picth (mm)", ""};
-	//manage的子菜单
-	char *Manage_SubMenu[7] = {"","Change Serial #","Delete","Copy","Import/Export","","Preview"};
+	GtkWidget *Element_Qty_Entry;
 
-	int i;
-    
-	static _load_menu3_7 new_menu;
-	static _load_menu3_7 browse_menu;
-	static _load_menu3_7 edit_menu;
-	static _load_menu3_7 manage_menu;
+	GtkWidget *Element_Qty_Label;
 
-	static int pos;
+	GtkWidget *Ref_Point_Box;
 
-	static _DEFINE_PROBE define_probe[7];
+	GtkWidget *Ref_Point_Entry;
 
-	static PROBE probe;
+	GtkWidget *Ref_Point_Label;
+
+	GtkWidget *Pitch_Box;
+
+	GtkWidget *Pitch_Entry;
+
+	GtkWidget *Pitch_Label;
+
+	GtkWidget *Element_Size_Box;
+
+	GtkWidget *Element_Size_Entry;
+
+	GtkWidget *Element_Size_Label;
+
+	GtkWidget *source_list;
+
+	GtkCellRenderer *renderer;
+
+	GtkTreeViewColumn *column;
+
+	GtkListStore *store;
+
+	GtkTreeSelection *source_selection;
+
+	static _Open_UT_PA_File open_ut_pa_file;
 
 	//新建窗口以及各属性设置
 	dialog = gtk_dialog_new_with_buttons ("Dialog_Wedge", window,
 			GTK_DIALOG_MODAL |	GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_NO_SEPARATOR,
-			NULL, NULL,
-			NULL, NULL,
+			GTK_STOCK_OK, GTK_RESPONSE_OK,
+			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 			NULL);
 
 	gtk_window_set_decorated (GTK_WINDOW (dialog), FALSE);			/*不可以装饰*/
@@ -4147,207 +4195,181 @@ void draw_define_probe()
     
 	//新建各种容器
 	vbox_first = GTK_WIDGET (GTK_DIALOG(dialog)->vbox);
-	
-	vbox = gtk_vbox_new(FALSE,0); 
-	
-	vbox_1 = gtk_vbox_new(FALSE,0);
 
-	hbox_1_1 = gtk_hbox_new(FALSE,0);
-
-	hbox_1_1_3 = gtk_hbox_new(FALSE,0);
-
-	vbox_1_1_3_1 = gtk_vbox_new(FALSE,0);
-
-	vbox_2 = gtk_vbox_new(FALSE,0);
-	
-	hbox_2_1 = gtk_hbox_new(FALSE,0);
-
-    //
-	for (i=0;i<7;i++)
-	{
-		hbox_2_1_1[i] = gtk_hbox_new(FALSE,0);
-
-		vbox_2_1_1_1[i] = gtk_vbox_new(FALSE,0);
-
-		entry_2_1_1_1_1[i] = gtk_entry_new();
-
-	    gtk_widget_set_size_request(GTK_WIDGET(entry_2_1_1_1_1[i]),114,25);
-
-		gtk_box_pack_start(GTK_BOX(vbox_2_1_1_1[i]),entry_2_1_1_1_1[i], FALSE, FALSE, 0);
-
-		gtk_box_pack_start(GTK_BOX(hbox_2_1_1[i]),vbox_2_1_1_1[i],FALSE,FALSE,0);
-
-		gtk_box_pack_start(GTK_BOX(hbox_2_1),hbox_2_1_1[i],FALSE,FALSE,0);
-
-	}
-
-
-	//画三级菜单
-	for(i=0;i<7;i++)
-	{
-		vbox_2_1_1_1_2[i] = gtk_event_box_new();
-
-		if ( strcmp(char_2_1_1_1_2[i],"") != 0 )
-		{
-			gtk_event_box_set_visible_window(GTK_EVENT_BOX(vbox_2_1_1_1_2[i]),TRUE);
-		
-			gtk_widget_set_sensitive(vbox_2_1_1_1_2[i],TRUE);
-		}
-		else
-		{
-			gtk_event_box_set_visible_window(GTK_EVENT_BOX(vbox_2_1_1_1_2[i]),FALSE);
-		
-			gtk_widget_set_sensitive(vbox_2_1_1_1_2[i],FALSE);
-		}
-
-	    gtk_widget_set_size_request(GTK_WIDGET(vbox_2_1_1_1_2[i]),114,60);
-		update_widget_bg(vbox_2_1_1_1_2[i], /*backpic[1]*/1);
-		label_2_1_1_1_2[i] = gtk_label_new(char_2_1_1_1_2[i]);
-		gtk_widget_modify_fg (label_2_1_1_1_2[i], GTK_STATE_NORMAL, &color_black);
-		gtk_label_set_justify(GTK_LABEL(label_2_1_1_1_2[i]), GTK_JUSTIFY_CENTER);
-		gtk_container_add(GTK_CONTAINER(vbox_2_1_1_1_2[i]), label_2_1_1_1_2[i]);
-		gtk_box_pack_start(GTK_BOX(vbox_2_1_1_1[i]),vbox_2_1_1_1_2[i], FALSE, FALSE, 0);
-	} 
-
-	//默认
-	pos = 2;
-	
-	//画二级菜单
-	for(i=0;i<6;i++)
-	{
-		vbox_1_1_3_1_1[i] = gtk_event_box_new();
-
-		if ( strcmp(char_1_1_3_1_1[i],"") != 0 )
-		{
-			gtk_event_box_set_visible_window(GTK_EVENT_BOX(vbox_1_1_3_1_1[i]),TRUE);
-		
-			gtk_widget_set_sensitive(vbox_1_1_3_1_1[i],TRUE);
-		}
-		else
-		{
-			gtk_event_box_set_visible_window(GTK_EVENT_BOX(vbox_1_1_3_1_1[i]),FALSE);
-		
-			gtk_widget_set_sensitive(vbox_1_1_3_1_1[i],FALSE);
-		}
-
-		gtk_widget_set_size_request(GTK_WIDGET(vbox_1_1_3_1_1[i]),115,86);
-		update_widget_bg(vbox_1_1_3_1_1[i], /*backpic[1]*/1);
-		label_1_1_3_1_1[i] = gtk_label_new(char_1_1_3_1_1[i]);
-		gtk_widget_modify_fg (label_1_1_3_1_1[i], GTK_STATE_NORMAL, &color_black);
-		gtk_label_set_justify(GTK_LABEL(label_1_1_3_1_1[i]), GTK_JUSTIFY_CENTER);
-		gtk_container_add(GTK_CONTAINER(vbox_1_1_3_1_1[i]), label_1_1_3_1_1[i]);
-		gtk_box_pack_start(GTK_BOX(vbox_1_1_3_1),vbox_1_1_3_1_1[i], FALSE, FALSE, 0);
-	}
-    
 	//探头的类型的滚动窗口
 	list_sw = gtk_scrolled_window_new (NULL, NULL);
 	
 	gtk_widget_set_size_request(GTK_WIDGET(list_sw),300,514);
-	
-	//探头简介的滚动窗口
-	view_sw = gtk_scrolled_window_new (NULL, NULL);
 
-	gtk_widget_set_size_request(GTK_WIDGET(view_sw),385,514);
+	//源文件列表
+	source_list = gtk_tree_view_new();
+	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(source_list), FALSE);
 
-	//二级菜单的响应
-	
-    //close
-	g_signal_connect(G_OBJECT (vbox_1_1_3_1_1[1]), "button-press-event",G_CALLBACK(dialog_destroy), dialog);
+	renderer = gtk_cell_renderer_text_new();
+	column = gtk_tree_view_column_new_with_attributes("List Items",renderer, "text", 0, NULL);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(source_list), column);
 
-	//browse
-	for (i = 0;i<7;i++)
+	store = gtk_list_store_new(1, G_TYPE_STRING);
+	gtk_tree_view_set_model(GTK_TREE_VIEW(source_list), GTK_TREE_MODEL(store));
+
+	source_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(source_list));
+
+	full_screen_box = gtk_hbox_new(FALSE,0);
+
+	left_box = gtk_hbox_new(FALSE,0);
+
+	right_box = gtk_vbox_new(FALSE,0);
+
+	Model_Box = gtk_hbox_new(FALSE,0);
+
+	Model_Label = gtk_label_new("Model");
+
+    Model_Entry = gtk_entry_new();
+
+	gtk_box_pack_start(GTK_BOX(Model_Box),Model_Label,FALSE,FALSE,0);
+
+	gtk_box_pack_start(GTK_BOX(Model_Box),Model_Entry,FALSE,FALSE,0);
+
+	Serial_Box = gtk_hbox_new(FALSE,0);
+
+	Serial_Label = gtk_label_new("Serial");
+
+    Serial_Entry = gtk_entry_new();
+
+	gtk_box_pack_start(GTK_BOX(Serial_Box),Serial_Label,FALSE,FALSE,0);
+
+	gtk_box_pack_start(GTK_BOX(Serial_Box),Serial_Entry,FALSE,FALSE,0);
+
+
+
+	Probe_Type_Box = gtk_hbox_new(FALSE,0);
+
+	Probe_Type_Label = gtk_label_new("Probe_Type");
+
+    Probe_Type_Combo = gtk_combo_box_new_text();
+
+	gtk_combo_box_append_text (GTK_COMBO_BOX (Probe_Type_Combo), "Custom");
+
+	gtk_combo_box_append_text (GTK_COMBO_BOX (Probe_Type_Combo), "angle beam");
+
+	gtk_combo_box_append_text (GTK_COMBO_BOX (Probe_Type_Combo), "Contact");
+
+	gtk_combo_box_append_text (GTK_COMBO_BOX (Probe_Type_Combo), "Immersion");
+
+	gtk_box_pack_start(GTK_BOX(Probe_Type_Box),Probe_Type_Label,FALSE,FALSE,0);
+
+	gtk_box_pack_start(GTK_BOX(Probe_Type_Box),Probe_Type_Combo,FALSE,FALSE,0);
+
+	Frequency_Box = gtk_hbox_new(FALSE,0);
+
+	Frequency_Label = gtk_label_new("Frequency");
+
+    Frequency_Entry = gtk_entry_new();
+
+	gtk_box_pack_start(GTK_BOX(Frequency_Box),Frequency_Label,FALSE,FALSE,0);
+
+	gtk_box_pack_start(GTK_BOX(Frequency_Box),Frequency_Entry,FALSE,FALSE,0);
+
+	Element_Qty_Box = gtk_hbox_new(FALSE,0);
+
+	Element_Qty_Label = gtk_label_new("Element_Qty");
+
+    Element_Qty_Entry = gtk_entry_new();
+
+	gtk_box_pack_start(GTK_BOX(Element_Qty_Box),Element_Qty_Label,FALSE,FALSE,0);
+
+	gtk_box_pack_start(GTK_BOX(Element_Qty_Box),Element_Qty_Entry,FALSE,FALSE,0);
+
+	Ref_Point_Box = gtk_hbox_new(FALSE,0);
+
+	Ref_Point_Label = gtk_label_new("Ref_Point");
+
+    Ref_Point_Entry = gtk_entry_new();
+
+	gtk_box_pack_start(GTK_BOX(Ref_Point_Box),Ref_Point_Label,FALSE,FALSE,0);
+
+	gtk_box_pack_start(GTK_BOX(Ref_Point_Box),Ref_Point_Entry,FALSE,FALSE,0);
+
+	Pitch_Box = gtk_hbox_new(FALSE,0);
+
+	Pitch_Label = gtk_label_new("Pitch");
+
+    Pitch_Entry = gtk_entry_new();
+
+	gtk_box_pack_start(GTK_BOX(Pitch_Box),Pitch_Label,FALSE,FALSE,0);
+
+	gtk_box_pack_start(GTK_BOX(Pitch_Box),Pitch_Entry,FALSE,FALSE,0);
+
+	Element_Size_Box = gtk_hbox_new(FALSE,0);
+
+	Element_Size_Label = gtk_label_new("Element_Size");
+
+    Element_Size_Entry = gtk_entry_new();
+
+	open_ut_pa_file.list = source_list;
+	open_ut_pa_file.Model_Entry = Model_Entry;
+	open_ut_pa_file.Serial_Entry = Serial_Entry;
+	open_ut_pa_file.Probe_Type_Combo = Probe_Type_Combo;
+	open_ut_pa_file.Frequency_Entry = Frequency_Entry;
+	open_ut_pa_file.Element_Qty_Entry = Element_Qty_Entry;
+	open_ut_pa_file.Ref_Point_Entry = Ref_Point_Entry;
+	open_ut_pa_file.Pitch_Entry = Pitch_Entry;
+	open_ut_pa_file.Element_Size_Entry = Element_Size_Entry;
+
+	gtk_box_pack_start(GTK_BOX(Element_Size_Box),Element_Size_Label,FALSE,FALSE,0);
+
+	gtk_box_pack_start(GTK_BOX(Element_Size_Box),Element_Size_Entry,FALSE,FALSE,0);
+
+	if ( GROUP_VAL(group_mode) == PA_SCAN )
 	{
-		browse_menu.tmp_char[i] = Browse_SubMenu[i];
-		browse_menu.tmp_label[i] = label_2_1_1_1_2[i];
-		browse_menu.tmp_hbox[i] = vbox_2_1_1_1_2[i];
-		browse_menu.tmp_entry[i] = entry_2_1_1_1_1[i];
-		browse_menu.tmp_pos = 2;
-		browse_menu.value = &pos;
-	}
+		gtk_box_pack_start(GTK_BOX(right_box),Model_Box,FALSE,FALSE,10);
 
-	g_signal_connect(G_OBJECT (vbox_1_1_3_1_1[2]), "button-press-event",G_CALLBACK(load_dialog_menu3_7),(gpointer)&browse_menu);
-	
-	//new
-	for (i = 0;i<7;i++)
-	{ 
-		new_menu.tmp_char[i] = New_SubMenu[i];
-		new_menu.tmp_label[i] = label_2_1_1_1_2[i];
-		new_menu.tmp_hbox[i] = vbox_2_1_1_1_2[i];
-		new_menu.tmp_entry[i] = entry_2_1_1_1_1[i];
-		new_menu.tmp_pos = 3;
-		new_menu.value = &pos;
-	}
+		gtk_box_pack_start(GTK_BOX(right_box),Serial_Box,FALSE,FALSE,10);
 
-	g_signal_connect(G_OBJECT (vbox_1_1_3_1_1[3]), "button-press-event",G_CALLBACK(load_dialog_menu3_7), (gpointer)&new_menu);	
-	
-	//edit
-	for (i = 0;i<7;i++)
-	{ 
-		edit_menu.tmp_char[i] = Edit_SubMenu[i];
-		edit_menu.tmp_label[i] = label_2_1_1_1_2[i];
-		edit_menu.tmp_hbox[i] = vbox_2_1_1_1_2[i];
-		edit_menu.tmp_entry[i] = entry_2_1_1_1_1[i];
-		edit_menu.tmp_pos = 4;
-		edit_menu.value = &pos;
-	}
-	
-	g_signal_connect(G_OBJECT (vbox_1_1_3_1_1[4]), "button-press-event",G_CALLBACK(load_dialog_menu3_7),(gpointer)&edit_menu);
-	
-	//manage
-	for (i = 0;i<7;i++)
-	{ 
-		manage_menu.tmp_char[i] = Manage_SubMenu[i];
-		manage_menu.tmp_label[i] = label_2_1_1_1_2[i];
-		manage_menu.tmp_hbox[i] = vbox_2_1_1_1_2[i];
-		manage_menu.tmp_entry[i] = entry_2_1_1_1_1[i];
-		manage_menu.tmp_pos = 5;
-		manage_menu.value = &pos;
-	}
+		gtk_box_pack_start(GTK_BOX(right_box),Probe_Type_Box,FALSE,FALSE,10);
 
-	g_signal_connect(G_OBJECT (vbox_1_1_3_1_1[5]),"button-press-event",G_CALLBACK(load_dialog_menu3_7),(gpointer)&manage_menu);
+		gtk_box_pack_start(GTK_BOX(right_box),Frequency_Box,FALSE,FALSE,10);
 
-	for (i=0;i<7;i++)
+		gtk_box_pack_start(GTK_BOX(right_box),Element_Qty_Box,FALSE,FALSE,10);
+
+		gtk_box_pack_start(GTK_BOX(right_box),Ref_Point_Box,FALSE,FALSE,10);
+
+		gtk_box_pack_start(GTK_BOX(right_box),Pitch_Box,FALSE,FALSE,10);
+	}
+	else if ( GROUP_VAL(group_mode) == UT_SCAN )
 	{
-		define_probe[i].pos_tmp =  &pos;
-		define_probe[i].probe_p_tmp = &probe;
-		define_probe[i].entry_tmp = entry_2_1_1_1_1[i];
+		gtk_box_pack_start(GTK_BOX(right_box),Model_Box,FALSE,FALSE,10);
+
+		gtk_box_pack_start(GTK_BOX(right_box),Serial_Box,FALSE,FALSE,10);
+
+		gtk_box_pack_start(GTK_BOX(right_box),Frequency_Box,FALSE,FALSE,10);
+
+		gtk_box_pack_start(GTK_BOX(right_box),Element_Size_Box,FALSE,FALSE,10);
 	}
-	//三级菜单的响应
-	g_signal_connect(G_OBJECT(vbox_2_1_1_1_2[0]),"button-press-event",G_CALLBACK(callback_box_3_7_0),(gpointer)&define_probe[0]);
 
-	g_signal_connect(G_OBJECT(vbox_2_1_1_1_2[1]),"button-press-event",G_CALLBACK(callback_box_3_7_1),(gpointer)&define_probe[1]);
+	gtk_container_add(GTK_CONTAINER(list_sw), source_list);
+
+	gtk_box_pack_start(GTK_BOX(left_box),list_sw,FALSE,FALSE,0);
+
+	gtk_box_pack_start(GTK_BOX(full_screen_box),left_box,FALSE,FALSE,0);
+
+    gtk_box_pack_start(GTK_BOX(full_screen_box),right_box,FALSE,FALSE,0);
+
+	gtk_box_pack_start(GTK_BOX(vbox_first),full_screen_box,FALSE,FALSE,0);
+
+	if ( GROUP_VAL(group_mode) == PA_SCAN )
+	{	
+		selection_file_type(source_list, PA_PROBE_USER_PATH,	".opp");
+	}
+	else if ( GROUP_VAL(group_mode) == UT_SCAN )
+	{
+		selection_file_type(source_list, UT_PROBE_USER_PATH,	".oup");
+	}
 	
-	g_signal_connect(G_OBJECT(vbox_2_1_1_1_2[2]),"button-press-event",G_CALLBACK(callback_box_3_7_2),(gpointer)&define_probe[2]);
+    g_signal_connect (G_OBJECT(dialog), "response",G_CALLBACK(signal_define_probe), (gpointer)&open_ut_pa_file);/*确定 or 取消*/
 
-	g_signal_connect(G_OBJECT(vbox_2_1_1_1_2[3]),"button-press-event",G_CALLBACK(callback_box_3_7_3),(gpointer)&define_probe[3]);
+	g_signal_connect (G_OBJECT (source_selection), "changed", G_CALLBACK(on_changed_open_ut_pa_file), (gpointer)&open_ut_pa_file);
 
-	g_signal_connect(G_OBJECT(vbox_2_1_1_1_2[4]),"button-press-event",G_CALLBACK(callback_box_3_7_4),(gpointer)&define_probe[4]);
-
-	g_signal_connect(G_OBJECT(vbox_2_1_1_1_2[5]),"button-press-event",G_CALLBACK(callback_box_3_7_5),(gpointer)&define_probe[5]);
-
-	g_signal_connect(G_OBJECT(vbox_2_1_1_1_2[6]),"button-press-event",G_CALLBACK(callback_box_3_7_6),(gpointer)&define_probe[6]);
-
-	//排版
-	gtk_box_pack_start(GTK_BOX(hbox_1_1_3),vbox_1_1_3_1,FALSE,FALSE,0);
-
-	gtk_box_pack_start(GTK_BOX(hbox_1_1),list_sw,FALSE,FALSE,0);
-
-	gtk_box_pack_start(GTK_BOX(hbox_1_1),view_sw,FALSE,FALSE,0);
-
-	gtk_box_pack_start(GTK_BOX(hbox_1_1),hbox_1_1_3,FALSE,FALSE,0);
-
-	gtk_box_pack_start(GTK_BOX(vbox_1),hbox_1_1, FALSE, FALSE, 0);
-	
-	gtk_box_pack_start(GTK_BOX(vbox),vbox_1, FALSE, FALSE, 0);
-
-	//gtk_box_pack_start(GTK_BOX(hbox_2_1),hbox_2_1_1,FALSE,FALSE,0);
-
-	gtk_box_pack_start(GTK_BOX(vbox_2),hbox_2_1, FALSE, FALSE, 0);
-
-	gtk_box_pack_start(GTK_BOX(vbox),vbox_2, FALSE, FALSE, 0);
-	
-	gtk_box_pack_start(GTK_BOX(vbox_first), vbox,FALSE,FALSE,0);
-	
 	//显示窗口
 	gtk_widget_show_all(dialog);
 
@@ -4398,6 +4420,8 @@ void draw_dialog_all (guint type)
         case DIALOG_REPORT_BUILD:	draw_report_build();break;
 		case DIALOG_FILE_NAME:	draw_file_name();break;
 		case DIALOG_DEFINE_PROBE:	draw_define_probe();break;
+		case DIALOG_USERFIELD_LABEL: draw_userfield_label(); break;
+		case DIALOG_USERFIELD_CONTENT: draw_userfield_content(); break;
 		default:break;
 	}
 

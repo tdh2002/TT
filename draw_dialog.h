@@ -27,6 +27,8 @@
 #define DIALOG_DEFINE_PROBE		20
 
 #define DIALOG_FILE_NAME		21
+#define DIALOG_USERFIELD_LABEL	22
+#define DIALOG_USERFIELD_CONTENT	23
 
 extern void draw_dialog_all (guint type);
 

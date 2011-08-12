@@ -68,6 +68,34 @@ void read_probe_file (const gchar *file_path, PROBE_P p)
 	}
 }
 
+/* 探头 PA opp UT oup  */
+void save_probe_file (const gchar *file_path, PROBE_P p)
+{
+	int fd;
+	int	i; 
+    char tmp[] = "    ";
+	if ((fd = open(file_path,  O_CREAT| O_RDWR,0666))<0) 
+	{
+		perror("open:");
+		exit(1);
+	}
+	else 
+	{
+		if (GROUP_VAL(group_mode) == PA_SCAN)
+		{
+			//lseek (fd, 4, SEEK_SET);
+			i = write (fd,tmp,strlen(tmp));
+			i = write (fd, p, sizeof(PROBE) - 4);
+		}
+		else if (GROUP_VAL(group_mode) == UT_SCAN)
+		{
+			//p->Frequency = p->Elem_qty | (p->Freq2 << 8);
+			i = write (fd, p, sizeof(PROBE) );
+		}
+		close (fd);
+	}
+}
+
 /* 楔块 PA opw UT ouw */
 void read_wedge_file (const gchar *file_path, WEDGE_P p)
 {

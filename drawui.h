@@ -303,6 +303,7 @@ extern GROUP g_tmp_group_struct;
 extern const gchar *backpic[];
 extern GdkPixbuf *g_pixbuf_[18]; 
 
+
 extern gint (*window_keypress_event_orig)(GtkWidget *widget, GdkEventKey *event);
 extern gint (*dialog_keypress_event_orig)(GtkWidget *widget, GdkEventKey *event);
 extern gint my_keypress_event(GtkWidget *widget, GdkEventKey *event);

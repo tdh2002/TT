@@ -645,22 +645,18 @@ typedef struct __dir_path_label
 	GtkWidget *target_label;
 }_dir_path_label, *_dir_path_label_p;
 
-typedef struct __load_menu3_7
+typedef struct __Open_UT_PA_File
 {
-    char *tmp_char[7];
-	GtkWidget *tmp_label[7];
-	GtkWidget *tmp_hbox[7];
-	GtkWidget *tmp_entry[7];
-	int tmp_pos;
-	int *value;
-}_load_menu3_7, *_load_menu3_7_p;
-
-typedef struct __DEFINE_PROBE
-{
-	int *pos_tmp;
-	GtkWidget *entry_tmp;
-	PROBE_P probe_p_tmp;
-} _DEFINE_PROBE, *_DEFINE_PROBE_P;
+	GtkWidget *list;
+	GtkWidget *Model_Entry;
+	GtkWidget *Serial_Entry;
+	GtkWidget *Probe_Type_Combo;
+	GtkWidget *Frequency_Entry;
+	GtkWidget *Element_Qty_Entry;
+	GtkWidget *Ref_Point_Entry;
+	GtkWidget *Pitch_Entry;
+	GtkWidget *Element_Size_Entry;
+}_Open_UT_PA_File, *_Open_UT_PA_File_P;
 
 #define CUR_POS (pp->pos2[pp->pos][pp->pos1[pp->pos]])      /* 0,1,2,3,4,5 */
 #define CUR_POS_P(p) (p->pos2[p->pos][p->pos1[p->pos]])      /* 0,1,2,3,4,5 */
