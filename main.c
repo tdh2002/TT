@@ -21,6 +21,7 @@
 DRAW_UI_P	pp;
 void init_group_spi (guint group);
 void send_focal_spi (guint group);
+void send_group_spi (guint group);
 extern float tttmp;
 extern void generate_focallaw(int grp);
 
@@ -47,16 +48,17 @@ static void set_config (guint groupid)
 
 	set_voltage (pp->p_config, groupid, VOLTAGE_LOW);
 	/* UT settings */
-	set_group_velocity (pp->p_config, groupid, 592000);	/* 5920m/s */ 
-	set_group_gain (pp->p_config, groupid, 10);
-	set_group_gainr (pp->p_config, groupid, 0);
-	set_group_db_ref (pp->p_config, groupid, NORMAL_OFF);
-	set_group_wedge_delay (pp->p_config, groupid, 0);
-	set_group_range (pp->p_config, groupid, 10000);
-	set_group_start (pp->p_config, groupid, 0);
+	set_group_wedge_delay	(pp->p_config, groupid,	0);
+	set_group_range			(pp->p_config, groupid, 10000);
+	set_group_start			(pp->p_config, groupid, 0);
+	set_group_gain			(pp->p_config, groupid, 10);
+	set_group_gainr			(pp->p_config, groupid, 0);
+	set_group_velocity		(pp->p_config, groupid, 592000);
+	set_group_db_ref		(pp->p_config, groupid, NORMAL_OFF);
 
-	GROUP_VAL(pulser)       = 1;			/* 1表示第一个探头接口 1-128 */
-	GROUP_VAL(receiver)     = 1;			/* 1表示第一个探头接口 1-128 */
+	set_group_val (&pp->p_config->group[get_current_group(pp->p_config)], GROUP_PULSER, 1);
+	set_group_val (&pp->p_config->group[get_current_group(pp->p_config)], GROUP_RECEIVER, 1);
+
 	GROUP_VAL(tx_rxmode)	= PULSE_ECHO;	/* 收发模式 */
 	GROUP_VAL(freq_pos)		= 0;			/* 0是1Mhz	*/
 	GROUP_VAL(frequency)	= 1000;			/* 频率 */
@@ -442,22 +444,25 @@ void send_focal_spi (guint group)
 		/*UT Settings->Pulser->Tx/Rx mode*/		
 		if (GROUP_VAL(tx_rxmode) == PULSE_ECHO )/*单个探头收发模式*/
 		{  
-			GROUP_VAL_POS(group, receiver) = GROUP_VAL_POS(group, pulser);
+			set_group_val (&pp->p_config->group[group],	GROUP_RECEIVER, 
+					get_group_val (&pp->p_config->group[group],	GROUP_PULSER));
 			if(LAW_VAL_POS(group, Focal_type) == 1)/*Linear*/
 			{
 				TMP(focal_spi[k]).rx_sel	= 
-					channel_select((guint)(GROUP_VAL_POS(group, pulser))+ (guint)(LAW_VAL_POS(group, First_tx_elem))+(k-offset)*LAW_VAL_POS(group, Elem_step)-1 ); //何凡修改 
+					channel_select(
+							(guint)(get_group_val (&pp->p_config->group[group], GROUP_PULSER))+ (guint)(LAW_VAL_POS(group, First_tx_elem))+(k-offset)*LAW_VAL_POS(group, Elem_step)-1 ); //何凡修改 
 				TMP(focal_spi[k]).tx_sel	= 
-					channel_select((guint)(GROUP_VAL_POS(group, receiver))+ (guint)(LAW_VAL_POS(group, First_tx_elem))+(k-offset)*LAW_VAL_POS(group, Elem_step)-1 );//何凡修改
-				tmp = (guint) (GROUP_VAL_POS(group, receiver))+(guint)(LAW_VAL_POS(group, First_tx_elem)+(k-offset)*LAW_VAL_POS(group, Elem_step))-1 ;
+					channel_select(
+							(guint)(get_group_val (&pp->p_config->group[group], GROUP_RECEIVER))+ (guint)(LAW_VAL_POS(group, First_tx_elem))+(k-offset)*LAW_VAL_POS(group, Elem_step)-1 );//何凡修改
+				tmp = (guint) (get_group_val (&pp->p_config->group[group], GROUP_RECEIVER))+(guint)(LAW_VAL_POS(group, First_tx_elem)+(k-offset)*LAW_VAL_POS(group, Elem_step))-1 ;
 			}
 			else
 			{
 				TMP(focal_spi[k]).rx_sel	= 
-					channel_select((guint)(GROUP_VAL_POS(group, pulser))+ (guint)(LAW_VAL_POS(group, First_tx_elem))-1 ); //何凡修改 
+					channel_select((guint)(get_group_val (&pp->p_config->group[group], GROUP_PULSER))+ (guint)(LAW_VAL_POS(group, First_tx_elem))-1 ); //何凡修改 
 				TMP(focal_spi[k]).tx_sel	= 
-					channel_select((guint)(GROUP_VAL_POS(group, receiver))+ (guint)(LAW_VAL_POS(group, First_tx_elem))-1 );//何凡修改
-				tmp = (guint) (GROUP_VAL_POS(group, receiver))+(guint)(LAW_VAL_POS(group, First_tx_elem))-1 ;
+					channel_select((guint)(get_group_val (&pp->p_config->group[group], GROUP_RECEIVER))+ (guint)(LAW_VAL_POS(group, First_tx_elem))-1 );//何凡修改
+				tmp = (guint) (get_group_val (&pp->p_config->group[group], GROUP_RECEIVER))+(guint)(LAW_VAL_POS(group, First_tx_elem))-1 ;
 			}
 			channel_index_num = (tmp % 32 == 0)? 31 : (tmp % 32 -1); 
 			cnt = pow(2,LAW_VAL_POS(group, Elem_qty))-1; 
@@ -494,6 +499,11 @@ void send_focal_spi (guint group)
 		}
 		write_focal_data (&TMP(focal_spi[k]), k);
 	}
+}
+
+void send_group_spi (guint group)
+{
+	write_group_data (&(pp->p_tmp_config->group_spi[group]), group);
 }
 
 /* 初始化需要发给fpga的group参数 */
@@ -545,8 +555,8 @@ void init_group_spi (guint group)
 	TMP(group_spi[group]).UT2			= (GROUP_VAL_POS (group, group_mode) == 2) ? 1 : 0;		
 	TMP(group_spi[group]).UT1			= (GROUP_VAL_POS (group, group_mode) == 0) ? 1 : 0;		
 	TMP(group_spi[group]).PA			= (GROUP_VAL_POS (group, group_mode) == 1) ? 1 : 0;		
-	TMP(group_spi[group]).sample_start	= (get_group_start (pp->p_config, group) + 
-			get_group_wedge_delay (pp->p_config, group)) / 10;
+	TMP(group_spi[group]).sample_start	= 
+		(get_group_start (pp->p_config, group) + get_group_wedge_delay (pp->p_config, group)) / 10;
 
 
 	if (LAW_VAL_POS(group, Elem_qty) == 1)	
@@ -635,4 +645,5 @@ void init_group_spi (guint group)
 	TMP(group_spi[group]).voltage = get_voltage (pp->p_config, group);	
 
 }
+
 

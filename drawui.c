@@ -1004,6 +1004,7 @@ static void draw3_digit_stop(gfloat cur_value, const gchar *unit,
 		g_free(str);
 	//	widget_window_class->key_press_event = my_keypress_event;
 	/* 显示和隐藏控件 */
+	gtk_spin_button_set_value (GTK_SPIN_BUTTON (pp->sbutton[z]), cur_value);
 	gtk_widget_show (pp->eventbox30[z]);
 	gtk_widget_show (pp->eventbox31[z]);
 	gtk_widget_show (pp->data3[z]);
@@ -3716,7 +3717,7 @@ void draw3_data0(DRAW_UI_P p)
 		case 1:
 			switch (p->pos1[1])
 			{
-				case 0: /* 增益 Gain P100 TAN1 只等硬件 */
+				case 0: /* 增益 Gain P100 */
 					switch (TMP(db_reg))
 					{
 						case 0:	tmpf = 0.1; break;
@@ -3762,7 +3763,7 @@ void draw3_data0(DRAW_UI_P p)
 					upper = (gfloat) (128 + 1 - LAW_VAL(Last_tx_elem));
 					if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 0))
 					{
-						cur_value = (gfloat) (GROUP_VAL(pulser));
+						cur_value = (gfloat) (get_group_val (&pp->p_config->group[get_current_group(pp->p_config)], GROUP_PULSER));
 						lower = 1.0;
 						step = tmpf;
 						digit = 0;
@@ -3772,7 +3773,7 @@ void draw3_data0(DRAW_UI_P p)
 					}
 					else 
 					{
-						cur_value = (gfloat) (GROUP_VAL(pulser));
+						cur_value = (gfloat) (get_group_val (&pp->p_config->group[get_current_group(pp->p_config)], GROUP_PULSER));
 						digit = 0;
 						pos = 0;
 						str = g_strdup_printf ("( 1 to %d)", (guint)(upper));
@@ -3796,7 +3797,7 @@ void draw3_data0(DRAW_UI_P p)
 					upper = (gfloat) (128 + 1 - LAW_VAL(Last_rx_elem));
 					if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 0))
 					{
-						cur_value = (gfloat) (GROUP_VAL(receiver));
+						cur_value = (gfloat) (get_group_val (&pp->p_config->group[get_current_group(pp->p_config)], GROUP_RECEIVER));
 						lower = 1.0;
 						step = tmpf;
 						digit = 0;
@@ -3806,7 +3807,7 @@ void draw3_data0(DRAW_UI_P p)
 					}
 					else 
 					{
-						cur_value = (gfloat) (GROUP_VAL(receiver));
+						cur_value = (gfloat) (get_group_val (&pp->p_config->group[get_current_group(pp->p_config)], GROUP_RECEIVER));
 						digit = 0;
 						pos = 0;
 						str = g_strdup_printf ("( 1 to %d)", (guint)(upper));
@@ -5719,7 +5720,7 @@ void draw3_data1(DRAW_UI_P p)
 					upper = (gfloat) (128 + 1 - LAW_VAL(Last_tx_elem));
 					if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 1))
 					{
-						cur_value = (gfloat) (GROUP_VAL(pulser));
+						cur_value = (gfloat) (get_group_val (&pp->p_config->group[get_current_group(pp->p_config)], GROUP_PULSER));
 						lower = 1.0;
 						step = tmpf;
 						digit = 0;
@@ -5729,7 +5730,7 @@ void draw3_data1(DRAW_UI_P p)
 					}
 					else 
 					{
-						cur_value = (gfloat) (GROUP_VAL(pulser));
+						cur_value = (gfloat) (get_group_val (&pp->p_config->group[get_current_group(pp->p_config)], GROUP_PULSER));
 						digit = 0;
 						pos = 1;
 						str = g_strdup_printf ("( 1 to %d)", (guint)(upper));
@@ -5926,7 +5927,7 @@ void draw3_data1(DRAW_UI_P p)
 							lower = 1.0;
 							/* 计算最大值 */
 							upper = (gfloat)MIN((GROUP_VAL(probe.Elem_qty) - LAW_VAL(Elem_qty) + 1),
-								  (128 + 1 - GROUP_VAL(pulser)));
+								  (128 + 1 - get_group_val (&pp->p_config->group[get_current_group(pp->p_config)], GROUP_PULSER)));
 							step = tmpf;
 							digit = 0;
 							pos = 1;
@@ -6401,7 +6402,7 @@ void draw3_data2(DRAW_UI_P p)
 								upper = (gfloat) (128 + 1 - LAW_VAL(Last_tx_elem));
 								if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 2))
 								{
-									cur_value = (gfloat) (g_tmp_group_struct.pulser);
+									cur_value = (gfloat) (get_group_val (&g_tmp_group_struct, GROUP_PULSER));
 									lower = 1.0;
 									step = tmpf;
 									digit = 0;
@@ -6411,7 +6412,7 @@ void draw3_data2(DRAW_UI_P p)
 								}
 								else 
 								{
-									cur_value = (gfloat) (g_tmp_group_struct.pulser);
+									cur_value = (gfloat) (get_group_val (&g_tmp_group_struct, GROUP_PULSER));
 									digit = 0;
 									pos = 2;
 									str = g_strdup_printf ("( 1 to %d)", (guint)(upper));
@@ -8846,7 +8847,7 @@ void draw3_data2(DRAW_UI_P p)
 					upper = (gfloat) (128 + 1 - LAW_VAL(Last_rx_elem));
 					if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 2))
 					{
-						cur_value = (gfloat) (GROUP_VAL(receiver));
+						cur_value = (gfloat) (get_group_val (&pp->p_config->group[get_current_group(pp->p_config)], GROUP_RECEIVER));
 						lower = 1.0;
 						step = tmpf;
 						digit = 0;
@@ -8856,7 +8857,7 @@ void draw3_data2(DRAW_UI_P p)
 					}
 					else 
 					{
-						cur_value = (gfloat) (GROUP_VAL(receiver));
+						cur_value = (gfloat) (get_group_val (&pp->p_config->group[get_current_group(pp->p_config)], GROUP_RECEIVER));
 						digit = 0;
 						pos = 2;
 						str = g_strdup_printf ("( 1 to %d)", (guint)(upper));
@@ -9334,7 +9335,7 @@ void draw3_data3(DRAW_UI_P p)
 							upper = (gfloat) (128 + 1 - LAW_VAL(Last_rx_elem));
 							if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 3))
 							{
-								cur_value = (gfloat) (g_tmp_group_struct.receiver);
+								cur_value = (gfloat) (get_group_val (&g_tmp_group_struct, GROUP_RECEIVER));
 								lower = 1.0;
 								step = tmpf;
 								digit = 0;
@@ -9344,7 +9345,7 @@ void draw3_data3(DRAW_UI_P p)
 							}
 							else 
 							{
-								cur_value = (gfloat) (g_tmp_group_struct.receiver);
+								cur_value = (gfloat) (get_group_val (&g_tmp_group_struct, GROUP_RECEIVER));
 								digit = 0;
 								pos = 3;
 								str = g_strdup_printf ("( 1 to %d)", (guint)(upper));
@@ -9367,7 +9368,7 @@ void draw3_data3(DRAW_UI_P p)
 							upper = (gfloat) (128 + 1 - LAW_VAL(Last_tx_elem));
 							if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 3))
 							{
-								cur_value = (gfloat) (g_tmp_group_struct.pulser);
+								cur_value = (gfloat) (get_group_val (&g_tmp_group_struct, GROUP_PULSER));
 								lower = 1.0;
 								step = tmpf;
 								digit = 0;
@@ -9377,7 +9378,7 @@ void draw3_data3(DRAW_UI_P p)
 							}
 							else 
 							{
-								cur_value = (gfloat) (g_tmp_group_struct.pulser);
+								cur_value = (gfloat) (get_group_val (&g_tmp_group_struct, GROUP_PULSER));
 								digit = 0;
 								pos = 3;
 								str = g_strdup_printf ("( 1 to %d)", (guint)(upper));
@@ -12061,7 +12062,7 @@ void draw3_data4(DRAW_UI_P p)
 							upper = (gfloat) (128 + 1 - LAW_VAL(Last_rx_elem));
 							if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 4))
 							{
-								cur_value = (gfloat) (g_tmp_group_struct.receiver);
+								cur_value = (gfloat) (get_group_val (&g_tmp_group_struct, GROUP_RECEIVER));
 								lower = 1.0;
 								step = tmpf;
 								digit = 0;
@@ -12071,7 +12072,7 @@ void draw3_data4(DRAW_UI_P p)
 							}
 							else 
 							{
-								cur_value = (gfloat) (g_tmp_group_struct.receiver);
+								cur_value = (gfloat) (get_group_val (&g_tmp_group_struct, GROUP_RECEIVER));
 								digit = 0;
 								pos = 4;
 								str = g_strdup_printf ("( 1 to %d)", (guint)(upper));
@@ -12098,7 +12099,7 @@ void draw3_data4(DRAW_UI_P p)
 							upper = (gfloat) (128 + 1 - LAW_VAL(Last_rx_elem));
 							if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 4))
 							{
-								cur_value = (gfloat) (g_tmp_group_struct.receiver);
+								cur_value = (gfloat) (get_group_val (&g_tmp_group_struct, GROUP_RECEIVER));
 								lower = 1.0;
 								step = tmpf;
 								digit = 0;
@@ -12108,7 +12109,7 @@ void draw3_data4(DRAW_UI_P p)
 							}
 							else 
 							{
-								cur_value = (gfloat) (g_tmp_group_struct.receiver);
+								cur_value = (gfloat) (get_group_val (&g_tmp_group_struct, GROUP_RECEIVER));
 								digit = 0;
 								pos = 4;
 								str = g_strdup_printf ("( 1 to %d)", (guint)(upper));

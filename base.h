@@ -525,6 +525,7 @@ typedef struct Draw_interface
 
 	gfloat	swmin;
 	gfloat	swmax;
+	int		mark_go_back;
 
 	gint    G_delay[256];//保存每一个beam的延时
 } DRAW_UI, *DRAW_UI_P;

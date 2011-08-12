@@ -4,22 +4,22 @@
  */
 
 #include "base_config.h"
-#include "base.h"
 #include <string.h>
 #include <stdio.h>
+//#define NDEBUG
 #include <assert.h>
 
-extern void init_group_spi (unsigned int group);
-extern void send_focal_spi (unsigned int group);
-extern DRAW_UI_P pp;					
-extern void generate_focallaw(int grp);
+void init_group_spi (unsigned int group);
+void send_focal_spi (unsigned int group);
+void send_group_spi (unsigned int group);
+void generate_focallaw(int grp);
 
 /* 材料 (Material) 28Byte OK */
 typedef struct _Material 
 {
 	unsigned int	Velocity_LW;	/* 声速 单位 0.01m/s 纵波 快点 */
 	unsigned int	Velocity_SW;	/* 声速 单位 0.01m/s 横波 慢点 */
-	char	Name[20];		/* 材料名字 */
+	char			Name[20];		/* 材料名字 */
 } st_MATERIAL;
 
 static const st_MATERIAL data[] =
@@ -27,9 +27,9 @@ static const st_MATERIAL data[] =
 	{626000, 308000, "Aluminum"},			/* 0 */
 	{592000, 323000, "Steel common"},		/* 1 */
 	{566400, 0, "Steel stainless"},			/* 2 */
-	{439400,0 , "Brass"},					/* 3 */
+	{439400, 0, "Brass"},					/* 3 */
 	{470000, 226000, "Copper"},				/* 4 */
-	{5893, 323000, "Iron"},					/* 5 */
+	{589300, 323000, "Iron"},				/* 5 */
 	{215900, 0, "Lead"},					/* 6 */
 	{220000, 0, "Nylon"},					/* 7 */
 	{360700, 0, "Silver"},					/* 8 */
@@ -134,7 +134,8 @@ void set_current_group (CONFIG *p, unsigned char data, int cal)	/* 设置p当前
 	{
 		generate_focallaw (data);
 		init_group_spi (data);
-		write_group_data (&TMP(group_spi[data]), data);
+//		write_group_data (&(pp->p_tmp_config->group_spi[data]), data);
+		send_group_spi (data);
 		send_focal_spi (data);
 	}
 }
@@ -1318,12 +1319,12 @@ void set_file_name_info (CONFIG *p, const char *content)
 }
 
 /* gll probe_type */
-unsigned char get_probe_type (CONFIG *p)
+char get_probe_type (CONFIG *p)
 {
 	return p->probe_type;
 }
 
-void set_probe_type (CONFIG *p, unsigned char data)
+void set_probe_type (CONFIG *p, char data)
 {
 	p->probe_type = data;
 }
@@ -1331,23 +1332,26 @@ void set_probe_type (CONFIG *p, unsigned char data)
 
 
 /* Group 参数的保存读取 */
-unsigned int get_group_wedge_delay (CONFIG *p, int group_id)
+/* 基本General*/
+int get_group_wedge_delay (CONFIG *p, int group_id)
 {
 	return p->group[group_id].wedge_delay;
 }
 
-void set_group_wedge_delay (CONFIG *p, int group_id, unsigned int data)
+void set_group_wedge_delay (CONFIG *p, int group_id, int data)
 {
+	assert (data >= 0);
 	p->group[group_id].wedge_delay = data;
 }
 
-unsigned int get_group_range (CONFIG *p, int group_id)
+int get_group_range (CONFIG *p, int group_id)
 {
 	return p->group[group_id].range;
 }
 
-void set_group_range (CONFIG *p, int group_id, unsigned int data)
+void set_group_range (CONFIG *p, int group_id, int data)
 {
+	assert (data > 0);
 	p->group[group_id].range = data;
 }
 
@@ -1361,35 +1365,98 @@ void set_group_start (CONFIG *p, int group_id, int data)
 	p->group[group_id].start = data;
 }
 
-short get_group_gain (CONFIG *p, int group_id)
+int get_group_gain (CONFIG *p, int group_id)
 {
 	return p->group[group_id].gain; 
 }
 
-void set_group_gain (CONFIG *p, int group_id, short data)
+void set_group_gain (CONFIG *p, int group_id, int data)
 {
+	assert (data >= 0);
 	p->group[group_id].gain = data; 
 }
 
-short get_group_gainr (CONFIG *p, int group_id)
+int get_group_gainr (CONFIG *p, int group_id)
 {
 	return p->group[group_id].gainr; 
 }
 
-void set_group_gainr (CONFIG *p, int group_id, short data)
+void set_group_gainr (CONFIG *p, int group_id, int data)
 {
+	assert (data >= 0);
 	p->group[group_id].gainr = data; 
 }
 
-unsigned int get_group_velocity (CONFIG *p, int group_id)
+int get_group_velocity (CONFIG *p, int group_id)
 {
 	return p->group[group_id].velocity; 
 }
 
-void set_group_velocity (CONFIG *p, int group_id, unsigned int data)
+void set_group_velocity (CONFIG *p, int group_id, int data)
 {
+	assert (data > 0);
 	p->group[group_id].velocity = data;
 }
+
+/* 发射接收设置 */
+int get_group_pulser (CONFIG *p, int group_id)
+{
+	return p->group[group_id].pulser1; 
+}
+
+void set_group_pulser (CONFIG *p, int group_id,	int	data)
+{
+	assert (data > 0);
+	assert (data < 129);
+	p->group[group_id].pulser1 = data;
+}
+
+int get_group_receiver (CONFIG *p, int group_id)
+{
+	return p->group[group_id].receiver1; 
+}
+
+void set_group_receiver (CONFIG *p, int group_id,	int	data)
+{
+	assert (data > 0);
+	assert (data < 129);
+	p->group[group_id].receiver1 = data;
+}
+
+
+/* GROUP 参数的保存读取*/
+int get_group_val (GROUP *p, int type)
+{
+	int tt = 0;
+	switch (type)
+	{
+		case GROUP_PULSER:tt = p->pulser1;break;
+		case GROUP_RECEIVER:tt = p->receiver1;break;
+		default:break;
+	}
+	return tt;
+}
+
+void set_group_val (GROUP *p, int type, int val)
+{
+	switch (type)
+	{
+		case GROUP_PULSER:p->pulser1 = (unsigned char)(val);break;
+		case GROUP_RECEIVER:p->receiver1 = (unsigned char)(val);break;
+		default:break;
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
 
 int get_group_db_ref (CONFIG *p, int group_id)
 {

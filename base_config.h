@@ -14,6 +14,15 @@
 
 #include "base_const.h"
 
+#define	GROUP_GAIN			0x1000
+#define	GROUP_GAINR			0x1001
+#define GROUP_START			0x1002
+#define GROUP_RANGE			0x1003
+#define GROUP_WEDGE_DELAY	0x1004
+#define GROUP_VELOCITY		0x1005
+#define GROUP_PULSER		0x1006
+#define GROUP_RECEIVER		0x1007
+
 /* 闸门信息 */
 typedef struct _gate_info
 {
@@ -274,37 +283,37 @@ typedef struct _Group GROUP;
 struct _Group 
 {
 	/* 基本设置 */
-	unsigned int	wedge_delay;	/* 楔款延时 单位 ns */
-	unsigned int	range;			/* 显示范围 单位 ns */
-	int				start;			/* 扫描延时 单位 ns XX*/ 
-	short			gain;			/* 实际增益 单位 0.01dB */
-	short			gainr;			/* 参考增益 单位 0.01dB */
-	unsigned int	velocity;		/* 实际声速 单位 0.01m/s  */
-	unsigned int	on_off_status;
+	int		wedge_delay;	/* 楔款延时 单位 ns		*/
+	int		range;			/* 显示范围 单位 ns		*/
+	int		start;			/* 扫描延时 单位 ns		*/ 
+	short	gain;			/* 实际增益 单位 0.01dB */
+	short	gainr;			/* 参考增益 单位 0.01dB	*/
+	int		velocity;		/* 实际声速 单位 0.01m/s*/
+	int		on_off_status;
 	/* 保存各种ON OFF 菜单的值
 	   0位 dB_ref 开关
+	   1位 video_filter 开关
 	   */	
 	/* 发射接收 */
-	unsigned char	pulser;			/* 1~ 128 - elem_qty(聚焦阵元数最大为32) + 1 
-									   指定发射阵元 与机器配置相关我们是128阵元最大,
-									   Probe 的Auto Program 选择On 以后不可以调节 值与connect P 一样 */
-	unsigned char	receiver;		/* 接收阵元 必须是 PR 模式才能调节 */
-	unsigned char	filter;			/* 滤波 */
-	unsigned char	rectifier;		/* 检波  */
-	unsigned char	averaging;		/* 平均 */
+	unsigned char	pulser1;			/* 1~128 - elem_qty(聚焦阵元数最大为32) + 1 指定发射阵元 
+									   与机器配置相关我们是128阵元最大,值与connect P 一样 */
+	unsigned char	receiver1;		/* 接收阵元 必须是 PR 模式才能调节 */
+	char			filter;			/* 滤波 */
+	char			rectifier;		/* 检波  */
+	char			averaging;		/* 平均 */
 	unsigned char	video_filter;	/* 视频滤波*/
 
-	unsigned char	tx_rxmode;		/* 收发模式 */
-	unsigned char	freq_pos;		/* 频率选择模式是指定还是自己输入 */
-	unsigned char	pw_pos;			/* 脉冲宽度选择模式 */
-	unsigned char	prf_pos;		/* 脉冲宽度选择模式 */
-	unsigned short	frequency;		/* 以0.001Mhz 也就是Khz 1MHz~20MHz 为单位 当探头学选unknown 时候才可以调节 */
-	unsigned short	pulser_width;	/* 30~500ns 2.5ns为步进*/
+	char	tx_rxmode;		/* 收发模式 */
+	char	freq_pos;		/* 频率选择模式是指定还是自己输入 */
+	char	pw_pos;			/* 脉冲宽度选择模式 */
+	char	prf_pos;		/* 脉冲宽度选择模式 */
+	short	frequency;		/* 以0.001Mhz 也就是Khz 1MHz~20MHz 为单位 当探头学选unknown 时候才可以调节 */
+	short	pulser_width;	/* 30~500ns 2.5ns为步进*/
 
-	unsigned int	prf;			/* 重复频率 1-20000Hz 取值为10~200000 */
+	int		prf;			/* 重复频率 1-20000Hz 取值为10~200000 */
 
-	unsigned char	point_qty_pos;	/* 点个数 位置 */
-	unsigned char	sum_gain_pos;	/**/
+	char	point_qty_pos;	/* 点个数 位置 */
+	char	sum_gain_pos;	/**/
 	unsigned char	gate_pos;		/* A , B , I 当前修改的是哪个闸门 */
 	unsigned short	point_qty;		/* 点个数 */
 	unsigned short	sum_gain;
@@ -402,10 +411,10 @@ struct _Config
 	unsigned short	alarm_info[16];		/* 存储alarm 配置的信息 */
 	unsigned char	list;				/* Measurements->Reading->list filed  测量的list选项 */
 	unsigned char	field[4];			/* 4个测量值选择 */
-	OUTPUT_INFO1    output1[3];	/* 输出信息 output[0],output[1],output[2] */
+	OUTPUT_INFO1    output1[3];			/* 输出信息 output[0],output[1],output[2] */
 	GROUP	        group[setup_MAX_GROUP_QTY];			/* */
 	MEASURE_DATA	measure_data[setup_MAX_LAW_QTY];//保存多个聚焦法则的测量数据
-	st_PART	part;				/* 被检测工件	*/
+	st_PART	part;						/* 被检测工件	*/
 	unsigned short	year;
 	unsigned char	month;
 	unsigned char	day;
@@ -464,20 +473,20 @@ struct _Config
 	unsigned int	inspection_scanspeed;	/* Scan->Inspection->Index scanspeed */
 	unsigned int	inspection_rpmscanspeed;/* Scan->Inspection->Index rpm scanspeed */
 	unsigned int	inspection_indexspeed;	/* Scan->Inspection->Index rpm scanspeed */
-	int	inspection_scan_start;		/* Scan->Area->Scan start*/
-	int	inspection_scan_end;		/* Scan->Area->Scan end*/
-	int	inspection_scan_resolution;	/* Scan->Area->Scan resolution*/
-	int	inspection_index_start;		/* Scan->Area->Index start*/
-	int	inspection_index_end;		/* Scan->Area->Index end*/
-	int	inspection_index_resolution;/* Scan->Area->Index resolution*/
+	int	inspection_scan_start;			/* Scan->Area->Scan start*/
+	int	inspection_scan_end;			/* Scan->Area->Scan end*/
+	int	inspection_scan_resolution;		/* Scan->Area->Scan resolution*/
+	int	inspection_index_start;			/* Scan->Area->Index start*/
+	int	inspection_index_end;			/* Scan->Area->Index end*/
+	int	inspection_index_resolution;	/* Scan->Area->Index resolution*/
 	unsigned int	userfield_select_enable;	/* File->User Field->select userfield 使能状态 */
 	char	user_label[10][25];
 	char	user_label_content[10][25];
 	char	edit_notes_info[256];
 	char	edit_header_info[256];
 	char	file_name_info[50];
-	unsigned char	probe_type;
-	unsigned char	userfield_select;			/* File->User Field->select 当前选择userfield编号 */
+	char	probe_type;
+	unsigned char	userfield_select;	/* File->User Field->select 当前选择userfield编号 */
 };
 
 /* fetch material info of current config 获取当前配置中材料的信息 */
@@ -715,37 +724,98 @@ extern void		set_report_userfield_content (CONFIG *p, const char *content, int s
 
 /* 保存配置信息 */
 extern const char	*get_edit_notes_info (CONFIG *p);
-extern void		set_edit_notes_info (CONFIG *p, const char *content);
+extern void			set_edit_notes_info (CONFIG *p, const char *content);
 extern const char	*get_header_info (CONFIG *p);
-extern void		set_header_info (CONFIG *p, const char *content);
+extern void			set_header_info (CONFIG *p, const char *content);
 extern const char	*get_file_name_info (CONFIG *p);
-extern void		set_file_name_info (CONFIG *p, const char *content);
+extern void			set_file_name_info (CONFIG *p, const char *content);
 /* gll probe_type */
-extern unsigned char	get_probe_type (CONFIG *p);
-extern void		set_probe_type (CONFIG *p, unsigned char data);
+extern char			get_probe_type (CONFIG *p);
+extern void			set_probe_type (CONFIG *p, char data);
 /* 配置信息的操作end */
 
 
 
 /* Group 参数的保存读取 */
-extern unsigned int get_group_wedge_delay (CONFIG *p, int group_id);
-extern void set_group_wedge_delay (CONFIG *p, int group_id, unsigned int data);
-extern unsigned int get_group_range (CONFIG *p, int group_id);
-extern void set_group_range (CONFIG *p, int group_id, unsigned int data);
-extern int get_group_start (CONFIG *p, int group_id);
-extern void set_group_start (CONFIG *p, int group_id, int data);
-extern short get_group_gain (CONFIG *p, int group_id);
-extern void set_group_gain (CONFIG *p, int group_id, short data);
-extern short get_group_gainr (CONFIG *p, int group_id);
-extern void set_group_gainr (CONFIG *p, int group_id, short data);
-extern unsigned int get_group_velocity (CONFIG *p, int group_id);
-extern void set_group_velocity (CONFIG *p, int group_id, unsigned int data);
-extern int get_group_db_ref (CONFIG *p, int group_id);
-extern void set_group_db_ref (CONFIG *p, int group_id, int data);
+/* 基本设置 */
+extern int	get_group_wedge_delay	(CONFIG	*p,	int	group_id);
+extern void	set_group_wedge_delay	(CONFIG *p, int group_id,	int	data);
+extern int	get_group_range			(CONFIG *p, int group_id);
+extern void	set_group_range			(CONFIG *p, int group_id,	int	data);
+extern int	get_group_start			(CONFIG *p, int group_id);
+extern void	set_group_start			(CONFIG *p, int group_id,	int	data);
+extern int	get_group_gain			(CONFIG *p, int group_id);
+extern void	set_group_gain			(CONFIG *p, int group_id,	int	data);
+extern int	get_group_gainr			(CONFIG *p, int group_id);
+extern void	set_group_gainr			(CONFIG *p, int group_id,	int	data);
+extern int	get_group_velocity		(CONFIG *p, int group_id);
+extern void	set_group_velocity		(CONFIG *p, int group_id,	int	data);
+/* 发射接收设置 */
+extern int	get_group_pulser		(CONFIG *p, int group_id);
+extern void	set_group_pulser		(CONFIG *p, int group_id,	int	data);
+extern int	get_group_receiver		(CONFIG *p, int group_id);
+extern void	set_group_receiver		(CONFIG *p, int group_id,	int	data);
+extern int	get_group_filter_pos	(CONFIG *p, int group_id);
+extern void	set_group_filter_pos	(CONFIG *p, int group_id,	int	data);
+extern int	get_group_filter_val	(CONFIG *p, int group_id);
+extern int	get_group_rectifier		(CONFIG *p, int group_id);
+extern void	set_group_rectifier		(CONFIG *p, int group_id,	int	data);
+extern int	get_group_averaging		(CONFIG *p, int group_id);
+extern void	set_group_averaging		(CONFIG *p, int group_id,	int	data);
+extern int	get_group_video_filter	(CONFIG *p, int group_id);
+extern void	set_group_video_filter	(CONFIG *p, int group_id,	int	data);
+extern int	get_group_tx_rx_mode	(CONFIG *p, int group_id);
+extern void	set_group_tx_rx_mode	(CONFIG *p, int group_id,	int	data);
+extern int	get_group_freq_pos		(CONFIG *p, int group_id);
+extern void	set_group_freq_pos		(CONFIG *p, int group_id,	int	data);
+extern int	get_group_freq_val		(CONFIG *p, int group_id);
+extern void	set_group_freq_val		(CONFIG *p, int group_id,	int	data);
+extern int	get_group_pw_pos		(CONFIG *p, int group_id);
+extern void	set_group_pw_pos		(CONFIG *p, int group_id,	int	data);
+extern int	get_group_pw_val		(CONFIG *p, int group_id);
+extern void	set_group_pw_val		(CONFIG *p, int group_id,	int	data);
+extern int	get_group_prf_pos		(CONFIG *p, int group_id);
+extern void	set_group_prf_pos		(CONFIG *p, int group_id,	int	data);
+extern int	get_group_prf_val		(CONFIG *p, int group_id);
+extern void	set_group_prf_val		(CONFIG *p, int group_id,	int	data);
+extern int	get_group_point_qty_pos	(CONFIG *p, int group_id);
+extern void	set_group_point_qty_pos	(CONFIG *p, int group_id,	int	data);
+extern int	get_group_point_qty_val	(CONFIG *p, int group_id);
+extern void	set_group_point_qty_val	(CONFIG *p, int group_id,	int	data);
+extern int	get_group_sum_gain_pos	(CONFIG *p, int group_id);
+extern void	set_group_sum_gain_pos	(CONFIG *p, int group_id,	int	data);
+extern int	get_group_sum_gain_val	(CONFIG *p, int group_id);
+extern void	set_group_sum_gain_val	(CONFIG *p, int group_id,	int	data);
+
+
+extern int	get_group_db_ref		(CONFIG *p, int group_id);
+extern void	set_group_db_ref		(CONFIG *p,	int	group_id,	int	data);
 
 #if 0
+	unsigned char	pulser;			/* 1~128 - elem_qty(聚焦阵元数最大为32) + 1 指定发射阵元 
+									   与机器配置相关我们是128阵元最大,值与connect P 一样 */
+	unsigned char	receiver;		/* 接收阵元 必须是 PR 模式才能调节 */
+	char			filter;			/* 滤波 */
+	char			rectifier;		/* 检波  */
+	char			averaging;		/* 平均 */
+	unsigned char	video_filter;	/* 视频滤波*/
+
+	char	tx_rxmode;		/* 收发模式 */
+	char	freq_pos;		/* 频率选择模式是指定还是自己输入 */
+	char	pw_pos;			/* 脉冲宽度选择模式 */
+	char	prf_pos;		/* 脉冲宽度选择模式 */
+	short	frequency;		/* 以0.001Mhz 也就是Khz 1MHz~20MHz 为单位 当探头学选unknown 时候才可以调节 */
+	short	pulser_width;	/* 30~500ns 2.5ns为步进*/
+
+	int		prf;			/* 重复频率 1-20000Hz 取值为10~200000 */
+
+	char	point_qty_pos;	/* 点个数 位置 */
+	char	sum_gain_pos;	/**/
 #endif
 
+/* Group 参数的保存读取 */
+extern int	get_group_val (GROUP *p, int type);
+extern void	set_group_val (GROUP *p, int type, int val);
 
 /* group操作 */
 extern void		grpcpy (CONFIG *p, unsigned int src, unsigned int dst);
