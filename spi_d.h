@@ -39,11 +39,11 @@ typedef struct _Group_data
 	unsigned int	UT2:1;					/* bit:9  UT2		 */	
 	unsigned int	UT1:1;					/* bit:10 UT1		 */
 	unsigned int	PA:1;					/* bit:11 PA	 	 */
-	unsigned int	sample_start:20;		/* bit:12-31 采样起点*/
+	unsigned int	_sample_start:20;		/* bit:12-31 采样起点*/
 
 	/* s_group_reg (2) */
 	unsigned int	sum_gain:12;			/* bit:0-11 Sum gain */
-	unsigned int	sample_range:20;		/* bit:12-31 capture end 采样范围 */
+	unsigned int	_sample_range:20;		/* bit:12-31 capture end 采样范围 */
 
 	/* s_group_reg (3) */
 	unsigned int	beam_qty:13;			/* bit:0-12 聚焦法则数量 */
@@ -91,8 +91,15 @@ typedef struct _Group_data
 	unsigned int	TT8:10;				/**/
 	unsigned int	reject:12;			/* bit:20-31 闸门C 结束 */
 
-	/* s_group_ref (13-15) */
-	unsigned int	TT3[3];
+	/* s_group_ref (13) */
+	unsigned int    sample_start:21;
+	unsigned int    TT_S:11;
+    /* s_group_ref  (14)*/
+	unsigned int    sample_range:21;
+	unsigned int    TT_V:11;
+
+	/* no used */
+	unsigned int	TT3[1];
 
 } group_data_spi;
 

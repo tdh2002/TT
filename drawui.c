@@ -2206,7 +2206,8 @@ DO_NOT_USE_CCFG(measure_data[index]).a_position = 10;
 static gboolean draw_other_info (GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
 
-	gint  y2 = 23;	//y1 = 3,
+	gint  y1 = 3;
+	gint  y2 = 23;
 
 	cairo_t *cr;        //声明一支画笔
 	cr = gdk_cairo_create(widget->window);//创建画笔
@@ -2264,14 +2265,25 @@ static gboolean draw_other_info (GtkWidget *widget, GdkEventExpose *event, gpoin
 	cairo_move_to (cr, 55, y2 + 5);
 	cairo_line_to (cr, 55, y2 + 10);
 
-	/* 更新电池信息 */
-	switch(pp->battery[9])//电池1
+	/* 更新电池信息*/ 
+	switch(pp->battery.flag1)//电池1
 	{
 		case 0x00://没连接
 			break;
 		case 0x01://放电
+			//显示剩余电量
+			cairo_set_source_rgba (cr, 0.3, 0.3, 0.3, 1);
+			cairo_rectangle (cr , 0, y1, 50*(pp->battery.power1), 15);
+			cairo_fill (cr);
 			break;
 		case 0x02://充电
+			// 显示充电标志
+
+			cairo_set_source_rgba (cr, 0.3, 0.3, 0.3, 1);
+			cairo_rectangle (cr , 0, y1, 50*(pp->battery.power1), 15);
+			cairo_fill (cr);
+			break;
+		default :
 			break;
 	}
 
@@ -16277,7 +16289,7 @@ static void key_message_thread(void)
 					if( (bar[0]==0xaa) && (bar[1]==0xaa) && (bar[2]==0xaa) )
 					{
 						//将所有电池信息全部读取出来
-						read(pp->fd_key, pp->battery, 11);
+						read(pp->fd_key, &(pp->battery), 33);
 						printf("read battery info successfully \n");
 					}
 				}
@@ -16292,7 +16304,7 @@ static void draw_frame_thread(void)
 {
 
 	gint i, j, k, offset, offset1;
-	guint temp2 = (pp->p_beam_data + 3);
+	guint temp2 = (pp->p_beam_data);
     unsigned int BeamInfoHeader;
 	while (1)
 	{
@@ -16857,11 +16869,6 @@ void init_ui(DRAW_UI_P p)
 	pp->mark2 = 1;
 	pp->scan_count = 1;
 #if ARM
-/*	g_thread_create (signal_thread, NULL, FALSE, NULL);*/
-/*	g_thread_create (signal_thread1, NULL, FALSE, NULL);*/
-//	g_timeout_add (50, (GSourceFunc) time_handler2, NULL);/////////////////////////////////////////
-/*	pthread_create (&tid, NULL, thread_func, NULL);
-	pthread_create (&tid, NULL, thread_func1, NULL);*/
 	DMA_MARK = (int*)(pp->p_beam_data + 0x800000)  ;
     printf("DMA_MAKR is %d \n", *DMA_MARK);	
 	ret = pthread_create (&tid0, NULL, (void*)key_message_thread, NULL);

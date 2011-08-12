@@ -85,6 +85,34 @@ typedef struct _calibration
 	
 } CALIBRATION,*CALIBRATION_P;
 
+typedef struct _battery
+{
+	char  start1;
+	char  start2;
+	char  start3;
+	short power1;//电池1电量 %比
+	short status1;
+	short time1;
+	short power2;
+	short status2;
+	short time2;
+	char  flag1;
+	char  flag2;
+
+	short temp1;
+	short temp2;
+	short temp3;
+	short temp4;
+	short temp5;
+	short temp6;
+
+	char  on_off;
+	char  end1;
+	char  end2;
+	char  end3;
+
+} BATTERY, *BATTERY_P;
+
 typedef struct tmp_config 
 {
 	guchar	db_reg;				/* 增益 gain 步进		*/
@@ -489,7 +517,7 @@ typedef struct Draw_interface
 	GtkWidget *sw1;		/* 第二个scroll 探头 楔块 聚焦法则 setup 等需要2个sw */
 	int		fd_key;		/* 串口设备 */
 	int		fd_key1;		/* 串口设备 */
-	char    battery[11];   /* 保存电池信息 */
+	BATTERY battery;  /* 保存电池信息 */
 
 	guchar  iter_qty;       /* treeview 中 iter 的个数 */
 	guchar  iter_pos;	/* treeview 中 iter 的位置 */

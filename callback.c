@@ -622,7 +622,7 @@ guint get_prf ()
 				GROUP_VAL(prf) = prf_temp ;
 				break;
 			case 1:
-				GROUP_VAL(prf) = prf_temp ;
+				GROUP_VAL(prf) = prf_temp/2;
 				break;
 			case 2:
 				GROUP_VAL(prf) = (prf_temp > 600 ) ? 600 : prf_temp ;
@@ -3571,7 +3571,6 @@ void data_1151 (GtkSpinButton *spinbutton, gpointer data) /* PRF P115 */
 	markup = g_markup_printf_escaped (
 			"<span foreground='white' font_desc='10'>V: %.2f mm/s</span>",(gfloat)(GROUP_VAL(prf) / 10.0));
 	gtk_label_set_markup (GTK_LABEL (pp->label[5]), markup); ;
-
 	g_free(markup);
 	if (GROUP_VAL_POS(grp, prf) >= 400)
 		GROUP_VAL_POS(grp, prf) = 400;
@@ -3588,11 +3587,24 @@ void data_1151 (GtkSpinButton *spinbutton, gpointer data) /* PRF P115 */
 
 void data_115 (GtkMenuItem *menuitem, gpointer data) /* PRF */
 {
+	gchar *markup;
 	guint temp = GPOINTER_TO_UINT (data);
 	gint grp = get_current_group(pp->p_config);
 	gint temp_prf;
 	GROUP_VAL(prf_pos) = temp;
 	GROUP_VAL(prf) = get_prf();			/*  */
+
+	markup=g_markup_printf_escaped(
+			"<span foreground='white' font_desc='10'>PRF: %d(%d)</span>",GROUP_VAL(prf) / 10, (GROUP_VAL(prf) / 10) * 1);
+	gtk_label_set_markup (GTK_LABEL(pp->label[3]),markup);
+	g_free(markup);
+
+	markup = g_markup_printf_escaped (
+			"<span foreground='white' font_desc='10'>V: %.2f mm/s</span>",(gfloat)(GROUP_VAL(prf) / 10.0));
+	gtk_label_set_markup (GTK_LABEL (pp->label[5]), markup); ;
+	g_free(markup);
+
+
 	if (temp != 3)
 	{
 		pp->pos_pos = MENU3_STOP;

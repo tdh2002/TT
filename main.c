@@ -325,20 +325,16 @@ int main (int argc, char *argv[])
 
 	pp = p_ui;
 
-	p_ui->p_tmp_config->fd_config = open ("default.cfg", O_RDWR);
-	if (!argv[1])
-	{
-		set_config(0);
-	} 
+	p_ui->p_tmp_config->fd_config = open ("default.cfg", O_RDWR | O_CREAT, 0644);
+	if (p_ui->p_tmp_config->fd_config < 0)
+		g_print("error open config file\n");
 	else 
-	{
-		if (p_ui->p_tmp_config->fd_config < 0)
-			g_print("error open config file\n");
-		else 
-		{ 
-			i = read (TMP(fd_config), pp->p_config, sizeof(CONFIG));
-			g_print("success open config file\n");
-		}
+	{ 
+		lseek( TMP(fd_config),0,SEEK_SET );
+		i = read (TMP(fd_config), pp->p_config, sizeof(CONFIG));
+		if(i == 0)
+			set_config(0);
+		g_print("success open config file\n");
 	}
 
 	tttmp = get_group_gain (pp->p_config, get_current_group(pp->p_config)) / 100.0;
@@ -430,7 +426,7 @@ int main (int argc, char *argv[])
 
 void send_focal_spi (guint group)
 {
-	guint offset, beam_qty = TMP(beam_qty[group]), k, i,enablet = 0, enabler = 0;
+	guint offset, beam_qty =TMP(beam_qty[group]), k, i,enablet = 0, enabler = 0;
 	guint tmp,index,channel_index_num,cnt;
 	for (offset = 0, k = 0 ; k < group; k++)
 		offset += TMP(beam_qty[k]);
@@ -567,7 +563,8 @@ void init_group_spi (guint group)
 	TMP(group_spi[group]).sample_range	= TMP(group_spi[group]).sample_start + 
 		get_group_range (pp->p_config, group) / 10;		
 
-	TMP(group_spi[group]).beam_qty		= TMP(beam_qty[group]) - 1; 
+	//TMP(group_spi[group]).beam_qty		= TMP(beam_qty[group]) - 1; 
+	TMP(group_spi[group]).beam_qty  = GROUP_VAL(point_qty);
 	TMP(group_spi[group]).sample_offset	= 0;
 
 	tt[0] = (GROUP_VAL_POS(group, gate[0].start) +	GROUP_VAL_POS (group, gate[0].width));
