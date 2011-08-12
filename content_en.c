@@ -409,7 +409,7 @@ const gchar *all_menu_content_en[] =
 	"Auto", "UserDef",								/* 68 sum_gain  */
 	"A", "B","I",									/* 70 gate_pos  */
 	"Position", "Mode",								/* 73 parameters*/
-	"Pulse", "I/","A/",								/* 75 synchro */
+	"Pulse", "I/","A^",								/* 75 synchro */
 	"Peak(^)", "Edge(/)",								/* 78 measure */
 	"Absolute", "Positive", "Negative",						/* 80 rectifier_freq*/
 	"1", "2","3","4","5","6","7","8","9","10","11","12","13","14","15","16",	/* 83 Alarm_pos*/

@@ -988,7 +988,6 @@ void b3_fun1(gpointer p)
 	/* 一次点击处理 */
 	switch (pp->pos)
 	{
-		tttmp = gtk_spin_button_get_value (GTK_SPIN_BUTTON (pp->sbutton[1]));
 		case 0:
 			switch (pp->pos1[0])
 			{
@@ -1246,7 +1245,7 @@ void b3_fun1(gpointer p)
 
 	/*处理微调*/
 	if ((pp->pos_last2 == pp->pos2[pp->pos][pp->pos1[pp->pos]]) &&
-			(pp->pos_pos == MENU3_PRESSED))
+			(pp->pos_pos == MENU3_PRESSED) )
 	{
 		switch (pp->pos) 
 		{
@@ -2680,6 +2679,29 @@ static int handler_key(guint keyval, gpointer data)
 					break;
 				case MENU3_PRESSED:
 					pp->pos_pos = MENU3_STOP;
+					switch (CUR_POS)
+					{
+						case 0:
+							b3_fun0(NULL);
+							break;
+						case 1:
+							b3_fun1(NULL);
+							break;
+						case 2:
+							b3_fun2(NULL);
+							break;
+						case 3:
+							b3_fun3(NULL);
+							break;
+						case 4:
+							b3_fun4(NULL);
+							break;
+						case 5:
+							b3_fun5(NULL);
+							break;
+						default:break;
+					}
+
 					break;
 				default:break;
 				}
