@@ -846,13 +846,13 @@ void b3_fun0(gpointer pt)
 			switch (p->pos1[1])
 			{
 				case 4: 
-/*
+#if ARM
 					 ret = pthread_create (&thread_id, NULL, (void*)thread_set_DB_eighty_percent, p);
 					if(ret){
 						perror("in1:");
 					    return;
 					}
-*/
+#endif
 					break; /* P140 自动80%  */
 				default:break;
 			}
