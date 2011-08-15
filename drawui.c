@@ -16353,8 +16353,8 @@ static void draw_frame_thread(void)
 								(GROUP_VAL_POS(i, point_qty) + 32) * j),
 							TMP(scan_data[i] + TMP(a_scan_dot_qty) * j), 
 							GROUP_VAL_POS(i, point_qty),
-							TMP(a_scan_dot_qty), 
-							GROUP_VAL_POS(i, rectifier));
+							TMP(a_scan_dot_qty),
+							get_group_val (get_group_by_id (pp->p_config, i), GROUP_RECTIFIER));
 				}
 			}
 			for (k = 0; ((k < 16) && (TMP(scan_type[k]) != 0xff)); k++)
