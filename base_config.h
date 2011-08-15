@@ -22,6 +22,8 @@
 #define GROUP_VELOCITY		0x1005
 #define GROUP_PULSER		0x1006
 #define GROUP_RECEIVER		0x1007
+#define GROUP_FILTER		0x1008
+#define GROUP_DB_REF		0x1009
 
 /* 闸门信息 */
 typedef struct _gate_info
@@ -295,10 +297,10 @@ struct _Group
 	   1位 video_filter 开关
 	   */	
 	/* 发射接收 */
-	unsigned char	pulser1;			/* 1~128 - elem_qty(聚焦阵元数最大为32) + 1 指定发射阵元 
+	unsigned char	pulser1;		/* 1~128 - elem_qty(聚焦阵元数最大为32) + 1 指定发射阵元 
 									   与机器配置相关我们是128阵元最大,值与connect P 一样 */
 	unsigned char	receiver1;		/* 接收阵元 必须是 PR 模式才能调节 */
-	char			filter;			/* 滤波 */
+	char			filter1;		/* 滤波 */
 	char			rectifier;		/* 检波  */
 	char			averaging;		/* 平均 */
 	unsigned char	video_filter;	/* 视频滤波*/
@@ -505,6 +507,7 @@ extern unsigned int	get_part_diameter (CONFIG *p);
 extern void		set_part_diameter (CONFIG *p, void* data);
 
 /* 配置信息的操作start */
+extern GROUP *get_group_by_id (CONFIG *p, int group);
 extern unsigned char	get_current_group (CONFIG *p);
 extern void		set_current_group (CONFIG *p, unsigned char data, int cal);
 extern unsigned char	get_group_qty (CONFIG *p);
@@ -738,7 +741,6 @@ extern void			set_probe_type (CONFIG *p, char data);
 
 /* Group 参数的保存读取 */
 /* 基本设置 */
-extern int	get_group_wedge_delay	(CONFIG	*p,	int	group_id);
 extern void	set_group_wedge_delay	(CONFIG *p, int group_id,	int	data);
 extern int	get_group_range			(CONFIG *p, int group_id);
 extern void	set_group_range			(CONFIG *p, int group_id,	int	data);
@@ -751,10 +753,6 @@ extern void	set_group_gainr			(CONFIG *p, int group_id,	int	data);
 extern int	get_group_velocity		(CONFIG *p, int group_id);
 extern void	set_group_velocity		(CONFIG *p, int group_id,	int	data);
 /* 发射接收设置 */
-extern int	get_group_pulser		(CONFIG *p, int group_id);
-extern void	set_group_pulser		(CONFIG *p, int group_id,	int	data);
-extern int	get_group_receiver		(CONFIG *p, int group_id);
-extern void	set_group_receiver		(CONFIG *p, int group_id,	int	data);
 extern int	get_group_filter_pos	(CONFIG *p, int group_id);
 extern void	set_group_filter_pos	(CONFIG *p, int group_id,	int	data);
 extern int	get_group_filter_val	(CONFIG *p, int group_id);
@@ -792,9 +790,6 @@ extern int	get_group_db_ref		(CONFIG *p, int group_id);
 extern void	set_group_db_ref		(CONFIG *p,	int	group_id,	int	data);
 
 #if 0
-	unsigned char	pulser;			/* 1~128 - elem_qty(聚焦阵元数最大为32) + 1 指定发射阵元 
-									   与机器配置相关我们是128阵元最大,值与connect P 一样 */
-	unsigned char	receiver;		/* 接收阵元 必须是 PR 模式才能调节 */
 	char			filter;			/* 滤波 */
 	char			rectifier;		/* 检波  */
 	char			averaging;		/* 平均 */

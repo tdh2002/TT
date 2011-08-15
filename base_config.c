@@ -120,6 +120,11 @@ void set_part_diameter (CONFIG *p, void* data)
 	p->part.Diameter = (unsigned int)((unsigned int) (data));
 }
 
+GROUP *get_group_by_id (CONFIG *p, int group)
+{
+	return &(p->group[group]);
+}
+
 /* 配置信息的操作 */
 unsigned char get_current_group (CONFIG *p)	/* 当前p活动的group 0-7 */
 {
@@ -1330,25 +1335,8 @@ void set_probe_type (CONFIG *p, char data)
 }
 
 
-
 /* Group 参数的保存读取 */
 /* 基本General*/
-int get_group_wedge_delay (CONFIG *p, int group_id)
-{
-	return p->group[group_id].wedge_delay;
-}
-
-void set_group_wedge_delay (CONFIG *p, int group_id, int data)
-{
-	assert (data >= 0);
-	p->group[group_id].wedge_delay = data;
-}
-
-int get_group_range (CONFIG *p, int group_id)
-{
-	return p->group[group_id].range;
-}
-
 void set_group_range (CONFIG *p, int group_id, int data)
 {
 	assert (data > 0);
@@ -1399,39 +1387,31 @@ void set_group_velocity (CONFIG *p, int group_id, int data)
 }
 
 /* 发射接收设置 */
-int get_group_pulser (CONFIG *p, int group_id)
-{
-	return p->group[group_id].pulser1; 
-}
-
-void set_group_pulser (CONFIG *p, int group_id,	int	data)
-{
-	assert (data > 0);
-	assert (data < 129);
-	p->group[group_id].pulser1 = data;
-}
-
-int get_group_receiver (CONFIG *p, int group_id)
-{
-	return p->group[group_id].receiver1; 
-}
-
-void set_group_receiver (CONFIG *p, int group_id,	int	data)
-{
-	assert (data > 0);
-	assert (data < 129);
-	p->group[group_id].receiver1 = data;
-}
-
 
 /* GROUP 参数的保存读取*/
+/**
+#define	GROUP_GAIN			0x1000
+#define	GROUP_GAINR			0x1001
+#define GROUP_START			0x1002
+#define GROUP_RANGE			0x1003
+#define GROUP_WEDGE_DELAY	0x1004
+#define GROUP_VELOCITY		0x1005
+ */
 int get_group_val (GROUP *p, int type)
 {
 	int tt = 0;
 	switch (type)
 	{
+		case GROUP_GAIN:tt = p->gain;break;
+		case GROUP_GAINR:tt = p->gainr;break;
+		case GROUP_START:tt = p->start;break;
+		case GROUP_RANGE:tt = p->range;break;
+		case GROUP_WEDGE_DELAY:tt = p->wedge_delay;break;
+		case GROUP_VELOCITY:tt = p->velocity;break;
 		case GROUP_PULSER:tt = p->pulser1;break;
 		case GROUP_RECEIVER:tt = p->receiver1;break;
+		case GROUP_FILTER:tt = p->filter1;break;
+		case GROUP_DB_REF:tt = get_bit_value (p->on_off_status, 0);break;
 		default:break;
 	}
 	return tt;
@@ -1441,8 +1421,16 @@ void set_group_val (GROUP *p, int type, int val)
 {
 	switch (type)
 	{
+		case GROUP_GAIN:p->gain = (short)(val);break;
+		case GROUP_GAINR:p->gainr = (short)(val);break;
+		case GROUP_START:p->start = val;break;
+		case GROUP_RANGE:p->range = val;break;
+		case GROUP_WEDGE_DELAY:p->wedge_delay = val;break;
+		case GROUP_VELOCITY:p->velocity = val;break;
 		case GROUP_PULSER:p->pulser1 = (unsigned char)(val);break;
 		case GROUP_RECEIVER:p->receiver1 = (unsigned char)(val);break;
+		case GROUP_FILTER:p->filter1=(char)(val);break;
+		case GROUP_DB_REF:set_bit_value (p->on_off_status, 0, val);break;
 		default:break;
 	}
 }

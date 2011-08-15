@@ -965,7 +965,7 @@ void report_build_setup(char *file_name,int group)
     fprintf(fp,"<TR>\n");
     fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%d ns</TD>\n",BEAM_INFO(group,beam_delay));
     fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%d ns</TD>\n", get_group_start (pp->p_config, group));
-    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%d ns</TD>\n", get_group_range (pp->p_config, group));
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%d ns</TD>\n", get_group_val (get_group_by_id (pp->p_config, group), GROUP_RANGE));
     fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%d</TD>\n",GROUP_VAL_POS(group,prf));
     fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%s</TD>\n",menu_content[ GROUP_MODE_P +(GROUP_VAL_POS(group,group_mode))]);
     fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%d</TD>\n",1 << GROUP_VAL_POS(group,averaging));
@@ -982,11 +982,12 @@ void report_build_setup(char *file_name,int group)
 
 	fprintf(fp,"<TR>\n");
 	fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">N/A</TD>\n");
-	fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%f</TD>\n",(get_group_range (pp->p_config, group) / 10.0) / GROUP_VAL_POS(group,point_qty));
+	fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%f</TD>\n",(get_group_val (get_group_by_id (pp->p_config, group), GROUP_RANGE) / 10.0) / GROUP_VAL_POS(group,point_qty));
     fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%s</TD>\n",menu_content[ OFF_ON + (GROUP_VAL_POS(group,video_filter))]);
     fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">N/A</TD>\n");//Pretrig    
     fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%s</TD>\n",menu_content[ RECTIFIER + (GROUP_VAL_POS(group,rectifier))]);
-    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%s</TD>\n",menu_content[ FILTER +(GROUP_VAL_POS(group,filter))]);
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%s</TD>\n",
+			menu_content[ FILTER + get_group_val (get_group_by_id (pp->p_config, group), GROUP_FILTER)]);
     fprintf(fp,"</TR>\n\n");
 
     fprintf(fp,"<TR>\n");

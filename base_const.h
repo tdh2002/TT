@@ -126,6 +126,9 @@
 #define GRP_8	7
 
 
+#define FILTER_NONE	0
+#define FILTER_AUTO	1
+
 #define	NORMAL_OFF	0
 #define	NORMAL_ON	1
 
