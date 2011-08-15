@@ -13732,7 +13732,15 @@ void draw3_data4(DRAW_UI_P p)
 					}
 					else if(get_probe_select (pp->p_config)==1)
 					{
-						draw3_popdown(NULL,4,0);
+						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
+						{
+							draw_dialog_all (DIALOG_DEFINE_WEDGE);
+						}
+						else
+						{
+							draw3_popdown(GROUP_VAL(wedge.Model), 4, 0);
+						}
+
 						g_sprintf (temp,"%s", con2_p[5][0][7]);
 						gtk_label_set_text (GTK_LABEL (pp->label3[4]), temp);
 					}

@@ -18,6 +18,7 @@
 extern void read_probe_file (const gchar *file_path, PROBE_P p);	/* 读取探头信息 */
 extern void save_probe_file (const gchar *file_path, PROBE_P p);	/* 保存探头信息 */
 extern void read_wedge_file (const gchar *file_path, WEDGE_P p);	/* 读取楔块信息 */
+extern void save_wedge_file (const gchar *file_path, WEDGE_P p);	/* 保存楔块信息 */
 extern void read_palette_file (const gchar *file_path, guint *sp_col, guint *col);
 extern void save_law_file (const gchar *file_path, gint offset, gint group);
 extern void read_law_file (const gchar *file_path, gint offset, gint group);
@@ -33,6 +34,9 @@ extern void read_law_file (const gchar *file_path, gint offset, gint group);
 
 #define PA_PROBE_USER_PATH	"source/user/probe/PA/"
 #define UT_PROBE_USER_PATH	"source/user/probe/UT/"
+
+#define PA_WEDGE_USER_PATH	"source/user/wedge/PA/"
+#define UT_WEDGE_USER_PATH	"source/user/wedge/UT/"
 
 #define USER_CFG_PATH	"source/user/setup/"
 

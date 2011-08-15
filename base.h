@@ -645,18 +645,34 @@ typedef struct __dir_path_label
 	GtkWidget *target_label;
 }_dir_path_label, *_dir_path_label_p;
 
-typedef struct __Open_UT_PA_File
+typedef struct __Open_UT_PA_Probe_File
 {
 	GtkWidget *list;
-	GtkWidget *Model_Entry;
-	GtkWidget *Serial_Entry;
-	GtkWidget *Probe_Type_Combo;
-	GtkWidget *Frequency_Entry;
-	GtkWidget *Element_Qty_Entry;
-	GtkWidget *Ref_Point_Entry;
-	GtkWidget *Pitch_Entry;
-	GtkWidget *Element_Size_Entry;
-}_Open_UT_PA_File, *_Open_UT_PA_File_P;
+	GtkWidget *model_entry;
+	GtkWidget *serial_entry;
+	GtkWidget *probe_type_combo;
+	GtkWidget *frequency_entry;
+	GtkWidget *element_qty_entry;
+	GtkWidget *ref_point_entry;
+	GtkWidget *pitch_entry;
+	GtkWidget *element_size_entry;
+}_Open_UT_PA_Probe_File, *_Open_UT_PA_Probe_File_P;
+
+typedef struct __Open_UT_PA_Wedge_File
+{
+	GtkWidget *list;
+	GtkWidget *model_entry;
+	GtkWidget *serial_entry;
+	GtkWidget *angle_entry;
+	GtkWidget *orientation_combo;
+	GtkWidget *velocity_entry;
+	GtkWidget *pri_offset_entry;
+	GtkWidget *sec_offset_entry;
+	GtkWidget *hight_entry;
+	GtkWidget *probe_delay_entry;
+	GtkWidget *wave_type_combo;
+	GtkWidget *ref_point_entry;
+}_Open_UT_PA_Wedge_File, *_Open_UT_PA_Wedge_File_P;
 
 #define CUR_POS (pp->pos2[pp->pos][pp->pos1[pp->pos]])      /* 0,1,2,3,4,5 */
 #define CUR_POS_P(p) (p->pos2[p->pos][p->pos1[p->pos]])      /* 0,1,2,3,4,5 */

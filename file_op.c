@@ -90,6 +90,8 @@ void save_probe_file (const gchar *file_path, PROBE_P p)
 		else if (GROUP_VAL(group_mode) == UT_SCAN)
 		{
 			//p->Frequency = p->Elem_qty | (p->Freq2 << 8);
+			p->Freq2 = (p->Frequency & 0xff00) >> 8;
+			p->Elem_qty = p->Frequency & 0xff;
 			i = write (fd, p, sizeof(PROBE) );
 		}
 		close (fd);
@@ -112,6 +114,31 @@ void read_wedge_file (const gchar *file_path, WEDGE_P p)
 		lseek (fd, 1, SEEK_CUR);
 		i = read (fd, (void *)((int)(p) + 52), 64);
 	}
+	
+	close(fd);
+}
+
+/* 楔块 PA opw UT ouw */
+void save_wedge_file (const gchar *file_path, WEDGE_P p)
+{
+	int fd;
+	int	i; 
+	char tmp[] = " ";
+
+	if ((fd = open(file_path, O_CREAT| O_RDWR,0666))<0) 
+	{
+		perror("open:");
+		exit(1);
+	}
+	else 
+	{
+		i = write (fd, p, 52);
+		//lseek (fd, 1, SEEK_CUR);
+		i = write (fd,tmp,strlen(tmp));
+		i = write (fd, (void *)((int)(p) + 52), 64);
+	}
+
+	close(fd);
 }
 
 int parseStory(xmlDocPtr doc, xmlNodePtr cur, int x, guint *sp_col, guint *col)
