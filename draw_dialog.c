@@ -4120,49 +4120,49 @@ void draw_define_probe()
 
 	GtkWidget *list_sw;
 
-	GtkWidget *model_box;
+	GtkWidget *model_fixed;
 
     GtkWidget *model_entry;
 
 	GtkWidget *model_label;
 
-	GtkWidget *serial_box;
+	GtkWidget *serial_fixed;
 
 	GtkWidget *serial_entry;
 
 	GtkWidget *serial_label;
 
-	GtkWidget *probe_type_box;
+	GtkWidget *probe_type_fixed;
 
 	GtkWidget *probe_type_combo;
 
 	GtkWidget *probe_type_label;
 
-	GtkWidget *frequency_box;
+	GtkWidget *frequency_fixed;
 
 	GtkWidget *frequency_entry;
 
 	GtkWidget *frequency_label;
 
-	GtkWidget *element_qty_box;
+	GtkWidget *element_qty_fixed;
 
 	GtkWidget *element_qty_entry;
 
 	GtkWidget *element_qty_label;
 
-	GtkWidget *ref_point_box;
+	GtkWidget *ref_point_fixed;
 
 	GtkWidget *ref_point_entry;
 
 	GtkWidget *ref_point_label;
 
-	GtkWidget *pitch_box;
+	GtkWidget *pitch_fixed;
 
 	GtkWidget *pitch_entry;
 
 	GtkWidget *pitch_label;
 
-	GtkWidget *element_size_box;
+	GtkWidget *element_size_fixed;
 
 	GtkWidget *element_size_entry;
 
@@ -4218,95 +4218,57 @@ void draw_define_probe()
 
 	right_box = gtk_vbox_new(FALSE,0);
 
-	model_box = gtk_hbox_new(FALSE,0);
-
+	model_fixed = gtk_fixed_new();
 	model_label = gtk_label_new("Model");
-
     model_entry = gtk_entry_new();
+    gtk_fixed_put(GTK_FIXED(model_fixed),model_label,5,0);
+    gtk_fixed_put(GTK_FIXED(model_fixed),model_entry,150,0);
 
-	gtk_box_pack_start(GTK_BOX(model_box),model_label,FALSE,FALSE,0);
-
-	gtk_box_pack_start(GTK_BOX(model_box),model_entry,FALSE,FALSE,0);
-
-	serial_box = gtk_hbox_new(FALSE,0);
-
+	serial_fixed = gtk_fixed_new();
 	serial_label = gtk_label_new("Serial");
-
     serial_entry = gtk_entry_new();
+    gtk_fixed_put(GTK_FIXED(serial_fixed),serial_label,5,0);
+    gtk_fixed_put(GTK_FIXED(serial_fixed),serial_entry,150,0);
 
-	gtk_box_pack_start(GTK_BOX(serial_box),serial_label,FALSE,FALSE,0);
-
-	gtk_box_pack_start(GTK_BOX(serial_box),serial_entry,FALSE,FALSE,0);
-
-
-
-	probe_type_box = gtk_hbox_new(FALSE,0);
-
+	probe_type_fixed = gtk_fixed_new();
 	probe_type_label = gtk_label_new("Probe_Type");
-
     probe_type_combo = gtk_combo_box_new_text();
-
 	gtk_combo_box_append_text (GTK_COMBO_BOX (probe_type_combo), "Custom");
-
 	gtk_combo_box_append_text (GTK_COMBO_BOX (probe_type_combo), "angle beam");
-
 	gtk_combo_box_append_text (GTK_COMBO_BOX (probe_type_combo), "Contact");
-
 	gtk_combo_box_append_text (GTK_COMBO_BOX (probe_type_combo), "Immersion");
+	gtk_fixed_put(GTK_FIXED(probe_type_fixed),probe_type_label,5,0);
+	gtk_fixed_put(GTK_FIXED(probe_type_fixed),probe_type_combo,150,0);
 
-	gtk_box_pack_start(GTK_BOX(probe_type_box),probe_type_label,FALSE,FALSE,0);
-
-	gtk_box_pack_start(GTK_BOX(probe_type_box),probe_type_combo,FALSE,FALSE,0);
-
-	frequency_box = gtk_hbox_new(FALSE,0);
-
-	frequency_label = gtk_label_new("Frequency");
-
+	frequency_fixed = gtk_fixed_new();
+	frequency_label = gtk_label_new("Frequency MHz");
     frequency_entry = gtk_entry_new();
+	gtk_fixed_put(GTK_FIXED(frequency_fixed),frequency_label,5,0);
+	gtk_fixed_put(GTK_FIXED(frequency_fixed),frequency_entry,150,0);
 
-	gtk_box_pack_start(GTK_BOX(frequency_box),frequency_label,FALSE,FALSE,0);
-
-	gtk_box_pack_start(GTK_BOX(frequency_box),frequency_entry,FALSE,FALSE,0);
-
-	element_qty_box = gtk_hbox_new(FALSE,0);
-
+	element_qty_fixed = gtk_fixed_new();
 	element_qty_label = gtk_label_new("Element_Qty");
-
     element_qty_entry = gtk_entry_new();
+	gtk_fixed_put(GTK_FIXED(element_qty_fixed),element_qty_label,5,0);
+	gtk_fixed_put(GTK_FIXED(element_qty_fixed),element_qty_entry,150,0);
 
-	gtk_box_pack_start(GTK_BOX(element_qty_box),element_qty_label,FALSE,FALSE,0);
-
-	gtk_box_pack_start(GTK_BOX(element_qty_box),element_qty_entry,FALSE,FALSE,0);
-
-	ref_point_box = gtk_hbox_new(FALSE,0);
-
-	ref_point_label = gtk_label_new("Ref_Point");
-
+	ref_point_fixed = gtk_fixed_new();
+	ref_point_label = gtk_label_new("Ref_Point(mm)");
     ref_point_entry = gtk_entry_new();
+	gtk_fixed_put(GTK_FIXED(ref_point_fixed),ref_point_label,5,0);
+	gtk_fixed_put(GTK_FIXED(ref_point_fixed),ref_point_entry,150,0);
 
-	gtk_box_pack_start(GTK_BOX(ref_point_box),ref_point_label,FALSE,FALSE,0);
-
-	gtk_box_pack_start(GTK_BOX(ref_point_box),ref_point_entry,FALSE,FALSE,0);
-
-	pitch_box = gtk_hbox_new(FALSE,0);
-
-	pitch_label = gtk_label_new("Pitch");
-
+	pitch_fixed = gtk_fixed_new();
+	pitch_label = gtk_label_new("Pitch(mm)");
     pitch_entry = gtk_entry_new();
+	gtk_fixed_put(GTK_FIXED(pitch_fixed),pitch_label,5,0);
+	gtk_fixed_put(GTK_FIXED(pitch_fixed),pitch_entry,150,0);
 
-	gtk_box_pack_start(GTK_BOX(pitch_box),pitch_label,FALSE,FALSE,0);
-
-	gtk_box_pack_start(GTK_BOX(pitch_box),pitch_entry,FALSE,FALSE,0);
-
-	element_size_box = gtk_hbox_new(FALSE,0);
-
-	element_size_label = gtk_label_new("Element_Size");
-
+	element_size_fixed = gtk_fixed_new();
+	element_size_label = gtk_label_new("Element_Size(mm)");
     element_size_entry = gtk_entry_new();
-
-	gtk_box_pack_start(GTK_BOX(element_size_box),element_size_label,FALSE,FALSE,0);
-
-	gtk_box_pack_start(GTK_BOX(element_size_box),element_size_entry,FALSE,FALSE,0);
+	gtk_fixed_put(GTK_FIXED(element_size_fixed),element_size_label,5,0);
+	gtk_fixed_put(GTK_FIXED(element_size_fixed),element_size_entry,150,0);
 
 	open_ut_pa_probe_file.list = source_list;
 	open_ut_pa_probe_file.model_entry = model_entry;
@@ -4320,29 +4282,29 @@ void draw_define_probe()
 
 	if ( GROUP_VAL(group_mode) == PA_SCAN )
 	{
-		gtk_box_pack_start(GTK_BOX(right_box),model_box,FALSE,FALSE,10);
+		gtk_box_pack_start(GTK_BOX(right_box),model_fixed,FALSE,FALSE,10);
 
-		gtk_box_pack_start(GTK_BOX(right_box),serial_box,FALSE,FALSE,10);
+		gtk_box_pack_start(GTK_BOX(right_box),serial_fixed,FALSE,FALSE,10);
 
-		gtk_box_pack_start(GTK_BOX(right_box),probe_type_box,FALSE,FALSE,10);
+		gtk_box_pack_start(GTK_BOX(right_box),probe_type_fixed,FALSE,FALSE,10);
 
-		gtk_box_pack_start(GTK_BOX(right_box),frequency_box,FALSE,FALSE,10);
+		gtk_box_pack_start(GTK_BOX(right_box),frequency_fixed,FALSE,FALSE,10);
 
-		gtk_box_pack_start(GTK_BOX(right_box),element_qty_box,FALSE,FALSE,10);
+		gtk_box_pack_start(GTK_BOX(right_box),element_qty_fixed,FALSE,FALSE,10);
 
-		gtk_box_pack_start(GTK_BOX(right_box),ref_point_box,FALSE,FALSE,10);
+		gtk_box_pack_start(GTK_BOX(right_box),ref_point_fixed,FALSE,FALSE,10);
 
-		gtk_box_pack_start(GTK_BOX(right_box),pitch_box,FALSE,FALSE,10);
+		gtk_box_pack_start(GTK_BOX(right_box),pitch_fixed,FALSE,FALSE,10);
 	}
 	else if ( GROUP_VAL(group_mode) == UT_SCAN )
 	{
-		gtk_box_pack_start(GTK_BOX(right_box),model_box,FALSE,FALSE,10);
+		gtk_box_pack_start(GTK_BOX(right_box),model_fixed,FALSE,FALSE,10);
 
-		gtk_box_pack_start(GTK_BOX(right_box),serial_box,FALSE,FALSE,10);
+		gtk_box_pack_start(GTK_BOX(right_box),serial_fixed,FALSE,FALSE,10);
 
-		gtk_box_pack_start(GTK_BOX(right_box),frequency_box,FALSE,FALSE,10);
+		gtk_box_pack_start(GTK_BOX(right_box),frequency_fixed,FALSE,FALSE,10);
 
-		gtk_box_pack_start(GTK_BOX(right_box),element_size_box,FALSE,FALSE,10);
+		gtk_box_pack_start(GTK_BOX(right_box),element_size_fixed,FALSE,FALSE,10);
 	}
 
 	gtk_container_add(GTK_CONTAINER(list_sw), source_list);
@@ -4600,67 +4562,67 @@ void draw_define_wedge()
 
 	GtkWidget *list_sw;
 
-	GtkWidget *model_box;
+	GtkWidget *model_fixed;
 
     GtkWidget *model_entry;
 
 	GtkWidget *model_label;
 
-	GtkWidget *serial_box;
+	GtkWidget *serial_fixed;
 
 	GtkWidget *serial_entry;
 
 	GtkWidget *serial_label;
 
-	GtkWidget *angle_box;
+	GtkWidget *angle_fixed;
 
 	GtkWidget *angle_label;
 
 	GtkWidget *angle_entry;
 
-	GtkWidget *orientation_box;
+	GtkWidget *orientation_fixed;
 
 	GtkWidget *orientation_label;
 
 	GtkWidget *orientation_combo;
 
-	GtkWidget *velocity_box;
+	GtkWidget *velocity_fixed;
 
 	GtkWidget *velocity_label;
 
 	GtkWidget *velocity_entry;
 
-	GtkWidget *pri_offset_box;
+	GtkWidget *pri_offset_fixed;
 
 	GtkWidget *pri_offset_label;
 
 	GtkWidget *pri_offset_entry;
 
-	GtkWidget *sec_offset_box;
+	GtkWidget *sec_offset_fixed;
 
 	GtkWidget *sec_offset_label;
 
 	GtkWidget *sec_offset_entry;
 
-	GtkWidget *hight_box;
+	GtkWidget *hight_fixed;
 
 	GtkWidget *hight_label;
 
 	GtkWidget *hight_entry;
 
-	GtkWidget *probe_delay_box;
+	GtkWidget *probe_delay_fixed;
 
 	GtkWidget *probe_delay_label;
 
 	GtkWidget *probe_delay_entry;
 
-	GtkWidget *wave_type_box;
+	GtkWidget *wave_type_fixed;
 
 	GtkWidget *wave_type_label;
 
 	GtkWidget *wave_type_combo;
 
-	GtkWidget *ref_point_box;
+	GtkWidget *ref_point_fixed;
 
 	GtkWidget *ref_point_label;
 
@@ -4714,75 +4676,75 @@ void draw_define_wedge()
 	left_box = gtk_hbox_new(FALSE,0);
 	right_box = gtk_vbox_new(FALSE,0);
 
-	model_box = gtk_hbox_new(FALSE,0);
+	model_fixed = gtk_fixed_new();
 	model_label = gtk_label_new("Model");
 	model_entry = gtk_entry_new();
-	gtk_box_pack_start(GTK_BOX(model_box),model_label,FALSE,FALSE,0);
-	gtk_box_pack_start(GTK_BOX(model_box),model_entry,FALSE,FALSE,0);
+	gtk_fixed_put(GTK_FIXED(model_fixed),model_label,5,0);
+	gtk_fixed_put(GTK_FIXED(model_fixed),model_entry,150,0);
 
-	serial_box = gtk_hbox_new(FALSE,0);
+	serial_fixed = gtk_fixed_new();
 	serial_label = gtk_label_new("Serial");
 	serial_entry = gtk_entry_new();
-	gtk_box_pack_start(GTK_BOX(serial_box),serial_label,FALSE,FALSE,0);
-	gtk_box_pack_start(GTK_BOX(serial_box),serial_entry,FALSE,FALSE,0);
+	gtk_fixed_put(GTK_FIXED(serial_fixed),serial_label,5,0);
+	gtk_fixed_put(GTK_FIXED(serial_fixed),serial_entry,150,0);
 
-	angle_box = gtk_hbox_new(FALSE,0);
-	angle_label = gtk_label_new("Angle");
+	angle_fixed = gtk_fixed_new();
+	angle_label = gtk_label_new("Angle (deg)");
 	angle_entry = gtk_entry_new();
-	gtk_box_pack_start(GTK_BOX(angle_box),angle_label,FALSE,FALSE,0);
-	gtk_box_pack_start(GTK_BOX(angle_box),angle_entry,FALSE,FALSE,0);
+	gtk_fixed_put(GTK_FIXED(angle_fixed),angle_label,5,0);
+	gtk_fixed_put(GTK_FIXED(angle_fixed),angle_entry,150,0);
 
-	orientation_box = gtk_hbox_new(FALSE,0);
+	orientation_fixed = gtk_fixed_new();
 	orientation_label = gtk_label_new("Orientation");
 	orientation_combo = gtk_combo_box_new_text();
 	gtk_combo_box_append_text (GTK_COMBO_BOX (orientation_combo), "Reverse");
 	gtk_combo_box_append_text (GTK_COMBO_BOX (orientation_combo), "Normal");
-	gtk_box_pack_start(GTK_BOX(orientation_box),orientation_label,FALSE,FALSE,0);
-	gtk_box_pack_start(GTK_BOX(orientation_box),orientation_combo,FALSE,FALSE,0);
+	gtk_fixed_put(GTK_FIXED(orientation_fixed),orientation_label,5,0);
+	gtk_fixed_put(GTK_FIXED(orientation_fixed),orientation_combo,150,0);
 
-	velocity_box = gtk_hbox_new(FALSE,0);
-	velocity_label = gtk_label_new("Velocity");
+	velocity_fixed = gtk_fixed_new();
+	velocity_label = gtk_label_new("Velocity (m/s)");
 	velocity_entry = gtk_entry_new();
-	gtk_box_pack_start(GTK_BOX(velocity_box),velocity_label,FALSE,FALSE,0);
-	gtk_box_pack_start(GTK_BOX(velocity_box),velocity_entry,FALSE,FALSE,0);
+	gtk_fixed_put(GTK_FIXED(velocity_fixed),velocity_label,5,0);
+	gtk_fixed_put(GTK_FIXED(velocity_fixed),velocity_entry,150,0);
 
-	pri_offset_box = gtk_hbox_new(FALSE,0);
-	pri_offset_label = gtk_label_new("Pri_Offset");
+	pri_offset_fixed = gtk_fixed_new();
+	pri_offset_label = gtk_label_new("Pri_Offset (mm)");
 	pri_offset_entry = gtk_entry_new();
-	gtk_box_pack_start(GTK_BOX(pri_offset_box),pri_offset_label,FALSE,FALSE,0);
-	gtk_box_pack_start(GTK_BOX(pri_offset_box),pri_offset_entry,FALSE,FALSE,0);
+	gtk_fixed_put(GTK_FIXED(pri_offset_fixed),pri_offset_label,5,0);
+	gtk_fixed_put(GTK_FIXED(pri_offset_fixed),pri_offset_entry,150,0);
 
-	sec_offset_box = gtk_hbox_new(FALSE,0);
-	sec_offset_label = gtk_label_new("Sec_Offset");
+	sec_offset_fixed = gtk_fixed_new();
+	sec_offset_label = gtk_label_new("Sec_Offset (mm)");
 	sec_offset_entry = gtk_entry_new();
-	gtk_box_pack_start(GTK_BOX(sec_offset_box),sec_offset_label,FALSE,FALSE,0);
-	gtk_box_pack_start(GTK_BOX(sec_offset_box),sec_offset_entry,FALSE,FALSE,0);
+	gtk_fixed_put(GTK_FIXED(sec_offset_fixed),sec_offset_label,5,0);
+	gtk_fixed_put(GTK_FIXED(sec_offset_fixed),sec_offset_entry,150,0);
 
-	hight_box = gtk_hbox_new(FALSE,0);
-	hight_label = gtk_label_new("Hight");
+	hight_fixed = gtk_fixed_new();
+	hight_label = gtk_label_new("Hight (mm)");
 	hight_entry = gtk_entry_new();
-	gtk_box_pack_start(GTK_BOX(hight_box),hight_label,FALSE,FALSE,0);
-	gtk_box_pack_start(GTK_BOX(hight_box),hight_entry,FALSE,FALSE,0);
+	gtk_fixed_put(GTK_FIXED(hight_fixed),hight_label,5,0);
+	gtk_fixed_put(GTK_FIXED(hight_fixed),hight_entry,150,0);
 
-	probe_delay_box = gtk_hbox_new(FALSE,0);
-	probe_delay_label = gtk_label_new("Probe_Delay");
+	probe_delay_fixed = gtk_fixed_new();
+	probe_delay_label = gtk_label_new("Probe_Delay (us)");
 	probe_delay_entry = gtk_entry_new();
-	gtk_box_pack_start(GTK_BOX(probe_delay_box),probe_delay_label,FALSE,FALSE,0);
-	gtk_box_pack_start(GTK_BOX(probe_delay_box),probe_delay_entry,FALSE,FALSE,0);
+	gtk_fixed_put(GTK_FIXED(probe_delay_fixed),probe_delay_label,5,0);
+	gtk_fixed_put(GTK_FIXED(probe_delay_fixed),probe_delay_entry,150,0);
 
-	wave_type_box = gtk_hbox_new(FALSE,0);
+	wave_type_fixed = gtk_fixed_new();
 	wave_type_label = gtk_label_new("Wave_Type");
 	wave_type_combo = gtk_combo_box_new_text();
 	gtk_combo_box_append_text (GTK_COMBO_BOX (wave_type_combo), "LW");
 	gtk_combo_box_append_text (GTK_COMBO_BOX (wave_type_combo), "SW");
-	gtk_box_pack_start(GTK_BOX(wave_type_box),wave_type_label,FALSE,FALSE,0);
-	gtk_box_pack_start(GTK_BOX(wave_type_box),wave_type_combo,FALSE,FALSE,0);
+	gtk_fixed_put(GTK_FIXED(wave_type_fixed),wave_type_label,5,0);
+	gtk_fixed_put(GTK_FIXED(wave_type_fixed),wave_type_combo,150,0);
 
-	ref_point_box = gtk_hbox_new(FALSE,0);
-	ref_point_label = gtk_label_new("Ref_Point");
+	ref_point_fixed = gtk_fixed_new();
+	ref_point_label = gtk_label_new("Ref_Point (mm)");
 	ref_point_entry = gtk_entry_new();
-	gtk_box_pack_start(GTK_BOX(ref_point_box),ref_point_label,FALSE,FALSE,0);
-	gtk_box_pack_start(GTK_BOX(ref_point_box),ref_point_entry,FALSE,FALSE,0);
+	gtk_fixed_put(GTK_FIXED(ref_point_fixed),ref_point_label,5,0);
+	gtk_fixed_put(GTK_FIXED(ref_point_fixed),ref_point_entry,150,0);
 
 	open_ut_pa_wedge_file.list  = source_list;
 	open_ut_pa_wedge_file.model_entry = model_entry;
@@ -4799,23 +4761,23 @@ void draw_define_wedge()
 
 	if ( GROUP_VAL(group_mode) == PA_SCAN )
 	{
-		gtk_box_pack_start(GTK_BOX(right_box),model_box,FALSE,FALSE,10);
-		gtk_box_pack_start(GTK_BOX(right_box),serial_box,FALSE,FALSE,10);
-		gtk_box_pack_start(GTK_BOX(right_box),angle_box,FALSE,FALSE,10);
-		gtk_box_pack_start(GTK_BOX(right_box),orientation_box,FALSE,FALSE,10);
-		gtk_box_pack_start(GTK_BOX(right_box),velocity_box,FALSE,FALSE,10);
-		gtk_box_pack_start(GTK_BOX(right_box),pri_offset_box,FALSE,FALSE,10);
-		gtk_box_pack_start(GTK_BOX(right_box),sec_offset_box,FALSE,FALSE,10);
-		gtk_box_pack_start(GTK_BOX(right_box),hight_box,FALSE,FALSE,10);
+		gtk_box_pack_start(GTK_BOX(right_box),model_fixed,FALSE,FALSE,10);
+		gtk_box_pack_start(GTK_BOX(right_box),serial_fixed,FALSE,FALSE,10);
+		gtk_box_pack_start(GTK_BOX(right_box),angle_fixed,FALSE,FALSE,10);
+		gtk_box_pack_start(GTK_BOX(right_box),orientation_fixed,FALSE,FALSE,10);
+		gtk_box_pack_start(GTK_BOX(right_box),velocity_fixed,FALSE,FALSE,10);
+		gtk_box_pack_start(GTK_BOX(right_box),pri_offset_fixed,FALSE,FALSE,10);
+		gtk_box_pack_start(GTK_BOX(right_box),sec_offset_fixed,FALSE,FALSE,10);
+		gtk_box_pack_start(GTK_BOX(right_box),hight_fixed,FALSE,FALSE,10);
 	}
 	else if ( GROUP_VAL(group_mode) == UT_SCAN )
 	{
-		gtk_box_pack_start(GTK_BOX(right_box),model_box,FALSE,FALSE,10);
-		gtk_box_pack_start(GTK_BOX(right_box),serial_box,FALSE,FALSE,10);
-		gtk_box_pack_start(GTK_BOX(right_box),angle_box,FALSE,FALSE,10);
-		gtk_box_pack_start(GTK_BOX(right_box),probe_delay_box,FALSE,FALSE,10);
-		gtk_box_pack_start(GTK_BOX(right_box),wave_type_box,FALSE,FALSE,10);
-		gtk_box_pack_start(GTK_BOX(right_box),ref_point_box,FALSE,FALSE,10);
+		gtk_box_pack_start(GTK_BOX(right_box),model_fixed,FALSE,FALSE,10);
+		gtk_box_pack_start(GTK_BOX(right_box),serial_fixed,FALSE,FALSE,10);
+		gtk_box_pack_start(GTK_BOX(right_box),angle_fixed,FALSE,FALSE,10);
+		gtk_box_pack_start(GTK_BOX(right_box),probe_delay_fixed,FALSE,FALSE,10);
+		gtk_box_pack_start(GTK_BOX(right_box),wave_type_fixed,FALSE,FALSE,10);
+		gtk_box_pack_start(GTK_BOX(right_box),ref_point_fixed,FALSE,FALSE,10);
 	}
 
 	gtk_container_add(GTK_CONTAINER(list_sw), source_list);
