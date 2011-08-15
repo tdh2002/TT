@@ -991,11 +991,11 @@ void report_build_setup(char *file_name,int group)
 
     fprintf(fp,"<TR>\n");
     fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%d ns</TD>\n",BEAM_INFO(group,beam_delay));
-    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%d ns</TD>\n", get_group_start (pp->p_config, group));
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%d ns</TD>\n", get_group_val (get_group_by_id (pp->p_config, group), GROUP_START));
     fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%d ns</TD>\n", get_group_val (get_group_by_id (pp->p_config, group), GROUP_RANGE));
     fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%d</TD>\n",GROUP_VAL_POS(group,prf));
     fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%s</TD>\n",menu_content[ GROUP_MODE_P +(GROUP_VAL_POS(group,group_mode))]);
-    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%d</TD>\n",1 << GROUP_VAL_POS(group,averaging));
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%d</TD>\n",1 << get_group_val (get_group_by_id (pp->p_config, group), GROUP_AVERAGING));
     fprintf(fp,"</TR>\n\n");
 
 	fprintf(fp,"<TR>\n");
@@ -1012,7 +1012,7 @@ void report_build_setup(char *file_name,int group)
 	fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%f</TD>\n",(get_group_val (get_group_by_id (pp->p_config, group), GROUP_RANGE) / 10.0) / GROUP_VAL_POS(group,point_qty));
     fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%s</TD>\n",menu_content[ OFF_ON + (GROUP_VAL_POS(group,video_filter))]);
     fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">N/A</TD>\n");//Pretrig    
-    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%s</TD>\n",menu_content[ RECTIFIER + (GROUP_VAL_POS(group,rectifier))]);
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%s</TD>\n",menu_content[ RECTIFIER + (get_group_val (get_group_by_id (pp->p_config, group), GROUP_RECTIFIER))]);
     fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%s</TD>\n",
 			menu_content[ FILTER + get_group_val (get_group_by_id (pp->p_config, group), GROUP_FILTER)]);
     fprintf(fp,"</TR>\n\n");
@@ -1028,10 +1028,10 @@ void report_build_setup(char *file_name,int group)
 
     fprintf(fp,"<TR>\n");
     fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">N/A</TD>\n");
-    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%.1f dB</TD>\n", get_group_gain (pp->p_config, group) / 100.0);
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%.1f dB</TD>\n", get_group_val (get_group_by_id (pp->p_config, group), GROUP_GAIN) / 100.0);
     fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%s</TD>\n",menu_content[ TX_RX_MODE + (GROUP_VAL_POS(group,tx_rxmode))]);
     fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">N/A</TD>\n");
-    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%d 0.01m/s</TD>\n", get_group_velocity (pp->p_config, group));
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%d 0.01m/s</TD>\n", get_group_val (get_group_by_id (pp->p_config, group), GROUP_VELOCITY));
     fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%f ns</TD>\n",GROUP_VAL_POS(group,pulser_width) / 100.0);
     fprintf(fp,"</TR>\n\n");
 

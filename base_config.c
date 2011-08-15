@@ -1335,67 +1335,8 @@ void set_probe_type (CONFIG *p, char data)
 }
 
 
-/* Group 参数的保存读取 */
-/* 基本General*/
-void set_group_range (CONFIG *p, int group_id, int data)
-{
-	assert (data > 0);
-	p->group[group_id].range = data;
-}
-
-int get_group_start (CONFIG *p, int group_id)
-{
-	return p->group[group_id].start; 
-}
-
-void set_group_start (CONFIG *p, int group_id, int data)
-{
-	p->group[group_id].start = data;
-}
-
-int get_group_gain (CONFIG *p, int group_id)
-{
-	return p->group[group_id].gain; 
-}
-
-void set_group_gain (CONFIG *p, int group_id, int data)
-{
-	assert (data >= 0);
-	p->group[group_id].gain = data; 
-}
-
-int get_group_gainr (CONFIG *p, int group_id)
-{
-	return p->group[group_id].gainr; 
-}
-
-void set_group_gainr (CONFIG *p, int group_id, int data)
-{
-	assert (data >= 0);
-	p->group[group_id].gainr = data; 
-}
-
-int get_group_velocity (CONFIG *p, int group_id)
-{
-	return p->group[group_id].velocity; 
-}
-
-void set_group_velocity (CONFIG *p, int group_id, int data)
-{
-	assert (data > 0);
-	p->group[group_id].velocity = data;
-}
-
-/* 发射接收设置 */
-
 /* GROUP 参数的保存读取*/
 /**
-#define	GROUP_GAIN			0x1000
-#define	GROUP_GAINR			0x1001
-#define GROUP_START			0x1002
-#define GROUP_RANGE			0x1003
-#define GROUP_WEDGE_DELAY	0x1004
-#define GROUP_VELOCITY		0x1005
  */
 int get_group_val (GROUP *p, int type)
 {
@@ -1412,6 +1353,9 @@ int get_group_val (GROUP *p, int type)
 		case GROUP_RECEIVER:tt = p->receiver1;break;
 		case GROUP_FILTER:tt = p->filter1;break;
 		case GROUP_DB_REF:tt = get_bit_value (p->on_off_status, 0);break;
+		case GROUP_FILTER_POS:tt = p->filter_pos1;break;
+		case GROUP_RECTIFIER:tt = p->rectifier1;break;
+		case GROUP_AVERAGING: tt = p->averaging1;break;	/*0:1 1:2 2:4 3:8 4:16*/
 		default:break;
 	}
 	return tt;
@@ -1431,6 +1375,9 @@ void set_group_val (GROUP *p, int type, int val)
 		case GROUP_RECEIVER:p->receiver1 = (unsigned char)(val);break;
 		case GROUP_FILTER:p->filter1=(char)(val);break;
 		case GROUP_DB_REF:set_bit_value (p->on_off_status, 0, val);break;
+		case GROUP_FILTER_POS:p->filter_pos1 = (char)(val);break;
+		case GROUP_RECTIFIER: p->rectifier1 = (char)(val);break;
+		case GROUP_AVERAGING: p->averaging1 = (char)(val);break;	/*0:1 1:2 2:4 3:8 4:16*/
 		default:break;
 	}
 }

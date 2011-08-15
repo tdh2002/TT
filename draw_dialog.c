@@ -630,7 +630,7 @@ static gchar* get_wedge_info(const gchar *file_path)
 		case ENGLISH_:
 			if (GROUP_VAL(group_mode) == UT_SCAN)
 				wedge_info = g_strdup_printf ("Model:%s           Angle:%.1f°\nWave Type:%s      Probe Delay:%.2f mm\nReference Point:%.3f mm",
-						w1.Model, w1.Angle/10.0, (w1.Wave_type == 2) ? "Shear" : "Longitudinal", (w1.Probe_delay / 1000.0) * (get_group_velocity (pp->p_config, get_current_group(pp->p_config)) / 1000.0) / 200.0, w1.Ref_point / 1000.0 );
+						w1.Model, w1.Angle/10.0, (w1.Wave_type == 2) ? "Shear" : "Longitudinal", (w1.Probe_delay / 1000.0) * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 1000.0) / 200.0, w1.Ref_point / 1000.0 );
 			else if (GROUP_VAL(group_mode) == PA_SCAN)
 				wedge_info = g_strdup_printf ("Model:%s         Angle:%.1f°\nOrientation:%s      Height:%.3f mm\n Velocity:%.4f m/s   Primary Offset:%.3f mm\nSecondary Offset:%.3f mm",
 						w1.Model, w1.Angle/10.0, (w1.Orientation == 1) ? "Normal" : "reversal", w1.Height/1000.0, w1.Velocity_PA / 1000.0, w1.Primary_offset/1000.0, w1.Secondary_offset/1000.0 );

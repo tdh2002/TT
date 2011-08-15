@@ -24,6 +24,9 @@
 #define GROUP_RECEIVER		0x1007
 #define GROUP_FILTER		0x1008
 #define GROUP_DB_REF		0x1009
+#define GROUP_FILTER_POS	0x100a
+#define GROUP_RECTIFIER		0x100b
+#define GROUP_AVERAGING		0x100c
 
 /* 闸门信息 */
 typedef struct _gate_info
@@ -301,10 +304,11 @@ struct _Group
 									   与机器配置相关我们是128阵元最大,值与connect P 一样 */
 	unsigned char	receiver1;		/* 接收阵元 必须是 PR 模式才能调节 */
 	char			filter1;		/* 滤波 */
-	char			rectifier;		/* 检波  */
-	char			averaging;		/* 平均 */
+	char			rectifier1;		/* 检波  */
+	char			averaging1;		/* 平均 */
 	unsigned char	video_filter;	/* 视频滤波*/
 
+	char	filter_pos1;	/*  */
 	char	tx_rxmode;		/* 收发模式 */
 	char	freq_pos;		/* 频率选择模式是指定还是自己输入 */
 	char	pw_pos;			/* 脉冲宽度选择模式 */
@@ -740,26 +744,6 @@ extern void			set_probe_type (CONFIG *p, char data);
 
 
 /* Group 参数的保存读取 */
-/* 基本设置 */
-extern void	set_group_wedge_delay	(CONFIG *p, int group_id,	int	data);
-extern int	get_group_range			(CONFIG *p, int group_id);
-extern void	set_group_range			(CONFIG *p, int group_id,	int	data);
-extern int	get_group_start			(CONFIG *p, int group_id);
-extern void	set_group_start			(CONFIG *p, int group_id,	int	data);
-extern int	get_group_gain			(CONFIG *p, int group_id);
-extern void	set_group_gain			(CONFIG *p, int group_id,	int	data);
-extern int	get_group_gainr			(CONFIG *p, int group_id);
-extern void	set_group_gainr			(CONFIG *p, int group_id,	int	data);
-extern int	get_group_velocity		(CONFIG *p, int group_id);
-extern void	set_group_velocity		(CONFIG *p, int group_id,	int	data);
-/* 发射接收设置 */
-extern int	get_group_filter_pos	(CONFIG *p, int group_id);
-extern void	set_group_filter_pos	(CONFIG *p, int group_id,	int	data);
-extern int	get_group_filter_val	(CONFIG *p, int group_id);
-extern int	get_group_rectifier		(CONFIG *p, int group_id);
-extern void	set_group_rectifier		(CONFIG *p, int group_id,	int	data);
-extern int	get_group_averaging		(CONFIG *p, int group_id);
-extern void	set_group_averaging		(CONFIG *p, int group_id,	int	data);
 extern int	get_group_video_filter	(CONFIG *p, int group_id);
 extern void	set_group_video_filter	(CONFIG *p, int group_id,	int	data);
 extern int	get_group_tx_rx_mode	(CONFIG *p, int group_id);
@@ -788,25 +772,6 @@ extern void	set_group_sum_gain_val	(CONFIG *p, int group_id,	int	data);
 
 extern int	get_group_db_ref		(CONFIG *p, int group_id);
 extern void	set_group_db_ref		(CONFIG *p,	int	group_id,	int	data);
-
-#if 0
-	char			filter;			/* 滤波 */
-	char			rectifier;		/* 检波  */
-	char			averaging;		/* 平均 */
-	unsigned char	video_filter;	/* 视频滤波*/
-
-	char	tx_rxmode;		/* 收发模式 */
-	char	freq_pos;		/* 频率选择模式是指定还是自己输入 */
-	char	pw_pos;			/* 脉冲宽度选择模式 */
-	char	prf_pos;		/* 脉冲宽度选择模式 */
-	short	frequency;		/* 以0.001Mhz 也就是Khz 1MHz~20MHz 为单位 当探头学选unknown 时候才可以调节 */
-	short	pulser_width;	/* 30~500ns 2.5ns为步进*/
-
-	int		prf;			/* 重复频率 1-20000Hz 取值为10~200000 */
-
-	char	point_qty_pos;	/* 点个数 位置 */
-	char	sum_gain_pos;	/**/
-#endif
 
 /* Group 参数的保存读取 */
 extern int	get_group_val (GROUP *p, int type);

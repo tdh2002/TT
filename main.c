@@ -49,17 +49,20 @@ static void set_config (guint groupid)
 	set_voltage (pp->p_config, groupid, VOLTAGE_LOW);
 	/* UT settings */
 	set_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_WEDGE_DELAY, 0);
-	set_group_range			(pp->p_config, groupid, 10000);
-	set_group_start			(pp->p_config, groupid, 0);
-	set_group_gain			(pp->p_config, groupid, 10);
-	set_group_gainr			(pp->p_config, groupid, 0);
-	set_group_velocity		(pp->p_config, groupid, 592000);
+	set_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_RANGE, 10000);
+	set_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_START, 0);
+	set_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_GAIN, 10);
+	set_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_GAINR, 0);
+	set_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY, 592000);
 	set_group_db_ref		(pp->p_config, groupid, NORMAL_OFF);
 
 	set_group_val (&pp->p_config->group[get_current_group(pp->p_config)], GROUP_PULSER, 1);
 	set_group_val (&pp->p_config->group[get_current_group(pp->p_config)], GROUP_RECEIVER, 1);
 
+	set_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_FILTER_POS, 0);
 	set_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_FILTER, FILTER_NONE);
+	set_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_RECTIFIER, FULL_WAVE);
+	set_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_AVERAGING, 0);
 
 	GROUP_VAL(tx_rxmode)	= PULSE_ECHO;	/* 收发模式 */
 	GROUP_VAL(freq_pos)		= 0;			/* 0是1Mhz	*/
@@ -68,8 +71,6 @@ static void set_config (guint groupid)
 	GROUP_VAL(prf_pos)		= 3;			/* 0是Atuo Max*/
 	GROUP_VAL(pulser_width)	= 10000;		/* 脉冲宽度 30ns */
 	GROUP_VAL(prf)			= 200;			/* 重复频率 60*/
-	GROUP_VAL(rectifier)	= FULL_WAVE;	/* 检波 */
-	GROUP_VAL(averaging)	= 1;	        /* 位置1 值为2*/
 	GROUP_VAL(video_filter)	= VIDEO_FILTER_OFF;
 	GROUP_VAL(point_qty)	= 615;			/* 0是Auto */
 	GROUP_VAL(sum_gain)	= 10;			/* 0是Auto */
@@ -338,7 +339,7 @@ int main (int argc, char *argv[])
 		g_print("success open config file\n");
 	}
 
-	tttmp = get_group_gain (pp->p_config, get_current_group(pp->p_config)) / 100.0;
+	tttmp = get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_GAIN) / 100.0;
 
 	/* 读取颜色 amp toft depth */
 	read_palette_file ("source/system/Sample/Palette/ONDT_Amplitude.pal",
@@ -509,11 +510,11 @@ void init_group_spi (guint group)
 	gint tmp = 0, tt[4];
 	gint temp_prf;
 	get_prf();
-	if (get_group_val (get_group_by_id (pp->p_config, group), GROUP_FILTER) == 0)
+	if (get_group_val (get_group_by_id (pp->p_config, group), GROUP_FILTER_POS) == 0)
 	{
 		TMP(group_spi[group]).freq_band	= 0;
 	}
-	else if (get_group_val (get_group_by_id (pp->p_config, group), GROUP_FILTER) == 1)
+	else if (get_group_val (get_group_by_id (pp->p_config, group), GROUP_FILTER_POS) == 1)
 	{
 		if (GROUP_VAL_POS(group, frequency) < 1250)
 			TMP(group_spi[group]).freq_band	= 1;
@@ -541,11 +542,12 @@ void init_group_spi (guint group)
 	else
 		TMP(group_spi[group]).freq_band	= get_group_val (get_group_by_id (pp->p_config, group), GROUP_FILTER) - 1;
 	TMP(group_spi[group]).video_filter	= GROUP_VAL_POS(group, video_filter);
-	TMP(group_spi[group]).rectifier		= GROUP_VAL_POS(group, rectifier);
+	TMP(group_spi[group]).rectifier		= 
+		get_group_val (get_group_by_id (pp->p_config, group), GROUP_RECTIFIER);
 	TMP(group_spi[group]).compress_rato	= 
 		((get_group_val (get_group_by_id (pp->p_config, group), GROUP_RANGE) / 10.0) / GROUP_VAL_POS(group, point_qty)) > 1 ? 
 		((get_group_val (get_group_by_id (pp->p_config, group), GROUP_RANGE) / 10.0) / GROUP_VAL_POS(group, point_qty)) : 1;
-	TMP(group_spi[group]).gain			= get_group_gain (pp->p_config, group) / 10.0;
+	TMP(group_spi[group]).gain			= get_group_val (get_group_by_id (pp->p_config, group), GROUP_GAIN) / 10.0;
 
 	TMP(group_spi[group]).tcg_point_qty	= 0;		/* 未完成 */
 	TMP(group_spi[group]).tcg_en		= 0;		/* 未完成 */
@@ -553,7 +555,7 @@ void init_group_spi (guint group)
 	TMP(group_spi[group]).UT1			= (GROUP_VAL_POS (group, group_mode) == 0) ? 1 : 0;		
 	TMP(group_spi[group]).PA			= (GROUP_VAL_POS (group, group_mode) == 1) ? 1 : 0;		
 	TMP(group_spi[group]).sample_start	= 
-		(get_group_start (pp->p_config, group) + 
+		(get_group_val (get_group_by_id (pp->p_config, group), GROUP_START) + 
 		 get_group_val (get_group_by_id(pp->p_config, group), GROUP_WEDGE_DELAY)) / 10;
 
 
