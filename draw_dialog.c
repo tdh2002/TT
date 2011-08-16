@@ -3552,31 +3552,26 @@ void draw_report_build()
 
 	GtkWidget *sw;
 
-	GtkWidget *vbox_first;
+	GtkWidget *full_screen;
 
-	GtkWidget *vbox;
+	GtkWidget *top;
 
-	GtkWidget *vbox_1;
+	GtkWidget *bottom;
 
-	GtkWidget *vbox_2;
+	GtkWidget *hbox_menu[7];
 
-	GtkWidget *hbox_2_1;
+	GtkWidget *label_menu[7];
 
-	GtkWidget *hbox_2_1_1[7];
-
-	GtkWidget *label_2_1_1[7];
-
-	char *char_2_1_1[7] = {"","","","","Print","Save and close","Close"};
+	char *char_menu[7] = {"","","","","Print","Save and close","Close"};
 
 	int i;
-
-	//window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-
-	//gtk_widget_set_size_request(GTK_WIDGET (window), 800, 600);
 
     report_build_start(file_name);
 
     report_build_header(file_name);
+
+	if (get_report_format_userfield(pp->p_config))
+		report_build_user_field(file_name);
 
     for (i = 0; i < get_group_qty (pp->p_config); i++)
     {
@@ -3589,35 +3584,31 @@ void draw_report_build()
 
 	dialog = gtk_dialog_new_with_buttons ("Dialog_Wedge", window,
 			GTK_DIALOG_MODAL |	GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_NO_SEPARATOR,
-			GTK_STOCK_OK, GTK_RESPONSE_OK,
-			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+			NULL, NULL,
+			NULL, NULL,
 			NULL);
 
 	gtk_window_set_decorated (GTK_WINDOW (dialog), FALSE);			/*不可以装饰*/
 
-	vbox_first = GTK_WIDGET (GTK_DIALOG(dialog)->vbox);
+	full_screen = GTK_WIDGET (GTK_DIALOG(dialog)->vbox);
 
 	gtk_widget_set_size_request(GTK_WIDGET (dialog), 800, 600);
 	gtk_widget_modify_bg(GTK_WIDGET (dialog), GTK_STATE_NORMAL, &color_black);	/*黑色背景*/
 
-	vbox = gtk_vbox_new(FALSE,0); 
+	top = gtk_vbox_new(FALSE,0);
 
-	vbox_1 = gtk_vbox_new(FALSE,0);
-
-	vbox_2 = gtk_vbox_new(FALSE,0);
-
-	hbox_2_1 = gtk_hbox_new(FALSE,0);
+	bottom = gtk_hbox_new(FALSE,0);
 
 	for(i=0;i<7;i++)
 	{
-		hbox_2_1_1[i] = gtk_event_box_new();
-		gtk_widget_set_size_request(GTK_WIDGET(hbox_2_1_1[i]),114,85);
-		update_widget_bg(hbox_2_1_1[i], /*backpic[1]*/1);
-		label_2_1_1[i] = gtk_label_new(char_2_1_1[i]);
-		gtk_widget_modify_fg (label_2_1_1[i], GTK_STATE_NORMAL, &color_black);
-		gtk_label_set_justify(GTK_LABEL(label_2_1_1[i]), GTK_JUSTIFY_CENTER);
-		gtk_container_add(GTK_CONTAINER(hbox_2_1_1[i]), label_2_1_1[i]);
-		gtk_box_pack_start(GTK_BOX(hbox_2_1),hbox_2_1_1[i], FALSE, FALSE, 0);
+		hbox_menu[i] = gtk_event_box_new();
+		gtk_widget_set_size_request(GTK_WIDGET(hbox_menu[i]),114,85);
+		update_widget_bg(hbox_menu[i], /*backpic[1]*/1);
+		label_menu[i] = gtk_label_new(char_menu[i]);
+		gtk_widget_modify_fg (label_menu[i], GTK_STATE_NORMAL, &color_black);
+		gtk_label_set_justify(GTK_LABEL(label_menu[i]), GTK_JUSTIFY_CENTER);
+		gtk_container_add(GTK_CONTAINER(hbox_menu[i]), label_menu[i]);
+		gtk_box_pack_start(GTK_BOX(bottom),hbox_menu[i], FALSE, FALSE, 0);
 	}
 
 	sw = gtk_scrolled_window_new (NULL, NULL);
@@ -3631,33 +3622,24 @@ void draw_report_build()
 	//
 	webkit_web_view_load_uri (web_view, file_path);
 
-	//g_signal_connect(G_OBJECT(window), "destroy",G_CALLBACK(gtk_main_quit), NULL);
+	g_signal_connect(G_OBJECT (hbox_menu[5]), "button-press-event",G_CALLBACK(dialog_destroy), dialog);
 
-	g_signal_connect(G_OBJECT (hbox_2_1_1[6]), "button-press-event",G_CALLBACK(dialog_destroy), dialog);
-
+	g_signal_connect(G_OBJECT (hbox_menu[6]), "button-press-event",G_CALLBACK(dialog_destroy), dialog);
+	
 	gtk_container_add(GTK_CONTAINER(sw),(GtkWidget *)web_view);
 
-	gtk_box_pack_start(GTK_BOX(vbox_1),sw, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(top),sw, FALSE, FALSE, 0);
 
-	gtk_box_pack_start(GTK_BOX(vbox),vbox_1, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(full_screen), top,FALSE,FALSE,0);
 
-	gtk_box_pack_start(GTK_BOX(vbox_2),hbox_2_1, FALSE, FALSE, 0);
-
-	gtk_box_pack_start(GTK_BOX(vbox),vbox_2, FALSE, FALSE, 0);
-
-	//gtk_container_add(GTK_CONTAINER(window), vbox);
-
-	gtk_box_pack_start(GTK_BOX(vbox_first), vbox,FALSE,FALSE,0);
-
+	gtk_box_pack_start(GTK_BOX(full_screen), bottom,FALSE,FALSE,0);
+	
 	g_signal_connect (G_OBJECT(dialog), "response",
 			G_CALLBACK(da_call_complex_dialog), NULL);/*发送退出信号*/
-
-	//gtk_widget_show_all(window);
 
 	gtk_widget_show_all(dialog);
 
 	return ;
-
 }
 
 /* File Name */
@@ -3979,6 +3961,7 @@ static void signal_define_probe(GtkDialog *dialog, gint response_id, gpointer us
 
 		pp->p_config->group[id].frequency = g_tmp_probe.Frequency;
 
+		gtk_label_set_text (GTK_LABEL (pp->data3[3]), GROUP_VAL(probe.Model));
 
         //关闭对话框
         gtk_widget_destroy (GTK_WIDGET (dialog));
@@ -4421,7 +4404,9 @@ static void signal_define_wedge(GtkDialog *dialog, gint response_id, gpointer us
 
 		memcpy(&pp->p_config->group[id].wedge,&g_tmp_wedge,sizeof(struct _Wedge));
 
-        //关闭对话框
+		gtk_label_set_text (GTK_LABEL (pp->data3[4]), GROUP_VAL(wedge.Model));
+        
+		//关闭对话框
         gtk_widget_destroy (GTK_WIDGET (dialog));
 		change_keypress_event (KEYPRESS_MAIN);
 

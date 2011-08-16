@@ -775,6 +775,22 @@ void report_build_header(char *file_name)
 
     fprintf(fp,"<br>\n");
 
+    fclose(fp);
+}
+
+void report_build_user_field(char *file_name)
+{
+    FILE *fp = NULL;
+
+    fp = fopen(file_name,"r+");
+
+    if(fp == NULL)
+    {
+        return ;
+    }
+
+    fseek(fp,0,SEEK_END);
+
     fprintf(fp,"<table width=\"690\" border=\"1\">\n");
     fprintf(fp,"<tr><td>\n");
 
@@ -1312,9 +1328,11 @@ void report_build_group_config(char *file_name,int group)
 {
     report_build_group_start(file_name,group);
 
-    report_build_probe(file_name,group);
+	if (get_report_format_probe(pp->p_config))
+    	report_build_probe(file_name,group);
 
-    report_build_setup(file_name,group);
+	if (get_report_format_setup(pp->p_config))
+    	report_build_setup(file_name,group);
 
     report_build_calculator(file_name,group);
 
