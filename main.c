@@ -93,13 +93,21 @@ static void set_config (guint groupid)
 
 	GROUP_VAL(mode_pos)= 0;				 /* 0是Setup */
 	GROUP_VAL(curve_pos)= 0;			/* 0是NOne */
-	GROUP_VAL(ref_ampl)=10; 
+	GROUP_VAL(ref_ampl)= 800;
 	GROUP_VAL(ref_ampl_offset)=10; 
-	GROUP_VAL(curve_step)=10; 
+	GROUP_VAL(curve_step)=50;
 	GROUP_VAL(ref_gain)=10;
 	GROUP_VAL(point_pos)=0;
-	GROUP_VAL(amplitude)=1000;
-	GROUP_VAL(position)=1000; 
+	GROUP_VAL(dac_point_qty) = 3;
+
+	GROUP_VAL(amplitude[0])=80000;
+	GROUP_VAL(amplitude[1])=80000;
+	GROUP_VAL(amplitude[2])=80000;
+
+	GROUP_VAL(position[0])=1000;
+	GROUP_VAL(position[1])=1000;
+	GROUP_VAL(position[2])=1000;
+
 	GROUP_VAL(mat_atten)=1000; 
 	GROUP_VAL(delay)=1000; 
 	GROUP_VAL(tcg_gain)=500;
@@ -336,7 +344,7 @@ int main (int argc, char *argv[])
 		i = read (TMP(fd_config), pp->p_config, sizeof(CONFIG));
 		if(i == 0)
 			set_config(0);
-		g_print("success open config file\n");
+		g_print("open default.cfg successfully\n");
 	}
 
 	tttmp = get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_GAIN) / 100.0;
@@ -399,7 +407,11 @@ int main (int argc, char *argv[])
 	init_serial ();
 	g_print ("serial inited\n");
 	p_ui->p_beam_data = TMP(dma_data_add);		/* FPGA过来的数据 */
+#endif
+	
+	init_ui (p_ui);
 
+#if ARM
 	/* 初始化要冲送给fpga的值 */
 	for (i = get_group_qty(pp->p_config) ; i != 0; i--)
 	{
@@ -414,8 +426,6 @@ int main (int argc, char *argv[])
 	for (i = 0; i < setup_MAX_GROUP_QTY; i++)
 		TMP(total_point_qty) += TMP(beam_qty[i]) * (GROUP_VAL_POS (i, point_qty) + 32);
 
-
-	init_ui (p_ui);
 
 	gtk_widget_show (window);
 

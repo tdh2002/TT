@@ -46,9 +46,9 @@ typedef struct _Group_data
 	unsigned int	_sample_range:20;		/* bit:12-31 capture end 采样范围 */
 
 	/* s_group_reg (3) */
-	unsigned int	beam_qty:13;			/* bit:0-12 聚焦法则数量 */
-	unsigned int	sample_offset:19;		/* bit:13-31 采样延时 */
-
+	unsigned int	beam_qty:16	;			/* bit:0-15 聚焦法则数量 */
+	unsigned int	sample_offset:16;		/* bit:16-31 采样延时 */
+    //unsigned int    beam_qty:16 ;           // modify 20110816 
 	/* s_group_reg (4) */
 	unsigned int	rx_time:20;				/* bit:0-19 rx_time */
 	unsigned int	TT1:2;

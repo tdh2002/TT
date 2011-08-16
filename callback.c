@@ -152,6 +152,9 @@ void data_2331 (GtkSpinButton *spinbutton, gpointer data);
 void data_2332 (GtkSpinButton *spinbutton, gpointer data);
 void data_234 (GtkSpinButton *spinbutton, gpointer data);
 void data_235 (GtkSpinButton *spinbutton, gpointer data);
+void data_234_add_point(DRAW_UI_P p);
+void data_235_del_point(DRAW_UI_P p);
+
 
 void data_300 (GtkMenuItem *menuitem, gpointer data); /* Measurements->Reading->list 300 */
 void data_302 (GtkMenuItem *menuitem, gpointer data); /* Measurements->Reading->Field1 302 */
@@ -2606,6 +2609,7 @@ static int handler_key(guint keyval, gpointer data)
 //			g_print("beam num =%d\n", TMP(beam_num[get_current_group(pp->p_config)]));
 
 			BEAM_INFO(0,beam_delay) = pp->G_delay[ TMP(beam_num[get_current_group(pp->p_config)]) ];
+			GROUP_VAL(gain_offset) = pp->tmp_gain_off[ TMP(beam_num[get_current_group(pp->p_config)]) ];
 			draw_menu3(0, NULL);
 			draw_area_all ();
 			break;
@@ -3770,7 +3774,9 @@ void data_134 (GtkSpinButton *spinbutton, gpointer data) /*scan offset */
 void data_135 (GtkSpinButton *spinbutton, gpointer data) /*gain offset */
 {
 	//DRAW_UI_P p = (DRAW_UI_P)(data);
-	GROUP_VAL(gain_offset) =  (guint) (gtk_spin_button_get_value (spinbutton) * 10.0);
+	gint index = TMP(beam_num[get_current_group(pp->p_config)]);
+	pp->tmp_gain_off[ index ] = (guint) (gtk_spin_button_get_value (spinbutton) * 10.0);
+	GROUP_VAL(gain_offset) =  pp->tmp_gain_off[ index ]; 
 
 	/*发送给硬件*/
 }
@@ -4219,20 +4225,22 @@ void data_225 (GtkSpinButton *spinbutton, gpointer data) /* holdtime P225*/
 	set_output_holdtime (pp->p_config,	(guint) (gtk_spin_button_get_value (spinbutton) * 1000.0));
 }
 
+
 void data_230 (GtkMenuItem *menuitem, gpointer data) /* Gate/Alarm->Sizing Curves->Mode P230 */
 {
 	GROUP_VAL(mode_pos) = (guchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
-	send_dsp_data (MODE_POS_DSP, GROUP_VAL(mode_pos));
+	//send_dsp_data (MODE_POS_DSP, GROUP_VAL(mode_pos));
 }
 
 void data_231 (GtkMenuItem *menuitem, gpointer data) /* Gate/Alarm->Sizing Curves->Curve P231 */
 {
 	GROUP_VAL(curve_pos) = (guchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
+    draw_area_all();
 	draw_menu3(0, NULL);
-	send_dsp_data (CURVE_POS_DSP, GROUP_VAL(curve_pos));
+	//send_dsp_data (CURVE_POS_DSP, GROUP_VAL(curve_pos));
 }
 
 void data_2311 (GtkMenuItem *menuitem, gpointer data) /* Gate/Alarm->Sizing Curves->Point 231 */
@@ -4253,14 +4261,22 @@ void data_2312 (GtkSpinButton *spinbutton, gpointer data) /* Mat.Attenuatior P23
 			GROUP_VAL(mat_atten) = (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 * 0.03937);
 	}
 	else /* 显示方式为时间 */
-		GROUP_VAL(mat_atten) = (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 * 0.338) ; 
-
+		GROUP_VAL(mat_atten) = (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 * 0.338) ;
+     draw_area_all();
 	//send_dsp_data (REF_AMPL_DSP, GROUP_VAL(ref_ampl));
 }
 
 void data_232 (GtkSpinButton *spinbutton, gpointer data) /* Ref.Amplitude P232 */
 {
-	GROUP_VAL(ref_ampl) =  (gushort) (gtk_spin_button_get_value (spinbutton) * 100.0);
+	int i;
+	GROUP_VAL(ref_ampl) =  (gushort) (gtk_spin_button_get_value (spinbutton) * 10.0);
+	GROUP_VAL(amplitude[0]) = GROUP_VAL(ref_ampl)*100;
+	for(i =0; i< GROUP_VAL(dac_point_qty); i++)
+	{
+		if(100*GROUP_VAL(ref_ampl)< GROUP_VAL(amplitude[i]))
+			GROUP_VAL(amplitude[i]) = 100*GROUP_VAL(ref_ampl);
+	}
+    draw_area_all();
 	//send_dsp_data (REF_AMPL_DSP, GROUP_VAL(ref_ampl));
 }
 void data_2321 (GtkSpinButton *spinbutton, gpointer data) /* Position P2321 */
@@ -4268,13 +4284,13 @@ void data_2321 (GtkSpinButton *spinbutton, gpointer data) /* Position P2321 */
 	if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 	{
 		if (UNIT_MM == get_unit(pp->p_config))
-			GROUP_VAL(position) = (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
+			GROUP_VAL(position[GROUP_VAL(point_pos)]) = (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
 		else  /* 英寸 */
-			GROUP_VAL(position) = (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 / 0.03937 );
+			GROUP_VAL(position[GROUP_VAL(point_pos)]) = (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 / 0.03937 );
 	}
 	else /* 显示方式为时间 */
-			GROUP_VAL(position) = (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 * 0.1159 / 0.03937);
-
+			GROUP_VAL(position[GROUP_VAL(point_pos)]) = (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 * 0.1159 / 0.03937);
+	draw_area_all();
 	//send_dsp_data (REF_AMPL_DSP, GROUP_VAL(ref_ampl));
 }
 void data_2322 (GtkSpinButton *spinbutton, gpointer data) /* Delay P2322 */
@@ -4287,39 +4303,88 @@ void data_2322 (GtkSpinButton *spinbutton, gpointer data) /* Delay P2322 */
 			GROUP_VAL(delay) = (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 / 0.03937) ;
 	}
 	else /* 显示方式为时间 */
-		GROUP_VAL(delay) = (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 * 2.945 ) ; 
-
+		GROUP_VAL(delay) = (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 * 2.945 ) ;
+    draw_area_all();
 	//send_dsp_data (REF_AMPL_DSP, GROUP_VAL(ref_ampl));
 }
 
 void data_233 (GtkSpinButton *spinbutton, gpointer data) /*Ref.Amplitude.Offset */
 {
 	GROUP_VAL(ref_ampl_offset) =  (guint) (gtk_spin_button_get_value (spinbutton) * 100.0);
+	draw_area_all();
 	//send_dsp_data (REF_AMPL_DSP, GROUP_VAL(ref_ampl));
 }
 
 void data_2331 (GtkSpinButton *spinbutton, gpointer data) /*Ref.Amplitude.Offset */
 {
-	GROUP_VAL(amplitude) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
+	int i;
+	GROUP_VAL(amplitude[GROUP_VAL(point_pos)]) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
+	for(i =GROUP_VAL(point_pos); i< GROUP_VAL(dac_point_qty); i++)
+	{
+		if(GROUP_VAL(amplitude[GROUP_VAL(point_pos)])< GROUP_VAL(amplitude[i]))
+			GROUP_VAL(amplitude[i]) = GROUP_VAL(amplitude[GROUP_VAL(point_pos)]);
+	}
+	draw_area_all();
 	//send_dsp_data (REF_AMPL_DSP, GROUP_VAL(ref_ampl));
 }
 void data_2332 (GtkSpinButton *spinbutton, gpointer data) /*Ref.Amplitude.Offset */
 {
 	GROUP_VAL(tcg_gain) =  (guint) (gtk_spin_button_get_value (spinbutton) * 100.0);
+	draw_area_all();
 	//send_dsp_data (REF_AMPL_DSP, GROUP_VAL(ref_ampl));
 }
 
-void data_234 (GtkSpinButton *spinbutton, gpointer data) /*Ref.Amplitude.Offset */
+void data_234 (GtkSpinButton *spinbutton, gpointer data) /*   */
 {
 	GROUP_VAL(curve_step) =  (guint) (gtk_spin_button_get_value (spinbutton) * 100.0);
-	//send_dsp_data (REF_AMPL_DSP, GROUP_VAL(ref_ampl));
+    draw_area_all();
 }
 
-void data_235 (GtkSpinButton *spinbutton, gpointer data) /*Ref.Amplitude.Offset */
+void data_234_add_point (DRAW_UI_P p) /*   */
+{
+     GROUP_VAL(dac_point_qty) = GROUP_VAL(dac_point_qty)+1;
+     if(GROUP_VAL(dac_point_qty)>=16)
+    	 GROUP_VAL(dac_point_qty)= 16 ;
+     else
+     {
+    	 GROUP_VAL(point_pos) = GROUP_VAL(dac_point_qty)-1;
+    	 GROUP_VAL(position[GROUP_VAL(point_pos)]) = GROUP_VAL(position[GROUP_VAL(point_pos-1)]) ;
+    	 GROUP_VAL(amplitude[GROUP_VAL(point_pos)]) = GROUP_VAL(amplitude[GROUP_VAL(point_pos-1)]) ;
+
+ 	     pp->pos_pos = MENU3_STOP;
+ 	     draw_menu3(0, NULL);
+ 	     draw_area_all();
+     }
+}
+
+void data_235_del_point  (DRAW_UI_P p) /*   */
+{
+    GROUP_VAL(dac_point_qty) = GROUP_VAL(dac_point_qty)-1 ;
+    if(GROUP_VAL(dac_point_qty)<=3)
+    	GROUP_VAL(dac_point_qty)= 3 ;
+    else
+    {
+   	    GROUP_VAL(point_pos) = GROUP_VAL(dac_point_qty)-1;
+   	    //GROUP_VAL(position[GROUP_VAL(point_pos)]) = GROUP_VAL(position[GROUP_VAL(point_pos-1)]) ;
+	    pp->pos_pos = MENU3_STOP;
+	    draw_menu3(0, NULL);
+	    draw_area_all();
+    }
+}
+
+void data_235 (GtkSpinButton *spinbutton, gpointer data) /*   */
 {
 	GROUP_VAL(ref_gain) =  (guint) (gtk_spin_button_get_value (spinbutton) * 100.0);
 	/*send_dsp_data (REF_AMPL_DSP, GROUP_VAL(ref_ampl));*/
+	draw_area_all();
 }
+
+
+
+
+
+
+
 
 void data_300 (GtkMenuItem *menuitem, gpointer data) /* Measurements->Reading->list 300 */
 {
@@ -5222,7 +5287,16 @@ void data_710 (GtkMenuItem *menuitem, gpointer data) /* Scan->Inspection->type *
 
 void data_711 (GtkMenuItem *menuitem, gpointer data) /* Scan->Inspection->scan */
 {
+	char *markup;
 	set_inspec_source (pp->p_config, (guchar) (GPOINTER_TO_UINT (data)));
+	
+	if(get_inspec_source (pp->p_config)==0)
+		markup = g_markup_printf_escaped ("<span foreground='white' font_desc='10'>X: %.1f s</span>",
+				(gfloat)(GROUP_VAL(prf)));
+	else
+		markup = g_markup_printf_escaped ("<span foreground='white' font_desc='10'>X: %.1f mm</span>",
+				(gfloat)(GROUP_VAL(prf)));
+	gtk_label_set_markup (GTK_LABEL (pp->label[7]), markup); 
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
 	gtk_widget_queue_draw (pp->vboxtable);

@@ -15,8 +15,8 @@ LIBS=webkit-1.0 libxml-2.0 libfakekey
 #---- 用户修改区域 结束
 
 # -O2
-CFLAGS=`pkg-config --cflags ${LIBS}` -Os -DX86 -Wall
-LDFLAGS=`pkg-config --libs ${LIBS}` -Wall 
+CFLAGS=`pkg-config --cflags ${LIBS}` -Os -DX86 -Wall -g
+LDFLAGS=`pkg-config --libs ${LIBS}` -Wall -g
 
 all: ${PROG_NAME}
 

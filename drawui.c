@@ -49,7 +49,6 @@ GdkColor	color_rule      = {0x0, 0xc300, 0xf000, 0x1d00};
 
 GROUP g_tmp_group_struct;
 
-sem_t sem;
 pthread_mutex_t draw_thread_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t  draw_thread_signal = PTHREAD_COND_INITIALIZER;
 volatile int *DMA_MARK ;
@@ -118,6 +117,7 @@ void draw_menu2(gint pa);
 void draw_menu3(gint pa, gpointer pt);
 void init_ui(DRAW_UI_P p);				/* 初始化界面 */
 void draw_area_all();
+void draw_dac_tcg_curve(cairo_t *cr, int width, int height);
 
 void save_config (GtkWidget *widget, GdkEventButton *event,	gpointer data);
 
@@ -127,6 +127,8 @@ void draw3_data2(DRAW_UI_P p);
 void draw3_data3(DRAW_UI_P p);
 void draw3_data4(DRAW_UI_P p);
 void draw3_data5(DRAW_UI_P p);
+extern void data_234_add_point(DRAW_UI_P p);
+extern void data_235_del_point(DRAW_UI_P p);
 
 void draw_field_name ();
 void draw_field_value ();
@@ -2023,6 +2025,7 @@ DO_NOT_USE_CCFG(measure_data[index]).a_position = 10;
 			case	CCC_SCAN:
 					break;
 		}
+
 		cairo_restore(cr);
 
 	}
@@ -2197,6 +2200,39 @@ DO_NOT_USE_CCFG(measure_data[index]).a_position = 10;
 			i++;
 		}
 	}
+
+
+	if (GROUP_VAL(curve_pos) && get_display_group(pp->p_config))
+	{
+		switch (get_display_pos(pp->p_config))
+		{
+			case A_SCAN:
+				draw_dac_tcg_curve(cr,605,390);
+				break;
+			case B_SCAN:
+                break;
+			case C_SCAN:
+				break;
+			case S_SCAN:
+				break;
+			case A_B_SCAN:
+				//draw_dac_tcg_curve();
+				break;
+			case A_B_C_SCAN:
+				break;
+			case A_B_S_SCAN:
+				break;
+			case A_C_CC_SCAN:
+				break;
+			case A_S_CC_SCAN:
+				break;
+			case Strip_Chart_AA:
+				break;
+			default:
+				break;
+		}
+	}
+
 	g_free(str);
 	cairo_destroy(cr);
 	return TRUE;
@@ -4357,9 +4393,17 @@ void draw3_data0(DRAW_UI_P p)
 				case 3: /* 被检则工件的几何形状  P530 */
 					p->x_pos = 608, p->y_pos = 118-YOFFSET;
 					if ((p->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
-						draw3_pop_tt (data_530, NULL, 
-								menu_content[GEOMETRY + get_part_geometry(p->p_config)],
-								menu_content+GEOMETRY, 3, 0, get_part_geometry(p->p_config), 0);
+					{
+						if(get_inspec_type (pp->p_config)==2)
+							draw3_pop_tt (data_530, NULL, 
+									menu_content[GEOMETRY + get_part_geometry(p->p_config)],
+									menu_content+GEOMETRY, 3, 0, get_part_geometry(p->p_config), 0x01);
+						else
+							draw3_pop_tt (data_530, NULL, 
+									menu_content[GEOMETRY + get_part_geometry(p->p_config)],
+									menu_content+GEOMETRY, 3, 0, get_part_geometry(p->p_config), 0);
+					}
+
 					else 
 						draw3_popdown (menu_content[GEOMETRY + get_part_geometry(p->p_config)], 0, 0);
 					break;
@@ -5137,7 +5181,7 @@ void draw3_data1(DRAW_UI_P p)
 							{
 								draw3_pop_tt (data_2311, NULL, 
 										menu_content[ ALARM_POS + GROUP_VAL(point_pos) ],
-										menu_content + ALARM_POS, 16, 1, GROUP_VAL(point_pos), 0);
+										menu_content + ALARM_POS, GROUP_VAL(dac_point_qty), 1, GROUP_VAL(point_pos), 0);
 								str = g_strdup_printf ("%s", con2_p[2][3][10]);	
 								gtk_label_set_text (GTK_LABEL (pp->label3[1]), str);
 							}
@@ -7062,7 +7106,7 @@ void draw3_data2(DRAW_UI_P p)
 								}
 								if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 								{
-									cur_value =GROUP_VAL(ref_ampl)/100.0;
+									cur_value =GROUP_VAL(ref_ampl)/10.0;
 									lower = 0.0;
 									upper = 100.0;
 									step = tmpf;
@@ -7073,7 +7117,7 @@ void draw3_data2(DRAW_UI_P p)
 								}
 								else
 								{
-									cur_value = GROUP_VAL(ref_ampl)/100.0;
+									cur_value = GROUP_VAL(ref_ampl)/10.0;
 									digit = 1;
 									pos = 2;
 									unit = UNIT_BFH;
@@ -7991,7 +8035,7 @@ void draw3_data2(DRAW_UI_P p)
 							}
 							if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 							{
-								cur_value =GROUP_VAL(ref_ampl)/100.0;
+								cur_value =GROUP_VAL(ref_ampl)/10.0;
 								lower = 0.0;
 								upper = 100.0;
 								step = tmpf;
@@ -8002,7 +8046,7 @@ void draw3_data2(DRAW_UI_P p)
 							}
 							else 
 							{
-								cur_value = GROUP_VAL(ref_ampl)/100.0;
+								cur_value = GROUP_VAL(ref_ampl)/10.0;
 								digit = 1;
 								pos = 2;
 								unit = UNIT_BFH;
@@ -8037,7 +8081,7 @@ void draw3_data2(DRAW_UI_P p)
 								{
 									if (UNIT_MM == get_unit(pp->p_config))
 									{
-										cur_value = GROUP_VAL(position) / 1000.0;
+										cur_value = GROUP_VAL(position[GROUP_VAL(point_pos)]) / 1000.0;
 										lower = 0.0;
 										upper = get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY)/100.0 * 4.95;
 										step = tmpf;
@@ -8047,7 +8091,7 @@ void draw3_data2(DRAW_UI_P p)
 									}
 									else
 									{
-										cur_value = GROUP_VAL(position) / 1000.0 * 0.03937;
+										cur_value = GROUP_VAL(position[GROUP_VAL(point_pos)]) / 1000.0 * 0.03937;
 										lower = 0.0;
 										upper = get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY)/100.0 * 4.95 * 0.03937;
 										step = tmpf/2.0;
@@ -8058,7 +8102,7 @@ void draw3_data2(DRAW_UI_P p)
 								}
 								else
 								{
-									cur_value = GROUP_VAL(position) / 1000.0 * 0.03937/0.1159;
+									cur_value = GROUP_VAL(position[GROUP_VAL(point_pos)]) / 1000.0 * 0.03937/0.1159;
 									lower = 0.0;
 									upper = 9900.80;
 									step = tmpf*5.0;
@@ -8075,14 +8119,14 @@ void draw3_data2(DRAW_UI_P p)
 								{
 									if (UNIT_MM == get_unit(pp->p_config))
 									{
-										cur_value = GROUP_VAL(position)/1000.0;
+										cur_value = GROUP_VAL(position[GROUP_VAL(point_pos)])/1000.0;
 										digit = 2;
 										pos = 2;
 										unit = UNIT_MM;
 									}
 									else
 									{
-										cur_value = GROUP_VAL(position)/1000.0 * 0.03937;
+										cur_value = GROUP_VAL(position[GROUP_VAL(point_pos)])/1000.0 * 0.03937;
 										digit = 3;
 										pos = 2;
 										unit = UNIT_INCH;
@@ -8090,7 +8134,7 @@ void draw3_data2(DRAW_UI_P p)
 								}
 								else
 								{
-									cur_value = GROUP_VAL(position) / 1000.0 * 0.03937/0.1159;
+									cur_value = GROUP_VAL(position[GROUP_VAL(point_pos)]) / 1000.0 * 0.03937/0.1159;
 									digit = 2;
 									pos = 2;
 									unit = UNIT_US;
@@ -10850,7 +10894,7 @@ void draw3_data3(DRAW_UI_P p)
 							}
 							if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 							{
-								cur_value =GROUP_VAL(amplitude)/1000.0;
+								cur_value =GROUP_VAL(amplitude[GROUP_VAL(point_pos)])/1000.0;
 								lower = 0.02;
 								upper = 80.10;
 								step = tmpf;
@@ -10861,7 +10905,7 @@ void draw3_data3(DRAW_UI_P p)
 							}
 							else 
 							{
-								cur_value = GROUP_VAL(amplitude)/1000.0;
+								cur_value = GROUP_VAL(amplitude[GROUP_VAL(point_pos)])/1000.0;
 								digit = 2;
 								pos = 3;
 								unit = UNIT_BFH;
@@ -13237,6 +13281,8 @@ void draw3_data4(DRAW_UI_P p)
 								pos = 4;
 								unit = UNIT_DB;
 								draw3_digit_pressed (data_234, units[unit], cur_value , lower, upper, step, digit, p, pos, 8);
+
+
 							}
 							else 
 							{
@@ -13263,6 +13309,8 @@ void draw3_data4(DRAW_UI_P p)
 							draw3_popdown(NULL,4,1);
 							str = g_strdup_printf ("%s", con2_p[2][3][13]);	
 							gtk_label_set_text (GTK_LABEL (pp->label3[4]), str);
+							if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
+								             data_234_add_point(p);
 						}
 						else
 						{
@@ -15110,6 +15158,8 @@ void draw3_data5(DRAW_UI_P p)
 							draw3_popdown(NULL,5,1);
 							str = g_strdup_printf ("%s", con2_p[2][3][14]);	
 							gtk_label_set_text (GTK_LABEL (pp->label3[5]), str);
+							if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 5))
+							data_235_del_point(p);
 						}
 						else
 						{
@@ -16479,7 +16529,6 @@ void init_ui(DRAW_UI_P p)
 	gint	i;
 	gchar	*markup;
 	pthread_t tid0 , tid1, tid2; 
-	sem_init(&sem,0,0);
 	int ret;
 	p_drawui_c = p;
 
@@ -16721,8 +16770,12 @@ void init_ui(DRAW_UI_P p)
 	gtk_box_pack_start (GTK_BOX (p->vbox1111[2]), pp->event[7], FALSE, FALSE, 0);
 	gtk_widget_set_size_request (GTK_WIDGET(pp->event[7]), 172, 22);
 	update_widget_bg(pp->event[7], /*backpic[5]*/ 5);
-	markup = g_markup_printf_escaped ("<span foreground='white' font_desc='10'>X: %.1f s</span>",
-			(gfloat)(GROUP_VAL(prf)));
+	if(get_inspec_source (pp->p_config)==0)
+		markup = g_markup_printf_escaped ("<span foreground='white' font_desc='10'>X: %.1f s</span>",
+				(gfloat)(GROUP_VAL(prf)));
+	else
+		markup = g_markup_printf_escaped ("<span foreground='white' font_desc='10'>X: %.1f mm</span>",
+				(gfloat)(GROUP_VAL(prf)));
 	gtk_label_set_markup (GTK_LABEL (pp->label[7]), markup); 
 	g_free (markup);
 
@@ -16907,3 +16960,155 @@ void save_config (GtkWidget *widget, GdkEventButton *event,	gpointer data)
 	close (TMP(fd_config));
 	gtk_main_quit();
 }
+
+void draw_dac_curve(cairo_t *cr, int width, int height)
+{
+	  double point_x[18] ;
+	  double point_y[18] ;
+	  double scale_y[18] ;
+	  int i, j ;
+	  double tmpInterval ;
+	  double interval;
+      double tmp ;
+      double ref_ampl_offset;
+      double reference_db ;
+      int point_count = (int)GROUP_VAL(dac_point_qty) ;
+      printf("dac_point_qty %d \n", GROUP_VAL(dac_point_qty));
+      printf("point_count %d \n", point_count);
+
+      ref_ampl_offset = pow(10.0, GROUP_VAL(ref_ampl_offset)/2000.0) ;
+
+      point_y[0] = (height * GROUP_VAL(ref_ampl)/1000.0) * ref_ampl_offset ;
+      point_x[0] = 0 ;
+      tmp = pow(10.0, GROUP_VAL(curve_step)/2000.0);
+      interval = point_y[0]*(tmp-1) ;
+      reference_db = (pow(10.0 , GROUP_VAL(ref_gain)/2000.0)-1)  ;
+      reference_db = point_y[0] * reference_db  ;
+      point_y[0] += reference_db ;
+
+	  for( i = 1; i < point_count+1; i++ )
+	  {
+		  point_x [i] = point_x[i-1] + width * (GROUP_VAL(position[i-1])*200000.0) / ( ((double)(GROUP_VAL(range))) * ((double)(GROUP_VAL(velocity)))) ;
+		  point_y [i] = reference_db + ref_ampl_offset * height * (GROUP_VAL( amplitude[i-1] ) / 100000.0) ;
+	  }
+
+	  point_x[point_count+1] = width ;
+	  point_y[point_count+1] = point_y[point_count] ;
+
+	  cairo_set_source_rgb (cr, 255, 0, 0 );
+	  for(i = 1 ; i <= point_count ; i++)
+	  {
+			cairo_rectangle(cr , 17 + point_x[i], height - point_y[i] - 3, 6 ,6 );
+			cairo_fill(cr);
+	  }
+	  scale_y[0] = 1.0 ;
+	  scale_y[point_count+1] = 1.0 ;
+
+	  for(i = 1; i<= point_count+1; i++ )
+	  {
+		  scale_y[i] = point_y[i]/ point_y[i-1];
+	  }
+
+	  cairo_set_source_rgb (cr, 0, 255 ,0);
+	  cairo_set_line_width (cr, 0.5);
+
+      tmp = interval ;
+	  for(j = 0; j<=2 ; j++)
+      {
+		  interval = tmp ;
+		  for(i = 0; i<= point_count; i++)
+		  {
+			  interval = interval*scale_y[i] ;
+			  tmpInterval = interval*scale_y[i+1] ;
+		      cairo_move_to(cr, 20 + point_x[i],   height - point_y[i] + j*interval);
+		      cairo_line_to(cr, 20 + point_x[i+1], height - point_y[i+1] + j*tmpInterval);
+		      if(j!=0)
+		      {
+		           cairo_move_to(cr, 20 + point_x[i],   height - point_y[i]- j* interval);
+		           cairo_line_to(cr, 20 + point_x[i+1], height - point_y[i+1]-j* tmpInterval);
+		      }
+		  }
+      }
+
+      cairo_stroke(cr);
+}
+
+void draw_tcg_curve(cairo_t *cr , int width , int height )
+{
+	double point_x[18] ;
+    double point_y[18] ;
+
+	int i ;
+
+    int point_count = (int)GROUP_VAL(dac_point_qty) ;
+    //printf("dac_point_qty= %d\n",GROUP_VAL(dac_point_qty) );
+	//printf("point_count %d \n", point_count);
+
+    point_y[0] = height * GROUP_VAL(ref_ampl)/1000.0 ;  //+ GROUP_VAL(ref_ampl_offset)
+    point_x[0] = 0 ;
+    //printf("GROUP_VAL(ref_ampl) is %d \n", GROUP_VAL(ref_ampl));
+    //printf(" point_y[0] is %f \n", point_y[0]);
+    // set color width
+	cairo_set_source_rgb (cr, 0, 255 , 0);
+	cairo_set_line_width (cr, 0.5);
+	  //draw five lines
+      //printf("width is %d\n", width);
+	for( i = 1; i < point_count+1; i++ )
+	{
+		  point_x [i] = point_x[i-1] + width * (GROUP_VAL(position[i-1])*200000.0) / ( ((double)(GROUP_VAL(range))) * ((double)(GROUP_VAL(velocity)))) ;
+		  point_y [i] = height * (GROUP_VAL( amplitude[i-1] ) / 100000.0) ;
+		  //printf("GROUP_VAL(position) is %d range %d  velocity %d \n", GROUP_VAL(position[i-1]),GROUP_VAL(range),GROUP_VAL(velocity));
+		  //printf("x:%f y%f\n", point_x[i], point_y[i]) ;
+		  //printf("GROUP_VAL(amplitude[i-1]) is %d\n", GROUP_VAL(amplitude[i-1]));
+	}
+
+	point_x[point_count+1] = width ;
+	point_y[point_count+1] = point_y[point_count] ;
+
+	for(i = point_count+1; i>0 ; i-- )
+	{
+		  point_y[i] = fabs(point_y[i] - point_y[0]) ;
+	}
+	point_y[0] = 0;
+
+	for(i = 0; i<= point_count; i++)
+	{
+	      cairo_move_to(cr, 20 + point_x[i],   height - point_y[i] );
+	      cairo_line_to(cr, 20 + point_x[i+1], height - point_y[i+1]);
+	      cairo_stroke(cr);
+	}
+
+	cairo_set_source_rgb (cr, 255, 0, 0 );
+	for(i = 1 ; i <= point_count ; i++)
+	{
+		cairo_rectangle(cr , 17 + point_x[i], height - point_y[i] - 3, 6 ,6 );
+	    cairo_fill(cr);
+	}
+
+
+    cairo_stroke(cr);
+
+}
+
+
+void draw_dac_tcg_curve(cairo_t *cr,int width, int height)
+{
+	int i = GROUP_VAL(curve_pos);
+	switch(i)
+	{
+		case 1:// DAC
+			draw_dac_curve( cr, width, height);
+			break;
+		case 2:// Linear DAC
+			draw_dac_curve( cr, width, height);
+			break;
+		case 3:// TCG
+			draw_tcg_curve (cr , width , height );
+			break;
+		default:
+			break;
+
+	}
+
+}
+

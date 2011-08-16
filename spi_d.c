@@ -166,7 +166,7 @@ int write_group_data (group_data_spi *p, unsigned int group)
 	return 0;
 #endif
 
-#if DEBUG
+#if 1
 /*	unsigned int *tmp = (unsigned *)(p);*/
 	unsigned int tmp = p->gain;
 	printf ("Gain= %d\n", tmp);
@@ -204,7 +204,9 @@ int write_group_data (group_data_spi *p, unsigned int group)
 #if ARM	
 /*	ioctl (fd_gpio, GPIO43_LOW, &i);*/ /* 发送group参数不复位 */
 	i = write (fd_array, (unsigned char *)(p1), sizeof(group_data_spi));
-/*	ioctl (fd_gpio, GPIO43_HIGH, &i);*/
+    printf("write spi %d \n", i);
+	
+	/*	ioctl (fd_gpio, GPIO43_HIGH, &i);*/
 #endif
 	return 0;
 }

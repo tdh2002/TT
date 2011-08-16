@@ -329,16 +329,17 @@ struct _Group
 
 	unsigned char	mode_pos;		/*Gate/Alarm->Sizing Curves->Mode*/
 	unsigned char	curve_pos;		/*Gate/Alarm->Sizing Curves->Curve*/
-	unsigned short	ref_ampl;
-	unsigned short	ref_ampl_offset;
-	unsigned short	curve_step;
-	unsigned short	ref_gain;
-	unsigned int	position;
-	unsigned char	point_pos;
-	unsigned int	amplitude;
-	unsigned short	mat_atten;
-	unsigned int	delay;
-	unsigned short	tcg_gain;
+	unsigned int    ref_ampl;
+	unsigned short  ref_ampl_offset;
+	unsigned int    amplitude[16];
+	unsigned int    position[16];
+	unsigned char   point_pos;
+	unsigned char   dac_point_qty;
+	unsigned short  curve_step;
+	unsigned short  ref_gain;
+	unsigned short  mat_atten;
+	unsigned int    delay;
+	unsigned short  tcg_gain;
 
 	unsigned char	ut_unit;		/*检测单位 时间2 声程1  实际深度0 .*/
 
