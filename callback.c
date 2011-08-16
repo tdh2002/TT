@@ -5733,8 +5733,6 @@ void generate_focallaw(int grp)
 	TMP(beam_qty[get_current_group(pp->p_config)])	= temp_beam;
 	TMP(beam_num[get_current_group(pp->p_config)]) = 0;
 
-	TMP(group_spi[get_current_group(pp->p_config)]).beam_qty = 
-		TMP(beam_qty[get_current_group(pp->p_config)]) - 1; 
 	temp_prf = TMP(beam_qty[get_current_group(pp->p_config)]) * GROUP_VAL_POS(grp, prf);
 	TMP(group_spi[grp]).idel_time		= 
 		100000000 / (temp_prf / (10)) - 2048 - TMP(group_spi[grp]).rx_time;

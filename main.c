@@ -578,7 +578,7 @@ void init_group_spi (guint group)
 		get_group_val (get_group_by_id (pp->p_config, group), GROUP_RANGE) / 10;		
 
 	//TMP(group_spi[group]).beam_qty		= TMP(beam_qty[group]) - 1; 
-	TMP(group_spi[group]).beam_qty  = GROUP_VAL(point_qty);
+	TMP(group_spi[group]).point_qty  = GROUP_VAL(point_qty);
 	TMP(group_spi[group]).sample_offset	= 0;
 
 	tt[0] = (GROUP_VAL_POS(group, gate[0].start) +	GROUP_VAL_POS (group, gate[0].width));
