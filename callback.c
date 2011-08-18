@@ -25,7 +25,6 @@ gboolean foo (GtkAccelGroup *accel_group, GObject *acceleratable,
 gboolean key_press_handler (GtkWidget* pWidget,
 		GdkEventKey* pEvent, gpointer data);
 
-void send_dsp_data (guint data_type, guint value);
 void send_spi_data (gint group);
 guint get_beam_qty();
 guint get_skew();
@@ -387,7 +386,6 @@ static void setup_para(PARAMETER_P p, guint group)
 
     //与P600 Law Type 对应起来
  	p->beam_angle->beam_type = LAW_VAL_POS(group,Focal_type);//何凡修改
-//	g_print("test beamnum is %d\n",p->beam_angle->beam_type);
 	p->beam_angle->beam_angle_sel = 0;//只有Refracted angle一种情况 何凡修改
 
 	/* 样本 */
@@ -516,8 +514,6 @@ void cal_focal_law (guint group)
 	/* 把聚集法则信息保存起来 */
 	for (offset = 0, k = 0 ; k < group; k++)
 		offset += TMP(beam_qty[k]);
-/*	g_print("offset = %d group=%d beam_qty = %d\n", 
-			offset, group, TMP(beam_qty[group]));*/
 			
 	save_cal_law (offset, group, p);
 
@@ -2610,7 +2606,6 @@ static int handler_key(guint keyval, gpointer data)
 			(TMP(beam_num[get_current_group(pp->p_config)]) < (TMP(beam_qty[get_current_group(pp->p_config)]) - 1))	?
 				(TMP(beam_num[get_current_group(pp->p_config)]) += 1)	:	
 			(TMP(beam_num[get_current_group(pp->p_config)]) = 0);
-//			g_print("beam num =%d\n", TMP(beam_num[get_current_group(pp->p_config)]));
 
 			BEAM_INFO(0,beam_delay) = pp->G_delay[ TMP(beam_num[get_current_group(pp->p_config)]) ];
 			GROUP_VAL(gain_offset) = pp->tmp_gain_off[ TMP(beam_num[get_current_group(pp->p_config)]) ];
@@ -3107,7 +3102,6 @@ void data_00242 (GtkMenuItem *menuitem, gpointer data) /* 收发模式 Tx/Rx Mod
 		set_group_val (&g_tmp_group_struct, 
 				GROUP_RECEIVER, get_group_val (&g_tmp_group_struct, GROUP_PULSER));
 	pp->pos_pos = MENU3_STOP;
-	send_dsp_data (TX_RX_MODE_DSP,g_tmp_group_struct.tx_rxmode);
 	draw_menu3(0, NULL);
 	/* 发送给硬件 */
 }
@@ -3332,7 +3326,6 @@ void data_100 (GtkSpinButton *spinbutton, gpointer data) /* 增益Gain P100 */
 	g_free(markup);
 	TMP(group_spi[grp]).gain = get_group_val (get_group_by_id (pp->p_config, grp), GROUP_GAIN) / 10;
 	write_group_data (&TMP(group_spi[grp]), grp);
-//	g_print("------>click gain<-----------gain:%.1f beam_qty:%d \n",get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_GAIN)/100,(int)(LAW_VAL(Elem_qty)));
 	/* 发送给硬件 */
 }
 
@@ -3509,7 +3502,6 @@ void data_111 (GtkMenuItem *menuitem, gpointer data) /* 收发模式 Tx/Rx Mode 
 				get_group_val (&pp->p_config->group[grp], GROUP_PULSER));
 	}
 	pp->pos_pos = MENU3_STOP;
-	send_dsp_data (TX_RX_MODE_DSP, GROUP_VAL(tx_rxmode));
 	draw_menu3(0, NULL);
 	/* 发送给硬件 */
 }
@@ -3519,7 +3511,6 @@ void data_1121 (GtkSpinButton *spinbutton, gpointer data) /* 频率 Freq 数值�
 	GROUP_VAL(frequency) =  (gushort) ((gtk_spin_button_get_value (spinbutton)) * 1000.0);
 	if (!GROUP_VAL(pw_pos))
 		GROUP_VAL(pulser_width) = ((guint)(GROUP_VAL(frequency) * 2.0) / 250)  * 250 ; /* 改变脉冲宽度 */
-	send_dsp_data (FREQUENCY_DSP, (guint) (GROUP_VAL(frequency)));
 	/* 发送给硬件 */
 }
 
@@ -3566,7 +3557,6 @@ void data_1141 (GtkSpinButton *spinbutton, gpointer data) /* PW  P114 */
 	temp =  (guint) ((gtk_spin_button_get_value (spinbutton))*100.0);
 	temp = (temp / 250) * 250;
 	GROUP_VAL(pulser_width) = temp;
-//	g_print("\n pulser width=%f \n",GROUP_VAL(pulser_width));
 	send_focal_spi (get_current_group(pp->p_config));
 	/* 发送给硬件 */
 }
@@ -3581,7 +3571,6 @@ void data_114 (GtkMenuItem *menuitem, gpointer data) /* PW */
 	{
 		pp->pos_pos = MENU3_STOP;
 		draw_menu3(0, NULL);
-		send_dsp_data (PW_DSP, GROUP_VAL(pulser_width) / 250) ;  /* 以2.5ns 为单位发出信息 */
 		gtk_spin_button_set_value (GTK_SPIN_BUTTON (pp->sbutton[4]), GROUP_VAL(pulser_width) / 100.0);
 
 	}
@@ -3619,7 +3608,6 @@ void data_1151 (GtkSpinButton *spinbutton, gpointer data) /* PRF P115 */
 		100000000 / (temp_prf / (10)) - 2048 - TMP(group_spi[grp]).rx_time;
 /*		100000000 / (GROUP_VAL_POS(grp, prf) / (10)) - 2048 - TMP(group_spi[grp]).rx_time;*/
 
-//	g_print ("ideal_time = %d\n", TMP(group_spi[grp]).idel_time);
 
 	write_group_data (&TMP(group_spi[grp]), grp);
 	/* 发送给硬件 */
@@ -3773,6 +3761,7 @@ void data_134 (GtkSpinButton *spinbutton, gpointer data) /*scan offset */
 	BEAM_INFO(0,beam_delay) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
 
 	/*发送给硬件*/
+	send_focal_spi(get_current_group(pp->p_config));
 }
 
 void data_135 (GtkSpinButton *spinbutton, gpointer data) /*gain offset */
@@ -3827,6 +3816,7 @@ void data_143 (GtkMenuItem *menuitem, gpointer data) /* point qty P143 */
 	gint temp_prf;
 	GROUP_VAL(point_qty_pos) = temp;
 	GROUP_VAL(point_qty) = get_point_qty();
+	TMP(group_spi[grp]).point_qty = get_point_qty();
 	get_prf();
 	if ((GROUP_VAL(point_qty) * 10) > (get_group_val (get_group_by_id (pp->p_config, grp), GROUP_RANGE) / 10))	
 		set_group_val (get_group_by_id (pp->p_config, grp), GROUP_RANGE,
@@ -3838,7 +3828,6 @@ void data_143 (GtkMenuItem *menuitem, gpointer data) /* point qty P143 */
 	{
 		MENU_STATUS = MENU3_STOP;
 		draw_menu3(0, NULL);
-		send_dsp_data (POINT_QTY_DSP, get_point_qty());
 		gtk_spin_button_set_value (GTK_SPIN_BUTTON (pp->sbutton[3]), GROUP_VAL(point_qty));
 	}
 	else
@@ -3895,7 +3884,6 @@ void data_145 (GtkMenuItem *menuitem, gpointer data) /* Sum Gain */
 	{
 		MENU_STATUS = MENU3_STOP;
 		draw_menu3(0, NULL);
-/*		send_dsp_data (SUM_GAIN_DSP, get_sum_gain());*/
 		gtk_spin_button_set_value (GTK_SPIN_BUTTON (pp->sbutton[5]), GROUP_VAL(sum_gain)/100.0);
 	}
 	else
@@ -3922,7 +3910,6 @@ void data_200 (GtkMenuItem *menuitem, gpointer data) /* Gate 闸门选择 P200 *
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
 
-	send_dsp_data (GATE_POS_DSP, GROUP_VAL(gate_pos));
 }
 
 void data_201 (GtkMenuItem *menuitem, gpointer data) /* parameter 闸门参数选择 位置或者模式 P201 */
@@ -3932,7 +3919,6 @@ void data_201 (GtkMenuItem *menuitem, gpointer data) /* parameter 闸门参数�
 	draw_menu3(0, NULL);
 
 
-	send_dsp_data (PARAMETERS_DSP, GROUP_VAL(gate[GROUP_VAL(gate_pos)].parameters));
 }
 
 void data_202 (GtkSpinButton *spinbutton, gpointer data)	/* 闸门开始位置 P202 */
@@ -4101,7 +4087,6 @@ void data_204 (GtkSpinButton *spinbutton, gpointer data) /* 闸门高度 P204 */
 		TMP(group_spi[group]).gate_i_height	= GROUP_VAL_POS(group, gate[2].height)*4095*0.01;
 	}
 
-//    g_print("--------------------------gate_a_height=%d ",TMP(group_spi[group]).gate_a_height);
 	send_spi_data (group);
 	gtk_widget_queue_draw (pp->vboxtable);
 }
@@ -4235,7 +4220,6 @@ void data_230 (GtkMenuItem *menuitem, gpointer data) /* Gate/Alarm->Sizing Curve
 	GROUP_VAL(mode_pos) = (guchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
-	//send_dsp_data (MODE_POS_DSP, GROUP_VAL(mode_pos));
 }
 
 void data_231 (GtkMenuItem *menuitem, gpointer data) /* Gate/Alarm->Sizing Curves->Curve P231 */
@@ -4244,7 +4228,6 @@ void data_231 (GtkMenuItem *menuitem, gpointer data) /* Gate/Alarm->Sizing Curve
 	pp->pos_pos = MENU3_STOP;
     draw_area_all();
 	draw_menu3(0, NULL);
-	//send_dsp_data (CURVE_POS_DSP, GROUP_VAL(curve_pos));
 }
 
 void data_2311 (GtkMenuItem *menuitem, gpointer data) /* Gate/Alarm->Sizing Curves->Point 231 */
@@ -4252,7 +4235,6 @@ void data_2311 (GtkMenuItem *menuitem, gpointer data) /* Gate/Alarm->Sizing Curv
 	GROUP_VAL(point_pos) = (guchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
-	send_dsp_data (POINT_POS_DSP, GROUP_VAL(point_pos));
 }
 
 void data_2312 (GtkSpinButton *spinbutton, gpointer data) /* Mat.Attenuatior P2312 */
@@ -4267,7 +4249,6 @@ void data_2312 (GtkSpinButton *spinbutton, gpointer data) /* Mat.Attenuatior P23
 	else /* 显示方式为时间 */
 		GROUP_VAL(mat_atten) = (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 * 0.338) ;
      draw_area_all();
-	//send_dsp_data (REF_AMPL_DSP, GROUP_VAL(ref_ampl));
 }
 
 void data_232 (GtkSpinButton *spinbutton, gpointer data) /* Ref.Amplitude P232 */
@@ -4281,7 +4262,6 @@ void data_232 (GtkSpinButton *spinbutton, gpointer data) /* Ref.Amplitude P232 *
 			GROUP_VAL(amplitude[i]) = 100*GROUP_VAL(ref_ampl);
 	}
     draw_area_all();
-	//send_dsp_data (REF_AMPL_DSP, GROUP_VAL(ref_ampl));
 }
 void data_2321 (GtkSpinButton *spinbutton, gpointer data) /* Position P2321 */
 {
@@ -4295,7 +4275,6 @@ void data_2321 (GtkSpinButton *spinbutton, gpointer data) /* Position P2321 */
 	else /* 显示方式为时间 */
 			GROUP_VAL(position[GROUP_VAL(point_pos)]) = (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 * 0.1159 / 0.03937);
 	draw_area_all();
-	//send_dsp_data (REF_AMPL_DSP, GROUP_VAL(ref_ampl));
 }
 void data_2322 (GtkSpinButton *spinbutton, gpointer data) /* Delay P2322 */
 {
@@ -4309,14 +4288,12 @@ void data_2322 (GtkSpinButton *spinbutton, gpointer data) /* Delay P2322 */
 	else /* 显示方式为时间 */
 		GROUP_VAL(delay) = (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 * 2.945 ) ;
     draw_area_all();
-	//send_dsp_data (REF_AMPL_DSP, GROUP_VAL(ref_ampl));
 }
 
 void data_233 (GtkSpinButton *spinbutton, gpointer data) /*Ref.Amplitude.Offset */
 {
 	GROUP_VAL(ref_ampl_offset) =  (guint) (gtk_spin_button_get_value (spinbutton) * 100.0);
 	draw_area_all();
-	//send_dsp_data (REF_AMPL_DSP, GROUP_VAL(ref_ampl));
 }
 
 void data_2331 (GtkSpinButton *spinbutton, gpointer data) /*Ref.Amplitude.Offset */
@@ -4329,13 +4306,11 @@ void data_2331 (GtkSpinButton *spinbutton, gpointer data) /*Ref.Amplitude.Offset
 			GROUP_VAL(amplitude[i]) = GROUP_VAL(amplitude[GROUP_VAL(point_pos)]);
 	}
 	draw_area_all();
-	//send_dsp_data (REF_AMPL_DSP, GROUP_VAL(ref_ampl));
 }
 void data_2332 (GtkSpinButton *spinbutton, gpointer data) /*Ref.Amplitude.Offset */
 {
 	GROUP_VAL(tcg_gain) =  (guint) (gtk_spin_button_get_value (spinbutton) * 100.0);
 	draw_area_all();
-	//send_dsp_data (REF_AMPL_DSP, GROUP_VAL(ref_ampl));
 }
 
 void data_234 (GtkSpinButton *spinbutton, gpointer data) /*   */
@@ -4379,7 +4354,6 @@ void data_235_del_point  (DRAW_UI_P p) /*   */
 void data_235 (GtkSpinButton *spinbutton, gpointer data) /*   */
 {
 	GROUP_VAL(ref_gain) =  (guint) (gtk_spin_button_get_value (spinbutton) * 100.0);
-	/*send_dsp_data (REF_AMPL_DSP, GROUP_VAL(ref_ampl));*/
 	draw_area_all();
 }
 
@@ -5203,7 +5177,6 @@ void data_630 (GtkSpinButton *spinbutton, gpointer data)
 		if( LAW_VAL (Last_tx_elem) < ((guchar) (LAW_VAL (First_tx_elem) + LAW_VAL (Elem_qty)) - 1) )
 				LAW_VAL (Last_tx_elem) = (guchar) (LAW_VAL (First_tx_elem) + LAW_VAL (Elem_qty)) - 1;
 	}
-//	g_print("------>elem_qty<-----------gain:%d beam_qty:%d \n",get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_GAIN)/100,(int)(LAW_VAL(Elem_qty)));
 }
 
 /* first_element 第一个接收阵元 */
@@ -5283,6 +5256,13 @@ void data_704 (GtkSpinButton *spinbutton, gpointer data) /* Origin */
 void data_710 (GtkMenuItem *menuitem, gpointer data) /* Scan->Inspection->type */
 {
 	set_inspec_type (pp->p_config, (guchar) (GPOINTER_TO_UINT (data)));
+	if( GPOINTER_TO_UINT (data) == 2)
+	{
+		if( pp->count == 0)
+			set_part_geometry (pp->p_config, (void*)(1) );
+		pp->count++;
+	}
+
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
 	draw_area_all ();
@@ -5301,6 +5281,7 @@ void data_711 (GtkMenuItem *menuitem, gpointer data) /* Scan->Inspection->scan *
 		markup = g_markup_printf_escaped ("<span foreground='white' font_desc='10'>X: %.1f mm</span>",
 				(gfloat)(GROUP_VAL(prf)));
 	gtk_label_set_markup (GTK_LABEL (pp->label[7]), markup); 
+
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
 	gtk_widget_queue_draw (pp->vboxtable);
@@ -5489,134 +5470,6 @@ void data_901 (GtkSpinButton *spinbutton, gpointer data) /*scan_resolution*/
 	set_bright (pp->p_config, (guchar) (gtk_spin_button_get_value (spinbutton)));
 }
 
-/*  */
-void send_dsp_data (guint data_type, guint value)
-{
-	switch (data_type)	
-	{
-		case BEAM_DELAY_DSP:break;
-		case GATEA_DSP:break;
-		case GATEB_DSP:break;
-		case GATEI_DSP:break;
-		case TX_RX_MODE_DSP:
-					   g_print("%d\n", value);
-					   break;
-		case FREQUENCY_DSP:
-					   g_print("%d\n", value);
-					   break;
-		case VOLTAGE_DSP:
-					   if (get_current_group(pp->p_config) != 3)
-						   switch (value)
-						   {
-							   case 0:g_print("%x\n", setup_VOLTAGE_MIN_PA);break;
-							   case 1:g_print("%x\n", setup_VOLTAGE_MAX_PA);break;
-							   default:break;
-						   }
-					   else 
-						   switch (value)
-						   {
-							   case 0:g_print("%x\n", setup_VOLTAGE_MIN_UT);break;
-							   case 1:g_print("%x\n", setup_VOLTAGE_MED_UT);break;
-							   case 2:g_print("%x\n", setup_VOLTAGE_MAX_UT);break;
-							   default:break;
-						   }
-					   break;
-		case PW_DSP:
-					   g_print("%d\n", value);
-					   break;
-		case PRF_DSP:
-					   g_print("%d\n", value);
-					   break;
-		case FILTER_DSP:
-					   g_print("%d\n", value);
-					   break;
-		case RECTIFIER_DSP:
-					   g_print("%d\n", value);
-					   break;
-		case AVERAGING_DSP:
-					   g_print("%d\n", value);
-					   break;
-		case VIDEO_FILTER_DSP:
-					   g_print("%d\n", value);
-					   break;
-		case POINT_QTY_DSP:
-					   g_print("%d\n", value);
-					   break;
-		case SUM_GAIN_DSP:
-					   g_print("%d\n", value);
-					   break;
-		case GATE_POS_DSP:
-					   g_print("%d\n", value);
-					   break;
-		case PARAMETERS_DSP:
-					   g_print("%d\n", value);
-					   break;
-		case START_DSP:
-					   g_print("%d\n", value);
-					   break;
-		case SYNCHRO_DSP:
-					   g_print("%d\n", value);
-					   break;
-		case WIDTH_DSP:
-					   g_print("%d\n", value);
-					   break;
-		case MEASURE_DSP:
-					   g_print("%d\n", value);
-					   break;
-		case HEIGHT_DSP:
-					   g_print("%d\n", value);
-					   break;
-		case RECTIFIER_FREQ_DSP:
-					   g_print("%d\n", value);
-					   break;
-		case ALARM_POS_DSP:
-					   g_print("%d\n", value);
-					   break;
-		case GROUPA_DSP:
-					   g_print("%d\n", value);
-					   break;
-		case CONDITIONA_DSP:
-					   g_print("%d\n", value);
-					   break;
-		case OPERAT_DSP:
-					   g_print("%d\n", value);
-					   break;
-		case GROUPB_DSP:
-					   g_print("%d\n", value);
-					   break;
-		case CONDITIONB_DSP:
-					   g_print("%d\n", value);
-					   break;
-		case OUTPUT_POS_DSP:
-					   g_print("%d\n", value);
-					   break;
-		case ALARM1_DSP:
-					   g_print("%d\n", value);
-					   break;
-		case COUNT_DSP:
-					   g_print("%d\n", value);
-					   break;
-		case DATA_DSP:
-					   g_print("%d\n", value);
-					   break;
-		case SOUND_DSP:
-					   g_print("%d\n", value);
-					   break;
-		case DELAY_DSP:
-					   g_print("%d\n", value);
-					   break;
-		case HOLDTIME_DSP:
-					   g_print("%d\n", value);
-					   break;
-		case MODE_POS_DSP:
-					   g_print("%d\n", value);
-					   break;
-		case CURVE_POS_DSP:
-					   g_print("%d\n", value);
-					   break;
-		default:break;
-	}
-}
 
 /* Edit Notes 2个按键的处理 一个是保存一个是取消 */
 void da_call_edit_notes (GtkDialog *dialog, gint response_id, gpointer user_data)      
@@ -5738,6 +5591,7 @@ void generate_focallaw(int grp)
 	TMP(beam_num[get_current_group(pp->p_config)]) = 0;
 
 	temp_prf = TMP(beam_qty[get_current_group(pp->p_config)]) * GROUP_VAL_POS(grp, prf);
+	TMP(group_spi[grp]).point_qty = GROUP_VAL(point_qty);
 	TMP(group_spi[grp]).idel_time		= 
 		100000000 / (temp_prf / (10)) - 2048 - TMP(group_spi[grp]).rx_time;
 /*		100000000 / (GROUP_VAL_POS(grp, prf) / 10) - 2048 - TMP(group_spi[grp]).rx_time;*/
@@ -5751,8 +5605,8 @@ void generate_focallaw(int grp)
 	else 
 		TMP(group_spi[grp]).sum_gain	= 
 			4096 / LAW_VAL_POS(grp, Elem_qty);					
-//	g_print("\n sumgain = %d\n", TMP(group_spi[grp]).sum_gain);
 
+	BEAM_INFO(0,beam_delay) = pp->G_delay[ TMP(beam_num[get_current_group(pp->p_config)]) ];
 	write_group_data (&TMP(group_spi[get_current_group(pp->p_config)]), get_current_group(pp->p_config));
 
 	pp->cscan_mark = 1;

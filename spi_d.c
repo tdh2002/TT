@@ -158,17 +158,15 @@ int write_group_data (group_data_spi *p, unsigned int group)
 {
 	group_data_spi new, *p1;
 	int i;
+
 	memcpy (&new, p, sizeof (group_data_spi));
 	p1 = &new;
-
 #if TT_DEBUG
 	ioctl (fd_gpio, GPIO43_LOW, &i);
 	return 0;
 #endif
 
 #if 0
-/*	unsigned int *tmp = (unsigned *)(p);*/
-	unsigned int tmp = p->gain;
 	printf ("Gain= %d\n", tmp);
 	tmp = p->freq_band;
 	printf ("Freq_band= %d\n", tmp);
@@ -197,7 +195,8 @@ int write_group_data (group_data_spi *p, unsigned int group)
 	tmp = p->voltage;
 	printf ("voltage= %d\n", tmp);
 #endif
-	
+    unsigned int tmp = p->point_qty ;
+	printf("*********point _qty  %d********\n", tmp)  ;
 	p->offset = 16 * group;
 	p->addr = 0x2;
 	little_to_big ((unsigned int *)(p1), sizeof(group_data_spi) / 4);

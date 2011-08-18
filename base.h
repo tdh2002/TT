@@ -557,6 +557,7 @@ typedef struct Draw_interface
 
 	gint    G_delay[256];//保存每一个beam的延时
 	guint   tmp_gain_off[256];
+	gint    count;
 } DRAW_UI, *DRAW_UI_P;
 
 typedef struct _MY_SIGNAL_TMP 

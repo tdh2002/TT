@@ -1170,7 +1170,7 @@ if(!(prule->mask & 0x04))
 	cairo_set_source_rgba (cr, 1.0, 1.0, 1.0, 1.0);
 	cairo_rectangle (cr, w-30, 0, 10, h-20);
 	cairo_fill (cr);
-	for ( i = 1; i < h - 21; i++ )
+	for ( i = 21; i < h ; i++ )
 	{
 		switch (((DRAW_AREA_P)(data))->scan_type)
 		{
@@ -1179,6 +1179,7 @@ if(!(prule->mask & 0x04))
 			case	B_SCAN:
 			case	S_SCAN:
 			case	S_SCAN_A:
+            case    S_SCAN_L:  // modified by shensheng for Linear S scan color bar is gray
 				color_r = ((TMP(color_amp[i * 256 / h]) >> 11)) / 32.0;
 				color_g = ((TMP(color_amp[i * 256 / h]) & 0x07e0) >> 5) / 64.0;
 				color_b = ((TMP(color_amp[i * 256 / h]) & 0x1f)) /  32.0;
@@ -1240,8 +1241,8 @@ if(!(prule->mask & 0x04))
 			default:break;
 		}
 		cairo_set_source_rgba (cr, color_r, color_g, color_b, 1.0);
-		cairo_move_to (cr, w - 29, i);
-		cairo_line_to (cr, w - 21, i);
+		cairo_move_to (cr, w - 29, h- i);
+		cairo_line_to (cr, w - 21, h -i);
 		cairo_stroke (cr);
 	}
 }
@@ -2892,7 +2893,10 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 				g_print("angle_min = %.1f  ", LAW_VAL_POS (p->group, Angle_min) / 100.0 );
 				g_print("sin = %.2f"  , sin((LAW_VAL_POS (p->group, Angle_min) / 100.0)*(3.14/180.0)));
 				//p->wmax1 = 100;
-				p->w_unit = UNIT_MM;
+				if(get_unit(pp->p_config) == UNIT_MM)
+						p->w_unit = UNIT_MM;
+				else if(get_unit(pp->p_config)== UNIT_INCH)
+						p->w_unit = UNIT_INCH  ;
 				p->w_color = 0x0AD5D3;/* 深绿色 */
 			}
 
@@ -3140,7 +3144,8 @@ void draw_area_all()
 							gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->hbox_area[0], FALSE, FALSE, 0);
 							set_drawarea_property (&(pp->draw_area[0]), A_SCAN_R, 0x06);
 							draw_area_ (pp->hbox_area[0], &(pp->draw_area[0]), 250, 425);
-							set_drawarea_property (&(pp->draw_area[1]), S_SCAN_L, 0x08);
+							//set_drawarea_property (&(pp->draw_area[1]), S_SCAN_L, 0x08);
+							set_drawarea_property (&(pp->draw_area[1]), S_SCAN_L, 0x0);//modified by shengsheng
 							draw_area_ (pp->hbox_area[0], &(pp->draw_area[1]), 405, 425);
 							gtk_widget_show (pp->hbox_area[0]);
 							set_scan_config (0, A_SCAN_R, 390, 230, 390, 0, 0, get_current_group(pp->p_config));
@@ -4395,9 +4400,11 @@ void draw3_data0(DRAW_UI_P p)
 					if ((p->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 					{
 						if(get_inspec_type (pp->p_config)==2)
+						{
 							draw3_pop_tt (data_530, NULL, 
 									menu_content[GEOMETRY + get_part_geometry(p->p_config)],
 									menu_content+GEOMETRY, 3, 0, get_part_geometry(p->p_config), 0x01);
+						}
 						else
 							draw3_pop_tt (data_530, NULL, 
 									menu_content[GEOMETRY + get_part_geometry(p->p_config)],
@@ -13121,7 +13128,7 @@ void draw3_data4(DRAW_UI_P p)
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
 						{
 							cur_value = BEAM_INFO(0,beam_delay)/1000.0;
-							lower = 1.0;
+							lower = 0.0;
 							upper = 1000.0;
 							step = tmpf;
 							digit = 2;
@@ -16743,7 +16750,7 @@ void init_ui(DRAW_UI_P p)
 	gtk_widget_set_size_request (GTK_WIDGET(pp->event[3]), 172, 22);
 	gtk_label_set_justify (GTK_LABEL (pp->label[3]), PANGO_ELLIPSIZE_START);
 	markup = g_markup_printf_escaped ("<span foreground='white' font_desc='10'>PRF: %d(%d)</span>",
-			GROUP_VAL(prf), GROUP_VAL(prf));
+			GROUP_VAL(prf) / 10, GROUP_VAL(prf) / 10);
 	gtk_label_set_markup (GTK_LABEL (pp->label[3]), markup); 
 	g_free (markup);
 	update_widget_bg(pp->event[3], /*backpic[5]*/ 5);

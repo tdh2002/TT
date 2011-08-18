@@ -109,4 +109,6 @@ extern void report_build_image(char *file_name);
 
 extern void report_build_end(char *file_name);
 
+extern void report_build_user_field(char *file_name);
+
 #endif

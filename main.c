@@ -275,6 +275,7 @@ static void set_config (guint groupid)
 	pp->ctype_pos = 1;
  	pp->cmode_pos = 2;
 	pp->cstart_qty = 1;
+	pp->count = 0;
 
 	set_report_template (pp->p_config, REPORT_COMPLETE);
 	set_report_paper_size (pp->p_config, PAPER_A4);
