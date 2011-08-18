@@ -3351,7 +3351,6 @@ void data_101 (GtkSpinButton *spinbutton, gpointer data) /*Start 扫描延时 P1
 	else /* 显示方式为时间 */
 		set_group_val (get_group_by_id (pp->p_config, grp), GROUP_START,
 				(gint) (gtk_spin_button_get_value (spinbutton) * 1000.0)); 
-
 	
 	set_group_val (get_group_by_id (pp->p_config, grp), GROUP_START,
 			((get_group_val (get_group_by_id (pp->p_config, grp), GROUP_START) + 5) / 10 ) * 10);

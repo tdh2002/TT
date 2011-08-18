@@ -1048,8 +1048,6 @@ static gboolean draw_info(GtkWidget *widget, GdkEventExpose *event, gpointer dat
 		offset += TMP(beam_qty[l]);
 	gint index = offset + TMP(beam_num[grp]);	
 
-
-
 	gtk_widget_get_size_request (widget, &w, &h);
 
 /*
@@ -1241,8 +1239,8 @@ if(!(prule->mask & 0x04))
 			default:break;
 		}
 		cairo_set_source_rgba (cr, color_r, color_g, color_b, 1.0);
-		cairo_move_to (cr, w - 29, h- i);
-		cairo_line_to (cr, w - 21, h -i);
+		cairo_move_to (cr, w - 29, h - i);
+		cairo_line_to (cr, w - 21, h - i);
 		cairo_stroke (cr);
 	}
 }
@@ -1418,7 +1416,6 @@ if(!(prule->mask & 0x04))
 				}
 				cairo_show_text(cr,str);
 				cairo_stroke(cr);
-
 
 				cairo_set_source_rgba(cr,0.5,1.0,0.5,1.0);/*绿色cursor*/
 				/* 当前值除以最大值再乘以窗口宽度 */
@@ -2039,7 +2036,7 @@ DO_NOT_USE_CCFG(measure_data[index]).a_position = 10;
 	//cairo_set_source_rgba(cr,0.72,0.94,0.1,1.0);    /* hruler1颜色为绿色 */
 
 	cairo_set_source_rgba(cr,((prule->h1_color)>>16)/255.0, (((prule->h1_color)>>8)&0x00FF)/255.0, ((prule->h1_color)&0xFF)/255.0, 1.0);
-
+    //cairo_set_source_rgba(cr , 1.0, 1.0 , 1.0 , 1.0);
 	cairo_rectangle(cr,0.0,0.0,20.0,h-20);		/* hruler1 */
 	cairo_fill (cr);
 	cairo_stroke(cr);
@@ -2074,10 +2071,10 @@ DO_NOT_USE_CCFG(measure_data[index]).a_position = 10;
 			cairo_move_to(cr,12,(int)k-3.5);
 			cairo_rotate(cr, G_PI * 3/2);		/*旋转270度*/
 			if(prule->hmax1 > prule->hmin1)
-				str=g_strdup_printf("%.*f",prule->h1_bit,  (float)(prule->hmax1-prule->hmin1)*i/(prule->hrule1_copies) );
+				str=g_strdup_printf("%.*f",prule->h1_bit,  (float)((prule->hmax1-prule->hmin1)*i/(prule->hrule1_copies)+prule->hmin1) );
 			else
 				str=g_strdup_printf("%.*f",prule->h1_bit,  prule->hmin1-(float)(prule->hmin1-prule->hmax1)*i/(prule->hrule1_copies) );
-
+            printf("degree str is %s\n", str);
 			cairo_show_text(cr,str); 
 			cairo_restore(cr);/* 恢复当前画笔 */
 		}
@@ -2733,7 +2730,17 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 					p->hmin1 = GROUP_VAL_POS(p->group, index_offset)/10.0 + get_area_indexstart (pp->p_config) / 1000.0;
 					p->hmax1 = GROUP_VAL_POS(p->group, index_offset)/10.0 + get_area_indexend (pp->p_config) / 1000.0 ;
 				}
-				p->h1_unit = UNIT_MM;
+				if(get_unit(pp->p_config) == UNIT_MM)
+				{
+					p->h1_unit = UNIT_MM;
+				}
+				else
+				{
+					p->h1_unit = UNIT_INCH;
+					p->hmin1  = p->hmin1 * 0.03937;
+					p->hmax1  = p->hmax1 * 0.03937;
+				}
+
 				p->h1_color = 0xADFBE3;
 				p->h1_bit = 1;
 			}
@@ -2761,7 +2768,6 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 				p->w_unit = UNIT_MM;
 				p->w_color = 0x0AD5D3;
 			}
-
 			else
 			{
 				p->wmin1 = GROUP_VAL_POS(p->group, scan_offset)/10.0*0.03937 + get_area_scanstart (pp->p_config)/1000.0*0.03937;
@@ -2868,18 +2874,18 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 
 				if((LAW_VAL (Angle_min)<0)&&(LAW_VAL (Angle_max)>0))
 				{
-				p->wmin1 = middle + get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_RANGE)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_min) / 100.0)*(3.14/180.0));
-				p->wmax1 = middle + get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_RANGE)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_max) / 100.0)*(3.14/180.0));
+				     p->wmin1 = middle + get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_RANGE)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_min) / 100.0)*(3.14/180.0));
+				     p->wmax1 = middle + get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_RANGE)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_max) / 100.0)*(3.14/180.0));
 				}
 				else if((LAW_VAL (Angle_min)<0)&&(LAW_VAL (Angle_max)<0))
 				{
-				p->wmin1 = middle + get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_RANGE)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_min) / 100.0)*(3.14/180.0));
-				p->wmax1 = middle - get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_RANGE)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_max) / 100.0)*(3.14/180.0));
+				     p->wmin1 = middle + get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_RANGE)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_min) / 100.0)*(3.14/180.0));
+				     p->wmax1 = middle - get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_RANGE)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_max) / 100.0)*(3.14/180.0));
 				}
 				else if((LAW_VAL (Angle_min)>0)&&(LAW_VAL (Angle_max)>0))
 				{
-				p->wmin1 = middle - get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_RANGE)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_min) / 100.0)*(3.14/180.0));
-				p->wmax1 = middle + get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_RANGE)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_max) / 100.0)*(3.14/180.0));
+				     p->wmin1 = middle - get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_RANGE)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_min) / 100.0)*(3.14/180.0));
+				     p->wmax1 = middle + get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_RANGE)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_max) / 100.0)*(3.14/180.0));
 				}
 				pp->swmin = p->wmin1;
 				pp->swmax = p->wmax1;

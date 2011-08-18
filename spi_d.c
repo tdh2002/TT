@@ -167,6 +167,8 @@ int write_group_data (group_data_spi *p, unsigned int group)
 #endif
 
 #if 0
+	unsigned int tmp;
+	tmp = p->gain;
 	printf ("Gain= %d\n", tmp);
 	tmp = p->freq_band;
 	printf ("Freq_band= %d\n", tmp);
