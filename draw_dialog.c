@@ -1300,8 +1300,8 @@ static void draw_file_open_main()
 
 	dialog = gtk_dialog_new_with_buttons ("Dialog_Wedge", window,
 			GTK_DIALOG_MODAL |	GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_NO_SEPARATOR,
-			GTK_STOCK_OK, GTK_RESPONSE_OK,
-			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+			NULL, NULL,
+			NULL, NULL,
 			NULL);
 
 	gtk_window_set_decorated (GTK_WINDOW (dialog), FALSE);			/*不可以装饰*/
@@ -1674,8 +1674,8 @@ static void draw_save_setup_as()
 
 	dialog = gtk_dialog_new_with_buttons ("Dialog_Wedge", window,
 			GTK_DIALOG_MODAL |	GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_NO_SEPARATOR,
-			GTK_STOCK_OK, GTK_RESPONSE_OK,
-			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+			NULL, NULL,
+			NULL, NULL,
 			NULL);
 
 	gtk_window_set_decorated (GTK_WINDOW (dialog), FALSE);			/*不可以装饰*/
@@ -1881,59 +1881,48 @@ static void draw_system_info ()
 
 	GtkWidget *sw;
 
-	GtkWidget *vbox_first;
+	GtkWidget *full_screen;
 
-	GtkWidget *vbox;
+	GtkWidget *top_box;
 
-	GtkWidget *vbox_1;
+	GtkWidget *bottom_box;
 
-	GtkWidget *vbox_2;
+	GtkWidget *hbox_menu[7];
 
-	GtkWidget *hbox_2_1;
+	GtkWidget *label_menu[7];
 
-	GtkWidget *hbox_2_1_1[7];
-
-	GtkWidget *label_2_1_1[7];
-
-	char *char_2_1_1[7] = {"","","","","Print","Save and close","Close"};
+	char *char_menu[7] = {"","","","","Print","Save and close","Close"};
 
 	int i;
 
-	//window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-
-	//gtk_widget_set_size_request(GTK_WIDGET (window), 800, 600);
 
 	dialog = gtk_dialog_new_with_buttons ("Dialog_Wedge", window,
 			GTK_DIALOG_MODAL |	GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_NO_SEPARATOR,
-			GTK_STOCK_OK, GTK_RESPONSE_OK,
-			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+			NULL, NULL,
+			NULL, NULL,
 			NULL);
 
 	gtk_window_set_decorated (GTK_WINDOW (dialog), FALSE);			/*不可以装饰*/
 
-	vbox_first = GTK_WIDGET (GTK_DIALOG(dialog)->vbox);
+	full_screen = GTK_WIDGET (GTK_DIALOG(dialog)->vbox);
 
 	gtk_widget_set_size_request(GTK_WIDGET (dialog), 800, 600);
 	gtk_widget_modify_bg(GTK_WIDGET (dialog), GTK_STATE_NORMAL, &color_black);	/*黑色背景*/
 
-	vbox = gtk_vbox_new(FALSE,0); 
+	top_box = gtk_vbox_new(FALSE,0);
 
-	vbox_1 = gtk_vbox_new(FALSE,0);
-
-	vbox_2 = gtk_vbox_new(FALSE,0);
-
-	hbox_2_1 = gtk_hbox_new(FALSE,0);
+	bottom_box = gtk_hbox_new(FALSE,0);
 
 	for(i=0;i<7;i++)
 	{
-		hbox_2_1_1[i] = gtk_event_box_new();
-		gtk_widget_set_size_request(GTK_WIDGET(hbox_2_1_1[i]),114,85);
-		update_widget_bg(hbox_2_1_1[i], /*backpic[1]*/1);
-		label_2_1_1[i] = gtk_label_new(char_2_1_1[i]);
-		gtk_widget_modify_fg (label_2_1_1[i], GTK_STATE_NORMAL, &color_black);
-		gtk_label_set_justify(GTK_LABEL(label_2_1_1[i]), GTK_JUSTIFY_CENTER);
-		gtk_container_add(GTK_CONTAINER(hbox_2_1_1[i]), label_2_1_1[i]);
-		gtk_box_pack_start(GTK_BOX(hbox_2_1),hbox_2_1_1[i], FALSE, FALSE, 0);
+		hbox_menu[i] = gtk_event_box_new();
+		gtk_widget_set_size_request(GTK_WIDGET(hbox_menu[i]),114,85);
+		update_widget_bg(hbox_menu[i], /*backpic[1]*/1);
+		label_menu[i] = gtk_label_new(char_menu[i]);
+		gtk_widget_modify_fg (label_menu[i], GTK_STATE_NORMAL, &color_black);
+		gtk_label_set_justify(GTK_LABEL(label_menu[i]), GTK_JUSTIFY_CENTER);
+		gtk_container_add(GTK_CONTAINER(hbox_menu[i]), label_menu[i]);
+		gtk_box_pack_start(GTK_BOX(bottom_box),hbox_menu[i], FALSE, FALSE, 0);
 	}
 
 	sw = gtk_scrolled_window_new (NULL, NULL);
@@ -1947,25 +1936,17 @@ static void draw_system_info ()
 	//
 	webkit_web_view_load_uri (web_view, file_path);
 
-	//g_signal_connect(G_OBJECT(window), "destroy",G_CALLBACK(gtk_main_quit), NULL);
+	g_signal_connect(G_OBJECT (hbox_menu[5]), "button-press-event",G_CALLBACK(dialog_destroy), dialog);
 
-	g_signal_connect(G_OBJECT (hbox_2_1_1[6]), "button-press-event",G_CALLBACK(dialog_destroy), dialog);
-
+	g_signal_connect(G_OBJECT (hbox_menu[6]), "button-press-event",G_CALLBACK(dialog_destroy), dialog);
+	
 	gtk_container_add(GTK_CONTAINER(sw),(GtkWidget *)web_view);
 
-	gtk_box_pack_start(GTK_BOX(vbox_1),sw, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(top_box),sw, FALSE, FALSE, 0);
 
-	gtk_box_pack_start(GTK_BOX(vbox),vbox_1, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(full_screen),top_box, FALSE, FALSE, 0);
 
-	gtk_box_pack_start(GTK_BOX(vbox_2),hbox_2_1, FALSE, FALSE, 0);
-
-	gtk_box_pack_start(GTK_BOX(vbox),vbox_2, FALSE, FALSE, 0);
-
-	//gtk_container_add(GTK_CONTAINER(window), vbox);
-
-	gtk_box_pack_start(GTK_BOX(vbox_first), vbox,FALSE,FALSE,0);
-
-	//gtk_widget_show_all(window);
+	gtk_box_pack_start(GTK_BOX(full_screen),bottom_box, FALSE, FALSE, 0);
 
 	g_signal_connect (G_OBJECT(dialog), "response",
 			G_CALLBACK(da_call_complex_dialog), NULL);/*发送退出信号*/
@@ -2122,8 +2103,8 @@ static void draw_file_manage ()
 
 	dialog = gtk_dialog_new_with_buttons ("Dialog_Wedge", win,
 			GTK_DIALOG_MODAL |	GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_NO_SEPARATOR,
-			GTK_STOCK_OK, GTK_RESPONSE_OK,
-			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+			NULL, NULL,
+			NULL, NULL,
 			NULL);
 
 	gtk_window_set_decorated (GTK_WINDOW (dialog), FALSE);			/*不可以装饰*/
@@ -3580,7 +3561,9 @@ void draw_report_build()
 
 	//report_build_image(file_name);
 
-    report_build_end(file_name);
+	report_build_signature(file_name);
+    
+	report_build_end(file_name);
 
 	dialog = gtk_dialog_new_with_buttons ("Dialog_Wedge", window,
 			GTK_DIALOG_MODAL |	GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_NO_SEPARATOR,

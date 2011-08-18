@@ -76,7 +76,7 @@ extern int Scan_Target_File(GtkWidget *widget,GtkTreeModel *model,char *file_nam
 extern int Select_File();
 
 extern int Unselect_File();
-;
+
 extern gboolean Select_All_File (GtkWidget *widget,	GdkEventButton *event,	gpointer       data);
 
 extern int Unselect_All_File();
@@ -110,5 +110,9 @@ extern void report_build_image(char *file_name);
 extern void report_build_end(char *file_name);
 
 extern void report_build_user_field(char *file_name);
+
+extern void report_build_note(FILE *fp);
+
+extern void report_build_signature(char *file_name);
 
 #endif

@@ -1350,6 +1350,50 @@ void report_build_image(char *file_name)
 	 screen_to_file();
 }
 
+void report_build_note(FILE *fp)
+{
+	if (fp == NULL)
+		return ;
+
+	fseek(fp,0,SEEK_END);
+
+	fprintf(fp,"<TR>\n");
+	fprintf(fp,"    <TD>Notes %s</TD>\n",get_edit_notes_info(pp->p_config));
+	fprintf(fp,"</TR>\n");
+}
+
+void report_build_signature(char *file_name)
+{
+	FILE *fp;
+
+	assert(file_name != NULL);
+
+	fp = fopen(file_name,"r+");
+
+	if (fp == NULL)
+		return ;
+
+	fseek(fp,0,SEEK_END);
+
+	fprintf(fp,"<TABLE WIDTH=\"690\" BORDER=\"1\">\n");
+	fprintf(fp,"<TR><TD>\n");
+	fprintf(fp,"<TABLE>\n");
+	fprintf(fp,"<TR><TD>\n");
+    fprintf(fp,"<TABLE>\n\n");
+
+	//判断一下用户有没有选择生成那个notef
+	if ( get_report_format_note(pp->p_config) )
+		report_build_note(fp);
+
+    fprintf(fp,"</TABLE>\n");
+    fprintf(fp,"</TD></TR>\n");
+    fprintf(fp,"</TABLE>\n");
+    fprintf(fp,"</TD></TR>\n");
+    fprintf(fp,"</TABLE>\n\n");
+	
+	fclose(fp);
+}
+
 void report_build_end(char *file_name)
 {
     FILE *fp = NULL;
