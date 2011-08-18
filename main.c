@@ -63,6 +63,7 @@ static void set_config (guint groupid)
 	set_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_FILTER, FILTER_NONE);
 	set_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_RECTIFIER, FULL_WAVE);
 	set_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_AVERAGING, 0);
+	set_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VIDEO_FILTER, NORMAL_OFF);
 
 	GROUP_VAL(tx_rxmode)	= PULSE_ECHO;	/* 收发模式 */
 	GROUP_VAL(freq_pos)		= 0;			/* 0是1Mhz	*/
@@ -71,7 +72,6 @@ static void set_config (guint groupid)
 	GROUP_VAL(prf_pos)		= 3;			/* 0是Atuo Max*/
 	GROUP_VAL(pulser_width)	= 10000;		/* 脉冲宽度 30ns */
 	GROUP_VAL(prf)			= 200;			/* 重复频率 60*/
-	GROUP_VAL(video_filter)	= VIDEO_FILTER_OFF;
 	GROUP_VAL(point_qty)	= 615;			/* 0是Auto */
 	GROUP_VAL(sum_gain)	= 10;			/* 0是Auto */
 	GROUP_VAL(gate_pos)	= GATE_A;		  
@@ -551,7 +551,7 @@ void init_group_spi (guint group)
 	}
 	else
 		TMP(group_spi[group]).freq_band	= get_group_val (get_group_by_id (pp->p_config, group), GROUP_FILTER) - 1;
-	TMP(group_spi[group]).video_filter	= GROUP_VAL_POS(group, video_filter);
+	TMP(group_spi[group]).video_filter	= get_group_val (get_group_by_id(pp->p_config, group), GROUP_VIDEO_FILTER);
 	TMP(group_spi[group]).rectifier		= 
 		get_group_val (get_group_by_id (pp->p_config, group), GROUP_RECTIFIER);
 	TMP(group_spi[group]).compress_rato	= 

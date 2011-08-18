@@ -6519,6 +6519,7 @@ void draw3_data2(DRAW_UI_P p)
 
 	gfloat cur_value=0.0, lower=0, upper=0, step=0, max_tmp=0, max_tmp1=0, temp_beam=0;
 	guint digit = 0, pos, unit = 0, temp_qty =0, temp_pos = 0;
+	gint	grp = get_current_group (pp->p_config);
 
 	//	p = NULL;
 
@@ -7781,7 +7782,7 @@ void draw3_data2(DRAW_UI_P p)
 						draw3_pop_tt (data_122, NULL, 
 								menu_content[RECTIFIER + get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_RECTIFIER)],
 								menu_content + RECTIFIER, 4, 2, get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_RECTIFIER), 
-								((GROUP_VAL(video_filter) == GAINR_ON) ? 0x01 : 0x0));
+								((get_group_val (get_group_by_id(pp->p_config, grp), GROUP_VIDEO_FILTER)  == NORMAL_ON) ? 0x01 : 0x0));
 					else 
 						draw3_popdown (menu_content[RECTIFIER + get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_RECTIFIER)], 2, 0);
 					break;
@@ -10621,7 +10622,8 @@ void draw3_data3(DRAW_UI_P p)
 						gtk_widget_set_sensitive (pp->eventbox30[3], FALSE);
 						gtk_widget_set_sensitive (pp->eventbox31[3], FALSE);
 					}
-					draw3_popdown (menu_content[OFF_ON + GROUP_VAL(video_filter)], 3, 0);
+					draw3_popdown (menu_content
+							[OFF_ON + get_group_val (get_group_by_id(pp->p_config, grp), GROUP_VIDEO_FILTER)], 3, 0);
 					break;
 				case 3: /* Skew (deg.) UT 无 P133 TAN1 */
 					if (GROUP_VAL(group_mode) == UT_SCAN)

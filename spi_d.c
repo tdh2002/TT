@@ -166,7 +166,7 @@ int write_group_data (group_data_spi *p, unsigned int group)
 	return 0;
 #endif
 
-#if 1
+#if 0
 /*	unsigned int *tmp = (unsigned *)(p);*/
 	unsigned int tmp = p->gain;
 	printf ("Gain= %d\n", tmp);

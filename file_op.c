@@ -978,6 +978,7 @@ void report_build_probe(char *file_name,int group)
 void report_build_setup(char *file_name,int group)
 {
     FILE *fp = NULL;
+	gint	grp = get_current_group (pp->p_config);
     
     fp = fopen(file_name,"r+");
 
@@ -1026,7 +1027,8 @@ void report_build_setup(char *file_name,int group)
 	fprintf(fp,"<TR>\n");
 	fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">N/A</TD>\n");
 	fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%f</TD>\n",(get_group_val (get_group_by_id (pp->p_config, group), GROUP_RANGE) / 10.0) / GROUP_VAL_POS(group,point_qty));
-    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%s</TD>\n",menu_content[ OFF_ON + (GROUP_VAL_POS(group,video_filter))]);
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%s</TD>\n",
+			menu_content[ OFF_ON + get_group_val (get_group_by_id(pp->p_config, grp), GROUP_VIDEO_FILTER)]);
     fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">N/A</TD>\n");//Pretrig    
     fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%s</TD>\n",menu_content[ RECTIFIER + (get_group_val (get_group_by_id (pp->p_config, group), GROUP_RECTIFIER))]);
     fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%s</TD>\n",

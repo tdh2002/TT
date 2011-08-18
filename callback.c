@@ -1713,8 +1713,12 @@ void b3_fun3(gpointer p)
 			switch (pp->pos1[1])
 			{
 				case 2: 
-					GROUP_VAL(video_filter) = !GROUP_VAL(video_filter);
-					TMP(group_spi[grp]).video_filter	= GROUP_VAL_POS(grp, video_filter);
+					set_group_val (get_group_by_id(pp->p_config, grp), GROUP_VIDEO_FILTER, 
+							!get_group_val (get_group_by_id(pp->p_config, grp), GROUP_VIDEO_FILTER));
+					TMP(group_spi[grp]).video_filter	= 
+							get_group_val (get_group_by_id(pp->p_config, grp), GROUP_VIDEO_FILTER);
+					g_print ("videofilter=%d\n",
+							get_group_val (get_group_by_id(pp->p_config, grp), GROUP_VIDEO_FILTER));
 					send_spi_data (grp);
 					/* 视频滤波 P123 */
 					break; 

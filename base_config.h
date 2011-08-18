@@ -27,6 +27,7 @@
 #define GROUP_FILTER_POS	0x100a
 #define GROUP_RECTIFIER		0x100b
 #define GROUP_AVERAGING		0x100c
+#define GROUP_VIDEO_FILTER	0x100d
 
 /* 闸门信息 */
 typedef struct _gate_info
@@ -306,7 +307,6 @@ struct _Group
 	char			filter1;		/* 滤波 */
 	char			rectifier1;		/* 检波  */
 	char			averaging1;		/* 平均 */
-	unsigned char	video_filter;	/* 视频滤波*/
 
 	char	filter_pos1;	/*  */
 	char	tx_rxmode;		/* 收发模式 */
@@ -745,8 +745,6 @@ extern void			set_probe_type (CONFIG *p, char data);
 
 
 /* Group 参数的保存读取 */
-extern int	get_group_video_filter	(CONFIG *p, int group_id);
-extern void	set_group_video_filter	(CONFIG *p, int group_id,	int	data);
 extern int	get_group_tx_rx_mode	(CONFIG *p, int group_id);
 extern void	set_group_tx_rx_mode	(CONFIG *p, int group_id,	int	data);
 extern int	get_group_freq_pos		(CONFIG *p, int group_id);
