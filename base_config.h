@@ -28,6 +28,11 @@
 #define GROUP_RECTIFIER		0x100b
 #define GROUP_AVERAGING		0x100c
 #define GROUP_VIDEO_FILTER	0x100d
+#define GROUP_TX_RX_MODE	0x100e
+#define GROUP_FREQ_VAL		0x100f
+#define GROUP_FREQ_POS		0x1010
+#define GROUP_PW_VAL		0x1011
+#define GROUP_PW_POS		0x1012
 
 /* 闸门信息 */
 typedef struct _gate_info
@@ -309,12 +314,12 @@ struct _Group
 	char			averaging1;		/* 平均 */
 
 	char	filter_pos1;	/*  */
-	char	tx_rxmode;		/* 收发模式 */
-	char	freq_pos;		/* 频率选择模式是指定还是自己输入 */
-	char	pw_pos;			/* 脉冲宽度选择模式 */
+	char	tx_rxmode1;		/* 收发模式 */
+	char	freq_pos1;		/* 频率选择模式是指定还是自己输入 */
+	char	pw_pos1;			/* 脉冲宽度选择模式 */
 	char	prf_pos;		/* 脉冲宽度选择模式 */
-	short	frequency;		/* 以0.001Mhz 也就是Khz 1MHz~20MHz 为单位 当探头学选unknown 时候才可以调节 */
-	short	pulser_width;	/* 30~500ns 2.5ns为步进*/
+	short	frequency1;		/* 以0.001Mhz 也就是Khz 1MHz~20MHz 为单位 当探头学选unknown 时候才可以调节 */
+	unsigned short	pulser_width1;	/* 30~500ns 2.5ns为步进*/
 
 	int		prf;			/* 重复频率 1-20000Hz 取值为10~200000 */
 
@@ -745,16 +750,6 @@ extern void			set_probe_type (CONFIG *p, char data);
 
 
 /* Group 参数的保存读取 */
-extern int	get_group_tx_rx_mode	(CONFIG *p, int group_id);
-extern void	set_group_tx_rx_mode	(CONFIG *p, int group_id,	int	data);
-extern int	get_group_freq_pos		(CONFIG *p, int group_id);
-extern void	set_group_freq_pos		(CONFIG *p, int group_id,	int	data);
-extern int	get_group_freq_val		(CONFIG *p, int group_id);
-extern void	set_group_freq_val		(CONFIG *p, int group_id,	int	data);
-extern int	get_group_pw_pos		(CONFIG *p, int group_id);
-extern void	set_group_pw_pos		(CONFIG *p, int group_id,	int	data);
-extern int	get_group_pw_val		(CONFIG *p, int group_id);
-extern void	set_group_pw_val		(CONFIG *p, int group_id,	int	data);
 extern int	get_group_prf_pos		(CONFIG *p, int group_id);
 extern void	set_group_prf_pos		(CONFIG *p, int group_id,	int	data);
 extern int	get_group_prf_val		(CONFIG *p, int group_id);

@@ -2074,7 +2074,6 @@ DO_NOT_USE_CCFG(measure_data[index]).a_position = 10;
 				str=g_strdup_printf("%.*f",prule->h1_bit,  (float)((prule->hmax1-prule->hmin1)*i/(prule->hrule1_copies)+prule->hmin1) );
 			else
 				str=g_strdup_printf("%.*f",prule->h1_bit,  prule->hmin1-(float)(prule->hmin1-prule->hmax1)*i/(prule->hrule1_copies) );
-            printf("degree str is %s\n", str);
 			cairo_show_text(cr,str); 
 			cairo_restore(cr);/* 恢复当前画笔 */
 		}
@@ -3940,6 +3939,9 @@ void draw3_data0(DRAW_UI_P p)
 	struct ifreq ifr;
 	char ip_temp[256];
 
+	gint grp = get_current_group (pp->p_config);
+	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
+
 	switch (p->pos) 
 	{
 		case 0:
@@ -4070,7 +4072,8 @@ void draw3_data0(DRAW_UI_P p)
 						case 2:	tmpf = 100.0; break;
 						default:break;
 					}
-					if (GROUP_VAL(tx_rxmode) == PULSE_ECHO)	/* 脉冲回波模式不可以调节 */
+					if (get_group_val (p_grp, GROUP_TX_RX_MODE) == PULSE_ECHO )
+						/* 脉冲回波模式不可以调节 */
 					{
 						gtk_widget_set_sensitive (p->eventbox30[0], FALSE);
 						gtk_widget_set_sensitive (p->eventbox31[0], FALSE);
@@ -4504,7 +4507,7 @@ void draw3_data0(DRAW_UI_P p)
 					{
 						if ((p->pos_pos == MENU3_PRESSED) && (CUR_POS == 0))
 						{
-							if (GROUP_VAL (tx_rxmode) == PITCH_CATCH)
+							if (get_group_val (p_grp, GROUP_TX_RX_MODE) == PITCH_CATCH )
 							{
 								menu_status = 0x0c;
 							} else if (LAW_VAL (Focal_type) == DEPTH_SCAN)
@@ -4845,6 +4848,8 @@ void draw3_data1(DRAW_UI_P p)
 	int inet_sock;
 	struct ifreq ifr;
 	static char mask_temp[256];
+	gint grp = get_current_group (pp->p_config);
+	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
 
 	p = NULL;
 
@@ -5032,15 +5037,15 @@ void draw3_data1(DRAW_UI_P p)
 						/* PA时候如何能够选择 TT PC */
 						if (GROUP_VAL (group_mode) == PA_SCAN)
 							draw3_pop_tt (data_111, NULL, 
-									menu_content[TX_RX_MODE + 4 + GROUP_VAL(tx_rxmode)],
-									menu_content + TX_RX_MODE, 3, 1, GROUP_VAL(tx_rxmode), 0x05);
+									menu_content[TX_RX_MODE + 4 + get_group_val (p_grp, GROUP_TX_RX_MODE)],
+									menu_content + TX_RX_MODE, 3, 1, get_group_val (p_grp, GROUP_TX_RX_MODE), 0x05);
 						else if (GROUP_VAL (group_mode) == UT_SCAN)
 							draw3_pop_tt (data_111, NULL, 
-									menu_content[TX_RX_MODE + 4 + GROUP_VAL(tx_rxmode)],
-									menu_content + TX_RX_MODE, 4, 1, GROUP_VAL(tx_rxmode), 0x00);
+									menu_content[TX_RX_MODE + 4 + get_group_val (p_grp, GROUP_TX_RX_MODE)],
+									menu_content + TX_RX_MODE, 4, 1, get_group_val (p_grp, GROUP_TX_RX_MODE), 0x00);
 					}
 					else 
-						draw3_popdown (menu_content[TX_RX_MODE + 4 + GROUP_VAL(tx_rxmode)], 1, 0);
+						draw3_popdown (menu_content[TX_RX_MODE + 4 + get_group_val (p_grp, GROUP_TX_RX_MODE)], 1, 0);
 					break;
 				case 2: /* 接收滤波 P121 TAN1 */
 					pp->x_pos = 516, pp->y_pos = 201-YOFFSET;
@@ -6532,8 +6537,9 @@ void draw3_data2(DRAW_UI_P p)
 
 	gfloat cur_value=0.0, lower=0, upper=0, step=0, max_tmp=0, max_tmp1=0, temp_beam=0;
 	guint digit = 0, pos, unit = 0, temp_qty =0, temp_pos = 0;
-	gint	grp = get_current_group (pp->p_config);
 
+	gint grp = get_current_group (pp->p_config);
+	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
 	//	p = NULL;
 
 	switch (pp->pos) 
@@ -6721,19 +6727,21 @@ void draw3_data2(DRAW_UI_P p)
 									if ( g_tmp_group_struct.group_mode == PA_SCAN )
 									{
 										draw3_pop_tt (data_00242, NULL, 
-											menu_content[TX_RX_MODE + 4 + g_tmp_group_struct.tx_rxmode],
-											menu_content + TX_RX_MODE, 3, 2, g_tmp_group_struct.tx_rxmode, 0x05);
+											menu_content[TX_RX_MODE + 4 + 
+											get_group_val (&g_tmp_group_struct, GROUP_TX_RX_MODE)],
+											menu_content + TX_RX_MODE, 3, 2, get_group_val (&g_tmp_group_struct, GROUP_TX_RX_MODE), 0x05);
 									}
 									else if ( g_tmp_group_struct.group_mode  == UT_SCAN )
 									{
 										draw3_pop_tt (data_00242, NULL, 
-											menu_content[TX_RX_MODE + 4 + g_tmp_group_struct.tx_rxmode],
-											menu_content + TX_RX_MODE, 4, 2, g_tmp_group_struct.tx_rxmode, 0x00);
+											menu_content[TX_RX_MODE + 4 + get_group_val (&g_tmp_group_struct, GROUP_TX_RX_MODE)],
+											menu_content + TX_RX_MODE, 4, 2, get_group_val (&g_tmp_group_struct, GROUP_TX_RX_MODE), 0x00);
 									}
 								}
 								else 
 								{
-									draw3_popdown (menu_content[TX_RX_MODE + 4 + g_tmp_group_struct.tx_rxmode], 2, 0);
+									draw3_popdown (menu_content[TX_RX_MODE + 4 + 
+											get_group_val (&g_tmp_group_struct, GROUP_TX_RX_MODE)], 2, 0);
 								}
 
 								str = g_strdup_printf ("%s", con2_p[0][0][16]);	
@@ -7761,7 +7769,7 @@ void draw3_data2(DRAW_UI_P p)
 					{
 						if (pp->mark_pop_change)
 						{
-							cur_value = GROUP_VAL(frequency) / 1000.0;
+							cur_value = get_group_val (p_grp, GROUP_FREQ_VAL) / 1000.0;
 							lower =	1.0;
 							upper =	20.0;
 							step = tmpf;
@@ -7773,16 +7781,16 @@ void draw3_data2(DRAW_UI_P p)
 						}
 						else
 						{
-							str = g_strdup_printf ("%0.2f", GROUP_VAL(frequency) / 1000.0);
+							str = g_strdup_printf ("%0.2f", get_group_val (p_grp, GROUP_FREQ_VAL) / 1000.0);
 							draw3_pop_tt (data_112, NULL, str,
-									menu_content + FREQUENCY, 13, 2, GROUP_VAL(freq_pos), 0);
+									menu_content + FREQUENCY, 13, 2, get_group_val (p_grp, GROUP_FREQ_POS), 0);
 
 							g_free (str);
 						}
 					}
 					else 
 					{
-						cur_value = GROUP_VAL(frequency) / 1000.0;
+						cur_value = get_group_val (p_grp, GROUP_FREQ_VAL) / 1000.0;
 						unit = UNIT_NULL;
 						pos = 2;
 						digit = 2;
@@ -9132,7 +9140,7 @@ void draw3_data2(DRAW_UI_P p)
 						case 2:	tmpf = 100.0; break;
 						default:break;
 					}
-					if (GROUP_VAL(tx_rxmode) == PULSE_ECHO)	/* 脉冲回波模式不可以调节 */
+					if (get_group_val (p_grp, GROUP_TX_RX_MODE) == PULSE_ECHO)	/* 脉冲回波模式不可以调节 */
 					{
 						gtk_widget_set_sensitive (pp->eventbox30[2], FALSE);
 						gtk_widget_set_sensitive (pp->eventbox31[2], FALSE);
@@ -9604,8 +9612,9 @@ void draw3_data3(DRAW_UI_P p)
 
 	gfloat cur_value=0.0, lower = 0, upper = 0, step = 0;
 	guint digit = 0, pos, unit = 0, content_pos, menu_status = 0, temp_beam, temp_beam1;
-	guint grp = get_current_group(pp->p_config);
 
+	gint grp = get_current_group (pp->p_config);
+	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
 
 	switch (pp->pos) 
 	{
@@ -12335,6 +12344,8 @@ void draw3_data4(DRAW_UI_P p)
 
 	gfloat cur_value, lower, upper, step;
 	guint digit, pos, unit, content_pos, temp_beam, menu_status = 0, temp_qty =0, temp_pos = 0;
+	gint grp = get_current_group (pp->p_config);
+	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
 
 	switch (pp->pos) 
 	{
@@ -12385,7 +12396,8 @@ void draw3_data4(DRAW_UI_P p)
 								case 2:	tmpf = 100.0; break;
 								default:break;
 							}
-							if ((g_tmp_group_struct.tx_rxmode) == PULSE_ECHO)	/* 脉冲回波模式不可以调节 */
+							if (get_group_val (&g_tmp_group_struct, GROUP_TX_RX_MODE) == PULSE_ECHO)
+								/* 脉冲回波模式不可以调节 */
 							{
 								gtk_widget_set_sensitive (pp->eventbox30[4], FALSE);
 								gtk_widget_set_sensitive (pp->eventbox31[4], FALSE);
@@ -13056,7 +13068,7 @@ void draw3_data4(DRAW_UI_P p)
 					{
 						if (pp->mark_pop_change)
 						{
-							cur_value = GROUP_VAL(pulser_width) / 100.0;
+							cur_value = get_group_val (p_grp, GROUP_PW_VAL) / 100.0;
 							lower =	30.0;
 							upper =	500.0;
 							step = tmpf;
@@ -13068,20 +13080,20 @@ void draw3_data4(DRAW_UI_P p)
 						}
 						else
 						{
-							if (!GROUP_VAL(pw_pos))
+							if (!get_group_val (p_grp, GROUP_PW_POS))
 							{
 								/* 更新当前增益值显示 */
 								str = g_strdup_printf ("%s %0.1f", 
-										menu_content[PULSER_WIDTH + GROUP_VAL(pw_pos)], GROUP_VAL(pulser_width) / 100.0);
+										menu_content[PULSER_WIDTH + get_group_val (p_grp, GROUP_PW_POS)], get_group_val (p_grp, GROUP_PW_VAL) / 100.0);
 								draw3_pop_tt (data_114, NULL, 
-										str, menu_content + PULSER_WIDTH, 2, 4, GROUP_VAL(pw_pos), 0);
+										str, menu_content + PULSER_WIDTH, 2, 4, get_group_val (p_grp, GROUP_PW_POS), 0);
 								g_free(str);
 							}
 							else
 							{
-								str = g_strdup_printf ("%0.1f", GROUP_VAL(pulser_width) / 100.0);
+								str = g_strdup_printf ("%0.1f", get_group_val (p_grp, GROUP_PW_VAL) / 100.0);
 								draw3_pop_tt (data_114, NULL, 
-										str, menu_content + PULSER_WIDTH, 2, 4, GROUP_VAL(pw_pos), 0);
+										str, menu_content + PULSER_WIDTH, 2, 4, get_group_val (p_grp, GROUP_PW_POS), 0);
 								g_free(str);
 							}
 						}
@@ -13089,17 +13101,17 @@ void draw3_data4(DRAW_UI_P p)
 					else 
 					{
 						/* 这个选中Auto 时候显示 Auto + 数值 */
-						if (!GROUP_VAL(pw_pos))
+						if (!get_group_val (p_grp, GROUP_PW_POS))
 						{
 							/* Auto 时候计算脉冲宽度 */
 							str = g_strdup_printf ("%s %0.1f", 
-									menu_content[PULSER_WIDTH + GROUP_VAL(pw_pos)], GROUP_VAL(pulser_width) / 100.0);
+									menu_content[PULSER_WIDTH + get_group_val (p_grp, GROUP_PW_POS)], get_group_val (p_grp, GROUP_PW_VAL) / 100.0);
 							draw3_popdown (str, 4, 0);
 							g_free(str);
 						}
 						else 
 						{
-							cur_value = GROUP_VAL(pulser_width) / 100.0;
+							cur_value = get_group_val (p_grp, GROUP_PW_VAL) / 100.0;
 							unit = UNIT_NULL;
 							pos = 4;
 							digit = 1;
@@ -14296,6 +14308,8 @@ void draw3_data5(DRAW_UI_P p)
 
 	gfloat max_tmp = 0.0,  max_tmp1 = 0.0, cur_value, lower, upper, step;
 	guint digit, pos, unit, content_pos, temp_beam;
+	gint grp = get_current_group (pp->p_config);
+	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
 
 	switch (pp->pos) 
 	{

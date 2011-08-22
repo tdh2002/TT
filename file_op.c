@@ -978,7 +978,8 @@ void report_build_probe(char *file_name,int group)
 void report_build_setup(char *file_name,int group)
 {
     FILE *fp = NULL;
-	gint	grp = get_current_group (pp->p_config);
+	gint grp = get_current_group (pp->p_config);
+	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
     
     fp = fopen(file_name,"r+");
 
@@ -1047,10 +1048,12 @@ void report_build_setup(char *file_name,int group)
     fprintf(fp,"<TR>\n");
     fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">N/A</TD>\n");
     fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%.1f dB</TD>\n", get_group_val (get_group_by_id (pp->p_config, group), GROUP_GAIN) / 100.0);
-    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%s</TD>\n",menu_content[ TX_RX_MODE + (GROUP_VAL_POS(group,tx_rxmode))]);
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%s</TD>\n",
+			menu_content[ TX_RX_MODE + get_group_val (p_grp, GROUP_TX_RX_MODE)]);
     fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">N/A</TD>\n");
     fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%d 0.01m/s</TD>\n", get_group_val (get_group_by_id (pp->p_config, group), GROUP_VELOCITY));
-    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%f ns</TD>\n",GROUP_VAL_POS(group,pulser_width) / 100.0);
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%f ns</TD>\n",
+			get_group_val (p_grp, GROUP_PW_VAL)	/ 100.0);
     fprintf(fp,"</TR>\n\n");
 
     fprintf(fp,"<TR>\n");

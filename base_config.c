@@ -1357,6 +1357,11 @@ int get_group_val (GROUP *p, int type)
 		case GROUP_RECTIFIER:tt = p->rectifier1;break;
 		case GROUP_AVERAGING: tt = p->averaging1;break;	/*0:1 1:2 2:4 3:8 4:16*/
 		case GROUP_VIDEO_FILTER: tt = get_bit_value (p->on_off_status, 1);break;
+		case GROUP_TX_RX_MODE: tt = p->tx_rxmode1;break;
+		case GROUP_FREQ_VAL:tt = p->frequency1;break;
+		case GROUP_FREQ_POS:tt = p->freq_pos1;break;
+		case GROUP_PW_POS:tt = p->pw_pos1;break;
+		case GROUP_PW_VAL:tt = p->pulser_width1;break;
 		default:break;
 	}
 
@@ -1365,7 +1370,6 @@ int get_group_val (GROUP *p, int type)
 
 void set_group_val (GROUP *p, int type, int val)
 {
-	printf ("val = %d\n", val);
 	switch (type)
 	{
 		case GROUP_GAIN:p->gain = (short)(val);break;
@@ -1382,6 +1386,11 @@ void set_group_val (GROUP *p, int type, int val)
 		case GROUP_RECTIFIER: p->rectifier1 = (char)(val);break;
 		case GROUP_AVERAGING: p->averaging1 = (char)(val);break;	/*0:1 1:2 2:4 3:8 4:16*/
 		case GROUP_VIDEO_FILTER: p->on_off_status = set_bit_value (p->on_off_status, 1, val);break;
+		case GROUP_TX_RX_MODE: p->tx_rxmode1 = (char)(val);break;
+		case GROUP_FREQ_VAL: p->frequency1 = (short)(val);break;
+		case GROUP_FREQ_POS: p->freq_pos1 = (char)(val);break;
+		case GROUP_PW_POS:p->pw_pos1 = (char)(val);break;
+		case GROUP_PW_VAL:p->pulser_width1 = (unsigned short)(val);break;
 		default:break;
 	}
 }

@@ -29,6 +29,8 @@ extern void generate_focallaw(int grp);
 static void set_config (guint groupid)
 {
 	gint i;
+	GROUP *p_grp = get_group_by_id (pp->p_config, groupid);
+
 	set_group_qty (pp->p_config, 1);
 	set_current_group (pp->p_config, groupid, 0);
 	GROUP_VAL(group_mode) = PA_SCAN;
@@ -64,13 +66,13 @@ static void set_config (guint groupid)
 	set_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_RECTIFIER, FULL_WAVE);
 	set_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_AVERAGING, 0);
 	set_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VIDEO_FILTER, NORMAL_OFF);
+	set_group_val (p_grp, GROUP_TX_RX_MODE, PULSE_ECHO);
+	set_group_val (p_grp, GROUP_FREQ_POS, 0);		/* 0是1Mhz	*/
+	set_group_val (p_grp, GROUP_FREQ_VAL, 1000);
+	set_group_val (p_grp, GROUP_PW_POS, 1);
+	set_group_val (p_grp, GROUP_PW_VAL, 2000);
 
-	GROUP_VAL(tx_rxmode)	= PULSE_ECHO;	/* 收发模式 */
-	GROUP_VAL(freq_pos)		= 0;			/* 0是1Mhz	*/
-	GROUP_VAL(frequency)	= 1000;			/* 频率 */
-	GROUP_VAL(pw_pos)		= 1;			/* 0是Atuo	*/
 	GROUP_VAL(prf_pos)		= 3;			/* 0是Atuo Max*/
-	GROUP_VAL(pulser_width)	= 10000;		/* 脉冲宽度 30ns */
 	GROUP_VAL(prf)			= 200;			/* 重复频率 60*/
 	GROUP_VAL(point_qty)	= 615;			/* 0是Auto */
 	GROUP_VAL(sum_gain)	= 10;			/* 0是Auto */
@@ -441,6 +443,8 @@ void send_focal_spi (guint group)
 {
 	guint offset, beam_qty =TMP(beam_qty[group]), k, i,enablet = 0, enabler = 0;
 	guint tmp,index,channel_index_num,cnt;
+	GROUP *p_grp = get_group_by_id (pp->p_config, group);
+
 	for (offset = 0, k = 0 ; k < group; k++)
 		offset += TMP(beam_qty[k]);
 	for (k = offset; k < offset + beam_qty; k++)
@@ -451,7 +455,7 @@ void send_focal_spi (guint group)
 
 		TMP(focal_spi[k]).beam_delay	= TMP(focal_law_all_beam[k].G_delay) / 10;
 		/*UT Settings->Pulser->Tx/Rx mode*/		
-		if (GROUP_VAL(tx_rxmode) == PULSE_ECHO )/*单个探头收发模式*/
+		if (get_group_val (p_grp, GROUP_TX_RX_MODE) == PULSE_ECHO )/*单个探头收发模式*/
 		{  
 			set_group_val (&pp->p_config->group[group],	GROUP_RECEIVER, 
 					get_group_val (&pp->p_config->group[group],	GROUP_PULSER));
@@ -481,7 +485,7 @@ void send_focal_spi (guint group)
 				TMP(focal_spi[k]).tx_info[index]	= 
 					(4 + (guint)(TMP(focal_law_all_elem[k][index].T_delay) / 2.5)) | 
 					((4 + (guint)(TMP(focal_law_all_elem[k][index].T_delay) / 2.5)) +
-					((guint)(GROUP_VAL_POS(group, pulser_width) / (2.5*100)))) << 16;// | (0x3 << 30);//何凡修改	
+					((guint)(get_group_val (p_grp, GROUP_PW_VAL) / (2.5*100)))) << 16;// | (0x3 << 30);//何凡修改	
 				if (index < 16)
 					TMP(focal_spi[k]).rx_info[index]	= 
 						(TMP(focal_spi[group]).rx_info[index] & 0xffff0000) | 
@@ -520,6 +524,7 @@ void init_group_spi (guint group)
 {
 	gint tmp = 0, tt[4];
 	gint temp_prf;
+	GROUP *p_grp = get_group_by_id (pp->p_config, group);
 	get_prf();
 	if (get_group_val (get_group_by_id (pp->p_config, group), GROUP_FILTER_POS) == 0)
 	{
@@ -527,25 +532,25 @@ void init_group_spi (guint group)
 	}
 	else if (get_group_val (get_group_by_id (pp->p_config, group), GROUP_FILTER_POS) == 1)
 	{
-		if (GROUP_VAL_POS(group, frequency) < 1250)
+		if (get_group_val (p_grp, GROUP_FREQ_VAL) < 1250)
 			TMP(group_spi[group]).freq_band	= 1;
-		else if (GROUP_VAL_POS(group, frequency) < 1750)
+		else if (get_group_val (p_grp, GROUP_FREQ_VAL) < 1750)
 			TMP(group_spi[group]).freq_band	= 2;
-		else if (GROUP_VAL_POS(group, frequency) < 2125)
+		else if (get_group_val (p_grp, GROUP_FREQ_VAL) < 2125)
 			TMP(group_spi[group]).freq_band	= 3;
-		else if (GROUP_VAL_POS(group, frequency) < 3125)
+		else if (get_group_val (p_grp, GROUP_FREQ_VAL) < 3125)
 			TMP(group_spi[group]).freq_band	= 4;
-		else if (GROUP_VAL_POS(group, frequency) < 4500)
+		else if (get_group_val (p_grp, GROUP_FREQ_VAL) < 4500)
 			TMP(group_spi[group]).freq_band	= 5;
-		else if (GROUP_VAL_POS(group, frequency) < 6250)
+		else if (get_group_val (p_grp, GROUP_FREQ_VAL) < 6250)
 			TMP(group_spi[group]).freq_band	= 6;
-		else if (GROUP_VAL_POS(group, frequency) < 8750)
+		else if (get_group_val (p_grp, GROUP_FREQ_VAL) < 8750)
 			TMP(group_spi[group]).freq_band	= 7;
-		else if (GROUP_VAL_POS(group, frequency) < 11000)
+		else if (get_group_val (p_grp, GROUP_FREQ_VAL) < 11000)
 			TMP(group_spi[group]).freq_band	= 8;
-		else if (GROUP_VAL_POS(group, frequency) < 13500)
+		else if (get_group_val (p_grp, GROUP_FREQ_VAL) < 13500)
 			TMP(group_spi[group]).freq_band	= 9;
-		else if (GROUP_VAL_POS(group, frequency) < 17500)
+		else if (get_group_val (p_grp, GROUP_FREQ_VAL) < 17500)
 			TMP(group_spi[group]).freq_band	= 10;
 		else 
 			TMP(group_spi[group]).freq_band	= 11;

@@ -54,6 +54,8 @@ static void da_call_probe (GtkDialog *dialog, gint response_id, gpointer user_da
 	GtkTreeModel *model;
 	gchar *value;
 	gchar *file_path = NULL;
+	gint grp = get_current_group(pp->p_config);
+	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
 
 	if (GTK_RESPONSE_OK == response_id)  /* 确认 */
 	{
@@ -67,9 +69,9 @@ static void da_call_probe (GtkDialog *dialog, gint response_id, gpointer user_da
 				file_path = g_strdup_printf ("%s%s/%s", UT_PROBE_PATH, pp->p_type, value);
 
 			read_probe_file (file_path, &GROUP_VAL(probe));
-			GROUP_VAL (frequency) = GROUP_VAL(probe.Frequency);				/* 频率 */
-			if (!GROUP_VAL(pw_pos))
-				GROUP_VAL(pulser_width) = GROUP_VAL(frequency) * 2.0; /* 改变脉冲宽度 */
+			set_group_val (p_grp, GROUP_FREQ_VAL, GROUP_VAL(probe.Frequency));				/* 频率 */
+			if (!get_group_val (p_grp, GROUP_PW_POS))
+				set_group_val (p_grp, GROUP_PW_VAL,	get_group_val (p_grp, GROUP_FREQ_VAL) * 2.0); /* 改变脉冲宽度 */
 			g_free (file_path);
 			gtk_label_set_text (GTK_LABEL (pp->data3[3]), GROUP_VAL(probe.Model));
 
@@ -87,9 +89,9 @@ static void da_call_probe (GtkDialog *dialog, gint response_id, gpointer user_da
 				else if (GROUP_VAL(group_mode) == UT_SCAN )
 					read_probe_file (UT_UNKNOWN_PROBE, &GROUP_VAL(probe));
 
-				GROUP_VAL (frequency) = GROUP_VAL(probe.Frequency);				/* 频率 */
-				if (!GROUP_VAL(pw_pos))
-					GROUP_VAL(pulser_width) = GROUP_VAL(frequency) * 2.0; /* 改变脉冲宽度 */
+				set_group_val (p_grp, GROUP_FREQ_VAL, GROUP_VAL(probe.Frequency));				/* 频率 */
+				if (!get_group_val (p_grp, GROUP_PW_POS))
+					set_group_val (p_grp, GROUP_PW_VAL,	get_group_val (p_grp, GROUP_FREQ_VAL) * 2.0); /* 改变脉冲宽度 */
 				gtk_label_set_text (GTK_LABEL (pp->data3[3]), GROUP_VAL(probe.Model));
 
 				gtk_widget_destroy (GTK_WIDGET (dialog));			
@@ -2738,9 +2740,11 @@ gboolean law_read (GtkWidget *widget, GdkEventButton *event, gpointer data)
 	gint offset, k;
 	gchar *value = NULL;
 	gchar *file_path = NULL;
+	gint grp = get_current_group(pp->p_config);
+	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
 
 	if (gtk_tree_selection_get_selected(
-				GTK_TREE_SELECTION(pp->selection), &model, &iter)) /* 选中探头型号时 */
+				GTK_TREE_SELECTION(pp->selection), &model, &iter)) 
 	{
 		gtk_tree_model_get(model, &iter, LIST_ITEM, &value,  -1);
 		file_path = g_strdup_printf ("%s%s", USER_LAW_PATH, value);
@@ -2748,7 +2752,7 @@ gboolean law_read (GtkWidget *widget, GdkEventButton *event, gpointer data)
 		for (offset = 0, k = 0 ; k < get_current_group(pp->p_config); k++)
 			offset += TMP(beam_qty[k]);
 		read_law_file(file_path, offset, get_current_group(pp->p_config));
-		GROUP_VAL (frequency) = GROUP_VAL(probe.Frequency);				/* 频率 */
+		set_group_val (p_grp, GROUP_FREQ_VAL, GROUP_VAL(probe.Frequency));				/* 频率 */
 	}
 
 	g_free (file_path);
@@ -3865,7 +3869,8 @@ static void signal_define_probe(GtkDialog *dialog, gint response_id, gpointer us
 
     char pa_pos[4] = {1,3,5,6};
 
-	int id;
+	gint grp = get_current_group(pp->p_config);
+	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
 
     //点击了确认
     if (GTK_RESPONSE_OK == response_id)
@@ -3938,11 +3943,11 @@ static void signal_define_probe(GtkDialog *dialog, gint response_id, gpointer us
 
 		save_probe_file(file_name,&g_tmp_probe);
 		
-		id = get_current_group(pp->p_config);
+		grp = get_current_group(pp->p_config);
 
-		memcpy(&pp->p_config->group[id].probe,&g_tmp_probe,sizeof(struct _Probe));		
+		memcpy(&pp->p_config->group[grp].probe,&g_tmp_probe,sizeof(struct _Probe));		
 
-		pp->p_config->group[id].frequency = g_tmp_probe.Frequency;
+		set_group_val (p_grp , GROUP_FREQ_VAL, g_tmp_probe.Frequency);
 
 		gtk_label_set_text (GTK_LABEL (pp->data3[3]), GROUP_VAL(probe.Model));
 
