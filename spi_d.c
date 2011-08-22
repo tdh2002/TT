@@ -198,7 +198,6 @@ int write_group_data (group_data_spi *p, unsigned int group)
 	printf ("voltage= %d\n", tmp);
 	tmp = p->point_qty;
 	printf ("point_qty= %d\n", tmp);
-	printf("*********point _qty  %d********\n", tmp)  ;
 #endif
 
 	p->offset = 16 * group;
