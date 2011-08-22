@@ -594,7 +594,7 @@ void init_group_spi (guint group)
 
 	tt[3] = MAX(tt[0], (MAX(tt[1],tt[2]))) / 10;
 
-	TMP(group_spi[group]).rx_time		= MAX (tt[3], TMP(group_spi[group]).sample_range);
+	TMP(group_spi[group]).rx_time		= MAX (tt[3], TMP(group_spi[group]).sample_range  + TMP(max_beam_delay[group])) + TMP(group_spi[group]).compress_rato;
 	TMP(group_spi[group]).gain1			= 0;
 
 	if (GROUP_VAL_POS(group, prf)  >= 400)
