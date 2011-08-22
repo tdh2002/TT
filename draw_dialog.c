@@ -1245,6 +1245,7 @@ static void da_call_complex_dialog (GtkDialog *dialog, gint response_id, gpointe
 		g_print ("OK_Pressed");
 	else if (GTK_RESPONSE_CANCEL == response_id) /* 取消 */
 		g_print ("CANCEL_Pressed");
+	
 	gtk_widget_destroy (GTK_WIDGET (dialog));
 	change_keypress_event (KEYPRESS_MAIN);
 }
@@ -1256,37 +1257,25 @@ static void draw_file_open_main()
 
 	static GtkWidget *dialog;
 
-	GtkWidget *hbox_first;
+	GtkWidget *full_screen;
 
-	GtkWidget *hbox;
+	GtkWidget *top_box;
 
-	GtkWidget *hbox_2;
+	GtkWidget *bottom_box;
 
-	GtkWidget *vbox_2_1;
+	GtkWidget *menu3_father;
 
-	GtkWidget *vbox_2_1_1[7];
-	GtkWidget *label_2_1_1[7];
-	char *char_2_1_1[7] = {"","","Close","File Type","listed files","",""};
+	GtkWidget *vbox_menu3[6];
+	GtkWidget *label_menu3[6];
+	char *char_menu3[6] = {"","","Close","File Type","listed files",""};
 
-	GtkWidget *hbox_1;
+	GtkWidget *sw_file;
 
-	GtkWidget *vbox_1_1;
+	GtkWidget *sw_information;
 
-	GtkWidget *vbox_1_1_1;
-
-	GtkWidget *hbox_1_1_1_1;
-
-	GtkWidget *sw_1_1_1_1_1;
-
-	GtkWidget *sw_1_1_1_1_2;
-
-	GtkWidget *vbox_1_1_2;
-
-	GtkWidget *hbox_1_1_2_1;
-
-	GtkWidget *hbox_1_1_2_1_1[6];
-	GtkWidget *label_1_1_2_1_1[6];
-	char *char_1_1_2_1_1[6] = {"Open","","","","",""};
+	GtkWidget *hbox_menu2[7];
+	GtkWidget *label_menu2[7];
+	char *char_menu2[7] = {"Open","","","","","",""};
 
 	int i;
 
@@ -1310,7 +1299,7 @@ static void draw_file_open_main()
 	gtk_widget_set_size_request(GTK_WIDGET (dialog), 800, 600);
 	gtk_widget_modify_bg(GTK_WIDGET (dialog), GTK_STATE_NORMAL, &color_black);	/*黑色背景*/
 
-	hbox_first = GTK_WIDGET (GTK_DIALOG(dialog)->vbox);
+	full_screen = GTK_WIDGET (GTK_DIALOG(dialog)->vbox);
 
 	//源文件列表
 	source_list = gtk_tree_view_new();
@@ -1327,116 +1316,89 @@ static void draw_file_open_main()
 
 	source_model=gtk_tree_view_get_model(GTK_TREE_VIEW(source_list));
 
-	hbox = gtk_hbox_new(FALSE,0);
+	top_box = gtk_hbox_new(FALSE,0);
 
-	hbox_2 = gtk_hbox_new(FALSE,0);
+	bottom_box = gtk_hbox_new(FALSE,0);
 
-	vbox_2_1 = gtk_vbox_new(FALSE,0); 
-
-	for(i=0;i<7;i++)
-	{
-		if ( (i>=2) && (i<=4))
-		{
-			vbox_2_1_1[i] = gtk_event_box_new();
-		}
-		else
-		{
-			vbox_2_1_1[i] = gtk_vbox_new(FALSE,0);
-		}
-		gtk_widget_set_size_request(GTK_WIDGET(vbox_2_1_1[i]),114,85);
-		update_widget_bg(vbox_2_1_1[i],  /*backpic[1]*/ 1);
-
-		label_2_1_1[i] = gtk_label_new(char_2_1_1[i]);
-		gtk_widget_modify_fg (label_2_1_1[i], GTK_STATE_NORMAL, &color_black);
-		gtk_label_set_justify(GTK_LABEL(label_2_1_1[i]), GTK_JUSTIFY_CENTER);
-
-		gtk_container_add(GTK_CONTAINER(vbox_2_1_1[i]),label_2_1_1[i]);
-		gtk_box_pack_start(GTK_BOX(vbox_2_1),vbox_2_1_1[i],FALSE,FALSE,0);   
-	}
-
-	hbox_1 = gtk_hbox_new(FALSE,0);
-
-	vbox_1_1 = gtk_vbox_new(FALSE,0);
-
-	vbox_1_1_1 = gtk_vbox_new(FALSE,0);
-
-	hbox_1_1_1_1 = gtk_hbox_new(FALSE,0);
-
-	vbox_1_1_2 = gtk_vbox_new(FALSE,0);
-
-	hbox_1_1_2_1 = gtk_hbox_new(FALSE,0);
-
-	//
-	sw_1_1_1_1_1 = gtk_scrolled_window_new (NULL, NULL);
-	gtk_widget_set_size_request(sw_1_1_1_1_1, 343, 515);
-
-	//
-	sw_1_1_1_1_2 = gtk_scrolled_window_new (NULL, NULL);
-	gtk_widget_set_size_request(sw_1_1_1_1_2, 343, 515);
-
-
+	menu3_father = gtk_vbox_new(FALSE,0);
 
 	for(i=0;i<6;i++)
 	{
-		if (i==0)
-		{ 
-			hbox_1_1_2_1_1[i] = gtk_event_box_new();
+		if ( (i>=2) && (i<=4))
+		{
+			vbox_menu3[i] = gtk_event_box_new();
 		}
 		else
 		{
-			hbox_1_1_2_1_1[i] = gtk_hbox_new(FALSE,0);
+			vbox_menu3[i] = gtk_vbox_new(FALSE,0);
 		}
-		gtk_widget_set_size_request(GTK_WIDGET(hbox_1_1_2_1_1[i]),114,85);
-		update_widget_bg(hbox_1_1_2_1_1[i], /*backpic[1]*/1);
-		label_1_1_2_1_1[i] = gtk_label_new(char_1_1_2_1_1[i]);
-		gtk_widget_modify_fg (label_1_1_2_1_1[i], GTK_STATE_NORMAL, &color_black);
-		gtk_label_set_justify(GTK_LABEL(label_1_1_2_1_1[i]), GTK_JUSTIFY_CENTER);
-		gtk_box_pack_start(GTK_BOX(hbox_1_1_2_1),hbox_1_1_2_1_1[i],FALSE,FALSE,0);
-		gtk_container_add(GTK_CONTAINER(hbox_1_1_2_1_1[i]), label_1_1_2_1_1[i]);
+		gtk_widget_set_size_request(GTK_WIDGET(vbox_menu3[i]),114,85);
+		update_widget_bg(vbox_menu3[i],  /*backpic[1]*/ 1);
+
+		label_menu3[i] = gtk_label_new(char_menu3[i]);
+		gtk_widget_modify_fg (label_menu3[i], GTK_STATE_NORMAL, &color_black);
+		gtk_label_set_justify(GTK_LABEL(label_menu3[i]), GTK_JUSTIFY_CENTER);
+
+		gtk_container_add(GTK_CONTAINER(vbox_menu3[i]),label_menu3[i]);
+		gtk_box_pack_start(GTK_BOX(menu3_father),vbox_menu3[i],FALSE,FALSE,0);   
 	}
 
+	//
+	sw_file = gtk_scrolled_window_new (NULL, NULL);
+	gtk_widget_set_size_request(sw_file, 343, 515);
 
+	//
+	sw_information = gtk_scrolled_window_new (NULL, NULL);
+	gtk_widget_set_size_request(sw_information, 343, 515);
+
+	for(i=0;i<7;i++)
+	{
+		if (i==0)
+		{ 
+			hbox_menu2[i] = gtk_event_box_new();
+		}
+		else
+		{
+			hbox_menu2[i] = gtk_hbox_new(FALSE,0);
+		}
+		gtk_widget_set_size_request(GTK_WIDGET(hbox_menu2[i]),114,85);
+		update_widget_bg(hbox_menu2[i], /*backpic[1]*/1);
+		label_menu2[i] = gtk_label_new(char_menu2[i]);
+		gtk_widget_modify_fg (label_menu2[i], GTK_STATE_NORMAL, &color_black);
+		gtk_label_set_justify(GTK_LABEL(label_menu2[i]), GTK_JUSTIFY_CENTER);
+		gtk_box_pack_start(GTK_BOX(bottom_box),hbox_menu2[i],FALSE,FALSE,0);
+		gtk_container_add(GTK_CONTAINER(hbox_menu2[i]), label_menu2[i]);
+	}
 
 	Set_Source_File_Path(USER_CFG_PATH);
 
 	selection_file_type(source_list, USER_CFG_PATH,	".cfg");
 
-	gtk_container_add(GTK_CONTAINER(sw_1_1_1_1_1), source_list);
+	gtk_container_add(GTK_CONTAINER(sw_file), source_list);
 
 	//    
 	pp->web_view_tmp = WEBKIT_WEB_VIEW (webkit_web_view_new());
 	//web的编码方式
 	webkit_web_view_set_custom_encoding (pp->web_view_tmp, "UTF-8");
 
-	gtk_container_add(GTK_CONTAINER(sw_1_1_1_1_2),GTK_WIDGET(pp->web_view_tmp));
+	gtk_container_add(GTK_CONTAINER(sw_information),GTK_WIDGET(pp->web_view_tmp));
 
-	gtk_box_pack_start(GTK_BOX(hbox_1_1_1_1),sw_1_1_1_1_1,FALSE,FALSE,0);
+	//界面排版
+	gtk_box_pack_start(GTK_BOX(top_box),sw_file,FALSE,FALSE,0);
 
-	gtk_box_pack_start(GTK_BOX(hbox_1_1_1_1),sw_1_1_1_1_2,FALSE,FALSE,0);
+	gtk_box_pack_start(GTK_BOX(top_box),sw_information,FALSE,FALSE,0);
 
-	gtk_box_pack_start(GTK_BOX(vbox_1_1_1),hbox_1_1_1_1,FALSE,FALSE,0);
+	gtk_box_pack_start(GTK_BOX(top_box),menu3_father,FALSE,FALSE,0);
 
-	gtk_box_pack_start(GTK_BOX(vbox_1_1),vbox_1_1_1,FALSE,FALSE,0);
+	gtk_box_pack_start(GTK_BOX(full_screen),top_box,FALSE,FALSE,0);
 
-	gtk_box_pack_start(GTK_BOX(vbox_1_1_2),hbox_1_1_2_1,FALSE,FALSE,0);
+	gtk_box_pack_start(GTK_BOX(full_screen),bottom_box,FALSE,FALSE,0);
 
-	gtk_box_pack_start(GTK_BOX(vbox_1_1),vbox_1_1_2,FALSE,FALSE,0);
+	g_signal_connect(G_OBJECT (vbox_menu3[2]), "button-press-event",G_CALLBACK(dialog_destroy), dialog);
 
-	gtk_box_pack_start(GTK_BOX(hbox_1),vbox_1_1,FALSE,FALSE,0);
+	g_signal_connect(G_OBJECT (hbox_menu2[0]), "button-press-event",G_CALLBACK(open_config_file), (gpointer)source_list);
 
-	gtk_box_pack_start(GTK_BOX(hbox),hbox_1,FALSE,FALSE,0);
-
-	gtk_box_pack_start(GTK_BOX(hbox_2),vbox_2_1,FALSE,FALSE,0);
-
-	gtk_box_pack_start(GTK_BOX(hbox),hbox_2,FALSE,FALSE,0);
-
-	gtk_container_add(GTK_CONTAINER(hbox_first), hbox);
-
-	g_signal_connect(G_OBJECT (vbox_2_1_1[2]), "button-press-event",G_CALLBACK(dialog_destroy), dialog);
-
-	g_signal_connect(G_OBJECT (hbox_1_1_2_1_1[0]), "button-press-event",G_CALLBACK(open_config_file), (gpointer)source_list);
-
-	g_signal_connect_after(G_OBJECT (hbox_1_1_2_1_1[0]), "button-press-event",G_CALLBACK(dialog_destroy), dialog);
+	g_signal_connect_after(G_OBJECT (hbox_menu2[0]), "button-press-event",G_CALLBACK(dialog_destroy), dialog);
 	
 	g_signal_connect (G_OBJECT (source_selection), "changed", G_CALLBACK(on_changed_open_config_file), (gpointer)source_list);
 
@@ -3551,22 +3513,35 @@ void draw_report_build()
 
 	int i;
 
+	//文件的头
     report_build_start(file_name);
-
+	//html的head
     report_build_header(file_name);
-
+	//如果打开报告,userfield的功能
 	if (get_report_format_userfield(pp->p_config))
-		report_build_user_field(file_name);
-
+	{	
+		//一共有十个userfield
+		for (i=0;i<10;i++)
+		{
+			//每一个userfield都有自己的设置，是否打开
+			if (get_report_userfield_enable(pp->p_config,i))
+			{
+				//如果打开，就在报告那里增加userfield功能
+				report_build_user_field(file_name);
+			}
+		}
+	}
+	//枚举group，每一个group，都是一个独立的信息
     for (i = 0; i < get_group_qty (pp->p_config); i++)
     {
+		//group
         report_build_group_config(file_name,i);
     }
 
 	//report_build_image(file_name);
-
+	//
 	report_build_signature(file_name);
-    
+    //
 	report_build_end(file_name);
 
 	dialog = gtk_dialog_new_with_buttons ("Dialog_Wedge", window,

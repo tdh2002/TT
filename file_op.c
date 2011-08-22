@@ -1282,9 +1282,14 @@ void report_build_scan_area(char *file_name,int group)
     fprintf(fp,"</TR>\n\n");
 
     fprintf(fp,"<TR>\n");
-    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\"></TD>\n");
-    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\"></TD>\n");
-    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">&nbsp;</TD>\n");
+    fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%s</TD>\n",menu_content[I_SCAN+get_inspec_source (pp->p_config)]);
+ 
+	if (UNIT_MM == get_unit(pp->p_config))
+		fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%.3f</TD>\n",get_inspec_speed (pp->p_config)/1000.0);
+	else
+		fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%.3f</TD>\n",get_inspec_speed (pp->p_config)/1000.0 * 0.03937);
+    
+	fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">&nbsp;</TD>\n");
     fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">&nbsp;</TD>\n");
     fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">&nbsp;</TD>\n");
     fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">&nbsp;</TD>\n");
@@ -1361,8 +1366,10 @@ void report_build_note(FILE *fp)
 	fseek(fp,0,SEEK_END);
 
 	fprintf(fp,"<TR>\n");
-	fprintf(fp,"    <TD>Notes %s</TD>\n",get_edit_notes_info(pp->p_config));
+	fprintf(fp,"    <TD>Notes</TD>\n");
 	fprintf(fp,"</TR>\n");
+
+	fprintf(fp,"<TR><TD COLSPAN = 2>%s</TD></TR>\n",get_edit_notes_info(pp->p_config));	
 }
 
 void report_build_signature(char *file_name)
@@ -1381,15 +1388,11 @@ void report_build_signature(char *file_name)
 	fprintf(fp,"<TABLE WIDTH=\"690\" BORDER=\"1\">\n");
 	fprintf(fp,"<TR><TD>\n");
 	fprintf(fp,"<TABLE>\n");
-	fprintf(fp,"<TR><TD>\n");
-    fprintf(fp,"<TABLE>\n\n");
 
 	//判断一下用户有没有选择生成那个notef
 	if ( get_report_format_note(pp->p_config) )
 		report_build_note(fp);
 
-    fprintf(fp,"</TABLE>\n");
-    fprintf(fp,"</TD></TR>\n");
     fprintf(fp,"</TABLE>\n");
     fprintf(fp,"</TD></TR>\n");
     fprintf(fp,"</TABLE>\n\n");

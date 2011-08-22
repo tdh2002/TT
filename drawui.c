@@ -12287,7 +12287,10 @@ void draw3_data3(DRAW_UI_P p)
 					draw3_popdown (menu_content[OFF_ON + get_report_format_note (pp->p_config)], 3, 0);
 					break;
 				case 3:/*File -> user field -> content  p833*/
-					draw3_popdown (menu_content[U_CONTENT + get_report_userfield_select (pp->p_config)], 3, 0);
+					//draw3_popdown (menu_content[U_CONTENT + get_report_userfield_select (pp->p_config)], 3, 0);
+					draw3_popdown(NULL,3,0);
+					gtk_label_set_text(GTK_LABEL(pp->data3[3]),
+								get_report_userfield_content(pp->p_config,get_report_userfield_select(pp->p_config)));
 					break;
 
 				case 4:
