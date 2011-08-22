@@ -1060,8 +1060,8 @@ void draw_scan(guchar scan_num, guchar scan_type, guchar group,
 				//		LAW_VAL(Angle_step) / 100.0, TMP(a_scan_dot_qty),
 				//	    TMP(s_scan_width), TMP(s_scan_height));	
 				CalcFanScan_new (LAW_VAL(Angle_min)/100.0, LAW_VAL(Angle_max)/100.0, LAW_VAL(Angle_step)/100.0, 
-						TMP(group_spi[group]).sample_start* get_group_val (get_group_by_id (pp->p_config, group), GROUP_VELOCITY)/100000, 
-						TMP(group_spi[group]).sample_range* get_group_val (get_group_by_id (pp->p_config, group), GROUP_VELOCITY)/100000, 
+						get_group_val (get_group_by_id (pp->p_config, group), GROUP_START) * get_group_val (get_group_by_id (pp->p_config, group), GROUP_VELOCITY)/100000,
+						get_group_val (get_group_by_id (pp->p_config, group), GROUP_RANGE)* get_group_val (get_group_by_id (pp->p_config, group), GROUP_VELOCITY)/100000,
                         TMP(Junction), TMP(a_scan_dot_qty),TMP(s_scan_width),TMP(s_scan_height), group);
 
 				pp->sscan_mark = 0;

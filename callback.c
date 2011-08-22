@@ -439,8 +439,16 @@ static void save_cal_law(gint offset, gint group, PARAMETER_P p)
 	gint grp = get_current_group (pp->p_config);
 	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
 	
+	unsigned int tmp_max_beam_delay;
+
+
 	for (i = 0; i < TMP(beam_qty[group]); i++)
 	{
+		//***************************************
+		TMP(field_distance[i]) = (gfloat)(p->field_distance[i]);//每束 中心正元到出射点的距离 单位mm
+		pp->G_delay[i] = (gint)p->G_delay[i];////保存每一个beam的延时  方便用于显示
+		BEAM_INFO(i+offset,beam_delay) = pp->G_delay[i];//modified by hefan
+		//***************************************
 		if(LAW_VAL_POS(group, Focal_type) == 1)//Linear
 		{
 			ElementStart = LAW_VAL_POS (group, First_tx_elem) + i*LAW_VAL_POS (group, Elem_step) - 1 ;
@@ -468,12 +476,9 @@ static void save_cal_law(gint offset, gint group, PARAMETER_P p)
 		TMP(focal_law_all_beam[offset + i]).Index_offset	= GROUP_VAL_POS (group, index_offset) * 100;
 		TMP(focal_law_all_beam[offset + i]).G_delay			= 
 			get_group_val (get_group_by_id (pp->p_config, group), GROUP_WEDGE_DELAY)
-			+	GROUP_VAL_POS (group, wedge.Probe_delay) + p->G_delay[i];
+			+	GROUP_VAL_POS (group, wedge.Probe_delay) + BEAM_INFO(i + offset,beam_delay);//modified by hefan 
 		TMP(focal_law_all_beam[offset + i]).F_depth			= LAW_VAL_POS (group, Focus_depth);
 		TMP(focal_law_all_beam[offset + i]).M_velocity		= get_group_val (get_group_by_id (pp->p_config, group), GROUP_VELOCITY) / 100;
-		
-		TMP(field_distance[i]) = (gfloat)(p->field_distance[i]);//每束 中心正元到出射点的距离 单位mm
-		pp->G_delay[i] = (gint)p->G_delay[i];////保存每一个beam的延时
 
 		for(k=ElementStart,j = 0; k< ElementStop; k++,j++)//,j < TMP(focal_law_all_beam[offset + i]).N_ActiveElements
 		{ 
@@ -485,8 +490,15 @@ static void save_cal_law(gint offset, gint group, PARAMETER_P p)
 			TMP(focal_law_all_elem[offset + i][j]).P_width	= 
 				get_group_val (p_grp, GROUP_PW_VAL) / 100;
 		} 
+	} 
 
+	tmp_max_beam_delay  = pp->G_delay[0];
+	for (i = 1; i < TMP(beam_qty[group]); i++)
+	{
+           if(tmp_max_beam_delay < pp->G_delay[i])
+			   tmp_max_beam_delay = pp->G_delay[i] ;
 	}
+	TMP(max_beam_delay[group]) = tmp_max_beam_delay / 10 ;
 }
 
 void cal_focal_law (guint group)
@@ -495,17 +507,16 @@ void cal_focal_law (guint group)
 	PARAMETER_P p;
 	
 	p = (PARAMETER_P)g_malloc0(sizeof(PARAMETER));
-//	p = (PARAMETER_P)malloc(sizeof(PARAMETER));
-       PROBEF        probe_p;
-       WEDGEF        wedge_p;
-       WEDGEF        wedge_r;
-       BEAM_ANGLE   beam_angle;
-       SPECIMEN     specimen;
-       FOCAL_POINT  focal_point;
-       ELEMENT_SEL  element_sel;
-       LOCATION     location;
+    PROBEF        probe_p;
+    WEDGEF        wedge_p;
+    WEDGEF        wedge_r;
+    BEAM_ANGLE   beam_angle;
+    SPECIMEN     specimen;
+    FOCAL_POINT  focal_point;
+    ELEMENT_SEL  element_sel;
+    LOCATION     location;
 
-        p->probe_p	= &probe_p;
+    p->probe_p	= &probe_p;
 	p->wedge_p	= &wedge_p;
 	p->wedge_r	= &wedge_r;
 	p->beam_angle = &beam_angle;
@@ -516,9 +527,7 @@ void cal_focal_law (guint group)
 	p->k = 0 ;	            
     
 	setup_para(p, group);
-	/*  */
 	focal_law(p);
-
 	
 	/* 把聚集法则信息保存起来 */
 	for (offset = 0, k = 0 ; k < group; k++)
@@ -551,7 +560,6 @@ guint	get_beam_qty()
 	return beam_qty;
 }
 
-/*  */
 guint get_sum_gain ()
 {
 	if (GROUP_VAL(sum_gain_pos))
@@ -561,7 +569,6 @@ guint get_sum_gain ()
 		if (LAW_VAL(Elem_qty) == 1)
 			GROUP_VAL(sum_gain) = 4800;
 		else
-/*			GROUP_VAL(sum_gain) = (46.1 - log10(LAW_VAL(Elem_qty))) * 100;*/
 			GROUP_VAL(sum_gain) = (46.1 - 20 * log10(LAW_VAL(Elem_qty) / 2)) * 100;
 	}
 	return GROUP_VAL(sum_gain);
@@ -2534,6 +2541,8 @@ static int handler_key(guint keyval, gpointer data)
 	guchar tmp = pp->pos_pos;
 	guchar tmp1 = pp->mark_pop_change;
 	guint	data1 = (GPOINTER_TO_UINT (data));
+	guint offset,k;
+	guint group = get_current_group(pp->p_config);
 	switch (keyval) 
 	{
 		case GDK_KP_0:	/* 选中 P310 cursors 这个位置 */
@@ -2620,9 +2629,11 @@ static int handler_key(guint keyval, gpointer data)
 			(TMP(beam_num[get_current_group(pp->p_config)]) < (TMP(beam_qty[get_current_group(pp->p_config)]) - 1))	?
 				(TMP(beam_num[get_current_group(pp->p_config)]) += 1)	:	
 			(TMP(beam_num[get_current_group(pp->p_config)]) = 0);
-
-			BEAM_INFO(0,beam_delay) = pp->G_delay[ TMP(beam_num[get_current_group(pp->p_config)]) ];
-			GROUP_VAL(gain_offset) = pp->tmp_gain_off[ TMP(beam_num[get_current_group(pp->p_config)]) ];
+	
+			for (offset = 0, k = 0 ; k < group; k++)
+					offset += TMP(beam_qty[k]);
+			BEAM_INFO(offset + TMP(beam_num[get_current_group(pp->p_config)]),beam_delay) = pp->G_delay[ TMP(beam_num[get_current_group(pp->p_config)]) ];
+			GROUP_VAL(gain_offset) = pp->tmp_gain_off[ TMP(beam_num[get_current_group(pp->p_config)]) ];//待更新
 			draw_menu3(0, NULL);
 			draw_area_all ();
 			break;
@@ -3374,9 +3385,10 @@ void data_101 (GtkSpinButton *spinbutton, gpointer data) /*Start 扫描延时 P1
 			((get_group_val (p_grp, GROUP_START) + 5) / 10 ) * 10);
  	draw_area_all ();
 	TMP(group_spi[grp]).sample_start	= (get_group_val (p_grp, GROUP_START) +
-			get_group_val (p_grp, GROUP_WEDGE_DELAY)) / 10;
+			get_group_val (p_grp, GROUP_WEDGE_DELAY)) / 10 + TMP(max_beam_delay[grp]) ;
 	TMP(group_spi[grp]).sample_range	= TMP(group_spi[grp]).sample_start + 
 		get_group_val (p_grp, GROUP_RANGE) / 10;		
+
 	tt[0] = (GROUP_VAL_POS(grp, gate[0].start) +	GROUP_VAL_POS (grp, gate[0].width));
 	tt[1] = (GROUP_VAL_POS(grp, gate[1].start) +	GROUP_VAL_POS (grp, gate[1].width));
 	tt[2] = (GROUP_VAL_POS(grp, gate[2].start) +	GROUP_VAL_POS (grp, gate[2].width));
@@ -3414,11 +3426,11 @@ void data_102 (GtkSpinButton *spinbutton, gpointer data) /*Range 范围 P102 */
 	{
 		if (UNIT_MM == get_unit(pp->p_config))
 			set_group_val (p_grp, GROUP_RANGE,
-					(gint) (gtk_spin_button_get_value (spinbutton)*cos(BottomAngle) * 2000.0 / 
+					(gint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / 
 						(get_group_val (p_grp, GROUP_VELOCITY) / 100000.0)));
 		else  /* 英寸 */
 			set_group_val (p_grp, GROUP_RANGE,
-					(gint) (gtk_spin_button_get_value (spinbutton)*cos(BottomAngle) * 2000.0 /
+					(gint) (gtk_spin_button_get_value (spinbutton) * 2000.0 /
 						(0.03937 * get_group_val (p_grp, GROUP_VELOCITY) / 100000.0)));
 	}
 	else /* 显示方式为时间 */
@@ -3437,8 +3449,8 @@ void data_102 (GtkSpinButton *spinbutton, gpointer data) /*Range 范围 P102 */
 	tt[0] = (GROUP_VAL_POS(grp, gate[0].start) + GROUP_VAL_POS (grp, gate[0].width));
 	tt[1] = (GROUP_VAL_POS(grp, gate[1].start) + GROUP_VAL_POS (grp, gate[1].width));
 	tt[2] = (GROUP_VAL_POS(grp, gate[2].start) + GROUP_VAL_POS (grp, gate[2].width));
-
 	tt[3] = MAX(tt[0], (MAX(tt[1],tt[2]))) / 10;
+
 	TMP(group_spi[grp]).rx_time		= MAX (tt[3], TMP(group_spi[grp]).sample_range);
 	temp_prf = TMP(beam_qty[grp]) * GROUP_VAL_POS(grp, prf);
 	TMP(group_spi[grp]).idel_time	= 
@@ -3462,7 +3474,7 @@ void data_103 (GtkSpinButton *spinbutton, gpointer data) /*楔块延时  P103 */
 			(gint) (gtk_spin_button_get_value (spinbutton) * 1000.0));
 
 	TMP(group_spi[grp]).sample_start	= (get_group_val (p_grp, GROUP_START) +
-			get_group_val (p_grp, GROUP_WEDGE_DELAY)) / 10;
+			get_group_val (p_grp, GROUP_WEDGE_DELAY)) / 10 + TMP(max_beam_delay[grp]);
 	TMP(group_spi[grp]).sample_range	= TMP(group_spi[grp]).sample_start + 
 		get_group_val (p_grp, GROUP_RANGE) / 10;		
 	tt[0] = (GROUP_VAL_POS(grp, gate[0].start) +	GROUP_VAL_POS (grp, gate[0].width));
@@ -3797,8 +3809,19 @@ void data_134 (GtkSpinButton *spinbutton, gpointer data) /*scan offset */
 {
 	//DRAW_UI_P p = (DRAW_UI_P)(data);
 	//pp->p_config->beam_delay =  (guint) (gtk_spin_button_get_value (spinbutton) * 100.0);
-	BEAM_INFO(0,beam_delay) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
-
+	guint offset,k;
+	guint group = get_current_group(pp->p_config);
+	guint index = TMP(beam_num[get_current_group(pp->p_config)]);
+	
+	for (offset = 0, k = 0 ; k < group; k++)
+		offset += TMP(beam_qty[k]);
+	BEAM_INFO(index + offset,beam_delay) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
+	pp->G_delay[index] = BEAM_INFO(index + offset,beam_delay);
+	//g_print("current_beam_delay=%d\n", (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0) );
+	TMP(focal_law_all_beam[offset + index]).G_delay			= 
+			get_group_val (get_group_by_id (pp->p_config, group), GROUP_WEDGE_DELAY)
+			+	GROUP_VAL_POS (group, wedge.Probe_delay) + BEAM_INFO(index,beam_delay);//modified by hefan 
+		
 	/*发送给硬件*/
 	send_focal_spi(get_current_group(pp->p_config));
 }
@@ -3821,6 +3844,7 @@ void data_1431 (GtkSpinButton *spinbutton, gpointer data) /* point qty P143 */
 	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
 	GROUP_VAL(point_qty) =  (guint)(gtk_spin_button_get_value (spinbutton));
 	TMP(group_spi[grp]).point_qty = get_point_qty();
+
 	get_prf();
 
 	g_print ("pqty=%d , range = %d \n", 
@@ -3844,8 +3868,8 @@ void data_1431 (GtkSpinButton *spinbutton, gpointer data) /* point qty P143 */
 	tt[0] = (GROUP_VAL_POS(grp, gate[0].start) + GROUP_VAL_POS (grp, gate[0].width));
 	tt[1] = (GROUP_VAL_POS(grp, gate[1].start) + GROUP_VAL_POS (grp, gate[1].width));
 	tt[2] = (GROUP_VAL_POS(grp, gate[2].start) + GROUP_VAL_POS (grp, gate[2].width));
-
 	tt[3] = MAX(tt[0], (MAX(tt[1],tt[2]))) / 10;
+
 	TMP(group_spi[grp]).rx_time		= MAX (tt[3], TMP(group_spi[grp]).sample_range);
 	temp_prf = TMP(beam_qty[grp]) * GROUP_VAL_POS(grp, prf);
 	TMP(group_spi[grp]).idel_time	= 
@@ -3864,7 +3888,7 @@ void data_143 (GtkMenuItem *menuitem, gpointer data) /* point qty P143 */
 	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
 	GROUP_VAL(point_qty_pos) = temp;
 	GROUP_VAL(point_qty) = get_point_qty();
-	TMP(group_spi[grp]).point_qty = get_point_qty();
+	TMP(group_spi[grp]).point_qty = GROUP_VAL(point_qty);
 	get_prf();
 	if ((GROUP_VAL(point_qty) * 10) > (get_group_val (p_grp, GROUP_RANGE)))	
 		set_group_val (p_grp, GROUP_RANGE, GROUP_VAL(point_qty) * 10);
@@ -4694,7 +4718,7 @@ void data_400 (GtkMenuItem *menuitem, gpointer data) /* Display->Selection->disp
 			break;
 		default:break;
 	}
-							generate_focallaw(get_current_group (pp->p_config));
+	//generate_focallaw(get_current_group (pp->p_config));
 	draw_menu3 (0, NULL);
 	draw_area_all ();
 }
@@ -5622,6 +5646,7 @@ void generate_focallaw(int grp)
 	gint	i, j;
 	guint	temp_beam;
 	gint temp_prf;
+	gint tt[4];
 	
 	temp_beam = 1;
 	if (LAW_VAL (Focal_type) == AZIMUTHAL_SCAN)
@@ -5645,6 +5670,22 @@ void generate_focallaw(int grp)
 	{
 
 	}
+
+
+	TMP(group_spi[grp]).sample_start	= (get_group_val (get_group_by_id (pp->p_config, grp), GROUP_START) +
+			get_group_val (get_group_by_id (pp->p_config, grp), GROUP_WEDGE_DELAY)) / 10 + TMP(max_beam_delay[grp]) ;
+	TMP(group_spi[grp]).sample_range	= TMP(group_spi[grp]).sample_start +
+		get_group_val (get_group_by_id (pp->p_config, grp), GROUP_RANGE) / 10 ;
+	tt[0] = (GROUP_VAL_POS(grp, gate[0].start) +	GROUP_VAL_POS (grp, gate[0].width));
+	tt[1] = (GROUP_VAL_POS(grp, gate[1].start) +	GROUP_VAL_POS (grp, gate[1].width));
+	tt[2] = (GROUP_VAL_POS(grp, gate[2].start) +	GROUP_VAL_POS (grp, gate[2].width));
+	tt[3] = MAX(tt[0], (MAX(tt[1],tt[2]))) / 10;
+
+	TMP(group_spi[grp]).rx_time		= MAX (tt[3], TMP(group_spi[grp]).sample_range);
+	temp_prf = TMP(beam_qty[grp]) * GROUP_VAL_POS(grp, prf);
+	TMP(group_spi[grp]).idel_time	=
+		100000000 / (temp_prf / (10)) - 2048 - TMP(group_spi[grp]).rx_time;
+
 	TMP(beam_qty[get_current_group(pp->p_config)])	= temp_beam;
 	TMP(beam_num[get_current_group(pp->p_config)]) = 0;
 
@@ -5664,7 +5705,9 @@ void generate_focallaw(int grp)
 		TMP(group_spi[grp]).sum_gain	= 
 			4096 / LAW_VAL_POS(grp, Elem_qty);					
 
-	BEAM_INFO(0,beam_delay) = pp->G_delay[ TMP(beam_num[get_current_group(pp->p_config)]) ];
+	//for(i=0; i< (TMP(beam_qty[get_current_group(pp->p_config)]));i++)
+	//		BEAM_INFO(i,beam_delay) = pp->G_delay[i];
+
 	write_group_data (&TMP(group_spi[get_current_group(pp->p_config)]), get_current_group(pp->p_config));
 
 	pp->cscan_mark = 1;

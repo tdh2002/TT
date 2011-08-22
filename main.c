@@ -418,6 +418,7 @@ int main (int argc, char *argv[])
 	/* 初始化要冲送给fpga的值 */
 	for (i = get_group_qty(pp->p_config) ; i != 0; i--)
 	{
+
 		generate_focallaw (i - 1);
 		init_group_spi (i - 1);
 		write_group_data (&TMP(group_spi[i - 1]), i - 1);
@@ -452,8 +453,8 @@ void send_focal_spi (guint group)
 		TMP(focal_spi[k]).group	= group;
 		TMP(focal_spi[k]).all_beam_info	= get_beam_qty() - 1;
 		TMP(focal_spi[k]).gain_offset	= GROUP_VAL_POS(group, gain_offset);
-
-		TMP(focal_spi[k]).beam_delay	= TMP(focal_law_all_beam[k].G_delay) / 10;
+		TMP(focal_spi[k]).beam_delay	= TMP(focal_law_all_beam[k].G_delay) / 10;//(BEAM_INFO(k,beam_delay)+5)/10;
+		//g_print("----->beam_delay[%d]=%d\n",k,TMP(focal_spi[k]).beam_delay);
 		/*UT Settings->Pulser->Tx/Rx mode*/		
 		if (get_group_val (p_grp, GROUP_TX_RX_MODE) == PULSE_ECHO )/*单个探头收发模式*/
 		{  
@@ -501,7 +502,7 @@ void send_focal_spi (guint group)
 		}	
 		else 
 		{
-
+			//其他模式待加
 		}		
 		TMP(focal_spi[k]).tx_enable	= enablet;
 		TMP(focal_spi[k]).rx_enable	= enabler;
@@ -572,7 +573,7 @@ void init_group_spi (guint group)
 	TMP(group_spi[group]).PA			= (GROUP_VAL_POS (group, group_mode) == 1) ? 1 : 0;		
 	TMP(group_spi[group]).sample_start	= 
 		(get_group_val (get_group_by_id (pp->p_config, group), GROUP_START) + 
-		 get_group_val (get_group_by_id(pp->p_config, group), GROUP_WEDGE_DELAY)) / 10;
+		 get_group_val (get_group_by_id(pp->p_config, group), GROUP_WEDGE_DELAY)) / 10 + TMP(max_beam_delay[group]) ;
 
 
 	if (LAW_VAL_POS(group, Elem_qty) == 1)	

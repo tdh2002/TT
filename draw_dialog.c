@@ -3620,7 +3620,9 @@ void draw_report_build()
 	gtk_box_pack_start(GTK_BOX(full_screen), top,FALSE,FALSE,0);
 
 	gtk_box_pack_start(GTK_BOX(full_screen), bottom,FALSE,FALSE,0);
-	
+
+	g_printf("%s\n",file_path);
+
 	g_signal_connect (G_OBJECT(dialog), "response",
 			G_CALLBACK(da_call_complex_dialog), NULL);/*发送退出信号*/
 

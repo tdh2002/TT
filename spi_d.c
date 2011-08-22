@@ -200,6 +200,7 @@ int write_group_data (group_data_spi *p, unsigned int group)
 	printf ("point_qty= %d\n", tmp);
 	printf("*********point _qty  %d********\n", tmp)  ;
 #endif
+
 	p->offset = 16 * group;
 	p->addr = 0x2;
 	little_to_big ((unsigned int *)(p1), sizeof(group_data_spi) / 4);

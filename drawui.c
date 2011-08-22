@@ -13145,7 +13145,7 @@ void draw3_data4(DRAW_UI_P p)
 						}
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
 						{
-							cur_value = BEAM_INFO(0,beam_delay)/1000.0;
+							cur_value = BEAM_INFO(TMP(beam_num[get_current_group(pp->p_config)]),beam_delay)/1000.0;
 							lower = 0.0;
 							upper = 1000.0;
 							step = tmpf;
@@ -13156,7 +13156,7 @@ void draw3_data4(DRAW_UI_P p)
 						}
 						else 
 						{
-							cur_value = BEAM_INFO(0,beam_delay)/1000.0;
+							cur_value = BEAM_INFO(TMP(beam_num[get_current_group(pp->p_config)]),beam_delay)/1000.0;
 							digit = 2;
 							pos = 4;
 							unit = UNIT_US;
@@ -16413,7 +16413,7 @@ static void draw_frame_thread(void)
 
 				BeamInfoHeader = *((int*)(TMP(measure_data[offset1+j])));
 				//BeamInfoHeader &= 0x1fff ;
-				printf("Beam info header is %x\n",BeamInfoHeader );
+				//printf("Beam info header is %x\n",BeamInfoHeader );
 				
 				if (GROUP_VAL_POS(i, point_qty) <= TMP(a_scan_dot_qty))
 				{

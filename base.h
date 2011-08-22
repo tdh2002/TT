@@ -243,6 +243,7 @@ typedef struct tmp_config
 
 	LAW_BEAM	focal_law_all_beam[setup_MAX_LAW_QTY];
 	LAW_ELEM	focal_law_all_elem[setup_MAX_LAW_QTY][setup_MAX_ELEM_RX_ACTIVE];	
+	unsigned int max_beam_delay[setup_MAX_GROUP_QTY];
 
 	DOT_TYPE	scan_data[setup_MAX_GROUP_QTY][640*400];
 	guint		measure_data[setup_MAX_LAW_QTY][8];
