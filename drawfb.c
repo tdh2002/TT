@@ -297,6 +297,13 @@ void draw_a_scan (gushort *p, gint width, gint height,
 	{
 		min =	MIN (height * HEIGHT_TABLE[data[i]],	height * HEIGHT_TABLE[data[i + 1]]);
 		max =	MAX (height * HEIGHT_TABLE[data[i]],	height * HEIGHT_TABLE[data[i + 1]]);
+		if ((max - min) == 0)
+		{
+			if (min) 
+				min -= 1;
+			else
+				max =+ 1;
+		}
 		fbliney(p,
 				xoffset + i,
 				yoffset + 0,
