@@ -16444,11 +16444,11 @@ static void draw_frame_thread(void)
 				if (TMP(scan_group[k]) == i)
 					draw_scan(k, TMP(scan_type[k]), TMP(scan_group[k]), 
 							TMP(scan_xpos[k]), TMP(scan_ypos[k]), dot_temp, 
-						TMP(fb1_addr) + 768*400);
+						TMP(fb1_addr)); //+ 768*400);
 				//						dot_temp1);
 			}
  		}
-		*DMA_MARK = 1  ;
+/*		*DMA_MARK = 1  ;*/
 		calc_measure_data();//计算数据
 		draw_field_value ();
 	}
