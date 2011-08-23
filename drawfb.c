@@ -295,6 +295,42 @@ void draw_a_scan (gushort *p, gint width, gint height,
 	/* 画回波 */
 	for (i = 0; i < width - 1; i++)
 	{
+		fbliney(p,
+				xoffset + i,
+				yoffset + height * 0,
+				yoffset + height * 1,
+				0x0
+			   );
+		fbliney(
+				p, 
+				xoffset + i,
+				yoffset + height * HEIGHT_TABLE[data[i]],
+				yoffset + height * HEIGHT_TABLE[data[i + 1]],
+				all_col_16[GROUP_VAL_POS(groupId, ascan_color)]
+				);
+#if 0
+		/* 画包络 */
+		if (GROUP_VAL_POS(groupId, ascan_envelope))
+		{
+			/* 未完成 */
+		}
+#endif
+	}
+}
+
+#if 0
+/* draw a scan back up */
+void draw_a_scan (gushort *p, gint width, gint height, 
+		DOT_TYPE *data, DOT_TYPE *data1, DOT_TYPE *data2,
+		gint xoffset, gint yoffset, guchar groupId)
+{
+	gint	i;
+	/* 清空这块显示区 背景暂定黑色 可以全部一起清空 */
+	for (i = 0; i < height; i++)
+		memset (p + FB_WIDTH * (i + yoffset) + xoffset, 0x0, width * 2 );
+	/* 画回波 */
+	for (i = 0; i < width - 1; i++)
+	{
 		fbline (p, 
 				xoffset + i,
 				yoffset + height * HEIGHT_TABLE[data[i]],
@@ -316,6 +352,7 @@ void draw_a_scan (gushort *p, gint width, gint height,
 		}
 	}
 }
+#endif
 
 /* 画A扫描 data 原始数据 data1 data2 包络数据 */
 void draw_a_scan_r (gushort *p, gint width, gint height, 

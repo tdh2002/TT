@@ -3806,7 +3806,7 @@ void data_132 (GtkSpinButton *spinbutton, gpointer data) /*scan offset */
 	LAW_VAL(Angle_min) =  (gint) (gtk_spin_button_get_value (spinbutton) * 100.0);
 }
 
-void data_134 (GtkSpinButton *spinbutton, gpointer data) /*scan offset */
+void data_134 (GtkSpinButton *spinbutton, gpointer data) /* beam delay */
 {
 	//DRAW_UI_P p = (DRAW_UI_P)(data);
 	//pp->p_config->beam_delay =  (guint) (gtk_spin_button_get_value (spinbutton) * 100.0);
