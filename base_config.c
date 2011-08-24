@@ -1323,6 +1323,41 @@ void set_file_name_info (CONFIG *p, const char *content)
 	strcpy (p->file_name_info, content);
 }
 
+const char	*get_file_name_all (CONFIG *p)
+{
+	switch (get_file_save_mode (p))
+	{
+		case SAVE_MODE_INSPEC_DATA:
+			return p->file_name_inspection_data;break;
+		case SAVE_MODE_INSPEC_TABLE:
+			return p->file_name_inspection_table;break;
+		case SAVE_MODE_SCREEN:
+			return p->file_name_screen;break;
+		case SAVE_MODE_REPORT:
+			return p->file_name_report;break;
+		default:break;
+	}
+	return (void*)(0);
+}
+
+void set_file_name_all (CONFIG *p, const char *content)
+{
+	assert (content);
+	switch (get_file_save_mode (p))
+	{
+		case SAVE_MODE_INSPEC_DATA:
+			strcpy (p->file_name_inspection_data, content);break;
+		case SAVE_MODE_INSPEC_TABLE:
+			strcpy (p->file_name_inspection_table, content);break;
+		case SAVE_MODE_SCREEN:
+			strcpy (p->file_name_screen, content);break;
+		case SAVE_MODE_REPORT:
+			strcpy (p->file_name_report, content);break;
+		default:break;
+	}
+}
+
+
 /* gll probe_type */
 char get_probe_type (CONFIG *p)
 {

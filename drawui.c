@@ -9553,7 +9553,18 @@ void draw3_data2(DRAW_UI_P p)
 					break;
 
 				case 3:/*File -> user field -> label p832 */
-					draw3_popdown (menu_content[U_LABEL + get_report_userfield_select (pp->p_config)], 2, 0);
+					
+					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
+					{
+						draw_dialog_all (DIALOG_USERFIELD_LABEL);
+					}
+					else
+					{
+						draw3_popdown (
+								get_report_userfield_label (pp->p_config,get_report_userfield_select(pp->p_config)),
+								2, 0);
+					}
+
 					break;
 				case 4:
 					if ( !con2_p[8][4][2] )
@@ -12272,13 +12283,25 @@ void draw3_data3(DRAW_UI_P p)
 		case 8:
 			switch (pp->pos1[8])
 			{
-				case 0:draw3_popdown(NULL,3,1);break;/*File -> File -> save data p803 */
+				case 0:
+				
+					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
+					{
+						SAVE_DATA();
+					}
+					else
+					{
+						draw3_popdown(NULL,3,1);/*File -> File -> save data p803 */
+					}
+
+					break;
+
 				case 1:/*File -> report -> build p813 */
 					draw3_popdown(NULL,3,1);
 					//gtk_widget_set_sensitive(pp->eventbox30[3],FALSE);
 					//gtk_widget_set_sensitive(pp->eventbox31[3],FALSE);
                     if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
-                    {
+                     {
                         draw_dialog_all(DIALOG_REPORT_BUILD);
                     }
 					break;
@@ -12287,10 +12310,18 @@ void draw3_data3(DRAW_UI_P p)
 					draw3_popdown (menu_content[OFF_ON + get_report_format_note (pp->p_config)], 3, 0);
 					break;
 				case 3:/*File -> user field -> content  p833*/
-					//draw3_popdown (menu_content[U_CONTENT + get_report_userfield_select (pp->p_config)], 3, 0);
-					draw3_popdown(NULL,3,0);
-					gtk_label_set_text(GTK_LABEL(pp->data3[3]),
-								get_report_userfield_content(pp->p_config,get_report_userfield_select(pp->p_config)));
+					
+					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
+					{
+						draw_dialog_all (DIALOG_USERFIELD_CONTENT);
+					}
+					else
+					{
+						draw3_popdown (
+								get_report_userfield_content (pp->p_config,get_report_userfield_select(pp->p_config)),
+								3, 0);
+					}
+
 					break;
 
 				case 4:

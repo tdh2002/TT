@@ -499,6 +499,10 @@ struct _Config
 	char	edit_notes_info[256];
 	char	edit_header_info[256];
 	char	file_name_info[50];
+	char	file_name_inspection_data[50];
+	char	file_name_inspection_table[50];
+	char	file_name_screen[50];
+	char	file_name_report[50];
 	char	probe_type;
 	unsigned char	userfield_select;	/* File->User Field->select 当前选择userfield编号 */
 };
@@ -745,7 +749,18 @@ extern void			set_header_info (CONFIG *p, const char *content);
 extern const char	*get_file_name_info (CONFIG *p);
 extern void			set_file_name_info (CONFIG *p, const char *content);
 
+extern const char	*get_file_name_all (CONFIG *p);
+extern void			set_file_name_all (CONFIG *p, const char *content);
 
+
+extern const char	*get_file_name_inspect_data (CONFIG *p);
+extern void			set_file_name_inspect_data (CONFIG *p, const char *content);
+extern const char	*get_file_name_inspec_table (CONFIG *p);
+extern void			set_file_name_inpsec_table (CONFIG *p, const char *content);
+extern const char	*get_file_name_screen (CONFIG *p);
+extern void			set_file_name_screen (CONFIG *p, const char *content);
+extern const char	*get_file_name_report (CONFIG *p);
+extern void			set_file_name_report (CONFIG *p, const char *content);
 
 /* gll probe_type */
 extern char			get_probe_type (CONFIG *p);

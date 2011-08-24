@@ -115,4 +115,6 @@ extern void report_build_note(FILE *fp);
 
 extern void report_build_signature(char *file_name);
 
+extern void SAVE_DATA();
+
 #endif
