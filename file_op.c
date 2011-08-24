@@ -978,7 +978,7 @@ void report_build_probe(char *file_name,int group)
 void report_build_setup(char *file_name,int group)
 {
     FILE *fp = NULL;
-	gint grp = get_current_group (pp->p_config);
+	gint grp = group; 
 	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
     
     fp = fopen(file_name,"r+");
@@ -1011,7 +1011,8 @@ void report_build_setup(char *file_name,int group)
     fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%d ns</TD>\n",BEAM_INFO(group,beam_delay));
     fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%d ns</TD>\n", get_group_val (get_group_by_id (pp->p_config, group), GROUP_START));
     fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%d ns</TD>\n", get_group_val (get_group_by_id (pp->p_config, group), GROUP_RANGE));
-    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%d</TD>\n",GROUP_VAL_POS(group,prf));
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%d</TD>\n",
+			get_group_val (p_grp, GROUP_PRF_VAL));
     fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%s</TD>\n",menu_content[ GROUP_MODE_P +(GROUP_VAL_POS(group,group_mode))]);
     fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%d</TD>\n",1 << get_group_val (get_group_by_id (pp->p_config, group), GROUP_AVERAGING));
     fprintf(fp,"</TR>\n\n");

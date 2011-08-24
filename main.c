@@ -71,9 +71,10 @@ static void set_config (guint groupid)
 	set_group_val (p_grp, GROUP_FREQ_VAL, 1000);
 	set_group_val (p_grp, GROUP_PW_POS, 1);
 	set_group_val (p_grp, GROUP_PW_VAL, 2000);
+	set_group_val (p_grp, GROUP_PRF_POS, 3);
+	set_group_val (p_grp, GROUP_PRF_VAL, 200);
+	
 
-	GROUP_VAL(prf_pos)		= 3;			/* 0是Atuo Max*/
-	GROUP_VAL(prf)			= 200;			/* 重复频率 60*/
 	GROUP_VAL(point_qty)	= 615;			/* 0是Auto */
 	GROUP_VAL(sum_gain)	= 10;			/* 0是Auto */
 	GROUP_VAL(gate_pos)	= GATE_A;		  
@@ -597,10 +598,10 @@ void init_group_spi (guint group)
 	TMP(group_spi[group]).rx_time		= MAX (tt[3], TMP(group_spi[group]).sample_range  + TMP(max_beam_delay[group])) + TMP(group_spi[group]).compress_rato;
 	TMP(group_spi[group]).gain1			= 0;
 
-	if (GROUP_VAL_POS(group, prf)  >= 400)
-			GROUP_VAL_POS(group, prf)  = 400;
+	if (get_group_val (p_grp, GROUP_PRF_VAL)  >= 400)
+			set_group_val (p_grp, GROUP_PRF_VAL, 400);
 
-	temp_prf = TMP(beam_qty[group]) * GROUP_VAL_POS(group, prf);
+	temp_prf = TMP(beam_qty[group]) * get_group_val (p_grp, GROUP_PRF_VAL);
 	TMP(group_spi[group]).idel_time		= 
 		100000000 / (temp_prf / (10)) - 2048 - TMP(group_spi[group]).rx_time;
 
