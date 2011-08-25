@@ -72,6 +72,11 @@ static void da_call_probe (GtkDialog *dialog, gint response_id, gpointer user_da
 			set_group_val (p_grp, GROUP_FREQ_VAL, GROUP_VAL(probe.Frequency));				/* 频率 */
 			if (!get_group_val (p_grp, GROUP_PW_POS))
 				set_group_val (p_grp, GROUP_PW_VAL,	get_group_val (p_grp, GROUP_FREQ_VAL) * 2.0); /* 改变脉冲宽度 */
+			if (GROUP_VAL(probe.Elem_qty) < LAW_VAL (Last_tx_elem))
+			{
+				LAW_VAL(Elem_qty) = GROUP_VAL(probe.Elem_qty);
+				LAW_VAL (Last_tx_elem) = GROUP_VAL(probe.Elem_qty);
+			}
 			g_free (file_path);
 			gtk_label_set_text (GTK_LABEL (pp->data3[3]), GROUP_VAL(probe.Model));
 
@@ -3520,8 +3525,16 @@ void draw_report_build()
 	//如果打开报告,userfield的功能
 	if (get_report_format_userfield(pp->p_config))
 	{	
-		//如果打开，就在报告那里增加userfield功能
-		report_build_user_field(file_name);
+		//一共有十个userfield
+		for (i=0;i<10;i++)
+		{
+			//每一个userfield都有自己的设置，是否打开
+			if (get_report_userfield_enable(pp->p_config,i))
+			{
+				//如果打开，就在报告那里增加userfield功能
+				report_build_user_field(file_name);
+			}
+		}
 	}
 	//枚举group，每一个group，都是一个独立的信息
     for (i = 0; i < get_group_qty (pp->p_config); i++)
@@ -3587,6 +3600,8 @@ void draw_report_build()
 	gtk_box_pack_start(GTK_BOX(full_screen), top,FALSE,FALSE,0);
 
 	gtk_box_pack_start(GTK_BOX(full_screen), bottom,FALSE,FALSE,0);
+
+	g_printf("%s\n",file_path);
 
 	g_signal_connect (G_OBJECT(dialog), "response",
 			G_CALLBACK(da_call_complex_dialog), NULL);/*发送退出信号*/
@@ -3916,6 +3931,11 @@ static void signal_define_probe(GtkDialog *dialog, gint response_id, gpointer us
 
 		set_group_val (p_grp , GROUP_FREQ_VAL, g_tmp_probe.Frequency);
 
+		if (GROUP_VAL(probe.Elem_qty) < LAW_VAL (Last_tx_elem))
+		{
+			LAW_VAL(Elem_qty) = GROUP_VAL(probe.Elem_qty);
+			LAW_VAL (Last_tx_elem) = GROUP_VAL(probe.Elem_qty);
+		}
 		gtk_label_set_text (GTK_LABEL (pp->data3[3]), GROUP_VAL(probe.Model));
 
         //关闭对话框

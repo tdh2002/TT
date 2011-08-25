@@ -25,7 +25,7 @@ void send_group_spi (guint group);
 extern float tttmp;
 extern void generate_focallaw(int grp);
 
-/* 测试用的初始值 */
+/* config结构体的初始值 */
 static void set_config (guint groupid)
 {
 	gint i;
@@ -71,12 +71,10 @@ static void set_config (guint groupid)
 	set_group_val (p_grp, GROUP_FREQ_VAL, 1000);
 	set_group_val (p_grp, GROUP_PW_POS, 1);
 	set_group_val (p_grp, GROUP_PW_VAL, 2000);
-	set_group_val (p_grp, GROUP_PRF_POS, 3);
-	set_group_val (p_grp, GROUP_PRF_VAL, 200);
-	set_group_val (p_grp, GROUP_PQTY_POS, 0);		/* 0是auto */
-	set_group_val (p_grp, GROUP_PQTY_VAL, 605);
-	
 
+	GROUP_VAL(prf_pos)		= 3;			/* 0是Atuo Max*/
+	GROUP_VAL(prf)			= 200;			/* 重复频率 60*/
+	GROUP_VAL(point_qty)	= 615;			/* 0是Auto */
 	GROUP_VAL(sum_gain)	= 10;			/* 0是Auto */
 	GROUP_VAL(gate_pos)	= GATE_A;		  
 	GROUP_VAL(gate[GROUP_VAL(gate_pos)].start) = 0;  
@@ -276,15 +274,19 @@ static void set_config (guint groupid)
 
 	set_part_geometry (pp->p_config, GUINT_TO_POINTER (PLATE_PART)	);
 
-	pp->ctype_pos = 1;
- 	pp->cmode_pos = 2;
-	pp->cstart_qty = 1;
-	pp->count = 0;
-
 	set_report_template (pp->p_config, REPORT_COMPLETE);
 	set_report_paper_size (pp->p_config, PAPER_A4);
 	GROUP_GATE_POS(height) = 20; /*闸门默认高度为20*/
 
+}
+
+/* 设置config结构体之外的初始值  */
+static void set_init_para()
+{
+	pp->ctype_pos = 1;
+ 	pp->cmode_pos = 2;
+	pp->cstart_qty = 1;
+	pp->count = 0;
 }
 
 int main (int argc, char *argv[])
@@ -339,7 +341,7 @@ int main (int argc, char *argv[])
 	p_ui->window		= window;
 
 	pp = p_ui;
-
+	set_init_para();//
 	p_ui->p_tmp_config->fd_config = open ("default.cfg", O_RDWR | O_CREAT, 0644);
 	if (p_ui->p_tmp_config->fd_config < 0)
 		g_print("error open config file\n");
@@ -400,9 +402,7 @@ int main (int argc, char *argv[])
 	TMP(beam_qty[6]) = 0;
 	TMP(beam_qty[7]) = 0;
 
-	TMP(range_step_min) = ((gint)(
-				get_group_val (	get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_PQTY_VAL)
-				* 10)+ 5) / 10 * 10;
+	TMP(range_step_min) = ((gint)(GROUP_VAL(point_qty) * 10)+ 5) / 10 * 10;
 
 #if ARM
 	init_fb ();					
@@ -432,10 +432,7 @@ int main (int argc, char *argv[])
 #endif
 
 	for (i = 0; i < setup_MAX_GROUP_QTY; i++)
-	{
-		TMP(total_point_qty) += TMP(beam_qty[i]) * (
-					get_group_val (get_group_by_id (pp->p_config, i), GROUP_PQTY_VAL) + 32);
-	}
+		TMP(total_point_qty) += TMP(beam_qty[i]) * (GROUP_VAL_POS (i, point_qty) + 32);
 
 
 	gtk_widget_show (window);
@@ -569,8 +566,8 @@ void init_group_spi (guint group)
 	TMP(group_spi[group]).rectifier		= 
 		get_group_val (get_group_by_id (pp->p_config, group), GROUP_RECTIFIER);
 	TMP(group_spi[group]).compress_rato	= 
-		((get_group_val (get_group_by_id (pp->p_config, group), GROUP_RANGE) / 10.0) / get_group_val (p_grp, GROUP_PQTY_POS)) > 1 ? 
-		((get_group_val (get_group_by_id (pp->p_config, group), GROUP_RANGE) / 10.0) / get_group_val (p_grp, GROUP_PQTY_POS)) : 1;
+		((get_group_val (get_group_by_id (pp->p_config, group), GROUP_RANGE) / 10.0) / GROUP_VAL_POS(group, point_qty)) > 1 ? 
+		((get_group_val (get_group_by_id (pp->p_config, group), GROUP_RANGE) / 10.0) / GROUP_VAL_POS(group, point_qty)) : 1;
 	TMP(group_spi[group]).gain			= get_group_val (get_group_by_id (pp->p_config, group), GROUP_GAIN) / 10.0;
 
 	TMP(group_spi[group]).tcg_point_qty	= 0;		/* 未完成 */
@@ -580,7 +577,7 @@ void init_group_spi (guint group)
 	TMP(group_spi[group]).PA			= (GROUP_VAL_POS (group, group_mode) == 1) ? 1 : 0;		
 	TMP(group_spi[group]).sample_start	= 
 		(get_group_val (get_group_by_id (pp->p_config, group), GROUP_START) + 
-		 get_group_val (get_group_by_id(pp->p_config, group), GROUP_WEDGE_DELAY)) / 10 + TMP(max_beam_delay[group]) ;
+		 get_group_val (get_group_by_id(pp->p_config, group), GROUP_WEDGE_DELAY)) / 10 ;//+ TMP(max_beam_delay[group]) ;
 
 
 	if (LAW_VAL_POS(group, Elem_qty) == 1)	
@@ -592,7 +589,7 @@ void init_group_spi (guint group)
 		get_group_val (get_group_by_id (pp->p_config, group), GROUP_RANGE) / 10;		
 
 	//TMP(group_spi[group]).beam_qty		= TMP(beam_qty[group]) - 1; 
-	TMP(group_spi[group]).point_qty  = get_group_val (p_grp, GROUP_PQTY_VAL);
+	TMP(group_spi[group]).point_qty  = GROUP_VAL(point_qty);
 	TMP(group_spi[group]).sample_offset	= 0;
 
 	tt[0] = (GROUP_VAL_POS(group, gate[0].start) +	GROUP_VAL_POS (group, gate[0].width));
@@ -604,10 +601,10 @@ void init_group_spi (guint group)
 	TMP(group_spi[group]).rx_time		= MAX (tt[3], TMP(group_spi[group]).sample_range  + TMP(max_beam_delay[group])) + TMP(group_spi[group]).compress_rato;
 	TMP(group_spi[group]).gain1			= 0;
 
-	if (get_group_val (p_grp, GROUP_PRF_VAL)  >= 400)
-			set_group_val (p_grp, GROUP_PRF_VAL, 400);
+	if (GROUP_VAL_POS(group, prf)  >= 400)
+			GROUP_VAL_POS(group, prf)  = 400;
 
-	temp_prf = TMP(beam_qty[group]) * get_group_val (p_grp, GROUP_PRF_VAL);
+	temp_prf = TMP(beam_qty[group]) * GROUP_VAL_POS(group, prf);
 	TMP(group_spi[group]).idel_time		= 
 		100000000 / (temp_prf / (10)) - 2048 - TMP(group_spi[group]).rx_time;
 

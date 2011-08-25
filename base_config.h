@@ -33,6 +33,7 @@
 #define GROUP_FREQ_POS		0x1010
 #define GROUP_PW_VAL		0x1011
 #define GROUP_PW_POS		0x1012
+
 #define GROUP_PRF_VAL		0x1013
 #define GROUP_PRF_POS		0x1014
 #define GROUP_PQTY_VAL		0x1015
@@ -268,25 +269,25 @@ typedef struct _law_info
 typedef struct _Measure_data
 {
 	//目前用到的
-	unsigned int	a_height;//%A
-	unsigned int	b_height;//%B
-	unsigned int	a_position;//A^
-	unsigned int	b_position;//B^
-	unsigned int    i_position;//I/
-	unsigned int	a_ref_position;//RA^
-	unsigned int	b_ref_position;//RB^
-	unsigned int	a_probe_front;//PA^
-	unsigned int	b_probe_front;//PB^
-	unsigned int	a_depth;//DA^
-	unsigned int	b_depth;//DB^
-	unsigned int	a_sound_path;//SA^
-	unsigned int	b_sound_path;//SB^
-	unsigned int	a_volu_position_i;//ViA
-	unsigned int	b_volu_position_i;//ViB
-	unsigned int	a_volu_position_s;//VsA
-	unsigned int	b_volu_position_s;//VsB
-	unsigned int	a_leg;//LA
-	unsigned int	b_leg;//LB
+	float	a_height;//%A
+	float	b_height;//%B
+	float   a_position;//A^
+	float   b_position;//B^
+	float   i_position;//I/
+	float   a_ref_position;//RA^
+	float   b_ref_position;//RB^
+	float   a_probe_front;//PA^
+	float   b_probe_front;//PB^
+	float   a_depth;//DA^
+	float   b_depth;//DB^
+	float   a_sound_path;//SA^
+	float   b_sound_path;//SB^
+	float   a_volu_position_i;//ViA
+	float   b_volu_position_i;//ViB
+	float   a_volu_position_s;//VsA
+	float   b_volu_position_s;//VsB
+	float   a_leg;//LA
+	float   b_leg;//LB
 
 	//其他待添加
 } MEASURE_DATA, *MEASURE_DATA_P;
@@ -321,16 +322,16 @@ struct _Group
 	char	tx_rxmode1;		/* 收发模式 */
 	char	freq_pos1;		/* 频率选择模式是指定还是自己输入 */
 	char	pw_pos1;			/* 脉冲宽度选择模式 */
-	char	prf_pos1;		/* 脉冲宽度选择模式 */
+	char	prf_pos;		/* 脉冲宽度选择模式 */
 	short	frequency1;		/* 以0.001Mhz 也就是Khz 1MHz~20MHz 为单位 当探头学选unknown 时候才可以调节 */
 	unsigned short	pulser_width1;	/* 30~500ns 2.5ns为步进*/
 
-	int		prf1;			/* 重复频率 1-20000Hz 取值为10~200000 */
+	int		prf;			/* 重复频率 1-20000Hz 取值为10~200000 */
 
-	char	point_qty_pos1;	/* 点个数 位置 */
+	char	point_qty_pos;	/* 点个数 位置 */
 	char	sum_gain_pos;	/**/
-	unsigned	char	gate_pos;		/* A , B , I 当前修改的是哪个闸门 */
-	short	point_qty1;		/* 点个数 */
+	unsigned char	gate_pos;		/* A , B , I 当前修改的是哪个闸门 */
+	unsigned short	point_qty;		/* 点个数 */
 	unsigned short	sum_gain;
 	unsigned short	gain_offset;
 
@@ -750,20 +751,6 @@ extern const char	*get_header_info (CONFIG *p);
 extern void			set_header_info (CONFIG *p, const char *content);
 extern const char	*get_file_name_info (CONFIG *p);
 extern void			set_file_name_info (CONFIG *p, const char *content);
-
-extern const char	*get_file_name_all (CONFIG *p);
-extern void			set_file_name_all (CONFIG *p, const char *content);
-
-
-extern const char	*get_file_name_inspect_data (CONFIG *p);
-extern void			set_file_name_inspect_data (CONFIG *p, const char *content);
-extern const char	*get_file_name_inspec_table (CONFIG *p);
-extern void			set_file_name_inpsec_table (CONFIG *p, const char *content);
-extern const char	*get_file_name_screen (CONFIG *p);
-extern void			set_file_name_screen (CONFIG *p, const char *content);
-extern const char	*get_file_name_report (CONFIG *p);
-extern void			set_file_name_report (CONFIG *p, const char *content);
-
 /* gll probe_type */
 extern char			get_probe_type (CONFIG *p);
 extern void			set_probe_type (CONFIG *p, char data);
@@ -772,6 +759,10 @@ extern void			set_probe_type (CONFIG *p, char data);
 
 
 /* Group 参数的保存读取 */
+extern int	get_group_prf_pos		(CONFIG *p, int group_id);
+extern void	set_group_prf_pos		(CONFIG *p, int group_id,	int	data);
+extern int	get_group_prf_val		(CONFIG *p, int group_id);
+extern void	set_group_prf_val		(CONFIG *p, int group_id,	int	data);
 extern int	get_group_point_qty_pos	(CONFIG *p, int group_id);
 extern void	set_group_point_qty_pos	(CONFIG *p, int group_id,	int	data);
 extern int	get_group_point_qty_val	(CONFIG *p, int group_id);
