@@ -16208,7 +16208,6 @@ void calc_measure_data()
 	gint i = TMP(beam_num[grp]);//当前beam
 	gfloat a = ( (gfloat)(LAW_VAL_POS (grp, Angle_min) + LAW_VAL_POS (grp, Angle_step)*i)/100.0 )*G_PI/180.0;//当前折射角
 	gfloat thickness = (gfloat)(get_part_thickness(pp->p_config)/1000.0);//工件厚度	
-//	printf("----->distance[%d]=%f a=%f thickness=%f\n",i,TMP(field_distance[i]),a,thickness);
 
 	for(l=0;l<4;l++)//4个field
 	{

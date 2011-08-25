@@ -39,7 +39,7 @@ guint get_max_point_qty();
 void generate_focallaw(int grp);
 guint cba_encoder();
 gchar cba_ultrasound_velocity();
-void cba_ultrasound_wedgedelay();
+gchar cba_ultrasound_wedgedelay();
 void cba_ultrasound_sensitivity();
 void cba_ultrasound_TCG();
 
@@ -1026,6 +1026,12 @@ void b3_fun1(gpointer p)
 	pp->pos2[pp->pos][pp->pos1[pp->pos]] = 1;
 	/*	pp->pos_pos = MENU3_PRESSED;*/
 
+	gint offset,k;
+	gint grp = get_current_group(pp->p_config);//当前group
+	for (offset = 0, k = 0 ; k < grp; k++)
+		offset += TMP(beam_qty[k]);
+	gint index = offset + TMP(beam_num[grp]);	
+
 	/* 一次点击处理 */
 	switch (pp->pos)
 	{
@@ -1050,95 +1056,84 @@ void b3_fun1(gpointer p)
 						switch(pp->ctype_pos)
 						{
 							case 0://Encoder
-								((pp->cstart_qty) < 4) ? (pp->cstart_qty) ++ : ((pp->cstart_qty) = 1); break;
+								((pp->cstart_qty) < 4) ? (pp->cstart_qty) ++ : ((pp->cstart_qty) = 1);
 								if((pp->cstart_qty) == 2)
 								{
 									//记录起点数据
-									TMP_CBA(measure_start) = 0;//待修改更新该参数
+									TMP_CBA(measure_start) = TMP(measure_data[index][4]);
 								}
 								else if((pp->cstart_qty) == 3)
 								{
-									TMP_CBA(measure_end) = 20;//待修改更新该参数
-									//在此调用Encoder校准函数								
+									TMP_CBA(measure_end) = TMP(measure_data[index][4]);
+									//调用校准函数cba_encoder()								
 									set_enc_resolution (pp->p_config, cba_encoder(),
 											get_cur_encoder (pp->p_config));
 								}
-							g_printf("qty=%d\n",pp->cstart_qty);
 								break;
 							case 1://Ultrasound
 								switch(pp->cmode_pos)
 								{
 									case 0://Velocity
-										if((pp->cstart_qty) < 4)
+										((pp->cstart_qty) < 6) ? (pp->cstart_qty) ++ : ((pp->cstart_qty) = 1);
+										if((pp->cstart_qty) == 4)
 										{
-											(pp->cstart_qty) ++;
-										}
-										else if((pp->cstart_qty) == 4)
-										{
-											(pp->cstart_qty) ++;
 											//获取闸门1信息
 											switch(pp->echotype_pos)
 											{
 												case 0://Radius
-													TMP_CBA(radius1) = 0;//待更新
+													TMP_CBA(radius1) = pp->radius1;
 													break;
 												case 1://Depth
-													TMP_CBA(depth1) = 0;//待更新
+													TMP_CBA(depth1) =  pp->depth1;
 													break;
 												case 2://Thickness
-													TMP_CBA(thickness1) = 0;//待更新
+													TMP_CBA(thickness1) = pp->thickness1;
 													break;
 											}
-											TMP_CBA(time_start) = 0;//待更新
+											TMP_CBA(time_start) = ((TMP(measure_data[index][1])) & 0xfffff)/100.0;
 										}
 										else if((pp->cstart_qty) == 5)
 										{
-											(pp->cstart_qty) ++;
 											//获取闸门2信息
 											switch(pp->echotype_pos)
 											{
 												case 0://Radius
-													TMP_CBA(radius2) = 0;//待更新
+													TMP_CBA(radius2) = pp->radius2;
 													break;
 												case 1://Depth
-													TMP_CBA(depth2) = 0;//待更新
+													TMP_CBA(depth2) = pp->depth2;
 													break;
 												case 2://Thickness
-													TMP_CBA(thickness2) = 0;//待更新
+													TMP_CBA(thickness2) = pp->thickness2;
 													break;
 											}
-											TMP_CBA(time_end) = 10;//待更新
+											TMP_CBA(time_end) = ((TMP(measure_data[index][2])) & 0xfffff)/100.0;
 										}
 										else if((pp->cstart_qty) == 6)
 										{
-											(pp->cstart_qty) =1;
 											//在此调用声速校准函数->此处校准之后的声速用于Wedge Delay校准
-											//在此设定一个标志位，用于Wedge Delay校准
 											set_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY,
 													cba_ultrasound_velocity());
+											pp->flag = 1;//当该标志为1时才能进行下面的wedge Delay
 										} 
 										break;
 									case 1://Wedge Delay
-										if((pp->cstart_qty) < 4)
+										((pp->cstart_qty) < 6) ? (pp->cstart_qty) ++ : ((pp->cstart_qty) = 1);
+										if((pp->cstart_qty) == 4)
 										{
-											(pp->cstart_qty) ++;
-										}
-										else if((pp->cstart_qty) == 4)
-										{
-											(pp->cstart_qty) ++;
 											//在此获取闸门信息
 											for(i=0;i<((pp->last_angle - pp->first_angle)/LAW_VAL(Angle_step));i++)
 											{
 												switch(pp->echotype_pos)
 												{
 													case 0://radius
-														TMP_CBA(wd_radius[i]) = 0;//实际检测值
+														TMP_CBA(wd_radius[i]) = pp->radius1;
 														break;
 													case 1://depth
-														TMP_CBA(wd_depth[i]) = 0;//实际检测值
+														TMP_CBA(wd_depth[i]) = pp->depth1;
 														break;
 													case 2://thickness
-														TMP_CBA(wd_thickness[i]) = 0;//实际检测值
+														TMP_CBA(wd_thickness[i]) = pp->thickness1;
 														break;
 												}
 												
@@ -1146,15 +1141,13 @@ void b3_fun1(gpointer p)
 										}
 										else if((pp->cstart_qty) == 5)
 										{
-											(pp->cstart_qty) ++;
 											//校准完之后Accept
-											//接受所作的事情是:把延时传给聚焦法则
-											// for(int i=0;i<((pp->last_angle - pp->first_angle)/LAW_VAL(Angle_step));i++)
-											//  		= TMP_CBA(wd_delay[i]);			
-										}
-										else if((pp->cstart_qty) == 6)
-										{
-											(pp->cstart_qty) = 1;
+											if(pp->flag)
+											{
+												for(i=0;i<((pp->last_angle - pp->first_angle)/LAW_VAL(Angle_step));i++)
+														set_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_WEDGE_DELAY,
+																cba_ultrasound_wedgedelay());
+											}
 										}
 										break;
 									case 2://Sensitivity
@@ -5685,7 +5678,6 @@ void generate_focallaw(int grp)
 	tt[0] = (GROUP_VAL_POS(grp, gate[0].start) +	GROUP_VAL_POS (grp, gate[0].width));
 	tt[1] = (GROUP_VAL_POS(grp, gate[1].start) +	GROUP_VAL_POS (grp, gate[1].width));
 	tt[2] = (GROUP_VAL_POS(grp, gate[2].start) +	GROUP_VAL_POS (grp, gate[2].width));
-
 	tt[3] = MAX(tt[0], (MAX(tt[1],tt[2]))) / 10;
 
 	TMP(group_spi[grp]).rx_time		= MAX (tt[3], TMP(group_spi[grp]).sample_range + TMP(max_beam_delay[grp])) + TMP(group_spi[grp]).compress_rato;
@@ -5747,10 +5739,11 @@ gchar cba_ultrasound_velocity()
 //****************************************
 //  延时校准：2011.7.1 何凡
 //****************************************
-void cba_ultrasound_wedgedelay()
+gchar cba_ultrasound_wedgedelay()
 {
 	gint i;
 	gint grp = get_current_group(pp->p_config);
+	gchar val;
 	//在此获取闸门信息
 	for(i=0;i<((pp->last_angle - pp->first_angle)/LAW_VAL(Angle_step));i++)
 	{
@@ -5766,8 +5759,9 @@ void cba_ultrasound_wedgedelay()
 				TMP_CBA(wd_delay[i]) = (TMP_CBA(wd_thickness[i])- pp->thickness1)/ get_group_val (get_group_by_id (pp->p_config, grp), GROUP_VELOCITY);
 				break;
 		}
-		
+		val = TMP_CBA(wd_delay[i]);
 	}
+	return val; 
 }
 
 //****************************************

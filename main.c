@@ -287,6 +287,7 @@ static void set_init_para()
  	pp->cmode_pos = 2;
 	pp->cstart_qty = 1;
 	pp->count = 0;
+	pp->flag = 0;
 }
 
 int main (int argc, char *argv[])
