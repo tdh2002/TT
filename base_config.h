@@ -751,6 +751,10 @@ extern const char	*get_header_info (CONFIG *p);
 extern void			set_header_info (CONFIG *p, const char *content);
 extern const char	*get_file_name_info (CONFIG *p);
 extern void			set_file_name_info (CONFIG *p, const char *content);
+
+extern const char	*get_file_name_all (CONFIG *p);
+extern void set_file_name_all (CONFIG *p, const char *content);
+
 /* gll probe_type */
 extern char			get_probe_type (CONFIG *p);
 extern void			set_probe_type (CONFIG *p, char data);

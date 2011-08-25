@@ -50,27 +50,27 @@ static void set_config (guint groupid)
 
 	set_voltage (pp->p_config, groupid, VOLTAGE_LOW);
 	/* UT settings */
-	set_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_WEDGE_DELAY, 0);
-	set_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_RANGE, 10000);
-	set_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_START, 0);
-	set_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_GAIN, 10);
-	set_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_GAINR, 0);
-	set_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY, 592000);
+	set_group_val (p_grp, GROUP_WEDGE_DELAY, 0);
+	set_group_val (p_grp, GROUP_RANGE, 10000);
+	set_group_val (p_grp, GROUP_START, 0);
+	set_group_val (p_grp, GROUP_GAIN, 10);
+	set_group_val (p_grp, GROUP_GAINR, 0);
+	set_group_val (p_grp, GROUP_VELOCITY, 592000);
 	set_group_db_ref		(pp->p_config, groupid, NORMAL_OFF);
 
 	set_group_val (&pp->p_config->group[get_current_group(pp->p_config)], GROUP_PULSER, 1);
 	set_group_val (&pp->p_config->group[get_current_group(pp->p_config)], GROUP_RECEIVER, 1);
 
-	set_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_FILTER_POS, 0);
-	set_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_FILTER, FILTER_NONE);
-	set_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_RECTIFIER, FULL_WAVE);
-	set_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_AVERAGING, 0);
-	set_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VIDEO_FILTER, NORMAL_OFF);
+	set_group_val (p_grp, GROUP_FILTER_POS, 0);
+	set_group_val (p_grp, GROUP_FILTER, FILTER_NONE);
+	set_group_val (p_grp, GROUP_RECTIFIER, FULL_WAVE);
+	set_group_val (p_grp, GROUP_AVERAGING, 0);
+	set_group_val (p_grp, GROUP_VIDEO_FILTER, NORMAL_OFF);
 	set_group_val (p_grp, GROUP_TX_RX_MODE, PULSE_ECHO);
-	set_group_val (p_grp, GROUP_FREQ_POS, 0);		/* 0是1Mhz	*/
-	set_group_val (p_grp, GROUP_FREQ_VAL, 1000);
-	set_group_val (p_grp, GROUP_PW_POS, 1);
-	set_group_val (p_grp, GROUP_PW_VAL, 50000);
+	set_group_val (p_grp, GROUP_FREQ_POS, 12);		/* 0是1Mhz	*/
+	set_group_val (p_grp, GROUP_FREQ_VAL, 5000);
+	set_group_val (p_grp, GROUP_PW_POS, 0);
+	set_group_val (p_grp, GROUP_PW_VAL, 10000);
 
 	GROUP_VAL(prf_pos)		= 3;			/* 0是Atuo Max*/
 	GROUP_VAL(prf)			= 200;			/* 重复频率 60*/
