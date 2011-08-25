@@ -1004,7 +1004,7 @@ void b3_fun0(gpointer pt)
 				break;
 			default:break;
 		}
-
+		g_print ("b0 preslkjaflsdjf\n");
 	}
 	else
 	{
@@ -2718,6 +2718,7 @@ static int handler_key(guint keyval, gpointer data)
 					/* 按下的动作在这里实现 */
 					break;
 				case MENU3_PRESSED:
+					pp->pos_pos = MENU3_STOP;
 					switch (CUR_POS)
 					{
 						case 0:
@@ -2741,7 +2742,6 @@ static int handler_key(guint keyval, gpointer data)
 						default:break;
 					}
 					pp->pos_pos = MENU3_STOP;
-
 					break;
 				default:break;
 				}
