@@ -15739,7 +15739,18 @@ void draw3_data5(DRAW_UI_P p)
 			switch (pp->pos1[8])
 			{
 				case 0: /*File -> File -> file name  p805 */
-					draw3_popdown ("Data####", 5, 0); break;
+					
+					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 5))
+					{
+						draw_dialog_all (DIALOG_FILE_NAME_ALL);
+					}
+					else
+					{
+						draw3_popdown ( get_file_name_all (pp->p_config), 5, 0);
+					}
+
+					break;
+
 				case 1:
 					if ( !con2_p[8][1][5] )
 						gtk_widget_hide (pp->eventbox30[5]);

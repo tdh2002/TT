@@ -782,8 +782,6 @@ void report_build_user_field(char *file_name)
 {
     FILE *fp = NULL;
 
-	int i;
-
     fp = fopen(file_name,"r+");
 
     if(fp == NULL)
@@ -797,19 +795,40 @@ void report_build_user_field(char *file_name)
     fprintf(fp,"<tr><td>\n");
 
     fprintf(fp,"<table width = \"100%%\" >\n");
+    fprintf(fp,"<tr><td width =\"50%%\"><table>\n");
+    fprintf(fp,"<tr><td class = \"general_cell\"><b>Contractor</b></td>");
+    fprintf(fp,"<td>Name</td></tr>\n");
+    fprintf(fp,"</table></td>\n\n");
 
-	for (i=0;i<10;i++)
-	{
-		if (get_report_userfield_enable(pp->p_config,i))
-		{
-			fprintf(fp,"<tr><td width =\"50%%\"><table>\n");
-			fprintf(fp,"<tr><td class = \"general_cell\"><b>%s</b></td>",
-				get_report_userfield_label(pp->p_config,i));
-			fprintf(fp,"<td>%s</td></tr>\n",
-				get_report_userfield_content(pp->p_config,i));
-			fprintf(fp,"</table></td></tr>\n\n");
-		}
-	}
+    fprintf(fp,"<td width=\"50%%\"><table>\n");
+    fprintf(fp,"<tr><td class = \"general_cell\"><b>Technician</b></td>\n");
+    fprintf(fp,"<td>Name</td></tr>\n");
+    fprintf(fp,"</table></td></tr>\n\n");
+
+    fprintf(fp,"<tr><td width = \"50%%\"><table>\n");
+    fprintf(fp,"<tr><td class = \"general_cell\"><b>Customer</b></td>\n");
+    fprintf(fp,"<td>Name</td></tr>\n");
+    fprintf(fp,"</table></td>\n\n");
+    
+    fprintf(fp,"<td width = \"50%%\"><table>\n");
+    fprintf(fp,"<tr><td class = \"general_cell\"><b>Project</b></td>\n");
+    fprintf(fp,"<td>Name</td></tr>\n");
+    fprintf(fp,"</table></td></tr>\n\n");
+  
+    fprintf(fp,"<tr><td width = \" 50%% \"><table>");
+    fprintf(fp,"<tr><td class = \"general_cell\"><b>Site</b></td>\n");
+    fprintf(fp,"<td>Name</td></tr>\n");
+    fprintf(fp,"</table></td>\n\n");
+
+    fprintf(fp,"<td width = \"50%%\"><table>\n");
+    fprintf(fp,"<tr><td class = \"general_cell\"><b>Part Number</b></td>");
+    fprintf(fp,"<td>Name</td></tr>\n");
+    fprintf(fp,"</table></td></tr>\n\n");
+
+    fprintf(fp,"<tr><td width = \"50%%\"></td>");
+    fprintf(fp,"    <td width = \"50%%\"></td></tr>\n");
+    fprintf(fp,"<tr><td width = \"50%%\"></td>\n");
+    fprintf(fp,"    <td width = \"50%%\"></td></tr>\n\n");
 
     fprintf(fp,"</table>\n");
     fprintf(fp,"</tr></td>\n");
@@ -959,7 +978,7 @@ void report_build_probe(char *file_name,int group)
 void report_build_setup(char *file_name,int group)
 {
     FILE *fp = NULL;
-	gint grp = group; 
+	gint grp = get_current_group (pp->p_config);
 	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
     
     fp = fopen(file_name,"r+");
@@ -992,8 +1011,7 @@ void report_build_setup(char *file_name,int group)
     fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%d ns</TD>\n",BEAM_INFO(group,beam_delay));
     fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%d ns</TD>\n", get_group_val (get_group_by_id (pp->p_config, group), GROUP_START));
     fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%d ns</TD>\n", get_group_val (get_group_by_id (pp->p_config, group), GROUP_RANGE));
-    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%d</TD>\n",
-			get_group_val (p_grp, GROUP_PRF_VAL));
+    fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%d</TD>\n",GROUP_VAL_POS(group,prf));
     fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%s</TD>\n",menu_content[ GROUP_MODE_P +(GROUP_VAL_POS(group,group_mode))]);
     fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%d</TD>\n",1 << get_group_val (get_group_by_id (pp->p_config, group), GROUP_AVERAGING));
     fprintf(fp,"</TR>\n\n");
@@ -1009,8 +1027,7 @@ void report_build_setup(char *file_name,int group)
 
 	fprintf(fp,"<TR>\n");
 	fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">N/A</TD>\n");
-	fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%f</TD>\n",
-			(get_group_val (get_group_by_id (pp->p_config, group), GROUP_RANGE) / 10.0) / get_group_val (p_grp, GROUP_PQTY_POS));
+	fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%f</TD>\n",(get_group_val (get_group_by_id (pp->p_config, group), GROUP_RANGE) / 10.0) / GROUP_VAL_POS(group,point_qty));
     fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%s</TD>\n",
 			menu_content[ OFF_ON + get_group_val (get_group_by_id(pp->p_config, grp), GROUP_VIDEO_FILTER)]);
     fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">N/A</TD>\n");//Pretrig    
@@ -1682,23 +1699,4 @@ void screen_to_file()
 	}
 
 	return ;
-}
-
-void SAVE_DATA()
-{
-	int operate;
-
-	operate = get_file_save_mode(pp->p_config);
-
-	if (operate == SAVE_MODE_INSPEC_DATA)
-	{}
-	else if (operate == SAVE_MODE_INSPEC_TABLE)
-	{}
-	else if (operate == SAVE_MODE_SCREEN)
-	{
-		screen_to_file();
-	}
-	else if (operate == SAVE_MODE_REPORT)
-	{}
-
 }

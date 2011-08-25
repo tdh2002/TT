@@ -1399,12 +1399,13 @@ static void draw_file_open_main()
 
 	gtk_box_pack_start(GTK_BOX(full_screen),bottom_box,FALSE,FALSE,0);
 
+	//close
 	g_signal_connect(G_OBJECT (vbox_menu3[2]), "button-press-event",G_CALLBACK(dialog_destroy), dialog);
-
+	//open
 	g_signal_connect(G_OBJECT (hbox_menu2[0]), "button-press-event",G_CALLBACK(open_config_file), (gpointer)source_list);
-
+	//open后自动close
 	g_signal_connect_after(G_OBJECT (hbox_menu2[0]), "button-press-event",G_CALLBACK(dialog_destroy), dialog);
-	
+	//select
 	g_signal_connect (G_OBJECT (source_selection), "changed", G_CALLBACK(on_changed_open_config_file), (gpointer)source_list);
 
     //g_signal_connect(G_OBJECT(dialog),"destroy_event",G_CALLBACK(dialog_destroy),dialog);
@@ -3936,7 +3937,7 @@ static void signal_define_probe(GtkDialog *dialog, gint response_id, gpointer us
 			LAW_VAL(Elem_qty) = GROUP_VAL(probe.Elem_qty);
 			LAW_VAL (Last_tx_elem) = GROUP_VAL(probe.Elem_qty);
 		}
-		gtk_label_set_text (GTK_LABEL (pp->data3[3]), GROUP_VAL(probe.Model));
+		gtk_label_set_text (GTK_LABEL (pp->data3[3]), GROUP_VAL(probe.Serial));
 
         //关闭对话框
         gtk_widget_destroy (GTK_WIDGET (dialog));
@@ -4379,7 +4380,7 @@ static void signal_define_wedge(GtkDialog *dialog, gint response_id, gpointer us
 
 		memcpy(&pp->p_config->group[id].wedge,&g_tmp_wedge,sizeof(struct _Wedge));
 
-		gtk_label_set_text (GTK_LABEL (pp->data3[4]), GROUP_VAL(wedge.Model));
+		gtk_label_set_text (GTK_LABEL (pp->data3[4]), GROUP_VAL(wedge.Serial));
         
 		//关闭对话框
         gtk_widget_destroy (GTK_WIDGET (dialog));
@@ -4765,6 +4766,74 @@ void draw_define_wedge()
 	return ;
 }
 
+void da_call_file_name_all (GtkDialog *dialog, gint response_id, gpointer user_data)      
+{
+	GtkTextBuffer *TextBuffer = (GTK_TEXT_BUFFER (user_data));
+	if (GTK_RESPONSE_OK == response_id)  /* 保存信息 */
+	{
+		GtkTextIter start, end;
+		gchar *Data;
+
+		gtk_text_buffer_get_start_iter (TextBuffer, &start);
+		gtk_text_buffer_get_end_iter (TextBuffer, &end);
+
+		Data = gtk_text_buffer_get_text (TextBuffer, &start, &end, FALSE);
+		set_file_name_all (pp->p_config, Data);
+		gtk_label_set_text (GTK_LABEL (pp->data3[5]), get_file_name_all (pp->p_config));
+
+		g_free (Data);
+		g_print ("OK_Pressed");
+	}
+	else if (GTK_RESPONSE_CANCEL == response_id) /* 取消 */
+		g_print ("CANCEL_Pressed");
+	gtk_widget_destroy (GTK_WIDGET (dialog));
+	change_keypress_event (KEYPRESS_MAIN);
+}
+
+void draw_file_name_all() 
+{
+	GtkWindow *win = GTK_WINDOW (pp->window);
+	GtkWidget *dialog;
+	GtkWidget *vbox1;	/* 指向dialog的vbox */
+	GtkWidget *sw;		/* 第一个scroll 备注只要一个sw */
+	GtkWidget *label;
+	GtkWidget *view;
+	GtkTextBuffer *TextBuffer;
+	//	GtkWidgetClass *widget_window_class1;
+	const gchar *buf = (const gchar *)(get_file_name_all (pp->p_config));
+
+	label = gtk_label_new("File name");
+	dialog = gtk_dialog_new_with_buttons("Dialog_file_name", win,
+			GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_NO_SEPARATOR,
+			GTK_STOCK_OK, GTK_RESPONSE_OK,
+			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+			NULL);
+	gtk_window_set_decorated (GTK_WINDOW (dialog), FALSE);			/*不可以装饰*/
+
+	gtk_widget_set_size_request(GTK_WIDGET (dialog), 300, 100);
+	vbox1 = GTK_WIDGET (GTK_DIALOG(dialog)->vbox);
+	sw = gtk_scrolled_window_new(NULL, NULL);
+
+	gtk_widget_set_size_request(sw, 300, 30);
+	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW(sw),
+			GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw),
+			GTK_SHADOW_ETCHED_IN);
+
+	gtk_box_pack_start(GTK_BOX(vbox1), label, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox1), sw, FALSE, FALSE, 5);
+	view = gtk_text_view_new ();
+	gtk_container_add (GTK_CONTAINER (sw), view);
+	TextBuffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
+	gtk_text_view_set_wrap_mode (GTK_TEXT_VIEW (view), GTK_WRAP_WORD_CHAR);
+	gtk_text_buffer_set_text (TextBuffer, buf, -1);
+
+	g_signal_connect (G_OBJECT(dialog), "response",
+			G_CALLBACK(da_call_file_name_all), (gpointer) (TextBuffer));
+
+	gtk_widget_show_all(dialog);
+}
+
 /*
  * 弹出的dialog
  * 0 记事本 备注等等
@@ -4812,6 +4881,7 @@ void draw_dialog_all (guint type)
 		case DIALOG_USERFIELD_LABEL: draw_userfield_label(); break;
 		case DIALOG_USERFIELD_CONTENT: draw_userfield_content(); break;
 		case DIALOG_DEFINE_WEDGE:	draw_define_wedge();break;
+		case DIALOG_FILE_NAME_ALL:	draw_file_name_all();break;
 		default:break;
 	}
 
