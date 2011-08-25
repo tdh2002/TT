@@ -658,7 +658,7 @@ guint get_pw ()
 	if (get_group_val (p_grp, GROUP_PW_POS))
 		return (get_group_val (p_grp, GROUP_PW_VAL));
 	else
-		return ((guint)(get_group_val (p_grp, GROUP_FREQ_VAL) * 2.0) / 250)  * 250 ; /* 改变脉冲宽度 */
+		return ((int)(( 5000*10000 / get_group_val (p_grp, GROUP_FREQ_VAL))) / 250)  * 250; /* 改变脉冲宽度 */
 }
 
 /* 计算滤波 0 1 None 和 Auto 时候怎么计算 */
@@ -3540,7 +3540,7 @@ void data_1121 (GtkSpinButton *spinbutton, gpointer data) /* 频率 Freq 数值�
 	set_group_val (p_grp, GROUP_FREQ_VAL, (int) ((gtk_spin_button_get_value (spinbutton)) * 1000.0));
 	if (!get_group_val (p_grp, GROUP_PW_POS))
 		set_group_val (p_grp, GROUP_PW_VAL, 
-			((int)((get_group_val (p_grp, GROUP_FREQ_VAL)	) * 2.0) / 250)  * 250) ; /* 改变脉冲宽度 */
+			((int)(( 5000*10000 / get_group_val (p_grp, GROUP_FREQ_VAL))) / 250)  * 250) ; /* 改变脉冲宽度 */
 	/* 发送给硬件 */
 }
 
@@ -3554,7 +3554,7 @@ void data_112 (GtkMenuItem *menuitem, gpointer data) /* 频率 Freq P112 */
 
 	if (!get_group_val (p_grp, GROUP_PW_POS))
 		set_group_val (p_grp, GROUP_PW_VAL, 
-			((int)((get_group_val (p_grp, GROUP_FREQ_VAL)	) * 2.0) / 250)  * 250) ; /* 改变脉冲宽度 */
+			((int)(( 5000*10000 / get_group_val (p_grp, GROUP_FREQ_VAL))) / 250)  * 250) ; /* 改变脉冲宽度 */
 	if (temp != 12)
 	{
 		pp->pos_pos = MENU3_STOP;

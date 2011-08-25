@@ -70,7 +70,7 @@ static void set_config (guint groupid)
 	set_group_val (p_grp, GROUP_FREQ_POS, 0);		/* 0是1Mhz	*/
 	set_group_val (p_grp, GROUP_FREQ_VAL, 1000);
 	set_group_val (p_grp, GROUP_PW_POS, 1);
-	set_group_val (p_grp, GROUP_PW_VAL, 2000);
+	set_group_val (p_grp, GROUP_PW_VAL, 50000);
 
 	GROUP_VAL(prf_pos)		= 3;			/* 0是Atuo Max*/
 	GROUP_VAL(prf)			= 200;			/* 重复频率 60*/
