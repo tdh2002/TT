@@ -4954,7 +4954,7 @@ void draw3_data1(DRAW_UI_P p)
 				case 0: /* start 显示延时 P101 TAN1 等硬件 */
 					switch (TMP(start_reg))
 					{
-						case 0:	tmpf = (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_RANGE) / 1000.0) / (gfloat)(GROUP_VAL(point_qty)); break;
+						case 0:	tmpf = (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_RANGE) / 1000.0) / (gfloat)(get_group_val (p_grp, GROUP_PQTY_VAL)); break;
 						case 1:	tmpf = (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_RANGE) / 1000.0) / 20.0 ; break;
 						case 2:	tmpf = (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_RANGE) / 1000.0) / 10.0 ; break;
 						default:break;
@@ -7671,22 +7671,22 @@ void draw3_data2(DRAW_UI_P p)
 				case 0: /* range范围 P102 TAN1 */
 					switch (TMP(range_reg))
 					{
-						case 0:	tmpf = GROUP_VAL(point_qty) / 100.0; break;
-						case 1:	tmpf = GROUP_VAL(point_qty) / 20.0; break;
-						case 2:	tmpf = GROUP_VAL(point_qty) / 10.0; break;
+						case 0:	tmpf = get_group_val (p_grp, GROUP_PQTY_VAL) / 100.0; break;
+						case 1:	tmpf = get_group_val (p_grp, GROUP_PQTY_VAL) / 20.0; break;
+						case 2:	tmpf = get_group_val (p_grp, GROUP_PQTY_VAL) / 10.0; break;
 						default:break;
 					}
-					tmpfm = GROUP_VAL(point_qty) / 100.0;
+					tmpfm = get_group_val (p_grp, GROUP_PQTY_VAL) / 100.0;
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
 					{
 						max_tmp = (MAX_RANGE_US - get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_START) / 1000.0);
-						max_tmp1 = GROUP_VAL(point_qty) * 20.0;
+						max_tmp1 = get_group_val (p_grp, GROUP_PQTY_VAL) * 20.0;
 						if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 						{
 							if (UNIT_MM == get_unit(pp->p_config))
 							{
 								cur_value = (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_RANGE) / 1000.0) * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0);   /* 当前显示的范围数值mm */
-								lower = (GROUP_VAL(point_qty) / 100.0) * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
+								lower = (get_group_val (p_grp, GROUP_PQTY_VAL) / 100.0) * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
 								upper = MIN(max_tmp, max_tmp1) * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0);
 								step = tmpf * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0);
 								tmpfm = tmpfm * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0);
@@ -7697,7 +7697,7 @@ void draw3_data2(DRAW_UI_P p)
 							else
 							{
 								cur_value = (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_RANGE) / 1000.0) * 0.03937 * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0); /* 当前显示的范围inch */
-								lower =	(GROUP_VAL(point_qty) / 100.0) * 0.03937 * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
+								lower =	(get_group_val (p_grp, GROUP_PQTY_VAL) / 100.0) * 0.03937 * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
 								upper = MIN(max_tmp, max_tmp1) * 0.03937 * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0);
 								step = tmpf * 0.03937 * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
 								tmpfm = tmpfm * 0.03937 * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
@@ -7709,7 +7709,7 @@ void draw3_data2(DRAW_UI_P p)
 						else 
 						{
 							cur_value = get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_RANGE) / 1000.0 ;
-							lower =	GROUP_VAL(point_qty) / 100.0;
+							lower =	get_group_val (p_grp, GROUP_PQTY_VAL) / 100.0;
 							upper = MIN(max_tmp, max_tmp1);										
 							step = tmpf;
 							tmpfm = tmpfm;
@@ -7911,7 +7911,7 @@ void draw3_data2(DRAW_UI_P p)
 							{
 								switch (TMP(agate_start_reg))
 								{
-									case 0:	tmpf = (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_RANGE) / 1000.0) / (gfloat)(GROUP_VAL(point_qty)); break;
+									case 0:	tmpf = (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_RANGE) / 1000.0) / (gfloat)(get_group_val (p_grp, GROUP_PQTY_VAL)); break;
 									case 1:	tmpf = (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_RANGE) / 1000.0) / 20.0 ; break;
 									case 2:	tmpf = (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_RANGE) / 1000.0) / 10.0 ; break;
 									case 3:	tmpf = (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_RANGE) / 1000.0) / 4.0 ; break;
@@ -10688,7 +10688,7 @@ void draw3_data3(DRAW_UI_P p)
 					{
 						if (pp->mark_pop_change)
 						{
-							cur_value = GROUP_VAL(point_qty) ;
+							cur_value = get_group_val (p_grp, GROUP_PQTY_VAL) ;
 							lower =	32.0;
 //							upper =	8192.0;	/* 最大值需要计算 TAN1 */
 							upper = (gfloat) (get_max_point_qty());
@@ -10700,24 +10700,24 @@ void draw3_data3(DRAW_UI_P p)
 						}
 						else
 						{
-							if (GROUP_VAL(point_qty_pos) == 4)	/* 自定义数值时候按下显示数值 */
+							if (get_group_val (p_grp, GROUP_PQTY_POS) == 4)	/* 自定义数值时候按下显示数值 */
 							{
 								/* 更新当前增益值显示 */
-								str = g_strdup_printf ("%d", GROUP_VAL(point_qty));
+								str = g_strdup_printf ("%d", get_group_val (p_grp, GROUP_PQTY_VAL));
 								draw3_pop_tt (data_143, NULL, 
 										str, menu_content + POINT_QTY, 5, 3, 
-										GROUP_VAL(point_qty_pos), 0);
+										get_group_val (p_grp, GROUP_PQTY_POS), 0);
 								g_free(str);
 							}
 							else	/* Auto ==时候 显示当前选项 */
 								draw3_pop_tt (data_143, NULL, 
-										menu_content[POINT_QTY + GROUP_VAL(point_qty_pos)],
-										menu_content + POINT_QTY, 5, 3, GROUP_VAL(point_qty_pos), 0);
+										menu_content[POINT_QTY + get_group_val (p_grp, GROUP_PQTY_POS)],
+										menu_content + POINT_QTY, 5, 3, get_group_val (p_grp, GROUP_PQTY_POS), 0);
 						}
 					}
 					else 
 					{
-						cur_value = GROUP_VAL(point_qty) ;
+						cur_value = get_group_val (p_grp, GROUP_PQTY_VAL) ;
 						unit = UNIT_NULL;
 						pos = 3;
 						digit = 0;
@@ -10777,7 +10777,7 @@ void draw3_data3(DRAW_UI_P p)
 							{
 								switch (TMP(gate_width_reg))
 								{
-									case 0:	tmpf = (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_RANGE) / 1000.0) / (gfloat)(GROUP_VAL(point_qty)); break;
+									case 0:	tmpf = (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_RANGE) / 1000.0) / (gfloat)(get_group_val (p_grp, GROUP_PQTY_VAL)); break;
 									case 1:	tmpf = (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_RANGE) / 1000.0) / 20.0 ; break;
 									case 2:	tmpf = (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_RANGE) / 1000.0) / 10.0 ; break;
 									case 3:	tmpf = (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_RANGE) / 1000.0) / 4.0 ; break;
@@ -12621,7 +12621,7 @@ void draw3_data4(DRAW_UI_P p)
 						{
 							switch (TMP(start_reg))
 							{
-								case 0:	tmpf = (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_RANGE) / 1000.0) / (gfloat)(GROUP_VAL(point_qty)); break;
+								case 0:	tmpf = (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_RANGE) / 1000.0) / (gfloat)(get_group_val (p_grp, GROUP_PQTY_VAL)); break;
 								case 1:	tmpf = (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_RANGE) / 1000.0) / 20.0 ; break;
 								case 2:	tmpf = (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_RANGE) / 1000.0) / 10.0 ; break;
 								default:break;
@@ -13202,7 +13202,7 @@ void draw3_data4(DRAW_UI_P p)
 					gtk_widget_set_sensitive (pp->eventbox30[4], FALSE);
 					gtk_widget_set_sensitive (pp->eventbox31[4], FALSE);
 
-					cur_value = (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_RANGE) / 10.0) / GROUP_VAL(point_qty);
+					cur_value = (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_RANGE) / 10.0) / get_group_val (p_grp, GROUP_PQTY_VAL);
 					digit = 0;
 					pos = 4;
 					unit = UNIT_NULL;
@@ -14429,22 +14429,22 @@ void draw3_data5(DRAW_UI_P p)
 							{
 								switch (TMP(range_reg))
 								{
-									case 0:	tmpf = GROUP_VAL(point_qty) / 100.0; break;
-									case 1:	tmpf = GROUP_VAL(point_qty) / 20.0; break;
-									case 2:	tmpf = GROUP_VAL(point_qty) / 10.0; break;
+									case 0:	tmpf = get_group_val (p_grp, GROUP_PQTY_VAL) / 100.0; break;
+									case 1:	tmpf = get_group_val (p_grp, GROUP_PQTY_VAL) / 20.0; break;
+									case 2:	tmpf = get_group_val (p_grp, GROUP_PQTY_VAL) / 10.0; break;
 									default:break;
 								}
-								tmpfm = GROUP_VAL(point_qty) / 100.0;
+								tmpfm = get_group_val (p_grp, GROUP_PQTY_VAL) / 100.0;
 								if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 5))
 								{
 									max_tmp = (MAX_RANGE_US - get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_START) / 1000.0);
-									max_tmp1 = GROUP_VAL(point_qty) * 20.0;
+									max_tmp1 = get_group_val (p_grp, GROUP_PQTY_VAL) * 20.0;
 									if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 									{
 										if (UNIT_MM == get_unit(pp->p_config))
 										{
 											cur_value = (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_RANGE) / 1000.0) * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0);   /* 当前显示的范围数值mm */
-											lower = (GROUP_VAL(point_qty) / 100.0) * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
+											lower = (get_group_val (p_grp, GROUP_PQTY_VAL) / 100.0) * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
 											upper = MIN(max_tmp, max_tmp1) * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0);
 											step = tmpf * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0);
 											tmpfm = tmpfm * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0);
@@ -14455,7 +14455,7 @@ void draw3_data5(DRAW_UI_P p)
 										else
 										{
 											cur_value = (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_RANGE) / 1000.0) * 0.03937 * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0); /* 当前显示的范围inch */
-											lower =	(GROUP_VAL(point_qty) / 100.0) * 0.03937 * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
+											lower =	(get_group_val (p_grp, GROUP_PQTY_VAL) / 100.0) * 0.03937 * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
 											upper = MIN(max_tmp, max_tmp1) * 0.03937 * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0);
 											step = tmpf * 0.03937 * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
 											tmpfm = tmpfm * 0.03937 * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
@@ -14467,7 +14467,7 @@ void draw3_data5(DRAW_UI_P p)
 									else 
 									{
 										cur_value = get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_RANGE) / 1000.0 ;
-										lower =	GROUP_VAL(point_qty) / 100.0;
+										lower =	get_group_val (p_grp, GROUP_PQTY_VAL) / 100.0;
 										upper = MIN(max_tmp, max_tmp1);										
 										step = tmpf;
 										tmpfm = tmpfm;
@@ -16427,6 +16427,9 @@ static void draw_frame_thread(void)
 	gint i, j, k, offset, offset1;
 	guint temp2 = (pp->p_beam_data);
     unsigned int BeamInfoHeader;
+	gint grp = get_current_group (pp->p_config), tmp_qty;
+	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
+
 	while (1)
 	{
 //		while(*DMA_MARK != 0)
@@ -16439,33 +16442,35 @@ static void draw_frame_thread(void)
 			{  
 				for (offset = 0, offset1 = 0, k = 0 ; k < i; k++)
 				{
-					offset += (GROUP_VAL_POS(k, point_qty) + 32) * TMP(beam_qty[k]);
+					p_grp = get_group_by_id (pp->p_config, k);
+					offset += (get_group_val (p_grp, GROUP_PQTY_VAL) + 32) * TMP(beam_qty[k]);
 					offset1 += TMP(beam_qty[k]);
 				}
+				p_grp = get_group_by_id (pp->p_config, i);
+				tmp_qty = get_group_val (p_grp, GROUP_PQTY_VAL);
 				memcpy (TMP(measure_data[offset1 + j]), (void *)(temp2 + offset +
-							(GROUP_VAL_POS(i, point_qty) + 32) * j + GROUP_VAL_POS(i, point_qty)), 32);
+							(tmp_qty + 32) * j + tmp_qty), 32);
 
 				BeamInfoHeader = *((int*)(TMP(measure_data[offset1+j])));
 				//BeamInfoHeader &= 0x1fff ;
 				//printf("Beam info header is %x\n",BeamInfoHeader );
 				
-				if (GROUP_VAL_POS(i, point_qty) <= TMP(a_scan_dot_qty))
+				if (tmp_qty <= TMP(a_scan_dot_qty))
 				{
 					/* 只插值当前显示的A扫描 其余不插值 */
 					interpolation_data (
 							(DOT_TYPE *)(temp2 + offset +
-								(GROUP_VAL_POS(i, point_qty) + 32) * j),
+								(tmp_qty + 32) * j),
 							TMP(scan_data[i] + TMP(a_scan_dot_qty) * j), 
-							GROUP_VAL_POS(i, point_qty),
-							TMP(a_scan_dot_qty));
+							tmp_qty, TMP(a_scan_dot_qty));
 				}
-				else if (GROUP_VAL_POS(i, point_qty) > TMP(a_scan_dot_qty))
+				else if (tmp_qty > TMP(a_scan_dot_qty))
 				{
 					compress_data (
 							(DOT_TYPE *)(temp2 + offset +
-								(GROUP_VAL_POS(i, point_qty) + 32) * j),
+								(tmp_qty + 32) * j),
 							TMP(scan_data[i] + TMP(a_scan_dot_qty) * j), 
-							GROUP_VAL_POS(i, point_qty),
+							tmp_qty,
 							TMP(a_scan_dot_qty),
 							get_group_val (get_group_by_id (pp->p_config, i), GROUP_RECTIFIER));
 				}

@@ -1009,7 +1009,8 @@ void report_build_setup(char *file_name,int group)
 
 	fprintf(fp,"<TR>\n");
 	fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">N/A</TD>\n");
-	fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%f</TD>\n",(get_group_val (get_group_by_id (pp->p_config, group), GROUP_RANGE) / 10.0) / GROUP_VAL_POS(group,point_qty));
+	fprintf(fp,"    <TD CLASS = \"GENERAL_CELL\">%f</TD>\n",
+			(get_group_val (get_group_by_id (pp->p_config, group), GROUP_RANGE) / 10.0) / get_group_val (p_grp, GROUP_PQTY_POS));
     fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">%s</TD>\n",
 			menu_content[ OFF_ON + get_group_val (get_group_by_id(pp->p_config, grp), GROUP_VIDEO_FILTER)]);
     fprintf(fp,"	<TD CLASS = \"GENERAL_CELL\">N/A</TD>\n");//Pretrig    

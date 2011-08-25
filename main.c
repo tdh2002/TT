@@ -73,9 +73,10 @@ static void set_config (guint groupid)
 	set_group_val (p_grp, GROUP_PW_VAL, 2000);
 	set_group_val (p_grp, GROUP_PRF_POS, 3);
 	set_group_val (p_grp, GROUP_PRF_VAL, 200);
+	set_group_val (p_grp, GROUP_PQTY_POS, 0);		/* 0是auto */
+	set_group_val (p_grp, GROUP_PQTY_VAL, 605);
 	
 
-	GROUP_VAL(point_qty)	= 615;			/* 0是Auto */
 	GROUP_VAL(sum_gain)	= 10;			/* 0是Auto */
 	GROUP_VAL(gate_pos)	= GATE_A;		  
 	GROUP_VAL(gate[GROUP_VAL(gate_pos)].start) = 0;  
@@ -399,7 +400,9 @@ int main (int argc, char *argv[])
 	TMP(beam_qty[6]) = 0;
 	TMP(beam_qty[7]) = 0;
 
-	TMP(range_step_min) = ((gint)(GROUP_VAL(point_qty) * 10)+ 5) / 10 * 10;
+	TMP(range_step_min) = ((gint)(
+				get_group_val (	get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_PQTY_VAL)
+				* 10)+ 5) / 10 * 10;
 
 #if ARM
 	init_fb ();					
@@ -429,7 +432,10 @@ int main (int argc, char *argv[])
 #endif
 
 	for (i = 0; i < setup_MAX_GROUP_QTY; i++)
-		TMP(total_point_qty) += TMP(beam_qty[i]) * (GROUP_VAL_POS (i, point_qty) + 32);
+	{
+		TMP(total_point_qty) += TMP(beam_qty[i]) * (
+					get_group_val (get_group_by_id (pp->p_config, i), GROUP_PQTY_VAL) + 32);
+	}
 
 
 	gtk_widget_show (window);
@@ -563,8 +569,8 @@ void init_group_spi (guint group)
 	TMP(group_spi[group]).rectifier		= 
 		get_group_val (get_group_by_id (pp->p_config, group), GROUP_RECTIFIER);
 	TMP(group_spi[group]).compress_rato	= 
-		((get_group_val (get_group_by_id (pp->p_config, group), GROUP_RANGE) / 10.0) / GROUP_VAL_POS(group, point_qty)) > 1 ? 
-		((get_group_val (get_group_by_id (pp->p_config, group), GROUP_RANGE) / 10.0) / GROUP_VAL_POS(group, point_qty)) : 1;
+		((get_group_val (get_group_by_id (pp->p_config, group), GROUP_RANGE) / 10.0) / get_group_val (p_grp, GROUP_PQTY_POS)) > 1 ? 
+		((get_group_val (get_group_by_id (pp->p_config, group), GROUP_RANGE) / 10.0) / get_group_val (p_grp, GROUP_PQTY_POS)) : 1;
 	TMP(group_spi[group]).gain			= get_group_val (get_group_by_id (pp->p_config, group), GROUP_GAIN) / 10.0;
 
 	TMP(group_spi[group]).tcg_point_qty	= 0;		/* 未完成 */
@@ -586,7 +592,7 @@ void init_group_spi (guint group)
 		get_group_val (get_group_by_id (pp->p_config, group), GROUP_RANGE) / 10;		
 
 	//TMP(group_spi[group]).beam_qty		= TMP(beam_qty[group]) - 1; 
-	TMP(group_spi[group]).point_qty  = GROUP_VAL(point_qty);
+	TMP(group_spi[group]).point_qty  = get_group_val (p_grp, GROUP_PQTY_VAL);
 	TMP(group_spi[group]).sample_offset	= 0;
 
 	tt[0] = (GROUP_VAL_POS(group, gate[0].start) +	GROUP_VAL_POS (group, gate[0].width));

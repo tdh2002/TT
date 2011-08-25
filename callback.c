@@ -577,36 +577,60 @@ guint get_sum_gain ()
 guint get_max_point_qty()
 {
 	guint i, point_qty = 0, max_point_qty;
+	gint grp = get_current_group (pp->p_config);
+	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
+
 	for (i = 0; i < setup_MAX_GROUP_QTY; i++)
-		point_qty += TMP(beam_qty[i]) * (GROUP_VAL_POS (i, point_qty) + 32);
-	max_point_qty = 192000 - point_qty + TMP(beam_qty[get_current_group(pp->p_config)]) * (GROUP_VAL (point_qty) + 128);
-	return MIN(((max_point_qty / TMP(beam_qty[get_current_group(pp->p_config)])) - 32), 8192);
+	{
+		p_grp = get_group_by_id (pp->p_config, i);
+		point_qty += TMP(beam_qty[i]) * (get_group_val (p_grp, GROUP_PQTY_VAL) + 32);
+	}
+	max_point_qty = 192000 - point_qty +
+		TMP(beam_qty[grp]) * (get_group_val (p_grp, GROUP_PQTY_VAL) + 128);
+	return MIN(((max_point_qty / TMP(beam_qty[grp])) - 32), 8192);
 }
 
 /* 取得压缩点的数量 */
 guint get_point_qty ()
 {
-	if (GROUP_VAL(point_qty_pos) == 4)
-		return GROUP_VAL(point_qty);
+	gint grp = get_current_group (pp->p_config);
+	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
+
+	if (get_group_val (p_grp, GROUP_PQTY_POS) == 4)
+		return get_group_val (p_grp, GROUP_PQTY_VAL);
 	else 
 	{
-		switch (GROUP_VAL(point_qty_pos))
+		switch (get_group_val (p_grp, GROUP_PQTY_POS))
 		{
-			case 0:GROUP_VAL(point_qty) = MIN(get_max_point_qty(), 605);break;
-			case 1:GROUP_VAL(point_qty) = MIN(get_max_point_qty(), 160);break;
-			case 2:GROUP_VAL(point_qty) = MIN(get_max_point_qty(), 320);break;
-			case 3:GROUP_VAL(point_qty) = MIN(get_max_point_qty(), 640);break;
+			case 0:
+				set_group_val (p_grp, GROUP_PQTY_VAL, MIN(get_max_point_qty(), 605));
+				break;
+			case 1:
+				set_group_val (p_grp, GROUP_PQTY_VAL, MIN(get_max_point_qty(), 160));
+				break;
+			case 2:
+				set_group_val (p_grp, GROUP_PQTY_VAL, MIN(get_max_point_qty(), 320));
+				break;
+			case 3:
+				set_group_val (p_grp, GROUP_PQTY_VAL, MIN(get_max_point_qty(), 640));
+				break;
 			default:break;
 		}
 	}
-	return GROUP_VAL(point_qty);
+	return get_group_val (p_grp, GROUP_PQTY_VAL);
 }
 
 guint get_max_prf()
 {
 	guint i, point_qty = 0 ;
+	gint grp = get_current_group (pp->p_config);
+	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
+
 	for (i = 0; i < setup_MAX_GROUP_QTY; i++)
-		point_qty += TMP(beam_qty[i]) * (GROUP_VAL_POS (i, point_qty) + 32);
+	{
+		p_grp = get_group_by_id (pp->p_config, i);
+		point_qty += TMP(beam_qty[i]) * (get_group_val (p_grp, GROUP_PQTY_VAL) + 32);
+	}
 //	return ((192000 / (point_qty + 32)) * 25);
 	return 400;
 }
@@ -647,7 +671,8 @@ guint get_pw ()
 	if (get_group_val (p_grp, GROUP_PW_POS))
 		return (get_group_val (p_grp, GROUP_PW_VAL));
 	else
-		return ((guint)(get_group_val (p_grp, GROUP_FREQ_VAL) * 2.0) / 250)  * 250 ; /* 改变脉冲宽度 */
+		return 
+			((int)(( 50000*1000 / get_group_val (p_grp, GROUP_FREQ_VAL))) / 250)  * 250; /* 改变脉冲宽度 */
 }
 
 /* 计算滤波 0 1 None 和 Auto 时候怎么计算 */
@@ -3409,7 +3434,7 @@ void data_102 (GtkSpinButton *spinbutton, gpointer data) /*Range 范围 P102 */
 		BottomAngle = MAX(fabs(minAngle),fabs(maxAngle));
 //	gint range = ((gint)(gtk_spin_button_get_value(spinbutton) * 1000) + 5) / 10 * 10;
 
-//	((GROUP_VAL(point_qty) * 100) + 5) / 10 * 10;
+//	((get_group_val (p_grp, GROUP_PQTY_VAL) * 100) + 5) / 10 * 10;
 
 	if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 	{
@@ -3427,12 +3452,12 @@ void data_102 (GtkSpinButton *spinbutton, gpointer data) /*Range 范围 P102 */
 				gtk_spin_button_get_value (spinbutton) * 1000); 
 
 	set_group_val (p_grp, GROUP_RANGE,
-			rounding(0, get_group_val (p_grp, GROUP_RANGE), GROUP_VAL(point_qty) * 10));
+			rounding(0, get_group_val (p_grp, GROUP_RANGE), get_group_val (p_grp, GROUP_PQTY_VAL) * 10));
 
 	draw_area_all ();
 	TMP(group_spi[grp]).compress_rato	= 
-		((get_group_val (p_grp, GROUP_RANGE) / 10.0) / GROUP_VAL_POS(grp, point_qty)) > 1 ? 
-		((get_group_val (p_grp, GROUP_RANGE) / 10.0) / GROUP_VAL_POS(grp, point_qty)) : 1;
+		((get_group_val (p_grp, GROUP_RANGE) / 10.0) / get_group_val (p_grp, GROUP_PQTY_POS)) > 1 ? 
+		((get_group_val (p_grp, GROUP_RANGE) / 10.0) / get_group_val (p_grp, GROUP_PQTY_POS)) : 1;
 	TMP(group_spi[grp]).sample_range	= TMP(group_spi[grp]).sample_start + 
 		get_group_val (p_grp, GROUP_RANGE) / 10;		
 	tt[0] = (GROUP_VAL_POS(grp, gate[0].start) + GROUP_VAL_POS (grp, gate[0].width));
@@ -3545,15 +3570,19 @@ void data_1121 (GtkSpinButton *spinbutton, gpointer data) /* 频率 Freq 数值�
 
 void data_112 (GtkMenuItem *menuitem, gpointer data) /* 频率 Freq P112 */
 {
-	guint temp = GPOINTER_TO_UINT (data);
+	guint temp = GPOINTER_TO_UINT (data), tmp1;
 	gint grp = get_current_group(pp->p_config);
 	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
 	set_group_val (p_grp, GROUP_FREQ_POS, (int) (GPOINTER_TO_UINT (data)));
 	set_group_val (p_grp, GROUP_FREQ_VAL, get_freq());
 
 	if (!get_group_val (p_grp, GROUP_PW_POS))
+	{
+		tmp1 =	((int)(( 50000*1000 / get_group_val (p_grp, GROUP_FREQ_VAL))) / 250)  * 250 ; /* 改变脉冲宽度 */
 		set_group_val (p_grp, GROUP_PW_VAL, 
-			((int)((get_group_val (p_grp, GROUP_FREQ_VAL)	) * 2.0) / 250)  * 250) ; /* 改变脉冲宽度 */
+			(tmp1 < 3000) ? 3000 :tmp1);
+
+	}
 	if (temp != 12)
 	{
 		pp->pos_pos = MENU3_STOP;
@@ -3601,7 +3630,7 @@ void data_114 (GtkMenuItem *menuitem, gpointer data) /* PW */
 	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
 
 	set_group_val (p_grp, GROUP_PW_POS, (int) temp);
-	set_group_val (p_grp, GROUP_PW_VAL, get_pw());
+	set_group_val (p_grp, GROUP_PW_VAL, (get_pw() < 3000) ? 3000 : get_pw());
 
 	g_print ("pw_pos=%d\n ", get_group_val (p_grp, GROUP_PW_POS));
 	if (temp == AUTO_SET)
@@ -3837,22 +3866,22 @@ void data_1431 (GtkSpinButton *spinbutton, gpointer data) /* point qty P143 */
 	gint tt[4];
 	gint temp_prf;
 	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
-	GROUP_VAL(point_qty) =  (guint)(gtk_spin_button_get_value (spinbutton));
+	set_group_val (p_grp, GROUP_PQTY_VAL, (int)(gtk_spin_button_get_value (spinbutton))); 
 	TMP(group_spi[grp]).point_qty = get_point_qty();
 
 	get_prf();
 
-	if ((GROUP_VAL(point_qty) * 10) >= (get_group_val (p_grp, GROUP_RANGE)))	
+	if ((get_group_val (p_grp, GROUP_PQTY_VAL) * 10) >= (get_group_val (p_grp, GROUP_RANGE)))	
 		set_group_val (p_grp, GROUP_RANGE,
-				GROUP_VAL(point_qty) * 10);
+				get_group_val (p_grp, GROUP_PQTY_VAL) * 10);
 	else
 		set_group_val (p_grp, GROUP_RANGE,
-				rounding(0, get_group_val (p_grp, GROUP_RANGE), GROUP_VAL(point_qty) * 10));
+				rounding(0, get_group_val (p_grp, GROUP_RANGE), get_group_val (p_grp, GROUP_PQTY_VAL) * 10));
 
 
 	TMP(group_spi[grp]).compress_rato	= 
-		((get_group_val (p_grp, GROUP_RANGE) / 10.0) / GROUP_VAL_POS(grp, point_qty)) > 1 ? 
-		((get_group_val (p_grp, GROUP_RANGE) / 10.0) / GROUP_VAL_POS(grp, point_qty)) : 1;
+		((get_group_val (p_grp, GROUP_RANGE) / 10.0) / get_group_val (p_grp, GROUP_PQTY_POS)) > 1 ? 
+		((get_group_val (p_grp, GROUP_RANGE) / 10.0) / get_group_val (p_grp, GROUP_PQTY_POS)) : 1;
 	TMP(group_spi[grp]).sample_range	= TMP(group_spi[grp]).sample_start + 
 		get_group_val (p_grp, GROUP_RANGE) / 10;		
 	tt[0] = (GROUP_VAL_POS(grp, gate[0].start) + GROUP_VAL_POS (grp, gate[0].width));
@@ -3877,20 +3906,20 @@ void data_143 (GtkMenuItem *menuitem, gpointer data) /* point qty P143 */
 	gint tt[4];
 	gint temp_prf;
 	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
-	GROUP_VAL(point_qty_pos) = temp;
-	GROUP_VAL(point_qty) = get_point_qty();
-	TMP(group_spi[grp]).point_qty = GROUP_VAL(point_qty);
+	set_group_val (p_grp, GROUP_PQTY_POS, (int)(temp));
+	set_group_val (p_grp, GROUP_PQTY_VAL, get_point_qty());
+	TMP(group_spi[grp]).point_qty = get_group_val (p_grp, GROUP_PQTY_VAL);
 	get_prf();
-	if ((GROUP_VAL(point_qty) * 10) > (get_group_val (p_grp, GROUP_RANGE)))	
-		set_group_val (p_grp, GROUP_RANGE, GROUP_VAL(point_qty) * 10);
+	if ((get_group_val (p_grp, GROUP_PQTY_VAL) * 10) > (get_group_val (p_grp, GROUP_RANGE)))	
+		set_group_val (p_grp, GROUP_RANGE, get_group_val (p_grp, GROUP_PQTY_VAL) * 10);
 	else
 		set_group_val (p_grp, GROUP_RANGE,
-				rounding(0, get_group_val (p_grp, GROUP_RANGE), GROUP_VAL(point_qty) * 10));
+				rounding(0, get_group_val (p_grp, GROUP_RANGE), get_group_val (p_grp, GROUP_PQTY_VAL) * 10));
 	if (temp != 4)
 	{
 		MENU_STATUS = MENU3_STOP;
 		draw_menu3(0, NULL);
-		gtk_spin_button_set_value (GTK_SPIN_BUTTON (pp->sbutton[3]), GROUP_VAL(point_qty));
+		gtk_spin_button_set_value (GTK_SPIN_BUTTON (pp->sbutton[3]), get_group_val (p_grp, GROUP_PQTY_VAL));
 	}
 	else
 	{
@@ -3901,8 +3930,8 @@ void data_143 (GtkMenuItem *menuitem, gpointer data) /* point qty P143 */
 	}
 
 	TMP(group_spi[grp]).compress_rato	= 
-		((get_group_val (p_grp, GROUP_RANGE) / 10.0) / GROUP_VAL_POS(grp, point_qty)) > 1 ? 
-		((get_group_val (p_grp, GROUP_RANGE) / 10.0) / GROUP_VAL_POS(grp, point_qty)) : 1;
+		((get_group_val (p_grp, GROUP_RANGE) / 10.0) / get_group_val (p_grp, GROUP_PQTY_POS)) > 1 ? 
+		((get_group_val (p_grp, GROUP_RANGE) / 10.0) / get_group_val (p_grp, GROUP_PQTY_POS)) : 1;
 	TMP(group_spi[grp]).sample_range	= TMP(group_spi[grp]).sample_start + 
 		get_group_val (p_grp, GROUP_RANGE) / 10;		
 	tt[0] = (GROUP_VAL_POS(grp, gate[0].start) + GROUP_VAL_POS (grp, gate[0].width));
@@ -5672,7 +5701,7 @@ void generate_focallaw(int grp)
 	TMP(beam_num[get_current_group(pp->p_config)]) = 0;
 
 	temp_prf = TMP(beam_qty[get_current_group(pp->p_config)]) * get_group_val (p_grp, GROUP_PRF_VAL);
-	TMP(group_spi[grp]).point_qty = GROUP_VAL(point_qty);
+	TMP(group_spi[grp]).point_qty = get_group_val (p_grp, GROUP_PQTY_VAL);
 	TMP(group_spi[grp]).idel_time		= 
 		100000000 / (temp_prf / (10)) - 2048 - TMP(group_spi[grp]).rx_time;
 /*		100000000 / (get_group_val (p_grp, GROUP_PRF_VAL) / 10) - 2048 - TMP(group_spi[grp]).rx_time;*/

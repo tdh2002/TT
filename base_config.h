@@ -35,6 +35,8 @@
 #define GROUP_PW_POS		0x1012
 #define GROUP_PRF_VAL		0x1013
 #define GROUP_PRF_POS		0x1014
+#define GROUP_PQTY_VAL		0x1015
+#define GROUP_PQTY_POS		0x1016
 
 /* 闸门信息 */
 typedef struct _gate_info
@@ -325,10 +327,10 @@ struct _Group
 
 	int		prf1;			/* 重复频率 1-20000Hz 取值为10~200000 */
 
-	char	point_qty_pos;	/* 点个数 位置 */
+	char	point_qty_pos1;	/* 点个数 位置 */
 	char	sum_gain_pos;	/**/
-	unsigned char	gate_pos;		/* A , B , I 当前修改的是哪个闸门 */
-	unsigned short	point_qty;		/* 点个数 */
+	unsigned	char	gate_pos;		/* A , B , I 当前修改的是哪个闸门 */
+	short	point_qty1;		/* 点个数 */
 	unsigned short	sum_gain;
 	unsigned short	gain_offset;
 
