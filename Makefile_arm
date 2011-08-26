@@ -1,12 +1,9 @@
-#export PATH=/stuff/bitbake/bin/tmp/sysroots/i686-linux/usr/armv7a/bin:$(PATH)	
 
+PATH=/stuff/tmp/sysroots/i686-linux/usr/armv7a/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games
 
-CC = arm-angstrom-linux-gnueabi-gcc
-#AR = arm-angstrom-linux-gnueabi-ar
-#LD = arm-angstrom-linux-gnueabi-ld
+CC=arm-angstrom-linux-gnueabi-gcc
 
-
-CFLAGS =   -D_REENTRANT -DARM -pthread \
+CFLAGS=-D_REENTRANT -DARM -pthread \
 	   -I/stuff/tmp/sysroots/armv7a-angstrom-linux-gnueabi/usr/include/libxml2 \
 	   -I/stuff/tmp/sysroots/armv7a-angstrom-linux-gnueabi/usr/include/webkit-1.0 \
 	   -I/stuff/tmp/sysroots/armv7a-angstrom-linux-gnueabi/usr/include/libsoup-2.4 \
@@ -21,14 +18,14 @@ CFLAGS =   -D_REENTRANT -DARM -pthread \
 	   -I/stuff/tmp/sysroots/armv7a-angstrom-linux-gnueabi/usr/include/libpng12 \
 	   -I/stuff/tmp/sysroots/armv7a-angstrom-linux-gnueabi/usr/include/glib-2.0 \
 	   -I/stuff/tmp/sysroots/armv7a-angstrom-linux-gnueabi/usr/lib/glib-2.0/include  \
-       -pthread -lgdk-x11-2.0 -lgtk-x11-2.0 -latk-1.0 -lpangoft2-1.0 -lgdk_pixbuf-2.0 \
+	   -pthread -lgtk-x11-2.0 -lgdk-x11-2.0 -latk-1.0 -lpangoft2-1.0 -lgdk_pixbuf-2.0 \
 	   -lm -lpangocairo-1.0 -lcairo -lgio-2.0 -lpango-1.0 -lfreetype -lfontconfig \
 	   -lgobject-2.0 -lgmodule-2.0 -lgthread-2.0 -lrt -lglib-2.0 -lwebkitgtk-1.0 \
 	   -lsoup-2.4 -lxml2 -lfakekey 
-         
+
 main_arm: main.c draw_dialog.c drawui.c callback.c content_en.c drawfb.c file_op.c base_config.c spi_d.c draw_dialog.h base_config.h file_op.h drawui.h base.h language.h drawfb.h spi_d.h
-	$(CC) $(PRE_ARGS) main.c draw_dialog.c drawui.c callback.c content_en.c drawfb.c file_op.c base_config.c spi_d.c focallaw_arm.o -o main_arm $(CFLAGS) -Os -Wall
+	$(CC) main.c draw_dialog.c drawui.c callback.c content_en.c drawfb.c file_op.c base_config.c spi_d.c focallaw_arm.o -o main_arm $(CFLAGS) -Wall -g
 
 .PHONY:clean
-clean:
-	   rm -f *.o main_arm
+clean: 
+	rm -f main_arm

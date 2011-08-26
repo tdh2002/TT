@@ -11625,7 +11625,6 @@ void draw3_data3(DRAW_UI_P p)
 							g_sprintf (temp,"%s", con2_p[5][0][6]);
 							gtk_label_set_text (GTK_LABEL (pp->label3[3]), temp);	
 						}
-
 						gtk_widget_set_sensitive(pp->eventbox30[3],FALSE);
 						gtk_widget_set_sensitive(pp->eventbox31[3],FALSE);
 					}
@@ -15014,7 +15013,7 @@ void draw3_data5(DRAW_UI_P p)
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 5))
 						{
 							cur_value = GROUP_VAL(gain_offset)/10.0;
-							lower = 1.0;
+							lower = 0.0;
 							upper = 80.0;
 							step = tmpf;
 							digit = 1;

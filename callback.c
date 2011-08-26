@@ -1077,7 +1077,11 @@ void b3_fun1(gpointer p)
 								{
 									case 0://Velocity
 										((pp->cstart_qty) < 6) ? (pp->cstart_qty) ++ : ((pp->cstart_qty) = 1);
-										if((pp->cstart_qty) == 4)
+										if((pp->cstart_qty) == 2)
+										{
+											//点击start进入A-
+										}	
+										else if((pp->cstart_qty) == 4)
 										{
 											//获取闸门1信息
 											switch(pp->echotype_pos)
@@ -1153,35 +1157,18 @@ void b3_fun1(gpointer p)
 										}
 										break;
 									case 2://Sensitivity
-										//((pp->cstart_qty) < 6) ? (pp->cstart_qty) ++ : ((pp->cstart_qty) = 1);
-										if((pp->cstart_qty)<5)
+										((pp->cstart_qty) < 6) ? (pp->cstart_qty) ++ : ((pp->cstart_qty) = 1);
+										if((pp->cstart_qty) == 2)
 										{
-											pp->cstart_qty ++;
-										}
-										else if((pp->cstart_qty) == 5)
-										{
-											pp->cstart_qty ++;
-											//apply 
-										}
+											//点击start进入A-
+										}	
 										else if((pp->cstart_qty) == 6)
 										{
 											//Accept 所做的事情就是把校准之后的值传出去
-											//
-											pp->cstart_qty =1;
 										}
 										break;
 									case 3://TCG
-										//((pp->cstart_qty) < 5) ? (pp->cstart_qty) ++ : ((pp->cstart_qty) = 1);
-										if((pp->cstart_qty)<5)
-										{
-											pp->cstart_qty ++;
-										}
-										else if((pp->cstart_qty) == 5)
-										{
-											//Add point
-											//
-											pp->cstart_qty =1;
-										}
+										((pp->cstart_qty) < 5) ? (pp->cstart_qty) ++ : ((pp->cstart_qty) = 1);
 										break;
 									default:break;
 								}
@@ -2018,9 +2005,10 @@ void b3_fun4(gpointer p)
 							case 1://wedge delay
 								cba_ultrasound_wedgedelay();
 								break;
-							case 2:
-								cba_ultrasound_sensitivity();
-								break;//sensitivity
+							case 2://sensitivity
+								if (pp->cstart_qty == 6)//Calibrate
+										cba_ultrasound_sensitivity();
+								break;
 							case 3:
 								break;
 					   }
@@ -2621,6 +2609,7 @@ static int handler_key(guint keyval, gpointer data)
 			GROUP_VAL(gain_offset) = pp->tmp_gain_off[ TMP(beam_num[get_current_group(pp->p_config)]) ];//待更新
 			draw_menu3(0, NULL);
 			draw_area_all ();
+			send_focal_spi(get_current_group(pp->p_config));
 			break;
 
 		case GDK_KP_Divide:	/* 擦除 */			
@@ -3821,6 +3810,7 @@ void data_135 (GtkSpinButton *spinbutton, gpointer data) /*gain offset */
 	GROUP_VAL(gain_offset) =  pp->tmp_gain_off[ index ]; 
 
 	/*发送给硬件*/
+	send_focal_spi(get_current_group(pp->p_config));
 }
 
 void data_1431 (GtkSpinButton *spinbutton, gpointer data) /* point qty P143 */
@@ -5801,7 +5791,7 @@ static int thread_set_DB_eighty_percent(gpointer data)
 	{
 		if(fabs(DO_NOT_USE_CCFG(measure_data[index]).a_height-160) <=3 )  break  ;
 		scale =  160.0/DO_NOT_USE_CCFG(measure_data[index]).a_height  ;
-		GROUP_VAL (gain) =  GROUP_VAL (gain) * scale ;
+		GROUP_VAL (gain) =  GROUP_VAL (gain) + (short)(log10(scale)*100) ;
 		TMP(group_spi[grp]).gain = GROUP_VAL (gain) / 10;
 		write_group_data (&TMP(group_spi[grp]), grp);
 		i--;

@@ -343,6 +343,7 @@ int main (int argc, char *argv[])
 
 	pp = p_ui;
 	set_init_para();//
+	gint grp = get_current_group(pp->p_config);
 	p_ui->p_tmp_config->fd_config = open ("default.cfg", O_RDWR | O_CREAT, 0644);
 	if (p_ui->p_tmp_config->fd_config < 0)
 		g_print("error open config file\n");
@@ -351,8 +352,14 @@ int main (int argc, char *argv[])
 		lseek( TMP(fd_config),0,SEEK_SET );
 		i = read (TMP(fd_config), pp->p_config, sizeof(CONFIG));
 		if(i == 0)
+		{
+			g_print("creat default.cfg successfully\n");
 			set_config(0);
-		g_print("open default.cfg successfully\n");
+			read_probe_file("source/system/Model/Probe/PA/DOPPLER/DOPPLER.opp",&pp->p_config->group[grp].probe);
+			read_wedge_file("source/system/Model/Wedge/PA/OTHER/Water.opw",&pp->p_config->group[grp].wedge);
+		}
+		else
+			g_print("open default.cfg successfully\n");
 	}
 
 	tttmp = get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_GAIN) / 100.0;
@@ -457,7 +464,7 @@ void send_focal_spi (guint group)
 	{   
 		TMP(focal_spi[k]).group	= group;
 		TMP(focal_spi[k]).all_beam_info	= get_beam_qty() - 1;
-		TMP(focal_spi[k]).gain_offset	= GROUP_VAL_POS(group, gain_offset);
+		TMP(focal_spi[k]).gain_offset	= pp->tmp_gain_off[k];//GROUP_VAL_POS(group, gain_offset);
 		TMP(focal_spi[k]).beam_delay	= TMP(focal_law_all_beam[k].G_delay) / 10;//(BEAM_INFO(k,beam_delay)+5)/10;
 		//g_print("----->beam_delay[%d]=%d\n",k,TMP(focal_spi[k]).beam_delay);
 		/*UT Settings->Pulser->Tx/Rx mode*/		
