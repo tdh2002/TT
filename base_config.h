@@ -314,16 +314,16 @@ struct _Group
 	unsigned char	pulser1;		/* 1~128 - elem_qty(聚焦阵元数最大为32) + 1 指定发射阵元 
 									   与机器配置相关我们是128阵元最大,值与connect P 一样 */
 	unsigned char	receiver1;		/* 接收阵元 必须是 PR 模式才能调节 */
-	char			filter1;		/* 滤波 */
-	char			rectifier1;		/* 检波  */
-	char			averaging1;		/* 平均 */
+	unsigned char	filter1;		/* 滤波 */
+	unsigned char	rectifier1;		/* 检波  */
+	unsigned char	averaging1;		/* 平均 */
 
-	char	filter_pos1;	/*  */
-	char	tx_rxmode1;		/* 收发模式 */
-	char	freq_pos1;		/* 频率选择模式是指定还是自己输入 */
-	char	pw_pos1;			/* 脉冲宽度选择模式 */
-	char	prf_pos;		/* 脉冲宽度选择模式 */
-	short	frequency1;		/* 以0.001Mhz 也就是Khz 1MHz~20MHz 为单位 当探头学选unknown 时候才可以调节 */
+	unsigned char	filter_pos1;	/*  */
+	unsigned char	tx_rxmode1;		/* 收发模式 */
+	unsigned char	freq_pos1;		/* 频率选择模式是指定还是自己输入 */
+	unsigned char	pw_pos1;		/* 脉冲宽度选择模式 */
+	unsigned char	prf_pos;		/* 脉冲宽度选择模式 */
+	unsigned short	frequency1;		/* 以0.001Mhz 也就是Khz 1MHz~20MHz 为单位 当探头学选unknown 时候才可以调节 */
 	unsigned short	pulser_width1;	/* 30~500ns 2.5ns为步进*/
 
 	int		prf;			/* 重复频率 1-20000Hz 取值为10~200000 */
@@ -785,7 +785,7 @@ extern int	get_group_val (GROUP *p, int type);
 extern void	set_group_val (GROUP *p, int type, int val);
 
 /* group操作 */
-extern void		grpcpy (CONFIG *p, unsigned int src, unsigned int dst);
+extern void	grpcpy (CONFIG *p, unsigned int src, unsigned int dst);
 
 /***
 #define	VAL_GRP_ID	0x0001
