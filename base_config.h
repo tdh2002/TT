@@ -322,11 +322,11 @@ struct _Group
 	unsigned char	tx_rxmode1;		/* 收发模式 */
 	unsigned char	freq_pos1;		/* 频率选择模式是指定还是自己输入 */
 	unsigned char	pw_pos1;		/* 脉冲宽度选择模式 */
-	unsigned char	prf_pos;		/* 脉冲宽度选择模式 */
+	unsigned char	prf_pos1;		/* 脉冲宽度选择模式 */
 	unsigned short	frequency1;		/* 以0.001Mhz 也就是Khz 1MHz~20MHz 为单位 当探头学选unknown 时候才可以调节 */
 	unsigned short	pulser_width1;	/* 30~500ns 2.5ns为步进*/
 
-	int		prf;			/* 重复频率 1-20000Hz 取值为10~200000 */
+	int		prf1;			/* 重复频率 1-20000Hz 取值为10~200000 */
 
 	char	point_qty_pos;	/* 点个数 位置 */
 	char	sum_gain_pos;	/**/
@@ -763,8 +763,8 @@ extern void			set_probe_type (CONFIG *p, char data);
 
 
 /* Group 参数的保存读取 */
-extern int	get_group_prf_pos		(CONFIG *p, int group_id);
-extern void	set_group_prf_pos		(CONFIG *p, int group_id,	int	data);
+//extern int	get_group_prf_pos		(CONFIG *p, int group_id);
+//extern void	set_group_prf_pos		(CONFIG *p, int group_id,	int	data);
 extern int	get_group_prf_val		(CONFIG *p, int group_id);
 extern void	set_group_prf_val		(CONFIG *p, int group_id,	int	data);
 extern int	get_group_point_qty_pos	(CONFIG *p, int group_id);

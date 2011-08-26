@@ -2522,10 +2522,13 @@ static inline void set_scan_config (guchar scan_num,guchar scan_type, guint aw, 
  * mask 后面3为是表示左右下3个方向的刻度尺 存在否
  *
  */
+
 void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 {
 	gint angle = 0, num = 0;
 	gfloat mid = 0.0, middle = 0.0;
+	gint grp = get_current_group (pp->p_config);
+	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
 
 
 	p->scan_type = type;
@@ -2559,16 +2562,20 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 			{	/*A_S scan 在 true depth时， A scan 需要旋转90度*/
 				if(get_unit(pp->p_config) == UNIT_MM) /* hrule1 */
 				{
-					p->hmin1 = get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_RANGE)/1000.0*(get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_VELOCITY)/200000.0)+get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_START)/1000.0*(get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_VELOCITY)/200000.0);
-					p->hmax1 = get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_START)/1000.0*(get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_VELOCITY)/200000.0);
+					p->hmin1 = get_group_val (p_grp, GROUP_RANGE)/1000.0 *
+						(get_group_val (p_grp, GROUP_VELOCITY)/200000.0) + 
+						get_group_val (p_grp, GROUP_START)/1000.0 * 
+						(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
+					p->hmax1 = get_group_val (p_grp, GROUP_START)/1000.0 *
+						(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
 					p->h1_unit = UNIT_MM;
 					p->h1_color = 0xD6ABF1;/*紫色*/
 
 				}
 				else
 				{
-					p->hmin1 = get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_RANGE)/1000.0*0.03937*(get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_VELOCITY)/200000.0)+get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_START)/1000.0*0.03937*(get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_VELOCITY)/200000.0);
-					p->hmax1 = get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_START)/1000.0*0.03937*(get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_VELOCITY)/200000.0);
+					p->hmin1 = get_group_val (p_grp, GROUP_RANGE)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0)+get_group_val (p_grp, GROUP_START)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
+					p->hmax1 = get_group_val (p_grp, GROUP_START)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
 					p->h1_unit = UNIT_INCH;
 					p->h1_color = 0xD6ABF1;/*紫色*/
 				}
@@ -2598,8 +2605,8 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 
 				if(GROUP_VAL_POS(p->group, ut_unit) == UT_UNIT_TIME)	/* wrule */	/*淡黄色*/
 				{
-					p->wmin1 = get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_START)/1000.0;
-					p->wmax1 = get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_RANGE)/1000.0+get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_START)/1000.0;
+					p->wmin1 = get_group_val (p_grp, GROUP_START)/1000.0;
+					p->wmax1 = get_group_val (p_grp, GROUP_RANGE)/1000.0+get_group_val (p_grp, GROUP_START)/1000.0;
 					p->w_unit = UNIT_US;
 					p->w_color = 0xF8EAC4;
 				}
@@ -2607,14 +2614,14 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 				{
 					if(get_unit(pp->p_config) == UNIT_MM)
 					{
-						p->wmin1 = get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_START)/1000.0*(get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_VELOCITY)/200000.0);
-						p->wmax1 = get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_RANGE)/1000.0*(get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_VELOCITY)/200000.0)+get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_START)/1000.0*(get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_VELOCITY)/200000.0);
+						p->wmin1 = get_group_val (p_grp, GROUP_START)/1000.0*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
+						p->wmax1 = get_group_val (p_grp, GROUP_RANGE)/1000.0*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0)+get_group_val (p_grp, GROUP_START)/1000.0*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
 						p->w_unit = UNIT_MM;
 					}
 					else
 					{
-						p->wmin1 = get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_START)/1000.0*0.03937*(get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_VELOCITY)/200000.0);
-						p->wmax1 = get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_RANGE)/1000.0*0.03937*(get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_VELOCITY)/200000.0)+get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_START)/1000.0*0.03937*(get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_VELOCITY)/200000.0);
+						p->wmin1 = get_group_val (p_grp, GROUP_START)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
+						p->wmax1 = get_group_val (p_grp, GROUP_RANGE)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0)+get_group_val (p_grp, GROUP_START)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
 						p->w_unit = UNIT_INCH;
 					}
 					if(GROUP_VAL_POS(p->group, ut_unit) == UT_UNIT_TRUE_DEPTH)
@@ -2665,8 +2672,8 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 
 			if(GROUP_VAL_POS(p->group, ut_unit) == UT_UNIT_TIME)	/* wrule */
 			{
-				p->wmin1 = get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_START)/1000.0;
-				p->wmax1 = get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_RANGE)/1000.0+get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_START)/1000.0;
+				p->wmin1 = get_group_val (p_grp, GROUP_START)/1000.0;
+				p->wmax1 = get_group_val (p_grp, GROUP_RANGE)/1000.0+get_group_val (p_grp, GROUP_START)/1000.0;
 				p->w_unit = UNIT_US;
 				p->w_color = 0xF8EAC4;	/*浅黄色*/
 			}
@@ -2674,14 +2681,14 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 			{
 				if(get_unit(pp->p_config) == UNIT_MM)
 				{
-					p->wmin1 = get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_START)/1000.0*(get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_VELOCITY)/200000.0);
-					p->wmax1 = get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_RANGE)/1000.0*(get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_VELOCITY)/200000.0)+get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_START)/1000.0*(get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_VELOCITY)/200000.0);
+					p->wmin1 = get_group_val (p_grp, GROUP_START)/1000.0*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
+					p->wmax1 = get_group_val (p_grp, GROUP_RANGE)/1000.0*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0)+get_group_val (p_grp, GROUP_START)/1000.0*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
 					p->w_unit = UNIT_MM;
 				}
 				else
 				{
-					p->wmin1 = get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_START)/1000.0*0.03937*(get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_VELOCITY)/200000.0);
-					p->wmax1 = get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_RANGE)/1000.0*0.03937*(get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_VELOCITY)/200000.0)+get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_START)/1000.0*0.03937*(get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_VELOCITY)/200000.0);
+					p->wmin1 = get_group_val (p_grp, GROUP_START)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
+					p->wmax1 = get_group_val (p_grp, GROUP_RANGE)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0)+get_group_val (p_grp, GROUP_START)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
 					p->w_unit = UNIT_INCH;
 				}
 				if(GROUP_VAL_POS(p->group, ut_unit) == UT_UNIT_TRUE_DEPTH)
@@ -2801,15 +2808,15 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 
 				if(get_unit(pp->p_config) == UNIT_MM)	/*wrule*/
 				{
-					p->wmin1 = get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_START)/1000.0*(get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_VELOCITY)/200000.0);
-					p->wmax1 = get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_RANGE)/1000.0*(get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_VELOCITY)/200000.0)+get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_START)/1000.0*(get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_VELOCITY)/200000.0);
+					p->wmin1 = get_group_val (p_grp, GROUP_START)/1000.0*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
+					p->wmax1 = get_group_val (p_grp, GROUP_RANGE)/1000.0*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0)+get_group_val (p_grp, GROUP_START)/1000.0*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
 					p->w_unit = UNIT_MM;
 					p->w_color = 0xF49CD6; /*粉色*/
 				}
 				else
 				{
-					p->wmin1 = get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_START)/1000.0*0.03937*(get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_VELOCITY)/200000.0);
-					p->wmax1 = get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_RANGE)/1000.0*0.03937*(get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_VELOCITY)/200000.0)+get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_START)/1000.0*0.03937*(get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_VELOCITY)/200000.0);
+					p->wmin1 = get_group_val (p_grp, GROUP_START)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
+					p->wmax1 = get_group_val (p_grp, GROUP_RANGE)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0)+get_group_val (p_grp, GROUP_START)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
 					p->w_unit = UNIT_INCH;
 					p->w_color = 0xF49CD6; /*粉色*/
 				}
@@ -2830,8 +2837,8 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 				p->h1_color = 0xB2C1C1;	/*灰色*/
 				p->h1_bit = 1;
 
-				p->wmin1 = get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_START)/1000.0;	/*wrule*/
-				p->wmax1 = get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_RANGE)/1000.0 + get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_START)/1000.0;
+				p->wmin1 = get_group_val (p_grp, GROUP_START)/1000.0;	/*wrule*/
+				p->wmax1 = get_group_val (p_grp, GROUP_RANGE)/1000.0 + get_group_val (p_grp, GROUP_START)/1000.0;
 				p->w_unit = UNIT_US;
 				p->w_color =0xF8EAC4; /*浅黄色*/
 
@@ -2841,16 +2848,16 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 			{
 				if(get_unit(pp->p_config) == UNIT_MM) /* hrule1 */
 				{
-					p->hmin1 = get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_RANGE)/1000.0*(get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_VELOCITY)/200000.0)+get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_START)/1000.0*(get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_VELOCITY)/200000.0)+tan((LAW_VAL_POS (p->group, Angle_min) / 100.0)*(3.14/180.0))*tan((LAW_VAL_POS (p->group, Angle_min) / 100.0)*(3.14/180.0))*get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_RANGE)/1000.0*(get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_VELOCITY)/200000.0);
-					p->hmax1 = get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_START)/1000.0*(get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_VELOCITY)/200000.0);
+					p->hmin1 = get_group_val (p_grp, GROUP_RANGE)/1000.0*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0)+get_group_val (p_grp, GROUP_START)/1000.0*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0)+tan((LAW_VAL_POS (p->group, Angle_min) / 100.0)*(3.14/180.0))*tan((LAW_VAL_POS (p->group, Angle_min) / 100.0)*(3.14/180.0))*get_group_val (p_grp, GROUP_RANGE)/1000.0*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
+					p->hmax1 = get_group_val (p_grp, GROUP_START)/1000.0*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
 					p->h1_unit = UNIT_MM;
 					p->h1_color = 0xD6ABF1;/*紫色*/
 
 				}
 				else
 				{
-					p->hmin1 = get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_RANGE)/1000.0*0.03937*(get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_VELOCITY)/200000.0)+get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_START)/1000.0*0.03937*(get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_VELOCITY)/200000.0);
-					p->hmax1 = get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_START)/1000.0*0.03937*(get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_VELOCITY)/200000.0);
+					p->hmin1 = get_group_val (p_grp, GROUP_RANGE)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0)+get_group_val (p_grp, GROUP_START)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
+					p->hmax1 = get_group_val (p_grp, GROUP_START)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
 					p->h1_unit = UNIT_INCH;
 					p->h1_color = 0xD6ABF1;/*紫色*/
 				}
@@ -2873,18 +2880,18 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 
 				if((LAW_VAL (Angle_min)<0)&&(LAW_VAL (Angle_max)>0))
 				{
-				     p->wmin1 = middle + get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_RANGE)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_min) / 100.0)*(3.14/180.0));
-				     p->wmax1 = middle + get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_RANGE)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_max) / 100.0)*(3.14/180.0));
+				     p->wmin1 = middle + get_group_val (p_grp, GROUP_RANGE)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_min) / 100.0)*(3.14/180.0));
+				     p->wmax1 = middle + get_group_val (p_grp, GROUP_RANGE)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_max) / 100.0)*(3.14/180.0));
 				}
 				else if((LAW_VAL (Angle_min)<0)&&(LAW_VAL (Angle_max)<0))
 				{
-				     p->wmin1 = middle + get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_RANGE)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_min) / 100.0)*(3.14/180.0));
-				     p->wmax1 = middle - get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_RANGE)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_max) / 100.0)*(3.14/180.0));
+				     p->wmin1 = middle + get_group_val (p_grp, GROUP_RANGE)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_min) / 100.0)*(3.14/180.0));
+				     p->wmax1 = middle - get_group_val (p_grp, GROUP_RANGE)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_max) / 100.0)*(3.14/180.0));
 				}
 				else if((LAW_VAL (Angle_min)>0)&&(LAW_VAL (Angle_max)>0))
 				{
-				     p->wmin1 = middle - get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_RANGE)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_min) / 100.0)*(3.14/180.0));
-				     p->wmax1 = middle + get_group_val (get_group_by_id (pp->p_config, p->group), GROUP_RANGE)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_max) / 100.0)*(3.14/180.0));
+				     p->wmin1 = middle - get_group_val (p_grp, GROUP_RANGE)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_min) / 100.0)*(3.14/180.0));
+				     p->wmax1 = middle + get_group_val (p_grp, GROUP_RANGE)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_max) / 100.0)*(3.14/180.0));
 				}
 				pp->swmin = p->wmin1;
 				pp->swmax = p->wmax1;
@@ -14936,22 +14943,22 @@ void draw3_data5(DRAW_UI_P p)
 						}
 						else
 						{
-							if (GROUP_VAL(prf_pos) == 3)	/* 自定义数值时候按下显示数值 */
+							if (GROUP_VAL(prf_pos1) == 3)	/* 自定义数值时候按下显示数值 */
 							{
 								/* 更新当前增益值显示 */
 								str = g_strdup_printf ("%d", get_prf() / 10);
 								draw3_pop_tt (data_115, NULL, 
-										str, menu_content + PRF, 4, 5, GROUP_VAL(prf_pos), 0);
+										str, menu_content + PRF, 4, 5, GROUP_VAL(prf_pos1), 0);
 								g_free(str);
 							}
 							else	/* Auto ==时候 显示当前选项 */
-								draw3_pop_tt (data_115, NULL, menu_content[PRF + GROUP_VAL(prf_pos)],
-										menu_content + PRF, 4, 5, GROUP_VAL(prf_pos), 0);
+								draw3_pop_tt (data_115, NULL, menu_content[PRF + GROUP_VAL(prf_pos1)],
+										menu_content + PRF, 4, 5, GROUP_VAL(prf_pos1), 0);
 						}
 					}
 					else 
 					{
-						cur_value = GROUP_VAL(prf) / 10.0;
+						cur_value = GROUP_VAL(prf1) / 10.0;
 						unit = UNIT_NULL;
 						pos = 5;
 						digit = 0;
@@ -15415,14 +15422,14 @@ void draw3_data5(DRAW_UI_P p)
 					{
 						if(UNIT_MM == get_unit(pp->p_config))
 						{
-							cur_value = GROUP_VAL(prf)/10.0;
+							cur_value = GROUP_VAL(prf1)/10.0;
 							digit = 2;
 							pos = 5;
 							unit = UNIT_MM_S;
 						}
 						else
 						{
-							cur_value = GROUP_VAL(prf)/10.0*0.03937;
+							cur_value = GROUP_VAL(prf1)/10.0*0.03937;
 							digit = 3;
 							pos = 5;
 							unit = UNIT_INCH_S;
@@ -16814,7 +16821,7 @@ void init_ui(DRAW_UI_P p)
 	gtk_widget_set_size_request (GTK_WIDGET(pp->event[3]), 172, 22);
 	gtk_label_set_justify (GTK_LABEL (pp->label[3]), PANGO_ELLIPSIZE_START);
 	markup = g_markup_printf_escaped ("<span foreground='white' font_desc='10'>PRF: %d(%d)</span>",
-			GROUP_VAL(prf) / 10, GROUP_VAL(prf) / 10);
+			GROUP_VAL(prf1) / 10, GROUP_VAL(prf1) / 10);
 	gtk_label_set_markup (GTK_LABEL (pp->label[3]), markup); 
 	g_free (markup);
 	update_widget_bg(pp->event[3], /*backpic[5]*/ 5);
@@ -16837,7 +16844,7 @@ void init_ui(DRAW_UI_P p)
 
 	update_widget_bg(pp->event[6], /*backpic[5]*/ 5);
 	markup = g_markup_printf_escaped ("<span foreground='white' font_desc='10'>V: %.2f mm/s</span>",
-			(gfloat)(GROUP_VAL(prf)));
+			(gfloat)(GROUP_VAL(prf1)));
 	gtk_label_set_markup (GTK_LABEL (pp->label[5]), markup); ;
 	g_free (markup);
 	gtk_box_pack_start (GTK_BOX (p->vbox1111[2]), pp->event[7], FALSE, FALSE, 0);
@@ -16845,10 +16852,10 @@ void init_ui(DRAW_UI_P p)
 	update_widget_bg(pp->event[7], /*backpic[5]*/ 5);
 	if(get_inspec_source (pp->p_config)==0)
 		markup = g_markup_printf_escaped ("<span foreground='white' font_desc='10'>X: %.1f s</span>",
-				(gfloat)(GROUP_VAL(prf)));
+				(gfloat)(GROUP_VAL(prf1)));
 	else
 		markup = g_markup_printf_escaped ("<span foreground='white' font_desc='10'>X: %.1f mm</span>",
-				(gfloat)(GROUP_VAL(prf)));
+				(gfloat)(GROUP_VAL(prf1)));
 	gtk_label_set_markup (GTK_LABEL (pp->label[7]), markup); 
 	g_free (markup);
 

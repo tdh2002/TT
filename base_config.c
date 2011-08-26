@@ -1397,8 +1397,8 @@ int get_group_val (GROUP *p, int type)
 		case GROUP_FREQ_POS:tt = p->freq_pos1;break;
 		case GROUP_PW_POS:tt = p->pw_pos1;break;
 		case GROUP_PW_VAL:tt = p->pulser_width1;break;
-//		case GROUP_PRF_POS:tt = p->prf_pos1;break;
-//		case GROUP_PRF_VAL:tt = p->prf1;break;
+		case GROUP_PRF_POS:tt = p->prf_pos1;break;
+		case GROUP_PRF_VAL:tt = p->prf1;break;
 //		case GROUP_PQTY_POS:tt = p->point_qty_pos1;break;
 //		case GROUP_PQTY_VAL:tt = p->point_qty1;break;
 		default:break;
@@ -1429,8 +1429,8 @@ void set_group_val (GROUP *p, int type, int val)
 		case GROUP_FREQ_POS: p->freq_pos1 = (unsigned char)(val);break;
 		case GROUP_PW_POS:p->pw_pos1 = (unsigned char)(val);break;
 		case GROUP_PW_VAL:p->pulser_width1 = (unsigned short)(val);break;
-//		case GROUP_PRF_POS: p->prf_pos1 = (unsigned char)(val);break;
-//		case GROUP_PRF_VAL: p->prf1 = (int)(val);break;
+		case GROUP_PRF_POS: p->prf_pos1 = (unsigned char)(val);break;
+		case GROUP_PRF_VAL: p->prf1 = (int)(val);break;
 //		case GROUP_PQTY_POS: p->point_qty_pos1 = (char)(val);break;
 //		case GROUP_PQTY_VAL: p->point_qty1 = (short)(val);break;
 		default:break;
