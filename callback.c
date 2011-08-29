@@ -13,6 +13,8 @@
 #include <pthread.h>
 
 extern void focal_law(gpointer data);/*回调函数*/
+extern void draw_area_calibration();
+extern void switch_area();
 
 static int handler_key(guint keyval, gpointer data);
 static int thread_set_DB_eighty_percent(gpointer data);
@@ -1081,6 +1083,7 @@ void b3_fun1(gpointer p)
 										if((pp->cstart_qty) == 2)
 										{
 											//点击start进入A-
+											draw_area_calibration();
 										}	
 										else if((pp->cstart_qty) == 4)
 										{
@@ -1126,7 +1129,11 @@ void b3_fun1(gpointer p)
 										break;
 									case 1://Wedge Delay
 										((pp->cstart_qty) < 6) ? (pp->cstart_qty) ++ : ((pp->cstart_qty) = 1);
-										if((pp->cstart_qty) == 4)
+										if((pp->cstart_qty) == 2)
+										{
+											draw_area_calibration();
+										}
+										else if((pp->cstart_qty) == 4)
 										{
 											//在此获取闸门信息
 											for(i=0;i<((pp->last_angle - pp->first_angle)/LAW_VAL(Angle_step));i++)
@@ -1162,6 +1169,7 @@ void b3_fun1(gpointer p)
 										if((pp->cstart_qty) == 2)
 										{
 											//点击start进入A-
+											draw_area_calibration();
 										}	
 										else if((pp->cstart_qty) == 6)
 										{
@@ -2671,6 +2679,8 @@ static int handler_key(guint keyval, gpointer data)
 					draw_menu3(0, NULL);
 				}
 			}
+			switch_area();//
+			generate_focallaw(get_current_group(pp->p_config));//
 			break;
 		case GDK_Return:	/*回车键*/
 

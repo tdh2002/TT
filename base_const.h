@@ -63,6 +63,9 @@
 #define A_S_CC_SCAN	 8
 #define PA_TOFD	         9
 #define Strip_Chart_AA	 10
+#define WEDGE_DELAY      11
+#define SENSITIVITY      12
+#define TCG              13
 
 /* c扫描的source选项 */
 #define C_SCAN_A_HEIGHT		0

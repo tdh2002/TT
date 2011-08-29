@@ -1058,6 +1058,26 @@ void draw_s_scan_r (gushort *p, guint width, guint height, DOT_TYPE *data, DOT_T
 	return ;
 }
 
+/* 画校准包络线 */
+void draw_clb_sensitivity (gushort *p, gint width, gint height, DOT_TYPE *data, DOT_TYPE *data1, 
+							DOT_TYPE *data2,gint xoffset, gint yoffset, guchar groupId)
+{
+	gint	i;
+	/* 清空这块显示区 背景暂定黑色 可以全部一起清空 */
+	for (i = 0; i < height; i++)
+		memset (p + FB_WIDTH * (i + yoffset) + xoffset, 0x0, width * 2 );
+	/* 画包络线 
+	for (i = 0; i < height - 1; i++)
+	{
+		fbline (p, 
+				xoffset + width * HEIGHT_TABLE[255 - data[i]],
+				yoffset + i,
+				xoffset + width * HEIGHT_TABLE[255 - data[i + 1]],
+				yoffset + i + 1,
+				all_col_16[GROUP_VAL_POS(groupId, ascan_color)]);
+	}*/
+
+}
 
 void draw_scan(guchar scan_num, guchar scan_type, guchar group,
 		guint xoff, guint yoff, guchar *dot_temp, gushort *dot_temp1 )
@@ -1163,6 +1183,16 @@ void draw_scan(guchar scan_num, guchar scan_type, guchar group,
 				draw_c_scan(dot_temp1, TMP(c_scan_width), TMP(c_scan_height),dot_temp,
 						TMP(scan_data[group]) + TMP(a_scan_width) * TMP(beam_num[group]),
 						xoff, yoff, group, 0, get_cscan_source (pp->p_config, 0));
+			break;
+		case WEDGE_DELAY:
+			break;
+		case SENSITIVITY:
+			draw_clb_sensitivity(dot_temp1, TMP(a_scan_width), TMP(a_scan_height),
+					TMP(scan_data[group]) + TMP(a_scan_width) * TMP(beam_num[group]),
+					dot_temp, dot_temp, 
+					xoff, yoff, group);
+			break;
+		case TCG:
 			break;
 		default:break;
 	}

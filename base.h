@@ -284,6 +284,9 @@ typedef struct tmp_config
 	guint	c_scan_width;
 	guint	c_scan_height;
 
+	guint   clb_width;//Calibration
+	guint   clb_height;//Calibration
+
 	guchar	scan_type[16];	/* 16个窗口显示的类型 */
 	guchar	scan_group[16];	/* 16个窗口对应的group */
 	guint	scan_xpos[16];
@@ -383,6 +386,7 @@ typedef struct Draw_interface
 
 	GtkWidget		*drawing_area;
 	DRAW_AREA		draw_area[16];
+	DRAW_AREA		draw_area_clb[4];//Calobration
 	/*boxes*/
 	GtkWidget		*vbox;			/* 整个window */
 	GtkWidget		*hbox1;			/* 上方数据显示 */
@@ -401,6 +405,8 @@ typedef struct Draw_interface
 
 	GtkWidget		*vbox_area[4];
 	GtkWidget		*hbox_area[4];
+	GtkWidget		*vbox_area_clb[4];//Clibration
+	GtkWidget		*hbox_area_clb[4];//Clibration
 
 	GtkWidget		*hbox212;		/*一级菜单 二级菜单显示*/
 
