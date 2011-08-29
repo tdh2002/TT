@@ -763,10 +763,6 @@ extern void			set_probe_type (CONFIG *p, char data);
 
 
 /* Group 参数的保存读取 */
-//extern int	get_group_prf_pos		(CONFIG *p, int group_id);
-//extern void	set_group_prf_pos		(CONFIG *p, int group_id,	int	data);
-extern int	get_group_prf_val		(CONFIG *p, int group_id);
-extern void	set_group_prf_val		(CONFIG *p, int group_id,	int	data);
 extern int	get_group_point_qty_pos	(CONFIG *p, int group_id);
 extern void	set_group_point_qty_pos	(CONFIG *p, int group_id,	int	data);
 extern int	get_group_point_qty_val	(CONFIG *p, int group_id);

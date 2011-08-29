@@ -36,6 +36,11 @@
 #define VOLTAGE_HIGH	2
 #define VOLTAGE_MID		1
 #define VOLTAGE_LOW		0
+/* 重复频率 */
+#define	PRF_AUTO_MAX	0
+#define	PRF_AUTO_MAX_2	1
+#define	PRF_OPTIMUM		2
+#define	PRF_USERDEF		3
 
 /* 显示模式ABSC */
 #define	DISPLAY_ALL_GROUP	0

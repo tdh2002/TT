@@ -14942,22 +14942,22 @@ void draw3_data5(DRAW_UI_P p)
 						}
 						else
 						{
-							if (GROUP_VAL(prf_pos1) == 3)	/* 自定义数值时候按下显示数值 */
+							if (get_group_val (p_grp, GROUP_PRF_POS) == 3)	/* 自定义数值时候按下显示数值 */
 							{
 								/* 更新当前增益值显示 */
 								str = g_strdup_printf ("%d", get_prf() / 10);
 								draw3_pop_tt (data_115, NULL, 
-										str, menu_content + PRF, 4, 5, GROUP_VAL(prf_pos1), 0);
+										str, menu_content + PRF, 4, 5, get_group_val (p_grp, GROUP_PRF_POS), 0);
 								g_free(str);
 							}
 							else	/* Auto ==时候 显示当前选项 */
-								draw3_pop_tt (data_115, NULL, menu_content[PRF + GROUP_VAL(prf_pos1)],
-										menu_content + PRF, 4, 5, GROUP_VAL(prf_pos1), 0);
+								draw3_pop_tt (data_115, NULL, menu_content[PRF + get_group_val (p_grp, GROUP_PRF_POS)],
+										menu_content + PRF, 4, 5, get_group_val (p_grp, GROUP_PRF_POS), 0);
 						}
 					}
 					else 
 					{
-						cur_value = GROUP_VAL(prf1) / 10.0;
+						cur_value = get_group_val (p_grp, GROUP_PRF_VAL) / 10.0;
 						unit = UNIT_NULL;
 						pos = 5;
 						digit = 0;
@@ -15421,14 +15421,14 @@ void draw3_data5(DRAW_UI_P p)
 					{
 						if(UNIT_MM == get_unit(pp->p_config))
 						{
-							cur_value = GROUP_VAL(prf1)/10.0;
+							cur_value = get_group_val (p_grp, GROUP_PRF_VAL)/10.0;
 							digit = 2;
 							pos = 5;
 							unit = UNIT_MM_S;
 						}
 						else
 						{
-							cur_value = GROUP_VAL(prf1)/10.0*0.03937;
+							cur_value = get_group_val (p_grp, GROUP_PRF_VAL)/10.0*0.03937;
 							digit = 3;
 							pos = 5;
 							unit = UNIT_INCH_S;
@@ -16610,6 +16610,8 @@ void init_ui(DRAW_UI_P p)
 	pthread_t tid0 , tid1, tid2; 
 	int ret;
 	p_drawui_c = p;
+	gint	grp = get_current_group (pp->p_config);
+	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
 
 	all_bg_pic_in_mem();
 	/* 初始化语言 language init */
@@ -16820,7 +16822,7 @@ void init_ui(DRAW_UI_P p)
 	gtk_widget_set_size_request (GTK_WIDGET(pp->event[3]), 172, 22);
 	gtk_label_set_justify (GTK_LABEL (pp->label[3]), PANGO_ELLIPSIZE_START);
 	markup = g_markup_printf_escaped ("<span foreground='white' font_desc='10'>PRF: %d(%d)</span>",
-			GROUP_VAL(prf1) / 10, GROUP_VAL(prf1) / 10);
+			get_group_val (p_grp, GROUP_PRF_VAL) / 10, get_group_val (p_grp, GROUP_PRF_VAL) / 10);
 	gtk_label_set_markup (GTK_LABEL (pp->label[3]), markup); 
 	g_free (markup);
 	update_widget_bg(pp->event[3], /*backpic[5]*/ 5);
@@ -16843,7 +16845,7 @@ void init_ui(DRAW_UI_P p)
 
 	update_widget_bg(pp->event[6], /*backpic[5]*/ 5);
 	markup = g_markup_printf_escaped ("<span foreground='white' font_desc='10'>V: %.2f mm/s</span>",
-			(gfloat)(GROUP_VAL(prf1)));
+			(gfloat)(get_group_val (p_grp, GROUP_PRF_VAL)));
 	gtk_label_set_markup (GTK_LABEL (pp->label[5]), markup); ;
 	g_free (markup);
 	gtk_box_pack_start (GTK_BOX (p->vbox1111[2]), pp->event[7], FALSE, FALSE, 0);
@@ -16851,10 +16853,10 @@ void init_ui(DRAW_UI_P p)
 	update_widget_bg(pp->event[7], /*backpic[5]*/ 5);
 	if(get_inspec_source (pp->p_config)==0)
 		markup = g_markup_printf_escaped ("<span foreground='white' font_desc='10'>X: %.1f s</span>",
-				(gfloat)(GROUP_VAL(prf1)));
+				(gfloat)(get_group_val (p_grp, GROUP_PRF_VAL)));
 	else
 		markup = g_markup_printf_escaped ("<span foreground='white' font_desc='10'>X: %.1f mm</span>",
-				(gfloat)(GROUP_VAL(prf1)));
+				(gfloat)(get_group_val (p_grp, GROUP_PRF_VAL)));
 	gtk_label_set_markup (GTK_LABEL (pp->label[7]), markup); 
 	g_free (markup);
 
