@@ -106,7 +106,8 @@ const gchar *backpic[] =
 	"pic/00.png", "pic/01.png", "pic/02.png",	        /* 00上方数值 标识栏 01 数值背景 02 比较小的背景 */
 	"pic/20.png", "pic/21.png", "pic/22.png",		/* 三级菜单名称 0按下 1未选中 2 停留 */
 	"pic/30.png", "pic/31.png", "pic/32.png",		/* 三级菜单数值 0按下 1未选中 2 停留 */
-	"pic/tt.png", "pic/311.png", "pic/322.png"      	/* 软键盘图标 */
+	"pic/tt.png", "pic/311.png", "pic/322.png",      	/* 软键盘图标 */
+	"pic/snow.png"
 };
 
 GdkPixbuf *g_pixbuf_[18];
@@ -16633,46 +16634,48 @@ static void draw_frame_thread(void)
     //unsigned int BeamInfoHeader;
 	while (1)
 	{
-//		while(*DMA_MARK != 0)
-			pthread_cond_wait( &draw_thread_signal, &draw_thread_mutex);
+		pthread_cond_wait( &draw_thread_signal, &draw_thread_mutex);
 		for (i = 0 ; i < get_group_qty(pp->p_config); i++)
 		{
 			/* 获取数据 */
 			/* 这里需要压缩数据 或者 插值数据 这里只有一个beam 同时最多处理256beam */
-			for	(j = 0 ; j < TMP(beam_qty[i]); j++)
-			{  
-				for (offset = 0, offset1 = 0, k = 0 ; k < i; k++)
-				{
-					offset += (GROUP_VAL_POS(k, point_qty) + 32) * TMP(beam_qty[k]);
-					offset1 += TMP(beam_qty[k]);
-				}
-				memcpy (TMP(measure_data[offset1 + j]), (void *)(temp2 + offset +
-							(GROUP_VAL_POS(i, point_qty) + 32) * j + GROUP_VAL_POS(i, point_qty)), 32);
+			if(TMP(freeze))
+			{
+					for	(j = 0 ; j < TMP(beam_qty[i]); j++)
+					{
+						for (offset = 0, offset1 = 0, k = 0 ; k < i; k++)
+						{
+							offset += (GROUP_VAL_POS(k, point_qty) + 32) * TMP(beam_qty[k]);
+							offset1 += TMP(beam_qty[k]);
+						}
+						memcpy (TMP(measure_data[offset1 + j]), (void *)(temp2 + offset +
+									(GROUP_VAL_POS(i, point_qty) + 32) * j + GROUP_VAL_POS(i, point_qty)), 32);
 
-				//BeamInfoHeader = *((int*)(TMP(measure_data[offset1+j])));
-				//BeamInfoHeader &= 0x1fff ;
-				//printf("Beam info header is %x\n",BeamInfoHeader );
-				
-				if (GROUP_VAL_POS(i, point_qty) <= TMP(a_scan_dot_qty))
-				{
-					/* 只插值当前显示的A扫描 其余不插值 */
-					interpolation_data (
-							(DOT_TYPE *)(temp2 + offset +
-								(GROUP_VAL_POS(i, point_qty) + 32) * j),
-							TMP(scan_data[i] + TMP(a_scan_dot_qty) * j), 
-							GROUP_VAL_POS(i, point_qty),
-							TMP(a_scan_dot_qty));
-				}
-				else if (GROUP_VAL_POS(i, point_qty) > TMP(a_scan_dot_qty))
-				{
-					compress_data (
-							(DOT_TYPE *)(temp2 + offset +
-								(GROUP_VAL_POS(i, point_qty) + 32) * j),
-							TMP(scan_data[i] + TMP(a_scan_dot_qty) * j), 
-							GROUP_VAL_POS(i, point_qty),
-							TMP(a_scan_dot_qty),
-							get_group_val (get_group_by_id (pp->p_config, i), GROUP_RECTIFIER));
-				}
+						//BeamInfoHeader = *((int*)(TMP(measure_data[offset1+j])));
+						//BeamInfoHeader &= 0x1fff ;
+						//printf("Beam info header is %x\n",BeamInfoHeader );
+
+						if (GROUP_VAL_POS(i, point_qty) <= TMP(a_scan_dot_qty))
+						{
+							/* 只插值当前显示的A扫描 其余不插值 */
+							interpolation_data (
+									(DOT_TYPE *)(temp2 + offset +
+										(GROUP_VAL_POS(i, point_qty) + 32) * j),
+									TMP(scan_data[i] + TMP(a_scan_dot_qty) * j),
+									GROUP_VAL_POS(i, point_qty),
+									TMP(a_scan_dot_qty));
+						}
+						else if (GROUP_VAL_POS(i, point_qty) > TMP(a_scan_dot_qty))
+						{
+							compress_data (
+									(DOT_TYPE *)(temp2 + offset +
+										(GROUP_VAL_POS(i, point_qty) + 32) * j),
+									TMP(scan_data[i] + TMP(a_scan_dot_qty) * j),
+									GROUP_VAL_POS(i, point_qty),
+									TMP(a_scan_dot_qty),
+									get_group_val (get_group_by_id (pp->p_config, i), GROUP_RECTIFIER));
+						}
+					}
 			}
 			for (k = 0; ((k < 16) && (TMP(scan_type[k]) != 0xff)); k++)
 			{	
@@ -16972,7 +16975,7 @@ void init_ui(DRAW_UI_P p)
 
 	gtk_box_pack_start (GTK_BOX (pp->vbox12), pp->hbox121, FALSE, FALSE, 0);
 	gtk_box_pack_start (GTK_BOX (pp->hbox121), pp->event[17], FALSE, FALSE, 0);
-	gtk_widget_set_size_request (GTK_WIDGET(pp->event[17]), 40, 25);
+	gtk_widget_set_size_request (GTK_WIDGET(pp->event[17]), 68, 25);
 	update_widget_bg(pp->event[17], /*backpic[12]*/ 12); 
 	g_signal_connect (G_OBJECT (pp->event[17]), "button-press-event", 
 			G_CALLBACK (draw_keyboard), NULL);		/* 虚拟键盘 */

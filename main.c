@@ -444,7 +444,7 @@ int main (int argc, char *argv[])
 
 
 	gtk_widget_show (window);
-
+	TMP(freeze) = TRUE ;  // freezing the screen
 	gdk_threads_enter();
 	gtk_main();
 	gdk_threads_leave();
@@ -538,6 +538,27 @@ void init_group_spi (guint group)
 	gint tmp = 0, tt[4];
 	gint temp_prf;
 	GROUP *p_grp = get_group_by_id (pp->p_config, group);
+	//***************************************************
+	double BeamNo ;
+	double max_angle;
+	double min_angle;
+	double current_angle;
+
+	BeamNo = pp->p_tmp_config->beam_num[group];
+    if(LAW_VAL(Focal_type) == 0)
+    {
+    	current_angle = LAW_VAL(Angle_min)/100.0 + BeamNo * LAW_VAL(Angle_step)/100.0 ;
+        max_angle = MAX(abs(LAW_VAL(Angle_min)), abs(LAW_VAL(Angle_max))) * G_PI / 180.0 ;
+    }
+    else
+    {
+    	current_angle = LAW_VAL(Angle_min)/100.0 ;
+    	max_angle = LAW_VAL(Angle_min) * G_PI / 180.0 ;
+    }
+    current_angle = current_angle * G_PI / 180.0 ;
+	//*****************************************************
+
+
 	get_prf();
 	if (get_group_val (get_group_by_id (pp->p_config, group), GROUP_FILTER_POS) == 0)
 	{
@@ -617,7 +638,7 @@ void init_group_spi (guint group)
 		100000000 / (temp_prf / (10)) - 2048 - TMP(group_spi[group]).rx_time;
 
 	TMP(group_spi[group]).gate_a_height	= GROUP_VAL_POS(group, gate[0].height);
-	TMP(group_spi[group]).gate_a_start	= GROUP_VAL_POS(group, gate[0].start) / 10;
+	TMP(group_spi[group]).gate_a_start	= (int)( GROUP_VAL_POS(group, gate[0].start) / (10 * cos(current_angle)));
 	
 	if (GROUP_VAL_POS(group, gate[0].synchro) == 0)
 		tmp = (tmp & 0xfffffff3) | 0x00;
@@ -633,11 +654,10 @@ void init_group_spi (guint group)
 	/* 0-1 表示测量选择 00 波前 Edge 01 波峰 Peak 
 	 * 2-3 表示同步选择 00 发射同步Pulse 01 AGate 10 BGate 11 IGATE
 	 * */
-	TMP(group_spi[group]).gate_a_end	= (GROUP_VAL_POS(group, gate[0].start) + 
-		GROUP_VAL_POS (group, gate[0].width)) / 10;
+	TMP(group_spi[group]).gate_a_end	= (int)(GROUP_VAL_POS(group, gate[0].start) + GROUP_VAL_POS (group, gate[0].width)) / (10 * cos(current_angle));
 
 	TMP(group_spi[group]).gate_b_height	= GROUP_VAL_POS(group, gate[1].height) * 40.96;
-	TMP(group_spi[group]).gate_b_start	= GROUP_VAL_POS(group, gate[1].start) / 10;
+	TMP(group_spi[group]).gate_b_start	= (int)( GROUP_VAL_POS(group, gate[1].start) / (10 * cos(current_angle)));
 
 	if (GROUP_VAL_POS(group, gate[1].synchro) == 0)
 		tmp = (tmp & 0xfffffff3) | 0x00;
@@ -652,11 +672,10 @@ void init_group_spi (guint group)
 		tmp = (tmp & 0xfffffffc) | 0x00;
 
 	TMP(group_spi[group]).gate_b_logic	= tmp;
-	TMP(group_spi[group]).gate_b_end	= (GROUP_VAL_POS(group, gate[1].start) + 
-		GROUP_VAL_POS (group, gate[1].width)) / 10;
+	TMP(group_spi[group]).gate_b_end	= (int)(GROUP_VAL_POS(group, gate[1].start) + GROUP_VAL_POS (group, gate[1].width)) / (10 * cos(current_angle));
 
 	TMP(group_spi[group]).gate_i_height	= GROUP_VAL_POS(group, gate[2].height);
-	TMP(group_spi[group]).gate_i_start	= GROUP_VAL_POS(group, gate[2].start) / 10;
+	TMP(group_spi[group]).gate_i_start	= (int)( GROUP_VAL_POS(group, gate[3].start) / (10 * cos(current_angle)));
 
 	if (GROUP_VAL_POS(group, gate[2].synchro) == 0)
 		tmp = (tmp & 0xfffffff3) | 0x00;
@@ -667,8 +686,7 @@ void init_group_spi (guint group)
 		tmp = (tmp & 0xfffffffc) | 0x00;
 
 	TMP(group_spi[group]).gate_i_logic	= tmp;	
-	TMP(group_spi[group]).gate_i_end	= (GROUP_VAL_POS(group, gate[2].start) + 
-		GROUP_VAL_POS (group, gate[2].width)) / 10;
+	TMP(group_spi[group]).gate_i_end	= (int)(GROUP_VAL_POS(group, gate[2].start) + GROUP_VAL_POS (group, gate[2].width)) / (10 * cos(current_angle));
 
 	TMP(group_spi[group]).reject = get_reject(pp->p_config) * 40.95;	
 

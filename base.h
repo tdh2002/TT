@@ -325,7 +325,7 @@ typedef struct tmp_config
 	guchar	compdb_reg;
 	guchar	cangle_reg;
 
-	gchar	freeze;
+	gboolean	freeze;
 
     //GdkPixbuf *pixbuf_[18];
 	CALIBRATION wizard_calibration;
