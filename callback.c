@@ -2555,9 +2555,10 @@ static int handler_key(guint keyval, gpointer data)
 		case GDK_KP_1:	/* 冻结 */
 			TMP(freeze) = !TMP(freeze);
 			if(TMP(freeze))
-			    update_widget_bg(pp->event[17], /*backpic[12]*/ 12);
+				//gtk_widget_modify_fg(pp->event[18], GTK_STATE_NORMAL, &color_black);
+				update_widget_bg(pp->event[18], /*backpic[12]*/ 16);
 			else
-				update_widget_bg(pp->event[17], /*backpic[12]*/ 15);
+				update_widget_bg(pp->event[18], /*backpic[12]*/ 15);
 			break;
 
 		case GDK_KP_2:	/* 选中 Calibration 这个位置 */

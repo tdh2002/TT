@@ -107,7 +107,7 @@ const gchar *backpic[] =
 	"pic/20.png", "pic/21.png", "pic/22.png",		/* 三级菜单名称 0按下 1未选中 2 停留 */
 	"pic/30.png", "pic/31.png", "pic/32.png",		/* 三级菜单数值 0按下 1未选中 2 停留 */
 	"pic/tt.png", "pic/311.png", "pic/322.png",      	/* 软键盘图标 */
-	"pic/snow.png"
+	"pic/snow.png","pic/black_25.png"
 };
 
 GdkPixbuf *g_pixbuf_[18];
@@ -17121,13 +17121,14 @@ void init_ui(DRAW_UI_P p)
 
 	gtk_box_pack_start (GTK_BOX (pp->vbox12), pp->hbox121, FALSE, FALSE, 0);
 	gtk_box_pack_start (GTK_BOX (pp->hbox121), pp->event[17], FALSE, FALSE, 0);
-	gtk_widget_set_size_request (GTK_WIDGET(pp->event[17]), 68, 25);
+	gtk_widget_set_size_request (GTK_WIDGET(pp->event[17]), 40 , 25 );    //68, 25);
 	update_widget_bg(pp->event[17], /*backpic[12]*/ 12); 
 	g_signal_connect (G_OBJECT (pp->event[17]), "button-press-event", 
 			G_CALLBACK (draw_keyboard), NULL);		/* 虚拟键盘 */
 	gtk_box_pack_start (GTK_BOX (pp->hbox121), pp->event[18], FALSE, FALSE, 0);
-	gtk_widget_set_size_request (GTK_WIDGET(pp->event[18]), 70, 25); 
+	gtk_widget_set_size_request (GTK_WIDGET(pp->event[18]), 25, 25);
 	gtk_widget_modify_bg(pp->event[18], GTK_STATE_NORMAL, &color_black);
+
 	/* 增益显示 */
 	gtk_box_pack_start (GTK_BOX (p->hbox111), pp->event[0], FALSE, FALSE, 0);
 	gtk_widget_set_size_request (GTK_WIDGET(pp->event[0]), 60, 45);
