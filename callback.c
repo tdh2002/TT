@@ -796,6 +796,16 @@ void b2_fun0(DRAW_UI_P p, guint pos)
 			draw_menu2(0);
 			draw_menu3(0, NULL);
 		}
+		if((p->pos == 0) && (p->pos1[p->pos] == 2))//Calibration
+		{
+		//	gtk_widget_set_sensitive(p->eventbox2[0],FALSE);
+		//	gtk_widget_set_sensitive(p->eventbox2[1],FALSE);
+		//	gtk_widget_set_sensitive(p->eventbox2[2],FALSE);
+		//	gtk_widget_set_sensitive(p->menubar,FALSE);
+			pp->clb_flag = 1;
+			pp->cstart_qty = 1;
+		//	draw_menu3(0, NULL);
+		}
 	}
 }
 
@@ -1819,7 +1829,7 @@ void b3_fun3(gpointer p)
 								 	 }
 								 	 else if ((pp->ctype_pos == 1) && ((pp->cmode_pos == 1)||(pp->cmode_pos == 2)||(pp->cmode_pos == 3)))
 								 	 {
-											data_process (&(TMP(max_angle_reg)), 2);
+											data_process (&(TMP(last_angle_reg)), 2);
 									 }
 								 	 else if ((pp->ctype_pos == 2) && (pp->scode_pos == 1))
 								 	 {
@@ -2714,8 +2724,19 @@ static int handler_key(guint keyval, gpointer data)
 					draw_menu3(0, NULL);
 				}
 			}
-			switch_area();//
-			generate_focallaw(get_current_group(pp->p_config));//
+			if((pp->pos == 0) && (pp->pos1[pp->pos] == 2) && (pp->clb_flag))//Calibration
+			{
+				switch_area();//
+				generate_focallaw(get_current_group(pp->p_config));//
+				gtk_widget_set_sensitive(pp->eventbox2[0],TRUE);
+				gtk_widget_set_sensitive(pp->eventbox2[1],TRUE);
+				gtk_widget_set_sensitive(pp->menubar,TRUE);
+				pp->clb_flag = 0;
+				pp->pos1[pp->pos] = 0;
+				pp->cstart_qty = 1;
+				draw_menu3(0, NULL);
+			}
+
 			break;
 		case GDK_Return:	/*回车键*/
 
@@ -3309,12 +3330,12 @@ void data_0237 (GtkSpinButton *spinbutton, gpointer data) /* wizard  thickness *
 {
 	pp->thickness =  (gint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
 }
-#if 0
+
 void data_0238 (GtkSpinButton *spinbutton, gpointer data) /* wizard  thickness A */
 {
 	pp->last_angle =  (gint) (gtk_spin_button_get_value (spinbutton) * 100.0);
 }
-#endif
+
 void data_0239 (GtkSpinButton *spinbutton, gpointer data) /* wizard  Tolerance*/
 {
 	pp->tolerance_t =  (gushort) (gtk_spin_button_get_value (spinbutton) * 100.0);
@@ -3586,7 +3607,8 @@ void data_110 (GtkSpinButton *spinbutton, gpointer data) /* Pulser 发射 P110 *
 	set_group_val (p_grp,
 			GROUP_PULSER, (int) (gtk_spin_button_get_value (spinbutton)));
 	if (get_group_val (&g_tmp_group_struct, GROUP_TX_RX_MODE) == PULSE_ECHO)
-		set_group_val (&pp->p_config->group[grp], GROUP_RECEIVER, (int) (gtk_spin_button_get_value (spinbutton)));
+		set_group_val (&pp->p_config->group[grp],
+				GROUP_RECEIVER, (int) (gtk_spin_button_get_value (spinbutton)));
 }
 
 void data_120 (GtkSpinButton *spinbutton, gpointer data) /* Pulser 发射 P120 */
@@ -5252,7 +5274,10 @@ void data_611 (GtkSpinButton *spinbutton, gpointer data)
 					(LAW_VAL(Angle_step) + 5) / 10 * 10) / 100.0);
 		LAW_VAL(Angle_max) = (gshort) (gtk_spin_button_get_value (spinbutton) * 100.0);
 	}
-	draw_area_all();
+	if(pp->clb_flag)
+		draw_area_calibration();
+	else
+		draw_area_all();
 }
 
 /* Angle Step P612 */

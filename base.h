@@ -318,8 +318,8 @@ typedef struct tmp_config
 	guchar	deptha_reg;
 	guchar	thickness_reg;
 	guchar	tolerance_reg;
-	//guchar	first_angle_reg;
-	//guchar	last_angle_reg;
+//	guchar	first_angle_reg;
+	guchar	last_angle_reg;
 	guchar	ref_amplitude_reg;
 	guchar	tolerance_t_reg;
 	guchar	compdb_reg;
@@ -566,6 +566,7 @@ typedef struct Draw_interface
 	guint   tmp_gain_off[256];
 	gint    count;
 	gint	flag;
+	gint    clb_flag;//Calibration标志位
 } DRAW_UI, *DRAW_UI_P;
 
 typedef struct _MY_SIGNAL_TMP 

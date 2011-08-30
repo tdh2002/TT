@@ -520,6 +520,11 @@ void draw_menu2 (gint pa)
 	else
 		gtk_widget_set_sensitive(p->eventbox2[1], TRUE);
 
+	if(pp->clb_flag)
+		gtk_widget_set_sensitive(p->eventbox2[1], FALSE);
+	else
+		gtk_widget_set_sensitive(p->eventbox2[1], TRUE);
+
 	gtk_widget_modify_fg(p->label2[p->pos1[p->pos]], GTK_STATE_NORMAL, &yellow);
 
 	return ;
@@ -1621,178 +1626,210 @@ if(!(prule->mask & 0x04))
 	/* 画闸门 gate */
 	if(get_overlay_gate (pp->p_config) == 1)
 	{
-DO_NOT_USE_CCFG(measure_data[index]).i_position = 5;
-DO_NOT_USE_CCFG(measure_data[index]).a_position = 10;
+		DO_NOT_USE_CCFG(measure_data[index]).i_position = 5;
+		DO_NOT_USE_CCFG(measure_data[index]).a_position = 10;
 		cairo_save(cr);
 		cairo_set_line_width(cr, 2);
 		switch (((DRAW_AREA_P)(data))->scan_type)
 		{
 			case	A_SCAN:
 			case	A_SCAN_R:
-
-				if((get_display_pos (pp->p_config) == A_S_CC_SCAN ) && (get_cscan_source(pp->p_config, 0)==4) && (GROUP_VAL(ut_unit) == UT_UNIT_TRUE_DEPTH) && (get_display_group(pp->p_config) == DISPLAY_CURRENT_GROUP))	/*A_S scan 在 true depth时， A scan 需要旋转90度*/
+				if(pp->clb_flag == 0)
 				{
-					cairo_set_source_rgba(cr,1.0,0.0,0.0,1.0);	/* A闸门为红色 */
-					if(  GROUP_VAL_POS(prule->group,gate[0].synchro) == 0 )/* A闸门 pulse 时 */
+					if((get_display_pos (pp->p_config) == A_S_CC_SCAN ) && (get_cscan_source(pp->p_config, 0)==4) && (GROUP_VAL(ut_unit) == UT_UNIT_TRUE_DEPTH) && (get_display_group(pp->p_config) == DISPLAY_CURRENT_GROUP))	/*A_S scan 在 true depth时， A scan 需要旋转90度*/
 					{
-					cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(w-50)+20, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));
-					cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(w-50)+20, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[0].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));
+						cairo_set_source_rgba(cr,1.0,0.0,0.0,1.0);	/* A闸门为红色 */
+						if(  GROUP_VAL_POS(prule->group,gate[0].synchro) == 0 )/* A闸门 pulse 时 */
+						{
+						cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(w-50)+20, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));
+						cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(w-50)+20, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[0].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));
 
-					cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(w-50)+17, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));
-					cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(w-50)+23, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));/*A闸门上端点*/
+						cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(w-50)+17, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));
+						cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(w-50)+23, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));/*A闸门上端点*/
 
-					cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(w-50)+17, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[0].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));
-					cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(w-50)+23, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[0].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));/*A闸门下端点*/
+						cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(w-50)+17, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[0].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));
+						cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(w-50)+23, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[0].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));/*A闸门下端点*/
+						}
+						else if( GROUP_VAL_POS(prule->group,gate[0].synchro) == 1 )/* A闸门 I/ 时 */
+						{
+	/*DO_NOT_USE_CCFG(measure_data[index]).i_position 为I闸门与波形的交点位置，这里需要将其单位转化为ns来使用*/
+						cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(w-50)+20, (DO_NOT_USE_CCFG(measure_data[index]).i_position+(GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));
+						cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(w-50)+20, (DO_NOT_USE_CCFG(measure_data[index]).i_position+(GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[0].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));
+
+						cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(w-50)+17, (DO_NOT_USE_CCFG(measure_data[index]).i_position+(GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));
+						cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(w-50)+23, (DO_NOT_USE_CCFG(measure_data[index]).i_position+(GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));/*A闸门上端点*/
+
+						cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(w-50)+17, (DO_NOT_USE_CCFG(measure_data[index]).i_position+(GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[0].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));
+						cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(w-50)+23, (DO_NOT_USE_CCFG(measure_data[index]).i_position+(GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[0].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));/*A闸门下端点*/
+
+						}
+						cairo_stroke(cr);
+
+						cairo_set_source_rgba(cr,0.0,1.0,0.0,1.0);	/* B闸门为绿色 */
+						if( GROUP_VAL_POS(prule->group,gate[1].synchro) == 0 )/* B闸门 pulse 时 */
+						{
+						cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(w-50)+20, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));
+						cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(w-50)+20, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));
+
+						cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(w-50)+17, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));
+						cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(w-50)+23, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));/*B闸门上端点*/
+
+						cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(w-50)+17, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));
+						cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(w-50)+23, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));/*B闸门下端点*/
+						}
+						else if( GROUP_VAL_POS(prule->group,gate[1].synchro) == 1 )/* B闸门 I/ 时 */
+						{
+	/*DO_NOT_USE_CCFG(measure_data[index]).i_position 为I闸门与波形的交点位置，这里需要将其单位转化为ns来使用*/
+						cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(w-50)+20, (DO_NOT_USE_CCFG(measure_data[index]).i_position+(GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));
+						cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(w-50)+20, (DO_NOT_USE_CCFG(measure_data[index]).i_position+(GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));
+
+						cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(w-50)+17, (DO_NOT_USE_CCFG(measure_data[index]).i_position+(GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));
+						cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(w-50)+23, (DO_NOT_USE_CCFG(measure_data[index]).i_position+(GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));/*B闸门上端点*/
+
+						cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(w-50)+17, (DO_NOT_USE_CCFG(measure_data[index]).i_position+(GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));
+						cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(w-50)+23, (DO_NOT_USE_CCFG(measure_data[index]).i_position+(GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));/*B闸门下端点*/
+
+						}
+						else if( GROUP_VAL_POS(prule->group,gate[1].synchro) == 2 )/* B闸门 A^ 时 */
+						{
+	/*DO_NOT_USE_CCFG(measure_data[index]).a_position 为A闸门内波峰的位置，这里需要将其单位转化为ns来使用*/
+						cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(w-50)+20, (DO_NOT_USE_CCFG(measure_data[index]).a_position+(GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));
+						cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(w-50)+20, (DO_NOT_USE_CCFG(measure_data[index]).a_position+(GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));
+
+						cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(w-50)+17, (DO_NOT_USE_CCFG(measure_data[index]).a_position+(GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));
+						cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(w-50)+23, (DO_NOT_USE_CCFG(measure_data[index]).a_position+(GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));/*B闸门上端点*/
+
+						cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(w-50)+17, (DO_NOT_USE_CCFG(measure_data[index]).a_position+(GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));
+						cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(w-50)+23, (DO_NOT_USE_CCFG(measure_data[index]).a_position+(GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));/*B闸门下端点*/
+
+						}
+						cairo_stroke(cr);
+
+						cairo_set_source_rgba(cr,1.0,1.0,0.0,1.0);	/* I闸门为黄色 */
+						cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[2].height) / 100.0)*(w-50)+20, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));
+						cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[2].height) / 100.0)*(w-50)+20, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[2].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));
+
+						cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[2].height) / 100.0)*(w-50)+17, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));
+						cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[2].height) / 100.0)*(w-50)+23, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));/*I闸门上端点*/
+
+						cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[2].height) / 100.0)*(w-50)+17, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[2].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));
+						cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[2].height) / 100.0)*(w-50)+23, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[2].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));/*I闸门下端点*/
+						cairo_stroke(cr);
 					}
-					else if( GROUP_VAL_POS(prule->group,gate[0].synchro) == 1 )/* A闸门 I/ 时 */
+					else	/*A Scan 需要旋转的情况除外*/
 					{
-/*DO_NOT_USE_CCFG(measure_data[index]).i_position 为I闸门与波形的交点位置，这里需要将其单位转化为ns来使用*/
-					cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(w-50)+20, (DO_NOT_USE_CCFG(measure_data[index]).i_position+(GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));
-					cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(w-50)+20, (DO_NOT_USE_CCFG(measure_data[index]).i_position+(GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[0].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));
+						cairo_set_source_rgba(cr,1.0,0.0,0.0,1.0);	/* A闸门为红色 */
+						if( GROUP_VAL_POS(prule->group,gate[0].synchro) == 0 )/* A闸门 pulse 时 */
+						{
+						cairo_move_to(cr, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(h-20) );
+						cairo_line_to(cr, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[0].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(h-20) );
 
-					cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(w-50)+17, (DO_NOT_USE_CCFG(measure_data[index]).i_position+(GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));
-					cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(w-50)+23, (DO_NOT_USE_CCFG(measure_data[index]).i_position+(GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));/*A闸门上端点*/
+						cairo_move_to(cr, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(h-20)-3 );
+						cairo_line_to(cr, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(h-20)+3 );/*A闸门左端点*/
 
-					cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(w-50)+17, (DO_NOT_USE_CCFG(measure_data[index]).i_position+(GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[0].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));
-					cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(w-50)+23, (DO_NOT_USE_CCFG(measure_data[index]).i_position+(GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[0].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));/*A闸门下端点*/
+						cairo_move_to(cr, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[0].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(h-20)-3 );
+						cairo_line_to(cr, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[0].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(h-20)+3 );/*A闸门右端点*/
+						}
+						else if( GROUP_VAL_POS(prule->group,gate[0].synchro) == 1 )/* A闸门 I/ 时 */
+						{
+	/*DO_NOT_USE_CCFG(measure_data[index]).i_position 为I闸门与波形的交点位置，这里需要将其单位转化为ns来使用*/
 
+						cairo_move_to(cr, (DO_NOT_USE_CCFG(measure_data[index]).i_position + (GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(h-20) );
+						cairo_line_to(cr, (DO_NOT_USE_CCFG(measure_data[index]).i_position + (GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[0].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(h-20) );
+
+						cairo_move_to(cr, (DO_NOT_USE_CCFG(measure_data[index]).i_position + (GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(h-20)-3 );
+						cairo_line_to(cr, (DO_NOT_USE_CCFG(measure_data[index]).i_position + (GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(h-20)+3 );
+	/*A闸门左端点*/
+						cairo_move_to(cr, (DO_NOT_USE_CCFG(measure_data[index]).i_position + (GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[0].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(h-20)-3);
+						cairo_line_to(cr, (DO_NOT_USE_CCFG(measure_data[index]).i_position + (GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[0].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(h-20)+3);
+	/*A闸门右端点*/
+						}
+						cairo_stroke(cr);
+
+						cairo_set_source_rgba(cr,0.0,1.0,0.0,1.0);	/* B闸门为绿色 */
+						if( GROUP_VAL_POS(prule->group,gate[1].synchro) == 0 )/* B闸门 pulse 时 */
+						{
+						cairo_move_to(cr, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(h-20) );
+						cairo_line_to(cr, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(h-20) );
+
+						cairo_move_to(cr, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(h-20)-3 );
+						cairo_line_to(cr, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(h-20)+3 );/*B闸门左端点*/
+
+						cairo_move_to(cr, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(h-20)-3 );
+						cairo_line_to(cr, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(h-20)+3 );/*B闸门右端点*/
+						}
+						else if( GROUP_VAL_POS(prule->group,gate[1].synchro) == 1 )/* B闸门 I/ 时 */
+						{
+	/*DO_NOT_USE_CCFG(measure_data[index]).i_position 为I闸门与波形的交点位置，这里需要将其单位转化为ns来使用*/
+						cairo_move_to(cr, (DO_NOT_USE_CCFG(measure_data[index]).i_position + (GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(h-20) );
+						cairo_line_to(cr, (DO_NOT_USE_CCFG(measure_data[index]).i_position + (GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(h-20) );
+
+						cairo_move_to(cr, (DO_NOT_USE_CCFG(measure_data[index]).i_position + (GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(h-20)-3 );
+						cairo_line_to(cr, (DO_NOT_USE_CCFG(measure_data[index]).i_position + (GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(h-20)+3 );
+	/*B闸门左端点*/
+						cairo_move_to(cr, (DO_NOT_USE_CCFG(measure_data[index]).i_position + (GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(h-20)-3);
+						cairo_line_to(cr, (DO_NOT_USE_CCFG(measure_data[index]).i_position + (GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(h-20)+3);
+	/*B闸门右端点*/
+
+						}
+						else if( GROUP_VAL_POS(prule->group,gate[1].synchro) == 2 )/* B闸门 A^ 时 */
+						{
+	/*DO_NOT_USE_CCFG(measure_data[index]).a_position 为A闸门内波峰的位置，这里需要将其单位转化为ns来使用*/
+						cairo_move_to(cr, (DO_NOT_USE_CCFG(measure_data[index]).a_position+(GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(h-20) );
+						cairo_line_to(cr, (DO_NOT_USE_CCFG(measure_data[index]).a_position+(GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(h-20) );
+
+						cairo_move_to(cr, (DO_NOT_USE_CCFG(measure_data[index]).a_position+(GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(h-20)-3);
+						cairo_line_to(cr, (DO_NOT_USE_CCFG(measure_data[index]).a_position+(GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(h-20)+3);/*B闸门左端点*/
+
+						cairo_move_to(cr, (DO_NOT_USE_CCFG(measure_data[index]).a_position+(GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(h-20)-3);
+						cairo_line_to(cr, (DO_NOT_USE_CCFG(measure_data[index]).a_position+(GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(h-20)+3);
+	/*B闸门右端点*/
+						}
+						cairo_stroke(cr);
+
+						cairo_set_source_rgba(cr,1.0,1.0,0.0,1.0);	/* C闸门为黄色 */
+						cairo_move_to(cr, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[2].height) / 100.0)*(h-20) );
+						cairo_line_to(cr, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[2].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[2].height) / 100.0)*(h-20) );
+
+						cairo_move_to(cr, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[2].height) / 100.0)*(h-20)-3 );
+						cairo_line_to(cr, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[2].height) / 100.0)*(h-20)+3 );/*C闸门左端点*/
+
+						cairo_move_to(cr, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[2].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[2].height) / 100.0)*(h-20)-3 );
+						cairo_line_to(cr, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[2].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[2].height) / 100.0)*(h-20)+3 );/*C闸门右端点*/
+
+						cairo_stroke(cr);
 					}
-					cairo_stroke(cr);
-
-					cairo_set_source_rgba(cr,0.0,1.0,0.0,1.0);	/* B闸门为绿色 */
-					if( GROUP_VAL_POS(prule->group,gate[1].synchro) == 0 )/* B闸门 pulse 时 */
-					{
-					cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(w-50)+20, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));
-					cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(w-50)+20, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));
-
-					cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(w-50)+17, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));
-					cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(w-50)+23, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));/*B闸门上端点*/
-
-					cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(w-50)+17, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));
-					cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(w-50)+23, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));/*B闸门下端点*/
-					}
-					else if( GROUP_VAL_POS(prule->group,gate[1].synchro) == 1 )/* B闸门 I/ 时 */
-					{
-/*DO_NOT_USE_CCFG(measure_data[index]).i_position 为I闸门与波形的交点位置，这里需要将其单位转化为ns来使用*/
-					cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(w-50)+20, (DO_NOT_USE_CCFG(measure_data[index]).i_position+(GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));
-					cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(w-50)+20, (DO_NOT_USE_CCFG(measure_data[index]).i_position+(GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));
-
-					cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(w-50)+17, (DO_NOT_USE_CCFG(measure_data[index]).i_position+(GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));
-					cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(w-50)+23, (DO_NOT_USE_CCFG(measure_data[index]).i_position+(GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));/*B闸门上端点*/
-
-					cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(w-50)+17, (DO_NOT_USE_CCFG(measure_data[index]).i_position+(GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));
-					cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(w-50)+23, (DO_NOT_USE_CCFG(measure_data[index]).i_position+(GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));/*B闸门下端点*/
-
-					}
-					else if( GROUP_VAL_POS(prule->group,gate[1].synchro) == 2 )/* B闸门 A^ 时 */
-					{
-/*DO_NOT_USE_CCFG(measure_data[index]).a_position 为A闸门内波峰的位置，这里需要将其单位转化为ns来使用*/
-					cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(w-50)+20, (DO_NOT_USE_CCFG(measure_data[index]).a_position+(GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));
-					cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(w-50)+20, (DO_NOT_USE_CCFG(measure_data[index]).a_position+(GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));
-
-					cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(w-50)+17, (DO_NOT_USE_CCFG(measure_data[index]).a_position+(GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));
-					cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(w-50)+23, (DO_NOT_USE_CCFG(measure_data[index]).a_position+(GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));/*B闸门上端点*/
-
-					cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(w-50)+17, (DO_NOT_USE_CCFG(measure_data[index]).a_position+(GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));
-					cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(w-50)+23, (DO_NOT_USE_CCFG(measure_data[index]).a_position+(GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));/*B闸门下端点*/
-
-					}
-					cairo_stroke(cr);
-
-					cairo_set_source_rgba(cr,1.0,1.0,0.0,1.0);	/* I闸门为黄色 */
-					cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[2].height) / 100.0)*(w-50)+20, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));
-					cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[2].height) / 100.0)*(w-50)+20, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[2].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));
-
-					cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[2].height) / 100.0)*(w-50)+17, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));
-					cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[2].height) / 100.0)*(w-50)+23, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));/*I闸门上端点*/
-
-					cairo_move_to(cr, (GROUP_VAL_POS(prule->group,gate[2].height) / 100.0)*(w-50)+17, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[2].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));
-					cairo_line_to(cr, (GROUP_VAL_POS(prule->group,gate[2].height) / 100.0)*(w-50)+23, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[2].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(h-20));/*I闸门下端点*/
-					cairo_stroke(cr);
 				}
-				else	/*A Scan 需要旋转的情况除外*/
+				else//Calibration
 				{
-					cairo_set_source_rgba(cr,1.0,0.0,0.0,1.0);	/* A闸门为红色 */
-					if( GROUP_VAL_POS(prule->group,gate[0].synchro) == 0 )/* A闸门 pulse 时 */
-					{
-					cairo_move_to(cr, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(h-20) );
-					cairo_line_to(cr, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[0].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(h-20) );
+						cairo_set_source_rgba(cr,1.0,0.0,0.0,1.0);	/* A闸门为红色 */
+						if( GROUP_VAL_POS(prule->group,gate[0].synchro) == 0 )/* A闸门 pulse 时 */
+						{
+						cairo_move_to(cr, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(h-20) );
+						cairo_line_to(cr, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[0].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(h-20) );
 
-					cairo_move_to(cr, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(h-20)-3 );
-					cairo_line_to(cr, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(h-20)+3 );/*A闸门左端点*/
+						cairo_move_to(cr, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(h-20)-3 );
+						cairo_line_to(cr, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(h-20)+3 );/*A闸门左端点*/
 
-					cairo_move_to(cr, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[0].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(h-20)-3 );
-					cairo_line_to(cr, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[0].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(h-20)+3 );/*A闸门右端点*/
-					}
-					else if( GROUP_VAL_POS(prule->group,gate[0].synchro) == 1 )/* A闸门 I/ 时 */
-					{
-/*DO_NOT_USE_CCFG(measure_data[index]).i_position 为I闸门与波形的交点位置，这里需要将其单位转化为ns来使用*/
+						cairo_move_to(cr, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[0].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(h-20)-3 );
+						cairo_line_to(cr, ((GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[0].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(h-20)+3 );/*A闸门右端点*/
+						}
+						else if( GROUP_VAL_POS(prule->group,gate[0].synchro) == 1 )/* A闸门 I/ 时 */
+						{
+	/*DO_NOT_USE_CCFG(measure_data[index]).i_position 为I闸门与波形的交点位置，这里需要将其单位转化为ns来使用*/
 
-					cairo_move_to(cr, (DO_NOT_USE_CCFG(measure_data[index]).i_position + (GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(h-20) );
-					cairo_line_to(cr, (DO_NOT_USE_CCFG(measure_data[index]).i_position + (GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[0].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(h-20) );
+						cairo_move_to(cr, (DO_NOT_USE_CCFG(measure_data[index]).i_position + (GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(h-20) );
+						cairo_line_to(cr, (DO_NOT_USE_CCFG(measure_data[index]).i_position + (GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[0].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(h-20) );
 
-					cairo_move_to(cr, (DO_NOT_USE_CCFG(measure_data[index]).i_position + (GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(h-20)-3 );
-					cairo_line_to(cr, (DO_NOT_USE_CCFG(measure_data[index]).i_position + (GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(h-20)+3 );
-/*A闸门左端点*/
-					cairo_move_to(cr, (DO_NOT_USE_CCFG(measure_data[index]).i_position + (GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[0].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(h-20)-3);
-					cairo_line_to(cr, (DO_NOT_USE_CCFG(measure_data[index]).i_position + (GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[0].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(h-20)+3);
-/*A闸门右端点*/
-					}
-					cairo_stroke(cr);
-
-					cairo_set_source_rgba(cr,0.0,1.0,0.0,1.0);	/* B闸门为绿色 */
-					if( GROUP_VAL_POS(prule->group,gate[1].synchro) == 0 )/* B闸门 pulse 时 */
-					{
-					cairo_move_to(cr, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(h-20) );
-					cairo_line_to(cr, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(h-20) );
-
-					cairo_move_to(cr, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(h-20)-3 );
-					cairo_line_to(cr, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(h-20)+3 );/*B闸门左端点*/
-
-					cairo_move_to(cr, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(h-20)-3 );
-					cairo_line_to(cr, ((GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(h-20)+3 );/*B闸门右端点*/
-					}
-					else if( GROUP_VAL_POS(prule->group,gate[1].synchro) == 1 )/* B闸门 I/ 时 */
-					{
-/*DO_NOT_USE_CCFG(measure_data[index]).i_position 为I闸门与波形的交点位置，这里需要将其单位转化为ns来使用*/
-					cairo_move_to(cr, (DO_NOT_USE_CCFG(measure_data[index]).i_position + (GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(h-20) );
-					cairo_line_to(cr, (DO_NOT_USE_CCFG(measure_data[index]).i_position + (GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(h-20) );
-
-					cairo_move_to(cr, (DO_NOT_USE_CCFG(measure_data[index]).i_position + (GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(h-20)-3 );
-					cairo_line_to(cr, (DO_NOT_USE_CCFG(measure_data[index]).i_position + (GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(h-20)+3 );
-/*B闸门左端点*/
-					cairo_move_to(cr, (DO_NOT_USE_CCFG(measure_data[index]).i_position + (GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(h-20)-3);
-					cairo_line_to(cr, (DO_NOT_USE_CCFG(measure_data[index]).i_position + (GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(h-20)+3);
-/*B闸门右端点*/
-
-					}
-					else if( GROUP_VAL_POS(prule->group,gate[1].synchro) == 2 )/* B闸门 A^ 时 */
-					{
-/*DO_NOT_USE_CCFG(measure_data[index]).a_position 为A闸门内波峰的位置，这里需要将其单位转化为ns来使用*/
-					cairo_move_to(cr, (DO_NOT_USE_CCFG(measure_data[index]).a_position+(GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(h-20) );
-					cairo_line_to(cr, (DO_NOT_USE_CCFG(measure_data[index]).a_position+(GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(h-20) );
-
-					cairo_move_to(cr, (DO_NOT_USE_CCFG(measure_data[index]).a_position+(GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(h-20)-3);
-					cairo_line_to(cr, (DO_NOT_USE_CCFG(measure_data[index]).a_position+(GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(h-20)+3);/*B闸门左端点*/
-
-					cairo_move_to(cr, (DO_NOT_USE_CCFG(measure_data[index]).a_position+(GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(h-20)-3);
-					cairo_line_to(cr, (DO_NOT_USE_CCFG(measure_data[index]).a_position+(GROUP_VAL_POS(prule->group,gate[1].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[1].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[1].height) / 100.0)*(h-20)+3);
-/*B闸门右端点*/
-					}
-					cairo_stroke(cr);
-
-					cairo_set_source_rgba(cr,1.0,1.0,0.0,1.0);	/* C闸门为黄色 */
-					cairo_move_to(cr, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[2].height) / 100.0)*(h-20) );
-					cairo_line_to(cr, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[2].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[2].height) / 100.0)*(h-20) );
-
-					cairo_move_to(cr, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[2].height) / 100.0)*(h-20)-3 );
-					cairo_line_to(cr, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[2].height) / 100.0)*(h-20)+3 );/*C闸门左端点*/
-
-					cairo_move_to(cr, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[2].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[2].height) / 100.0)*(h-20)-3 );
-					cairo_line_to(cr, ((GROUP_VAL_POS(prule->group,gate[2].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[2].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[2].height) / 100.0)*(h-20)+3 );/*C闸门右端点*/
-
-					cairo_stroke(cr);
-				}
+						cairo_move_to(cr, (DO_NOT_USE_CCFG(measure_data[index]).i_position + (GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(h-20)-3 );
+						cairo_line_to(cr, (DO_NOT_USE_CCFG(measure_data[index]).i_position + (GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(h-20)+3 );
+	/*A闸门左端点*/
+						cairo_move_to(cr, (DO_NOT_USE_CCFG(measure_data[index]).i_position + (GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[0].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(h-20)-3);
+						cairo_line_to(cr, (DO_NOT_USE_CCFG(measure_data[index]).i_position + (GROUP_VAL_POS(prule->group,gate[0].start) / 1000.0)-(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_START) / 1000.0)+(GROUP_VAL_POS(prule->group,gate[0].width) / 1000.0))/(get_group_val (get_group_by_id (pp->p_config, prule->group), GROUP_RANGE) / 1000.0)*(w-50)+20,(1.0-GROUP_VAL_POS(prule->group,gate[0].height) / 100.0)*(h-20)+3);
+	/*A闸门右端点*/
+						}
+						cairo_stroke(cr);
+				}	
 					break;
 
 			case	B_SCAN:
@@ -2569,61 +2606,93 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 	{
 		case A_SCAN:
 		case A_SCAN_R:
-
-			if((get_display_pos (pp->p_config) == A_S_CC_SCAN ) && (get_cscan_source(pp->p_config, 0)==4) && (GROUP_VAL_POS(p->group, ut_unit) == UT_UNIT_TRUE_DEPTH) && (get_display_group(pp->p_config) == DISPLAY_CURRENT_GROUP))
-			{	/*A_S scan 在 true depth时， A scan 需要旋转90度*/
-				if(get_unit(pp->p_config) == UNIT_MM) /* hrule1 */
-				{
-					p->hmin1 = get_group_val (p_grp, GROUP_RANGE)/1000.0 *
-						(get_group_val (p_grp, GROUP_VELOCITY)/200000.0) + 
-						get_group_val (p_grp, GROUP_START)/1000.0 * 
-						(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
-					p->hmax1 = get_group_val (p_grp, GROUP_START)/1000.0 *
-						(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
-					p->h1_unit = UNIT_MM;
-					p->h1_color = 0xD6ABF1;/*紫色*/
-
-				}
-				else
-				{
-					p->hmin1 = get_group_val (p_grp, GROUP_RANGE)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0)+get_group_val (p_grp, GROUP_START)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
-					p->hmax1 = get_group_val (p_grp, GROUP_START)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
-					p->h1_unit = UNIT_INCH;
-					p->h1_color = 0xD6ABF1;/*紫色*/
-				}
-				p->h1_bit = 2;
-
-				p->wmin1 = 0;
-				p->wmax1 = 100;
-				p->w_unit = UNIT_BFH;
-				p->w_color = 0xEDF169;	/*黄色*/
-
-				p->hmin2 = 0;
-				p->hmax2 = 100;
-				p->h2_unit = UNIT_BFH;
-				p->h2_color = 0xEDF169;	/*黄色*/
-			}
-			else /*除了A scan 需要旋转的那种情况以外*/
+			if(pp->clb_flag == 0)
 			{
-				p->hmin1 = 0;
-				p->hmin2 = 0;
-				p->h1_unit = UNIT_BFH;
-				p->h1_color = 0xEDF169;	/*黄色*/
-				p->h1_bit = 0;
-				p->hmax1 = 100;
-				p->hmax2 = 100;
-				p->h2_unit = UNIT_BFH;
-				p->h2_color = 0xEDF169;	/*黄色*/
+				if((get_display_pos (pp->p_config) == A_S_CC_SCAN ) && (get_cscan_source(pp->p_config, 0)==4) && (GROUP_VAL_POS(p->group, ut_unit) == UT_UNIT_TRUE_DEPTH) && (get_display_group(pp->p_config) == DISPLAY_CURRENT_GROUP))
+				{	/*A_S scan 在 true depth时， A scan 需要旋转90度*/
+					if(get_unit(pp->p_config) == UNIT_MM) /* hrule1 */
+					{
+						p->hmin1 = get_group_val (p_grp, GROUP_RANGE)/1000.0 *
+							(get_group_val (p_grp, GROUP_VELOCITY)/200000.0) + 
+							get_group_val (p_grp, GROUP_START)/1000.0 * 
+							(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
+						p->hmax1 = get_group_val (p_grp, GROUP_START)/1000.0 *
+							(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
+						p->h1_unit = UNIT_MM;
+						p->h1_color = 0xD6ABF1;/*紫色*/
 
-				if(GROUP_VAL_POS(p->group, ut_unit) == UT_UNIT_TIME)	/* wrule */	/*淡黄色*/
-				{
-					p->wmin1 = get_group_val (p_grp, GROUP_START)/1000.0;
-					p->wmax1 = get_group_val (p_grp, GROUP_RANGE)/1000.0+get_group_val (p_grp, GROUP_START)/1000.0;
-					p->w_unit = UNIT_US;
-					p->w_color = 0xF8EAC4;
+					}
+					else
+					{
+						p->hmin1 = get_group_val (p_grp, GROUP_RANGE)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0)+get_group_val (p_grp, GROUP_START)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
+						p->hmax1 = get_group_val (p_grp, GROUP_START)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
+						p->h1_unit = UNIT_INCH;
+						p->h1_color = 0xD6ABF1;/*紫色*/
+					}
+					p->h1_bit = 2;
+
+					p->wmin1 = 0;
+					p->wmax1 = 100;
+					p->w_unit = UNIT_BFH;
+					p->w_color = 0xEDF169;	/*黄色*/
+
+					p->hmin2 = 0;
+					p->hmax2 = 100;
+					p->h2_unit = UNIT_BFH;
+					p->h2_color = 0xEDF169;	/*黄色*/
 				}
-				else
+				else /*除了A scan 需要旋转的那种情况以外*/
 				{
+					p->hmin1 = 0;
+					p->hmin2 = 0;
+					p->h1_unit = UNIT_BFH;
+					p->h1_color = 0xEDF169;	/*黄色*/
+					p->h1_bit = 0;
+					p->hmax1 = 100;
+					p->hmax2 = 100;
+					p->h2_unit = UNIT_BFH;
+					p->h2_color = 0xEDF169;	/*黄色*/
+
+					if(GROUP_VAL_POS(p->group, ut_unit) == UT_UNIT_TIME)	/* wrule */	/*淡黄色*/
+					{
+						p->wmin1 = get_group_val (p_grp, GROUP_START)/1000.0;
+						p->wmax1 = get_group_val (p_grp, GROUP_RANGE)/1000.0+get_group_val (p_grp, GROUP_START)/1000.0;
+						p->w_unit = UNIT_US;
+						p->w_color = 0xF8EAC4;
+					}
+					else
+					{
+						if(get_unit(pp->p_config) == UNIT_MM)
+						{
+							p->wmin1 = get_group_val (p_grp, GROUP_START)/1000.0*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
+							p->wmax1 = get_group_val (p_grp, GROUP_RANGE)/1000.0*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0)+get_group_val (p_grp, GROUP_START)/1000.0*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
+							p->w_unit = UNIT_MM;
+						}
+						else
+						{
+							p->wmin1 = get_group_val (p_grp, GROUP_START)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
+							p->wmax1 = get_group_val (p_grp, GROUP_RANGE)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0)+get_group_val (p_grp, GROUP_START)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
+							p->w_unit = UNIT_INCH;
+						}
+						if(GROUP_VAL_POS(p->group, ut_unit) == UT_UNIT_TRUE_DEPTH)
+							p->w_color = 0xD6ABF1;	/* 紫色 */
+						else
+							p->w_color = 0xF49CD6;	/* 粉色 */
+					}
+				}
+			}
+			else//Calibration
+			{
+					p->hmin1 = 0;
+					p->hmin2 = 0;
+					p->h1_unit = UNIT_BFH;
+					p->h1_color = 0xEDF169;	/*黄色*/
+					p->h1_bit = 0;
+					p->hmax1 = 100;
+					p->hmax2 = 100;
+					p->h2_unit = UNIT_BFH;
+					p->h2_color = 0xEDF169;	/*黄色*/
+					
 					if(get_unit(pp->p_config) == UNIT_MM)
 					{
 						p->wmin1 = get_group_val (p_grp, GROUP_START)/1000.0*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
@@ -2636,12 +2705,8 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 						p->wmax1 = get_group_val (p_grp, GROUP_RANGE)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0)+get_group_val (p_grp, GROUP_START)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
 						p->w_unit = UNIT_INCH;
 					}
-					if(GROUP_VAL_POS(p->group, ut_unit) == UT_UNIT_TRUE_DEPTH)
-						p->w_color = 0xD6ABF1;	/* 紫色 */
-					else
-						p->w_color = 0xF49CD6;	/* 粉色 */
-				}
-			}
+					p->w_color = 0xD6ABF1;/*紫色*/
+			}	
 			g_sprintf (p->title, "A scan|Gr %d|CH %0.1f|SK%0.1f|L%d", 
 					get_current_group(pp->p_config) + 1, angle / 100.0, GROUP_VAL_POS(p->group, skew) / 100.0, num + 1);
 			break;
@@ -2800,79 +2865,147 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 		case S_SCAN:
 		case S_SCAN_A:
 		case S_SCAN_L:
-			if(GROUP_VAL_POS(p->group, ut_unit)==UT_UNIT_SOUNDPATH)
+			if(pp->clb_flag == 0)
 			{
-				if(LAW_VAL (Angle_min) == LAW_VAL(Angle_max) )	/*hrule1*/	/* 灰色 */
+				if(GROUP_VAL_POS(p->group, ut_unit)==UT_UNIT_SOUNDPATH)
 				{
-					p->hmin1 = LAW_VAL_POS (p->group, Angle_min) / 100.0;
-					p->hmax1 = LAW_VAL_POS (p->group, Angle_max) / 100.0 + 1.0;
-				}
-				else
-				{
-					p->hmin1 = LAW_VAL_POS (p->group, Angle_min) / 100.0;
-					p->hmax1 = LAW_VAL_POS (p->group, Angle_max) / 100.0 ;
-				}
-				p->h1_unit = UNIT_DEG;
-				p->h1_color = 0xB2C1C1;
-				p->h1_bit = 1;
+					if(LAW_VAL (Angle_min) == LAW_VAL(Angle_max) )	/*hrule1*/	/* 灰色 */
+					{
+						p->hmin1 = LAW_VAL_POS (p->group, Angle_min) / 100.0;
+						p->hmax1 = LAW_VAL_POS (p->group, Angle_max) / 100.0 + 1.0;
+					}
+					else
+					{
+						p->hmin1 = LAW_VAL_POS (p->group, Angle_min) / 100.0;
+						p->hmax1 = LAW_VAL_POS (p->group, Angle_max) / 100.0 ;
+					}
+					p->h1_unit = UNIT_DEG;
+					p->h1_color = 0xB2C1C1;
+					p->h1_bit = 1;
 
 
 
-				if(get_unit(pp->p_config) == UNIT_MM)	/*wrule*/
-				{
-					p->wmin1 = get_group_val (p_grp, GROUP_START)/1000.0*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
-					p->wmax1 = get_group_val (p_grp, GROUP_RANGE)/1000.0*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0)+get_group_val (p_grp, GROUP_START)/1000.0*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
-					p->w_unit = UNIT_MM;
-					p->w_color = 0xF49CD6; /*粉色*/
+					if(get_unit(pp->p_config) == UNIT_MM)	/*wrule*/
+					{
+						p->wmin1 = get_group_val (p_grp, GROUP_START)/1000.0*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
+						p->wmax1 = get_group_val (p_grp, GROUP_RANGE)/1000.0*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0)+get_group_val (p_grp, GROUP_START)/1000.0*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
+						p->w_unit = UNIT_MM;
+						p->w_color = 0xF49CD6; /*粉色*/
+					}
+					else
+					{
+						p->wmin1 = get_group_val (p_grp, GROUP_START)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
+						p->wmax1 = get_group_val (p_grp, GROUP_RANGE)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0)+get_group_val (p_grp, GROUP_START)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
+						p->w_unit = UNIT_INCH;
+						p->w_color = 0xF49CD6; /*粉色*/
+					}
 				}
-				else
+				else if(GROUP_VAL_POS(p->group, ut_unit) == UT_UNIT_TIME)
 				{
-					p->wmin1 = get_group_val (p_grp, GROUP_START)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
-					p->wmax1 = get_group_val (p_grp, GROUP_RANGE)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0)+get_group_val (p_grp, GROUP_START)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
-					p->w_unit = UNIT_INCH;
-					p->w_color = 0xF49CD6; /*粉色*/
+					if(LAW_VAL (Angle_min) == LAW_VAL(Angle_max) )	/*hrule1*/
+					{
+						p->hmin1 = LAW_VAL_POS (p->group, Angle_min) / 100.0;
+						p->hmax1 = LAW_VAL_POS (p->group, Angle_max) / 100.0 + 1.0;
+					}
+					else
+					{
+						p->hmin1 = LAW_VAL_POS (p->group, Angle_min) / 100.0;
+						p->hmax1 = LAW_VAL_POS (p->group, Angle_max) / 100.0 ;
+					}
+					p->h1_unit = UNIT_DEG;
+					p->h1_color = 0xB2C1C1;	/*灰色*/
+					p->h1_bit = 1;
+
+					p->wmin1 = get_group_val (p_grp, GROUP_START)/1000.0;	/*wrule*/
+					p->wmax1 = get_group_val (p_grp, GROUP_RANGE)/1000.0 + get_group_val (p_grp, GROUP_START)/1000.0;
+					p->w_unit = UNIT_US;
+					p->w_color =0xF8EAC4; /*浅黄色*/
+
 				}
+				else if(GROUP_VAL_POS(p->group, ut_unit) == UT_UNIT_TRUE_DEPTH)
+				{
+					if(get_unit(pp->p_config) == UNIT_MM) /* hrule1 */
+					{
+						p->hmin1 = get_group_val (p_grp, GROUP_RANGE)/1000.0*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0)+get_group_val (p_grp, GROUP_START)/1000.0*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0)+tan((LAW_VAL_POS (p->group, Angle_min) / 100.0)*(3.14/180.0))*tan((LAW_VAL_POS (p->group, Angle_min) / 100.0)*(3.14/180.0))*get_group_val (p_grp, GROUP_RANGE)/1000.0*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
+						p->hmax1 = get_group_val (p_grp, GROUP_START)/1000.0*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
+						p->h1_unit = UNIT_MM;
+						p->h1_color = 0xD6ABF1;/*紫色*/
+
+					}
+					else
+					{
+						p->hmin1 = get_group_val (p_grp, GROUP_RANGE)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0)+get_group_val (p_grp, GROUP_START)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
+						p->hmax1 = get_group_val (p_grp, GROUP_START)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
+						p->h1_unit = UNIT_INCH;
+						p->h1_color = 0xD6ABF1;/*紫色*/
+					}
+					p->h1_bit = 2;
+
+					//p->wmin1 = 0;	/*wrule1*/
+					/*if(wedge == contact)
+						mid = pp->probe_primary_offset - (pp->element_qty * pp->element_pitch)/2.0;
+					else*/
+						mid = (-1)*GROUP_VAL_POS(get_current_group(pp->p_config),wedge.Primary_offset)/1000.0 - (GROUP_VAL_POS(get_current_group(pp->p_config),probe.Elem_qty) * GROUP_VAL_POS(get_current_group(pp->p_config),probe.Pitch)/1000.0)/2.0;
+
+					if(GROUP_VAL_POS(p->group, skew_pos)==0)
+						middle = GROUP_VAL_POS(p->group, scan_offset)/10.0 - mid;
+					else if(GROUP_VAL_POS(p->group, skew_pos)==1)
+						middle = GROUP_VAL_POS(p->group, index_offset)/10.0 - mid;
+					else if(GROUP_VAL_POS(p->group, skew_pos)==2)
+						middle = GROUP_VAL_POS(p->group, scan_offset)/10.0 + mid;
+					else if (GROUP_VAL_POS(p->group, skew_pos)==3)
+						middle = GROUP_VAL_POS(p->group, index_offset)/10.0 + mid;
+
+					if((LAW_VAL (Angle_min)<0)&&(LAW_VAL (Angle_max)>0))
+					{
+					     p->wmin1 = middle + get_group_val (p_grp, GROUP_RANGE)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_min) / 100.0)*(3.14/180.0));
+					     p->wmax1 = middle + get_group_val (p_grp, GROUP_RANGE)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_max) / 100.0)*(3.14/180.0));
+					}
+					else if((LAW_VAL (Angle_min)<0)&&(LAW_VAL (Angle_max)<0))
+					{
+					     p->wmin1 = middle + get_group_val (p_grp, GROUP_RANGE)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_min) / 100.0)*(3.14/180.0));
+					     p->wmax1 = middle - get_group_val (p_grp, GROUP_RANGE)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_max) / 100.0)*(3.14/180.0));
+					}
+					else if((LAW_VAL (Angle_min)>0)&&(LAW_VAL (Angle_max)>0))
+					{
+					     p->wmin1 = middle - get_group_val (p_grp, GROUP_RANGE)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_min) / 100.0)*(3.14/180.0));
+					     p->wmax1 = middle + get_group_val (p_grp, GROUP_RANGE)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_max) / 100.0)*(3.14/180.0));
+					}
+					pp->swmin = p->wmin1;
+					pp->swmax = p->wmax1;
+/*
+					g_print("\nwedge_primary_offset = %.2f  ",GROUP_VAL_POS(get_current_group(pp->p_config),wedge.Primary_offset)/1000.0);
+					g_print("element_qty = %d  ",GROUP_VAL_POS(get_current_group(pp->p_config),probe.Elem_qty));
+					g_print("element_pitch ＝ %.2f\n",GROUP_VAL_POS(get_current_group(pp->p_config),probe.Pitch)/1000.0);
+					g_print("wmin1 = %.2f  ", pp->swmin);
+					g_print("wmax1 = %.2f  ", pp->swmax);
+					g_print("middle = %.2f  ", middle );
+					g_print("angle_min = %.1f  ", LAW_VAL_POS (p->group, Angle_min) / 100.0 );
+					g_print("sin = %.2f"  , sin((LAW_VAL_POS (p->group, Angle_min) / 100.0)*(3.14/180.0)));*/
+					//p->wmax1 = 100;
+					if(get_unit(pp->p_config) == UNIT_MM)
+							p->w_unit = UNIT_MM;
+					else if(get_unit(pp->p_config)== UNIT_INCH)
+							p->w_unit = UNIT_INCH  ;
+					p->w_color = 0x0AD5D3;/* 深绿色 */
+				}
+
 			}
-			else if(GROUP_VAL_POS(p->group, ut_unit) == UT_UNIT_TIME)
+			else //Calibration 时，默认位S-scan truedepth
 			{
-				if(LAW_VAL (Angle_min) == LAW_VAL(Angle_max) )	/*hrule1*/
+				if(get_unit(pp->p_config) == UNIT_MM)
 				{
-					p->hmin1 = LAW_VAL_POS (p->group, Angle_min) / 100.0;
-					p->hmax1 = LAW_VAL_POS (p->group, Angle_max) / 100.0 + 1.0;
-				}
-				else
-				{
-					p->hmin1 = LAW_VAL_POS (p->group, Angle_min) / 100.0;
-					p->hmax1 = LAW_VAL_POS (p->group, Angle_max) / 100.0 ;
-				}
-				p->h1_unit = UNIT_DEG;
-				p->h1_color = 0xB2C1C1;	/*灰色*/
-				p->h1_bit = 1;
-
-				p->wmin1 = get_group_val (p_grp, GROUP_START)/1000.0;	/*wrule*/
-				p->wmax1 = get_group_val (p_grp, GROUP_RANGE)/1000.0 + get_group_val (p_grp, GROUP_START)/1000.0;
-				p->w_unit = UNIT_US;
-				p->w_color =0xF8EAC4; /*浅黄色*/
-
-			}
-
-			else if(GROUP_VAL_POS(p->group, ut_unit) == UT_UNIT_TRUE_DEPTH)
-			{
-				if(get_unit(pp->p_config) == UNIT_MM) /* hrule1 */
-				{
-					p->hmin1 = get_group_val (p_grp, GROUP_RANGE)/1000.0*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0)+get_group_val (p_grp, GROUP_START)/1000.0*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0)+tan((LAW_VAL_POS (p->group, Angle_min) / 100.0)*(3.14/180.0))*tan((LAW_VAL_POS (p->group, Angle_min) / 100.0)*(3.14/180.0))*get_group_val (p_grp, GROUP_RANGE)/1000.0*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
 					p->hmax1 = get_group_val (p_grp, GROUP_START)/1000.0*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
+					p->hmin1 = get_group_val (p_grp, GROUP_RANGE)/1000.0*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0)+get_group_val (p_grp, GROUP_START)/1000.0*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
 					p->h1_unit = UNIT_MM;
-					p->h1_color = 0xD6ABF1;/*紫色*/
-
 				}
 				else
 				{
-					p->hmin1 = get_group_val (p_grp, GROUP_RANGE)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0)+get_group_val (p_grp, GROUP_START)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
 					p->hmax1 = get_group_val (p_grp, GROUP_START)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
+					p->hmin1 = get_group_val (p_grp, GROUP_RANGE)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0)+get_group_val (p_grp, GROUP_START)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
 					p->h1_unit = UNIT_INCH;
-					p->h1_color = 0xD6ABF1;/*紫色*/
 				}
+				p->h1_color = 0xD6ABF1;/*紫色*/			
 				p->h1_bit = 2;
 
 				//p->wmin1 = 0;	/*wrule1*/
@@ -2907,7 +3040,7 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 				}
 				pp->swmin = p->wmin1;
 				pp->swmax = p->wmax1;
-
+/*
 				g_print("\nwedge_primary_offset = %.2f  ",GROUP_VAL_POS(get_current_group(pp->p_config),wedge.Primary_offset)/1000.0);
 				g_print("element_qty = %d  ",GROUP_VAL_POS(get_current_group(pp->p_config),probe.Elem_qty));
 				g_print("element_pitch ＝ %.2f\n",GROUP_VAL_POS(get_current_group(pp->p_config),probe.Pitch)/1000.0);
@@ -2915,15 +3048,14 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 				g_print("wmax1 = %.2f  ", pp->swmax);
 				g_print("middle = %.2f  ", middle );
 				g_print("angle_min = %.1f  ", LAW_VAL_POS (p->group, Angle_min) / 100.0 );
-				g_print("sin = %.2f"  , sin((LAW_VAL_POS (p->group, Angle_min) / 100.0)*(3.14/180.0)));
+				g_print("sin = %.2f"  , sin((LAW_VAL_POS (p->group, Angle_min) / 100.0)*(3.14/180.0)));*/
 				//p->wmax1 = 100;
 				if(get_unit(pp->p_config) == UNIT_MM)
 						p->w_unit = UNIT_MM;
 				else if(get_unit(pp->p_config)== UNIT_INCH)
 						p->w_unit = UNIT_INCH  ;
 				p->w_color = 0x0AD5D3;/* 深绿色 */
-			}
-
+			}	
 
 			p->hmin2 = 0;	/*hrule2*/	/* 黄色 */
 			p->hmax2 = 100;
@@ -2936,48 +3068,54 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 		case A_B_SCAN:
 			break;
 		case WEDGE_DELAY:
-			p->hmin1 = 0;	/*hrule2*/	/* 黄色 */
-			p->hmax1 = 100;
-			p->h1_unit = UNIT_BFH;
-
-			p->hmin2 = 0;	/*hrule2*/	/* 黄色 */
-			p->hmax2 = 100;
-			p->h2_unit = UNIT_BFH;
-
-			p->wmin1 = 0;	/*hrule2*/	/* 黄色 */
-			p->wmax1 = 100;
-			p->w_unit = UNIT_BFH;
-			g_sprintf (p->title, "Calibration:Wedge Delay");
-			break;
-		case SENSITIVITY:
-			p->hmin1 = 0;	/*hrule2*/	/* 黄色 */
+			p->hmin1 = 0;
 			p->hmax1 = 100;
 			p->h1_unit = UNIT_BFH;
 			p->h1_color = 0xEDF169;
 
-			p->hmin2 = 0;	/*hrule2*/	/* 黄色 */
+			p->hmin2 = 0;
 			p->hmax2 = 100;
 			p->h2_unit = UNIT_BFH;
 			p->h2_color = 0xEDF169;
 
-			p->wmin1 = 0;	/*hrule2*/	/* 黄色 */
-			p->wmax1 = 100;
-			p->w_unit = UNIT_BFH;
-			p->w_color = 0xEDF169;
+			p->wmin1 = LAW_VAL (Angle_min)/100;
+			p->wmax1 = LAW_VAL (Angle_max)/100;
+			p->w_unit = UNIT_DEG;
+			p->w_color = 0xCCD9D5;	/*浅灰色*/;
+			g_sprintf (p->title, "Calibration:Wedge Delay");
+			break;
+		case SENSITIVITY:
+			p->hmin1 = 0;
+			p->hmax1 = 100;
+			p->h1_unit = UNIT_BFH;
+			p->h1_color = 0xEDF169;
+
+			p->hmin2 = 0;
+			p->hmax2 = 100;
+			p->h2_unit = UNIT_BFH;
+			p->h2_color = 0xEDF169;
+
+			p->wmin1 = LAW_VAL (Angle_min)/100;
+			p->wmax1 = LAW_VAL (Angle_max)/100;
+			p->w_unit = UNIT_DEG;
+			p->w_color = 0xCCD9D5;	/*浅灰色*/;
 			g_sprintf (p->title, "Calibration:Sensitivity");
 			break;
 		case TCG:
-			p->hmin1 = 0;	/*hrule2*/	/* 黄色 */
+			p->hmin1 = 0;
 			p->hmax1 = 100;
 			p->h1_unit = UNIT_BFH;
+			p->h1_color = 0xEDF169;
 
-			p->hmin2 = 0;	/*hrule2*/	/* 黄色 */
+			p->hmin2 = 0;
 			p->hmax2 = 100;
 			p->h2_unit = UNIT_BFH;
+			p->h2_color = 0xEDF169;
 
-			p->wmin1 = 0;	/*hrule2*/	/* 黄色 */
-			p->wmax1 = 100;
-			p->w_unit = UNIT_BFH;
+			p->wmin1 = LAW_VAL (Angle_min)/100;
+			p->wmax1 = LAW_VAL (Angle_max)/100;
+			p->w_unit = UNIT_DEG;
+			p->w_color = 0xCCD9D5;	/*浅灰色*/;
 			g_sprintf (p->title, "Calibration:TCG");
 			break;
 		default:break;
@@ -5071,6 +5209,13 @@ void draw3_data1(DRAW_UI_P p)
 					break;
 
 				case 2:/* Wizard -> Calibration -> start p021 */
+					if((pp->pos == 0) && (pp->pos1[pp->pos] == 2) && (pp->cstart_qty != 1) )//Calibration
+					{
+						gtk_widget_set_sensitive(pp->eventbox2[0],FALSE);
+						gtk_widget_set_sensitive(pp->eventbox2[1],FALSE);
+						gtk_widget_set_sensitive(pp->menubar,FALSE);
+						pp->clb_flag = 1;
+					}
 					draw3_popdown (NULL, 1, 1);
 					if(pp->ctype_pos == 0)
 					{
@@ -10436,6 +10581,7 @@ void draw3_data3(DRAW_UI_P p)
 							}
 							else if ((pp->ctype_pos == 1) && ((pp->cmode_pos == 1)||(pp->cmode_pos == 2)||(pp->cmode_pos == 3)))
 							{
+#if 0
 								switch (TMP(max_angle_reg))
 								{
 									case 0:	tmpf = 0.1; break;
@@ -10469,7 +10615,7 @@ void draw3_data3(DRAW_UI_P p)
 									unit = UNIT_DEG;
 									draw3_digit_stop (cur_value, units[unit], digit, pos, 28);
 								}
-#if 0
+#endif
 								switch (TMP(last_angle_reg))
 								{
 									case 0:	tmpf = 0.1; break;
@@ -10480,8 +10626,8 @@ void draw3_data3(DRAW_UI_P p)
 								if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 3))
 								{
 									cur_value = pp->last_angle/100.0 ;
-									lower =	0.0;
-									upper =	89.9;
+									lower =	LAW_VAL (Angle_min) / 100.0;
+									upper =	LAW_VAL(Angle_max) / 100.0;
 									step = tmpf;
 									digit = 1;
 									pos = 3;
@@ -10497,7 +10643,7 @@ void draw3_data3(DRAW_UI_P p)
 									digit = 1;
 									draw3_digit_stop (cur_value , units[unit], digit, pos, 28);
 								}
-#endif
+
 							}
 							else if((pp->ctype_pos == 2)&&(pp->scode_pos == 1))
 							{

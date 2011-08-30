@@ -288,6 +288,10 @@ static void set_init_para()
 	pp->cstart_qty = 1;
 	pp->count = 0;
 	pp->flag = 0;
+	pp->clb_flag = 0;
+
+	pp->ref_amplitude = 8000;
+	pp->tolerance_t = 500;
 }
 
 int main (int argc, char *argv[])
@@ -355,8 +359,8 @@ int main (int argc, char *argv[])
 		{
 			g_print("creat default.cfg successfully\n");
 			set_config(0);
-			read_probe_file("source/system/Model/Probe/PA/DOPPLER/DOPPLER.opp",&pp->p_config->group[grp].probe);
-			read_wedge_file("source/system/Model/Wedge/PA/OTHER/Water.opw",&pp->p_config->group[grp].wedge);
+		//	read_probe_file("source/system/Model/Probe/PA/DOPPLER/DOPPLER.opp",&pp->p_config->group[grp].probe);
+		//	read_wedge_file("source/system/Model/Wedge/PA/OTHER/Water.opw",&pp->p_config->group[grp].wedge);
 		}
 		else
 			g_print("open default.cfg successfully\n");
