@@ -3528,6 +3528,7 @@ void draw_area_all()
 							set_drawarea_property (&(pp->draw_area[2]), CCC_SCAN, 0);
 							draw_area_ (pp->vbox_area[1], &(pp->draw_area[2]), 655, 150);
 							gtk_widget_show (pp->hbox_area[0]);
+							gtk_widget_show (pp->vbox_area[1]);
 							set_scan_config (0, A_SCAN_R, 230, 230, 240, 0, 0, get_current_group(pp->p_config));
 							set_scan_config (1, S_SCAN_A, 230, 355, 240, 250, 0, get_current_group(pp->p_config));
 							set_scan_config (2, CCC_SCAN, 230, 605, 115, 0, 275, get_current_group(pp->p_config));
@@ -3544,6 +3545,7 @@ void draw_area_all()
 							set_drawarea_property (&(pp->draw_area[2]), CCC_SCAN, 0);
 							draw_area_ (pp->vbox_area[1], &(pp->draw_area[2]), 655, 150);
 							gtk_widget_show (pp->hbox_area[0]);
+							gtk_widget_show (pp->vbox_area[1]);
 							set_scan_config (0, A_SCAN_R, 230, 230, 240, 0, 0, get_current_group(pp->p_config));
 							set_scan_config (1, S_SCAN_L, 230, 355, 240, 250, 0, get_current_group(pp->p_config));
 							set_scan_config (2, CCC_SCAN, 230, 605, 115, 0, 275, get_current_group(pp->p_config));
@@ -5380,7 +5382,7 @@ void draw3_data1(DRAW_UI_P p)
 							draw3_pop_tt (data_111, NULL, 
 									menu_content[TX_RX_MODE + 4 + get_group_val (p_grp, GROUP_TX_RX_MODE)],
 									menu_content + TX_RX_MODE, 3, 1, get_group_val (p_grp, GROUP_TX_RX_MODE), 0x05);
-						else if (GROUP_VAL (group_mode) == UT_SCAN)
+						else //if (GROUP_VAL (group_mode) == UT_SCAN)
 							draw3_pop_tt (data_111, NULL, 
 									menu_content[TX_RX_MODE + 4 + get_group_val (p_grp, GROUP_TX_RX_MODE)],
 									menu_content + TX_RX_MODE, 4, 1, get_group_val (p_grp, GROUP_TX_RX_MODE), 0x00);
@@ -6177,7 +6179,7 @@ void draw3_data1(DRAW_UI_P p)
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 						draw3_pop_tt (data_501, NULL, 
 								menu_content[GROUP_MODE_P + GROUP_VAL(group_mode)],
-								menu_content + GROUP_MODE, 2, 1, GROUP_VAL(group_mode), 0);
+								menu_content + GROUP_MODE, 4, 1, GROUP_VAL(group_mode), 0);
 					else 
 						draw3_popdown (menu_content[GROUP_MODE_P + GROUP_VAL(group_mode)], 1, 0);
 					break;
@@ -7072,7 +7074,7 @@ void draw3_data2(DRAW_UI_P p)
 											get_group_val (&g_tmp_group_struct, GROUP_TX_RX_MODE)],
 											menu_content + TX_RX_MODE, 3, 2, get_group_val (&g_tmp_group_struct, GROUP_TX_RX_MODE), 0x05);
 									}
-									else if ( g_tmp_group_struct.group_mode  == UT_SCAN )
+									else //if ( g_tmp_group_struct.group_mode  == UT_SCAN )
 									{
 										draw3_pop_tt (data_00242, NULL, 
 											menu_content[TX_RX_MODE + 4 + get_group_val (&g_tmp_group_struct, GROUP_TX_RX_MODE)],
@@ -8168,7 +8170,7 @@ void draw3_data2(DRAW_UI_P p)
 						digit = 1;
 						draw3_digit_stop (cur_value , units[unit], digit, pos, 0);
 					}
-					else if (GROUP_VAL(group_mode) == UT_SCAN)
+					else// if (GROUP_VAL(group_mode) == UT_SCAN)
 					{
 						switch (TMP(angle_reg))
 						{
@@ -11001,7 +11003,7 @@ void draw3_data3(DRAW_UI_P p)
 							[OFF_ON + get_group_val (get_group_by_id(pp->p_config, grp), GROUP_VIDEO_FILTER)], 3, 0);
 					break;
 				case 3: /* Skew (deg.) UT 无 P133 TAN1 */
-					if (GROUP_VAL(group_mode) == UT_SCAN)
+					if (GROUP_VAL(group_mode) != PA_SCAN)
 					{
 						gtk_widget_hide (pp->eventbox30[3]);
 						gtk_widget_hide (pp->eventbox31[3]);
@@ -13504,7 +13506,7 @@ void draw3_data4(DRAW_UI_P p)
 						draw3_popdown (menu_content[AVERAGING + get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_AVERAGING)], 4, 0);
 					break;
 				case 3:/* Beam Delay 波束延时 UT无 P134 */
-					if (GROUP_VAL(group_mode) == UT_SCAN)
+					if (GROUP_VAL(group_mode) != PA_SCAN)
 					{
 						gtk_widget_hide (pp->eventbox30[4]);
 						gtk_widget_hide (pp->eventbox31[4]);
@@ -15329,7 +15331,7 @@ void draw3_data5(DRAW_UI_P p)
 					}
 					break;
 				case 3:/* Gain Offset UT 无 P135 */
-					if (GROUP_VAL(group_mode) == UT_SCAN)
+					if (GROUP_VAL(group_mode) != PA_SCAN)
 					{
 						gtk_widget_hide (pp->eventbox30[5]);
 						gtk_widget_hide (pp->eventbox31[5]);
@@ -15368,6 +15370,8 @@ void draw3_data5(DRAW_UI_P p)
 					break;
 				case 4:/* Sum Gain  P145 */
 					pp->x_pos = 587, pp->y_pos = 543-YOFFSET;
+if(GROUP_VAL(group_mode)==1)
+{
 					switch (TMP(sum_gain_reg))
 					{
 						case 0:	tmpf = 0.1; break;
@@ -15428,6 +15432,12 @@ void draw3_data5(DRAW_UI_P p)
 							draw3_digit_stop (cur_value , units[unit], digit, pos, 0);
 						}
 					}
+}
+else
+{
+					gtk_widget_hide (pp->eventbox30[5]);
+					gtk_widget_hide (pp->eventbox31[5]);
+}
 					break;
 				default:break;
 			}
