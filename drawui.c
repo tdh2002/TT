@@ -15370,21 +15370,21 @@ void draw3_data5(DRAW_UI_P p)
 					break;
 				case 4:/* Sum Gain  P145 */
 					pp->x_pos = 587, pp->y_pos = 543-YOFFSET;
-if(GROUP_VAL(group_mode)==1)
-{
-					switch (TMP(sum_gain_reg))
+					if(GROUP_VAL(group_mode)==1)
 					{
+						switch (TMP(sum_gain_reg))
+						{
 						case 0:	tmpf = 0.1; break;
 						case 1:	tmpf = 0.5; break;
 						case 2:	tmpf = 1.0; break;
 						case 3:	tmpf = 2.0; break;
 						case 4:	tmpf = 6.0; break;						
 						default:break;
-					}
-					if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 5))
-					{
-						if (pp->mark_pop_change)
+						}
+						if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 5))
 						{
+							if (pp->mark_pop_change)
+							{
 							cur_value = GROUP_VAL(sum_gain)/100.0 ;
 							lower =	0.0;
 							upper =	48.0;
@@ -15393,51 +15393,51 @@ if(GROUP_VAL(group_mode)==1)
 							pos = 5;
 							unit = UNIT_NONE;
 							draw3_digit_pressed (data_1451, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
-						}
-						else
-						{
-							if (!GROUP_VAL(sum_gain_pos))
+							}
+							else
 							{
+								if (!GROUP_VAL(sum_gain_pos))
+								{
 								/* 更新当前增益值显示 */
 								str = g_strdup_printf ("%s %0.1f", 
 										menu_content[SUM_GAIN + GROUP_VAL(sum_gain_pos)], GROUP_VAL(sum_gain) / 100.0);
 								draw3_pop_tt (data_145, NULL, 
 										str, menu_content + SUM_GAIN, 2, 5, GROUP_VAL(sum_gain_pos), 0);
 								g_free(str);
-							}
-							else
-							{
+								}
+								else
+								{
 								str = g_strdup_printf ("%0.1f", GROUP_VAL(sum_gain) / 100.0);
 								draw3_pop_tt (data_145, NULL, 
 										str, menu_content + SUM_GAIN, 2, 5, GROUP_VAL(sum_gain_pos), 0);
 								g_free(str);
+								}
 							}
 						}
-					}
-					else 
-					{
-						if (!GROUP_VAL(sum_gain_pos))
+						else 
 						{
+							if (!GROUP_VAL(sum_gain_pos))
+							{
 							str = g_strdup_printf ("%s %0.1f", 
 									menu_content[SUM_GAIN + GROUP_VAL(sum_gain_pos)], GROUP_VAL(sum_gain) / 100.0);
 							draw3_popdown (str, 5, 0);
 							g_free(str);
-						}
-						else 
-						{
+							}
+							else 
+							{
 							cur_value = GROUP_VAL(sum_gain) / 100.0;
 							unit = UNIT_NULL;
 							pos = 5;
 							digit = 1;
 							draw3_digit_stop (cur_value , units[unit], digit, pos, 0);
+							}
 						}
 					}
-}
-else
-{
-					gtk_widget_hide (pp->eventbox30[5]);
-					gtk_widget_hide (pp->eventbox31[5]);
-}
+					else
+					{
+						gtk_widget_hide (pp->eventbox30[5]);
+						gtk_widget_hide (pp->eventbox31[5]);
+					}
 					break;
 				default:break;
 			}
