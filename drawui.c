@@ -10062,7 +10062,13 @@ void draw3_data3(DRAW_UI_P p)
 							}
 							else if(get_probe_select (pp->p_config)==1)
 							{
-								draw3_popdown(NULL,3,1);
+								if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
+								{
+									draw_dialog_all (DIALOG_DEFINE_PROBE);
+								}
+								else
+									draw3_popdown((g_tmp_group_struct.probe.Serial), 3,0);
+								
 								g_sprintf (temp,"%s", con2_p[5][0][6]);
 								gtk_label_set_text (GTK_LABEL (pp->label3[3]), temp);
 							}
@@ -10087,7 +10093,14 @@ void draw3_data3(DRAW_UI_P p)
 							}
 							else if( get_probe_select (pp->p_config)==1 )
 							{
-								draw3_popdown(NULL,3,1);
+								
+								if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
+								{
+									draw_dialog_all (DIALOG_DEFINE_PROBE);
+								}
+								else
+									draw3_popdown((g_tmp_group_struct.probe.Serial), 3,0);
+								
 								g_sprintf (temp,"%s", con2_p[5][0][6]);
 								gtk_label_set_text (GTK_LABEL (pp->label3[3]), temp);
 							}
@@ -10118,7 +10131,12 @@ void draw3_data3(DRAW_UI_P p)
 						}
 						else if(get_probe_select (pp->p_config)==1)
 						{
-							draw3_popdown(NULL,3,1);
+							
+							if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
+								draw_dialog_all (DIALOG_DEFINE_WEDGE);
+							else
+								draw3_popdown((g_tmp_group_struct.wedge.Serial), 3, 0);
+							
 							g_sprintf (temp,"%s", con2_p[5][0][7]);
 							gtk_label_set_text (GTK_LABEL (pp->label3[3]), temp);
 						}

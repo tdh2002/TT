@@ -2686,6 +2686,7 @@ static int handler_key(guint keyval, gpointer data)
 				}
 			}
 			break;
+
 		case GDK_Escape:
 			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
 			{
