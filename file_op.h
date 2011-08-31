@@ -117,4 +117,6 @@ extern void report_build_signature(char *file_name);
 
 extern void SAVE_DATA();
 
+extern void Save_Report_File(char *html_file_name);
+
 #endif

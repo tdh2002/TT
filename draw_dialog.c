@@ -3542,28 +3542,7 @@ void draw_report_build()
 
 	int i;
 
-	//文件的头
-    report_build_start(file_name);
-	//html的head
-    report_build_header(file_name);
-	//如果打开报告,userfield的功能
-	if (get_report_format_userfield(pp->p_config))
-	{	
-		//如果打开，就在报告那里增加userfield功能
-		report_build_user_field(file_name);
-	}
-	//枚举group，每一个group，都是一个独立的信息
-    for (i = 0; i < get_group_qty (pp->p_config); i++)
-    {
-		//group
-        report_build_group_config(file_name,i);
-    }
-
-	//report_build_image(file_name);
-	//
-	report_build_signature(file_name);
-    //
-	report_build_end(file_name);
+	Save_Report_File(file_name);
 
 	dialog = gtk_dialog_new_with_buttons ("Dialog_Wedge", window,
 			GTK_DIALOG_MODAL |	GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_NO_SEPARATOR,
@@ -3939,18 +3918,36 @@ static void signal_define_probe(GtkDialog *dialog, gint response_id, gpointer us
 
 		save_probe_file(file_name,&g_tmp_probe);
 		
-		grp = get_current_group(pp->p_config);
-
-		memcpy(&pp->p_config->group[grp].probe,&g_tmp_probe,sizeof(struct _Probe));		
-
-		set_group_val (p_grp , GROUP_FREQ_VAL, g_tmp_probe.Frequency);
-
-		if (GROUP_VAL(probe.Elem_qty) < LAW_VAL (Last_tx_elem))
+		
+		if ( ( pp->pos == 5 ) && ( pp->pos1[pp->pos] == 0 ) && ( pp->pos2[pp->pos][pp->pos1[pp->pos]] == 3 ) )
 		{
-			LAW_VAL(Elem_qty) = GROUP_VAL(probe.Elem_qty);
-			LAW_VAL (Last_tx_elem) = GROUP_VAL(probe.Elem_qty);
+			grp = get_current_group(pp->p_config);
+			memcpy(&pp->p_config->group[grp].probe,&g_tmp_probe,sizeof(struct _Probe));		
+		
+			set_group_val (p_grp , GROUP_FREQ_VAL, g_tmp_probe.Frequency);
+
+			if (GROUP_VAL(probe.Elem_qty) < LAW_VAL (Last_tx_elem))
+			{
+				LAW_VAL(Elem_qty) = GROUP_VAL(probe.Elem_qty);
+				LAW_VAL (Last_tx_elem) = GROUP_VAL(probe.Elem_qty);
+			}
+
+			gtk_label_set_text (GTK_LABEL (pp->data3[3]), GROUP_VAL(probe.Serial));
 		}
-		gtk_label_set_text (GTK_LABEL (pp->data3[3]), GROUP_VAL(probe.Serial));
+		else if ( (pp->pos == 0) && (pp->pos1[pp->pos] == 0) && (pp->pos2[pp->pos][pp->pos1[pp->pos]] == 3 ) )
+		{
+			memcpy(&g_tmp_group_struct.probe,&g_tmp_probe,sizeof(struct _Probe));
+
+			g_tmp_group_struct.frequency1 = g_tmp_probe.Frequency;
+
+			if ( g_tmp_group_struct.probe.Elem_qty < g_tmp_group_struct.law_info.Last_tx_elem )
+			{
+				g_tmp_group_struct.law_info.Elem_qty = g_tmp_group_struct.probe.Elem_qty;
+				g_tmp_group_struct.law_info.Last_tx_elem = g_tmp_group_struct.probe.Elem_qty;
+			}
+
+			gtk_label_set_text (GTK_LABEL (pp->data3[3]), g_tmp_probe.Serial);
+		}
 
         //关闭对话框
         gtk_widget_destroy (GTK_WIDGET (dialog));
@@ -4389,12 +4386,24 @@ static void signal_define_wedge(GtkDialog *dialog, gint response_id, gpointer us
 
 		save_wedge_file(file_name,&g_tmp_wedge);
 
-		id = get_current_group(pp->p_config);
+		
+		if( ( pp->pos == 5 ) && ( pp->pos1[pp->pos] == 0 ) && ( pp->pos2[pp->pos][pp->pos1[pp->pos]] == 4 ) )
+		{
+			id = get_current_group(pp->p_config);
 
-		memcpy(&pp->p_config->group[id].wedge,&g_tmp_wedge,sizeof(struct _Wedge));
+			memcpy(&pp->p_config->group[id].wedge,&g_tmp_wedge,sizeof(struct _Wedge));
 
-		gtk_label_set_text (GTK_LABEL (pp->data3[4]), GROUP_VAL(wedge.Serial));
-        
+			gtk_label_set_text (GTK_LABEL (pp->data3[4]), GROUP_VAL(wedge.Serial));
+		}
+		else if ( ( pp->pos == 0 ) && ( pp->pos1[pp->pos] == 0 ) && (pp->pos2[pp->pos][pp->pos1[pp->pos]] == 3 ) ) 
+		{
+			g_print("zhong\n");
+
+			memcpy(&g_tmp_group_struct.wedge,&g_tmp_wedge,sizeof(struct _Wedge));
+
+			gtk_label_set_text (GTK_LABEL (pp->data3[3]),g_tmp_wedge.Serial);
+		}
+
 		//关闭对话框
         gtk_widget_destroy (GTK_WIDGET (dialog));
 		change_keypress_event (KEYPRESS_MAIN);

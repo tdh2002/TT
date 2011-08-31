@@ -1380,7 +1380,24 @@ void report_build_signature(char *file_name)
 	if ( get_report_format_note(pp->p_config) )
 		report_build_note(fp);
 
-    fprintf(fp,"</TABLE>\n");
+	
+	fprintf(fp,"<TR>\n");
+	fprintf(fp,"    <TD>Technician Name</TD>\n");
+	fprintf(fp,"<TD>_______________________________________________________________________________________________</TD></TR>\n");
+
+	fprintf(fp,"<TR>\n");
+	fprintf(fp,"    <TD>Technician Signature</TD>\n");
+	fprintf(fp,"<TD>_______________________________________________________________________________________________</TD></TR>\n");
+
+	fprintf(fp,"<TR>\n");
+	fprintf(fp,"    <TD>Contractor</TD>\n");
+	fprintf(fp,"<TD>_______________________________________________________________________________________________</TD></TR>\n");
+
+	fprintf(fp,"<TR>\n");
+	fprintf(fp,"    <TD>Date</TD>\n");
+	fprintf(fp,"<TD>_______________________________________________________________________________________________</TD></TR>\n");
+	
+	fprintf(fp,"</TABLE>\n");
     fprintf(fp,"</TD></TR>\n");
     fprintf(fp,"</TABLE>\n\n");
 	
@@ -1539,8 +1556,10 @@ static void fb_close(FBInfo* fb)
 
 static int snap2jpg(const char * filename, int quality, FBInfo* fb)
 {
+	//一行的字节数
 	int row_stride = 0; 
 	FILE * outfile = NULL;
+	//一行位图
 	JSAMPROW row_pointer[1] = {0};
 	struct jpeg_error_mgr jerr;
 	struct jpeg_compress_struct cinfo;
@@ -1548,9 +1567,11 @@ static int snap2jpg(const char * filename, int quality, FBInfo* fb)
 	memset(&jerr, 0x00, sizeof(jerr));
 	memset(&cinfo, 0x00, sizeof(cinfo));
 
+	//设置错误的回调函数为jpeg_std_error
 	cinfo.err = jpeg_std_error(&jerr);
+	//初始化解码
 	jpeg_create_compress(&cinfo);
-
+	//打开输出文件
 	if ((outfile = fopen(filename, "wb+")) == NULL) 
 	{
 		fprintf(stderr, "can't open %s\n", filename);
@@ -1558,18 +1579,27 @@ static int snap2jpg(const char * filename, int quality, FBInfo* fb)
 		return -1;
 	}
 
+	//把jpg的输出文件设为outfile
 	jpeg_stdio_dest(&cinfo, outfile);
+	//jpeg图像的宽
 	cinfo.image_width = fb_width(fb);
+	//jpeg图像的高
 	cinfo.image_height = fb_height(fb);
+	//jpeg图像的色彩为3，3为彩色，1为灰度
 	cinfo.input_components = 3;
+	//jpeg图像的色彩为JCS_RGB，JCS_RGB为彩色，JCS_GRAYSCALE为灰度
 	cinfo.in_color_space = JCS_RGB;
+	//其它东西设为默认值，上面的四个一定要设置
 	jpeg_set_defaults(&cinfo);
+	//设定编码jpeg的质量
 	jpeg_set_quality(&cinfo, quality, TRUE);
+	//开始压缩
 	jpeg_start_compress(&cinfo, TRUE);
-
+	//一行的字节数
 	row_stride = fb_width(fb) * 2;
+	//
 	JSAMPLE* image_buffer = malloc(3 * fb_width(fb));
-
+	//对每一行压缩
 	while (cinfo.next_scanline < cinfo.image_height) 
 	{
 		int i = 0;
@@ -1580,14 +1610,16 @@ static int snap2jpg(const char * filename, int quality, FBInfo* fb)
 		{
 			fb->unpack(fb, line, image_buffer+offset, image_buffer + offset + 1, image_buffer + offset + 2);
 		}
-
+		
 		row_pointer[0] = image_buffer;
 		(void) jpeg_write_scanlines(&cinfo, row_pointer, 1);
 	}
-
+	
+	//结束解码
 	jpeg_finish_compress(&cinfo);
+	//关闭输出文件
 	fclose(outfile);
-
+	//释放解码对像
 	jpeg_destroy_compress(&cinfo);
 
 	return 0;
@@ -1694,6 +1726,8 @@ void SAVE_DATA()
 {
 	int operate;
 
+	char *html_file_name = "report_build.html";
+
 	char *screen_filename = "fb.jpg";
 
 	char *fbfilename = "/dev/fb1";
@@ -1709,6 +1743,37 @@ void SAVE_DATA()
 		screen_to_file(screen_filename,fbfilename);
 	}
 	else if (operate == SAVE_MODE_REPORT)
-	{}
+	{
+		Save_Report_File(html_file_name);
+	}
 
 }
+
+void Save_Report_File(char *html_file_name)
+{
+	int i;
+	
+	//文件的头
+    report_build_start(html_file_name);
+	//html的head
+    report_build_header(html_file_name);
+	//如果打开报告,userfield的功能
+	if (get_report_format_userfield(pp->p_config))
+	{	
+		//如果打开，就在报告那里增加userfield功能
+		report_build_user_field(html_file_name);
+	}
+	//枚举group，每一个group，都是一个独立的信息
+    for (i = 0; i < get_group_qty (pp->p_config); i++)
+    {
+		//group
+        report_build_group_config(html_file_name,i);
+    }
+
+	//report_build_image(html_file_name);
+	//
+	report_build_signature(html_file_name);
+    //
+	report_build_end(html_file_name);
+}
+

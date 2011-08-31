@@ -2686,6 +2686,7 @@ static int handler_key(guint keyval, gpointer data)
 				}
 			}
 			break;
+
 		case GDK_Escape:
 			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
 			{
@@ -5103,7 +5104,7 @@ void data_500 (GtkMenuItem *menuitem, gpointer data) /* 增加删除选择group 
 void data_501 (GtkMenuItem *menuitem, gpointer data) /* Probe/Part->Select->Group Mode 501 */
 {
 	GROUP_VAL(group_mode) = (gchar) (GPOINTER_TO_UINT (data));
-	if(!GROUP_VAL(group_mode)) /*group mode 选择UT时，focal law 不可用*/
+	if(GROUP_VAL(group_mode)!=1) /*group mode 选择UT时，focal law 不可用*/
 		gtk_widget_set_sensitive(pp->menuitem[6],FALSE);
 	else
 		gtk_widget_set_sensitive(pp->menuitem[6],TRUE);

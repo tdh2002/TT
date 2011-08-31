@@ -483,8 +483,8 @@ const gchar *all_menu_content_en[] =
 	"Yellow", "Blue", "White","Black",								/* 373 FFT->Color*/
 	"Vertical", "Horizontal",									/* 377 Orientation*/
 	"Add", "1", "2", "3", "4", "5", "6", "7", "8", "Remove",	/* 379 Group */
-	"UT  Conventional Ultrasound", "PA  Phassed Array",						/* 385 Group Mode*/
-	"UT", "PA",											/* 387 */
+	"UT (PA Connector)", "PA (Phassed Array)",	"UT1(Conventional UT)","UT2(Conventional UT)",					/* 385 Group Mode*/
+	"UT", "PA", "UT1", "UT2",											/* 387 */
 	"Select Tx/Rx", "Defines",									/* 389 Select*/
 	"0.0", "90.0", "180.0", "270.0", "UserDef",							/* 391 Skew  */
 	"Plate", "OD", "ID",										/* 396 Geometry */
