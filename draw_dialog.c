@@ -54,8 +54,17 @@ static void da_call_probe (GtkDialog *dialog, gint response_id, gpointer user_da
 	GtkTreeModel *model;
 	gchar *value;
 	gchar *file_path = NULL;
-	gint grp = get_current_group(pp->p_config);
-	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
+	gint grp;
+	GROUP *p_grp;
+	if (pp->pos != 0)
+	{
+		grp = get_current_group(pp->p_config);
+		p_grp = get_group_by_id (pp->p_config, grp);
+	}
+	else 
+	{
+		p_grp = &g_tmp_group_struct;
+	}
 
 	if (GTK_RESPONSE_OK == response_id)  /* 确认 */
 	{
@@ -63,22 +72,25 @@ static void da_call_probe (GtkDialog *dialog, gint response_id, gpointer user_da
 					GTK_TREE_SELECTION(pp->selection1), &model, &iter)) /* 选中探头型号时 */
 		{
 			gtk_tree_model_get(model, &iter, LIST_ITEM, &value,  -1);
-			if (GROUP_VAL(group_mode) == PA_SCAN )
+			if (p_grp->group_mode == PA_SCAN )
 				file_path = g_strdup_printf ("%s%s/%s", PA_PROBE_PATH, pp->p_type, value);
 			else if (GROUP_VAL(group_mode) == UT_SCAN )
 				file_path = g_strdup_printf ("%s%s/%s", UT_PROBE_PATH, pp->p_type, value);
 
-			read_probe_file (file_path, &GROUP_VAL(probe));
-			set_group_val (p_grp, GROUP_FREQ_VAL, GROUP_VAL(probe.Frequency));				/* 频率 */
+
+			read_probe_file (file_path, &p_grp->probe);
+			set_group_val (p_grp, GROUP_FREQ_VAL, p_grp->probe.Frequency);				/* 频率 */
 			if (!get_group_val (p_grp, GROUP_PW_POS))
 				set_group_val (p_grp, GROUP_PW_VAL,	get_group_val (p_grp, GROUP_FREQ_VAL) * 2.0); /* 改变脉冲宽度 */
-			if (GROUP_VAL(probe.Elem_qty) < LAW_VAL (Last_tx_elem))
+
+
+			if (p_grp->probe.Elem_qty < LAW_VAL (Last_tx_elem))
 			{
-				LAW_VAL(Elem_qty) = GROUP_VAL(probe.Elem_qty);
-				LAW_VAL (Last_tx_elem) = GROUP_VAL(probe.Elem_qty);
+				LAW_VAL(Elem_qty) = p_grp->probe.Elem_qty;
+				LAW_VAL (Last_tx_elem) = p_grp->probe.Elem_qty;
 			}
 			g_free (file_path);
-			gtk_label_set_text (GTK_LABEL (pp->data3[3]), GROUP_VAL(probe.Model));
+			gtk_label_set_text (GTK_LABEL (pp->data3[3]), p_grp->probe.Model);
 
 			gtk_widget_destroy (GTK_WIDGET (dialog));
 			change_keypress_event (KEYPRESS_MAIN);
@@ -89,15 +101,15 @@ static void da_call_probe (GtkDialog *dialog, gint response_id, gpointer user_da
 			{
 				//				strcpy(GROUP_VAL(probe.Model), " Unknown");
 
-				if (GROUP_VAL(group_mode) == PA_SCAN )
-					read_probe_file (PA_UNKNOWN_PROBE, &GROUP_VAL(probe));
+				if (p_grp->group_mode == PA_SCAN )
+					read_probe_file (PA_UNKNOWN_PROBE, &p_grp->probe);
 				else if (GROUP_VAL(group_mode) == UT_SCAN )
-					read_probe_file (UT_UNKNOWN_PROBE, &GROUP_VAL(probe));
+					read_probe_file (UT_UNKNOWN_PROBE, &p_grp->probe);
 
-				set_group_val (p_grp, GROUP_FREQ_VAL, GROUP_VAL(probe.Frequency));				/* 频率 */
+				set_group_val (p_grp, GROUP_FREQ_VAL, p_grp->probe.Frequency);				/* 频率 */
 				if (!get_group_val (p_grp, GROUP_PW_POS))
 					set_group_val (p_grp, GROUP_PW_VAL,	get_group_val (p_grp, GROUP_FREQ_VAL) * 2.0); /* 改变脉冲宽度 */
-				gtk_label_set_text (GTK_LABEL (pp->data3[3]), GROUP_VAL(probe.Model));
+				gtk_label_set_text (GTK_LABEL (pp->data3[3]), p_grp->probe.Model);
 
 				gtk_widget_destroy (GTK_WIDGET (dialog));			
 				change_keypress_event (KEYPRESS_MAIN);
@@ -132,6 +144,17 @@ static void da_call_wedge (GtkDialog *dialog, gint response_id, gpointer user_da
 	GtkTreeModel *model;
 	gchar *value = NULL;
 	gchar *file_path = NULL;
+	gint grp;
+	GROUP *p_grp;
+	if (pp->pos != 0)
+	{
+		grp = get_current_group(pp->p_config);
+		p_grp = get_group_by_id (pp->p_config, grp);
+	}
+	else 
+	{
+		p_grp = &g_tmp_group_struct;
+	}
 
 	if (GTK_RESPONSE_OK == response_id)  /* 确认 */
 	{
@@ -145,10 +168,10 @@ static void da_call_wedge (GtkDialog *dialog, gint response_id, gpointer user_da
 			else if (GROUP_VAL(group_mode) == UT_SCAN )
 				file_path = g_strdup_printf ("%s%s/%s", UT_WEDGE_PATH, pp->p_type, value);
 
-			read_wedge_file (file_path, &GROUP_VAL(wedge));
+			read_wedge_file (file_path, &p_grp->wedge);
 			g_free(file_path);
 
-			gtk_label_set_text (GTK_LABEL (pp->data3[4]), GROUP_VAL(wedge.Model));
+			gtk_label_set_text (GTK_LABEL (pp->data3[4]), p_grp->wedge.Model);
 			gtk_widget_destroy (GTK_WIDGET (dialog));
 			change_keypress_event (KEYPRESS_MAIN);
 		}
@@ -157,7 +180,7 @@ static void da_call_wedge (GtkDialog *dialog, gint response_id, gpointer user_da
 			if (pp->tag == 0)/* 楔块大类选择Unknow时*/
 			{
 				strcpy(GROUP_VAL(wedge.Model), " Unknown");
-				gtk_label_set_text (GTK_LABEL (pp->data3[4]), GROUP_VAL(wedge.Model));
+				gtk_label_set_text (GTK_LABEL (pp->data3[4]), p_grp->wedge.Model);
 				gtk_widget_destroy (GTK_WIDGET (dialog));
 				change_keypress_event (KEYPRESS_MAIN);			
 			}

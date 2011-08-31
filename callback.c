@@ -2466,7 +2466,7 @@ static gint keypress_event_dialog(GtkWidget *widget, GdkEventKey *event)			/* è‡
 			return 0;
 			break;
 		case GDK_Escape:
-			gtk_dialog_response (GTK_DIALOG(widget), GTK_RESPONSE_CLOSE);
+			gtk_dialog_response (GTK_DIALOG(widget), GTK_RESPONSE_CANCEL);
 			return 0;
 			break;
 		default:break;
