@@ -136,6 +136,7 @@ extern void data_235_del_point(DRAW_UI_P p);
 void draw_field_name ();
 void draw_field_value ();
 void calc_measure_data();//Defined by hefan
+extern void generate_focallaw(int grp);
 
 void (*draw_data3[6])(DRAW_UI_P p) =
 {
@@ -2536,8 +2537,16 @@ static inline void set_scan_config (guchar scan_num,guchar scan_type, guint aw, 
 	{
 		case A_SCAN:
 		case A_SCAN_R:
-			TMP(a_scan_width)	=	w;
-			TMP(a_scan_height)	=	h;
+			if(pp->clb_flag == 0)
+			{
+				TMP(a_scan_width)	=	w;
+				TMP(a_scan_height)	=	h;
+			}
+			else//Calibration
+			{
+				TMP(clb_a_scan_width)	=	w;
+				TMP(clb_a_scan_height)	=	h;
+			}
 			break;
 		case B_SCAN:
 			TMP(b_scan_width)	=	w;
@@ -2552,8 +2561,16 @@ static inline void set_scan_config (guchar scan_num,guchar scan_type, guint aw, 
 		case S_SCAN:
 		case S_SCAN_A:
 		case S_SCAN_L:
-			TMP(s_scan_width)	=	w;
-			TMP(s_scan_height)	=	h;
+			if(pp->clb_flag == 0)
+			{
+				TMP(s_scan_width)	=	w;
+				TMP(s_scan_height)	=	h;
+			}
+			else//Calibration
+			{
+				TMP(clb_s_scan_width)	=	w;
+				TMP(clb_s_scan_height)	=	h;
+			}
 			break;
 		case WEDGE_DELAY:
 		case SENSITIVITY:
@@ -3131,10 +3148,10 @@ void switch_area()
 	/*校准完之后把常规刷波形区域显示，校准显示区域销毁*/
 	for (i = 0; i < 4; i ++)
 	{
-		gtk_widget_show(GTK_WIDGET(pp->vbox_area[i]));
-		gtk_widget_show(GTK_WIDGET(pp->hbox_area[i]));
 		gtk_widget_hide(pp->hbox_area_clb[i]);
 		gtk_widget_hide(pp->vbox_area_clb[i]);
+		gtk_widget_show(GTK_WIDGET(pp->vbox_area[i]));
+		gtk_widget_show(GTK_WIDGET(pp->hbox_area[i]));
 	}
 }
 
@@ -3202,7 +3219,6 @@ void draw_area_calibration()
 					gtk_box_pack_start (GTK_BOX (pp->vbox_area_clb[0]), pp->hbox_area_clb[0], FALSE, FALSE, 0);
 					gtk_widget_show (pp->hbox_area_clb[0]);
 					gtk_widget_show (pp->vbox_area_clb[0]);
-					/* S-scan A-scan */	
 					if (LAW_VAL(Focal_type) == AZIMUTHAL_SCAN)
 							set_drawarea_property (&(pp->draw_area_clb[0]), S_SCAN_A, 0x06);
 					else if (LAW_VAL(Focal_type) == LINEAR_SCAN)
@@ -3227,16 +3243,16 @@ void draw_area_calibration()
 					}
 
 					if (LAW_VAL(Focal_type) == AZIMUTHAL_SCAN)
-							set_scan_config (0, S_SCAN_A, 187, 307, 187, 0, 0, get_current_group(pp->p_config));
+							set_scan_config (0, S_SCAN_A, 277, 307, 177, 0, 0, get_current_group(pp->p_config));
 					else if (LAW_VAL(Focal_type) == LINEAR_SCAN)
-							set_scan_config (0, S_SCAN_L, 187, 307, 187, 0, 0, get_current_group(pp->p_config));
-					set_scan_config (1, A_SCAN, 177, 307, 177, 328, 0, get_current_group(pp->p_config));
+							set_scan_config (0, S_SCAN_L, 277, 307, 177, 0, 0, get_current_group(pp->p_config));
+					set_scan_config (1, A_SCAN, 277, 277, 177, 328, 0, get_current_group(pp->p_config));
 					if( pp->cmode_pos == 1 )
-						set_scan_config (2, WEDGE_DELAY,    193, 605, 193, 0, 212, get_current_group(pp->p_config));
+						set_scan_config (2, WEDGE_DELAY,    655, 605, 193, 0, 212, get_current_group(pp->p_config));
 					else if( pp->cmode_pos == 2 )
-						set_scan_config (2, SENSITIVITY,    193, 605, 193, 0, 212, get_current_group(pp->p_config));
+						set_scan_config (2, SENSITIVITY,    655, 605, 193, 0, 212, get_current_group(pp->p_config));
 					else if( pp->cmode_pos == 3 )
-						set_scan_config (2, TCG,    193, 605, 193, 0, 212, get_current_group(pp->p_config));
+						set_scan_config (2, TCG,    655, 605, 193, 0, 212, get_current_group(pp->p_config));
 				}
 				break;
 			case 2://Code
@@ -3264,15 +3280,7 @@ void draw_area_all()
 		if (pp->hbox_area[i])
 		{
 			gtk_widget_destroy(pp->hbox_area[i]);
-		}/*
-		if (pp->vbox_area_clb[i])
-		{
-			gtk_widget_destroy(pp->vbox_area_clb[i]);
 		}
-		if (pp->hbox_area_clb[i])
-		{
-			gtk_widget_destroy(pp->hbox_area_clb[i]);
-		}*/
 		pp->vbox_area[i] = gtk_vbox_new(FALSE, 0);
 		pp->hbox_area[i] = gtk_hbox_new(FALSE, 0);
 		memset (TMP(scan_type), 0xff, 16);
@@ -5211,12 +5219,19 @@ void draw3_data1(DRAW_UI_P p)
 					break;
 
 				case 2:/* Wizard -> Calibration -> start p021 */
-					if((pp->pos == 0) && (pp->pos1[pp->pos] == 2) && (pp->cstart_qty != 1) )//Calibration
+					if((pp->pos == 0) && (pp->pos1[pp->pos] == 2) && (pp->cstart_qty == 2) )//Calibration
 					{
+						pp->clb_flag = 1;
+						pp->clb_count++;
 						gtk_widget_set_sensitive(pp->eventbox2[0],FALSE);
 						gtk_widget_set_sensitive(pp->eventbox2[1],FALSE);
 						gtk_widget_set_sensitive(pp->menubar,FALSE);
-						pp->clb_flag = 1;
+
+						set_overlay_gate(pp->p_config,1);
+						if(pp->clb_count == 1)
+							pp->save_ut_unit = GROUP_VAL_POS(get_current_group(pp->p_config), ut_unit);
+						GROUP_VAL_POS(get_current_group(pp->p_config), ut_unit) = UT_UNIT_TRUE_DEPTH;
+						generate_focallaw( (int)(get_current_group(pp->p_config)) );
 					}
 					draw3_popdown (NULL, 1, 1);
 					if(pp->ctype_pos == 0)
@@ -9968,7 +9983,7 @@ void draw3_data3(DRAW_UI_P p)
 	guint digit = 0, pos, unit = 0, content_pos, menu_status = 0, temp_beam, temp_beam1;
 
 	gint grp = get_current_group (pp->p_config);
-	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
+	//GROUP *p_grp = get_group_by_id (pp->p_config, grp);
 
 	switch (pp->pos) 
 	{
@@ -16602,11 +16617,13 @@ void calc_measure_data()
 	gint l,n;
 
 	gint grp = get_current_group(pp->p_config);//当前group
+	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
 	for (offset = 0, k = 0 ; k < grp; k++)
 		offset += TMP(beam_qty[k]);
 	gint index = offset + TMP(beam_num[grp]);	
 	gint i = TMP(beam_num[grp]);//当前beam
-	gfloat a = ( (gfloat)(LAW_VAL_POS (grp, Angle_min) + LAW_VAL_POS (grp, Angle_step)*i)/100.0 )*G_PI/180.0;//当前折射角
+	gfloat a = ( (gfloat)(LAW_VAL_POS (grp, Angle_min) + 
+				 LAW_VAL_POS (grp, Angle_step)*i)/100.0 )*G_PI/180.0;//当前折射角
 	gfloat thickness = (gfloat)(get_part_thickness(pp->p_config)/1000.0);//工件厚度	
 
 	for(l=0;l<4;l++)//4个field
@@ -16614,32 +16631,43 @@ void calc_measure_data()
 		switch( DO_NOT_USE_CCFG(field[l]) )//field1
 		{
 			case 0://A%
-				DO_NOT_USE_CCFG(measure_data[index]).a_height = (float)(((TMP(measure_data[index][1])>>20) & 0xfff)/20.47);//满屏时200% 4095 
+				DO_NOT_USE_CCFG(measure_data[index]).a_height = 
+						((TMP(measure_data[index][1])>>20) & 0xfff)/20.47;//满屏时200% 4095 
 				TMP(field[l]) = DO_NOT_USE_CCFG(measure_data[index]).a_height;
 				break;
 			case 3://B%
-				DO_NOT_USE_CCFG(measure_data[index]).b_height = (float)(((TMP(measure_data[index][2])>>20) & 0xfff)/20.47);
+				DO_NOT_USE_CCFG(measure_data[index]).b_height = 
+						((TMP(measure_data[index][2])>>20) & 0xfff)/20.47;
 				TMP(field[l]) = DO_NOT_USE_CCFG(measure_data[index]).b_height;
 				break;
 			case 6://A^
 				if(GROUP_VAL(ut_unit)==1)//Time
-					DO_NOT_USE_CCFG(measure_data[index]).a_position = (float)(((TMP(measure_data[index][1])) & 0xfffff)/100.0);//直接显示时间微妙
+					DO_NOT_USE_CCFG(measure_data[index]).a_position = 
+						((TMP(measure_data[index][1])) & 0xfffff)/100.0 - TMP(max_beam_delay[grp]);//直接显示时间微妙
 				else
-					DO_NOT_USE_CCFG(measure_data[index]).a_position = (float)(((TMP(measure_data[index][1])) & 0xfffff)*get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY)/20000000.0);//距离模式s= time * velo/2
+					DO_NOT_USE_CCFG(measure_data[index]).a_position = 
+						((TMP(measure_data[index][1]) & 0xfffff) - TMP(max_beam_delay[grp]))*
+						get_group_val (p_grp, GROUP_VELOCITY)/20000000.0;//距离模式s= time * velo/2
 				TMP(field[l]) = DO_NOT_USE_CCFG(measure_data[index]).a_position;
 				break;
 			case 7://B^
 				if(GROUP_VAL(ut_unit)==1)
-					DO_NOT_USE_CCFG(measure_data[index]).b_position = (float)(((TMP(measure_data[index][2])) & 0xfffff)/100.0);//直接显示时间微妙
+					DO_NOT_USE_CCFG(measure_data[index]).b_position = 
+						((TMP(measure_data[index][2])) & 0xfffff)/100.0 - TMP(max_beam_delay[grp]);//直接显示时间微妙
 				else
-					DO_NOT_USE_CCFG(measure_data[index]).b_position = (float)(((TMP(measure_data[index][2])) & 0xfffff)*get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY)/20000000.0);
+					DO_NOT_USE_CCFG(measure_data[index]).b_position = 
+						((TMP(measure_data[index][2]) & 0xfffff) - TMP(max_beam_delay[grp]))*
+						get_group_val (p_grp, GROUP_VELOCITY)/20000000.0;
 				TMP(field[l]) = DO_NOT_USE_CCFG(measure_data[index]).b_position;
 				break;
 			case 8://I/
 				if(GROUP_VAL(ut_unit)==1)
-					DO_NOT_USE_CCFG(measure_data[index]).i_position = (float)(((TMP(measure_data[index][3])) & 0xfffff)/100.0);//直接显示时间微妙
+					DO_NOT_USE_CCFG(measure_data[index]).i_position = 
+						((TMP(measure_data[index][3])) & 0xfffff)/100.0 - TMP(max_beam_delay[grp]);//直接显示时间微妙
 				else
-					DO_NOT_USE_CCFG(measure_data[index]).i_position = (float)(((TMP(measure_data[index][3])) & 0xfffff)*get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY)/20000000.0);
+					DO_NOT_USE_CCFG(measure_data[index]).i_position = 
+						((TMP(measure_data[index][3]) & 0xfffff) - TMP(max_beam_delay[grp]))*
+						get_group_val (p_grp, GROUP_VELOCITY)/20000000.0;
 				TMP(field[l]) = DO_NOT_USE_CCFG(measure_data[index]).i_position;
 
 				break;
@@ -16659,21 +16687,25 @@ void calc_measure_data()
 						//DO_NOT_USE_CCFG(measure_data[index]).a_sound_path = ((TMP(measure_data[index][1])) & 0xfffff)/100.0;//=A^
 						//break;
 					case 1://Time
-						DO_NOT_USE_CCFG(measure_data[index]).a_sound_path = (float)(((TMP(measure_data[index][1])) & 0xfffff)*get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY)/20000000.0);//Time(A^)*声速/2
+						DO_NOT_USE_CCFG(measure_data[index]).a_sound_path = 
+							((TMP(measure_data[index][1]) & 0xfffff) - TMP(max_beam_delay[grp]))*
+							get_group_val (p_grp, GROUP_VELOCITY)/20000000.0;//Time(A^)*声速/2
 						break;
 					case 2://True Depth
-						DO_NOT_USE_CCFG(measure_data[index]).a_sound_path = (float)(((TMP(measure_data[index][1])) & 0xfffff)*get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY)/(cos(a)*20000000.0) +TMP(field_distance[i]));//=DA^/cos(a)+distance				
+						DO_NOT_USE_CCFG(measure_data[index]).a_sound_path = 
+							((TMP(measure_data[index][1]) & 0xfffff) - TMP(max_beam_delay[grp]))*
+							get_group_val (p_grp, GROUP_VELOCITY)/(cos(a)*20000000.0) +TMP(field_distance[i]);//=DA^/cos(a)+distance				
 						break;
 				}
 				/******由SA^计算DA^*************/	
 				n = (gint)((DO_NOT_USE_CCFG(measure_data[index]).a_sound_path -TMP(field_distance[i]))*cos(a)/thickness);//反射次数
 				if( n%2 == 0 )
 				{
-					DO_NOT_USE_CCFG(measure_data[index]).a_depth = (float)((DO_NOT_USE_CCFG(measure_data[index]).a_sound_path -TMP(field_distance[i]))*cos(a) - thickness);
+					DO_NOT_USE_CCFG(measure_data[index]).a_depth = DO_NOT_USE_CCFG(measure_data[index]).a_sound_path -TMP(field_distance[i])*cos(a) - thickness;
 				}
 				else
 				{
-					DO_NOT_USE_CCFG(measure_data[index]).a_depth =  (float)((n+1)*thickness - (DO_NOT_USE_CCFG(measure_data[index]).a_sound_path -TMP(field_distance[i]))*cos(a));
+					DO_NOT_USE_CCFG(measure_data[index]).a_depth =  (n+1)*thickness - (DO_NOT_USE_CCFG(measure_data[index]).a_sound_path -TMP(field_distance[i]))*cos(a);
 				}
 				TMP(field[l]) = DO_NOT_USE_CCFG(measure_data[index]).a_depth;
 				break;
@@ -16685,21 +16717,27 @@ void calc_measure_data()
 						//DO_NOT_USE_CCFG(measure_data[index]).b_sound_path = ((TMP(measure_data[index][2])) & 0xfffff)/100.0;//=A^
 						//break;
 					case 1://Time
-						DO_NOT_USE_CCFG(measure_data[index]).b_sound_path = (float)(((TMP(measure_data[index][2])) & 0xfffff)*get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY)/20000000.0);//Time(A^)*声速/2
+						DO_NOT_USE_CCFG(measure_data[index]).b_sound_path = 
+							((TMP(measure_data[index][2]) & 0xfffff) - TMP(max_beam_delay[grp]))*
+							get_group_val (p_grp, GROUP_VELOCITY)/20000000.0;//Time(A^)*声速/2
 						break;
 					case 2://True Depth
-						DO_NOT_USE_CCFG(measure_data[index]).b_sound_path = (float)(((TMP(measure_data[index][2])) & 0xfffff)*get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY)/(cos(a)*20000000.0) +TMP(field_distance[i]));//=DA^/cos(a)+distance				
+						DO_NOT_USE_CCFG(measure_data[index]).b_sound_path = 
+							((TMP(measure_data[index][2]) & 0xfffff) - TMP(max_beam_delay[grp]))*
+							get_group_val (p_grp, GROUP_VELOCITY)/(cos(a)*20000000.0) +TMP(field_distance[i]);//=DA^/cos(a)+distance				
 						break;
 				}
 				/******由SA^计算DA^*************/	
 				n = (gint)((DO_NOT_USE_CCFG(measure_data[index]).a_sound_path -TMP(field_distance[i]))*cos(a)/thickness);//反射次数
 				if( n%2 == 0 )
 				{
-					DO_NOT_USE_CCFG(measure_data[index]).b_depth = (float)((DO_NOT_USE_CCFG(measure_data[index]).b_sound_path -TMP(field_distance[i]))*cos(a) - thickness);
+					DO_NOT_USE_CCFG(measure_data[index]).b_depth = 
+						(DO_NOT_USE_CCFG(measure_data[index]).b_sound_path -TMP(field_distance[i]))*cos(a) - thickness;
 				}
 				else
 				{
-					DO_NOT_USE_CCFG(measure_data[index]).b_depth =  (float)((n+1)*thickness - (DO_NOT_USE_CCFG(measure_data[index]).b_sound_path -TMP(field_distance[i]))*cos(a));
+					DO_NOT_USE_CCFG(measure_data[index]).b_depth =  
+						(n+1)*thickness - (DO_NOT_USE_CCFG(measure_data[index]).b_sound_path -TMP(field_distance[i]))*cos(a);
 				}
 				TMP(field[l]) = DO_NOT_USE_CCFG(measure_data[index]).b_depth;
 				break;
@@ -16707,13 +16745,18 @@ void calc_measure_data()
 				switch(GROUP_VAL(ut_unit))	
 				{
 					case 0://Sound Path
-						DO_NOT_USE_CCFG(measure_data[index]).a_sound_path = (float)(((TMP(measure_data[index][1])) & 0xfffff)*get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY)/20000000.0);//Time(A^)*声速/2
+						DO_NOT_USE_CCFG(measure_data[index]).a_sound_path = 
+							((TMP(measure_data[index][1]) & 0xfffff) - TMP(max_beam_delay[grp]))*
+							get_group_val (p_grp, GROUP_VELOCITY)/20000000.0;//Time(A^)*声速/2
 						break;
 					case 1://Time
-						DO_NOT_USE_CCFG(measure_data[index]).a_sound_path = (float)(((TMP(measure_data[index][1])) & 0xfffff)/100.0);//=A^
+						DO_NOT_USE_CCFG(measure_data[index]).a_sound_path = ((TMP(measure_data[index][1])) & 0xfffff)/100.0;//=A^
 						break;
 					case 2://True Depth
-						DO_NOT_USE_CCFG(measure_data[index]).a_sound_path = (float)(((TMP(measure_data[index][1])) & 0xfffff)*get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY)/(cos(a)*20000000.0) +TMP(field_distance[i]));//=DA^/cos(a)+distance				
+						DO_NOT_USE_CCFG(measure_data[index]).a_sound_path = 
+							((TMP(measure_data[index][1]) & 0xfffff) - TMP(max_beam_delay[grp]))*
+							get_group_val (p_grp, GROUP_VELOCITY)/(cos(a)*20000000.0) 
+							+ TMP(field_distance[i]);//=DA^/cos(a)+distance				
 						break;
 				}
 				TMP(field[l]) = DO_NOT_USE_CCFG(measure_data[index]).a_sound_path;
@@ -16722,13 +16765,19 @@ void calc_measure_data()
 				switch(GROUP_VAL(ut_unit))	
 				{
 					case 0://Sound Path
-						DO_NOT_USE_CCFG(measure_data[index]).b_sound_path = (float)(((TMP(measure_data[index][2])) & 0xfffff)*get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY)/20000000.0);//Time(A^)*声速/2
+						DO_NOT_USE_CCFG(measure_data[index]).b_sound_path = 
+							((TMP(measure_data[index][2]) & 0xfffff) - TMP(max_beam_delay[grp]))*
+							get_group_val (p_grp, GROUP_VELOCITY)/20000000.0;//Time(A^)*声速/2
 						break;
 					case 1://Time
-						DO_NOT_USE_CCFG(measure_data[index]).b_sound_path = (float)(((TMP(measure_data[index][2])) & 0xfffff)/100.0);//=A^
+						DO_NOT_USE_CCFG(measure_data[index]).b_sound_path = 
+							((TMP(measure_data[index][2]) & 0xfffff) - TMP(max_beam_delay[grp]))/100.0;//=A^
 						break;
 					case 2://True Depth
-						DO_NOT_USE_CCFG(measure_data[index]).b_sound_path = (float)(((TMP(measure_data[index][2])) & 0xfffff)*get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY)/(cos(a)*20000000.0) +TMP(field_distance[i]));//=DA^/cos(a)+distance			
+						DO_NOT_USE_CCFG(measure_data[index]).b_sound_path = 
+							((TMP(measure_data[index][2]) & 0xfffff) - TMP(max_beam_delay[grp]))*
+							get_group_val (p_grp, GROUP_VELOCITY)/(cos(a)*20000000.0) 
+							+ TMP(field_distance[i]);//=DA^/cos(a)+distance			
 						break;
 				}
 				TMP(field[l]) = DO_NOT_USE_CCFG(measure_data[index]).b_sound_path;
@@ -16851,15 +16900,32 @@ static void draw_frame_thread(void)
 						}
 					}
 			}
-			for (k = 0; ((k < 16) && (TMP(scan_type[k]) != 0xff)); k++)
-			{	
-				if (TMP(scan_group[k]) == i)
-					draw_scan(k, TMP(scan_type[k]), TMP(scan_group[k]), 
-							TMP(scan_xpos[k]), TMP(scan_ypos[k]), dot_temp, 
-						TMP(fb1_addr) + 768*400);
-				//						dot_temp1);
+//			if (!pp->clb_flag)
+//			{
+				for (k = 0; ((k < 16) && (TMP(scan_type[k]) != 0xff)); k++)
+				{	
+					if (TMP(scan_group[k]) == i)
+						draw_scan(k, TMP(scan_type[k]), TMP(scan_group[k]), 
+								TMP(scan_xpos[k]), TMP(scan_ypos[k]), dot_temp, 
+								TMP(fb1_addr) + 768*400);
+				}
+//			} 
+#if 0
+			else
+			{
+				pp->sscan_mark = 1;	
+				draw_scan(0, S_SCAN_A, 0, 0, 0, dot_temp, TMP(fb1_addr) + 768*400);
+				draw_scan(1, A_SCAN, 0, 328, 0, dot_temp, TMP(fb1_addr) + 768*400);
+				for (k = 0; ((k < 16) && (TMP(scan_type[k]) != 0xff)); k++)
+				{	
+					if (TMP(scan_group[k]) == i)
+						draw_scan(k, TMP(scan_type[k]), TMP(scan_group[k]), 
+								TMP(scan_xpos[k]), TMP(scan_ypos[k]), dot_temp, 
+								TMP(fb1_addr) + 768*400);
+				}
 			}
- 		}
+#endif
+		}
 		*DMA_MARK = 1  ;
 		calc_measure_data();//计算数据
 		draw_field_value ();

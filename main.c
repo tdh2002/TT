@@ -289,6 +289,7 @@ static void set_init_para()
 	pp->count = 0;
 	pp->flag = 0;
 	pp->clb_flag = 0;
+	pp->clb_count = 0;
 
 	pp->ref_amplitude = 8000;
 	pp->tolerance_t = 500;
@@ -347,7 +348,7 @@ int main (int argc, char *argv[])
 
 	pp = p_ui;
 	set_init_para();//
-	gint grp = get_current_group(pp->p_config);
+//	gint grp = get_current_group(pp->p_config);
 	p_ui->p_tmp_config->fd_config = open ("default.cfg", O_RDWR | O_CREAT, 0644);
 	if (p_ui->p_tmp_config->fd_config < 0)
 		g_print("error open config file\n");
@@ -545,7 +546,7 @@ void init_group_spi (guint group)
 	//***************************************************
 	double BeamNo ;
 	double max_angle;
-	double min_angle;
+//	double min_angle;
 	double current_angle;
 
 	BeamNo = pp->p_tmp_config->beam_num[group];
@@ -697,5 +698,7 @@ void init_group_spi (guint group)
 	TMP(group_spi[group]).voltage = get_voltage (pp->p_config, group);	
 
 }
+
+
 
 

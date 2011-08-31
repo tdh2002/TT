@@ -15,6 +15,7 @@
 extern void focal_law(gpointer data);/*回调函数*/
 extern void draw_area_calibration();
 extern void switch_area();
+extern void draw_field_value ();
 
 static int handler_key(guint keyval, gpointer data);
 static int thread_set_DB_eighty_percent(gpointer data);
@@ -802,7 +803,7 @@ void b2_fun0(DRAW_UI_P p, guint pos)
 		//	gtk_widget_set_sensitive(p->eventbox2[1],FALSE);
 		//	gtk_widget_set_sensitive(p->eventbox2[2],FALSE);
 		//	gtk_widget_set_sensitive(p->menubar,FALSE);
-			pp->clb_flag = 1;
+		//	pp->clb_flag = 1;
 			pp->cstart_qty = 1;
 		//	draw_menu3(0, NULL);
 		}
@@ -2628,43 +2629,46 @@ static int handler_key(guint keyval, gpointer data)
 			break;
 
 		case GDK_KP_Subtract:  /* +/- */
-			(TMP(beam_num[get_current_group(pp->p_config)]) < (TMP(beam_qty[get_current_group(pp->p_config)]) - 1))	?
-				(TMP(beam_num[get_current_group(pp->p_config)]) += 1)	:	
-			(TMP(beam_num[get_current_group(pp->p_config)]) = 0);
+			if(!pp->clb_flag)
+			{
+				(TMP(beam_num[get_current_group(pp->p_config)]) < (TMP(beam_qty[get_current_group(pp->p_config)]) - 1))	?
+					(TMP(beam_num[get_current_group(pp->p_config)]) += 1)	:	
+				(TMP(beam_num[get_current_group(pp->p_config)]) = 0);
 	
-			for (offset = 0, k = 0 ; k < group; k++)
-					offset += TMP(beam_qty[k]);
-			BEAM_INFO(offset + TMP(beam_num[get_current_group(pp->p_config)]),beam_delay) = pp->G_delay[ TMP(beam_num[get_current_group(pp->p_config)]) ];
-			GROUP_VAL(gain_offset) = pp->tmp_gain_off[ TMP(beam_num[get_current_group(pp->p_config)]) ];//待更新
+				for (offset = 0, k = 0 ; k < group; k++)
+						offset += TMP(beam_qty[k]);
+				BEAM_INFO(offset + TMP(beam_num[get_current_group(pp->p_config)]),beam_delay) = pp->G_delay[ TMP(beam_num[get_current_group(pp->p_config)]) ];
+				GROUP_VAL(gain_offset) = pp->tmp_gain_off[ TMP(beam_num[get_current_group(pp->p_config)]) ];//待更新
 
-            //  add by shensheng
-			BeamNo = pp->p_tmp_config->beam_num[group];
-		    if(LAW_VAL(Focal_type) == 0)
-		    {
-		    	current_angle = LAW_VAL(Angle_min)/100.0 + BeamNo * LAW_VAL(Angle_step)/100.0 ;
-		        max_angle = MAX(abs(LAW_VAL(Angle_min)), abs(LAW_VAL(Angle_max))) * G_PI / 180.0 ;
-		    }
-		    else
-		    {
-		    	current_angle = LAW_VAL(Angle_min)/100.0 ;
-		    	max_angle = LAW_VAL(Angle_min) * G_PI / 180.0 ;
-		    }
-		    current_angle = current_angle * G_PI / 180.0 ;
+		    //  add by shensheng
+				BeamNo = pp->p_tmp_config->beam_num[group];
+			    if(LAW_VAL(Focal_type) == 0)
+			    {
+			    	current_angle = LAW_VAL(Angle_min)/100.0 + BeamNo * LAW_VAL(Angle_step)/100.0 ;
+				max_angle = MAX(abs(LAW_VAL(Angle_min)), abs(LAW_VAL(Angle_max))) * G_PI / 180.0 ;
+			    }
+			    else
+			    {
+			    	current_angle = LAW_VAL(Angle_min)/100.0 ;
+			    	max_angle = LAW_VAL(Angle_min) * G_PI / 180.0 ;
+			    }
+			    current_angle = current_angle * G_PI / 180.0 ;
 
-			TMP(group_spi[group]).gate_a_start	= 	(int)( GROUP_VAL_POS(group, gate[0].start) / (10 * cos(current_angle)));
-			TMP(group_spi[group]).gate_a_end	=   (int)(GROUP_VAL_POS(group, gate[0].start) + GROUP_VAL_POS (group, gate[0].width)) / (10 * cos(current_angle));
+				TMP(group_spi[group]).gate_a_start	= 	(int)( GROUP_VAL_POS(group, gate[0].start) / (10 * cos(current_angle)));
+				TMP(group_spi[group]).gate_a_end	=   (int)(GROUP_VAL_POS(group, gate[0].start) + GROUP_VAL_POS (group, gate[0].width)) / (10 * cos(current_angle));
 
-			TMP(group_spi[group]).gate_b_start	= 	(int)( GROUP_VAL_POS(group, gate[1].start) / (10 * cos(current_angle)));
-			TMP(group_spi[group]).gate_b_end	=   (int)(GROUP_VAL_POS(group, gate[1].start) + GROUP_VAL_POS (group, gate[1].width)) / (10 * cos(current_angle));
+				TMP(group_spi[group]).gate_b_start	= 	(int)( GROUP_VAL_POS(group, gate[1].start) / (10 * cos(current_angle)));
+				TMP(group_spi[group]).gate_b_end	=   (int)(GROUP_VAL_POS(group, gate[1].start) + GROUP_VAL_POS (group, gate[1].width)) / (10 * cos(current_angle));
 
-			TMP(group_spi[group]).gate_i_start	= 	(int)( GROUP_VAL_POS(group, gate[2].start) / (10 * cos(current_angle)));
-			TMP(group_spi[group]).gate_i_end	=   (int)(GROUP_VAL_POS(group, gate[2].start) + GROUP_VAL_POS (group, gate[2].width)) / (10 * cos(current_angle));
+				TMP(group_spi[group]).gate_i_start	= 	(int)( GROUP_VAL_POS(group, gate[2].start) / (10 * cos(current_angle)));
+				TMP(group_spi[group]).gate_i_end	=   (int)(GROUP_VAL_POS(group, gate[2].start) + GROUP_VAL_POS (group, gate[2].width)) / (10 * cos(current_angle));
 
-		    // *************************
-			write_group_data (&TMP(group_spi[group]), group);
-			draw_menu3(0, NULL);
-			draw_area_all ();
-			send_focal_spi(get_current_group(pp->p_config));
+			    // *************************
+				write_group_data (&TMP(group_spi[group]), group);
+				draw_menu3(0, NULL);
+				draw_area_all ();
+				send_focal_spi(get_current_group(pp->p_config));
+			}
 			break;
 
 		case GDK_KP_Divide:	/* 擦除 */			
@@ -2728,14 +2732,17 @@ static int handler_key(guint keyval, gpointer data)
 			}
 			if((pp->pos == 0) && (pp->pos1[pp->pos] == 2) && (pp->clb_flag))//Calibration
 			{
+				pp->clb_flag = 0;
+				pp->clb_count = 0;
 				switch_area();//
-				generate_focallaw(get_current_group(pp->p_config));//
+				GROUP_VAL_POS(get_current_group(pp->p_config), ut_unit) = pp->save_ut_unit;
+				generate_focallaw(get_current_group(pp->p_config));
+
+				pp->pos1[pp->pos] = 2;
+				pp->cstart_qty = 1;
 				gtk_widget_set_sensitive(pp->eventbox2[0],TRUE);
 				gtk_widget_set_sensitive(pp->eventbox2[1],TRUE);
 				gtk_widget_set_sensitive(pp->menubar,TRUE);
-				pp->clb_flag = 0;
-				pp->pos1[pp->pos] = 0;
-				pp->cstart_qty = 1;
 				draw_menu3(0, NULL);
 			}
 
@@ -5276,6 +5283,7 @@ void data_611 (GtkSpinButton *spinbutton, gpointer data)
 					(LAW_VAL(Angle_step) + 5) / 10 * 10) / 100.0);
 		LAW_VAL(Angle_max) = (gshort) (gtk_spin_button_get_value (spinbutton) * 100.0);
 	}
+	pp->last_angle = LAW_VAL(Angle_max);
 	if(pp->clb_flag)
 		draw_area_calibration();
 	else
@@ -5833,11 +5841,15 @@ void generate_focallaw(int grp)
 
 	write_group_data (&TMP(group_spi[grp]), grp);
 
+ 	if(!pp->clb_flag)
+		draw_area_all ();
+	else
+		draw_area_calibration();
+
 	pp->cscan_mark = 1;
 	pp->ccscan_mark = 1;
 	pp->cccscan_mark = 1;
 	pp->sscan_mark = 1;	
- 	draw_area_all ();
 
 }
 

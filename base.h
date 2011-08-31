@@ -284,8 +284,15 @@ typedef struct tmp_config
 	guint	c_scan_width;
 	guint	c_scan_height;
 
+	guint	clb_a_scan_dot_qty;		/*  */
 	guint   clb_width;//Calibration
 	guint   clb_height;//Calibration
+	guint	clb_a_scan_width;
+	guint	clb_a_scan_height;
+	guint	clb_s_scan_width;
+	guint	clb_s_scan_height;
+	guint	clb_real_data[setup_MAX_GROUP_QTY];
+	guint	clb_max_data[setup_MAX_GROUP_QTY];
 
 	guchar	scan_type[16];	/* 16个窗口显示的类型 */
 	guchar	scan_group[16];	/* 16个窗口对应的group */
@@ -567,6 +574,8 @@ typedef struct Draw_interface
 	gint    count;
 	gint	flag;
 	gint    clb_flag;//Calibration标志位
+	gint    save_ut_unit;
+	gint    clb_count;
 } DRAW_UI, *DRAW_UI_P;
 
 typedef struct _MY_SIGNAL_TMP 

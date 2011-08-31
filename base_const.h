@@ -54,7 +54,7 @@
 #define CC_SCAN		0x22
 #define CCC_SCAN	0x32
 #define S_SCAN	     3			/*  */
-#define S_SCAN_A		0x23	/* truedepath 的角度扫查 */
+#define S_SCAN_A 		0x23	/* truedepath 的角度扫查 */
 #define S_SCAN_L		0x33	/* truedepth 的线扫 */
 #define A_B_SCAN     4
 #define A_B_C_SCAN	 5
