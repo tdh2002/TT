@@ -12012,7 +12012,7 @@ void draw3_data3(DRAW_UI_P p)
 							gtk_label_set_text (GTK_LABEL (pp->label3[3]), temp);
 						}
 					}
-					if( GROUP_VAL(group_mode) && get_auto_detect (pp->p_config))	/* 自动检测开启时同时又在PA模式时，探头不可选 */
+					if( (GROUP_VAL(group_mode)==1) && get_auto_detect (pp->p_config))	/* 自动检测开启时同时又在PA模式时，探头不可选 */
 					{
 						gtk_widget_set_sensitive(pp->eventbox30[3],FALSE);
 						gtk_widget_set_sensitive(pp->eventbox31[3],FALSE);
