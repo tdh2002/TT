@@ -1728,9 +1728,9 @@ void SAVE_DATA()
 
 	char *html_file_name = "report_build.html";
 
-	char *screen_filename = "fb.jpg";
+	char *screen_filename = "fb0.jpg";
 
-	char *fbfilename = "/dev/fb1";
+	char *fbfilename = "/dev/fb0";
 
 	operate = get_file_save_mode(pp->p_config);
 

@@ -4397,8 +4397,6 @@ static void signal_define_wedge(GtkDialog *dialog, gint response_id, gpointer us
 		}
 		else if ( ( pp->pos == 0 ) && ( pp->pos1[pp->pos] == 0 ) && (pp->pos2[pp->pos][pp->pos1[pp->pos]] == 3 ) ) 
 		{
-			g_print("zhong\n");
-
 			memcpy(&g_tmp_group_struct.wedge,&g_tmp_wedge,sizeof(struct _Wedge));
 
 			gtk_label_set_text (GTK_LABEL (pp->data3[3]),g_tmp_wedge.Serial);

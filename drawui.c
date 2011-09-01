@@ -7226,7 +7226,12 @@ void draw3_data2(DRAW_UI_P p)
 
 							memcpy(&(pp->p_config->group[pp->p_config->groupId]),&g_tmp_group_struct,sizeof(struct _Group));
 						}
-                        						
+                        	
+						if(GROUP_VAL(group_mode)!=1) /*group mode 选择UT时，focal law 不可用*/
+							gtk_widget_set_sensitive(pp->menuitem[6],FALSE);
+						else
+							gtk_widget_set_sensitive(pp->menuitem[6],TRUE);
+
 						pp->start_qty = 0;
 						draw3_data2(p);
 					}
@@ -7245,9 +7250,16 @@ void draw3_data2(DRAW_UI_P p)
 					}
 					else if (pp->fstart_qty == 2)
 					{
+						//pp->x_pos = 560, pp->y_pos = 310;
+
 						g_sprintf (TMP (velocity_data[0]), "LW:%dm/s", get_material_lw(pp->p_config) / 100);
 						g_sprintf (TMP (velocity_data[1]), "SW:%dm/s", get_material_sw(pp->p_config) / 100);
 						g_sprintf (TMP (velocity_data[2]), "%d m/s", get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 100);
+		
+						TMP(velocity_data_p[0]) =  TMP(velocity_data[0]);
+						TMP(velocity_data_p[1]) =  TMP(velocity_data[1]);
+						TMP(velocity_data_p[2]) =  TMP(velocity_data[2]);
+						
 						const gchar **tp = (const gchar **)(TMP(velocity_data_p));
 						if (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) == get_material_lw(pp->p_config )) 
 						{
@@ -11020,7 +11032,7 @@ void draw3_data3(DRAW_UI_P p)
 			switch (pp->pos1[1])
 			{
 				case 0:/* wedge delay P103 TAN1 */
-					switch (TMP(wedge_delay_reg))
+					switch (TMP(wedge_delay_reg))	
 					{
 						case 0:	tmpf = 0.01; break;
 						case 1:	tmpf = 0.1; break;
@@ -14439,6 +14451,11 @@ void draw3_data4(DRAW_UI_P p)
 					g_sprintf (TMP (velocity_data[0]), "LW:%dm/s", get_material_lw(pp->p_config) / 100);
 					g_sprintf (TMP (velocity_data[1]), "SW:%dm/s", get_material_sw(pp->p_config) / 100);
 					g_sprintf (TMP (velocity_data[2]), "%d m/s", get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 100);
+					
+					TMP(velocity_data_p[0]) =  TMP(velocity_data[0]);
+					TMP(velocity_data_p[1]) =  TMP(velocity_data[1]);
+					TMP(velocity_data_p[2]) =  TMP(velocity_data[2]);
+
 					gchar **tp = TMP(velocity_data_p);
 					if (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) == get_material_lw(pp->p_config)) 
 					{
