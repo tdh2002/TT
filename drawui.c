@@ -52,7 +52,7 @@ GROUP g_tmp_group_struct;
 pthread_mutex_t draw_thread_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t  draw_thread_signal = PTHREAD_COND_INITIALIZER;
 volatile int *DMA_MARK ;
-
+extern float tttmp;
 #if 0
 static char *keyboard_display[] = 
 {
@@ -549,6 +549,7 @@ void draw_menu3 (gint pa, gpointer pt)
 		gtk_widget_hide (pp->sbutton[i]);
 	}
 	draw_data3[CUR_POS_P(p)](p);
+	tttmp = gtk_spin_button_get_value (GTK_SPIN_BUTTON (pp->sbutton[CUR_POS_P(p)]));
 
 	p->menu3_amount = 6;
 	/* 计算当前3级菜单活动的数量 */
