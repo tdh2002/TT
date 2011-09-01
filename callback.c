@@ -5173,6 +5173,7 @@ void data_511 (GtkSpinButton *spinbutton, gpointer data) /*indexoffset */
 void data_5121 (GtkSpinButton *spinbutton, gpointer data) /* Skew (deg) */
 {
 	GROUP_VAL(skew) =  (gushort) (gtk_spin_button_get_value (spinbutton) * 100.0);
+	draw_area_all ();
 }
 
 void data_512 (GtkMenuItem *menuitem, gpointer data) /* Skew (deg) */
@@ -5193,6 +5194,7 @@ void data_512 (GtkMenuItem *menuitem, gpointer data) /* Skew (deg) */
 		draw_menu3(0, NULL);
 		tttmp = gtk_spin_button_get_value (GTK_SPIN_BUTTON (pp->sbutton[2]));
 	}
+	draw_area_all ();
 }
 
 void data_521 (GtkSpinButton *spinbutton, gpointer data) /*gain */
