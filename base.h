@@ -269,7 +269,7 @@ typedef struct tmp_config
 
 	guint	beam_num[setup_MAX_GROUP_QTY];		/* Group 显示的beam编号 */
 	guint	beam_qty[setup_MAX_GROUP_QTY];		/* Group beam总数量	*/
-	gfloat   field_distance[setup_MAX_GROUP_QTY];/* 每束中心正元到出射点的距离 */
+	gfloat   field_distance[setup_MAX_LAW_QTY];/* 每束中心正元到出射点的距离 */
 	guint	angle_num;						/* 几个angle */
 	guint	beam_skew_num;					/* 几个beam_skew */
 
@@ -284,21 +284,27 @@ typedef struct tmp_config
 	guint	c_scan_width;
 	guint	c_scan_height;
 
-	guint	clb_a_scan_dot_qty;		/*  */
+	guchar	scan_type[16];	/* 16个窗口显示的类型 */
+	guchar	scan_group[16];	/* 16个窗口对应的group */
+	guint	scan_xpos[16];
+	guint	scan_ypos[16];
+	gint	ctype[16];
+
+//	guint	clb_a_scan_dot_qty;		/*  */
 	guint   clb_width;//Calibration
 	guint   clb_height;//Calibration
 	guint	clb_a_scan_width;
 	guint	clb_a_scan_height;
 	guint	clb_s_scan_width;
 	guint	clb_s_scan_height;
-	guint	clb_real_data[setup_MAX_GROUP_QTY];
-	guint	clb_max_data[setup_MAX_GROUP_QTY];
+	gfloat	clb_real_data[setup_MAX_LAW_QTY];
+	gfloat	clb_max_data[setup_MAX_LAW_QTY];
+	gfloat  clb_his_max_data;
 
-	guchar	scan_type[16];	/* 16个窗口显示的类型 */
-	guchar	scan_group[16];	/* 16个窗口对应的group */
-	guint	scan_xpos[16];
-	guint	scan_ypos[16];
-	gint	ctype[16];
+	guchar	clb_scan_type[16];	/* 16个窗口显示的类型 */
+	guchar	clb_scan_group[16];	/* 16个窗口对应的group */
+	guint	clb_scan_xpos[16];
+	guint	clb_scan_ypos[16];
 
 	gchar	velocity_data[3][20];
 	gchar	*velocity_data_p[3];
@@ -393,7 +399,7 @@ typedef struct Draw_interface
 
 	GtkWidget		*drawing_area;
 	DRAW_AREA		draw_area[16];
-	DRAW_AREA		draw_area_clb[4];//Calobration
+	DRAW_AREA		draw_area_clb[16];//Calibration
 	/*boxes*/
 	GtkWidget		*vbox;			/* 整个window */
 	GtkWidget		*hbox1;			/* 上方数据显示 */

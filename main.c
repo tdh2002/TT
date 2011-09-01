@@ -268,16 +268,10 @@ static void set_config (guint groupid)
 	LAW_VAL(law_index_start)= 0;
 	LAW_VAL(law_index_end)	= 1;
 
-	TMP(velocity_data_p[0]) =  TMP(velocity_data[0]);
-	TMP(velocity_data_p[1]) =  TMP(velocity_data[1]);
-	TMP(velocity_data_p[2]) =  TMP(velocity_data[2]);
-
 	set_part_geometry (pp->p_config, GUINT_TO_POINTER (PLATE_PART)	);
-
 	set_report_template (pp->p_config, REPORT_COMPLETE);
 	set_report_paper_size (pp->p_config, PAPER_A4);
 	GROUP_GATE_POS(height) = 20; /*闸门默认高度为20*/
-
 }
 
 /* 设置config结构体之外的初始值  */
@@ -293,6 +287,11 @@ static void set_init_para()
 
 	pp->ref_amplitude = 8000;
 	pp->tolerance_t = 500;
+
+	TMP(clb_his_max_data) = 0;
+	TMP(velocity_data_p[0]) =  TMP(velocity_data[0]);
+	TMP(velocity_data_p[1]) =  TMP(velocity_data[1]);
+	TMP(velocity_data_p[2]) =  TMP(velocity_data[2]);
 }
 
 int main (int argc, char *argv[])

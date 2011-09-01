@@ -2527,12 +2527,21 @@ else
 static inline void set_scan_config (guchar scan_num,guchar scan_type, guint aw, guint w, guint h, 
 		guint xoff, guint yoff, guchar group)
 {
-
-	TMP(scan_type[scan_num])	=	scan_type;
-	TMP(scan_xpos[scan_num])	=	xoff;
-	TMP(scan_ypos[scan_num])	=	yoff;
-	TMP(scan_group[scan_num])	=	group;
-	TMP(a_scan_dot_qty)			=	aw;
+	if(!pp->clb_flag)
+	{
+		TMP(scan_type[scan_num])	=	scan_type;
+		TMP(scan_xpos[scan_num])	=	xoff;
+		TMP(scan_ypos[scan_num])	=	yoff;
+		TMP(scan_group[scan_num])	=	group;
+	}
+	else
+	{
+		TMP(clb_scan_type[scan_num])	=	scan_type;
+		TMP(clb_scan_xpos[scan_num])	=	xoff;
+		TMP(clb_scan_ypos[scan_num])	=	yoff;
+		TMP(clb_scan_group[scan_num])	=	group;
+	}
+		TMP(a_scan_dot_qty)			=	aw;
 	switch (scan_type)
 	{
 		case A_SCAN:
@@ -2561,7 +2570,7 @@ static inline void set_scan_config (guchar scan_num,guchar scan_type, guint aw, 
 		case S_SCAN:
 		case S_SCAN_A:
 		case S_SCAN_L:
-			if(pp->clb_flag == 0)
+			if(!pp->clb_flag)
 			{
 				TMP(s_scan_width)	=	w;
 				TMP(s_scan_height)	=	h;
@@ -2889,7 +2898,7 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 		case S_SCAN:
 		case S_SCAN_A:
 		case S_SCAN_L:
-			if(pp->clb_flag == 0)
+			if(!pp->clb_flag)
 			{
 				if(GROUP_VAL_POS(p->group, ut_unit)==UT_UNIT_SOUNDPATH)
 				{
@@ -3191,7 +3200,7 @@ void draw_area_calibration()
 		}
 		pp->vbox_area_clb[i] = gtk_vbox_new(FALSE, 0);
 		pp->hbox_area_clb[i] = gtk_hbox_new(FALSE, 0);
-		memset (TMP(scan_type), 0xff, 16);
+		memset (TMP(clb_scan_type), 0xff, 16);
 	}
 
 	if ((get_display_group(pp->p_config) == DISPLAY_CURRENT_GROUP) || (get_group_qty(pp->p_config)==1))
@@ -3260,11 +3269,11 @@ void draw_area_calibration()
 							set_scan_config (0, S_SCAN_L, 277, 307, 177, 0, 0, get_current_group(pp->p_config));
 					set_scan_config (1, A_SCAN, 277, 277, 177, 328, 0, get_current_group(pp->p_config));
 					if( pp->cmode_pos == 1 )
-						set_scan_config (2, WEDGE_DELAY,    655, 605, 193, 0, 212, get_current_group(pp->p_config));
+						set_scan_config (2, WEDGE_DELAY,    277, 605, 193, 0, 212, get_current_group(pp->p_config));
 					else if( pp->cmode_pos == 2 )
-						set_scan_config (2, SENSITIVITY,    655, 605, 193, 0, 212, get_current_group(pp->p_config));
+						set_scan_config (2, SENSITIVITY,    277, 605, 193, 0, 212, get_current_group(pp->p_config));
 					else if( pp->cmode_pos == 3 )
-						set_scan_config (2, TCG,    655, 605, 193, 0, 212, get_current_group(pp->p_config));
+						set_scan_config (2, TCG,    277, 605, 193, 0, 212, get_current_group(pp->p_config));
 				}
 				break;
 			case 2://Code
@@ -14740,12 +14749,14 @@ void draw3_data5(DRAW_UI_P p)
 	gchar temp[52];
 	gfloat tmpf = 0.0, tmpfm;
 	gchar *str;
+	gint i;
 	guint menu_status  = 0;
 
 	gfloat max_tmp = 0.0,  max_tmp1 = 0.0, cur_value, lower, upper, step;
 	guint digit, pos, unit, content_pos, temp_beam;
 	gint grp = get_current_group (pp->p_config);
 	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
+	gint clb_step = (gint)( (LAW_VAL(Angle_max) - LAW_VAL(Angle_min)) / LAW_VAL(Angle_step) + 1);
 
 	switch (pp->pos) 
 	{
@@ -15231,6 +15242,12 @@ void draw3_data5(DRAW_UI_P p)
 							else if ((pp->ctype_pos == 1) && (pp->cmode_pos == 2))
 							{
 								draw3_popdown_offset(NULL, 5,1,29);
+								for (i = 0; i < clb_step; i++)
+								{
+									TMP(clb_his_max_data) = 0;//TMP(clb_real_data[i]);
+								//	TMP(clb_real_data[i]) = ((TMP(measure_data[i][1])>>20) & 0xfff)/20.47;
+									TMP(clb_max_data[i]) = TMP(clb_real_data[i]);
+								}
 							}
 							else if (pp->ctype_pos == 2)
 							{
@@ -16926,8 +16943,8 @@ static void draw_frame_thread(void)
 						}
 					}
 			}
-//			if (!pp->clb_flag)
-//			{
+			if (!pp->clb_flag)
+			{
 				for (k = 0; ((k < 16) && (TMP(scan_type[k]) != 0xff)); k++)
 				{	
 					if (TMP(scan_group[k]) == i)
@@ -16935,22 +16952,17 @@ static void draw_frame_thread(void)
 								TMP(scan_xpos[k]), TMP(scan_ypos[k]), dot_temp, 
 								TMP(fb1_addr) + 768*400);
 				}
-//			} 
-#if 0
+			} 
 			else
 			{
-				pp->sscan_mark = 1;	
-				draw_scan(0, S_SCAN_A, 0, 0, 0, dot_temp, TMP(fb1_addr) + 768*400);
-				draw_scan(1, A_SCAN, 0, 328, 0, dot_temp, TMP(fb1_addr) + 768*400);
-				for (k = 0; ((k < 16) && (TMP(scan_type[k]) != 0xff)); k++)
+				for (k = 0; ((k < 4) && (TMP(clb_scan_type[k]) != 0xff)); k++)
 				{	
-					if (TMP(scan_group[k]) == i)
-						draw_scan(k, TMP(scan_type[k]), TMP(scan_group[k]), 
-								TMP(scan_xpos[k]), TMP(scan_ypos[k]), dot_temp, 
+					if (TMP(clb_scan_group[k]) == i)
+						draw_scan(k, TMP(clb_scan_type[k]), TMP(clb_scan_group[k]), 
+								TMP(clb_scan_xpos[k]), TMP(clb_scan_ypos[k]), dot_temp, 
 								TMP(fb1_addr) + 768*400);
 				}
 			}
-#endif
 		}
 		*DMA_MARK = 1  ;
 		calc_measure_data();//计算数据

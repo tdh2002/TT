@@ -2228,6 +2228,32 @@ void b3_fun5(gpointer p)
 
 	switch (pp->pos)
 	{
+		case 0:
+			switch (pp->pos1[0])
+			{
+				case 2:
+					switch(pp->ctype_pos)
+					{
+						case 0:
+							break;
+						case 1:
+							switch(pp->cmode_pos)
+							{
+								case 0:
+									break;
+								case 1:
+									break;
+								case 2:
+									break;
+								case 3:
+									break;
+							}
+							break;
+						case 2:
+							break;
+					}
+			}
+			break;
 		case 4:
 			switch (pp->pos1[4])
 			{
