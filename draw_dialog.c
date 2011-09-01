@@ -74,7 +74,7 @@ static void da_call_probe (GtkDialog *dialog, gint response_id, gpointer user_da
 			gtk_tree_model_get(model, &iter, LIST_ITEM, &value,  -1);
 			if (p_grp->group_mode == PA_SCAN )
 				file_path = g_strdup_printf ("%s%s/%s", PA_PROBE_PATH, pp->p_type, value);
-			else if (GROUP_VAL(group_mode) == UT_SCAN )
+			else// if (GROUP_VAL(group_mode) == UT_SCAN )
 				file_path = g_strdup_printf ("%s%s/%s", UT_PROBE_PATH, pp->p_type, value);
 
 
@@ -103,7 +103,7 @@ static void da_call_probe (GtkDialog *dialog, gint response_id, gpointer user_da
 
 				if (p_grp->group_mode == PA_SCAN )
 					read_probe_file (PA_UNKNOWN_PROBE, &p_grp->probe);
-				else if (GROUP_VAL(group_mode) == UT_SCAN )
+				else// if (GROUP_VAL(group_mode) == UT_SCAN )
 					read_probe_file (UT_UNKNOWN_PROBE, &p_grp->probe);
 
 				set_group_val (p_grp, GROUP_FREQ_VAL, p_grp->probe.Frequency);				/* 频率 */
@@ -165,7 +165,7 @@ static void da_call_wedge (GtkDialog *dialog, gint response_id, gpointer user_da
 			gtk_tree_model_get(model, &iter, LIST_ITEM, &value,  -1);
 			if (GROUP_VAL(group_mode) == PA_SCAN )
 				file_path = g_strdup_printf ("%s%s/%s", PA_WEDGE_PATH, pp->p_type, value);
-			else if (GROUP_VAL(group_mode) == UT_SCAN )
+			else// if (GROUP_VAL(group_mode) == UT_SCAN )
 				file_path = g_strdup_printf ("%s%s/%s", UT_WEDGE_PATH, pp->p_type, value);
 
 			read_wedge_file (file_path, &p_grp->wedge);
@@ -451,7 +451,7 @@ static void on_changed_probe(GtkTreeSelection *selection, gpointer p)
 		}
 		if (GROUP_VAL(group_mode) == PA_SCAN )
 			file_path = g_strdup_printf ("%s%s/", PA_PROBE_PATH , value);	
-		else if (GROUP_VAL(group_mode) == UT_SCAN )
+		else// if (GROUP_VAL(group_mode) == UT_SCAN )
 			file_path = g_strdup_printf ("%s%s/", UT_PROBE_PATH , value);	
 		init_file_list (GTK_WIDGET (p), NULL, file_path, DT_REG);
 		g_free(file_path);
@@ -498,7 +498,7 @@ static void on_changed_wedge(GtkTreeSelection *selection, gpointer label)
 		strcpy(pp->p_type, value);
 		if (GROUP_VAL(group_mode) == PA_SCAN )
 			file_path = g_strdup_printf ("%s%s/", PA_WEDGE_PATH , value);	
-		else if (GROUP_VAL(group_mode) == UT_SCAN )
+		else// if (GROUP_VAL(group_mode) == UT_SCAN )
 			file_path = g_strdup_printf ("%s%s/", UT_WEDGE_PATH , value);	
 		init_file_list (GTK_WIDGET (label), NULL, file_path, DT_REG);
 		printf("file_path = %s\n", file_path);
@@ -638,7 +638,7 @@ static gchar* get_probe_info(const gchar *file_path)
 			if (GROUP_VAL(group_mode) == PA_SCAN)
 				probe_info = g_strdup_printf ("Model:%s           Frequency:%.2fMHz\nElement Quantity:%d      Element Pitch:%.3f mm\nReference Point:-%.3f mm", 
 						p1.Model, p1.Frequency/1000.0,p1.Elem_qty, p1.Pitch/1000.0, p1.Reference_Point/1000.0 );
-			else if (GROUP_VAL(group_mode) == UT_SCAN)
+			else// if (GROUP_VAL(group_mode) == UT_SCAN)
 				probe_info = g_strdup_printf ("Model:%s           Frequency:%.2fMHz\nElement_size:%.3f", 
 						p1.Model, p1.Frequency/1000.0, p1.Pitch / 1000.0 );
 			break;
@@ -658,7 +658,7 @@ static gchar* get_wedge_info(const gchar *file_path)
 	switch (get_language(pp->p_config))
 	{
 		case ENGLISH_:
-			if (GROUP_VAL(group_mode) == UT_SCAN)
+			if (GROUP_VAL(group_mode) != PA_SCAN)
 				wedge_info = g_strdup_printf ("Model:%s           Angle:%.1f°\nWave Type:%s      Probe Delay:%.2f mm\nReference Point:%.3f mm",
 						w1.Model, w1.Angle/10.0, (w1.Wave_type == 2) ? "Shear" : "Longitudinal", (w1.Probe_delay / 1000.0) * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 1000.0) / 200.0, w1.Ref_point / 1000.0 );
 			else if (GROUP_VAL(group_mode) == PA_SCAN)
@@ -686,7 +686,7 @@ static void on_changed1_probe(GtkTreeSelection *selection, gpointer label)
 		gtk_tree_model_get(model, &iter, LIST_ITEM, &value,  -1);
 		if (GROUP_VAL(group_mode) == PA_SCAN)
 			file_path = g_strdup_printf ("%s%s/%s", PA_PROBE_PATH, pp->p_type, value);	
-		else if (GROUP_VAL(group_mode) == UT_SCAN)
+		else// if (GROUP_VAL(group_mode) == UT_SCAN)
 			file_path = g_strdup_printf ("%s%s/%s", UT_PROBE_PATH, pp->p_type, value);	
 		g_free(value);
 		probe_info = get_probe_info(file_path);
@@ -715,7 +715,7 @@ static void on_changed1_wedge(GtkTreeSelection *selection, gpointer label)
 		gtk_tree_model_get(model, &iter, LIST_ITEM, &value,  -1);
 		if (GROUP_VAL(group_mode) == PA_SCAN)
 			file_path = g_strdup_printf ("%s%s/%s", PA_WEDGE_PATH, pp->p_type, value);	
-		else if (GROUP_VAL(group_mode) == UT_SCAN)
+		else// if (GROUP_VAL(group_mode) == UT_SCAN)
 			file_path = g_strdup_printf ("%s%s/%s", UT_WEDGE_PATH, pp->p_type, value);	
 		g_free(value);
 		wedge_info = get_wedge_info(file_path);
@@ -908,7 +908,7 @@ static void draw_probe ()
 	pp->label_probe = gtk_label_new("\n");
 	gtk_box_pack_start (GTK_BOX(vbox1), pp->label_probe, TRUE, TRUE, 5);
 
-	if (GROUP_VAL(group_mode) == UT_SCAN)
+	if (GROUP_VAL(group_mode) != PA_SCAN)
 		init_file_list (list, pp->selection, UT_PROBE_PATH ,DT_DIR);
 	else if (GROUP_VAL(group_mode) == PA_SCAN)
 		init_file_list (list, pp->selection, PA_PROBE_PATH ,DT_DIR);
@@ -1012,7 +1012,7 @@ static void draw_wedge ()
 	pp->label_probe = gtk_label_new("\n");
 	gtk_box_pack_start(GTK_BOX(vbox1), pp->label_probe, TRUE, TRUE, 5);
 
-	if (GROUP_VAL(group_mode) == UT_SCAN)
+	if (GROUP_VAL(group_mode) != PA_SCAN)
 		init_file_list (list, pp->selection, UT_WEDGE_PATH ,DT_DIR);
 	else if (GROUP_VAL(group_mode) == PA_SCAN)
 		init_file_list (list, pp->selection, PA_WEDGE_PATH ,DT_DIR);
@@ -3879,7 +3879,7 @@ static void signal_define_probe(GtkDialog *dialog, gint response_id, gpointer us
 
 			g_tmp_probe.Pitch = (unsigned int) ( atof(buf) * 1000 );
 		}
-		else if (GROUP_VAL(group_mode) == UT_SCAN)
+		else //if (GROUP_VAL(group_mode) == UT_SCAN)
 		{
 			buf = gtk_entry_get_text(GTK_ENTRY(open_ut_pa_probe_file_p->model_entry));
 			strcpy(g_tmp_probe.Model,buf);
@@ -3902,7 +3902,7 @@ static void signal_define_probe(GtkDialog *dialog, gint response_id, gpointer us
 		{
 			file_path = PA_PROBE_USER_PATH;
     	}
-    	else if ( GROUP_VAL(group_mode) == UT_SCAN )
+    	else// if ( GROUP_VAL(group_mode) == UT_SCAN )
     	{
 			file_path = UT_PROBE_USER_PATH;
     	}
@@ -3913,7 +3913,7 @@ static void signal_define_probe(GtkDialog *dialog, gint response_id, gpointer us
 
 		if ( GROUP_VAL(group_mode) == PA_SCAN )
 			strcat(file_name,".opp");
-		else if ( GROUP_VAL(group_mode) == UT_SCAN )
+		else// if ( GROUP_VAL(group_mode) == UT_SCAN )
 			strcat(file_name,".oup");
 
 		save_probe_file(file_name,&g_tmp_probe);
@@ -3999,7 +3999,7 @@ int on_changed_open_ut_pa_probe_file(GtkTreeSelection *selection,	gpointer      
 	{
 		file_path = PA_PROBE_USER_PATH;
     }
-    else if ( GROUP_VAL(group_mode) == UT_SCAN )
+    else// if ( GROUP_VAL(group_mode) == UT_SCAN )
     {
 		file_path = UT_PROBE_USER_PATH;
     }
@@ -4018,7 +4018,7 @@ int on_changed_open_ut_pa_probe_file(GtkTreeSelection *selection,	gpointer      
 
 			read_probe_file(file_name,&g_tmp_probe);
 
-            if ( GROUP_VAL(group_mode) == UT_SCAN )
+            if ( GROUP_VAL(group_mode) != PA_SCAN )
 			{
 				gtk_entry_set_text(GTK_ENTRY(open_ut_pa_probe_file_p->model_entry),g_tmp_probe.Model);
 
@@ -4265,7 +4265,7 @@ void draw_define_probe()
 
 		gtk_box_pack_start(GTK_BOX(right_box),pitch_fixed,FALSE,FALSE,10);
 	}
-	else if ( GROUP_VAL(group_mode) == UT_SCAN )
+	else// if ( GROUP_VAL(group_mode) == UT_SCAN )
 	{
 		gtk_box_pack_start(GTK_BOX(right_box),model_fixed,FALSE,FALSE,10);
 
@@ -4290,7 +4290,7 @@ void draw_define_probe()
 	{	
 		selection_file_type(source_list, PA_PROBE_USER_PATH,	".opp");
 	}
-	else if ( GROUP_VAL(group_mode) == UT_SCAN )
+	else// if ( GROUP_VAL(group_mode) == UT_SCAN )
 	{
 		selection_file_type(source_list, UT_PROBE_USER_PATH,	".oup");
 	}
@@ -4346,7 +4346,7 @@ static void signal_define_wedge(GtkDialog *dialog, gint response_id, gpointer us
 			buf = gtk_entry_get_text(GTK_ENTRY(open_ut_pa_wedge_file_p->hight_entry));
 			g_tmp_wedge.Height = (unsigned int) ( atof(buf) * 1000 );
 		}
-		else if ( GROUP_VAL(group_mode) == UT_SCAN )
+		else// if ( GROUP_VAL(group_mode) == UT_SCAN )
 		{
 			buf = gtk_entry_get_text(GTK_ENTRY(open_ut_pa_wedge_file_p->model_entry));
 			strcpy(g_tmp_wedge.Model,buf);
@@ -4370,7 +4370,7 @@ static void signal_define_wedge(GtkDialog *dialog, gint response_id, gpointer us
 		{
 			file_path = PA_WEDGE_USER_PATH;
     	}
-    	else if ( GROUP_VAL(group_mode) == UT_SCAN )
+    	else// if ( GROUP_VAL(group_mode) == UT_SCAN )
     	{
 			file_path = UT_WEDGE_USER_PATH;
     	}
@@ -4381,7 +4381,7 @@ static void signal_define_wedge(GtkDialog *dialog, gint response_id, gpointer us
 
 		if ( GROUP_VAL(group_mode) == PA_SCAN )
 			strcat(file_name,".opw");
-		else if ( GROUP_VAL(group_mode) == UT_SCAN )
+		else// if ( GROUP_VAL(group_mode) == UT_SCAN )
 			strcat(file_name,".ouw");
 
 		save_wedge_file(file_name,&g_tmp_wedge);
@@ -4453,7 +4453,7 @@ int on_changed_open_ut_pa_wedge_file(GtkTreeSelection *selection,	gpointer      
 	{
 		file_path = PA_WEDGE_USER_PATH;
     }
-    else if ( GROUP_VAL(group_mode) == UT_SCAN )
+    else// if ( GROUP_VAL(group_mode) == UT_SCAN )
     {
 		file_path = UT_WEDGE_USER_PATH;
     }
@@ -4472,7 +4472,7 @@ int on_changed_open_ut_pa_wedge_file(GtkTreeSelection *selection,	gpointer      
 
 			read_wedge_file(file_name,&g_tmp_wedge);
 
-            if ( GROUP_VAL(group_mode) == UT_SCAN )
+            if ( GROUP_VAL(group_mode) != PA_SCAN )
 			{
 				gtk_entry_set_text(GTK_ENTRY(open_ut_pa_wedge_file_p->model_entry),g_tmp_wedge.Model);
 
@@ -4753,7 +4753,7 @@ void draw_define_wedge()
 		gtk_box_pack_start(GTK_BOX(right_box),sec_offset_fixed,FALSE,FALSE,10);
 		gtk_box_pack_start(GTK_BOX(right_box),hight_fixed,FALSE,FALSE,10);
 	}
-	else if ( GROUP_VAL(group_mode) == UT_SCAN )
+	else// if ( GROUP_VAL(group_mode) == UT_SCAN )
 	{
 		gtk_box_pack_start(GTK_BOX(right_box),model_fixed,FALSE,FALSE,10);
 		gtk_box_pack_start(GTK_BOX(right_box),serial_fixed,FALSE,FALSE,10);
@@ -4773,7 +4773,7 @@ void draw_define_wedge()
 	{	
 		selection_file_type(source_list, PA_WEDGE_USER_PATH,	".opw");
 	}
-	else if ( GROUP_VAL(group_mode) == UT_SCAN )
+	else// if ( GROUP_VAL(group_mode) == UT_SCAN )
 	{
 		selection_file_type(source_list, UT_WEDGE_USER_PATH,	".ouw");
 	}
