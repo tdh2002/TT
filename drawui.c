@@ -2620,12 +2620,14 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 	{
 		case AZIMUTHAL_SCAN:
 			num = TMP(beam_num[get_current_group(pp->p_config)]);
-			angle = LAW_VAL (Angle_min) + LAW_VAL (Angle_step)*num;
+			//angle = LAW_VAL (Angle_min) + LAW_VAL (Angle_step)*num;
+			angle = LAW_VAL_POS (p->group,Angle_min) + LAW_VAL_POS (p->group,Angle_step)*num;
 			break;
 		case LINEAR_SCAN:
 		case DEPTH_SCAN:
 		case STATIC_SCAN:
-			angle = LAW_VAL (Angle_min);
+			//angle = LAW_VAL (Angle_min);
+			angle = LAW_VAL_POS (p->group,Angle_min);
 			num = TMP(beam_num[get_current_group(pp->p_config)]);
 		default:break;
 	}
@@ -9260,6 +9262,7 @@ void draw3_data2(DRAW_UI_P p)
 						digit = 1;
 						draw3_digit_stop (cur_value , units[unit], digit, pos, 0);
 					}
+//gtk_widget_queue_draw(pp->vboxtable);
 					break;
 				case 2:/*Probe/Part -> Characterize -> start p522 */
 # if 0
