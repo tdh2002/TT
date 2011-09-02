@@ -91,11 +91,10 @@ static void da_call_probe (GtkDialog *dialog, gint response_id, gpointer user_da
 			}
 			g_free (file_path);
 			gtk_label_set_text (GTK_LABEL (pp->data3[3]), p_grp->probe.Model);
-
 			gtk_widget_destroy (GTK_WIDGET (dialog));
 			change_keypress_event (KEYPRESS_MAIN);
 		}
-		else
+		else /* 未选中探头型号时 */
 		{
 			if (pp->tag == 0)/*探头大类选择Unknow时*/
 			{
@@ -115,11 +114,12 @@ static void da_call_probe (GtkDialog *dialog, gint response_id, gpointer user_da
 				change_keypress_event (KEYPRESS_MAIN);
 			}
 			else 
-			{	
+			{
+				gtk_widget_child_focus(GTK_WIDGET (dialog),GTK_DIR_TAB_FORWARD);	
 				if (gtk_tree_model_get_iter_first (model, &iter))/*用model中的第一项初始化iter*/
 				{
 					gtk_tree_selection_select_iter(pp->selection1, &iter);/*选择&iter指定的那项*/
-					gtk_widget_grab_focus (pp->sw1);
+					//gtk_widget_grab_focus (pp->sw1);
 				}
 				else 
 				{
@@ -131,8 +131,16 @@ static void da_call_probe (GtkDialog *dialog, gint response_id, gpointer user_da
 	}
 	else if (GTK_RESPONSE_CANCEL == response_id) /* 取消 */
 	{
-		gtk_widget_destroy (GTK_WIDGET (dialog));
-		change_keypress_event (KEYPRESS_MAIN);
+		if (gtk_tree_selection_get_selected(
+					GTK_TREE_SELECTION(pp->selection1), &model, &iter)) /* 选中探头型号时 */
+		{
+			gtk_widget_child_focus(GTK_WIDGET (dialog),GTK_DIR_TAB_BACKWARD);
+		}
+		else
+		{
+			gtk_widget_destroy (GTK_WIDGET (dialog));
+			change_keypress_event (KEYPRESS_MAIN);
+		}
 	}
 
 }
@@ -185,7 +193,8 @@ static void da_call_wedge (GtkDialog *dialog, gint response_id, gpointer user_da
 				change_keypress_event (KEYPRESS_MAIN);			
 			}
 			else
-			{	
+			{
+				gtk_widget_child_focus(GTK_WIDGET (dialog),GTK_DIR_TAB_FORWARD);	
 				if (gtk_tree_model_get_iter_first (model, &iter))/*用model中的第一项初始化iter*/
 					gtk_tree_selection_select_iter(pp->selection1, &iter);/*选择&iter指定的那项*/
 				else
@@ -197,8 +206,16 @@ static void da_call_wedge (GtkDialog *dialog, gint response_id, gpointer user_da
 
 	else if (GTK_RESPONSE_CANCEL == response_id) /* 取消 */
 	{
-		gtk_widget_destroy (GTK_WIDGET (dialog));
-		change_keypress_event (KEYPRESS_MAIN);
+		if (gtk_tree_selection_get_selected(
+					GTK_TREE_SELECTION(pp->selection1), &model, &iter)) /* 选中楔块型号时 */
+		{
+				gtk_widget_child_focus(GTK_WIDGET (dialog),GTK_DIR_TAB_BACKWARD);
+		}
+		else
+		{
+			gtk_widget_destroy (GTK_WIDGET (dialog));
+			change_keypress_event (KEYPRESS_MAIN);
+		}
 	}
 }
 
