@@ -3292,11 +3292,11 @@ void draw_area_calibration()
 							set_scan_config (0, S_SCAN_L, 277, 307, 177, 0, 0, get_current_group(pp->p_config));
 					set_scan_config (1, A_SCAN, 277, 277, 177, 328, 0, get_current_group(pp->p_config));
 					if( pp->cmode_pos == 1 )
-						set_scan_config (2, WEDGE_DELAY,    277, 605, 193, 0, 212, get_current_group(pp->p_config));
+						set_scan_config (2, WEDGE_DELAY,    277, 605, 178, 0, 212, get_current_group(pp->p_config));
 					else if( pp->cmode_pos == 2 )
-						set_scan_config (2, SENSITIVITY,    277, 605, 193, 0, 212, get_current_group(pp->p_config));
+						set_scan_config (2, SENSITIVITY,    277, 605, 178, 0, 212, get_current_group(pp->p_config));
 					else if( pp->cmode_pos == 3 )
-						set_scan_config (2, TCG,    277, 605, 193, 0, 212, get_current_group(pp->p_config));
+						set_scan_config (2, TCG,    277, 605, 178, 0, 212, get_current_group(pp->p_config));
 				}
 				break;
 			case 2://Code
@@ -3628,8 +3628,8 @@ void draw_area_all()
 							set_drawarea_property (&(pp->draw_area[1]), A_SCAN, 0x10);
 							draw_area_ (pp->vbox_area[0], &(pp->draw_area[1]), 655, 213);
 							gtk_widget_show (pp->vbox_area[0]);
-							set_scan_config (0, A_SCAN, 615, 615, 178, 0, 0,  0);
-							set_scan_config (1, A_SCAN, 615, 615, 193, 0, 212, 1);
+							set_scan_config (0, A_SCAN, 615, 615, 163, 0, 0,  0);
+							set_scan_config (1, A_SCAN, 615, 615, 178, 0, 197, 1);
 							/* 显示的位置 偏移等等 */
 							break;
 						case S_SCAN:
@@ -3778,9 +3778,9 @@ void draw_area_all()
 									gtk_widget_show (pp->vbox_area[0]);
 									gtk_widget_show (pp->vbox_area[1]);
 									set_scan_config (0, pp->draw_area[0].scan_type, 277, 277, 115, 0, 0,  0);
-									set_scan_config (1, pp->draw_area[1].scan_type, 277, 277, 255, 0, 150, 0);
+									set_scan_config (1, pp->draw_area[1].scan_type, 277, 277, 255, 0, 135, 0);
 									set_scan_config (2, pp->draw_area[3].scan_type, 278, 278, 115, 327, 0,  1);
-									set_scan_config (3, pp->draw_area[4].scan_type, 278, 278, 255, 327, 150, 1); 
+									set_scan_config (3, pp->draw_area[4].scan_type, 278, 278, 255, 327, 135, 1); 
 							}
 							else
 							{
@@ -3810,11 +3810,11 @@ void draw_area_all()
 									gtk_widget_show (pp->vbox_area[0]);
 									gtk_widget_show (pp->vbox_area[1]);
 									set_scan_config (0, pp->draw_area[0].scan_type, 277, 277, 106, 0, 0,  0);
-									set_scan_config (1, pp->draw_area[1].scan_type, 277, 277, 122, 0, 141, 0);
-									set_scan_config (2, pp->draw_area[2].scan_type, 277, 277, 122, 0, 283, 0);
+									set_scan_config (1, pp->draw_area[1].scan_type, 277, 277, 122, 0, 126, 0);
+									set_scan_config (2, pp->draw_area[2].scan_type, 277, 277, 122, 0, 268, 0);
 									set_scan_config (3, pp->draw_area[3].scan_type, 278, 278, 106, 327, 0, 1);
-									set_scan_config (4, pp->draw_area[4].scan_type, 278, 278, 122, 327, 141,  1);
-									set_scan_config (5, pp->draw_area[5].scan_type, 278, 278, 122, 327, 283, 1);
+									set_scan_config (4, pp->draw_area[4].scan_type, 278, 278, 122, 327, 126,  1);
+									set_scan_config (5, pp->draw_area[5].scan_type, 278, 278, 122, 327, 268, 1);
 							}
 							break;
 						default:
@@ -7259,7 +7259,7 @@ void draw3_data2(DRAW_UI_P p)
 					}
 					else if (pp->fstart_qty == 2)
 					{
-						//pp->x_pos = 560, pp->y_pos = 310;
+						pp->x_pos = 560, pp->y_pos = 310;
 
 						g_sprintf (TMP (velocity_data[0]), "LW:%dm/s", get_material_lw(pp->p_config) / 100);
 						g_sprintf (TMP (velocity_data[1]), "SW:%dm/s", get_material_sw(pp->p_config) / 100);
@@ -10251,6 +10251,8 @@ void draw3_data3(DRAW_UI_P p)
 				case 1:/*p013*/
 					if(pp->fstart_qty == 2)
 					{
+						pp->x_pos =520, pp->y_pos = 300;
+
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 							draw3_pop_tt (data_533, NULL, 
 									get_material_name (pp->p_config),
