@@ -7259,7 +7259,7 @@ void draw3_data2(DRAW_UI_P p)
 					}
 					else if (pp->fstart_qty == 2)
 					{
-						//pp->x_pos = 560, pp->y_pos = 310;
+						pp->x_pos = 560, pp->y_pos = 310;
 
 						g_sprintf (TMP (velocity_data[0]), "LW:%dm/s", get_material_lw(pp->p_config) / 100);
 						g_sprintf (TMP (velocity_data[1]), "SW:%dm/s", get_material_sw(pp->p_config) / 100);
@@ -10251,6 +10251,8 @@ void draw3_data3(DRAW_UI_P p)
 				case 1:/*p013*/
 					if(pp->fstart_qty == 2)
 					{
+						pp->x_pos =520, pp->y_pos = 300;
+
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
 							draw3_pop_tt (data_533, NULL, 
 									get_material_name (pp->p_config),
