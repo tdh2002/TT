@@ -3628,8 +3628,8 @@ void draw_area_all()
 							set_drawarea_property (&(pp->draw_area[1]), A_SCAN, 0x10);
 							draw_area_ (pp->vbox_area[0], &(pp->draw_area[1]), 655, 213);
 							gtk_widget_show (pp->vbox_area[0]);
-							set_scan_config (0, A_SCAN, 615, 615, 178, 0, 0,  0);
-							set_scan_config (1, A_SCAN, 615, 615, 193, 0, 212, 1);
+							set_scan_config (0, A_SCAN, 615, 615, 163, 0, 0,  0);
+							set_scan_config (1, A_SCAN, 615, 615, 178, 0, 197, 1);
 							/* 显示的位置 偏移等等 */
 							break;
 						case S_SCAN:
@@ -3778,9 +3778,9 @@ void draw_area_all()
 									gtk_widget_show (pp->vbox_area[0]);
 									gtk_widget_show (pp->vbox_area[1]);
 									set_scan_config (0, pp->draw_area[0].scan_type, 277, 277, 115, 0, 0,  0);
-									set_scan_config (1, pp->draw_area[1].scan_type, 277, 277, 255, 0, 140, 0);
+									set_scan_config (1, pp->draw_area[1].scan_type, 277, 277, 255, 0, 135, 0);
 									set_scan_config (2, pp->draw_area[3].scan_type, 278, 278, 115, 327, 0,  1);
-									set_scan_config (3, pp->draw_area[4].scan_type, 278, 278, 255, 327, 140, 1); 
+									set_scan_config (3, pp->draw_area[4].scan_type, 278, 278, 255, 327, 135, 1); 
 							}
 							else
 							{
@@ -3810,11 +3810,11 @@ void draw_area_all()
 									gtk_widget_show (pp->vbox_area[0]);
 									gtk_widget_show (pp->vbox_area[1]);
 									set_scan_config (0, pp->draw_area[0].scan_type, 277, 277, 106, 0, 0,  0);
-									set_scan_config (1, pp->draw_area[1].scan_type, 277, 277, 122, 0, 141, 0);
-									set_scan_config (2, pp->draw_area[2].scan_type, 277, 277, 122, 0, 283, 0);
+									set_scan_config (1, pp->draw_area[1].scan_type, 277, 277, 122, 0, 126, 0);
+									set_scan_config (2, pp->draw_area[2].scan_type, 277, 277, 122, 0, 268, 0);
 									set_scan_config (3, pp->draw_area[3].scan_type, 278, 278, 106, 327, 0, 1);
-									set_scan_config (4, pp->draw_area[4].scan_type, 278, 278, 122, 327, 141,  1);
-									set_scan_config (5, pp->draw_area[5].scan_type, 278, 278, 122, 327, 283, 1);
+									set_scan_config (4, pp->draw_area[4].scan_type, 278, 278, 122, 327, 126,  1);
+									set_scan_config (5, pp->draw_area[5].scan_type, 278, 278, 122, 327, 268, 1);
 							}
 							break;
 						default:
