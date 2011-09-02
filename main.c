@@ -406,7 +406,7 @@ int main (int argc, char *argv[])
 
 	memset (TMP(scan_type), 0xff, 16);
 	TMP(beam_qty[0]) = 1;
-	TMP(beam_qty[1]) = 0;
+	TMP(beam_qty[1]) = 1;
 	TMP(beam_qty[2]) = 0;
 	TMP(beam_qty[3]) = 0;
 	TMP(beam_qty[4]) = 0;

@@ -12877,7 +12877,7 @@ void draw3_data4(DRAW_UI_P p)
 						{
 							if (pp->mark_pop_change)
 							{
-								cur_value = GROUP_VAL(skew)/100.0 ;
+								cur_value = g_tmp_group_struct.skew/100.0 ;
 								lower =	0.0;
 								upper =	359.9;
 								step = tmpf;

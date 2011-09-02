@@ -40,7 +40,8 @@ char SOURCE_FILE_PATH[FILE_NAME_MAX];
 char TARGET_FILE_NAME[FILE_NAME_MAX];
 char TARGET_FILE_PATH[FILE_NAME_MAX];
 
-void screen_to_file();
+
+void full_screen_to_file(char *filename, char *fbfilename0 , char * fbfilename1);
 
 /* 探头 PA opp UT oup  */
 void read_probe_file (const gchar *file_path, PROBE_P p)
@@ -1342,7 +1343,7 @@ void report_build_image(char *file_name)
 
     assert(file_name != NULL);
 
-	screen_to_file(screen_filename,fbfilename);
+	//screen_to_file(screen_filename,fbfilename);
 }
 
 void report_build_note(FILE *fp)
@@ -1692,7 +1693,8 @@ static int snap2png(const char * filename, int quality, FBInfo* fb)
 
 }
 
-void screen_to_file(char *filename, char *fbfilename0 , char * fbfilename1)
+//全屏保存
+void full_screen_to_file(char *filename, char *fbfilename0 , char * fbfilename1)
 {
 	FBInfo fb0;
 	FBInfo fb1;
@@ -1742,7 +1744,7 @@ void screen_to_file(char *filename, char *fbfilename0 , char * fbfilename1)
 			// if equeal 1(fb1 will display)
 			// set current tmp_fb pixel to be fb1
 			tmp_p =  tmp_pixel + i + j*width;
-			if(*tmp_p == 1) *tmp_p = *(fb1_pixel + 768*(j-105) + i - 20);
+			if(*tmp_p == 1) *tmp_p = *(fb1_pixel + width_fb1*(j-105) + i - 20);
 		}
 
 	}
@@ -1785,7 +1787,7 @@ void SAVE_DATA()
 	{}
 	else if (operate == SAVE_MODE_SCREEN)
 	{
-		screen_to_file(screen_filename,fbfilename0, fbfilename1);
+		full_screen_to_file(screen_filename,fbfilename0, fbfilename1);
 	}
 	else if (operate == SAVE_MODE_REPORT)
 	{

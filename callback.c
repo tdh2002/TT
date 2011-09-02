@@ -3264,7 +3264,16 @@ void data_00472 (GtkMenuItem *menuitem, gpointer data) /* Skew (deg) */
 {
 	gushort temp = GPOINTER_TO_UINT (data);
 	g_tmp_group_struct.skew_pos = (guchar) (GPOINTER_TO_UINT (data));
-	g_tmp_group_struct.skew = get_skew();
+	
+	switch (g_tmp_group_struct.skew_pos)
+	{
+		case 0:g_tmp_group_struct.skew = 0;break;
+		case 1:g_tmp_group_struct.skew = 9000;break;
+		case 2:g_tmp_group_struct.skew =18000;break;
+		case 3:g_tmp_group_struct.skew =27000;break;
+		default:break;
+	}
+
 	if (temp != 4)
 	{
 		pp->pos_pos = MENU3_STOP;
