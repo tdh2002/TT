@@ -59,7 +59,7 @@ void read_probe_file (const gchar *file_path, PROBE_P p)
 			lseek (fd, 4, SEEK_SET);
 			i = read (fd, p, sizeof(PROBE) - 4);
 		}
-		else// if (GROUP_VAL(group_mode) == UT_SCAN)
+		else if (GROUP_VAL(group_mode) == UT_SCAN)
 		{
 			i = read (fd, p, sizeof(PROBE) );
 			p->Frequency = p->Elem_qty | (p->Freq2 << 8);
@@ -87,7 +87,7 @@ void save_probe_file (const gchar *file_path, PROBE_P p)
 			i = write (fd,tmp,strlen(tmp));
 			i = write (fd, p, sizeof(PROBE) - 4);
 		}
-		else// if (GROUP_VAL(group_mode) == UT_SCAN)
+		else if (GROUP_VAL(group_mode) == UT_SCAN)
 		{
 			//p->Frequency = p->Elem_qty | (p->Freq2 << 8);
 			p->Freq2 = (p->Frequency & 0xff00) >> 8;
@@ -1575,7 +1575,6 @@ static int snap2jpg(const char * filename, int quality, FBInfo* fb)
 	if ((outfile = fopen(filename, "wb+")) == NULL) 
 	{
 		fprintf(stderr, "can't open %s\n", filename);
-
 		return -1;
 	}
 
@@ -1693,30 +1692,75 @@ static int snap2png(const char * filename, int quality, FBInfo* fb)
 
 }
 
-void screen_to_file(char *filename, char *fbfilename) 
+void screen_to_file(char *filename, char *fbfilename0 , char * fbfilename1)
 {
-	FBInfo fb;
+	FBInfo fb0;
+	FBInfo fb1;
+	FBInfo tmp_fb;
 
-	//const char* filename   = "fb.jpg";
-	//const char* fbfilename = "/dev/fb1";
+	short* tmp_pixel;
+	short* fb0_pixel;
+	short* fb1_pixel;
+	short* tmp_p    ;
+	int i;
+	int j;
+	int width;
+	int height;
+	int width_fb1;
+	int height_fb1;
 
 
-	//filename   = argv[1];
-	//fbfilename = argv[2];
+	memset(&fb0, 0x00, sizeof(fb0));
+	memset(&fb1, 0x00, sizeof(fb1));
 
-	memset(&fb, 0x00, sizeof(fb));
-	if (fb_open(&fb, fbfilename) == 0)
+    // open fb0 fb1
+	if (fb_open(&fb0, fbfilename0) != 0)  return ;
+	if (fb_open(&fb1, fbfilename1) != 0)  return ;
+    //cp fb0 structure to tmp_fb
+	memcpy(&tmp_fb, &fb0, sizeof(fb0));
+
+	//get heigh and width of fb0 and fb1
+	width = fb_width(&fb0);
+	height = fb_height(&fb0);
+	width_fb1 = fb_width(&fb1);
+	height_fb1= fb_height(&fb1);
+
+	// malloc tmp memory for image storage
+	tmp_fb.bits = (unsigned char*)malloc( width * height * fb_bpp(&fb0)) ;
+    // format the image pixle pointer
+	fb0_pixel = (short*)fb0.bits    ;
+	fb1_pixel = (short*)fb1.bits    ;
+	tmp_pixel = (short*)tmp_fb.bits ;
+    // cp fb0 pixels to tmp_fb
+	memcpy(tmp_fb.bits, fb0.bits,  width * height * fb_bpp(&fb0));
+
+    for( j = 105; j< 495; j++)
 	{
-		if(strstr(filename, ".png") != NULL)
+		for( i = 20; i < 625; i++ )
 		{
-			snap2png(filename, 100, &fb);
+			// check each pixels
+			// if equeal 1(fb1 will display)
+			// set current tmp_fb pixel to be fb1
+			tmp_p =  tmp_pixel + i + j*width;
+			if(*tmp_p == 1) *tmp_p = *(fb1_pixel + 768*(j-105) + i - 20);
 		}
-		else
-		{
-			snap2jpg(filename, 100, &fb);
-		}
-		fb_close(&fb);
+
 	}
+
+    // save tmp_fb to image
+	if(strstr(filename, ".png") != NULL)
+	{
+		snap2png(filename, 100, &tmp_fb);
+	}
+	else
+	{
+		snap2jpg(filename, 100, &tmp_fb);
+	}
+
+	fb_close(&fb0);
+	fb_close(&fb1);
+
+     free(tmp_fb.bits);
 
 	return ;
 }
@@ -1728,9 +1772,10 @@ void SAVE_DATA()
 
 	char *html_file_name = "report_build.html";
 
-	char *screen_filename = "fb0.jpg";
+	char *screen_filename = "fb.jpg";
 
-	char *fbfilename = "/dev/fb0";
+	char *fbfilename0 = "/dev/fb0";
+	char *fbfilename1 = "/dev/fb1";
 
 	operate = get_file_save_mode(pp->p_config);
 
@@ -1740,7 +1785,7 @@ void SAVE_DATA()
 	{}
 	else if (operate == SAVE_MODE_SCREEN)
 	{
-		screen_to_file(screen_filename,fbfilename);
+		screen_to_file(screen_filename,fbfilename0, fbfilename1);
 	}
 	else if (operate == SAVE_MODE_REPORT)
 	{
