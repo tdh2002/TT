@@ -2690,7 +2690,7 @@ static int handler_key(guint keyval, gpointer data)
 				TMP(group_spi[group]).gate_i_end	=   (int)(GROUP_VAL_POS(group, gate[2].start) + GROUP_VAL_POS (group, gate[2].width)) / (10 * cos(current_angle));
 
 			    // *************************
-				write_group_data (&TMP(group_spi[group]), group);
+				//write_group_data (&TMP(group_spi[group]), group);
 				draw_menu3(0, NULL);
 				draw_area_all ();
 				send_focal_spi(get_current_group(pp->p_config));
