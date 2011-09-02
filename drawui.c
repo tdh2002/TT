@@ -3778,9 +3778,9 @@ void draw_area_all()
 									gtk_widget_show (pp->vbox_area[0]);
 									gtk_widget_show (pp->vbox_area[1]);
 									set_scan_config (0, pp->draw_area[0].scan_type, 277, 277, 115, 0, 0,  0);
-									set_scan_config (1, pp->draw_area[1].scan_type, 277, 277, 255, 0, 150, 0);
+									set_scan_config (1, pp->draw_area[1].scan_type, 277, 277, 255, 0, 135, 0);
 									set_scan_config (2, pp->draw_area[3].scan_type, 278, 278, 115, 327, 0,  1);
-									set_scan_config (3, pp->draw_area[4].scan_type, 278, 278, 255, 327, 150, 1); 
+									set_scan_config (3, pp->draw_area[4].scan_type, 278, 278, 255, 327, 135, 1); 
 							}
 							else
 							{
