@@ -5098,6 +5098,9 @@ void data_445 (GtkMenuItem *menuitem, gpointer data) /* Display->Properties->Ove
 void data_500 (GtkMenuItem *menuitem, gpointer data) /* 增加删除选择group P500 */
 {
 	guchar temp = (guchar)(GPOINTER_TO_UINT (data));
+	gchar *markup;
+	gint grp;
+	GROUP *p_grp;
 	switch (temp)
 	{
 		case 0:
@@ -5122,6 +5125,21 @@ void data_500 (GtkMenuItem *menuitem, gpointer data) /* 增加删除选择group 
 			break;
 		default:break;
 	}
+
+	grp = get_current_group(pp->p_config);
+	p_grp = get_group_by_id (pp->p_config, grp);
+	if (get_group_db_ref (pp->p_config, grp))
+		markup = g_markup_printf_escaped (
+				"<span foreground='white' font_desc='16'>%0.1f(%0.1f)</span>",
+				(get_group_val (p_grp, GROUP_GAIN) -
+				get_group_val (p_grp, GROUP_GAINR)) / 100.0,
+				get_group_val (p_grp, GROUP_GAINR) / 100.0);
+	else
+		markup = g_markup_printf_escaped ("<span foreground='white' font_desc='24'>%0.1f</span>",
+				get_group_val (p_grp, GROUP_GAIN) / 100.0 );
+	gtk_label_set_markup (GTK_LABEL(pp->label[GAIN_VALUE]),markup);
+
+	g_free(markup);
 
 	if(!GROUP_VAL(group_mode)) /*group mode 选择UT时，focal law 不可用*/
 		gtk_widget_set_sensitive(pp->menuitem[6],FALSE);
