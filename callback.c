@@ -1020,7 +1020,7 @@ void b3_fun0(gpointer pt)
 				break;
 			default:break;
 		}
-		g_print ("b0 preslkjaflsdjf\n");
+//		g_print ("b0 preslkjaflsdjf\n");
 	}
 	else
 	{
