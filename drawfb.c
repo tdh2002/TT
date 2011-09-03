@@ -1156,7 +1156,7 @@ void draw_s_scan_r (gushort *p, guint width, guint height, DOT_TYPE *data, DOT_T
 	return ;
 }
 
-/* 画校准包络线 */
+/* 画灵敏度校准包络线 */
 void draw_clb_sensitivity (gushort *p, gint width, gint height, DOT_TYPE *data, DOT_TYPE *data1, 
 							DOT_TYPE *data2,gint xoffset, gint yoffset, guchar groupId)
 {
@@ -1216,8 +1216,8 @@ void draw_clb_sensitivity (gushort *p, gint width, gint height, DOT_TYPE *data, 
 		if(clb_y2_m < yoffset)
 				clb_y2_m = yoffset;
 
-		fbline (p, clb_x1, clb_y1, clb_x2, clb_y2, all_col_16[0]);
-		fbline (p, clb_x1, clb_y1_m, clb_x2, clb_y2_m, all_col_16[2]);
+		fbline (p, clb_x1, clb_y1, clb_x2, clb_y2, all_col_16[0]);//实测线
+		fbline (p, clb_x1, clb_y1_m, clb_x2, clb_y2_m, all_col_16[2]);//包络线
 	}       
 
 }

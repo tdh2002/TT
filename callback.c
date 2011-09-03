@@ -2703,7 +2703,7 @@ static int handler_key(guint keyval, gpointer data)
 				TMP(group_spi[group]).gate_i_end	=   (int)(GROUP_VAL_POS(group, gate[2].start) + GROUP_VAL_POS (group, gate[2].width)) / (10 * cos(current_angle));
 
 			    // *************************
-				write_group_data (&TMP(group_spi[group]), group);
+				//write_group_data (&TMP(group_spi[group]), group);
 				draw_menu3(0, NULL);
 				draw_area_all ();
 				send_focal_spi(get_current_group(pp->p_config));
@@ -3277,7 +3277,16 @@ void data_00472 (GtkMenuItem *menuitem, gpointer data) /* Skew (deg) */
 {
 	gushort temp = GPOINTER_TO_UINT (data);
 	g_tmp_group_struct.skew_pos = (guchar) (GPOINTER_TO_UINT (data));
-	g_tmp_group_struct.skew = get_skew();
+	
+	switch (g_tmp_group_struct.skew_pos)
+	{
+		case 0:g_tmp_group_struct.skew = 0;break;
+		case 1:g_tmp_group_struct.skew = 9000;break;
+		case 2:g_tmp_group_struct.skew =18000;break;
+		case 3:g_tmp_group_struct.skew =27000;break;
+		default:break;
+	}
+
 	if (temp != 4)
 	{
 		pp->pos_pos = MENU3_STOP;

@@ -516,12 +516,7 @@ void draw_menu2 (gint pa)
 		update_widget_bg(p->eventbox2[p->pos1[p->pos]], /*backpic[0]*/ 0);
 	}
 
-	if((p->pos == 0) && (GROUP_VAL(group_mode) != 1))
-		gtk_widget_set_sensitive(p->eventbox2[1], FALSE);
-	else
-		gtk_widget_set_sensitive(p->eventbox2[1], TRUE);
-
-	if(pp->clb_flag)
+	if(((p->pos == 0) && (GROUP_VAL(group_mode) != 1)) || pp->clb_flag)
 		gtk_widget_set_sensitive(p->eventbox2[1], FALSE);
 	else
 		gtk_widget_set_sensitive(p->eventbox2[1], TRUE);
@@ -12911,7 +12906,7 @@ void draw3_data4(DRAW_UI_P p)
 						{
 							if (pp->mark_pop_change)
 							{
-								cur_value = GROUP_VAL(skew)/100.0 ;
+								cur_value = g_tmp_group_struct.skew/100.0 ;
 								lower =	0.0;
 								upper =	359.9;
 								step = tmpf;
