@@ -516,7 +516,7 @@ void draw_menu2 (gint pa)
 		update_widget_bg(p->eventbox2[p->pos1[p->pos]], /*backpic[0]*/ 0);
 	}
 
-	if((p->pos == 0) && (GROUP_VAL(group_mode) == 0))
+	if((p->pos == 0) && (GROUP_VAL(group_mode) != 1))
 		gtk_widget_set_sensitive(p->eventbox2[1], FALSE);
 	else
 		gtk_widget_set_sensitive(p->eventbox2[1], TRUE);

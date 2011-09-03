@@ -1440,6 +1440,19 @@ void b3_fun2(gpointer p)
 
 	switch (pp->pos)
 	{
+		case 0:
+			switch (pp->pos1[0])
+			{
+				case 0: 
+					if(gtk_widget_get_sensitive(pp->eventbox2[1]))
+						pp->pos1[0]=1;
+					else
+						pp->pos1[0]=2;
+					pp->pos_pos = MENU3_STOP;
+					break; /* p002 */
+
+				default:break;
+			}
 		case 1:
 			switch (pp->pos1[1])
 			{
@@ -5141,7 +5154,7 @@ void data_500 (GtkMenuItem *menuitem, gpointer data) /* 增加删除选择group 
 
 	g_free(markup);
 
-	if(!GROUP_VAL(group_mode)) /*group mode 选择UT时，focal law 不可用*/
+	if(GROUP_VAL(group_mode)!=PA_SCAN) /*group mode 选择UT,UT1,UT2时，focal law 不可用*/
 		gtk_widget_set_sensitive(pp->menuitem[6],FALSE);
 	else
 		gtk_widget_set_sensitive(pp->menuitem[6],TRUE);
@@ -5155,7 +5168,7 @@ void data_500 (GtkMenuItem *menuitem, gpointer data) /* 增加删除选择group 
 void data_501 (GtkMenuItem *menuitem, gpointer data) /* Probe/Part->Select->Group Mode 501 */
 {
 	GROUP_VAL(group_mode) = (gchar) (GPOINTER_TO_UINT (data));
-	if(GROUP_VAL(group_mode)!=1) /*group mode 选择UT时，focal law 不可用*/
+	if(GROUP_VAL(group_mode)!=1) /*group mode 选择UT,UT1,UT2时，focal law 不可用*/
 		gtk_widget_set_sensitive(pp->menuitem[6],FALSE);
 	else
 		gtk_widget_set_sensitive(pp->menuitem[6],TRUE);
