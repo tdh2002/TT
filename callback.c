@@ -1440,19 +1440,6 @@ void b3_fun2(gpointer p)
 
 	switch (pp->pos)
 	{
-		case 0:
-			switch (pp->pos1[0])
-			{
-				case 0: 
-					if(gtk_widget_get_sensitive(pp->eventbox2[1]))
-						pp->pos1[0]=1;
-					else
-						pp->pos1[0]=2;
-					pp->pos_pos = MENU3_STOP;
-					break; /* p002 */
-
-				default:break;
-			}
 		case 1:
 			switch (pp->pos1[1])
 			{
