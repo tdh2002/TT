@@ -1156,6 +1156,35 @@ void draw_s_scan_r (gushort *p, guint width, guint height, DOT_TYPE *data, DOT_T
 	return ;
 }
 
+void draw_clb_wedge_delay (gushort *p, gint width, gint height, DOT_TYPE *data, DOT_TYPE *data1, 
+							DOT_TYPE *data2,gint xoffset, gint yoffset, guchar groupId)
+{
+	gint	i;
+//	gint clb_x1, clb_x2;
+//	gint clb_y1, clb_y2;
+//	gint clb_y1_m, clb_y2_m;
+
+//	gint count = 0;
+//	gfloat clb_tmp_max_data = 0;
+//	static gfloat clb_his_max_data = 0;
+	gint y1 = (gint)(height*(1- pp->ref_amplitude/10000.0 - pp->tolerance_t/10000.0)) + yoffset;
+	gint y2 = (gint)(height*(1- pp->ref_amplitude/10000.0 + pp->tolerance_t/10000.0)) + yoffset;
+	if(y1 < yoffset)
+			y1 = yoffset;
+	if(y2 < yoffset)
+			y2 = yoffset;
+//	gint step = (gint)( (LAW_VAL(Angle_max) - LAW_VAL(Angle_min)) / LAW_VAL(Angle_step) + 1);
+	/* 清空这块显示区 背景暂定黑色 可以全部一起清空 */
+	for (i = 0; i < height; i++)
+		memset (p + FB_WIDTH * (i + yoffset) + xoffset, 0x0, width * 2 );
+	/*画参考线*/
+	fbline (p,0, y1, width, y1,all_col_16[1]);
+	fbline (p,0, y2, width, y2,all_col_16[1]);
+	/* 画包络线 */
+       
+
+}
+
 /* 画灵敏度校准包络线 */
 void draw_clb_sensitivity (gushort *p, gint width, gint height, DOT_TYPE *data, DOT_TYPE *data1, 
 							DOT_TYPE *data2,gint xoffset, gint yoffset, guchar groupId)
@@ -1201,7 +1230,7 @@ void draw_clb_sensitivity (gushort *p, gint width, gint height, DOT_TYPE *data, 
 	TMP(clb_max_data[count]) = TMP(clb_his_max_data);
 	if(TMP(clb_max_data[count]) > 100.0)
 			TMP(clb_max_data[count]) = 100.0;
-    pp->p_tmp_config->beam_num[groupId] = count;
+    	pp->p_tmp_config->beam_num[groupId] = count;
 
 	for (i = 0; i < step - 1; i++)
 	{
@@ -1219,6 +1248,35 @@ void draw_clb_sensitivity (gushort *p, gint width, gint height, DOT_TYPE *data, 
 		fbline (p, clb_x1, clb_y1, clb_x2, clb_y2, all_col_16[0]);//实测线
 		fbline (p, clb_x1, clb_y1_m, clb_x2, clb_y2_m, all_col_16[2]);//包络线
 	}       
+
+}
+
+void draw_clb_tcg (gushort *p, gint width, gint height, DOT_TYPE *data, DOT_TYPE *data1, 
+							DOT_TYPE *data2,gint xoffset, gint yoffset, guchar groupId)
+{
+	gint	i;
+//	gint clb_x1, clb_x2;
+//	gint clb_y1, clb_y2;
+//	gint clb_y1_m, clb_y2_m;
+
+//	gint count = 0;
+//	gfloat clb_tmp_max_data = 0;
+//	static gfloat clb_his_max_data = 0;
+	gint y1 = (gint)(height*(1- GROUP_VAL(amplitude[0])/10000.0 - pp->tolerance_t/10000.0)) + yoffset;
+	gint y2 = (gint)(height*(1- GROUP_VAL(amplitude[0])/10000.0 + pp->tolerance_t/10000.0)) + yoffset;
+	if(y1 < yoffset)
+			y1 = yoffset;
+	if(y2 < yoffset)
+			y2 = yoffset;
+//	gint step = (gint)( (LAW_VAL(Angle_max) - LAW_VAL(Angle_min)) / LAW_VAL(Angle_step) + 1);
+	/* 清空这块显示区 背景暂定黑色 可以全部一起清空 */
+	for (i = 0; i < height; i++)
+		memset (p + FB_WIDTH * (i + yoffset) + xoffset, 0x0, width * 2 );
+	/*画参考线*/
+	fbline (p,0, y1, width, y1,all_col_16[1]);
+	fbline (p,0, y2, width, y2,all_col_16[1]);
+	/* 画包络线 */
+	      
 
 }
 
@@ -1374,6 +1432,10 @@ void draw_scan(guchar scan_num, guchar scan_type, guchar group,
 						xoff, yoff, group, 0, get_cscan_source (pp->p_config, 0));
 			break;
 		case WEDGE_DELAY:
+			draw_clb_wedge_delay(dot_temp1, TMP(clb_width), TMP(clb_height),
+					TMP(scan_data[group]) + TMP(clb_width) * TMP(beam_num[group]),
+					dot_temp, dot_temp, 
+					xoff, yoff, group);
 			break;
 		case SENSITIVITY:
 			draw_clb_sensitivity(dot_temp1, TMP(clb_width), TMP(clb_height),
@@ -1382,6 +1444,10 @@ void draw_scan(guchar scan_num, guchar scan_type, guchar group,
 					xoff, yoff, group);
 			break;
 		case TCG:
+			draw_clb_tcg(dot_temp1, TMP(clb_width), TMP(clb_height),
+					TMP(scan_data[group]) + TMP(clb_width) * TMP(beam_num[group]),
+					dot_temp, dot_temp, 
+					xoff, yoff, group);
 			break;
 		default:break;
 	}
