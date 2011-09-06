@@ -1794,7 +1794,7 @@ static void draw_save_setup_as()
 	gtk_widget_set_size_request (GTK_WIDGET(vbox_filename), 342, 85);
 	eventbox_filename = gtk_event_box_new();
 	gtk_widget_set_size_request (GTK_WIDGET(eventbox_filename), 342, 57);
-	update_widget_bg(eventbox_filename, /*backpic[1]*/1);
+	update_widget_bg(eventbox_filename, /*backpic[1]*/17);
 	label[1] = gtk_label_new("File name");
 	gtk_container_add(GTK_CONTAINER(eventbox_filename),label[1]);
 	gtk_box_pack_start (GTK_BOX (vbox_filename), eventbox_filename, FALSE, FALSE, 0);

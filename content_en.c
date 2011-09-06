@@ -114,7 +114,7 @@ static const gchar *content_en211[] = {
 
 static const gchar *content_en212[] = {
 	/* 二级菜单第1页下的第2页三级菜单 */
-	"Receiver", "Filter", "Rectifier", "Video Filter", "Averaging", "Reject"
+	"Receiver", "Filter", "Rectifier", "Video Filter", "Averaging", "Reject","Damping"
 };
 
 static const gchar *content_en213[] = {
@@ -535,6 +535,7 @@ const gchar *all_menu_content_en[] =
 	"Radius", "Depth", "Thickness",		/* Echo type */
 	"Compressive", "Tensile",			/* Weld type */
 	"Custom", "Angle Beam", "Contact", "Immersion",	/* Probe Type */
+	"50 Ω","500 Ω",/*Damping*/
 	""
 };
 
