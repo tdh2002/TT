@@ -107,7 +107,7 @@ const gchar *backpic[] =
 	"pic/20.png", "pic/21.png", "pic/22.png",		/* 三级菜单名称 0按下 1未选中 2 停留 */
 	"pic/30.png", "pic/31.png", "pic/32.png",		/* 三级菜单数值 0按下 1未选中 2 停留 */
 	"pic/tt.png", "pic/311.png", "pic/322.png",      	/* 软键盘图标 */
-	"pic/snow.png","pic/black_25.png","pic/40.png",
+	"pic/snow.png","pic/black_25.png"
 };
 
 GdkPixbuf *g_pixbuf_[18];
@@ -4573,20 +4573,6 @@ void draw3_data0(DRAW_UI_P p)
 					g_free(str);
 					break;
 				case 2: /* Reveiver 接收器  P120 TAN1 */
-if((GROUP_VAL(group_mode)==2)||(GROUP_VAL(group_mode)==3))/*group_mode选择UT1 或 UT2*/
-{
-					p->x_pos = 600, p->y_pos = 150;
-					if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 0))
-						draw3_pop_tt (data_1201, NULL, 
-								menu_content[DAMPING + get_damping_pos(p->p_config)],
-								menu_content + DAMPING, 2, 0, get_damping_pos(p->p_config), 0);
-					else 
-						draw3_popdown (menu_content[DAMPING + get_damping_pos(p->p_config)], 0, 0);
-					str = g_strdup_printf ("%s", con2_p[1][2][6]);	
-					gtk_label_set_text (GTK_LABEL (pp->label3[0]), str);
-}
-else
-{
 					switch (TMP(receiver_reg))
 					{
 						case 0:	tmpf = 1.0; break;
@@ -4620,7 +4606,6 @@ else
 						draw3_digit_stop (cur_value, str, digit, pos, 0);
 					}
 					g_free(str);
-}
 					break;
 				case 3:/* Scan Offset P130 TAN1 */
 					if (GROUP_VAL(group_mode) == PA_SCAN)	/* 脉冲回波模式不可以调节 */
@@ -6961,8 +6946,7 @@ void draw3_data1(DRAW_UI_P p)
 				case 0:/* 打开文件 P801 */
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 						draw_dialog_all (DIALOG_FILE_OPEN);
-					else
-						draw3_popdown(NULL,1,1);
+					draw3_popdown(NULL,1,1);
 					break;
 
 				case 1:/*File -> report -> file name p811 */

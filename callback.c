@@ -3960,7 +3960,7 @@ void data_115 (GtkMenuItem *menuitem, gpointer data) /* PRF */
 void data_1201 (GtkMenuItem *menuitem, gpointer data) /* damping p120 */
 {
 	//get_damping_pos (pp->p_config);
-	set_damping_pos (pp->p_config, (guchar) (GPOINTER_TO_UINT (data)));
+	set_damping_pos (pp->p_config, (void*)(data));
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
 }
