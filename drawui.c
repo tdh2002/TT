@@ -5349,9 +5349,11 @@ void draw3_data1(DRAW_UI_P p)
 	gchar temp[52];
 	gfloat tmpf = 0.0;
 	gchar *str;
+	gint i;
 
 	gfloat cur_value=0.0, lower, upper, step;
 	guint digit, pos, unit, content_pos, menu_status = 0, temp_beam, tt;
+	gint clb_step = (gint)( (LAW_VAL(Angle_max) - LAW_VAL(Angle_min)) / LAW_VAL(Angle_step) + 1);
 
 	int inet_sock;
 	struct ifreq ifr;
@@ -5397,9 +5399,18 @@ void draw3_data1(DRAW_UI_P p)
 
 							set_overlay_gate(pp->p_config,1);
 							if(pp->clb_count == 1)
+							{
 								pp->save_ut_unit = GROUP_VAL_POS(get_current_group(pp->p_config), ut_unit);
+								for (i = 0; i < clb_step; i++)
+								{
+									TMP(clb_real_data[i]) = ((TMP(measure_data[i][1])>>20) & 0xfff)/20.47;
+									TMP(clb_max_data[i]) = TMP(clb_real_data[i]);//第一次需初始化
+								}
+							}
 							GROUP_VAL_POS(get_current_group(pp->p_config), ut_unit) = UT_UNIT_TRUE_DEPTH;
 							generate_focallaw( (int)(get_current_group(pp->p_config)) );
+
+							
 						}
 					}
 					draw3_popdown (NULL, 1, 1);
@@ -14903,14 +14914,15 @@ void draw3_data5(DRAW_UI_P p)
 	gchar temp[52];
 	gfloat tmpf = 0.0, tmpfm;
 	gchar *str;
-	gint i;
 	guint menu_status  = 0;
 
 	gfloat max_tmp = 0.0,  max_tmp1 = 0.0, cur_value, lower, upper, step;
 	guint digit, pos, unit, content_pos, temp_beam;
+	gint offset,k;
 	gint grp = get_current_group (pp->p_config);
+	for (offset = 0, k = 0 ; k < grp; k++)
+		offset += TMP(beam_qty[k]);
 	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
-	gint clb_step = (gint)( (LAW_VAL(Angle_max) - LAW_VAL(Angle_min)) / LAW_VAL(Angle_step) + 1);
 
 	switch (pp->pos) 
 	{
@@ -15396,12 +15408,6 @@ void draw3_data5(DRAW_UI_P p)
 							else if ((pp->ctype_pos == 1) && (pp->cmode_pos == 2))
 							{
 								draw3_popdown_offset(NULL, 5,1,29);
-								for (i = 0; i < clb_step; i++)
-								{
-									TMP(clb_his_max_data) = 0;//TMP(clb_real_data[i]);
-								//	TMP(clb_real_data[i]) = ((TMP(measure_data[i][1])>>20) & 0xfff)/20.47;
-									TMP(clb_max_data[i]) = TMP(clb_real_data[i]);
-								}
 							}
 							else if (pp->ctype_pos == 2)
 							{
@@ -15579,7 +15585,7 @@ void draw3_data5(DRAW_UI_P p)
 						}
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 5))
 						{
-							cur_value = GROUP_VAL(gain_offset)/10.0;
+							cur_value = GROUP_VAL(gain_offset[TMP(beam_num[grp]) + offset])/10.0;
 							lower = 0.0;
 							upper = 80.0;
 							step = tmpf;
@@ -15590,7 +15596,7 @@ void draw3_data5(DRAW_UI_P p)
 						}
 						else 
 						{
-							cur_value = GROUP_VAL(gain_offset)/10.0;
+							cur_value = GROUP_VAL(gain_offset[TMP(beam_num[grp]) + offset])/10.0;
 							digit = 1;
 							pos = 5;
 							unit = UNIT_DB;
@@ -17202,22 +17208,29 @@ gboolean on_finish(gpointer p)
 
 void draw_field_value ()
 {
-//	gint	offset, k;
-	gchar	*markup0, *markup1 ,*markup2 ,*markup3;
-//	for (offset = 0, k = 0 ; k < get_current_group (pp->p_config); k++)
-//		offset += TMP(beam_qty[k]);
-//	gint index = offset + TMP(beam_num[get_current_group(pp->p_config)]);
+	gchar  *markup0, *markup1, *markup2, *markup3;
+//	gchar  *markup;
 	/* 4个测量值显示 */
 	markup0 = g_markup_printf_escaped ("<span foreground='white' font_desc='24'>%.2f</span>", TMP(field[0]));
 	markup1 = g_markup_printf_escaped ("<span foreground='white' font_desc='24'>%.2f</span>", TMP(field[1]));
 	markup2 = g_markup_printf_escaped ("<span foreground='white' font_desc='24'>%.2f</span>", TMP(field[2]));
 	markup3 = g_markup_printf_escaped ("<span foreground='white' font_desc='24'>%.2f</span>", TMP(field[3]));
+	/*实时更新编码器信息
+	if( (!pp->ctype_pos) && (pp->cstart_qty == 3) )
+	{
+		//先让编码器的起点值与origin一致
+		markup = g_markup_printf_escaped ("<span foreground='white' font_desc='10'>X: %.1f s</span>",
+				TMP_CBA(measure_start));
+	}*/
 	gdk_threads_enter();
 	gtk_label_set_markup (GTK_LABEL(pp->label[9]),  markup0);
 	gtk_label_set_markup (GTK_LABEL(pp->label[11]), markup1);
 	gtk_label_set_markup (GTK_LABEL(pp->label[13]), markup2);
 	gtk_label_set_markup (GTK_LABEL(pp->label[15]), markup3);
+	//
+//	gtk_label_set_markup (GTK_LABEL (pp->label[7]), markup); 
 	gdk_threads_leave();	
+//	g_free (markup);
 	g_free (markup0);
 	g_free (markup1);
 	g_free (markup2);

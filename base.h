@@ -58,11 +58,11 @@ extern GdkColor color_rule;
 typedef struct _calibration
 {
 	//ENCODER
-	gint delt_distance;
-	gint measure_start;
-	gint measure_end;
-	gint delt_measure;
-	guint resolution;
+	gfloat delt_distance;
+	gfloat measure_start;
+	gfloat measure_end;
+	gfloat delt_measure;
+	gfloat resolution;
 
 	//Ultrasound->Velocity
 	gint radius1;

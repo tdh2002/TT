@@ -1196,7 +1196,6 @@ void draw_clb_sensitivity (gushort *p, gint width, gint height, DOT_TYPE *data, 
 
 	gint count = 0;
 	gfloat clb_tmp_max_data = 0;
-//	static gfloat clb_his_max_data = 0;
 	gint y1 = (gint)(height*(1- pp->ref_amplitude/10000.0 - pp->tolerance_t/10000.0)) + yoffset;
 	gint y2 = (gint)(height*(1- pp->ref_amplitude/10000.0 + pp->tolerance_t/10000.0)) + yoffset;
 	if(y1 < yoffset)
@@ -1214,9 +1213,6 @@ void draw_clb_sensitivity (gushort *p, gint width, gint height, DOT_TYPE *data, 
 	for (i = 0; i < step; i++)
 	{
 		TMP(clb_real_data[i]) = ((TMP(measure_data[i][1])>>20) & 0xfff)/20.47;
-//		if(pp->clb_count == 1)
-//			TMP(clb_max_data[i]) = TMP(clb_real_data[i]);//第一次需初始化
-//		pp->clb_count = 0;
 		if(TMP(clb_real_data[i]) > 100.0)
 				TMP(clb_real_data[i]) = 100.0;
 		if( clb_tmp_max_data < TMP(clb_real_data[i]) )
@@ -1224,10 +1220,14 @@ void draw_clb_sensitivity (gushort *p, gint width, gint height, DOT_TYPE *data, 
 				count = i;//记录最大值时的beam_num
 				clb_tmp_max_data = TMP(clb_real_data[i]);//保存每次循环的最大值
 		}
+
+		if(TMP(clb_max_data[i]) < TMP(clb_real_data[i]))
+				TMP(clb_max_data[i]) = TMP(clb_real_data[i]);
 	}
+	/*
 	if(TMP(clb_his_max_data) < clb_tmp_max_data)
 			TMP(clb_his_max_data) = clb_tmp_max_data;//保存历史最大值
-	TMP(clb_max_data[count]) = TMP(clb_his_max_data);
+	TMP(clb_max_data[count]) = TMP(clb_his_max_data);*/
 	if(TMP(clb_max_data[count]) > 100.0)
 			TMP(clb_max_data[count]) = 100.0;
     	pp->p_tmp_config->beam_num[groupId] = count;

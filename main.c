@@ -1,4 +1,3 @@
-//~~~~~~~~~~~~~~~~~~~~~:
 /*345678901234567890123456789012345678901234567890123456789012345678901234567890
  *      10        20        30        40        50        60        70        80
  */
@@ -272,6 +271,9 @@ static void set_config (guint groupid)
 	set_report_template (pp->p_config, REPORT_COMPLETE);
 	set_report_paper_size (pp->p_config, PAPER_A4);
 	GROUP_GATE_POS(height) = 20; /*闸门默认高度为20*/
+
+	for(i=0; i < 256; i++)
+		GROUP_VAL(gain_offset[i]) = 0;
 }
 
 /* 设置config结构体之外的初始值  */
@@ -287,11 +289,12 @@ static void set_init_para()
 
 	pp->ref_amplitude = 8000;
 	pp->tolerance_t = 500;
+	pp->distance = 10000.0;
 
-	TMP(clb_his_max_data) = 0;
 	TMP(velocity_data_p[0]) =  TMP(velocity_data[0]);
 	TMP(velocity_data_p[1]) =  TMP(velocity_data[1]);
 	TMP(velocity_data_p[2]) =  TMP(velocity_data[2]);
+	TMP(clb_his_max_data) = 0;
 }
 
 int main (int argc, char *argv[])
@@ -468,7 +471,7 @@ void send_focal_spi (guint group)
 	{   
 		TMP(focal_spi[k]).group	= group;
 		TMP(focal_spi[k]).all_beam_info	= get_beam_qty() - 1;
-		TMP(focal_spi[k]).gain_offset	= pp->tmp_gain_off[k];//GROUP_VAL_POS(group, gain_offset);
+		TMP(focal_spi[k]).gain_offset	= GROUP_VAL_POS(group, gain_offset[k]);
 		TMP(focal_spi[k]).beam_delay	= TMP(focal_law_all_beam[k].G_delay) / 10;//(BEAM_INFO(k,beam_delay)+5)/10;
 		//g_print("----->beam_delay[%d]=%d\n",k,TMP(focal_spi[k]).beam_delay);
 		/*UT Settings->Pulser->Tx/Rx mode*/		

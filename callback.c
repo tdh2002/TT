@@ -45,6 +45,7 @@ gchar cba_ultrasound_velocity();
 gchar cba_ultrasound_wedgedelay();
 void cba_ultrasound_sensitivity();
 void cba_ultrasound_TCG();
+void esc_calibration();
 
 float tttmp;
 
@@ -1047,6 +1048,7 @@ void b3_fun1(gpointer p)
 	for (offset = 0, k = 0 ; k < grp; k++)
 		offset += TMP(beam_qty[k]);
 	gint index = offset + TMP(beam_num[grp]);	
+	gint step = (gint)( (LAW_VAL(Angle_max) - LAW_VAL(Angle_min)) / LAW_VAL(Angle_step) + 1);
 
 	/* 一次点击处理 */
 	switch (pp->pos)
@@ -1057,30 +1059,33 @@ void b3_fun1(gpointer p)
 					case 0://Group
 						((pp->start_qty) < 9) ? (pp->start_qty) ++ : ((pp->start_qty) = 1); break;
 					case 1://Focal Law
-						if((pp->fstart_qty) < 5)	
+						((pp->fstart_qty) < 5) ? (pp->fstart_qty) ++ : ((pp->fstart_qty) = 1); 
+						if((pp->fstart_qty) == 5)
 						{
-							(pp->fstart_qty) ++;
-						}
-						else if((pp->fstart_qty) == 5)
-						{
-							pp->fstart_qty = 1;
 							//生成聚焦法则
-							generate_focallaw(get_current_group (pp->p_config));
+							generate_focallaw(grp);
 						}					
 						break;
 					case 2://Calibration
 						switch(pp->ctype_pos)
 						{
 							case 0://Encoder
-								((pp->cstart_qty) < 4) ? (pp->cstart_qty) ++ : ((pp->cstart_qty) = 1);
+								((pp->cstart_qty) < 5) ? (pp->cstart_qty) ++ : ((pp->cstart_qty) = 1);
 								if((pp->cstart_qty) == 2)
 								{
-									//记录起点数据
-									TMP_CBA(measure_start) = TMP(measure_data[index][4]);
+									//先让编码器的起点值与origin一致
+									TMP_CBA(measure_start) = 
+											get_enc_origin (pp->p_config, get_cur_encoder (pp->p_config))/1000.0;//TMP(measure_data[index][4]);
 								}
 								else if((pp->cstart_qty) == 3)
 								{
+									markup = g_markup_printf_escaped ("<span foreground='white' font_desc='10'>X: %.1f s</span>",
+											TMP_CBA(measure_start));
+									//记录终点数据
 									TMP_CBA(measure_end) = TMP(measure_data[index][4]);
+								}
+								else if((pp->cstart_qty) == 4)
+								{
 									//调用校准函数cba_encoder()								
 									set_enc_resolution (pp->p_config, cba_encoder(),
 											get_cur_encoder (pp->p_config));
@@ -1169,6 +1174,7 @@ void b3_fun1(gpointer p)
 											//校准完之后Accept
 											if(pp->flag)
 											{
+												pp->flag = 0;
 												for(i=0;i<((pp->last_angle - pp->first_angle)/LAW_VAL(Angle_step));i++)
 														set_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_WEDGE_DELAY,
 																cba_ultrasound_wedgedelay());
@@ -1182,9 +1188,23 @@ void b3_fun1(gpointer p)
 											//点击start进入A-
 											draw_area_calibration();
 										}	
-										else if((pp->cstart_qty) == 6)
+										else if((pp->cstart_qty) == 1)
 										{
-											//Accept 所做的事情就是把校准之后的值传出去
+											//Accept 所做的事情就是把校准之后值传给硬件
+											for (i = 0; i < step; i++)
+											{
+												GROUP_VAL(gain_offset[i+offset]) =  pp->tmp_gain_off[ i+offset]; 
+											}
+											//校准完之后清除包络线
+											for (i = 0; i < step; i++)
+											{
+												TMP(clb_real_data[i]) = ((TMP(measure_data[i][1])>>20) & 0xfff)/20.47;
+												TMP(clb_max_data[i]) = TMP(clb_real_data[i]);//第一次需初始化
+											}
+#if ARM											
+											send_focal_spi(grp);
+#endif										
+											esc_calibration();		
 										}
 										break;
 									case 3://TCG
@@ -1711,6 +1731,8 @@ void b3_fun2(gpointer p)
 
 void b3_fun3(gpointer p)
 {
+	gint i;
+	gint clb_step = (gint)( (LAW_VAL(Angle_max) - LAW_VAL(Angle_min)) / LAW_VAL(Angle_step) + 1);
 	gint	grp = get_current_group (pp->p_config);
 	/* 之前的位置 */
 	pp->pos_last2 = pp->pos2[pp->pos][pp->pos1[pp->pos]];
@@ -1718,6 +1740,39 @@ void b3_fun3(gpointer p)
 
 	switch (pp->pos)
 	{
+		case 0:
+			switch (pp->pos1[0])
+			{
+				case 2:
+					switch(pp->ctype_pos)
+					{
+						case 0:
+							break;
+						case 1:
+							switch(pp->cmode_pos)
+							{
+								case 0:
+									break;
+								case 1:
+									break;
+								case 2:
+									if(pp->cstart_qty == 6)
+									{
+										for (i = 0; i < clb_step; i++)
+										{
+											TMP(clb_real_data[i]) = ((TMP(measure_data[i][1])>>20) & 0xfff)/20.47;
+											TMP(clb_max_data[i]) = TMP(clb_real_data[i]);//第一次需初始化
+										}
+									}
+									break;
+								case 3:
+									break;
+							}
+							break;
+						case 2:
+							break;
+					}
+			}
 		case 1:
 			switch (pp->pos1[1])
 			{
@@ -2005,6 +2060,12 @@ void b3_fun4(gpointer p)
 	/* 之前的位置 */
 	pp->pos_last2 = pp->pos2[pp->pos][pp->pos1[pp->pos]];
 	pp->pos2[pp->pos][pp->pos1[pp->pos]] = 4;
+	gint offset,k,i;
+	gint grp = get_current_group(pp->p_config);//当前group
+	for (offset = 0, k = 0 ; k < grp; k++)
+		offset += TMP(beam_qty[k]);
+//	gint index = offset + TMP(beam_num[grp]);	
+	gint step = (gint)( (LAW_VAL(Angle_max) - LAW_VAL(Angle_min)) / LAW_VAL(Angle_step) + 1);
 
 	switch (pp->pos)
 	{
@@ -2026,8 +2087,23 @@ void b3_fun4(gpointer p)
 								cba_ultrasound_wedgedelay();
 								break;
 							case 2://sensitivity
-								if (pp->cstart_qty == 6)//Calibrate
+								if (pp->cstart_qty == 1)//Clear Calibrate
+								{
+									for (i = 0; i < step; i++)
+									{
+										GROUP_VAL(gain_offset[i+offset]) =  0;
+										pp->tmp_gain_off[ i+offset] = 0; 
+									}
+								}
+								else if (pp->cstart_qty == 6)//Calibrate
+								{
 										cba_ultrasound_sensitivity();
+										for (i = 0; i < step; i++)
+										{
+											TMP(clb_real_data[i]) = ((TMP(measure_data[i][1])>>20) & 0xfff)/20.47;
+											TMP(clb_max_data[i]) = TMP(clb_real_data[i]);//第一次需初始化
+										}
+								}
 								break;
 							case 3:
 								break;
@@ -2225,6 +2301,8 @@ void b3_fun5(gpointer p)
 	/* 之前的位置 */
 	pp->pos_last2 = pp->pos2[pp->pos][pp->pos1[pp->pos]];
 	pp->pos2[pp->pos][pp->pos1[pp->pos]] = 5;
+	gint i;
+	gint clb_step = (gint)( (LAW_VAL(Angle_max) - LAW_VAL(Angle_min)) / LAW_VAL(Angle_step) + 1);
 
 	switch (pp->pos)
 	{
@@ -2244,15 +2322,35 @@ void b3_fun5(gpointer p)
 								case 1:
 									break;
 								case 2:
+									if(pp->cstart_qty == 5)//Clear env
+									{
+										for (i = 0; i < clb_step; i++)
+										{
+											TMP(clb_real_data[i]) = ((TMP(measure_data[i][1])>>20) & 0xfff)/20.47;
+											TMP(clb_max_data[i]) = TMP(clb_real_data[i]);//第一次需初始化
+										}
+									}
+									else if(pp->cstart_qty == 6)//Restart
+									{
+										pp->cstart_qty = 1;
+										for (i = 0; i < clb_step; i++)
+										{
+											TMP(clb_real_data[i]) = ((TMP(measure_data[i][1])>>20) & 0xfff)/20.47;
+											TMP(clb_max_data[i]) = TMP(clb_real_data[i]);//第一次需初始化
+										}
+									}
 									break;
 								case 3:
 									break;
 							}
 							break;
 						case 2:
-							break;
+								break;
+						case 3:
+								break;
 					}
-			}
+					break;
+			 }
 			break;
 		case 4:
 			switch (pp->pos1[4])
@@ -2657,15 +2755,14 @@ static int handler_key(guint keyval, gpointer data)
 		case GDK_KP_Subtract:  /* +/- */
 			if(!pp->clb_flag)
 			{
-				(TMP(beam_num[get_current_group(pp->p_config)]) < (TMP(beam_qty[get_current_group(pp->p_config)]) - 1))	?
-					(TMP(beam_num[get_current_group(pp->p_config)]) += 1)	:	
-				(TMP(beam_num[get_current_group(pp->p_config)]) = 0);
+				(TMP(beam_num[group]) < (TMP(beam_qty[group]) - 1))	?
+					(TMP(beam_num[group]) += 1)	: (TMP(beam_num[group]) = 0);
 	
 				for (offset = 0, k = 0 ; k < group; k++)
 						offset += TMP(beam_qty[k]);
-				BEAM_INFO(offset + TMP(beam_num[get_current_group(pp->p_config)]),beam_delay) = pp->G_delay[ TMP(beam_num[get_current_group(pp->p_config)]) ];
-				GROUP_VAL(gain_offset) = pp->tmp_gain_off[ TMP(beam_num[get_current_group(pp->p_config)]) ];//待更新
-
+				BEAM_INFO(offset + TMP(beam_num[group]),beam_delay) = pp->G_delay[ TMP(beam_num[group]) ];
+				GROUP_VAL(gain_offset[TMP(beam_num[group]) + offset]) = 
+								pp->tmp_gain_off[TMP(beam_num[group]) + offset];
 		    //  add by shensheng
 				BeamNo = pp->p_tmp_config->beam_num[group];
 			    if(LAW_VAL(Focal_type) == 0)
@@ -2759,22 +2856,7 @@ static int handler_key(guint keyval, gpointer data)
 					draw_menu3(0, NULL);
 				}
 			}
-			if((pp->pos == 0) && (pp->pos1[pp->pos] == 2) && (pp->clb_flag))//Calibration
-			{
-				pp->clb_flag = 0;
-				pp->clb_count = 0;
-				switch_area();//
-				GROUP_VAL_POS(get_current_group(pp->p_config), ut_unit) = pp->save_ut_unit;
-				generate_focallaw(get_current_group(pp->p_config));
-
-				pp->pos1[pp->pos] = 2;
-				pp->cstart_qty = 1;
-				gtk_widget_set_sensitive(pp->eventbox2[0],TRUE);
-				gtk_widget_set_sensitive(pp->eventbox2[1],TRUE);
-				gtk_widget_set_sensitive(pp->menubar,TRUE);
-				draw_menu3(0, NULL);
-			}
-
+			esc_calibration();
 			break;
 		case GDK_Return:	/*回车键*/
 
@@ -3985,9 +4067,14 @@ void data_134 (GtkSpinButton *spinbutton, gpointer data) /* beam delay */
 void data_135 (GtkSpinButton *spinbutton, gpointer data) /*gain offset */
 {
 	//DRAW_UI_P p = (DRAW_UI_P)(data);
-	gint index = TMP(beam_num[get_current_group(pp->p_config)]);
-	pp->tmp_gain_off[ index ] = (guint) (gtk_spin_button_get_value (spinbutton) * 10.0);
-	GROUP_VAL(gain_offset) =  pp->tmp_gain_off[ index ]; 
+	guint offset, k;
+	gint grp = get_current_group(pp->p_config);
+	gint index = TMP(beam_num[grp]);
+	for (offset = 0, k = 0 ; k < grp; k++)
+		offset += TMP(beam_qty[k]);
+
+	pp->tmp_gain_off[ index + offset ] = (guint) (gtk_spin_button_get_value (spinbutton) * 10.0);
+	GROUP_VAL(gain_offset[index + offset]) =  pp->tmp_gain_off[ index + offset]; 
 
 	/*发送给硬件*/
 	send_focal_spi(get_current_group(pp->p_config));
@@ -5614,8 +5701,12 @@ void data_703 (GtkSpinButton *spinbutton, gpointer data) /* Resolution */
 
 void data_704 (GtkSpinButton *spinbutton, gpointer data) /* Origin */
 {
-	set_enc_origin (pp->p_config, 
-			(guint) (gtk_spin_button_get_value (spinbutton) * 1000.0), get_cur_encoder (pp->p_config));
+	gint enc_id = get_cur_encoder(pp->p_config);
+	if(	!(pp->p_config->encoder1[enc_id].Resolution))
+		set_enc_origin (pp->p_config, 0.0, enc_id) ;
+	else
+		set_enc_origin (pp->p_config, 
+				(guint) (gtk_spin_button_get_value (spinbutton) * 1000.0), enc_id);
 }
 
 void data_710 (GtkMenuItem *menuitem, gpointer data) /* Scan->Inspection->type */
@@ -6097,7 +6188,27 @@ gchar cba_ultrasound_wedgedelay()
 //****************************************
 void cba_ultrasound_sensitivity()
 {
-
+	gint i;
+	gint offset,k;
+	gint step = (gint)( (LAW_VAL(Angle_max) - LAW_VAL(Angle_min)) / LAW_VAL(Angle_step) + 1);
+	gint grp = get_current_group(pp->p_config);
+	for (offset = 0, k = 0 ; k < grp; k++)
+		offset += TMP(beam_qty[k]);
+	for (i = 0; i < step; i++)
+	{
+		//*****************************************
+		if(TMP(clb_real_data[i]) >= 100.0)
+			return;
+		if(TMP(clb_real_data[i]) <= 0.0)
+			return;
+		//*****************************************
+		if(TMP(clb_his_max_data) < TMP(clb_real_data[i]))
+				TMP(clb_his_max_data) = TMP(clb_real_data[i]);
+	}
+	for (i = 0; i < step; i++)
+	{
+		pp->tmp_gain_off[i + offset] = fabs( 20*log10(TMP(clb_real_data[i])/TMP(clb_his_max_data)) );
+	}
 }
 
 //****************************************
@@ -6106,6 +6217,25 @@ void cba_ultrasound_sensitivity()
 void cba_ultrasound_TCG()
 {
 
+}
+
+void esc_calibration()
+{
+	if((pp->pos == 0) && (pp->pos1[pp->pos] == 2) && (pp->clb_flag))//Calibration
+	{
+		pp->clb_flag = 0;
+		pp->clb_count = 0;
+		switch_area();//
+		GROUP_VAL_POS(get_current_group(pp->p_config), ut_unit) = pp->save_ut_unit;
+		generate_focallaw(get_current_group(pp->p_config));
+
+		pp->pos1[pp->pos] = 2;
+		pp->cstart_qty = 1;
+		gtk_widget_set_sensitive(pp->eventbox2[0],TRUE);
+		gtk_widget_set_sensitive(pp->eventbox2[1],TRUE);
+		gtk_widget_set_sensitive(pp->menubar,TRUE);
+		draw_menu3(0, NULL);
+	}
 }
 
 static int thread_set_DB_eighty_percent(gpointer data)
