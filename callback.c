@@ -103,6 +103,7 @@ void data_114 (GtkMenuItem *menuitem, gpointer data);            /* 114 PW 脉�
 void data_1151(GtkSpinButton *spinbutton, gpointer data);        /* 115 PRF  重复频率*/
 void data_115 (GtkMenuItem *menuitem, gpointer data);            /* 115 PRF  重复频率 */
 
+void data_1201 (GtkMenuItem *menuitem, gpointer data); 
 void data_121 (GtkMenuItem *menuitem, gpointer data);        /* 121 Filter */
 void data_122 (GtkMenuItem *menuitem, gpointer data);        /* 122 Rectifier */
 void data_124 (GtkMenuItem *menuitem, gpointer data);        /* 124 Averaging */
@@ -2594,6 +2595,16 @@ static gint keypress_event_dialog(GtkWidget *widget, GdkEventKey *event)			/* �
 			gtk_dialog_response (GTK_DIALOG(widget), GTK_RESPONSE_CANCEL);
 			return 0;
 			break;
+		case GDK_F12:
+			if((pp->pos==6)&&(pp->pos1[6]==4)&&((pp->pos2[6][4]==1)||(pp->pos2[6][4]==2))&&(pp->pos_pos==MENU3_PRESSED))
+				gtk_dialog_response (GTK_DIALOG(widget), GTK_RESPONSE_OK);
+			return 0;
+			break;
+		case GDK_F11:
+			if((pp->pos==6)&&(pp->pos1[6]==4)&&((pp->pos2[6][4]==1)||(pp->pos2[6][4]==2))&&(pp->pos_pos==MENU3_PRESSED))
+				gtk_dialog_response (GTK_DIALOG(widget), GTK_RESPONSE_CANCEL);
+			return 0;
+			break;
 		default:break;
 	}
 
@@ -3102,7 +3113,9 @@ static int handler_key(guint keyval, gpointer data)
 					b3_fun0(pp);
 				}
 			}
+
 			break;
+
 		case GDK_Left:
 		case GDK_Up:
 			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
@@ -3944,6 +3957,14 @@ void data_115 (GtkMenuItem *menuitem, gpointer data) /* PRF */
 
 }
 
+void data_1201 (GtkMenuItem *menuitem, gpointer data) /* damping p120 */
+{
+	//get_damping_pos (pp->p_config);
+	set_damping_pos (pp->p_config, (guchar) (GPOINTER_TO_UINT (data)));
+	pp->pos_pos = MENU3_STOP;
+	draw_menu3(0, NULL);
+}
+
 /* filter 滤波 P121 */
 void data_121 (GtkMenuItem *menuitem, gpointer data)  
 {
@@ -4221,7 +4242,6 @@ void data_200 (GtkMenuItem *menuitem, gpointer data) /* Gate 闸门选择 P200 *
 	GROUP_VAL(gate_pos) = (gchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
-
 }
 
 void data_201 (GtkMenuItem *menuitem, gpointer data) /* parameter 闸门参数选择 位置或者模式 P201 */

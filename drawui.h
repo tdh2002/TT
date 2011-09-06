@@ -211,6 +211,7 @@
 #define ECHOTYPE	(SCODE + 2)
 #define WELDTYPE	(ECHOTYPE + 3)
 #define PROBETYPE	(WELDTYPE + 2)
+#define DAMPING		(PROBETYPE + 4)
 //#define LAW_CONFIG	(WGROUP + 3)
 //#define L_CONFIG	(LAW_CONFIG + 4)
 
@@ -389,6 +390,7 @@ extern void data_114 (GtkMenuItem *menuitem, gpointer data);            /* 114 P
 extern void data_1151 (GtkSpinButton *spinbutton, gpointer data);       /* 115 PRF  重复频率*/
 extern void data_115 (GtkMenuItem *menuitem, gpointer data);            /* 115 PRF  重复频率 */
 
+extern void data_1201 (GtkMenuItem *menuitem, gpointer data);
 extern void data_121 (GtkMenuItem *menuitem, gpointer data);            /* 121 Filter */
 extern void data_122 (GtkMenuItem *menuitem, gpointer data);            /* 122 Rectifier */
 extern void data_124 (GtkMenuItem *menuitem, gpointer data);            /* 124 Averaging */

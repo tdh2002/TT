@@ -508,7 +508,11 @@ struct _Config
 	char	file_name_report[50];
 	char	probe_type;
 	unsigned char	userfield_select;	/* File->User Field->select 当前选择userfield编号 */
+	unsigned char   damping_pos;
 };
+
+extern unsigned char	get_damping_pos(CONFIG *p);
+extern void		set_damping_pos(CONFIG *p, void* data);
 
 /* fetch material info of current config 获取当前配置中材料的信息 */
 extern char	*get_material_name (CONFIG *p);

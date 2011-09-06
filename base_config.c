@@ -50,6 +50,15 @@ static const st_MATERIAL data[] =
 	{148000, 0, "Water"}					/* 23 */
 };
 
+unsigned char get_damping_pos (CONFIG *p)
+{
+	return p->damping_pos;
+}
+void set_damping_pos(CONFIG *p, void* data)
+{
+	p->damping_pos = (unsigned int)((unsigned int) (data));
+}
+
 static inline int get_bit_value (int val, int bit)
 {
 	assert (bit < 32);
