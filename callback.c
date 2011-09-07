@@ -1076,12 +1076,14 @@ void b3_fun1(gpointer p)
 								{
 									//先让编码器的起点值与origin一致
 									TMP_CBA(measure_start) = 
-											get_enc_origin (pp->p_config, get_cur_encoder (pp->p_config))/1000.0;//TMP(measure_data[index][4]);
+											get_enc_origin (pp->p_config, get_cur_encoder (pp->p_config))/1000.0;
+
+									markup = g_markup_printf_escaped ("<span foreground='white' font_desc='10'>X: %.1f mm</span>",
+											TMP_CBA(measure_start));
+									gtk_label_set_markup (GTK_LABEL (pp->label[7]), markup); 
 								}
 								else if((pp->cstart_qty) == 3)
 								{
-									markup = g_markup_printf_escaped ("<span foreground='white' font_desc='10'>X: %.1f s</span>",
-											TMP_CBA(measure_start));
 									//记录终点数据
 									TMP_CBA(measure_end) = TMP(measure_data[index][4]);
 								}
@@ -1090,6 +1092,7 @@ void b3_fun1(gpointer p)
 									//调用校准函数cba_encoder()								
 									set_enc_resolution (pp->p_config, cba_encoder(),
 											get_cur_encoder (pp->p_config));
+
 								}
 								break;
 							case 1://Ultrasound
@@ -1189,9 +1192,9 @@ void b3_fun1(gpointer p)
 											//点击start进入A-
 											draw_area_calibration();
 										}	
-										else if((pp->cstart_qty) == 1)
+										else if((pp->cstart_qty) == 1)//最后一步
 										{
-											//Accept 所做的事情就是把校准之后值传给硬件
+											//Accept 所做的事情就是把校准之后值显示在控件上
 											for (i = 0; i < step; i++)
 											{
 												GROUP_VAL(gain_offset[i+offset]) =  pp->tmp_gain_off[ i+offset]; 
@@ -1199,12 +1202,10 @@ void b3_fun1(gpointer p)
 											//校准完之后清除包络线
 											for (i = 0; i < step; i++)
 											{
-												TMP(clb_real_data[i]) = ((TMP(measure_data[i][1])>>20) & 0xfff)/20.47;
+				//								TMP(clb_real_data[i]) = ((TMP(measure_data[i][1])>>20) & 0xfff)/20.47;
 												TMP(clb_max_data[i]) = TMP(clb_real_data[i]);//第一次需初始化
 											}
-#if ARM											
-											send_focal_spi(grp);
-#endif										
+
 											esc_calibration();		
 										}
 										break;
@@ -1761,7 +1762,7 @@ void b3_fun3(gpointer p)
 									{
 										for (i = 0; i < clb_step; i++)
 										{
-											TMP(clb_real_data[i]) = ((TMP(measure_data[i][1])>>20) & 0xfff)/20.47;
+				//							TMP(clb_real_data[i]) = ((TMP(measure_data[i][1])>>20) & 0xfff)/20.47;
 											TMP(clb_max_data[i]) = TMP(clb_real_data[i]);//第一次需初始化
 										}
 									}
@@ -2092,6 +2093,9 @@ void b3_fun4(gpointer p)
 								{
 									for (i = 0; i < step; i++)
 									{
+										TMP(clb_real_data[i]) = ((TMP(measure_data[i][1])>>20) & 0xfff)/20.47;
+										TMP(clb_max_data[i]) = TMP(clb_real_data[i]);//第一次需初始化
+										TMP(clb_his_max_data) = 0;
 										GROUP_VAL(gain_offset[i+offset]) =  0;
 										pp->tmp_gain_off[ i+offset] = 0; 
 									}
@@ -2099,11 +2103,7 @@ void b3_fun4(gpointer p)
 								else if (pp->cstart_qty == 6)//Calibrate
 								{
 										cba_ultrasound_sensitivity();
-										for (i = 0; i < step; i++)
-										{
-											TMP(clb_real_data[i]) = ((TMP(measure_data[i][1])>>20) & 0xfff)/20.47;
-											TMP(clb_max_data[i]) = TMP(clb_real_data[i]);//第一次需初始化
-										}
+
 								}
 								break;
 							case 3:
@@ -6210,17 +6210,50 @@ void cba_ultrasound_sensitivity()
 {
 	gint i;
 	gint offset,k;
+	GtkWidget* dialog;
+	GtkWindow *win = GTK_WINDOW (pp->window);
+	
+	gint count = 0;
 	gint step = (gint)( (LAW_VAL(Angle_max) - LAW_VAL(Angle_min)) / LAW_VAL(Angle_step) + 1);
 	gint grp = get_current_group(pp->p_config);
 	for (offset = 0, k = 0 ; k < grp; k++)
 		offset += TMP(beam_qty[k]);
+	TMP(clb_his_max_data) = 0;
 	for (i = 0; i < step; i++)
 	{
 		//*****************************************
-		if(TMP(clb_real_data[i]) >= 100.0)
-			return;
-		if(TMP(clb_real_data[i]) <= 0.0)
-			return;
+		if(TMP(clb_max_data[i]) >= 100.0)
+		{	
+			count++ ;
+			if(count == 1)
+			{
+				dialog = gtk_message_dialog_new( win,
+							GTK_DIALOG_DESTROY_WITH_PARENT,
+							GTK_MESSAGE_ERROR,
+							GTK_BUTTONS_CLOSE,
+							"At least one context has an amplitude peak of %s \nThe calibration cannot be performed",
+							"100%" );
+				gtk_dialog_run(GTK_DIALOG(dialog));
+				gtk_widget_destroy(dialog);
+			}
+	//		return 0;//最好能弹出一个警告框
+		}
+		else if(TMP(clb_max_data[i]) <= 0.0)
+		{	
+			count++ ;
+			if(count == 1)
+			{
+				dialog = gtk_message_dialog_new( win,
+							GTK_DIALOG_DESTROY_WITH_PARENT,
+							GTK_MESSAGE_ERROR,
+							GTK_BUTTONS_CLOSE,
+							"At least one context has an amplitude peak of %s \nThe calibration cannot be performed",
+							"0%" );
+				gtk_dialog_run(GTK_DIALOG(dialog));
+				gtk_widget_destroy(dialog);
+			}
+	//		return 0;//最好能弹出一个警告框
+		}
 		//*****************************************
 		if(TMP(clb_his_max_data) < TMP(clb_real_data[i]))
 				TMP(clb_his_max_data) = TMP(clb_real_data[i]);
@@ -6228,7 +6261,17 @@ void cba_ultrasound_sensitivity()
 	for (i = 0; i < step; i++)
 	{
 		pp->tmp_gain_off[i + offset] = fabs( 20*log10(TMP(clb_real_data[i])/TMP(clb_his_max_data)) );
+		TMP(clb_max_data[i]) = ((TMP(measure_data[i][1])>>20) & 0xfff)/20.47;//清除包络线
 	}
+#if ARM											
+	send_focal_spi(grp);
+#endif										
+/*	for (i = 0; i < step; i++)
+	{
+		TMP(clb_real_data[i]) = ((TMP(measure_data[i][1])>>20) & 0xfff)/20.47;
+		TMP(clb_max_data[i]) = TMP(clb_real_data[i]);//第一次需初始化
+	}
+	TMP(clb_his_max_data) = 0;	*/
 }
 
 //****************************************

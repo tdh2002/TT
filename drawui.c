@@ -5401,16 +5401,15 @@ void draw3_data1(DRAW_UI_P p)
 							if(pp->clb_count == 1)
 							{
 								pp->save_ut_unit = GROUP_VAL_POS(get_current_group(pp->p_config), ut_unit);
+								TMP(clb_his_max_data) = 0;	
 								for (i = 0; i < clb_step; i++)
 								{
 									TMP(clb_real_data[i]) = ((TMP(measure_data[i][1])>>20) & 0xfff)/20.47;
-									TMP(clb_max_data[i]) = TMP(clb_real_data[i]);//第一次需初始化
+									TMP(clb_max_data[i]) = TMP(clb_real_data[i]);
 								}
 							}
 							GROUP_VAL_POS(get_current_group(pp->p_config), ut_unit) = UT_UNIT_TRUE_DEPTH;
 							generate_focallaw( (int)(get_current_group(pp->p_config)) );
-
-							
 						}
 					}
 					draw3_popdown (NULL, 1, 1);
