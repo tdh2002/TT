@@ -463,10 +463,11 @@ static void on_changed_probe(GtkTreeSelection *selection, gpointer p)
 		else if (strcmp(value, "user") == 0)
 			pp->tag =2;
 		else
-		{
 			pp->tag =1;
-			strcpy(pp->p_type, value);
-		}
+
+		
+		strcpy(pp->p_type, value);
+		
 		if (GROUP_VAL(group_mode) == PA_SCAN )
 			file_path = g_strdup_printf ("%s%s/", PA_PROBE_PATH , value);	
 		else// if (GROUP_VAL(group_mode) == UT_SCAN )
@@ -703,9 +704,13 @@ static void on_changed1_probe(GtkTreeSelection *selection, gpointer label)
 	{
 		gtk_tree_model_get(model, &iter, LIST_ITEM, &value,  -1);
 		if (GROUP_VAL(group_mode) == PA_SCAN)
-			file_path = g_strdup_printf ("%s%s/%s", PA_PROBE_PATH, pp->p_type, value);	
+		{	
+			file_path = g_strdup_printf ("%s%s/%s", PA_PROBE_PATH, pp->p_type, value);
+		}
 		else// if (GROUP_VAL(group_mode) == UT_SCAN)
-			file_path = g_strdup_printf ("%s%s/%s", UT_PROBE_PATH, pp->p_type, value);	
+		{	
+			file_path = g_strdup_printf ("%s%s/%s", UT_PROBE_PATH, pp->p_type, value);
+		}
 		g_free(value);
 		probe_info = get_probe_info(file_path);
 		gtk_label_set_text (GTK_LABEL (pp->label_probe), probe_info);
