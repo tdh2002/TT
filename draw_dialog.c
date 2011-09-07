@@ -136,6 +136,7 @@ static void da_call_probe (GtkDialog *dialog, gint response_id, gpointer user_da
 					GTK_TREE_SELECTION(pp->selection1), &model, &iter)) /* 选中探头型号时 */
 		{
 			gtk_widget_child_focus(GTK_WIDGET (dialog),GTK_DIR_TAB_BACKWARD);
+			gtk_tree_selection_unselect_all(pp->selection1);
 		}
 		else
 		{
@@ -211,6 +212,7 @@ static void da_call_wedge (GtkDialog *dialog, gint response_id, gpointer user_da
 					GTK_TREE_SELECTION(pp->selection1), &model, &iter)) /* 选中楔块型号时 */
 		{
 				gtk_widget_child_focus(GTK_WIDGET (dialog),GTK_DIR_TAB_BACKWARD);
+				gtk_tree_selection_unselect_all(pp->selection1);
 		}
 		else
 		{
@@ -1808,7 +1810,7 @@ static void draw_save_setup_as()
 	gtk_widget_set_size_request (GTK_WIDGET(vbox_filename), 342, 85);
 	eventbox_filename = gtk_event_box_new();
 	gtk_widget_set_size_request (GTK_WIDGET(eventbox_filename), 342, 57);
-	update_widget_bg(eventbox_filename, /*backpic[1]*/17);
+	update_widget_bg(eventbox_filename, /*backpic[1]*/1);
 	label[1] = gtk_label_new("File name");
 	gtk_container_add(GTK_CONTAINER(eventbox_filename),label[1]);
 	gtk_box_pack_start (GTK_BOX (vbox_filename), eventbox_filename, FALSE, FALSE, 0);

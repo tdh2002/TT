@@ -8437,7 +8437,8 @@ void draw3_data2(DRAW_UI_P p)
 								if (UNIT_MM == get_unit(pp->p_config)) 
 								{
 									cur_value = (GROUP_GATE_POS(start) / 1000.0) * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0);   /* 当前显示的起位数值mm */
-									lower = (BEAM_INFO(0,beam_delay) /1000.0) * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
+									//lower = (BEAM_INFO(0,beam_delay) /1000.0) * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
+									lower = 0;
 									upper =	(MAX_RANGE_US - GROUP_GATE_POS(width) / 1000.0) * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0);
 									//step = tmpf * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0);
 									step = tmpf;
@@ -8448,7 +8449,8 @@ void draw3_data2(DRAW_UI_P p)
 								else 
 								{
 									cur_value = (GROUP_GATE_POS(start) / 1000.0) * 0.03937 * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0); /* 当前显示的范围inch */
-									lower = (BEAM_INFO(0,beam_delay) / 1000.0) * 0.03937 * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
+									//lower = (BEAM_INFO(0,beam_delay) / 1000.0) * 0.03937 * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
+									lower = 0;
 									upper =	(MAX_RANGE_US - GROUP_GATE_POS(width) / 1000.0 ) * 0.03937 * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
 									//step = tmpf * 0.03937 * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
 									step = tmpf;
@@ -8468,7 +8470,8 @@ void draw3_data2(DRAW_UI_P p)
 									default:break;
 								}
 								cur_value = GROUP_GATE_POS(start) / 1000.0 ;
-								lower =	BEAM_INFO(0,beam_delay) / 1000.0;
+								//lower =	BEAM_INFO(0,beam_delay) / 1000.0;
+								lower = 0;
 								upper =	(MAX_RANGE_US - GROUP_GATE_POS(width) / 1000.0);
 								step = tmpf;
 								digit = 2;
