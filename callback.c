@@ -1044,12 +1044,20 @@ void b3_fun1(gpointer p)
 	pp->pos2[pp->pos][pp->pos1[pp->pos]] = 1;
 	/*	pp->pos_pos = MENU3_PRESSED;*/
 
-	gint offset,k;
+	gint offset,k,step;
 	gint grp = get_current_group(pp->p_config);//当前group
 	for (offset = 0, k = 0 ; k < grp; k++)
 		offset += TMP(beam_qty[k]);
 	gint index = offset + TMP(beam_num[grp]);	
-	gint step = (gint)( (LAW_VAL(Angle_max) - LAW_VAL(Angle_min)) / LAW_VAL(Angle_step) + 1);
+	if (LAW_VAL (Focal_type) == AZIMUTHAL_SCAN)
+	{
+		step = (gint)( (LAW_VAL(Angle_max) - LAW_VAL(Angle_min)) / LAW_VAL(Angle_step) + 1);
+	}
+	else if(LAW_VAL (Focal_type) == LINEAR_SCAN) 
+	{
+		step = (gint)( ( LAW_VAL (Last_tx_elem)-LAW_VAL(First_tx_elem) - LAW_VAL(Elem_qty) + 1 ) /
+				LAW_VAL(Elem_step) ) + 1;
+	}
 
 	/* 一次点击处理 */
 	switch (pp->pos)
@@ -1733,8 +1741,16 @@ void b3_fun2(gpointer p)
 
 void b3_fun3(gpointer p)
 {
-	gint i;
-	gint clb_step = (gint)( (LAW_VAL(Angle_max) - LAW_VAL(Angle_min)) / LAW_VAL(Angle_step) + 1);
+	gint i,clb_step;
+	if (LAW_VAL (Focal_type) == AZIMUTHAL_SCAN)
+	{
+		clb_step = (gint)( (LAW_VAL(Angle_max) - LAW_VAL(Angle_min)) / LAW_VAL(Angle_step) + 1);
+	}
+	else if(LAW_VAL (Focal_type) == LINEAR_SCAN) 
+	{
+		clb_step = (gint)( ( LAW_VAL (Last_tx_elem)-LAW_VAL(First_tx_elem) - LAW_VAL(Elem_qty) + 1 ) /
+				LAW_VAL(Elem_step) ) + 1;
+	}
 	gint	grp = get_current_group (pp->p_config);
 	/* 之前的位置 */
 	pp->pos_last2 = pp->pos2[pp->pos][pp->pos1[pp->pos]];
@@ -2062,12 +2078,20 @@ void b3_fun4(gpointer p)
 	/* 之前的位置 */
 	pp->pos_last2 = pp->pos2[pp->pos][pp->pos1[pp->pos]];
 	pp->pos2[pp->pos][pp->pos1[pp->pos]] = 4;
-	gint offset,k,i;
+	gint offset,k,i,step;
 	gint grp = get_current_group(pp->p_config);//当前group
 	for (offset = 0, k = 0 ; k < grp; k++)
 		offset += TMP(beam_qty[k]);
 //	gint index = offset + TMP(beam_num[grp]);	
-	gint step = (gint)( (LAW_VAL(Angle_max) - LAW_VAL(Angle_min)) / LAW_VAL(Angle_step) + 1);
+	if (LAW_VAL (Focal_type) == AZIMUTHAL_SCAN)
+	{
+		step = (gint)( (LAW_VAL(Angle_max) - LAW_VAL(Angle_min)) / LAW_VAL(Angle_step) + 1);
+	}
+	else if(LAW_VAL (Focal_type) == LINEAR_SCAN) 
+	{
+		step = (gint)( ( LAW_VAL (Last_tx_elem)-LAW_VAL(First_tx_elem) - LAW_VAL(Elem_qty) + 1 ) /
+				LAW_VAL(Elem_step) ) + 1;
+	}
 
 	switch (pp->pos)
 	{
@@ -2302,8 +2326,16 @@ void b3_fun5(gpointer p)
 	/* 之前的位置 */
 	pp->pos_last2 = pp->pos2[pp->pos][pp->pos1[pp->pos]];
 	pp->pos2[pp->pos][pp->pos1[pp->pos]] = 5;
-	gint i;
-	gint clb_step = (gint)( (LAW_VAL(Angle_max) - LAW_VAL(Angle_min)) / LAW_VAL(Angle_step) + 1);
+	gint i,clb_step;
+	if (LAW_VAL (Focal_type) == AZIMUTHAL_SCAN)
+	{
+		clb_step = (gint)( (LAW_VAL(Angle_max) - LAW_VAL(Angle_min)) / LAW_VAL(Angle_step) + 1);
+	}
+	else if(LAW_VAL (Focal_type) == LINEAR_SCAN) 
+	{
+		clb_step = (gint)( ( LAW_VAL (Last_tx_elem)-LAW_VAL(First_tx_elem) - LAW_VAL(Elem_qty) + 1 ) /
+				LAW_VAL(Elem_step) ) + 1;
+	}
 
 	switch (pp->pos)
 	{
@@ -2672,9 +2704,9 @@ static int handler_key(guint keyval, gpointer data)
 	guint offset,k;
 	guint group = get_current_group(pp->p_config);
 
-	double current_angle ;
-	double max_angle     ;
-	int BeamNo ;
+//	double current_angle ;
+//	double max_angle     ;
+//	int BeamNo ;
 
 	switch (keyval) 
 	{
@@ -2774,28 +2806,28 @@ static int handler_key(guint keyval, gpointer data)
 				BEAM_INFO(offset + TMP(beam_num[group]),beam_delay) = pp->G_delay[ TMP(beam_num[group]) ];
 				GROUP_VAL(gain_offset[TMP(beam_num[group]) + offset]) = 
 								pp->tmp_gain_off[TMP(beam_num[group]) + offset];
-		    //  add by shensheng
-				BeamNo = pp->p_tmp_config->beam_num[group];
-			    if(LAW_VAL(Focal_type) == 0)
-			    {
-			    	current_angle = LAW_VAL(Angle_min)/100.0 + BeamNo * LAW_VAL(Angle_step)/100.0 ;
-				max_angle = MAX(abs(LAW_VAL(Angle_min)), abs(LAW_VAL(Angle_max))) * G_PI / 180.0 ;
-			    }
-			    else
-			    {
-			    	current_angle = LAW_VAL(Angle_min)/100.0 ;
-			    	max_angle = LAW_VAL(Angle_min) * G_PI / 180.0 ;
-			    }
-			    current_angle = current_angle * G_PI / 180.0 ;
+		        //  add by shensheng
+				//BeamNo = pp->p_tmp_config->beam_num[group];
+			    //if(LAW_VAL(Focal_type) == 0)
+			   // {
+			   // 	current_angle = LAW_VAL(Angle_min)/100.0 + BeamNo * LAW_VAL(Angle_step)/100.0 ;
+				//max_angle = MAX(abs(LAW_VAL(Angle_min)), abs(LAW_VAL(Angle_max))) * G_PI / 180.0 ;
+			    //}
+			    //else
+			    //{
+			    //	current_angle = LAW_VAL(Angle_min)/100.0 ;
+			    //	max_angle = LAW_VAL(Angle_min) * G_PI / 180.0 ;
+			    //}
+			    //current_angle = current_angle * G_PI / 180.0 ;
 
-				TMP(group_spi[group]).gate_a_start	= 	(int)( GROUP_VAL_POS(group, gate[0].start) / (10 * cos(current_angle)));
-				TMP(group_spi[group]).gate_a_end	=   (int)(GROUP_VAL_POS(group, gate[0].start) + GROUP_VAL_POS (group, gate[0].width)) / (10 * cos(current_angle));
+				//TMP(group_spi[group]).gate_a_start	= 	(int)( GROUP_VAL_POS(group, gate[0].start) / (10 * cos(current_angle)));
+				//TMP(group_spi[group]).gate_a_end	=   (int)(GROUP_VAL_POS(group, gate[0].start) + GROUP_VAL_POS (group, gate[0].width)) / (10 * cos(current_angle));
 
-				TMP(group_spi[group]).gate_b_start	= 	(int)( GROUP_VAL_POS(group, gate[1].start) / (10 * cos(current_angle)));
-				TMP(group_spi[group]).gate_b_end	=   (int)(GROUP_VAL_POS(group, gate[1].start) + GROUP_VAL_POS (group, gate[1].width)) / (10 * cos(current_angle));
+				//TMP(group_spi[group]).gate_b_start	= 	(int)( GROUP_VAL_POS(group, gate[1].start) / (10 * cos(current_angle)));
+				//TMP(group_spi[group]).gate_b_end	=   (int)(GROUP_VAL_POS(group, gate[1].start) + GROUP_VAL_POS (group, gate[1].width)) / (10 * cos(current_angle));
 
-				TMP(group_spi[group]).gate_i_start	= 	(int)( GROUP_VAL_POS(group, gate[2].start) / (10 * cos(current_angle)));
-				TMP(group_spi[group]).gate_i_end	=   (int)(GROUP_VAL_POS(group, gate[2].start) + GROUP_VAL_POS (group, gate[2].width)) / (10 * cos(current_angle));
+				//TMP(group_spi[group]).gate_i_start	= 	(int)( GROUP_VAL_POS(group, gate[2].start) / (10 * cos(current_angle)));
+				//TMP(group_spi[group]).gate_i_end	=   (int)(GROUP_VAL_POS(group, gate[2].start) + GROUP_VAL_POS (group, gate[2].width)) / (10 * cos(current_angle));
 
 			    // *************************
 				//write_group_data (&TMP(group_spi[group]), group);
@@ -2804,7 +2836,7 @@ static int handler_key(guint keyval, gpointer data)
 					draw_area_all();
 				else
 					draw_area_calibration();
-				send_focal_spi(get_current_group(pp->p_config));
+				//send_focal_spi(get_current_group(pp->p_config));
 			}
 			break;
 
@@ -6065,6 +6097,11 @@ void generate_focallaw(int grp)
 	guint	temp_beam;
 	gint	temp_prf;
 	gint	tt[4];
+	gint    k, offset;
+	gint step;
+
+	for (offset = 0, k = 0 ; k < grp; k++)
+		offset += TMP(beam_qty[k]);
 	GROUP	*p_grp = get_group_by_id (pp->p_config, grp);
 	
 	temp_beam = 1;
@@ -6075,10 +6112,13 @@ void generate_focallaw(int grp)
 		j = (LAW_VAL(Angle_beam_skew_min) - LAW_VAL(Angle_beam_skew_max)) /
 			LAW_VAL(Angle_beam_skew_step) + 1;
 		temp_beam = i * j;
+		step = (gint)( (LAW_VAL(Angle_max) - LAW_VAL(Angle_min)) / LAW_VAL(Angle_step) + 1);
 	}
 	else if(LAW_VAL (Focal_type) == LINEAR_SCAN) 
 	{
-		temp_beam = (int)( ( LAW_VAL (Last_tx_elem)-LAW_VAL(First_tx_elem) - LAW_VAL(Elem_qty) + 1 ) /
+		temp_beam = (gint)( ( LAW_VAL (Last_tx_elem)-LAW_VAL(First_tx_elem) - LAW_VAL(Elem_qty) + 1 ) /
+				LAW_VAL(Elem_step) ) + 1;
+		step = (gint)( ( LAW_VAL (Last_tx_elem)-LAW_VAL(First_tx_elem) - LAW_VAL(Elem_qty) + 1 ) /
 				LAW_VAL(Elem_step) ) + 1;
 	}
 	else if(LAW_VAL (Focal_type) == DEPTH_SCAN) 
@@ -6105,7 +6145,7 @@ void generate_focallaw(int grp)
 	else 
 			TMP(group_spi[grp]).sum_gain	= 
 				4096 / LAW_VAL_POS(grp, Elem_qty) ;
-//		printf("sum_gain=%d\n",TMP(group_spi[grp].sum_gain));
+	
 	TMP(group_spi[grp]).sample_start	= (get_group_val (p_grp, GROUP_START) +
 			get_group_val (p_grp, GROUP_WEDGE_DELAY)) / 10 ;
 	TMP(group_spi[grp]).sample_range	= TMP(group_spi[grp]).sample_start +
@@ -6119,7 +6159,18 @@ void generate_focallaw(int grp)
 	temp_prf = TMP(beam_qty[grp]) * get_group_val (p_grp, GROUP_PRF_VAL);
 	TMP(group_spi[grp]).idel_time	=
 		100000000 / (temp_prf / (10)) - 2048 - TMP(group_spi[grp]).rx_time;
-
+	if(!pp->clb_count)
+	{
+		//每次计算之后gain_offset清零
+		for (i = 0; i < step; i++)
+		{
+			pp->tmp_gain_off[i + offset] = 0;
+		}
+#if ARM											
+		send_focal_spi(grp);
+#endif										
+	}
+	//
 	//printf("-->>tt[3] is %d \n", tt[3]);
 	//printf("-->>max_beam_delay is %d \n", TMP(max_beam_delay[grp]));
 	//printf("-->>sample_range is %d\n", TMP(group_spi[grp]).sample_range);
@@ -6209,12 +6260,20 @@ gchar cba_ultrasound_wedgedelay()
 void cba_ultrasound_sensitivity()
 {
 	gint i;
-	gint offset,k;
+	gint offset,k,step;
 	GtkWidget* dialog;
 	GtkWindow *win = GTK_WINDOW (pp->window);
 	
 	gint count = 0;
-	gint step = (gint)( (LAW_VAL(Angle_max) - LAW_VAL(Angle_min)) / LAW_VAL(Angle_step) + 1);
+	if (LAW_VAL (Focal_type) == AZIMUTHAL_SCAN)
+	{
+		step = (gint)( (LAW_VAL(Angle_max) - LAW_VAL(Angle_min)) / LAW_VAL(Angle_step) + 1);
+	}
+	else if(LAW_VAL (Focal_type) == LINEAR_SCAN) 
+	{
+		step = (gint)( ( LAW_VAL (Last_tx_elem)-LAW_VAL(First_tx_elem) - LAW_VAL(Elem_qty) + 1 ) /
+				LAW_VAL(Elem_step) ) + 1;
+	}
 	gint grp = get_current_group(pp->p_config);
 	for (offset = 0, k = 0 ; k < grp; k++)
 		offset += TMP(beam_qty[k]);
@@ -6266,12 +6325,7 @@ void cba_ultrasound_sensitivity()
 #if ARM											
 	send_focal_spi(grp);
 #endif										
-/*	for (i = 0; i < step; i++)
-	{
-		TMP(clb_real_data[i]) = ((TMP(measure_data[i][1])>>20) & 0xfff)/20.47;
-		TMP(clb_max_data[i]) = TMP(clb_real_data[i]);//第一次需初始化
-	}
-	TMP(clb_his_max_data) = 0;	*/
+
 }
 
 //****************************************
@@ -6287,10 +6341,10 @@ void esc_calibration()
 	if((pp->pos == 0) && (pp->pos1[pp->pos] == 2) && (pp->clb_flag))//Calibration
 	{
 		pp->clb_flag = 0;
-		pp->clb_count = 0;
 		switch_area();//
 		GROUP_VAL_POS(get_current_group(pp->p_config), ut_unit) = pp->save_ut_unit;
 		generate_focallaw(get_current_group(pp->p_config));
+		pp->clb_count = 0;
 
 		pp->pos1[pp->pos] = 2;
 		pp->cstart_qty = 1;
