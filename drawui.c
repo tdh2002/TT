@@ -2859,11 +2859,11 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 						p->w_unit = UNIT_INCH;
 					}
 					p->w_color = 0xD6ABF1;/*紫色*/
-			}	
+			   }
+			}
 			g_sprintf (p->title, "A scan|Gr %d|CH %0.1f|SK%0.1f|L%d", 
-p->group+1, angle / 100.0, GROUP_VAL_POS(p->group, skew) / 100.0, num + 1);
+							p->group+1, angle / 100.0, GROUP_VAL_POS(p->group, skew) / 100.0, num + 1);
 					//get_current_group(pp->p_config) + 1, angle / 100.0, GROUP_VAL_POS(p->group, skew) / 100.0, num + 1);
-				}
 			break;
 		//case A_SCAN_R:
 			//break;
@@ -3196,22 +3196,23 @@ p->group+1, angle / 100.0, GROUP_VAL_POS(p->group, skew) / 100.0, num + 1);
 				else if (GROUP_VAL_POS(p->group, skew_pos)==3)
 					middle = GROUP_VAL_POS(p->group, index_offset)/10.0 + mid;
 
+
 				if((LAW_VAL (Angle_min)<0)&&(LAW_VAL (Angle_max)>0))
 				{
-				     //p->wmin1 = middle + get_group_val (p_grp, GROUP_RANGE)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_min) / 100.0)*(3.14/180.0));
-				    // p->wmax1 = middle + get_group_val (p_grp, GROUP_RANGE)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_max) / 100.0)*(3.14/180.0));
-				     p->wmin1 = middle + GROUP_VAL_POS(p->group, range)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_min) / 100.0)*(3.14/180.0));
-				     p->wmax1 = middle + GROUP_VAL_POS(p->group, range)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_max) / 100.0)*(3.14/180.0));
+					     //p->wmin1 = middle + get_group_val (p_grp, GROUP_RANGE)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_min) / 100.0)*(3.14/180.0));
+					    // p->wmax1 = middle + get_group_val (p_grp, GROUP_RANGE)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_max) / 100.0)*(3.14/180.0));
+					     p->wmin1 = middle + GROUP_VAL_POS(p->group, range)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_min) / 100.0)*(3.14/180.0));
+					     p->wmax1 = middle + GROUP_VAL_POS(p->group, range)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_max) / 100.0)*(3.14/180.0));
 				}
 				else if((LAW_VAL (Angle_min)<0)&&(LAW_VAL (Angle_max)<0))
 				{
-				     p->wmin1 = middle + GROUP_VAL_POS(p->group, range)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_min) / 100.0)*(3.14/180.0));
-				     p->wmax1 = middle - GROUP_VAL_POS(p->group, range)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_max) / 100.0)*(3.14/180.0));
+					     p->wmin1 = middle + GROUP_VAL_POS(p->group, range)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_min) / 100.0)*(3.14/180.0));
+					     p->wmax1 = middle - GROUP_VAL_POS(p->group, range)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_max) / 100.0)*(3.14/180.0));
 				}
 				else if((LAW_VAL (Angle_min)>0)&&(LAW_VAL (Angle_max)>0))
 				{
-				     p->wmin1 = middle - GROUP_VAL_POS(p->group, range)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_min) / 100.0)*(3.14/180.0));
-				     p->wmax1 = middle + GROUP_VAL_POS(p->group, range)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_max) / 100.0)*(3.14/180.0));
+					     p->wmin1 = middle - GROUP_VAL_POS(p->group, range)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_min) / 100.0)*(3.14/180.0));
+					     p->wmax1 = middle + GROUP_VAL_POS(p->group, range)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_max) / 100.0)*(3.14/180.0));
 				}
 				pp->swmin = p->wmin1;
 				pp->swmax = p->wmax1;
@@ -3271,9 +3272,22 @@ p->group+1, angle / 100.0, GROUP_VAL_POS(p->group, skew) / 100.0, num + 1);
 			p->h2_unit = UNIT_BFH;
 			p->h2_color = 0xEDF169;
 
-			p->wmin1 = LAW_VAL (Angle_min)/100;
-			p->wmax1 = LAW_VAL (Angle_max)/100;
-			p->w_unit = UNIT_DEG;
+			if(LAW_VAL(Focal_type) == AZIMUTHAL_SCAN)
+			{
+				p->wmin1 = LAW_VAL (Angle_min)/100;
+				p->wmax1 = LAW_VAL (Angle_max)/100;
+				p->w_unit = UNIT_DEG;
+			}
+    		else if (LAW_VAL(Focal_type) == LINEAR_SCAN)
+			{
+				p->wmin1 = (gfloat)(LAW_VAL(First_tx_elem));
+				p->wmax1 = (gfloat)((( LAW_VAL (Last_tx_elem)-LAW_VAL(First_tx_elem) - LAW_VAL(Elem_qty) + 1 ) /
+							LAW_VAL(Elem_step)) + 1);
+				p->w_unit = UNIT_VPA;
+//				p->wrule_copies = (gfloat)((( LAW_VAL (Last_tx_elem)-LAW_VAL(First_tx_elem) - LAW_VAL(Elem_qty) + 1 ) /
+//							LAW_VAL(Elem_step)) + 1);
+			}
+
 			p->w_color = 0xCCD9D5;	/*浅灰色*/;
 			g_sprintf (p->title, "Calibration:Sensitivity");
 			break;
@@ -5350,10 +5364,19 @@ void draw3_data1(DRAW_UI_P p)
 	gfloat tmpf = 0.0;
 	gchar *str;
 	gint i;
+	gint clb_step;
 
 	gfloat cur_value=0.0, lower, upper, step;
-	guint digit, pos, unit, content_pos, menu_status = 0, temp_beam, tt;
-	gint clb_step = (gint)( (LAW_VAL(Angle_max) - LAW_VAL(Angle_min)) / LAW_VAL(Angle_step) + 1);
+	guint digit, pos, unit, content_pos, menu_status = 0, temp_beam, tt;	
+	if (LAW_VAL (Focal_type) == AZIMUTHAL_SCAN)
+	{
+		clb_step = (gint)( (LAW_VAL(Angle_max) - LAW_VAL(Angle_min)) / LAW_VAL(Angle_step) + 1);
+	}
+	else if(LAW_VAL (Focal_type) == LINEAR_SCAN) 
+	{
+		clb_step = (gint)( ( LAW_VAL (Last_tx_elem)-LAW_VAL(First_tx_elem) - LAW_VAL(Elem_qty) + 1 ) /
+				LAW_VAL(Elem_step) ) + 1;
+	}
 
 	int inet_sock;
 	struct ifreq ifr;
@@ -5401,16 +5424,15 @@ void draw3_data1(DRAW_UI_P p)
 							if(pp->clb_count == 1)
 							{
 								pp->save_ut_unit = GROUP_VAL_POS(get_current_group(pp->p_config), ut_unit);
+								TMP(clb_his_max_data) = 0;	
 								for (i = 0; i < clb_step; i++)
 								{
 									TMP(clb_real_data[i]) = ((TMP(measure_data[i][1])>>20) & 0xfff)/20.47;
-									TMP(clb_max_data[i]) = TMP(clb_real_data[i]);//第一次需初始化
+									TMP(clb_max_data[i]) = TMP(clb_real_data[i]);
 								}
 							}
 							GROUP_VAL_POS(get_current_group(pp->p_config), ut_unit) = UT_UNIT_TRUE_DEPTH;
 							generate_focallaw( (int)(get_current_group(pp->p_config)) );
-
-							
 						}
 					}
 					draw3_popdown (NULL, 1, 1);
