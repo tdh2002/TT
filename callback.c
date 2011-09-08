@@ -12,6 +12,9 @@
 #include <gdk/gdkkeysyms.h>
 #include <pthread.h>
 
+pthread_cond_t qready = PTHREAD_COND_INITIALIZER;
+pthread_mutex_t qlock = PTHREAD_MUTEX_INITIALIZER;
+
 extern void focal_law(gpointer data);/*回调函数*/
 extern void draw_area_calibration();
 extern void switch_area();
@@ -46,6 +49,7 @@ gchar cba_ultrasound_wedgedelay();
 void cba_ultrasound_sensitivity();
 void cba_ultrasound_TCG();
 void esc_calibration();
+void draw_encoder_value(gpointer data);
 
 float tttmp;
 
@@ -560,7 +564,7 @@ gint rounding(gint src1, gint src2, gint round)
 guint	get_beam_qty()
 {
 	guint i, beam_qty = 0;
-	for (i = 0; i < setup_MAX_GROUP_QTY; i++)
+	for (i = 0; i < get_group_qty(pp->p_config); i++)
 		beam_qty += TMP(beam_qty[i]);
 	return beam_qty;
 }
@@ -1037,8 +1041,12 @@ void b3_fun0(gpointer pt)
 
 void b3_fun1(gpointer p)
 {
-	gchar *markup;
 	gint i;
+	guint tmp_data;
+	gchar* markup;
+	int err;
+	pthread_t encoder;
+
 	/* 之前的位置 */
 	pp->pos_last2 = pp->pos2[pp->pos][pp->pos1[pp->pos]];
 	pp->pos2[pp->pos][pp->pos1[pp->pos]] = 1;
@@ -1079,28 +1087,46 @@ void b3_fun1(gpointer p)
 						switch(pp->ctype_pos)
 						{
 							case 0://Encoder
-								((pp->cstart_qty) < 5) ? (pp->cstart_qty) ++ : ((pp->cstart_qty) = 1);
+								((pp->cstart_qty) < 4) ? (pp->cstart_qty) ++ : ((pp->cstart_qty) = 1);
 								if((pp->cstart_qty) == 2)
 								{
+									err = pthread_create(&encoder, NULL, (void*)draw_encoder_value, pp);
+									if(err != 0)
+										perror("can't create thread: encoder");
+								}
+								if((pp->cstart_qty) == 3)
+								{
 									//先让编码器的起点值与origin一致
-									TMP_CBA(measure_start) = 
-											get_enc_origin (pp->p_config, get_cur_encoder (pp->p_config))/1000.0;
+									TMP_CBA(measure_start) = TMP(measure_data[index][4]);
 
 									markup = g_markup_printf_escaped ("<span foreground='white' font_desc='10'>X: %.1f mm</span>",
-											TMP_CBA(measure_start));
+											get_enc_origin (pp->p_config, get_cur_encoder (pp->p_config))/1000.0);
 									gtk_label_set_markup (GTK_LABEL (pp->label[7]), markup); 
-								}
-								else if((pp->cstart_qty) == 3)
-								{
-									//记录终点数据
-									TMP_CBA(measure_end) = TMP(measure_data[index][4]);
+
+									//while(1)
+									//{
+										tmp_data = TMP(measure_data[index][4]);
+									//	if(tmp_data != TMP_CBA(measure_start))
+									//					break;
+									//}
+									printf("\ntmp_data = %d\n",tmp_data);
+									if(tmp_data != TMP_CBA(measure_start))
+									{
+										pthread_mutex_lock(&qlock);
+										pthread_cond_signal(&qready);
+										pthread_mutex_unlock(&qlock);
+									}
 								}
 								else if((pp->cstart_qty) == 4)
 								{
 									//调用校准函数cba_encoder()								
-									set_enc_resolution (pp->p_config, cba_encoder(),
+									set_enc_resolution (pp->p_config, cba_encoder()*1000,
 											get_cur_encoder (pp->p_config));
-
+								}
+								else if((pp->cstart_qty) == 1)//Accpet
+								{
+									pp->p_config->encoder1[get_cur_encoder (pp->p_config)].Resolution = TMP_CBA(resolution);	
+									esc_calibration();
 								}
 								break;
 							case 1://Ultrasound
@@ -1821,7 +1847,7 @@ void b3_fun3(gpointer p)
 			{
 				case 4:
 					/* 计算聚焦法则 P643 */
-							generate_focallaw(get_current_group (pp->p_config));
+					generate_focallaw(get_current_group (pp->p_config));
 					break;  
 				default:break;
 			}
@@ -2346,6 +2372,10 @@ void b3_fun5(gpointer p)
 					switch(pp->ctype_pos)
 					{
 						case 0:
+							if((pp->cstart_qty) == 4)
+							{
+								(pp->cstart_qty) = 1;
+							}
 							break;
 						case 1:
 							switch(pp->cmode_pos)
@@ -6199,7 +6229,7 @@ void generate_focallaw(int grp)
 guint cba_encoder()
 {
 	gint K = 483;
-	TMP_CBA(delt_distance) = pp->distance - get_enc_origin (pp->p_config, get_cur_encoder (pp->p_config));
+	TMP_CBA(delt_distance) = pp->distance ;//- get_enc_origin (pp->p_config, get_cur_encoder (pp->p_config));
 	TMP_CBA(delt_measure) = TMP_CBA(measure_end) - TMP_CBA(measure_start);
 	TMP_CBA(resolution) = K*TMP_CBA(delt_measure)/TMP_CBA(delt_distance);
 	
@@ -6338,21 +6368,57 @@ void cba_ultrasound_TCG()
 
 void esc_calibration()
 {
-	if((pp->pos == 0) && (pp->pos1[pp->pos] == 2) && (pp->clb_flag))//Calibration
+	if(!pp->ctype_pos)//当位Encoder时无需更新扫描
 	{
-		pp->clb_flag = 0;
-		switch_area();//
-		GROUP_VAL_POS(get_current_group(pp->p_config), ut_unit) = pp->save_ut_unit;
-		generate_focallaw(get_current_group(pp->p_config));
-		pp->clb_count = 0;
-
+		pp->clb_encoder = 0;
 		pp->pos1[pp->pos] = 2;
 		pp->cstart_qty = 1;
 		gtk_widget_set_sensitive(pp->eventbox2[0],TRUE);
 		gtk_widget_set_sensitive(pp->eventbox2[1],TRUE);
 		gtk_widget_set_sensitive(pp->menubar,TRUE);
-		draw_menu3(0, NULL);
 	}
+	else
+	{
+		if((pp->pos == 0) && (pp->pos1[pp->pos] == 2) && (pp->clb_flag))//Calibration
+		{
+			pp->clb_flag = 0;
+			switch_area();//
+			GROUP_VAL_POS(get_current_group(pp->p_config), ut_unit) = pp->save_ut_unit;
+			generate_focallaw(get_current_group(pp->p_config));
+			pp->clb_count = 0;
+
+			pp->pos1[pp->pos] = 2;
+			pp->cstart_qty = 1;
+			gtk_widget_set_sensitive(pp->eventbox2[0],TRUE);
+			gtk_widget_set_sensitive(pp->eventbox2[1],TRUE);
+			gtk_widget_set_sensitive(pp->menubar,TRUE);
+		}
+	}
+	draw_menu3(0, NULL);
+}
+
+void draw_encoder_value(gpointer data)
+{
+	DRAW_UI_P pp = (DRAW_UI_P) data;
+	gchar* markup;
+	gint offset,k;
+	gint grp = get_current_group(pp->p_config);
+	for (offset = 0, k = 0 ; k < grp; k++)
+		offset += TMP(beam_qty[k]);
+	gint index = offset + TMP(beam_num[grp]);	
+
+	while(1)
+	{
+		pthread_mutex_lock(&qlock);
+		pthread_cond_wait(&qready, &qlock);
+		pthread_mutex_unlock(&qlock);
+
+		TMP_CBA(measure_end) = TMP(measure_data[index][4]);
+		markup = g_markup_printf_escaped ("<span foreground='white' font_desc='10'>X: %.1f mm</span>",
+							(TMP_CBA(measure_end) - TMP_CBA(measure_start)) );
+		gtk_label_set_markup (GTK_LABEL (pp->label[7]), markup); 
+	}
+
 }
 
 static int thread_set_DB_eighty_percent(gpointer data)

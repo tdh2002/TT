@@ -21,6 +21,7 @@ DRAW_UI_P	pp;
 void init_group_spi (guint group);
 void send_focal_spi (guint group);
 void send_group_spi (guint group);
+void shut_down_power();
 extern float tttmp;
 extern void generate_focallaw(int grp);
 
@@ -288,6 +289,7 @@ static void set_init_para()
 	pp->count = 0;
 	pp->flag = 0;
 	pp->clb_flag = 0;
+	pp->clb_encoder = 0;
 	pp->clb_count = 0;
 
 	pp->ref_amplitude = 8000;
@@ -463,8 +465,15 @@ int main (int argc, char *argv[])
 	gdk_threads_enter();
 	gtk_main();
 	gdk_threads_leave();
-
+    
+	shut_down_power();
 	return 0;
+}
+
+void shut_down_power()
+{
+	unsigned char key = 0x55;
+    write(pp->fd_key, &key,1); 
 }
 
 void send_focal_spi (guint group)
@@ -481,7 +490,6 @@ void send_focal_spi (guint group)
 		TMP(focal_spi[k]).all_beam_info	= get_beam_qty() - 1;
 		TMP(focal_spi[k]).gain_offset	= pp->tmp_gain_off[k];//GROUP_VAL_POS(group, gain_offset[k]);
 		TMP(focal_spi[k]).beam_delay	= TMP(focal_law_all_beam[k].G_delay) / 10;//(BEAM_INFO(k,beam_delay)+5)/10;
-		//g_print("----->beam_delay[%d]=%d\n",k,TMP(focal_spi[k]).beam_delay);
 		/*UT Settings->Pulser->Tx/Rx mode*/		
 		if (get_group_val (p_grp, GROUP_TX_RX_MODE) == PULSE_ECHO )/*单个探头收发模式*/
 		{  
@@ -538,6 +546,7 @@ void send_focal_spi (guint group)
 			for (i = TMP(focal_law_all_beam[k].N_ActiveElements); i < 32; i++)
 				TMP(focal_spi[k]).rx_info[i] &= 0x3fffffff;
 		}
+		
 		write_focal_data (&TMP(focal_spi[k]), k);
 	}
 }

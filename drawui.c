@@ -516,7 +516,7 @@ void draw_menu2 (gint pa)
 		update_widget_bg(p->eventbox2[p->pos1[p->pos]], /*backpic[0]*/ 0);
 	}
 
-	if(((p->pos == 0) && (GROUP_VAL(group_mode) != 1)) || pp->clb_flag)
+	if(((p->pos == 0) && (GROUP_VAL(group_mode) != 1)) || pp->clb_flag || pp->clb_encoder)
 		gtk_widget_set_sensitive(p->eventbox2[1], FALSE);
 	else
 		gtk_widget_set_sensitive(p->eventbox2[1], TRUE);
@@ -2417,7 +2417,7 @@ static gboolean draw_other_info (GtkWidget *widget, GdkEventExpose *event, gpoin
 	cairo_line_to (cr, 55, y2 + 10);
 
 	/* 更新电池信息*/ 
-	switch(pp->battery.flag1)//电池1
+	switch(pp->battery.status1)//电池1
 	{
 		case 0x00://没连接
 			break;
@@ -3026,17 +3026,28 @@ p->group+1, angle / 100.0, GROUP_VAL_POS(p->group, skew) / 100.0, num + 1);
 			{
 				if(GROUP_VAL_POS(p->group, ut_unit)==UT_UNIT_SOUNDPATH)
 				{
-					if(LAW_VAL (Angle_min) == LAW_VAL(Angle_max) )	/*hrule1*/	/* 灰色 */
+
+					if(LAW_VAL(Focal_type) == AZIMUTHAL_SCAN)
 					{
-						p->hmin1 = LAW_VAL_POS (p->group, Angle_min) / 100.0;
-						p->hmax1 = LAW_VAL_POS (p->group, Angle_max) / 100.0 + 1.0;
-					}
-					else
+						if(LAW_VAL (Angle_min) == LAW_VAL(Angle_max) )	/*hrule1*/	/* 灰色 */
+						{
+							p->hmin1 = LAW_VAL_POS (p->group, Angle_min) / 100.0;
+							p->hmax1 = LAW_VAL_POS (p->group, Angle_max) / 100.0 + 1.0;
+						}
+						else
+						{
+							p->hmin1 = LAW_VAL_POS (p->group, Angle_min) / 100.0;
+							p->hmax1 = LAW_VAL_POS (p->group, Angle_max) / 100.0 ;
+						}
+						p->h1_unit = UNIT_DEG;
+				    }
+					else if (LAW_VAL(Focal_type) == LINEAR_SCAN)
 					{
-						p->hmin1 = LAW_VAL_POS (p->group, Angle_min) / 100.0;
-						p->hmax1 = LAW_VAL_POS (p->group, Angle_max) / 100.0 ;
+						p->hmin1 = (gfloat)(LAW_VAL(First_tx_elem));
+						p->hmax1 = (gfloat)((( LAW_VAL (Last_tx_elem)-LAW_VAL(First_tx_elem) - LAW_VAL(Elem_qty) + 1 ) /
+									LAW_VAL(Elem_step)) + 1);
+						p->h1_unit = UNIT_VPA;
 					}
-					p->h1_unit = UNIT_DEG;
 					p->h1_color = 0xB2C1C1;
 					p->h1_bit = 1;
 
@@ -5411,7 +5422,12 @@ void draw3_data1(DRAW_UI_P p)
 					if((pp->pos == 0) && (pp->pos1[pp->pos] == 2) && (pp->cstart_qty == 2) )//Calibration
 					{
 						if(!pp->ctype_pos)//当位Encoder时无需更新扫描
-							pp->clb_flag = 0;
+						{
+							pp->clb_encoder = 1;
+							gtk_widget_set_sensitive(pp->eventbox2[0],FALSE);
+							gtk_widget_set_sensitive(pp->eventbox2[1],FALSE);
+							gtk_widget_set_sensitive(pp->menubar,FALSE);
+						}
 						else
 						{
 							pp->clb_flag = 1;
@@ -17057,24 +17073,35 @@ static void key_message_thread(void)
 	{
 	    if (read(pp->fd_key, &key, 1) > 0) 
 	    {	
-		     process_key_press (key);
-			 //读取电池信息	
-			 if(key == 0xaa)
-			 {
-				if( read(pp->fd_key, bar, 3) >0 )
+			if(key != 0x55)
+				process_key_press (key);
+			else
+			{
+				if( read(pp->fd_key, bar, 2) >0 )//读取电池信息
 				{
-					if( (bar[0]==0xaa) && (bar[1]==0xaa) && (bar[2]==0xaa) )
+					if((bar[0]==0x55) && (bar[1]==0x55))
 					{
 						//将所有电池信息全部读取出来
-						read(pp->fd_key, &(pp->battery), 33);
-						printf("read battery info successfully \n");
+						read(pp->fd_key, &(pp->battery), 28);
+						if(pp->battery.on_off==0x50)  save_config(NULL,NULL,NULL);
+						printf("read battery info successfully \
+							power1=%d status1=%d time1=%d \n\
+							power2=%d status2=%d time2=%d \n\
+							temp1=%d temp2=%d temp3=%d \n\
+							temp4=%d temp5=%d temp6=%d \n\
+							end1=%d end2=%d end3=%d \n",
+							pp->battery.power1, pp->battery.status1, pp->battery.time1,
+							pp->battery.power2, pp->battery.status2, pp->battery.time2,
+							pp->battery.temp1,  pp->battery.temp2,   pp->battery.temp3,
+							pp->battery.temp4,  pp->battery.temp5,   pp->battery.temp6,
+							pp->battery.end1,   pp->battery.end2,    pp->battery.end3   );
 					}
 				}
-			 }
-			//
-	    }
-		usleep(50000);
-    }
+			}	 	
+			 
+	   }
+	   usleep(100000);
+	}
 }
 
 static void draw_frame_thread(void)
@@ -17234,28 +17261,33 @@ gboolean on_finish(gpointer p)
 void draw_field_value ()
 {
 	gchar  *markup0, *markup1, *markup2, *markup3;
-//	gchar  *markup;
+	gchar  *markup_encoder;
+	gint offset,k;
+
+	gint grp = get_current_group(pp->p_config);//当前group
+	for (offset = 0, k = 0 ; k < grp; k++)
+		offset += TMP(beam_qty[k]);
+	gint index = offset + TMP(beam_num[grp]);	
 	/* 4个测量值显示 */
 	markup0 = g_markup_printf_escaped ("<span foreground='white' font_desc='24'>%.2f</span>", TMP(field[0]));
 	markup1 = g_markup_printf_escaped ("<span foreground='white' font_desc='24'>%.2f</span>", TMP(field[1]));
 	markup2 = g_markup_printf_escaped ("<span foreground='white' font_desc='24'>%.2f</span>", TMP(field[2]));
 	markup3 = g_markup_printf_escaped ("<span foreground='white' font_desc='24'>%.2f</span>", TMP(field[3]));
-	/*实时更新编码器信息
-	if( (!pp->ctype_pos) && (pp->cstart_qty == 3) )
-	{
-		//先让编码器的起点值与origin一致
-		markup = g_markup_printf_escaped ("<span foreground='white' font_desc='10'>X: %.1f s</span>",
-				TMP_CBA(measure_start));
-	}*/
+	/*实时更新编码器信息*/
+	markup_encoder = g_markup_printf_escaped ("<span foreground='white' font_desc='10'>X: %.1f s</span>",
+					(gfloat)(TMP(measure_data[index][4])));
 	gdk_threads_enter();
+	if( !pp->clb_encoder )
+	{
+		gtk_label_set_markup (GTK_LABEL(pp->label[7]),  markup_encoder); 
+	}
 	gtk_label_set_markup (GTK_LABEL(pp->label[9]),  markup0);
 	gtk_label_set_markup (GTK_LABEL(pp->label[11]), markup1);
 	gtk_label_set_markup (GTK_LABEL(pp->label[13]), markup2);
 	gtk_label_set_markup (GTK_LABEL(pp->label[15]), markup3);
-	//
-//	gtk_label_set_markup (GTK_LABEL (pp->label[7]), markup); 
+
 	gdk_threads_leave();	
-//	g_free (markup);
+	g_free (markup_encoder);
 	g_free (markup0);
 	g_free (markup1);
 	g_free (markup2);
