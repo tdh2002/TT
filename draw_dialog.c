@@ -24,6 +24,7 @@
 #include <unistd.h>
 
 #define YOFFSET  26
+#define RESPONSE_SELECT_AND_CLOSE	1
 
 enum
 {
@@ -136,6 +137,7 @@ static void da_call_probe (GtkDialog *dialog, gint response_id, gpointer user_da
 					GTK_TREE_SELECTION(pp->selection1), &model, &iter)) /* 选中探头型号时 */
 		{
 			gtk_widget_child_focus(GTK_WIDGET (dialog),GTK_DIR_TAB_BACKWARD);
+			gtk_tree_selection_unselect_all(pp->selection1);
 		}
 		else
 		{
@@ -211,6 +213,7 @@ static void da_call_wedge (GtkDialog *dialog, gint response_id, gpointer user_da
 					GTK_TREE_SELECTION(pp->selection1), &model, &iter)) /* 选中楔块型号时 */
 		{
 				gtk_widget_child_focus(GTK_WIDGET (dialog),GTK_DIR_TAB_BACKWARD);
+				gtk_tree_selection_unselect_all(pp->selection1);
 		}
 		else
 		{
@@ -463,10 +466,11 @@ static void on_changed_probe(GtkTreeSelection *selection, gpointer p)
 		else if (strcmp(value, "user") == 0)
 			pp->tag =2;
 		else
-		{
 			pp->tag =1;
-			strcpy(pp->p_type, value);
-		}
+
+		
+		strcpy(pp->p_type, value);
+		
 		if (GROUP_VAL(group_mode) == PA_SCAN )
 			file_path = g_strdup_printf ("%s%s/", PA_PROBE_PATH , value);	
 		else// if (GROUP_VAL(group_mode) == UT_SCAN )
@@ -703,9 +707,13 @@ static void on_changed1_probe(GtkTreeSelection *selection, gpointer label)
 	{
 		gtk_tree_model_get(model, &iter, LIST_ITEM, &value,  -1);
 		if (GROUP_VAL(group_mode) == PA_SCAN)
-			file_path = g_strdup_printf ("%s%s/%s", PA_PROBE_PATH, pp->p_type, value);	
+		{	
+			file_path = g_strdup_printf ("%s%s/%s", PA_PROBE_PATH, pp->p_type, value);
+		}
 		else// if (GROUP_VAL(group_mode) == UT_SCAN)
-			file_path = g_strdup_printf ("%s%s/%s", UT_PROBE_PATH, pp->p_type, value);	
+		{	
+			file_path = g_strdup_printf ("%s%s/%s", UT_PROBE_PATH, pp->p_type, value);
+		}
 		g_free(value);
 		probe_info = get_probe_info(file_path);
 		gtk_label_set_text (GTK_LABEL (pp->label_probe), probe_info);
@@ -1053,7 +1061,8 @@ static void draw_wedge ()
 //函数 selection_file_type
 //参数 char *dir_path
 //参数 char *file_type
-void selection_file_type(GtkWidget *list,char *dir_path,char *file_type)
+//参数 int show_father_dir
+void selection_file_type(GtkWidget *list,char *dir_path,char *file_type,int show_father_dir)
 {
 	DIR *dir;      
 	int i;
@@ -1098,10 +1107,17 @@ void selection_file_type(GtkWidget *list,char *dir_path,char *file_type)
 			{
 				continue;
 			}
+
+			if (show_father_dir == 0)
+			{
+				continue;
+			}
 		}
 
-		if ( ( name_len <= suffix_len ) && ( enump->d_type == DT_REG ) )
+		if ( ( name_len <= suffix_len ) && ( enump->d_type == DT_REG ) && ( strcmp(file_type,"*.*") != 0 ) )
+		{
 			continue;
+		}
 
 		pos = strstr(enump->d_name,file_type);
 
@@ -1418,7 +1434,7 @@ static void draw_file_open_main()
 
 	Set_Source_File_Path(USER_CFG_PATH);
 
-	selection_file_type(source_list, USER_CFG_PATH,	".cfg");
+	selection_file_type(source_list, USER_CFG_PATH,	".cfg",FALSE);
 
 	gtk_container_add(GTK_CONTAINER(sw_file), source_list);
 
@@ -1615,7 +1631,7 @@ int save_config_file(GtkWidget *widget,	GdkEventButton *event,	gpointer       da
 
 	gtk_list_store_clear(store);
 	
-	selection_file_type(list, USER_CFG_PATH,	".cfg");
+	selection_file_type(list, USER_CFG_PATH,	".cfg",FALSE);
 	
 	return FALSE;
 }
@@ -1795,7 +1811,7 @@ static void draw_save_setup_as()
 	gtk_widget_set_size_request (GTK_WIDGET(vbox_filename), 342, 85);
 	eventbox_filename = gtk_event_box_new();
 	gtk_widget_set_size_request (GTK_WIDGET(eventbox_filename), 342, 57);
-	update_widget_bg(eventbox_filename, /*backpic[1]*/17);
+	update_widget_bg(eventbox_filename, /*backpic[1]*/1);
 	label[1] = gtk_label_new("File name");
 	gtk_container_add(GTK_CONTAINER(eventbox_filename),label[1]);
 	gtk_box_pack_start (GTK_BOX (vbox_filename), eventbox_filename, FALSE, FALSE, 0);
@@ -1822,7 +1838,7 @@ static void draw_save_setup_as()
 
 	Set_Source_File_Path(USER_CFG_PATH);
 
-	selection_file_type(source_list, USER_CFG_PATH,	".cfg");
+	selection_file_type(source_list, USER_CFG_PATH,	".cfg",FALSE);
 
 	gtk_container_add(GTK_CONTAINER(sw_1_1_1_1_1), source_list);
 
@@ -2211,10 +2227,10 @@ static void draw_file_manage ()
 
 	//源文件，文件视图
 	//init_file_list (source_list, pp->selection, "/" , DT_DIR);
-	selection_file_type(source_list,"/",file_type);
+	selection_file_type(source_list,"/",file_type,TRUE);
 	//目标文件，文件视图
 	//init_file_list (target_list, pp->selection1, "/" , DT_DIR);
-    selection_file_type(target_list,"/",file_type);
+    selection_file_type(target_list,"/",file_type,TRUE);
 
 	gtk_tree_selection_set_mode(source_selection,GTK_SELECTION_MULTIPLE);
 
@@ -2500,7 +2516,7 @@ void cd_source_dir_path (GtkTreeView *tree_view,GtkTreePath *path,GtkTreeViewCol
 	//
 	gtk_label_set_text(GTK_LABEL (source_label), pwd_path);
     //
-	selection_file_type(GTK_WIDGET (tree_view),pwd_path,file_type);
+	selection_file_type(GTK_WIDGET (tree_view),pwd_path,file_type,TRUE);
 	//
 	g_free(file_name);
 }
@@ -2541,7 +2557,7 @@ void cd_target_dir_path (GtkTreeView *tree_view,GtkTreePath *path,GtkTreeViewCol
 	//
 	gtk_label_set_text(GTK_LABEL (target_label), pwd_path);
 	//
-	selection_file_type(GTK_WIDGET (tree_view),pwd_path,file_type);
+	selection_file_type(GTK_WIDGET (tree_view),pwd_path,file_type,TRUE);
 	//
 	g_free(file_name);
 }
@@ -3963,7 +3979,21 @@ static void signal_define_probe(GtkDialog *dialog, gint response_id, gpointer us
 		save_probe_file(file_name,&g_tmp_probe);
 	
 		link(file_name,link_name);
-		
+
+        //关闭对话框
+        gtk_widget_destroy (GTK_WIDGET (dialog));
+		change_keypress_event (KEYPRESS_MAIN);
+
+    }
+    //点击了取消按钮
+    else if (GTK_RESPONSE_CANCEL == response_id)
+    {
+        //关闭对话框
+		gtk_widget_destroy (GTK_WIDGET (dialog));
+		change_keypress_event (KEYPRESS_MAIN);
+    }
+	else if (RESPONSE_SELECT_AND_CLOSE == response_id)
+	{
 		if ( ( pp->pos == 5 ) && ( pp->pos1[pp->pos] == 0 ) && ( pp->pos2[pp->pos][pp->pos1[pp->pos]] == 3 ) )
 		{
 			grp = get_current_group(pp->p_config);
@@ -3997,15 +4027,7 @@ static void signal_define_probe(GtkDialog *dialog, gint response_id, gpointer us
         //关闭对话框
         gtk_widget_destroy (GTK_WIDGET (dialog));
 		change_keypress_event (KEYPRESS_MAIN);
-
-    }
-    //点击了取消按钮
-    else if (GTK_RESPONSE_CANCEL == response_id)
-    {
-        //关闭对话框
-		gtk_widget_destroy (GTK_WIDGET (dialog));
-		change_keypress_event (KEYPRESS_MAIN);
-    }
+	}
 }
 
 int on_changed_open_ut_pa_probe_file(GtkTreeSelection *selection,	gpointer       data)
@@ -4219,8 +4241,9 @@ void draw_define_probe()
 	//新建窗口以及各属性设置
 	dialog = gtk_dialog_new_with_buttons ("Dialog_Wedge", window,
 			GTK_DIALOG_MODAL |	GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_NO_SEPARATOR,
-			GTK_STOCK_OK, GTK_RESPONSE_OK,
-			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+			"Selection and Close", RESPONSE_SELECT_AND_CLOSE,
+			GTK_STOCK_SAVE, GTK_RESPONSE_OK,
+			GTK_STOCK_CLOSE, GTK_RESPONSE_CANCEL,
 			NULL);
 	
 	gtk_window_set_decorated (GTK_WINDOW (dialog), FALSE);			/*不可以装饰*/
@@ -4355,11 +4378,11 @@ void draw_define_probe()
 
 	if ( pGroup->group_mode == PA_SCAN )
 	{	
-		selection_file_type(source_list, PA_PROBE_USER_PATH,	".opp");
+		selection_file_type(source_list, PA_PROBE_USER_PATH,	".opp",FALSE);
 	}
 	else// if ( pGroup->group_mode == UT_SCAN )
 	{
-		selection_file_type(source_list, UT_PROBE_USER_PATH,	".oup");
+		selection_file_type(source_list, UT_PROBE_USER_PATH,	".oup",FALSE);
 	}
 	
     g_signal_connect (G_OBJECT(dialog), "response",G_CALLBACK(signal_define_probe), (gpointer)&open_ut_pa_probe_file);/*确定 or 取消*/
@@ -4482,6 +4505,20 @@ static void signal_define_wedge(GtkDialog *dialog, gint response_id, gpointer us
 
 		link(file_name,link_name);
 
+		//关闭对话框
+        gtk_widget_destroy (GTK_WIDGET (dialog));
+		change_keypress_event (KEYPRESS_MAIN);
+
+    }
+    //点击了取消按钮
+    else if (GTK_RESPONSE_CANCEL == response_id)
+    {
+        //关闭对话框
+		gtk_widget_destroy (GTK_WIDGET (dialog));
+		change_keypress_event (KEYPRESS_MAIN);
+    }
+	else if (RESPONSE_SELECT_AND_CLOSE == response_id)
+	{
 		if( ( pp->pos == 5 ) && ( pp->pos1[pp->pos] == 0 ) && ( pp->pos2[pp->pos][pp->pos1[pp->pos]] == 4 ) )
 		{
 			id = get_current_group(pp->p_config);
@@ -4498,17 +4535,9 @@ static void signal_define_wedge(GtkDialog *dialog, gint response_id, gpointer us
 		}
 
 		//关闭对话框
-        gtk_widget_destroy (GTK_WIDGET (dialog));
-		change_keypress_event (KEYPRESS_MAIN);
-
-    }
-    //点击了取消按钮
-    else if (GTK_RESPONSE_CANCEL == response_id)
-    {
-        //关闭对话框
 		gtk_widget_destroy (GTK_WIDGET (dialog));
 		change_keypress_event (KEYPRESS_MAIN);
-    }
+	}
 }
 
 
@@ -4741,8 +4770,9 @@ void draw_define_wedge()
 	//新建窗口以及各属性设置
 	dialog = gtk_dialog_new_with_buttons ("Dialog_Wedge", window,
 			GTK_DIALOG_MODAL |	GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_NO_SEPARATOR,
-			GTK_STOCK_OK, GTK_RESPONSE_OK,
-			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+			"Select and Close",RESPONSE_SELECT_AND_CLOSE,
+			GTK_STOCK_SAVE, GTK_RESPONSE_OK,
+			GTK_STOCK_CLOSE, GTK_RESPONSE_CANCEL,
 			NULL);
 
 	gtk_window_set_decorated (GTK_WINDOW (dialog), FALSE);			/*不可以装饰*/
@@ -4886,11 +4916,11 @@ void draw_define_wedge()
 
 	if ( pGroup->group_mode == PA_SCAN )
 	{	
-		selection_file_type(source_list, PA_WEDGE_USER_PATH,	".opw");
+		selection_file_type(source_list, PA_WEDGE_USER_PATH,	".opw",FALSE);
 	}
 	else// if ( pGroup->group_mode == UT_SCAN )
 	{
-		selection_file_type(source_list, UT_WEDGE_USER_PATH,	".ouw");
+		selection_file_type(source_list, UT_WEDGE_USER_PATH,	".ouw",FALSE);
 	}
 
     g_signal_connect (G_OBJECT(dialog), "response",G_CALLBACK(signal_define_wedge), (gpointer)&open_ut_pa_wedge_file);/*确定 or 取消*/

@@ -333,7 +333,7 @@ struct _Group
 	unsigned char	gate_pos;		/* A , B , I 当前修改的是哪个闸门 */
 	unsigned short	point_qty;		/* 点个数 */
 	unsigned short	sum_gain;
-	unsigned short	gain_offset;
+	unsigned short	gain_offset[256];
 
 	GATE_INFO		gate[setup_MAX_GATE];	/* gate[0] A , gate[1] B , gate[2] I */
 

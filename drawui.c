@@ -107,7 +107,7 @@ const gchar *backpic[] =
 	"pic/20.png", "pic/21.png", "pic/22.png",		/* 三级菜单名称 0按下 1未选中 2 停留 */
 	"pic/30.png", "pic/31.png", "pic/32.png",		/* 三级菜单数值 0按下 1未选中 2 停留 */
 	"pic/tt.png", "pic/311.png", "pic/322.png",      	/* 软键盘图标 */
-	"pic/snow.png","pic/black_25.png","pic/40.png",
+	"pic/snow.png","pic/black_25.png"
 };
 
 GdkPixbuf *g_pixbuf_[18];
@@ -2859,10 +2859,10 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 						p->w_unit = UNIT_INCH;
 					}
 					p->w_color = 0xD6ABF1;/*紫色*/
-				}
+			   }
 			}
 			g_sprintf (p->title, "A scan|Gr %d|CH %0.1f|SK%0.1f|L%d", 
-p->group+1, angle / 100.0, GROUP_VAL_POS(p->group, skew) / 100.0, num + 1);
+							p->group+1, angle / 100.0, GROUP_VAL_POS(p->group, skew) / 100.0, num + 1);
 					//get_current_group(pp->p_config) + 1, angle / 100.0, GROUP_VAL_POS(p->group, skew) / 100.0, num + 1);
 			break;
 		//case A_SCAN_R:
@@ -3196,22 +3196,23 @@ p->group+1, angle / 100.0, GROUP_VAL_POS(p->group, skew) / 100.0, num + 1);
 				else if (GROUP_VAL_POS(p->group, skew_pos)==3)
 					middle = GROUP_VAL_POS(p->group, index_offset)/10.0 + mid;
 
+
 				if((LAW_VAL (Angle_min)<0)&&(LAW_VAL (Angle_max)>0))
 				{
-				     //p->wmin1 = middle + get_group_val (p_grp, GROUP_RANGE)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_min) / 100.0)*(3.14/180.0));
-				    // p->wmax1 = middle + get_group_val (p_grp, GROUP_RANGE)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_max) / 100.0)*(3.14/180.0));
-				     p->wmin1 = middle + GROUP_VAL_POS(p->group, range)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_min) / 100.0)*(3.14/180.0));
-				     p->wmax1 = middle + GROUP_VAL_POS(p->group, range)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_max) / 100.0)*(3.14/180.0));
+					     //p->wmin1 = middle + get_group_val (p_grp, GROUP_RANGE)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_min) / 100.0)*(3.14/180.0));
+					    // p->wmax1 = middle + get_group_val (p_grp, GROUP_RANGE)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_max) / 100.0)*(3.14/180.0));
+					     p->wmin1 = middle + GROUP_VAL_POS(p->group, range)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_min) / 100.0)*(3.14/180.0));
+					     p->wmax1 = middle + GROUP_VAL_POS(p->group, range)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_max) / 100.0)*(3.14/180.0));
 				}
 				else if((LAW_VAL (Angle_min)<0)&&(LAW_VAL (Angle_max)<0))
 				{
-				     p->wmin1 = middle + GROUP_VAL_POS(p->group, range)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_min) / 100.0)*(3.14/180.0));
-				     p->wmax1 = middle - GROUP_VAL_POS(p->group, range)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_max) / 100.0)*(3.14/180.0));
+					     p->wmin1 = middle + GROUP_VAL_POS(p->group, range)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_min) / 100.0)*(3.14/180.0));
+					     p->wmax1 = middle - GROUP_VAL_POS(p->group, range)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_max) / 100.0)*(3.14/180.0));
 				}
 				else if((LAW_VAL (Angle_min)>0)&&(LAW_VAL (Angle_max)>0))
 				{
-				     p->wmin1 = middle - GROUP_VAL_POS(p->group, range)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_min) / 100.0)*(3.14/180.0));
-				     p->wmax1 = middle + GROUP_VAL_POS(p->group, range)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_max) / 100.0)*(3.14/180.0));
+					     p->wmin1 = middle - GROUP_VAL_POS(p->group, range)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_min) / 100.0)*(3.14/180.0));
+					     p->wmax1 = middle + GROUP_VAL_POS(p->group, range)/1000.0 * sin((LAW_VAL_POS (p->group, Angle_max) / 100.0)*(3.14/180.0));
 				}
 				pp->swmin = p->wmin1;
 				pp->swmax = p->wmax1;
@@ -3271,9 +3272,22 @@ p->group+1, angle / 100.0, GROUP_VAL_POS(p->group, skew) / 100.0, num + 1);
 			p->h2_unit = UNIT_BFH;
 			p->h2_color = 0xEDF169;
 
-			p->wmin1 = LAW_VAL (Angle_min)/100;
-			p->wmax1 = LAW_VAL (Angle_max)/100;
-			p->w_unit = UNIT_DEG;
+			if(LAW_VAL(Focal_type) == AZIMUTHAL_SCAN)
+			{
+				p->wmin1 = LAW_VAL (Angle_min)/100;
+				p->wmax1 = LAW_VAL (Angle_max)/100;
+				p->w_unit = UNIT_DEG;
+			}
+    		else if (LAW_VAL(Focal_type) == LINEAR_SCAN)
+			{
+				p->wmin1 = (gfloat)(LAW_VAL(First_tx_elem));
+				p->wmax1 = (gfloat)((( LAW_VAL (Last_tx_elem)-LAW_VAL(First_tx_elem) - LAW_VAL(Elem_qty) + 1 ) /
+							LAW_VAL(Elem_step)) + 1);
+				p->w_unit = UNIT_VPA;
+//				p->wrule_copies = (gfloat)((( LAW_VAL (Last_tx_elem)-LAW_VAL(First_tx_elem) - LAW_VAL(Elem_qty) + 1 ) /
+//							LAW_VAL(Elem_step)) + 1);
+			}
+
 			p->w_color = 0xCCD9D5;	/*浅灰色*/;
 			g_sprintf (p->title, "Calibration:Sensitivity");
 			break;
@@ -4573,20 +4587,6 @@ void draw3_data0(DRAW_UI_P p)
 					g_free(str);
 					break;
 				case 2: /* Reveiver 接收器  P120 TAN1 */
-if((GROUP_VAL(group_mode)==2)||(GROUP_VAL(group_mode)==3))/*group_mode选择UT1 或 UT2*/
-{
-					p->x_pos = 600, p->y_pos = 150;
-					if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 0))
-						draw3_pop_tt (data_1201, NULL, 
-								menu_content[DAMPING + get_damping_pos(p->p_config)],
-								menu_content + DAMPING, 2, 0, get_damping_pos(p->p_config), 0);
-					else 
-						draw3_popdown (menu_content[DAMPING + get_damping_pos(p->p_config)], 0, 0);
-					str = g_strdup_printf ("%s", con2_p[1][2][6]);	
-					gtk_label_set_text (GTK_LABEL (pp->label3[0]), str);
-}
-else
-{
 					switch (TMP(receiver_reg))
 					{
 						case 0:	tmpf = 1.0; break;
@@ -4620,7 +4620,6 @@ else
 						draw3_digit_stop (cur_value, str, digit, pos, 0);
 					}
 					g_free(str);
-}
 					break;
 				case 3:/* Scan Offset P130 TAN1 */
 					if (GROUP_VAL(group_mode) == PA_SCAN)	/* 脉冲回波模式不可以调节 */
@@ -5364,9 +5363,20 @@ void draw3_data1(DRAW_UI_P p)
 	gchar temp[52];
 	gfloat tmpf = 0.0;
 	gchar *str;
+	gint i;
+	gint clb_step;
 
 	gfloat cur_value=0.0, lower, upper, step;
-	guint digit, pos, unit, content_pos, menu_status = 0, temp_beam, tt;
+	guint digit, pos, unit, content_pos, menu_status = 0, temp_beam, tt;	
+	if (LAW_VAL (Focal_type) == AZIMUTHAL_SCAN)
+	{
+		clb_step = (gint)( (LAW_VAL(Angle_max) - LAW_VAL(Angle_min)) / LAW_VAL(Angle_step) + 1);
+	}
+	else if(LAW_VAL (Focal_type) == LINEAR_SCAN) 
+	{
+		clb_step = (gint)( ( LAW_VAL (Last_tx_elem)-LAW_VAL(First_tx_elem) - LAW_VAL(Elem_qty) + 1 ) /
+				LAW_VAL(Elem_step) ) + 1;
+	}
 
 	int inet_sock;
 	struct ifreq ifr;
@@ -5412,7 +5422,15 @@ void draw3_data1(DRAW_UI_P p)
 
 							set_overlay_gate(pp->p_config,1);
 							if(pp->clb_count == 1)
+							{
 								pp->save_ut_unit = GROUP_VAL_POS(get_current_group(pp->p_config), ut_unit);
+								TMP(clb_his_max_data) = 0;	
+								for (i = 0; i < clb_step; i++)
+								{
+									TMP(clb_real_data[i]) = ((TMP(measure_data[i][1])>>20) & 0xfff)/20.47;
+									TMP(clb_max_data[i]) = TMP(clb_real_data[i]);
+								}
+							}
 							GROUP_VAL_POS(get_current_group(pp->p_config), ut_unit) = UT_UNIT_TRUE_DEPTH;
 							generate_focallaw( (int)(get_current_group(pp->p_config)) );
 						}
@@ -6950,8 +6968,7 @@ void draw3_data1(DRAW_UI_P p)
 				case 0:/* 打开文件 P801 */
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 						draw_dialog_all (DIALOG_FILE_OPEN);
-					else
-						draw3_popdown(NULL,1,1);
+					draw3_popdown(NULL,1,1);
 					break;
 
 				case 1:/*File -> report -> file name p811 */
@@ -8442,7 +8459,8 @@ void draw3_data2(DRAW_UI_P p)
 								if (UNIT_MM == get_unit(pp->p_config)) 
 								{
 									cur_value = (GROUP_GATE_POS(start) / 1000.0) * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0);   /* 当前显示的起位数值mm */
-									lower = (BEAM_INFO(0,beam_delay) /1000.0) * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
+									//lower = (BEAM_INFO(0,beam_delay) /1000.0) * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
+									lower = 0;
 									upper =	(MAX_RANGE_US - GROUP_GATE_POS(width) / 1000.0) * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0);
 									//step = tmpf * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0);
 									step = tmpf;
@@ -8453,7 +8471,8 @@ void draw3_data2(DRAW_UI_P p)
 								else 
 								{
 									cur_value = (GROUP_GATE_POS(start) / 1000.0) * 0.03937 * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0); /* 当前显示的范围inch */
-									lower = (BEAM_INFO(0,beam_delay) / 1000.0) * 0.03937 * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
+									//lower = (BEAM_INFO(0,beam_delay) / 1000.0) * 0.03937 * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
+									lower = 0;
 									upper =	(MAX_RANGE_US - GROUP_GATE_POS(width) / 1000.0 ) * 0.03937 * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
 									//step = tmpf * 0.03937 * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
 									step = tmpf;
@@ -8473,7 +8492,8 @@ void draw3_data2(DRAW_UI_P p)
 									default:break;
 								}
 								cur_value = GROUP_GATE_POS(start) / 1000.0 ;
-								lower =	BEAM_INFO(0,beam_delay) / 1000.0;
+								//lower =	BEAM_INFO(0,beam_delay) / 1000.0;
+								lower = 0;
 								upper =	(MAX_RANGE_US - GROUP_GATE_POS(width) / 1000.0);
 								step = tmpf;
 								digit = 2;
@@ -14919,14 +14939,15 @@ void draw3_data5(DRAW_UI_P p)
 	gchar temp[52];
 	gfloat tmpf = 0.0, tmpfm;
 	gchar *str;
-	gint i;
 	guint menu_status  = 0;
 
 	gfloat max_tmp = 0.0,  max_tmp1 = 0.0, cur_value, lower, upper, step;
 	guint digit, pos, unit, content_pos, temp_beam;
+	gint offset,k;
 	gint grp = get_current_group (pp->p_config);
+	for (offset = 0, k = 0 ; k < grp; k++)
+		offset += TMP(beam_qty[k]);
 	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
-	gint clb_step = (gint)( (LAW_VAL(Angle_max) - LAW_VAL(Angle_min)) / LAW_VAL(Angle_step) + 1);
 
 	switch (pp->pos) 
 	{
@@ -15412,12 +15433,6 @@ void draw3_data5(DRAW_UI_P p)
 							else if ((pp->ctype_pos == 1) && (pp->cmode_pos == 2))
 							{
 								draw3_popdown_offset(NULL, 5,1,29);
-								for (i = 0; i < clb_step; i++)
-								{
-									TMP(clb_his_max_data) = 0;//TMP(clb_real_data[i]);
-								//	TMP(clb_real_data[i]) = ((TMP(measure_data[i][1])>>20) & 0xfff)/20.47;
-									TMP(clb_max_data[i]) = TMP(clb_real_data[i]);
-								}
 							}
 							else if (pp->ctype_pos == 2)
 							{
@@ -15595,7 +15610,7 @@ void draw3_data5(DRAW_UI_P p)
 						}
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 5))
 						{
-							cur_value = GROUP_VAL(gain_offset)/10.0;
+							cur_value = GROUP_VAL(gain_offset[TMP(beam_num[grp]) + offset])/10.0;
 							lower = 0.0;
 							upper = 80.0;
 							step = tmpf;
@@ -15606,7 +15621,7 @@ void draw3_data5(DRAW_UI_P p)
 						}
 						else 
 						{
-							cur_value = GROUP_VAL(gain_offset)/10.0;
+							cur_value = GROUP_VAL(gain_offset[TMP(beam_num[grp]) + offset])/10.0;
 							digit = 1;
 							pos = 5;
 							unit = UNIT_DB;
@@ -17218,22 +17233,29 @@ gboolean on_finish(gpointer p)
 
 void draw_field_value ()
 {
-//	gint	offset, k;
-	gchar	*markup0, *markup1 ,*markup2 ,*markup3;
-//	for (offset = 0, k = 0 ; k < get_current_group (pp->p_config); k++)
-//		offset += TMP(beam_qty[k]);
-//	gint index = offset + TMP(beam_num[get_current_group(pp->p_config)]);
+	gchar  *markup0, *markup1, *markup2, *markup3;
+//	gchar  *markup;
 	/* 4个测量值显示 */
 	markup0 = g_markup_printf_escaped ("<span foreground='white' font_desc='24'>%.2f</span>", TMP(field[0]));
 	markup1 = g_markup_printf_escaped ("<span foreground='white' font_desc='24'>%.2f</span>", TMP(field[1]));
 	markup2 = g_markup_printf_escaped ("<span foreground='white' font_desc='24'>%.2f</span>", TMP(field[2]));
 	markup3 = g_markup_printf_escaped ("<span foreground='white' font_desc='24'>%.2f</span>", TMP(field[3]));
+	/*实时更新编码器信息
+	if( (!pp->ctype_pos) && (pp->cstart_qty == 3) )
+	{
+		//先让编码器的起点值与origin一致
+		markup = g_markup_printf_escaped ("<span foreground='white' font_desc='10'>X: %.1f s</span>",
+				TMP_CBA(measure_start));
+	}*/
 	gdk_threads_enter();
 	gtk_label_set_markup (GTK_LABEL(pp->label[9]),  markup0);
 	gtk_label_set_markup (GTK_LABEL(pp->label[11]), markup1);
 	gtk_label_set_markup (GTK_LABEL(pp->label[13]), markup2);
 	gtk_label_set_markup (GTK_LABEL(pp->label[15]), markup3);
+	//
+//	gtk_label_set_markup (GTK_LABEL (pp->label[7]), markup); 
 	gdk_threads_leave();	
+//	g_free (markup);
 	g_free (markup0);
 	g_free (markup1);
 	g_free (markup2);
