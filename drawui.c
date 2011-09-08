@@ -2859,11 +2859,11 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 						p->w_unit = UNIT_INCH;
 					}
 					p->w_color = 0xD6ABF1;/*紫色*/
-			}	
+				}
+			}
 			g_sprintf (p->title, "A scan|Gr %d|CH %0.1f|SK%0.1f|L%d", 
 p->group+1, angle / 100.0, GROUP_VAL_POS(p->group, skew) / 100.0, num + 1);
 					//get_current_group(pp->p_config) + 1, angle / 100.0, GROUP_VAL_POS(p->group, skew) / 100.0, num + 1);
-				}
 			break;
 		//case A_SCAN_R:
 			//break;
