@@ -313,8 +313,6 @@ void data_9131 (GtkMenuItem *menuitem, gpointer data);
 //void data_923 (GtkMenuItem *menuitem, gpointer data);
 void data_930 (GtkMenuItem *menuitem, gpointer data);
 
-
-
 gboolean eventbox2_function0 (GtkWidget *widget, GdkEventButton *event,	gpointer data);
 
 /*   */
@@ -6031,7 +6029,6 @@ void data_901 (GtkSpinButton *spinbutton, gpointer data) /*scan_resolution*/
 {
 	set_bright (pp->p_config, (guchar) (gtk_spin_button_get_value (spinbutton)));
 }
-
 
 /* Edit Notes 2个按键的处理 一个是保存一个是取消 */
 void da_call_edit_notes (GtkDialog *dialog, gint response_id, gpointer user_data)      

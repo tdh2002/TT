@@ -32,6 +32,7 @@ enum
 	N_COLUMNS
 };
 
+
 void set_dialog_menu_position(GtkMenu *menu, gint *x, gint *y,
 		gboolean *push_in, gpointer status_icon)
 {
@@ -4393,6 +4394,7 @@ void draw_define_probe()
 
 	return ;
 }
+
 
 static void signal_define_wedge(GtkDialog *dialog, gint response_id, gpointer user_data)
 {
