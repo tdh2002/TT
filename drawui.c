@@ -4598,38 +4598,54 @@ void draw3_data0(DRAW_UI_P p)
 					g_free(str);
 					break;
 				case 2: /* Reveiver 接收器  P120 TAN1 */
-					switch (TMP(receiver_reg))
+					if((GROUP_VAL(group_mode)==2)||(GROUP_VAL(group_mode)==3))/*group_mode选择UT1 或 UT2*/
 					{
-						case 0:	tmpf = 1.0; break;
-						case 1:	tmpf = 10.0; break;
-						case 2:	tmpf = 100.0; break;
-						default:break;
+						p->x_pos = 600, p->y_pos = 150;
+						if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 0))
+							draw3_pop_tt (data_1201, NULL, 
+									menu_content[DAMPING + get_damping_pos(p->p_config)],
+									menu_content + DAMPING, 2, 0, get_damping_pos(p->p_config), 0);
+						else 
+							draw3_popdown (menu_content[DAMPING + get_damping_pos(p->p_config)], 0, 0);
+						str = g_strdup_printf ("%s", con2_p[1][2][6]);	
+						gtk_label_set_text (GTK_LABEL (pp->label3[0]), str);
 					}
-					if (get_group_val (p_grp, GROUP_TX_RX_MODE) == PULSE_ECHO )
-						/* 脉冲回波模式不可以调节 */
+					else
 					{
-						gtk_widget_set_sensitive (p->eventbox30[0], FALSE);
-						gtk_widget_set_sensitive (p->eventbox31[0], FALSE);
+						switch (TMP(receiver_reg))
+						{
+							case 0:	tmpf = 1.0; break;
+							case 1:	tmpf = 10.0; break;
+							case 2:	tmpf = 100.0; break;
+							default:break;
+						}
+						if (get_group_val (p_grp, GROUP_TX_RX_MODE) == PULSE_ECHO )
+							/* 脉冲回波模式不可以调节 */
+						{
+							gtk_widget_set_sensitive (p->eventbox30[0], FALSE);
+							gtk_widget_set_sensitive (p->eventbox31[0], FALSE);
+						}
+						upper = (gfloat) (128 + 1 - LAW_VAL(Last_rx_elem));
+						if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 0))
+						{
+							cur_value = (gfloat) (get_group_val (&pp->p_config->group[get_current_group(pp->p_config)], GROUP_RECEIVER));
+							lower = 1.0;
+							step = tmpf;
+							digit = 0;
+							pos = 0;
+							str = g_strdup_printf ("( 1 to %d)", (guint)(upper));
+							draw3_digit_pressed (data_120, str, cur_value , lower, upper, step, digit, p, pos, 0);
+						}
+						else 
+						{
+							cur_value = (gfloat) (get_group_val (&pp->p_config->group[get_current_group(pp->p_config)], GROUP_RECEIVER));
+							digit = 0;
+							pos = 0;
+							str = g_strdup_printf ("( 1 to %d)", (guint)(upper));
+							draw3_digit_stop (cur_value, str, digit, pos, 0);
+						}
 					}
-					upper = (gfloat) (128 + 1 - LAW_VAL(Last_rx_elem));
-					if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 0))
-					{
-						cur_value = (gfloat) (get_group_val (&pp->p_config->group[get_current_group(pp->p_config)], GROUP_RECEIVER));
-						lower = 1.0;
-						step = tmpf;
-						digit = 0;
-						pos = 0;
-						str = g_strdup_printf ("( 1 to %d)", (guint)(upper));
-						draw3_digit_pressed (data_120, str, cur_value , lower, upper, step, digit, p, pos, 0);
-					}
-					else 
-					{
-						cur_value = (gfloat) (get_group_val (&pp->p_config->group[get_current_group(pp->p_config)], GROUP_RECEIVER));
-						digit = 0;
-						pos = 0;
-						str = g_strdup_printf ("( 1 to %d)", (guint)(upper));
-						draw3_digit_stop (cur_value, str, digit, pos, 0);
-					}
+						
 					g_free(str);
 					break;
 				case 3:/* Scan Offset P130 TAN1 */
