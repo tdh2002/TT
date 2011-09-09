@@ -60,7 +60,7 @@ void read_probe_file (const gchar *file_path, PROBE_P p)
 			lseek (fd, 4, SEEK_SET);
 			i = read (fd, p, sizeof(PROBE) - 4);
 		}
-		else if (GROUP_VAL(group_mode) == UT_SCAN)
+		else //if (GROUP_VAL(group_mode) == UT_SCAN)
 		{
 			i = read (fd, p, sizeof(PROBE) );
 			p->Frequency = p->Elem_qty | (p->Freq2 << 8);
@@ -88,7 +88,7 @@ void save_probe_file (const gchar *file_path, PROBE_P p)
 			i = write (fd,tmp,strlen(tmp));
 			i = write (fd, p, sizeof(PROBE) - 4);
 		}
-		else if (GROUP_VAL(group_mode) == UT_SCAN)
+		else// if (GROUP_VAL(group_mode) == UT_SCAN)
 		{
 			//p->Frequency = p->Elem_qty | (p->Freq2 << 8);
 			p->Freq2 = (p->Frequency & 0xff00) >> 8;

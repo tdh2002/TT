@@ -87,17 +87,12 @@ typedef struct _calibration
 
 typedef struct _battery
 {
-	char  start1;
-	char  start2;
-	char  start3;
 	short power1;//电池1电量 %比
-	short status1;
+	unsigned short status1;
 	short time1;
 	short power2;
-	short status2;
+	unsigned short status2;
 	short time2;
-	char  flag1;
-	char  flag2;
 
 	short temp1;
 	short temp2;
@@ -105,13 +100,12 @@ typedef struct _battery
 	short temp4;
 	short temp5;
 	short temp6;
-
 	char  on_off;
 	char  end1;
 	char  end2;
-	char  end3;
+ 	char  end3;
 
-} BATTERY, *BATTERY_P;
+} BATTERY, *BATTERY_P;;
 
 typedef struct tmp_config 
 {
@@ -246,7 +240,7 @@ typedef struct tmp_config
 	unsigned int max_beam_delay[setup_MAX_GROUP_QTY];
 
 	DOT_TYPE	scan_data[setup_MAX_GROUP_QTY][640*400];
-	guint		measure_data[setup_MAX_LAW_QTY][8];
+	guint		measure_data[setup_MAX_LAW_QTY][8];//接收从硬件发过来的数据
 	gfloat     field[4];//保存4个field最后用于显示的值
 
 	gushort	special_col_amp[3];		/* 特殊颜色 */
@@ -580,6 +574,7 @@ typedef struct Draw_interface
 	gint    count;
 	gint	flag;
 	gint    clb_flag;//Calibration标志位
+	gint    clb_encoder;
 	gint    save_ut_unit;
 	gint    clb_count;
 } DRAW_UI, *DRAW_UI_P;

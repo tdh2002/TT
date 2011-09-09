@@ -1479,6 +1479,8 @@ void draw_scan(guchar scan_num, guchar scan_type, guchar group,
 					dot_temp, dot_temp, 
 					xoff, yoff, group);
 			break;
+		case CODER:
+			break;
 		default:break;
 	}
 	return ;

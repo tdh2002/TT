@@ -13,7 +13,6 @@
 
 #include "drawui.h"
 #define ARRAY_DEVICE	"/dev/spidev1.0"
-#define NORMAL_DEVICE	"/dev/spidev3.1"
 #define GPIO_DEVICE		"/dev/tt"
 
 #define GPIO61_LOW	0x6000
@@ -26,7 +25,7 @@
 #define TT_DEBUG 0
 #define DEBUG 0
 
-static int fd_array, fd_normal;
+static int fd_array;
 static int fd_gpio;
 
 /* n为siezof(p)/4 */
@@ -100,34 +99,12 @@ void init_spi ()
 	}
 
 
-	/*spi0 3设备 初始化skyworks*/
-	if ((fd_normal = open(NORMAL_DEVICE, O_RDWR)) == -1) 
-	{
-		perror(NORMAL_DEVICE);
-		return ;
-	}
-
 	if ((fd_array = open(ARRAY_DEVICE, O_RDWR)) == -1) 
 	{
 		perror(ARRAY_DEVICE);
 		return ;
 	}
-	if (ioctl(fd_normal, SPI_IOC_RD_MODE, &val) == -1) 
-	{
-		perror("ioctl spi read error2\n");
-		return ;
-	}
 	val = (val & 0xfc) | 0x00;
-	if (ioctl(fd_normal, SPI_IOC_WR_MODE, &val) == -1) 
-	{
-		perror("ioctl spi write error3\n");
-		return ;
-	}
-	if (ioctl(fd_normal, SPI_IOC_RD_MODE, &val) == -1) 
-	{
-		perror("ioctl spi read error4\n");
-		return ;
-	}
 	if (ioctl(fd_array, SPI_IOC_RD_MODE, &val) == -1) 
 	{
 		perror("ioctl spi read error2\n");
@@ -205,6 +182,9 @@ int write_group_data (group_data_spi *p, unsigned int group)
 	little_to_big ((unsigned int *)(p1), sizeof(group_data_spi) / 4);
 #if ARM	
 /*	ioctl (fd_gpio, GPIO43_LOW, &i);*/ /* 发送group参数不复位 */
+	//p1->rx_time   += 80;//*(get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_RANGE) / 10.0) / GROUP_VAL(point_qty);
+	//p1->idel_time -= 80;//*(get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_RANGE) / 10.0) / GROUP_VAL(point_qty);
+	//p1->sample_start += 80;// add a offset
 	i = write (fd_array, (unsigned char *)(p1), sizeof(group_data_spi));
     printf("write spi %d \n", i);
 	
@@ -253,41 +233,6 @@ void write_tgc_data ()
 
 void write_fir_data ()
 {
-}
-
-void write_normal_data (group_data_spi *p)
-{
-	group_data_spi new, *p1;
-	int i;
-	memcpy (&new, p, sizeof (group_data_spi));
-	p1 = &new;
-
-#if DEBUG
-/*	unsigned int *tmp = (unsigned *)(p);*/
-	unsigned int tmp = p->gain;
-	printf ("Gain= %d\n", tmp);
-	tmp = p->freq_band;
-	printf ("Freq_band= %d\n", tmp);
-	tmp = p->rectifier;
-	printf ("Rectifier= %d\n", tmp);
-	tmp = p->video_filter;
-	printf ("Video_filter= %d\n", tmp);
-	tmp = p->sum_gain;
-	printf ("sun gain= %d\n", tmp);
-	tmp = p->reject;
-	printf ("reject= %d\n", tmp);
-	tmp = p->voltage;
-	printf ("voltage= %d\n", tmp);
-#endif
-
-	p->offset = 0;
-	p->addr = 0x2;
-	little_to_big ((unsigned int *)(p1), sizeof(group_data_spi) / 4);
-	
-	ioctl (fd_gpio, GPIO43_LOW, &i);
-	i = write (fd_normal, (unsigned char *)(p1), sizeof(group_data_spi));
-	ioctl (fd_gpio, GPIO43_HIGH, &i);
-	return ;
 }
 
 
