@@ -66,6 +66,7 @@
 #define WEDGE_DELAY      11
 #define SENSITIVITY      12
 #define TCG              13
+#define CODER            14
 
 /* c扫描的source选项 */
 #define C_SCAN_A_HEIGHT		0

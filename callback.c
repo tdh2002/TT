@@ -2102,7 +2102,7 @@ void b3_fun4(gpointer p)
 	/* 之前的位置 */
 	pp->pos_last2 = pp->pos2[pp->pos][pp->pos1[pp->pos]];
 	pp->pos2[pp->pos][pp->pos1[pp->pos]] = 4;
-	gint offset,k,i,step;
+	gint offset,k,step;
 	gint grp = get_current_group(pp->p_config);//当前group
 	for (offset = 0, k = 0 ; k < grp; k++)
 		offset += TMP(beam_qty[k]);
@@ -2137,21 +2137,9 @@ void b3_fun4(gpointer p)
 								cba_ultrasound_wedgedelay();
 								break;
 							case 2://sensitivity
-								if (pp->cstart_qty == 1)//Clear Calibrate
+								if (pp->cstart_qty == 6)//Calibrate
 								{
-									for (i = 0; i < step; i++)
-									{
-										TMP(clb_real_data[i]) = ((TMP(measure_data[i][1])>>20) & 0xfff)/20.47;
-										TMP(clb_max_data[i]) = TMP(clb_real_data[i]);//第一次需初始化
-										TMP(clb_his_max_data) = 0;
-										GROUP_VAL(gain_offset[i+offset]) =  0;
-										pp->tmp_gain_off[ i+offset] = 0; 
-									}
-								}
-								else if (pp->cstart_qty == 6)//Calibrate
-								{
-										cba_ultrasound_sensitivity();
-
+									cba_ultrasound_sensitivity();
 								}
 								break;
 							case 3:
@@ -2350,7 +2338,12 @@ void b3_fun5(gpointer p)
 	/* 之前的位置 */
 	pp->pos_last2 = pp->pos2[pp->pos][pp->pos1[pp->pos]];
 	pp->pos2[pp->pos][pp->pos1[pp->pos]] = 5;
-	gint i,clb_step;
+	gint clb_step;
+	gint offset,k,i;
+	gint grp = get_current_group(pp->p_config);//当前group
+	for (offset = 0, k = 0 ; k < grp; k++)
+		offset += TMP(beam_qty[k]);
+
 	if (LAW_VAL (Focal_type) == AZIMUTHAL_SCAN)
 	{
 		clb_step = (gint)( (LAW_VAL(Angle_max) - LAW_VAL(Angle_min)) / LAW_VAL(Angle_step) + 1);
@@ -2383,7 +2376,18 @@ void b3_fun5(gpointer p)
 								case 1:
 									break;
 								case 2:
-									if(pp->cstart_qty == 5)//Clear env
+									if (pp->cstart_qty == 1)//Clear Calibrate
+									{
+										for (i = 0; i < clb_step; i++)
+										{
+											TMP(clb_real_data[i]) = ((TMP(measure_data[i][1])>>20) & 0xfff)/20.47;
+											TMP(clb_max_data[i]) = TMP(clb_real_data[i]);//第一次需初始化
+											TMP(clb_his_max_data) = 0;
+											GROUP_VAL(gain_offset[i+offset]) =  0;
+											pp->tmp_gain_off[ i+offset] = 0; 
+										}
+									}
+									else if(pp->cstart_qty == 5)//Clear env
 									{
 										for (i = 0; i < clb_step; i++)
 										{
@@ -3307,6 +3311,7 @@ gboolean data_function0 (GtkWidget *widget,	GdkEventButton *event,	gpointer data
 {
 	guint num = GPOINTER_TO_UINT (data);
 	gpointer p = pp;
+	printf("\n num = %d \n", num);
 	switch (num)
 	{
 		case 0:b3_fun0(p);break;

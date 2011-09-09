@@ -182,6 +182,8 @@ int write_group_data (group_data_spi *p, unsigned int group)
 	little_to_big ((unsigned int *)(p1), sizeof(group_data_spi) / 4);
 #if ARM	
 /*	ioctl (fd_gpio, GPIO43_LOW, &i);*/ /* 发送group参数不复位 */
+	p1->rx_time   += 80*(get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_RANGE) / 10.0) / GROUP_VAL(point_qty);
+	p1->idel_time -= 80*(get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_RANGE) / 10.0) / GROUP_VAL(point_qty);
 	i = write (fd_array, (unsigned char *)(p1), sizeof(group_data_spi));
     printf("write spi %d \n", i);
 	
