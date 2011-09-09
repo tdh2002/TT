@@ -24,7 +24,10 @@
 #include <unistd.h>
 
 #define YOFFSET  26
-#define RESPONSE_SELECT_AND_CLOSE	1
+
+
+GtkWidget * g_source_list = NULL;
+static _save_file_name_struct g_save_file_name_struct;
 
 enum
 {
@@ -1311,6 +1314,25 @@ static void da_call_complex_dialog (GtkDialog *dialog, gint response_id, gpointe
 	change_keypress_event (KEYPRESS_MAIN);
 }
 
+static void response_file_open_main(GtkDialog *dialog, gint response_id, gpointer user_data)
+{
+	if (GTK_RESPONSE_OK == response_id)  /*读配置文件*/
+	{
+		open_config_file(NULL,NULL,g_source_list);
+	}
+	else if (GTK_RESPONSE_CANCEL == response_id) /* 取消 */
+	{	
+		g_print ("CANCEL_Pressed");
+	}
+	else if ( RESPONSE_FILE_OPEN == response_id )	
+	{
+		open_config_file(NULL,NULL,g_source_list);
+	}
+
+	gtk_widget_destroy (GTK_WIDGET (dialog));
+	change_keypress_event (KEYPRESS_MAIN);
+}
+	
 /* 打开文件 */
 static void draw_file_open_main()
 { 
@@ -1455,6 +1477,9 @@ static void draw_file_open_main()
 
 	gtk_box_pack_start(GTK_BOX(full_screen),bottom_box,FALSE,FALSE,0);
 
+	//
+	g_source_list = source_list;
+
 	//close
 	g_signal_connect(G_OBJECT (vbox_menu3[2]), "button-press-event",G_CALLBACK(dialog_destroy), dialog);
 	//open
@@ -1466,9 +1491,12 @@ static void draw_file_open_main()
 
     //g_signal_connect(G_OBJECT(dialog),"destroy_event",G_CALLBACK(dialog_destroy),dialog);
 
-	g_signal_connect (G_OBJECT(dialog), "response",
-			G_CALLBACK(da_call_complex_dialog), NULL);/*发送退出信号*/
+	//g_signal_connect (G_OBJECT(dialog), "response",
+	//		G_CALLBACK(da_call_complex_dialog), NULL);/*发送退出信号*/
 
+	g_signal_connect (G_OBJECT(dialog), "response",
+			G_CALLBACK(response_file_open_main), NULL);/*发送退出信号*/
+	
 	gtk_widget_show_all(dialog);
 
 	gtk_widget_hide (GTK_DIALOG(dialog)->action_area);
@@ -1635,6 +1663,37 @@ int save_config_file(GtkWidget *widget,	GdkEventButton *event,	gpointer       da
 	return FALSE;
 }
 
+static void  response_save_setup_as(GtkDialog *dialog, gint response_id, gpointer user_data)      
+{
+	if (GTK_RESPONSE_OK == response_id)  /* 保存信息 */
+	{
+		g_print ("OK_Pressed\n");
+
+		save_config_file(NULL,NULL,	(gpointer)&g_save_file_name_struct);
+		gtk_widget_destroy (GTK_WIDGET (dialog));
+		change_keypress_event (KEYPRESS_MAIN);
+	}
+	else if (GTK_RESPONSE_CANCEL == response_id) /* 取消 */
+	{
+		g_print ("CANCEL_Pressed\n");
+
+		gtk_widget_destroy (GTK_WIDGET (dialog));
+		change_keypress_event (KEYPRESS_MAIN);
+	}
+	else if (RESPONSE_CONFIG_SAVE == response_id)
+	{
+		save_config_file(NULL,NULL,	(gpointer)&g_save_file_name_struct);
+
+		gtk_widget_destroy (GTK_WIDGET (dialog));
+		change_keypress_event (KEYPRESS_MAIN);
+	}
+	else if (RESPONSE_CONFIG_FILE_FOCAL == response_id)
+	{
+		gtk_window_set_focus(GTK_WINDOW(dialog),g_save_file_name_struct.file_name);
+	}
+	
+}
+
 static void draw_save_setup_as()
 {
 	GtkWindow *window = GTK_WINDOW (pp->window);
@@ -1696,7 +1755,7 @@ static void draw_save_setup_as()
 	GtkTreeViewColumn *column;
 	GtkListStore *store;
 
-    static _save_file_name_struct save_file_name_struct;
+    //static _save_file_name_struct save_file_name_struct;
 
 	dialog = gtk_dialog_new_with_buttons ("Dialog_Wedge", window,
 			GTK_DIALOG_MODAL |	GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_NO_SEPARATOR,
@@ -1810,7 +1869,7 @@ static void draw_save_setup_as()
 	gtk_widget_set_size_request (GTK_WIDGET(vbox_filename), 342, 85);
 	eventbox_filename = gtk_event_box_new();
 	gtk_widget_set_size_request (GTK_WIDGET(eventbox_filename), 342, 57);
-	update_widget_bg(eventbox_filename, /*backpic[1]*/1);
+	update_widget_bg(eventbox_filename, /*backpic[1]*/17);
 	label[1] = gtk_label_new("File name");
 	gtk_container_add(GTK_CONTAINER(eventbox_filename),label[1]);
 	gtk_box_pack_start (GTK_BOX (vbox_filename), eventbox_filename, FALSE, FALSE, 0);
@@ -1872,26 +1931,59 @@ static void draw_save_setup_as()
 
 	gtk_container_add(GTK_CONTAINER(hbox_first), hbox);
 
-	save_file_name_struct.list = source_list;
-	save_file_name_struct.file_name = entry_save_file_name;
-    save_file_name_struct.store = store;
+	g_source_list = source_list;
+
+	g_save_file_name_struct.list = source_list;
+	g_save_file_name_struct.file_name = entry_save_file_name;
+    g_save_file_name_struct.store = store;
 
 	g_signal_connect(G_OBJECT (vbox_2_1_1[2]), "button-press-event",G_CALLBACK(dialog_destroy), dialog);
 
-	g_signal_connect(G_OBJECT (eventbox_save), "button-press-event",G_CALLBACK(save_config_file), (gpointer)&save_file_name_struct);
+	g_signal_connect(G_OBJECT (eventbox_save), "button-press-event",G_CALLBACK(save_config_file), (gpointer)&g_save_file_name_struct);
 
 	g_signal_connect_after(G_OBJECT (eventbox_save), "button-press-event",G_CALLBACK(dialog_destroy), dialog);
 
-	g_signal_connect (G_OBJECT (source_selection), "changed", G_CALLBACK(on_changed_save_config_file), (gpointer)&save_file_name_struct);
+	g_signal_connect (G_OBJECT (source_selection), "changed", G_CALLBACK(on_changed_save_config_file), (gpointer)&g_save_file_name_struct);
 
+	//g_signal_connect (G_OBJECT(dialog), "response",
+	//		G_CALLBACK(da_call_complex_dialog), NULL);/*发送退出信号*/
+	
 	g_signal_connect (G_OBJECT(dialog), "response",
-			G_CALLBACK(da_call_complex_dialog), NULL);/*发送退出信号*/
+			G_CALLBACK(response_save_setup_as), NULL);/*发送退出信号*/
 	
 	gtk_widget_show_all(dialog);
 
 	gtk_widget_hide (GTK_DIALOG(dialog)->action_area);
 
 }
+
+static void  response_system_info(GtkDialog *dialog, gint response_id, gpointer user_data)      
+{
+	if (GTK_RESPONSE_OK == response_id)  /* 保存信息 */
+	{
+		g_print ("OK_Pressed\n");
+		gtk_widget_destroy (GTK_WIDGET (dialog));
+		change_keypress_event (KEYPRESS_MAIN);
+	}
+	else if (GTK_RESPONSE_CANCEL == response_id) /* 取消 */
+	{
+		g_print ("CANCEL_Pressed\n");
+		gtk_widget_destroy (GTK_WIDGET (dialog));
+		change_keypress_event (KEYPRESS_MAIN);
+	}
+	else if (RESPONSE_CLOSE == response_id)
+	{
+		gtk_widget_destroy (GTK_WIDGET (dialog));
+		change_keypress_event (KEYPRESS_MAIN);
+	}
+	else if (RESPONSE_SAVE_AND_CLOSE == response_id)
+	{
+		gtk_widget_destroy (GTK_WIDGET (dialog));
+		change_keypress_event (KEYPRESS_MAIN);
+	}
+	
+}
+
 
 /* 系统信息的显示 */
 static void draw_system_info ()
@@ -1974,8 +2066,11 @@ static void draw_system_info ()
 
 	gtk_box_pack_start(GTK_BOX(full_screen),bottom_box, FALSE, FALSE, 0);
 
+	//g_signal_connect (G_OBJECT(dialog), "response",
+	//		G_CALLBACK(da_call_complex_dialog), NULL);/*发送退出信号*/
+
 	g_signal_connect (G_OBJECT(dialog), "response",
-			G_CALLBACK(da_call_complex_dialog), NULL);/*发送退出信号*/
+			G_CALLBACK(response_system_info), NULL);/*发送退出信号*/
 
 	gtk_widget_show_all(dialog);
 
@@ -3543,6 +3638,33 @@ void draw_date()
     gtk_widget_show_all(dialog);
 }
 
+static void  response_report_build(GtkDialog *dialog, gint response_id, gpointer user_data)      
+{
+	if (GTK_RESPONSE_OK == response_id)  /* 保存信息 */
+	{
+		g_print ("OK_Pressed\n");
+		gtk_widget_destroy (GTK_WIDGET (dialog));
+		change_keypress_event (KEYPRESS_MAIN);
+	}
+	else if (GTK_RESPONSE_CANCEL == response_id) /* 取消 */
+	{
+		g_print ("CANCEL_Pressed\n");
+		gtk_widget_destroy (GTK_WIDGET (dialog));
+		change_keypress_event (KEYPRESS_MAIN);
+	}
+	else if (RESPONSE_CLOSE == response_id)
+	{
+		gtk_widget_destroy (GTK_WIDGET (dialog));
+		change_keypress_event (KEYPRESS_MAIN);
+	}
+	else if (RESPONSE_SAVE_AND_CLOSE == response_id)
+	{
+		gtk_widget_destroy (GTK_WIDGET (dialog));
+		change_keypress_event (KEYPRESS_MAIN);
+	}
+	
+}
+
 void draw_report_build()
 {
 	GtkWindow *window = GTK_WINDOW (pp->window);
@@ -3629,8 +3751,11 @@ void draw_report_build()
 
 	gtk_box_pack_start(GTK_BOX(full_screen), bottom,FALSE,FALSE,0);
 
+	//g_signal_connect (G_OBJECT(dialog), "response",
+	//		G_CALLBACK(da_call_complex_dialog), NULL);/*发送退出信号*/
+
 	g_signal_connect (G_OBJECT(dialog), "response",
-			G_CALLBACK(da_call_complex_dialog), NULL);/*发送退出信号*/
+			G_CALLBACK(response_report_build), NULL);/*发送退出信号*/
 
 	gtk_widget_show_all(dialog);
 
@@ -3881,6 +4006,10 @@ static void signal_define_probe(GtkDialog *dialog, gint response_id, gpointer us
 
     char pa_pos[4] = {1,3,5,6};
 
+	static int focal_pos = 0;
+
+	GtkWidget *scan_focal[7];
+	
 	struct _Group * pGroup = NULL;
 
 	if( ( pp->pos == 5 ) && ( pp->pos1[pp->pos] == 0 ) && ( pp->pos2[pp->pos][pp->pos1[pp->pos]] == 3 ) )
@@ -3894,6 +4023,24 @@ static void signal_define_probe(GtkDialog *dialog, gint response_id, gpointer us
 
 	gint grp = get_current_group(pp->p_config);
 	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
+
+	if ( pGroup->group_mode == PA_SCAN )		
+	{
+		scan_focal[0] = open_ut_pa_probe_file_p->model_entry;
+		scan_focal[1] = open_ut_pa_probe_file_p->serial_entry;
+		scan_focal[2] = open_ut_pa_probe_file_p->probe_type_combo;
+		scan_focal[3] = open_ut_pa_probe_file_p->frequency_entry;
+		scan_focal[4] = open_ut_pa_probe_file_p->element_qty_entry;
+		scan_focal[5] = open_ut_pa_probe_file_p->ref_point_entry;
+		scan_focal[6] = open_ut_pa_probe_file_p->pitch_entry;
+	}
+	else 
+	{
+		scan_focal[0] = open_ut_pa_probe_file_p->model_entry;
+		scan_focal[1] = open_ut_pa_probe_file_p->serial_entry;
+		scan_focal[2] = open_ut_pa_probe_file_p->frequency_entry;
+		scan_focal[3] = open_ut_pa_probe_file_p->element_size_entry;
+	}
 
     //点击了确认
     if (GTK_RESPONSE_OK == response_id)
@@ -4027,6 +4174,22 @@ static void signal_define_probe(GtkDialog *dialog, gint response_id, gpointer us
         gtk_widget_destroy (GTK_WIDGET (dialog));
 		change_keypress_event (KEYPRESS_MAIN);
 	}
+	else if (RESPONSE_CHANGE_FOCAL == response_id)
+	{
+		focal_pos++;
+
+		if ( pGroup->group_mode == PA_SCAN )		
+		{
+			if (focal_pos >=7 ) focal_pos = 0;
+		}
+		else 
+		{
+			if (focal_pos >=4) focal_pos = 0;
+		}
+		
+		gtk_window_set_focus(GTK_WINDOW(dialog),scan_focal[focal_pos]);
+
+	}
 }
 
 int on_changed_open_ut_pa_probe_file(GtkTreeSelection *selection,	gpointer       data)
@@ -4150,6 +4313,9 @@ int on_changed_open_ut_pa_probe_file(GtkTreeSelection *selection,	gpointer      
 	return TRUE;
 }
 
+
+
+
 void draw_define_probe()
 {	
 	GtkWindow *window = GTK_WINDOW (pp->window);
@@ -4255,7 +4421,7 @@ void draw_define_probe()
 	//探头的类型的滚动窗口
 	list_sw = gtk_scrolled_window_new (NULL, NULL);
 	
-	gtk_widget_set_size_request(GTK_WIDGET(list_sw),300,514);
+	gtk_widget_set_size_request(GTK_WIDGET(list_sw),400,514);
 
 	//源文件列表
 	source_list = gtk_tree_view_new();
@@ -4271,9 +4437,7 @@ void draw_define_probe()
 	source_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(source_list));
 
 	full_screen_box = gtk_hbox_new(FALSE,0);
-
 	left_box = gtk_hbox_new(FALSE,0);
-
 	right_box = gtk_vbox_new(FALSE,0);
 
 	model_fixed = gtk_fixed_new();
@@ -4341,38 +4505,25 @@ void draw_define_probe()
 	if ( pGroup->group_mode == PA_SCAN )
 	{
 		gtk_box_pack_start(GTK_BOX(right_box),model_fixed,FALSE,FALSE,10);
-
 		gtk_box_pack_start(GTK_BOX(right_box),serial_fixed,FALSE,FALSE,10);
-
 		gtk_box_pack_start(GTK_BOX(right_box),probe_type_fixed,FALSE,FALSE,10);
-
 		gtk_box_pack_start(GTK_BOX(right_box),frequency_fixed,FALSE,FALSE,10);
-
 		gtk_box_pack_start(GTK_BOX(right_box),element_qty_fixed,FALSE,FALSE,10);
-
 		gtk_box_pack_start(GTK_BOX(right_box),ref_point_fixed,FALSE,FALSE,10);
-
 		gtk_box_pack_start(GTK_BOX(right_box),pitch_fixed,FALSE,FALSE,10);
 	}
 	else// if ( pGroup->group_mode == UT_SCAN )
 	{
 		gtk_box_pack_start(GTK_BOX(right_box),model_fixed,FALSE,FALSE,10);
-
 		gtk_box_pack_start(GTK_BOX(right_box),serial_fixed,FALSE,FALSE,10);
-
 		gtk_box_pack_start(GTK_BOX(right_box),frequency_fixed,FALSE,FALSE,10);
-
 		gtk_box_pack_start(GTK_BOX(right_box),element_size_fixed,FALSE,FALSE,10);
 	}
 
 	gtk_container_add(GTK_CONTAINER(list_sw), source_list);
-
 	gtk_box_pack_start(GTK_BOX(left_box),list_sw,FALSE,FALSE,0);
-
 	gtk_box_pack_start(GTK_BOX(full_screen_box),left_box,FALSE,FALSE,0);
-
     gtk_box_pack_start(GTK_BOX(full_screen_box),right_box,FALSE,FALSE,0);
-
 	gtk_box_pack_start(GTK_BOX(vbox_first),full_screen_box,FALSE,FALSE,0);
 
 	if ( pGroup->group_mode == PA_SCAN )
@@ -4385,7 +4536,6 @@ void draw_define_probe()
 	}
 	
     g_signal_connect (G_OBJECT(dialog), "response",G_CALLBACK(signal_define_probe), (gpointer)&open_ut_pa_probe_file);/*确定 or 取消*/
-
 	g_signal_connect (G_OBJECT (source_selection), "changed", G_CALLBACK(on_changed_open_ut_pa_probe_file), (gpointer)&open_ut_pa_probe_file);
 
 	//显示窗口
@@ -4411,6 +4561,10 @@ static void signal_define_wedge(GtkDialog *dialog, gint response_id, gpointer us
 
 	int id;
 
+	static int focal_pos = 0;
+
+	GtkWidget *scan_focal[8]; 
+
 	struct _Group * pGroup = NULL;
 
 	if( ( pp->pos == 5 ) && ( pp->pos1[pp->pos] == 0 ) && ( pp->pos2[pp->pos][pp->pos1[pp->pos]] == 4 ) )
@@ -4420,6 +4574,27 @@ static void signal_define_wedge(GtkDialog *dialog, gint response_id, gpointer us
 	else if ( ( pp->pos == 0 ) && ( pp->pos1[pp->pos] == 0 ) && (pp->pos2[pp->pos][pp->pos1[pp->pos]] == 3 ) ) 
 	{
 		pGroup = &g_tmp_group_struct;
+	}
+
+	if ( pGroup->group_mode == PA_SCAN )
+	{
+		scan_focal[0] = open_ut_pa_wedge_file_p->model_entry;		
+		scan_focal[1] = open_ut_pa_wedge_file_p->serial_entry;
+		scan_focal[2] = open_ut_pa_wedge_file_p->angle_entry;
+		scan_focal[3] = open_ut_pa_wedge_file_p->orientation_combo;
+		scan_focal[4] = open_ut_pa_wedge_file_p->velocity_entry;
+		scan_focal[5] = open_ut_pa_wedge_file_p->pri_offset_entry;
+		scan_focal[6] = open_ut_pa_wedge_file_p->sec_offset_entry;
+		scan_focal[7] = open_ut_pa_wedge_file_p->hight_entry;
+	}
+	else
+	{
+		scan_focal[0] = open_ut_pa_wedge_file_p->model_entry;		
+		scan_focal[1] = open_ut_pa_wedge_file_p->serial_entry;
+		scan_focal[2] = open_ut_pa_wedge_file_p->angle_entry;
+		scan_focal[3] = open_ut_pa_wedge_file_p->probe_delay_entry;
+		scan_focal[4] = open_ut_pa_wedge_file_p->wave_type_combo;
+		scan_focal[5] = open_ut_pa_wedge_file_p->ref_point_entry;
 	}
 
     //点击了确认
@@ -4535,6 +4710,22 @@ static void signal_define_wedge(GtkDialog *dialog, gint response_id, gpointer us
 		//关闭对话框
 		gtk_widget_destroy (GTK_WIDGET (dialog));
 		change_keypress_event (KEYPRESS_MAIN);
+	}
+	else if (RESPONSE_CHANGE_FOCAL == response_id)
+	{
+		focal_pos++;
+
+		if ( pGroup->group_mode == PA_SCAN )		
+		{
+			if (focal_pos >=8 ) focal_pos = 0;
+		}
+		else 
+		{
+			if (focal_pos >=6) focal_pos = 0;
+		}
+		
+		gtk_window_set_focus(GTK_WINDOW(dialog),scan_focal[focal_pos]);
+
 	}
 }
 

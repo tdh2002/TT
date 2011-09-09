@@ -107,7 +107,7 @@ const gchar *backpic[] =
 	"pic/20.png", "pic/21.png", "pic/22.png",		/* 三级菜单名称 0按下 1未选中 2 停留 */
 	"pic/30.png", "pic/31.png", "pic/32.png",		/* 三级菜单数值 0按下 1未选中 2 停留 */
 	"pic/tt.png", "pic/311.png", "pic/322.png",      	/* 软键盘图标 */
-	"pic/snow.png","pic/black_25.png"
+	"pic/snow.png","pic/black_25.png","pic/file_name_40.png"
 };
 
 GdkPixbuf *g_pixbuf_[18];

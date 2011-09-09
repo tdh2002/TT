@@ -428,4 +428,14 @@ receiver. PR is for separate pulser and receiver.收发分离 或者收发一体
 	*/
 #define setup_ALARM_MAX_STAT	32  
 
+
+//各种response消息
+#define RESPONSE_FILE_OPEN	1
+#define RESPONSE_CLOSE	2 
+#define RESPONSE_CONFIG_SAVE	3
+#define RESPONSE_CONFIG_FILE_FOCAL	4
+#define RESPONSE_SAVE_AND_CLOSE	5
+#define RESPONSE_CHANGE_FOCAL	6
+#define RESPONSE_SELECT_AND_CLOSE	7
+
 #endif

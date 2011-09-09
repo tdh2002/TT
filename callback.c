@@ -27,7 +27,6 @@ gboolean foo (GtkAccelGroup *accel_group, GObject *acceleratable,
 
 gboolean key_press_handler (GtkWidget* pWidget,
 		GdkEventKey* pEvent, gpointer data);
-
 void send_spi_data (gint group);
 guint get_beam_qty();
 guint get_skew();
@@ -2630,11 +2629,102 @@ static gint keypress_event_dialog(GtkWidget *widget, GdkEventKey *event)			/* è‡
 		case GDK_F12:
 			if((pp->pos==6)&&(pp->pos1[6]==4)&&((pp->pos2[6][4]==1)||(pp->pos2[6][4]==2))&&(pp->pos_pos==MENU3_PRESSED))
 				gtk_dialog_response (GTK_DIALOG(widget), GTK_RESPONSE_OK);
+
+			if((pp->pos==5)&&(pp->pos1[pp->pos]==0)&&(pp->pos2[5][0]==3)&&(pp->pos_pos==MENU3_PRESSED))
+				gtk_dialog_response (GTK_DIALOG(widget), RESPONSE_CHANGE_FOCAL);
+
+			if((pp->pos==5)&&(pp->pos1[pp->pos]==0)&&(pp->pos2[5][0]==4)&&(pp->pos_pos==MENU3_PRESSED))
+				gtk_dialog_response (GTK_DIALOG(widget), RESPONSE_CHANGE_FOCAL);			
+						
 			return 0;
 			break;
 		case GDK_F11:
 			if((pp->pos==6)&&(pp->pos1[6]==4)&&((pp->pos2[6][4]==1)||(pp->pos2[6][4]==2))&&(pp->pos_pos==MENU3_PRESSED))
 				gtk_dialog_response (GTK_DIALOG(widget), GTK_RESPONSE_CANCEL);
+			
+			if((pp->pos==8)&&(pp->pos1[pp->pos]==0)&&(pp->pos2[pp->pos][pp->pos1[pp->pos]]==1)&&(pp->pos_pos==MENU3_PRESSED))
+				gtk_dialog_response (GTK_DIALOG(widget), GTK_RESPONSE_CANCEL);
+
+			if((pp->pos==8)&&(pp->pos1[pp->pos]==0)&&(pp->pos2[pp->pos][pp->pos1[pp->pos]]==2)&&(pp->pos_pos==MENU3_PRESSED))
+				gtk_dialog_response (GTK_DIALOG(widget), GTK_RESPONSE_CANCEL);
+
+			return 0;
+			break;
+		case GDK_Super_L:
+			if((pp->pos==8)&&(pp->pos1[pp->pos]==0)&&(pp->pos2[pp->pos][pp->pos1[pp->pos]]==1)&&(pp->pos_pos==MENU3_PRESSED))
+			{
+				gtk_dialog_response (GTK_DIALOG(widget), RESPONSE_FILE_OPEN);
+			}
+
+			if((pp->pos==8)&&(pp->pos1[pp->pos]==0)&&(pp->pos2[pp->pos][pp->pos1[pp->pos]]==2)&&(pp->pos_pos==MENU3_PRESSED))
+			{
+				gtk_dialog_response (GTK_DIALOG(widget), RESPONSE_CONFIG_SAVE);
+			}
+
+			return 0;
+			break;
+
+		case GDK_F2:
+			
+			if((pp->pos==8)&&(pp->pos1[pp->pos]==0)&&(pp->pos2[pp->pos][pp->pos1[pp->pos]]==2)&&(pp->pos_pos==MENU3_PRESSED))
+			{
+				gtk_dialog_response (GTK_DIALOG(widget), RESPONSE_CONFIG_FILE_FOCAL);
+			}
+
+
+			return 0;
+			break;
+
+		case GDK_F6:
+			
+			if((pp->pos==9)&&(pp->pos1[pp->pos]==2)&&(pp->pos2[pp->pos][pp->pos1[pp->pos]]==0)&&(pp->pos_pos==MENU3_PRESSED))
+			{
+				gtk_dialog_response (GTK_DIALOG(widget), RESPONSE_SAVE_AND_CLOSE);
+			}
+
+			if((pp->pos==8)&&(pp->pos1[pp->pos]==1)&&(pp->pos2[pp->pos][pp->pos1[pp->pos]]==3)&&(pp->pos_pos==MENU3_PRESSED))
+			{
+				gtk_dialog_response (GTK_DIALOG(widget), RESPONSE_SAVE_AND_CLOSE);
+			}
+
+			if((pp->pos==5)&&(pp->pos1[pp->pos]==0)&&(pp->pos2[5][0]==3)&&(pp->pos_pos==MENU3_PRESSED))
+				gtk_dialog_response (GTK_DIALOG(widget), GTK_RESPONSE_OK );
+
+			if((pp->pos==5)&&(pp->pos1[pp->pos]==0)&&(pp->pos2[5][0]==4)&&(pp->pos_pos==MENU3_PRESSED))
+				gtk_dialog_response (GTK_DIALOG(widget),GTK_RESPONSE_OK );	
+
+			return 0;
+			break;
+
+		case GDK_F1:
+			
+			if((pp->pos==9)&&(pp->pos1[pp->pos]==2)&&(pp->pos2[pp->pos][pp->pos1[pp->pos]]==0)&&(pp->pos_pos==MENU3_PRESSED))
+			{
+				gtk_dialog_response (GTK_DIALOG(widget), RESPONSE_CLOSE);
+			}
+
+			if((pp->pos==8)&&(pp->pos1[pp->pos]==1)&&(pp->pos2[pp->pos][pp->pos1[pp->pos]]==3)&&(pp->pos_pos==MENU3_PRESSED))
+			{
+				gtk_dialog_response (GTK_DIALOG(widget), RESPONSE_CLOSE);
+			}
+
+			if((pp->pos==5)&&(pp->pos1[pp->pos]==0)&&(pp->pos2[5][0]==3)&&(pp->pos_pos==MENU3_PRESSED))
+				gtk_dialog_response (GTK_DIALOG(widget), GTK_RESPONSE_CANCEL );
+
+			if((pp->pos==5)&&(pp->pos1[pp->pos]==0)&&(pp->pos2[5][0]==4)&&(pp->pos_pos==MENU3_PRESSED))
+				gtk_dialog_response (GTK_DIALOG(widget),GTK_RESPONSE_CANCEL );	
+
+			return 0;
+			break;
+
+		case GDK_F5:
+
+			if((pp->pos==5)&&(pp->pos1[pp->pos]==0)&&(pp->pos2[5][0]==3)&&(pp->pos_pos==MENU3_PRESSED))
+				gtk_dialog_response (GTK_DIALOG(widget), RESPONSE_SELECT_AND_CLOSE);
+
+			if((pp->pos==5)&&(pp->pos1[pp->pos]==0)&&(pp->pos2[5][0]==4)&&(pp->pos_pos==MENU3_PRESSED))
+				gtk_dialog_response (GTK_DIALOG(widget), RESPONSE_SELECT_AND_CLOSE);	
+
 			return 0;
 			break;
 		default:break;
