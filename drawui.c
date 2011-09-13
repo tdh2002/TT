@@ -7000,7 +7000,8 @@ void draw3_data1(DRAW_UI_P p)
 				case 0:/* 打开文件 P801 */
 					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 1))
 						draw_dialog_all (DIALOG_FILE_OPEN);
-					draw3_popdown(NULL,1,1);
+					else
+						draw3_popdown(NULL,1,1);
 					break;
 
 				case 1:/*File -> report -> file name p811 */
@@ -17290,8 +17291,9 @@ void draw_field_value ()
 	markup2 = g_markup_printf_escaped ("<span foreground='white' font_desc='24'>%.2f</span>", TMP(field[2]));
 	markup3 = g_markup_printf_escaped ("<span foreground='white' font_desc='24'>%.2f</span>", TMP(field[3]));
 	/*实时更新编码器信息*/
-	markup_encoder = g_markup_printf_escaped ("<span foreground='white' font_desc='10'>X: %.1f s</span>",
-					(gfloat)(TMP(measure_data[index][4])));
+	if(get_inspec_source (pp->p_config)==0)
+		markup_encoder = g_markup_printf_escaped ("<span foreground='white' font_desc='10'>X: %.1f s</span>",
+						(gfloat)(TMP(measure_data[index][4])));
 	gdk_threads_enter();
 	if( !pp->clb_encoder )
 	{

@@ -453,6 +453,7 @@ static void save_cal_law(gint offset, gint group, PARAMETER_P p)
 		TMP(field_distance[i]) = (gfloat)(p->field_distance[i]);//每束 中心正元到出射点的距离 单位mm
 		pp->G_delay[i] = (gint)p->G_delay[i];////保存每一个beam的延时  方便用于显示
 		BEAM_INFO(i+offset,beam_delay) = pp->G_delay[i];//modified by hefan
+	//	printf("beam_delay[%d]=%d \n", i, pp->G_delay[i]);
 		//***************************************
 		if(LAW_VAL_POS(group, Focal_type) == 1)//Linear
 		{
@@ -1053,7 +1054,8 @@ void b3_fun1(gpointer p)
 	gint grp = get_current_group(pp->p_config);//当前group
 	for (offset = 0, k = 0 ; k < grp; k++)
 		offset += TMP(beam_qty[k]);
-	gint index = offset + TMP(beam_num[grp]);	
+	gint index = offset + TMP(beam_num[grp]);
+	gint thread_count = 10;
 	if (LAW_VAL (Focal_type) == AZIMUTHAL_SCAN)
 	{
 		step = (gint)( (LAW_VAL(Angle_max) - LAW_VAL(Angle_min)) / LAW_VAL(Angle_step) + 1);
@@ -1100,19 +1102,22 @@ void b3_fun1(gpointer p)
 											get_enc_origin (pp->p_config, get_cur_encoder (pp->p_config))/1000.0);
 									gtk_label_set_markup (GTK_LABEL (pp->label[7]), markup); 
 
-									//while(1)
-									//{
+									while(thread_count)
+									{
+										thread_count-- ;
 										tmp_data = TMP(measure_data[index][4]);
 									//	if(tmp_data != TMP_CBA(measure_start))
 									//					break;
-									//}
-									printf("\ntmp_data = %d\n",tmp_data);
+									}
+									//printf("\ntmp_data = %d\n",tmp_data);
 									if(tmp_data != TMP_CBA(measure_start))
 									{
 										pthread_mutex_lock(&qlock);
 										pthread_cond_signal(&qready);
 										pthread_mutex_unlock(&qlock);
 									}
+									else
+										TMP_CBA(measure_end) = TMP_CBA(measure_start);
 								}
 								else if((pp->cstart_qty) == 4)
 								{
