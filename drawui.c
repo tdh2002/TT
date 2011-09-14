@@ -7262,7 +7262,7 @@ void draw3_data2(DRAW_UI_P p)
 							{
 								draw3_pop_tt (data_0023, NULL, 
 									menu_content[GROUP_MODE_P + (g_tmp_group_struct.group_mode)],
-									menu_content + GROUP_MODE, 2, 2, (g_tmp_group_struct.group_mode), 0);
+									menu_content + GROUP_MODE, 4, 2, (g_tmp_group_struct.group_mode), 0);
 							}
 							else 
 							{
@@ -7400,8 +7400,45 @@ void draw3_data2(DRAW_UI_P p)
 					else if (pp->start_qty == 8)
 					{
 						//if (g_group_wizard_struct.operation == modify)
-						{
+						//{
 							draw3_popdown_offset (NULL, 2, 1, 15 );
+						//}
+						
+						if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 2))
+						{
+							pp->start_qty = 0;
+							pp->pos = 0;
+							pp->pos1[pp->pos] = 1;
+							pp->pos2[pp->pos][pp->pos1[pp->pos]] = 0;
+
+
+							if ( g_group_wizard_struct.operation == modify ) 
+							{	
+								//
+								pp->p_config->groupId = pp->wgroup_pos;
+								//用户点击finish按钮后，把临时的group copy去
+								memcpy(&(pp->p_config->group[pp->p_config->groupId]),&g_tmp_group_struct,sizeof(struct _Group));
+							}
+							else if ( g_group_wizard_struct.operation == add )
+							{
+								//之所以这么写，
+								//是因为groupQty代表group的数量，是从1开始数的。
+								//groudId代表，选中是那个group，是从0开始数的。
+								//新增group，是在最后那个group后面新增的。
+								pp->p_config->groupId = pp->p_config->groupQty;
+
+								(pp->p_config->groupQty)++;
+
+								memcpy(&(pp->p_config->group[pp->p_config->groupId]),&g_tmp_group_struct,sizeof(struct _Group));
+							}
+                        	
+							if(GROUP_VAL(group_mode)!=1) /*group mode 选择UT时，focal law 不可用*/
+								gtk_widget_set_sensitive(pp->menuitem[6],FALSE);
+							else
+								gtk_widget_set_sensitive(pp->menuitem[6],TRUE);
+
+							draw_menu2(0);
+							draw_menu3(0,NULL);
 						}
 					}
 					else if( pp->start_qty == 9 )
@@ -10435,8 +10472,9 @@ void draw3_data3(DRAW_UI_P p)
 							draw3_digit_stop (cur_value, units[unit], digit, pos, 12);
 						}
 					}
-					else
+					else 
 					{
+
 						gtk_widget_hide (pp->eventbox30[3]);
 						gtk_widget_hide (pp->eventbox31[3]);
 					}
