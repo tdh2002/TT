@@ -262,6 +262,7 @@ typedef struct tmp_config
 	gushort	*virtual_add;
 
 	guint	beam_num[setup_MAX_GROUP_QTY];		/* Group 显示的beam编号 */
+	float   current_angle[setup_MAX_GROUP_QTY]; // current angle
 	guint	beam_qty[setup_MAX_GROUP_QTY];		/* Group beam总数量	*/
 	gfloat   field_distance[setup_MAX_LAW_QTY];/* 每束中心正元到出射点的距离 */
 	guint	angle_num;						/* 几个angle */
