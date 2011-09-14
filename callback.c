@@ -2833,7 +2833,8 @@ static int handler_key(guint keyval, gpointer data)
 
 //	double current_angle ;
 //	double max_angle     ;
-//	int BeamNo ;
+	int BeamNo ;
+	float current_angle;
 
 	switch (keyval) 
 	{
@@ -2933,31 +2934,18 @@ static int handler_key(guint keyval, gpointer data)
 				BEAM_INFO(offset + TMP(beam_num[group]),beam_delay) = pp->G_delay[ TMP(beam_num[group]) ];
 				GROUP_VAL(gain_offset[TMP(beam_num[group]) + offset]) = 
 								pp->tmp_gain_off[TMP(beam_num[group]) + offset];
-		        //  add by shensheng
-				//BeamNo = pp->p_tmp_config->beam_num[group];
-			    //if(LAW_VAL(Focal_type) == 0)
-			   // {
-			   // 	current_angle = LAW_VAL(Angle_min)/100.0 + BeamNo * LAW_VAL(Angle_step)/100.0 ;
-				//max_angle = MAX(abs(LAW_VAL(Angle_min)), abs(LAW_VAL(Angle_max))) * G_PI / 180.0 ;
-			    //}
-			    //else
-			    //{
-			    //	current_angle = LAW_VAL(Angle_min)/100.0 ;
-			    //	max_angle = LAW_VAL(Angle_min) * G_PI / 180.0 ;
-			    //}
-			    //current_angle = current_angle * G_PI / 180.0 ;
 
-				//TMP(group_spi[group]).gate_a_start	= 	(int)( GROUP_VAL_POS(group, gate[0].start) / (10 * cos(current_angle)));
-				//TMP(group_spi[group]).gate_a_end	=   (int)(GROUP_VAL_POS(group, gate[0].start) + GROUP_VAL_POS (group, gate[0].width)) / (10 * cos(current_angle));
+				BeamNo = pp->p_tmp_config->beam_num[group];
+			    if(LAW_VAL(Focal_type) == 0)
+			    {
+			    	current_angle = LAW_VAL(Angle_min)/100.0 + BeamNo * LAW_VAL(Angle_step)/100.0 ;
+			    }
+			    else
+			    {
+			    	current_angle = LAW_VAL(Angle_min)/100.0 ;
+			    }
+			    TMP(current_angle[group]) = current_angle * G_PI / 180.0 ;
 
-				//TMP(group_spi[group]).gate_b_start	= 	(int)( GROUP_VAL_POS(group, gate[1].start) / (10 * cos(current_angle)));
-				//TMP(group_spi[group]).gate_b_end	=   (int)(GROUP_VAL_POS(group, gate[1].start) + GROUP_VAL_POS (group, gate[1].width)) / (10 * cos(current_angle));
-
-				//TMP(group_spi[group]).gate_i_start	= 	(int)( GROUP_VAL_POS(group, gate[2].start) / (10 * cos(current_angle)));
-				//TMP(group_spi[group]).gate_i_end	=   (int)(GROUP_VAL_POS(group, gate[2].start) + GROUP_VAL_POS (group, gate[2].width)) / (10 * cos(current_angle));
-
-			    // *************************
-				//write_group_data (&TMP(group_spi[group]), group);
 				draw_menu3(0, NULL);
 				if(!pp->clb_flag)
 					draw_area_all();
@@ -3725,17 +3713,16 @@ void data_101 (GtkSpinButton *spinbutton, gpointer data) /*Start 扫描延时 P1
     }
     current_angle = current_angle * G_PI / 180.0 ;
 
-
 	if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 	{
 		if (UNIT_MM == get_unit(pp->p_config))
 			set_group_val (p_grp, GROUP_START,
 					(gint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / 
-						(get_group_val (p_grp, GROUP_VELOCITY) / 100000.0)));
+						(cos(TMP(current_angle[grp])) * get_group_val (p_grp, GROUP_VELOCITY) / 100000.0)));
 		else  /* 英寸 */
 			set_group_val (p_grp, GROUP_START,
 					(gint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / 
-						(0.03937 * get_group_val (p_grp, GROUP_VELOCITY) / 100000.0)));
+						(cos(TMP(current_angle[grp])) * 0.03937 * get_group_val (p_grp, GROUP_VELOCITY) / 100000.0)));
 	}
 	else /* 显示方式为时间 */
 		set_group_val (p_grp, GROUP_START,
@@ -3743,14 +3730,16 @@ void data_101 (GtkSpinButton *spinbutton, gpointer data) /*Start 扫描延时 P1
 	
 	set_group_val (p_grp, GROUP_START,
 			((get_group_val (p_grp, GROUP_START) + 5) / 10 ) * 10);
+
 	if(!pp->clb_flag)
 			draw_area_all();
 	else
 			draw_area_calibration();
+
 	TMP(group_spi[grp]).sample_start	= (get_group_val (p_grp, GROUP_START) +
 			get_group_val (p_grp, GROUP_WEDGE_DELAY)) / 10;
 	TMP(group_spi[grp]).sample_range	= TMP(group_spi[grp]).sample_start + 
-		get_group_val (p_grp, GROUP_RANGE) / 10;		
+		    get_group_val (p_grp, GROUP_RANGE) / 10;
 
 	tt[0] = (GROUP_VAL_POS(grp, gate[0].start) +	GROUP_VAL_POS (grp, gate[0].width));
 	tt[1] = (GROUP_VAL_POS(grp, gate[1].start) +	GROUP_VAL_POS (grp, gate[1].width));
@@ -3791,21 +3780,16 @@ void data_102 (GtkSpinButton *spinbutton, gpointer data) /*Range 范围 P102 */
     }
     current_angle = current_angle * G_PI / 180.0 ;
 
-
-//	gint range = ((gint)(gtk_spin_button_get_value(spinbutton) * 1000) + 5) / 10 * 10;
-
-//	((GROUP_VAL(point_qty) * 100) + 5) / 10 * 10;
-
 	if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 	{
 		if (UNIT_MM == get_unit(pp->p_config))
 			set_group_val (p_grp, GROUP_RANGE,
 					(gint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / 
-						(get_group_val (p_grp, GROUP_VELOCITY) / 100000.0)));
+						(cos(TMP(current_angle[grp])) * get_group_val (p_grp, GROUP_VELOCITY) / 100000.0)));
 		else  /* 英寸 */
 			set_group_val (p_grp, GROUP_RANGE,
 					(gint) (gtk_spin_button_get_value (spinbutton) * 2000.0 /
-						(0.03937 * get_group_val (p_grp, GROUP_VELOCITY) / 100000.0)));
+						( cos(TMP(current_angle[grp])) * 0.03937 * get_group_val (p_grp, GROUP_VELOCITY) / 100000.0)));
 	}
 	else /* 显示方式为时间 */
 		set_group_val (p_grp, GROUP_RANGE,
@@ -6243,7 +6227,7 @@ void generate_focallaw(int grp)
 	}
 	else if(LAW_VAL (Focal_type) == LINEAR_SCAN) 
 	{
-		temp_beam = (gint)( ( LAW_VAL (Last_tx_elem)-LAW_VAL(First_tx_elem) - LAW_VAL(Elem_qty) + 1 ) /
+		temp_beam = (gint)( ( LAW_VAL (Last_tx_elem) - LAW_VAL(First_tx_elem) - LAW_VAL(Elem_qty) + 1 ) /
 				LAW_VAL(Elem_step) ) + 1;
 		step = (gint)( ( LAW_VAL (Last_tx_elem)-LAW_VAL(First_tx_elem) - LAW_VAL(Elem_qty) + 1 ) /
 				LAW_VAL(Elem_step) ) + 1;
@@ -6260,6 +6244,7 @@ void generate_focallaw(int grp)
 
 	TMP(beam_qty[grp])	= temp_beam;
 	TMP(beam_num[grp]) = 0;
+	TMP(current_angle[grp]) = LAW_VAL(Angle_min) * G_PI / 18000.0 ;
 
 	TMP(group_spi[grp]).point_qty = GROUP_VAL(point_qty);
 
