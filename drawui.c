@@ -2416,15 +2416,22 @@ static gboolean draw_other_info (GtkWidget *widget, GdkEventExpose *event, gpoin
 	cairo_move_to (cr, 55, y2 + 5);
 	cairo_line_to (cr, 55, y2 + 10);
 
-	/* 更新电池信息*/ 
-	switch(pp->battery.status1)//电池1
+	cairo_stroke (cr);
+
+	cairo_set_source_rgba (cr, 0.3, 0.8, 0.3, 1);
+	cairo_rectangle (cr , 0, y1, 0.5*(pp->battery.power1), 15);
+	cairo_rectangle (cr , 0, y2, 0.5*(pp->battery.power2), 15);
+	cairo_fill (cr);
+	/* 更新电池信息
+	switch(0x01)//(pp->battery.status1)//电池1
 	{
 		case 0x00://没连接
 			break;
 		case 0x01://放电
 			//显示剩余电量
-			cairo_set_source_rgba (cr, 0.3, 0.3, 0.3, 1);
-			cairo_rectangle (cr , 0, y1, 50*(pp->battery.power1), 15);
+			cairo_set_source_rgba (cr, 1, 0, 0, 1);
+			cairo_rectangle (cr , 0, y1, 50*0.45,15);//;50*(pp->battery.power1), 15);//
+			cairo_rectangle (cr , 0, y2, 50*0.85,15);//;50*(pp->battery.power1), 15);//
 			cairo_fill (cr);
 			break;
 		case 0x02://充电
@@ -2437,7 +2444,7 @@ static gboolean draw_other_info (GtkWidget *widget, GdkEventExpose *event, gpoin
 		default :
 			break;
 	}
-
+*/
 	cairo_stroke (cr);
 	cairo_destroy(cr);//销毁画笔
 	return TRUE;
@@ -17238,7 +17245,7 @@ static void signal_scan_thread(void)
 static void key_message_thread(void)
 {
 	char key = 0;
-	char bar[3] = {0};
+	char bar[2] = {0};
     while(1)
 	{
 	    if (read(pp->fd_key, &key, 1) > 0) 
@@ -17253,18 +17260,12 @@ static void key_message_thread(void)
 					{
 						//将所有电池信息全部读取出来
 						read(pp->fd_key, &(pp->battery), 28);
-						if(pp->battery.on_off==0x50)  save_config(NULL,NULL,NULL);
-						printf("read battery info successfully \
-							power1=%d status1=%d time1=%d \n\
-							power2=%d status2=%d time2=%d \n\
-							temp1=%d temp2=%d temp3=%d \n\
-							temp4=%d temp5=%d temp6=%d \n\
-							end1=%d end2=%d end3=%d \n",
-							pp->battery.power1, pp->battery.status1, pp->battery.time1,
-							pp->battery.power2, pp->battery.status2, pp->battery.time2,
-							pp->battery.temp1,  pp->battery.temp2,   pp->battery.temp3,
-							pp->battery.temp4,  pp->battery.temp5,   pp->battery.temp6,
-							pp->battery.end1,   pp->battery.end2,    pp->battery.end3   );
+						if(pp->battery.on_off==0x50)  
+								save_config(NULL,NULL,NULL);
+						
+						gdk_threads_enter();
+						draw_other_info(NULL,NULL,NULL);//pp->drawing_area
+						gdk_threads_leave();	
 					}
 				}
 			}	 	
@@ -17435,6 +17436,7 @@ void draw_field_value ()
 	gint offset,k;
 
 	gint grp = get_current_group(pp->p_config);//当前group
+	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
 	for (offset = 0, k = 0 ; k < grp; k++)
 		offset += TMP(beam_qty[k]);
 	gint index = offset + TMP(beam_num[grp]);	
@@ -17447,6 +17449,10 @@ void draw_field_value ()
 	if(get_inspec_source (pp->p_config)==0)
 		markup_encoder = g_markup_printf_escaped ("<span foreground='white' font_desc='10'>X: %.1f s</span>",
 						(gfloat)(TMP(measure_data[index][4])));
+	else
+		markup_encoder = g_markup_printf_escaped ("<span foreground='white' font_desc='10'>X: %.1f mm</span>",
+						(gfloat)(get_group_val (p_grp, GROUP_PRF_VAL)));
+
 	gdk_threads_enter();
 	if( !pp->clb_encoder )
 	{
