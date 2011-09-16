@@ -131,7 +131,7 @@ void init_mem ()
 void init_serial ()
 {
 	struct termios newtermios;
-	pp->fd_key = open(TTY_DEVICE, O_RDWR | O_NOCTTY );
+	pp->fd_key = open(TTY_DEVICE, O_RDWR | O_NOCTTY | O_NDELAY);
 	if (pp->fd_key < 0) {
 		perror(TTY_DEVICE); 
 		return ;
