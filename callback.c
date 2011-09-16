@@ -3746,7 +3746,7 @@ void data_101 (GtkSpinButton *spinbutton, gpointer data) /*Start 扫描延时 P1
 	tt[2] = (GROUP_VAL_POS(grp, gate[2].start) +	GROUP_VAL_POS (grp, gate[2].width));
 
 	tt[3] = MAX(tt[0], (MAX(tt[1],tt[2]))) / 10;
-	tt[3] = (int) (tt[3] / cos(max_angle))  ;
+	//tt[3] = (int) (tt[3] / cos(max_angle))  ;
 
 	TMP(group_spi[grp]).rx_time		= MAX (tt[3], TMP(group_spi[grp]).sample_range + TMP(max_beam_delay[grp])) + TMP(group_spi[grp]).compress_rato;
 	temp_prf = TMP(beam_qty[grp]) * get_group_val (p_grp, GROUP_PRF_VAL);
@@ -3811,7 +3811,7 @@ void data_102 (GtkSpinButton *spinbutton, gpointer data) /*Range 范围 P102 */
 	tt[1] = (GROUP_VAL_POS(grp, gate[1].start) + GROUP_VAL_POS (grp, gate[1].width));
 	tt[2] = (GROUP_VAL_POS(grp, gate[2].start) + GROUP_VAL_POS (grp, gate[2].width));
 	tt[3] = MAX(tt[0], (MAX(tt[1],tt[2]))) / 10;
-	tt[3] = (int)( tt[3] / cos(max_angle));
+	//tt[3] = (int)( tt[3] / cos(max_angle));
 
 	TMP(group_spi[grp]).rx_time		= MAX (tt[3], TMP(group_spi[grp]).sample_range  +
 			TMP(max_beam_delay[grp])) + TMP(group_spi[grp]).compress_rato;
@@ -3860,7 +3860,7 @@ void data_103 (GtkSpinButton *spinbutton, gpointer data) /*楔块延时  P103 */
 	tt[2] = (GROUP_VAL_POS(grp, gate[2].start) +	GROUP_VAL_POS (grp, gate[2].width));
 
 	tt[3] = MAX(tt[0], (MAX(tt[1],tt[2]))) / 10;
-	tt[3] = (gint)(tt[3]/cos(max_angle));
+	//tt[3] = (gint)(tt[3]/cos(max_angle));
 
 	TMP(group_spi[grp]).rx_time		= MAX (tt[3], TMP(group_spi[grp]).sample_range  + TMP(max_beam_delay[grp])) + TMP(group_spi[grp]).compress_rato;
 	temp_prf = TMP(beam_qty[grp]) * get_group_val (p_grp, GROUP_PRF_VAL);
@@ -4435,25 +4435,25 @@ void data_202 (GtkSpinButton *spinbutton, gpointer data)	/* 闸门开始位置 P
 	
 	if (GROUP_VAL(gate_pos) == GATE_A)
 	{
-		TMP(group_spi[grp]).gate_a_start	= 	(int)GROUP_GATE_POS(start) / (10 * cos(current_angle));
-		TMP(group_spi[grp]).gate_a_end	= (int)(GROUP_GATE_POS(start)  +  GROUP_GATE_POS (width)) / (10 * cos(current_angle));
+		TMP(group_spi[grp]).gate_a_start	= 	(int)GROUP_GATE_POS(start) / 10 ;
+		TMP(group_spi[grp]).gate_a_end	= (int)(GROUP_GATE_POS(start)  +  GROUP_GATE_POS (width)) / 10;
 	}
 	else if (GROUP_VAL(gate_pos) == GATE_B)
 	{ 
 		TMP(group_spi[grp]).gate_b_start	= 	(int)GROUP_GATE_POS(start) / (10 * cos(current_angle));
-		TMP(group_spi[grp]).gate_b_end	= (int)(GROUP_GATE_POS(start)  +  GROUP_GATE_POS (width)) / (10 * cos(current_angle));
+		TMP(group_spi[grp]).gate_b_end	= (int)(GROUP_GATE_POS(start)  +  GROUP_GATE_POS (width)) / 10;
 	}
 	else if (GROUP_VAL(gate_pos) == GATE_I)
 	{
 		TMP(group_spi[grp]).gate_i_start	= 	(int)GROUP_GATE_POS(start) / (10 * cos(current_angle));
-		TMP(group_spi[grp]).gate_i_end	= (int)(GROUP_GATE_POS(start)  +  GROUP_GATE_POS (width)) / (10 * cos(current_angle));
+		TMP(group_spi[grp]).gate_i_end	= (int)(GROUP_GATE_POS(start)  +  GROUP_GATE_POS (width)) / 10;
 	}
 	tt[0] = (GROUP_VAL_POS(grp, gate[0].start) + GROUP_VAL_POS (grp, gate[0].width));
 	tt[1] = (GROUP_VAL_POS(grp, gate[1].start) + GROUP_VAL_POS (grp, gate[1].width));
 	tt[2] = (GROUP_VAL_POS(grp, gate[2].start) + GROUP_VAL_POS (grp, gate[2].width));
 
 	tt[3] = MAX(tt[0], MAX(tt[1],tt[2])) / 10 ;
-	tt[3] = (gint)(tt[3] / cos(max_angle)) ;
+	//tt[3] = (gint)(tt[3] / cos(max_angle)) ;
 	TMP(group_spi[grp]).rx_time	= MAX (tt[3]  , TMP(group_spi[grp]).sample_range  + TMP(max_beam_delay[grp])) + TMP(group_spi[grp]).compress_rato;
 	temp_prf = TMP(beam_qty[grp]) * GROUP_VAL_POS(grp, prf1);
 	TMP(group_spi[grp]).idel_time	=
