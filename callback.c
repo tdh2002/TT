@@ -6,6 +6,7 @@
 #include "drawui.h"
 #include "focallaw.h"		/* 计算聚焦法则的头文件 */
 #include "base_config.h"
+#include "spi_d.h"
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
@@ -24,6 +25,7 @@ static int handler_key(guint keyval, gpointer data);
 static int thread_set_DB_eighty_percent(gpointer data);
 
 extern const gchar ****con2_p;
+extern int fd_array ;
 
 gboolean foo (GtkAccelGroup *accel_group, GObject *acceleratable,
 		guint keyval, GdkModifierType modifier, gpointer data);
@@ -3687,7 +3689,23 @@ void data_100 (GtkSpinButton *spinbutton, gpointer data) /* 增益Gain P100 */
 
 	g_free(markup);
 	TMP(group_spi[grp]).gain = get_group_val (p_grp, GROUP_GAIN) / 10;
-	write_group_data (&TMP(group_spi[grp]), grp);
+
+
+	group_data_spi new, *p1;
+	memcpy (&new, &TMP(group_spi[grp]), sizeof (group_data_spi));
+	p1 = &new;
+	p1->offset = 16 * grp;
+	p1->addr = 0x2;
+	little_to_big ((unsigned int *)(p1),2);
+        
+#if ARM
+/*	ioctl (fd_gpio, GPIO43_LOW, &i);*/ /* 发送group参数不复位 */
+	write (fd_array, (unsigned char *)(p1), 8);
+
+	//write_group_data (&TMP(group_spi[grp]), grp);
+
+	/* 发送给硬件 */
+#endif
 	/* 发送给硬件 */
 }
 
