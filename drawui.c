@@ -18113,5 +18113,4 @@ ssize_t treadn(int fd, void *buf, size_t nbytes, unsigned int timout)
             buf += nread;
        }
        return(nbytes - nleft);      /* return >= 0 */
-
 }
