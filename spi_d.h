@@ -152,4 +152,6 @@ extern void init_spi ();
 extern DWORD channel_select(unsigned int n);
 extern int write_group_data (group_data_spi *p, unsigned int group);
 extern int write_focal_data (focal_data_spi *p, unsigned int beam_num);
+extern void little_to_big(unsigned int *p, int n) ;
+
 #endif

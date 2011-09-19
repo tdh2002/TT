@@ -121,6 +121,8 @@ void draw_area_all();
 void draw_area_calibration();
 void switch_area();
 void draw_dac_tcg_curve(cairo_t *cr, int width, int height);
+ssize_t tread(int fd, void *buf, size_t nbytes, unsigned int timout);
+ssize_t treadn(int fd, void *buf, size_t nbytes, unsigned int timout);
 
 void save_config (GtkWidget *widget, GdkEventButton *event,	gpointer data);
 
@@ -17259,12 +17261,13 @@ static void key_message_thread(void)
 					if((bar[0]==0x55) && (bar[1]==0x55))
 					{
 						//将所有电池信息全部读取出来
-						read(pp->fd_key, &(pp->battery), 28);
+						treadn(pp->fd_key, &(pp->battery), 28, 0.1);//0.1s
+//						read(pp->fd_key, &(pp->battery), 28);
 						if(pp->battery.on_off==0x50)  
 								save_config(NULL,NULL,NULL);
 						
 						gdk_threads_enter();
-						draw_other_info(NULL,NULL,NULL);//pp->drawing_area
+						draw_other_info(pp->drawing_area,NULL,NULL);
 						gdk_threads_leave();	
 					}
 				}
@@ -17462,7 +17465,8 @@ void draw_field_value ()
 	gtk_label_set_markup (GTK_LABEL(pp->label[11]), markup1);
 	gtk_label_set_markup (GTK_LABEL(pp->label[13]), markup2);
 	gtk_label_set_markup (GTK_LABEL(pp->label[15]), markup3);
-
+    
+	//draw_other_info(NULL,NULL,NULL);
 	gdk_threads_leave();	
 	g_free (markup_encoder);
 	g_free (markup0);
@@ -18064,3 +18068,49 @@ void draw_dac_tcg_curve(cairo_t *cr,int width, int height)
 
 }
 
+ssize_t tread(int fd, void *buf, size_t nbytes, unsigned int timout)
+{
+
+       int                         nfds;
+       fd_set                   readfds;
+       struct timeval  tv;
+
+       tv.tv_sec = timout;
+       tv.tv_usec = 0;
+       FD_ZERO(&readfds);
+       FD_SET(fd, &readfds);
+       nfds = select(fd+1, &readfds, NULL, NULL, &tv);
+       if (nfds <= 0) 
+       {
+              if (nfds == 0)
+                     errno = ETIME;
+              return(-1);
+       }
+       else
+	      return(read(fd, buf, nbytes));
+}
+
+ssize_t treadn(int fd, void *buf, size_t nbytes, unsigned int timout)
+{
+       size_t      nleft;
+       ssize_t     nread;
+
+       nleft = nbytes;
+       while (nleft > 0) 
+       {
+			if ((nread = tread(fd, buf, nleft, timout)) < 0) 
+	        {
+                if (nleft == nbytes)
+                        return(-1); /* error, return -1 */
+                else
+                        break;      /* error, return amount read so far */
+            } 
+	        else if (nread == 0) 
+	        {
+                break;          /* EOF */
+            }
+            nleft -= nread;
+            buf += nread;
+       }
+       return(nbytes - nleft);      /* return >= 0 */
+}
