@@ -26,6 +26,9 @@
 #define YOFFSET  26
 
 
+GtkWidget *g_entry_name;
+GtkWidget *g_law_ebox_save;
+GtkWidget *g_law_ebox_read;
 GtkWidget * g_source_list = NULL;
 static _save_file_name_struct g_save_file_name_struct;
 
@@ -44,13 +47,14 @@ void set_dialog_menu_position(GtkMenu *menu, gint *x, gint *y,
 	return;
 }
 
-
+MY_SIGNAL g_my_signal;
 _my_ip_set entry_ip;
 _my_mask_set entry_mask;
 PROBE g_tmp_probe;
 WEDGE g_tmp_wedge;
 void cd_source_dir_path (GtkTreeView *tree_view,GtkTreePath *path,GtkTreeViewColumn *column,gpointer user_data);
 void cd_target_dir_path (GtkTreeView *tree_view,GtkTreePath *path,GtkTreeViewColumn *column,gpointer user_data);
+gboolean law_save (GtkWidget *widget, GdkEventButton *event, gpointer data);
 
 /* Probe 选择探头2个按键的处理 一个是确认 一个是取消 */
 static void da_call_probe (GtkDialog *dialog, gint response_id, gpointer user_data)      
@@ -2154,6 +2158,43 @@ static void draw_color_palette ()
 	gtk_widget_show_all(dialog);
 }
 
+static void  response_file_manage(GtkDialog *dialog, gint response_id, gpointer user_data)      
+{
+	if (GTK_RESPONSE_OK == response_id)  /* 保存信息 */
+	{
+
+	}
+	else if (GTK_RESPONSE_CANCEL == response_id) /* 取消 */
+	{
+
+	}
+	else if (RESPONSE_CLOSE == response_id)
+	{
+		gtk_widget_destroy (GTK_WIDGET (dialog));
+		change_keypress_event (KEYPRESS_MAIN);
+	}
+	else if (RESPONSE_SELECT_ALL == response_id)
+	{
+		Select_All_File(NULL,NULL,&g_my_signal);		
+	}
+	else if (RESPONSE_COPY_FILE == response_id)
+	{
+		Copy_File(NULL,NULL,&g_my_signal);
+	}
+	else if (RESPONSE_MOVE_FILE == response_id)
+	{
+		Move_File(NULL,NULL,&g_my_signal);
+	}
+	else if (RESPONSE_DELECT_FILE == response_id)
+	{
+		Delect_File(NULL,NULL,&g_my_signal);
+	}
+	else if (RESPONSE_RENAME_FILE == response_id)
+	{
+		
+	}
+}
+
 /* 12 文件管理 */
 static void draw_file_manage ()
 {
@@ -2215,7 +2256,7 @@ static void draw_file_manage ()
 	GtkTreeViewColumn *target_column;
 	GtkListStore *store;
 
-	static MY_SIGNAL my_signal;
+	//static MY_SIGNAL my_signal;
 
 	int i;
 
@@ -2404,12 +2445,12 @@ static void draw_file_manage ()
 
 	gtk_box_pack_start(GTK_BOX(hbox_first),hbox, FALSE, FALSE, 0);
 
-	my_signal.source_model = source_model;
-	my_signal.source_selection = source_selection;
-	my_signal.source_list = source_list;
-	my_signal.target_model = target_model;
-	my_signal.target_selection = target_selection;
-	my_signal.target_list = target_list;
+	g_my_signal.source_model = source_model;
+	g_my_signal.source_selection = source_selection;
+	g_my_signal.source_list = source_list;
+	g_my_signal.target_model = target_model;
+	g_my_signal.target_selection = target_selection;
+	g_my_signal.target_list = target_list;
 
 	dir_path_label_struct.file_type = file_type;
 	dir_path_label_struct.source_label = source_label;
@@ -2420,21 +2461,24 @@ static void draw_file_manage ()
 
 	g_signal_connect(G_OBJECT(hbox_1_1_2_1_1[1]), "button-press-event",G_CALLBACK(Select_All_File), (gpointer)source_list);
 
-	g_signal_connect(G_OBJECT(hbox_1_1_2_1_1[2]), "button-press-event",G_CALLBACK(Copy_File), (gpointer)&my_signal);
+	g_signal_connect(G_OBJECT(hbox_1_1_2_1_1[2]), "button-press-event",G_CALLBACK(Copy_File), (gpointer)&g_my_signal);
 
-	g_signal_connect(G_OBJECT(hbox_1_1_2_1_1[3]), "button-press-event",G_CALLBACK(Move_File), (gpointer)&my_signal);
+	g_signal_connect(G_OBJECT(hbox_1_1_2_1_1[3]), "button-press-event",G_CALLBACK(Move_File), (gpointer)&g_my_signal);
 
-	g_signal_connect(G_OBJECT(hbox_1_1_2_1_1[4]), "button-press-event",G_CALLBACK(Delect_File), (gpointer)&my_signal);
+	g_signal_connect(G_OBJECT(hbox_1_1_2_1_1[4]), "button-press-event",G_CALLBACK(Delect_File), (gpointer)&g_my_signal);
 
-	g_signal_connect(G_OBJECT(hbox_1_1_2_1_1[5]), "button-press-event",G_CALLBACK(Rename_File), (gpointer)&my_signal);
+	g_signal_connect(G_OBJECT(hbox_1_1_2_1_1[5]), "button-press-event",G_CALLBACK(Rename_File), (gpointer)&g_my_signal);
 
 	g_signal_connect(G_OBJECT(source_list),"row-activated",G_CALLBACK(cd_source_dir_path),&dir_path_label_struct);
 
 	g_signal_connect(G_OBJECT(target_list),"row-activated",G_CALLBACK(cd_target_dir_path),&dir_path_label_struct);
 
-	g_signal_connect (G_OBJECT(dialog), "response",
-			G_CALLBACK(da_call_complex_dialog), NULL);/*发送退出信号*/
+	//g_signal_connect (G_OBJECT(dialog), "response",
+	//		G_CALLBACK(da_call_complex_dialog), NULL);/*发送退出信号*/
 
+	g_signal_connect (G_OBJECT(dialog), "response",
+			G_CALLBACK(response_file_manage), NULL);/*发送退出信号*/
+	
 	gtk_widget_show_all(dialog);
 
 	gtk_widget_hide (GTK_DIALOG(dialog)->action_area);
@@ -2657,6 +2701,26 @@ void cd_target_dir_path (GtkTreeView *tree_view,GtkTreePath *path,GtkTreeViewCol
 	g_free(file_name);
 }
 
+
+static void response_law_save (GtkDialog *dialog, gint response_id, gpointer user_data)      
+{
+	if (GTK_RESPONSE_OK == response_id)  /* 保存信息 */
+	{	
+		law_save(g_law_ebox_save,NULL,g_entry_name);
+	}
+	else if (GTK_RESPONSE_CANCEL == response_id) /* 取消 */
+	{
+		g_print ("CANCEL_Pressed");
+	}
+	else if (RESPONSE_LAW_SAVE == response_id)
+	{
+		law_save(g_law_ebox_save,NULL,g_entry_name);
+	}
+
+	gtk_widget_destroy (GTK_WIDGET (dialog));
+	change_keypress_event (KEYPRESS_MAIN);
+}
+
 void  on_changed_law_save(GtkWidget *widget, gpointer label) 
 {
 	GtkTreeIter iter;
@@ -2773,6 +2837,9 @@ static void draw_law_save ()
 	gtk_box_pack_start (GTK_BOX(vbox_name), entry_name, FALSE, FALSE, 5);
 	gtk_box_pack_start (GTK_BOX(vbox_name), ebox_name, TRUE, TRUE, 5);
 
+	g_law_ebox_save = ebox_save;
+	g_entry_name = entry_name;
+
 	g_signal_connect (G_OBJECT(ebox_save), "button-press-event", 
 			G_CALLBACK(law_save), (gpointer) (entry_name));
 
@@ -2845,8 +2912,11 @@ static void draw_law_save ()
 	gtk_table_attach(GTK_TABLE(table), vbox_name, 0, 7, 5, 6, 
 			GTK_FILL | GTK_EXPAND, GTK_FILL | GTK_EXPAND, 0, 0);	/* 下方栏 */
 
+	//g_signal_connect (G_OBJECT(dialog), "response",
+	//		G_CALLBACK(da_call_complex_dialog), NULL);/*发送退出信号*/
+
 	g_signal_connect (G_OBJECT(dialog), "response",
-			G_CALLBACK(da_call_complex_dialog), NULL);/*发送退出信号*/
+			G_CALLBACK(response_law_save), NULL);/*发送退出信号*/
 
 	gtk_box_pack_start (GTK_BOX(vbox1), table, TRUE, TRUE, 5);
 	gtk_widget_show_all (dialog);
@@ -2881,6 +2951,26 @@ gboolean law_read (GtkWidget *widget, GdkEventButton *event, gpointer data)
 			(gtk_widget_get_parent
 			 (gtk_widget_get_parent (widget))));
 	return TRUE;
+}
+
+static void response_law_read (GtkDialog *dialog, gint response_id, gpointer user_data)      
+{
+	if (GTK_RESPONSE_OK == response_id)  /* 保存信息 */
+	{
+		g_print ("OK_Pressed");
+		law_read(g_law_ebox_read,NULL,NULL);
+	}
+	else if (GTK_RESPONSE_CANCEL == response_id) /* 取消 */
+	{
+		g_print ("CANCEL_Pressed");
+	}
+	else if (RESPONSE_LAW_READ ==  response_id)
+	{
+		law_read(g_law_ebox_read,NULL,NULL);
+	}
+
+	gtk_widget_destroy (GTK_WIDGET (dialog));
+	change_keypress_event (KEYPRESS_MAIN);
 }
 
 /* 14 读取聚焦法则 */
@@ -2933,6 +3023,8 @@ static void draw_law_read ()
 
 	gtk_container_add (GTK_CONTAINER (ebox_read), label_read);
 	gtk_container_add (GTK_CONTAINER (ebox_close), label_close);
+
+	g_law_ebox_read = ebox_read;
 
 	g_signal_connect (G_OBJECT(ebox_read), "button-press-event", 
 			G_CALLBACK(law_read), (gpointer) (NULL));
@@ -3001,8 +3093,11 @@ static void draw_law_read ()
 			GTK_FILL | GTK_EXPAND, GTK_FILL | GTK_EXPAND, 0, 0);	/* 侧边栏 */
 
 
+	//g_signal_connect (G_OBJECT(dialog), "response",
+	//		G_CALLBACK(da_call_complex_dialog), NULL);/*发送退出信号*/
+	
 	g_signal_connect (G_OBJECT(dialog), "response",
-			G_CALLBACK(da_call_complex_dialog), NULL);/*发送退出信号*/
+			G_CALLBACK(response_law_read), NULL);/*发送退出信号*/
 
 	gtk_box_pack_start (GTK_BOX(vbox1), table, TRUE, TRUE, 5);
 	gtk_widget_show_all (dialog);
@@ -4009,7 +4104,7 @@ static void signal_define_probe(GtkDialog *dialog, gint response_id, gpointer us
 
 	static int focal_pos = 0;
 
-	GtkWidget *scan_focal[7];
+	GtkWidget *scan_focal[8];
 	
 	struct _Group * pGroup = NULL;
 
@@ -4034,6 +4129,7 @@ static void signal_define_probe(GtkDialog *dialog, gint response_id, gpointer us
 		scan_focal[4] = open_ut_pa_probe_file_p->element_qty_entry;
 		scan_focal[5] = open_ut_pa_probe_file_p->ref_point_entry;
 		scan_focal[6] = open_ut_pa_probe_file_p->pitch_entry;
+		scan_focal[7] = open_ut_pa_probe_file_p->list;
 	}
 	else 
 	{
@@ -4041,6 +4137,7 @@ static void signal_define_probe(GtkDialog *dialog, gint response_id, gpointer us
 		scan_focal[1] = open_ut_pa_probe_file_p->serial_entry;
 		scan_focal[2] = open_ut_pa_probe_file_p->frequency_entry;
 		scan_focal[3] = open_ut_pa_probe_file_p->element_size_entry;
+		scan_focal[4] = open_ut_pa_probe_file_p->list;
 	}
 
     //点击了确认
@@ -4181,14 +4278,16 @@ static void signal_define_probe(GtkDialog *dialog, gint response_id, gpointer us
 
 		if ( pGroup->group_mode == PA_SCAN )		
 		{
-			if (focal_pos >=7 ) focal_pos = 0;
+			if (focal_pos >=8 ) focal_pos = 0;
 		}
 		else 
 		{
-			if (focal_pos >=4) focal_pos = 0;
+			if (focal_pos >=5) focal_pos = 0;
 		}
 		
-		gtk_window_set_focus(GTK_WINDOW(dialog),scan_focal[focal_pos]);
+		//gtk_window_set_focus(GTK_WINDOW(dialog),scan_focal[focal_pos]);
+		//
+		gtk_widget_grab_focus(scan_focal[focal_pos]);
 
 	}
 }
@@ -4565,7 +4664,7 @@ static void signal_define_wedge(GtkDialog *dialog, gint response_id, gpointer us
 
 	static int focal_pos = 0;
 
-	GtkWidget *scan_focal[8]; 
+	GtkWidget *scan_focal[9]; 
 
 	struct _Group * pGroup = NULL;
 
@@ -4588,6 +4687,7 @@ static void signal_define_wedge(GtkDialog *dialog, gint response_id, gpointer us
 		scan_focal[5] = open_ut_pa_wedge_file_p->pri_offset_entry;
 		scan_focal[6] = open_ut_pa_wedge_file_p->sec_offset_entry;
 		scan_focal[7] = open_ut_pa_wedge_file_p->hight_entry;
+		scan_focal[8] = open_ut_pa_wedge_file_p->list;	
 	}
 	else
 	{
@@ -4597,6 +4697,7 @@ static void signal_define_wedge(GtkDialog *dialog, gint response_id, gpointer us
 		scan_focal[3] = open_ut_pa_wedge_file_p->probe_delay_entry;
 		scan_focal[4] = open_ut_pa_wedge_file_p->wave_type_combo;
 		scan_focal[5] = open_ut_pa_wedge_file_p->ref_point_entry;
+		scan_focal[6] = open_ut_pa_wedge_file_p->list;
 	}
 
     //点击了确认
@@ -4719,15 +4820,16 @@ static void signal_define_wedge(GtkDialog *dialog, gint response_id, gpointer us
 
 		if ( pGroup->group_mode == PA_SCAN )		
 		{
-			if (focal_pos >=8 ) focal_pos = 0;
+			if (focal_pos >=9 ) focal_pos = 0;
 		}
 		else 
 		{
-			if (focal_pos >=6) focal_pos = 0;
+			if (focal_pos >=7) focal_pos = 0;
 		}
 		
-		gtk_window_set_focus(GTK_WINDOW(dialog),scan_focal[focal_pos]);
+		//gtk_window_set_focus(GTK_WINDOW(dialog),scan_focal[focal_pos]);
 
+		gtk_widget_grab_focus(scan_focal[focal_pos]);
 	}
 }
 
