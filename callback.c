@@ -2675,6 +2675,11 @@ static gint keypress_event_dialog(GtkWidget *widget, GdkEventKey *event)			/* è‡
 			if((pp->pos==5)&&(pp->pos1[pp->pos]==0)&&(pp->pos2[5][0]==4)&&(pp->pos_pos==MENU3_PRESSED))
 				gtk_dialog_response (GTK_DIALOG(widget), RESPONSE_CHANGE_FOCAL);			
 						
+			if((pp->pos==6)&&(pp->pos1[pp->pos]==4)&&(pp->pos2[6][4]==2)&&(pp->pos_pos==MENU3_PRESSED))
+				gtk_dialog_response (GTK_DIALOG(widget), RESPONSE_LAW_SAVE);			
+			
+			if((pp->pos==6)&&(pp->pos1[pp->pos]==4)&&(pp->pos2[6][4]==1)&&(pp->pos_pos==MENU3_PRESSED))
+				gtk_dialog_response (GTK_DIALOG(widget), RESPONSE_LAW_READ);			
 			return 0;
 			break;
 		case GDK_F11:
@@ -2710,6 +2715,30 @@ static gint keypress_event_dialog(GtkWidget *widget, GdkEventKey *event)			/* è‡
 				gtk_dialog_response (GTK_DIALOG(widget), RESPONSE_CONFIG_FILE_FOCAL);
 			}
 
+			if((pp->pos==9)&&(pp->pos1[pp->pos]==2)&&(pp->pos2[pp->pos][pp->pos1[pp->pos]]==1)&&(pp->pos_pos==MENU3_PRESSED))
+			{
+				gtk_dialog_response (GTK_DIALOG(widget), RESPONSE_SELECT_ALL);
+			}
+
+			return 0;
+			break;
+
+		case GDK_F3:
+
+			if((pp->pos==9)&&(pp->pos1[pp->pos]==2)&&(pp->pos2[pp->pos][pp->pos1[pp->pos]]==1)&&(pp->pos_pos==MENU3_PRESSED))
+			{
+				gtk_dialog_response (GTK_DIALOG(widget), RESPONSE_COPY_FILE);
+			}
+
+			return 0;
+			break;
+
+		case GDK_F4:
+
+			if((pp->pos==9)&&(pp->pos1[pp->pos]==2)&&(pp->pos2[pp->pos][pp->pos1[pp->pos]]==1)&&(pp->pos_pos==MENU3_PRESSED))
+			{
+				gtk_dialog_response (GTK_DIALOG(widget), RESPONSE_MOVE_FILE);
+			}
 
 			return 0;
 			break;
@@ -2731,6 +2760,11 @@ static gint keypress_event_dialog(GtkWidget *widget, GdkEventKey *event)			/* è‡
 
 			if((pp->pos==5)&&(pp->pos1[pp->pos]==0)&&(pp->pos2[5][0]==4)&&(pp->pos_pos==MENU3_PRESSED))
 				gtk_dialog_response (GTK_DIALOG(widget),GTK_RESPONSE_OK );	
+
+			if((pp->pos==9)&&(pp->pos1[pp->pos]==2)&&(pp->pos2[pp->pos][pp->pos1[pp->pos]]==1)&&(pp->pos_pos==MENU3_PRESSED))
+			{
+				gtk_dialog_response (GTK_DIALOG(widget), RESPONSE_RENAME_FILE);
+			}
 
 			return 0;
 			break;
@@ -2763,6 +2797,11 @@ static gint keypress_event_dialog(GtkWidget *widget, GdkEventKey *event)			/* è‡
 
 			if((pp->pos==5)&&(pp->pos1[pp->pos]==0)&&(pp->pos2[5][0]==4)&&(pp->pos_pos==MENU3_PRESSED))
 				gtk_dialog_response (GTK_DIALOG(widget), RESPONSE_SELECT_AND_CLOSE);	
+
+			if((pp->pos==9)&&(pp->pos1[pp->pos]==2)&&(pp->pos2[pp->pos][pp->pos1[pp->pos]]==1)&&(pp->pos_pos==MENU3_PRESSED))
+			{
+				gtk_dialog_response (GTK_DIALOG(widget), RESPONSE_DELECT_FILE);
+			}
 
 			return 0;
 			break;
