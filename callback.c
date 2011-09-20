@@ -6267,7 +6267,7 @@ void generate_focallaw(int grp)
 	TMP(group_spi[grp]).point_qty = GROUP_VAL(point_qty);
 
 	cal_focal_law (grp);
-	send_focal_spi (grp);
+	//send_focal_spi (grp);
 
 	/*计算聚焦法则时，sumgain默认为Auto*/
 	if (LAW_VAL_POS(grp, Elem_qty) == 1)	
@@ -6296,19 +6296,10 @@ void generate_focallaw(int grp)
 		{
 			pp->tmp_gain_off[i + offset] = 0;
 		}
-#if ARM											
-		send_focal_spi(grp);
-#endif										
-	}
-	//
-	//printf("-->>tt[3] is %d \n", tt[3]);
-	//printf("-->>max_beam_delay is %d \n", TMP(max_beam_delay[grp]));
-	//printf("-->>sample_range is %d\n", TMP(group_spi[grp]).sample_range);
-	//printf("-->>idel_time is %d \n", TMP(group_spi[grp]).idel_time);
-	//printf("-->> start  is %d \n", get_group_val (get_group_by_id (pp->p_config, grp), GROUP_START));
-	//for(i=0; i< (TMP(beam_qty[get_current_group(pp->p_config)]));i++)
-	//		BEAM_INFO(i,beam_delay) = pp->G_delay[i];
 
+	}
+
+	send_focal_spi(grp);
 	write_group_data (&TMP(group_spi[grp]), grp);
 
  	if(!pp->clb_flag)
