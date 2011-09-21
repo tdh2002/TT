@@ -438,5 +438,12 @@ receiver. PR is for separate pulser and receiver.收发分离 或者收发一体
 #define RESPONSE_SAVE_AND_CLOSE	5
 #define RESPONSE_CHANGE_FOCAL	6
 #define RESPONSE_SELECT_AND_CLOSE	7
+#define RESPONSE_LAW_READ	8
+#define RESPONSE_LAW_SAVE	9
+#define RESPONSE_SELECT_ALL	10
+#define RESPONSE_COPY_FILE	11
+#define RESPONSE_MOVE_FILE	12
+#define RESPONSE_DELECT_FILE	13
+#define RESPONSE_RENAME_FILE	14
 
 #endif

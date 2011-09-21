@@ -2677,6 +2677,11 @@ static gint keypress_event_dialog(GtkWidget *widget, GdkEventKey *event)			/* è‡
 			if((pp->pos==5)&&(pp->pos1[pp->pos]==0)&&(pp->pos2[5][0]==4)&&(pp->pos_pos==MENU3_PRESSED))
 				gtk_dialog_response (GTK_DIALOG(widget), RESPONSE_CHANGE_FOCAL);			
 						
+			if((pp->pos==6)&&(pp->pos1[pp->pos]==4)&&(pp->pos2[6][4]==2)&&(pp->pos_pos==MENU3_PRESSED))
+				gtk_dialog_response (GTK_DIALOG(widget), RESPONSE_LAW_SAVE);			
+			
+			if((pp->pos==6)&&(pp->pos1[pp->pos]==4)&&(pp->pos2[6][4]==1)&&(pp->pos_pos==MENU3_PRESSED))
+				gtk_dialog_response (GTK_DIALOG(widget), RESPONSE_LAW_READ);			
 			return 0;
 			break;
 		case GDK_F11:
@@ -2712,6 +2717,30 @@ static gint keypress_event_dialog(GtkWidget *widget, GdkEventKey *event)			/* è‡
 				gtk_dialog_response (GTK_DIALOG(widget), RESPONSE_CONFIG_FILE_FOCAL);
 			}
 
+			if((pp->pos==9)&&(pp->pos1[pp->pos]==2)&&(pp->pos2[pp->pos][pp->pos1[pp->pos]]==1)&&(pp->pos_pos==MENU3_PRESSED))
+			{
+				gtk_dialog_response (GTK_DIALOG(widget), RESPONSE_SELECT_ALL);
+			}
+
+			return 0;
+			break;
+
+		case GDK_F3:
+
+			if((pp->pos==9)&&(pp->pos1[pp->pos]==2)&&(pp->pos2[pp->pos][pp->pos1[pp->pos]]==1)&&(pp->pos_pos==MENU3_PRESSED))
+			{
+				gtk_dialog_response (GTK_DIALOG(widget), RESPONSE_COPY_FILE);
+			}
+
+			return 0;
+			break;
+
+		case GDK_F4:
+
+			if((pp->pos==9)&&(pp->pos1[pp->pos]==2)&&(pp->pos2[pp->pos][pp->pos1[pp->pos]]==1)&&(pp->pos_pos==MENU3_PRESSED))
+			{
+				gtk_dialog_response (GTK_DIALOG(widget), RESPONSE_MOVE_FILE);
+			}
 
 			return 0;
 			break;
@@ -2733,6 +2762,11 @@ static gint keypress_event_dialog(GtkWidget *widget, GdkEventKey *event)			/* è‡
 
 			if((pp->pos==5)&&(pp->pos1[pp->pos]==0)&&(pp->pos2[5][0]==4)&&(pp->pos_pos==MENU3_PRESSED))
 				gtk_dialog_response (GTK_DIALOG(widget),GTK_RESPONSE_OK );	
+
+			if((pp->pos==9)&&(pp->pos1[pp->pos]==2)&&(pp->pos2[pp->pos][pp->pos1[pp->pos]]==1)&&(pp->pos_pos==MENU3_PRESSED))
+			{
+				gtk_dialog_response (GTK_DIALOG(widget), RESPONSE_RENAME_FILE);
+			}
 
 			return 0;
 			break;
@@ -2765,6 +2799,11 @@ static gint keypress_event_dialog(GtkWidget *widget, GdkEventKey *event)			/* è‡
 
 			if((pp->pos==5)&&(pp->pos1[pp->pos]==0)&&(pp->pos2[5][0]==4)&&(pp->pos_pos==MENU3_PRESSED))
 				gtk_dialog_response (GTK_DIALOG(widget), RESPONSE_SELECT_AND_CLOSE);	
+
+			if((pp->pos==9)&&(pp->pos1[pp->pos]==2)&&(pp->pos2[pp->pos][pp->pos1[pp->pos]]==1)&&(pp->pos_pos==MENU3_PRESSED))
+			{
+				gtk_dialog_response (GTK_DIALOG(widget), RESPONSE_DELECT_FILE);
+			}
 
 			return 0;
 			break;
@@ -6299,18 +6338,7 @@ void generate_focallaw(int grp)
 			pp->tmp_gain_off[i + offset] = 0;
 		}
 	}
-#if ARM											
-		send_focal_spi(grp);
-#endif										
-	//
-	//printf("-->>tt[3] is %d \n", tt[3]);
-	//printf("-->>max_beam_delay is %d \n", TMP(max_beam_delay[grp]));
-	//printf("-->>sample_range is %d\n", TMP(group_spi[grp]).sample_range);
-	//printf("-->>idel_time is %d \n", TMP(group_spi[grp]).idel_time);
-	//printf("-->> start  is %d \n", get_group_val (get_group_by_id (pp->p_config, grp), GROUP_START));
-	//for(i=0; i< (TMP(beam_qty[get_current_group(pp->p_config)]));i++)
-	//		BEAM_INFO(i,beam_delay) = pp->G_delay[i];
-
+	send_focal_spi(grp);
 	write_group_data (&TMP(group_spi[grp]), grp);
 
  	if(!pp->clb_flag)
