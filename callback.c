@@ -879,6 +879,8 @@ void b3_fun0(gpointer pt)
 							break;
 						default:break;
 					}
+				//	if((p->cstart_qty) == 1)
+				//			esc_calibration();
 					break;
 				case 3:break;
 				default:break;
@@ -6267,7 +6269,7 @@ void generate_focallaw(int grp)
 	TMP(group_spi[grp]).point_qty = GROUP_VAL(point_qty);
 
 	cal_focal_law (grp);
-	send_focal_spi (grp);
+	//send_focal_spi (grp);
 
 	/*计算聚焦法则时，sumgain默认为Auto*/
 	if (LAW_VAL_POS(grp, Elem_qty) == 1)	
@@ -6296,10 +6298,10 @@ void generate_focallaw(int grp)
 		{
 			pp->tmp_gain_off[i + offset] = 0;
 		}
+	}
 #if ARM											
 		send_focal_spi(grp);
 #endif										
-	}
 	//
 	//printf("-->>tt[3] is %d \n", tt[3]);
 	//printf("-->>max_beam_delay is %d \n", TMP(max_beam_delay[grp]));

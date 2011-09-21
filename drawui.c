@@ -17038,6 +17038,7 @@ void calc_measure_data()
 {
 	gint offset,k;
 	gint l,n;
+	guint gate_data[setup_MAX_LAW_QTY][8];
 
 	gint grp = get_current_group(pp->p_config);//当前group
 	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
@@ -17048,6 +17049,26 @@ void calc_measure_data()
 	gfloat a = ( (gfloat)(LAW_VAL_POS (grp, Angle_min) + 
 				 LAW_VAL_POS (grp, Angle_step)*i)/100.0 )*G_PI/180.0;//当前折射角
 	gfloat thickness = (gfloat)(get_part_thickness(pp->p_config)/1000.0);//工件厚度	
+
+	/* 闸门位置数据 */
+	if(LAW_VAL(Focal_point_type) == 0)//half path
+	{
+		gate_data[index][1] = 
+				((TMP(measure_data[index][1])) & 0xfffff)/100.0 - TMP(max_beam_delay[grp]);
+		gate_data[index][2] = 
+				((TMP(measure_data[index][2])) & 0xfffff)/100.0 - TMP(max_beam_delay[grp]);
+		gate_data[index][3] = 
+				((TMP(measure_data[index][3])) & 0xfffff)/100.0 - TMP(max_beam_delay[grp]);
+	}
+	else if(LAW_VAL(Focal_point_type) == 1)//true depth
+	{
+		gate_data[index][1] = 
+				((TMP(measure_data[index][1])) & 0xfffff)/100.0 - TMP(max_beam_delay[grp])/cos(a);
+		gate_data[index][2] = 
+				((TMP(measure_data[index][2])) & 0xfffff)/100.0 - TMP(max_beam_delay[grp])/cos(a);
+		gate_data[index][3] = 
+				((TMP(measure_data[index][3])) & 0xfffff)/100.0 - TMP(max_beam_delay[grp])/cos(a);
+	}
 
 	for(l=0;l<4;l++)//4个field
 	{
@@ -17065,32 +17086,26 @@ void calc_measure_data()
 				break;
 			case 6://A^
 				if(GROUP_VAL(ut_unit)==1)//Time
-					DO_NOT_USE_CCFG(measure_data[index]).a_position = 
-						((TMP(measure_data[index][1])) & 0xfffff)/100.0 - TMP(max_beam_delay[grp]);//直接显示时间微妙
+					DO_NOT_USE_CCFG(measure_data[index]).a_position = gate_data[index][1];
 				else
 					DO_NOT_USE_CCFG(measure_data[index]).a_position = 
-						((TMP(measure_data[index][1]) & 0xfffff) - TMP(max_beam_delay[grp]))*
-						get_group_val (p_grp, GROUP_VELOCITY)/20000000.0;//距离模式s= time * velo/2
+						(gate_data[index][1])*get_group_val (p_grp, GROUP_VELOCITY)/20000000.0;//距离模式s= time * velo/2
 				TMP(field[l]) = DO_NOT_USE_CCFG(measure_data[index]).a_position;
 				break;
 			case 7://B^
 				if(GROUP_VAL(ut_unit)==1)
-					DO_NOT_USE_CCFG(measure_data[index]).b_position = 
-						((TMP(measure_data[index][2])) & 0xfffff)/100.0 - TMP(max_beam_delay[grp]);//直接显示时间微妙
+					DO_NOT_USE_CCFG(measure_data[index]).b_position = gate_data[index][2];
 				else
 					DO_NOT_USE_CCFG(measure_data[index]).b_position = 
-						((TMP(measure_data[index][2]) & 0xfffff) - TMP(max_beam_delay[grp]))*
-						get_group_val (p_grp, GROUP_VELOCITY)/20000000.0;
+						(gate_data[index][2])*get_group_val (p_grp, GROUP_VELOCITY)/20000000.0;
 				TMP(field[l]) = DO_NOT_USE_CCFG(measure_data[index]).b_position;
 				break;
 			case 8://I/
 				if(GROUP_VAL(ut_unit)==1)
-					DO_NOT_USE_CCFG(measure_data[index]).i_position = 
-						((TMP(measure_data[index][3])) & 0xfffff)/100.0 - TMP(max_beam_delay[grp]);//直接显示时间微妙
+					DO_NOT_USE_CCFG(measure_data[index]).i_position = gate_data[index][3];
 				else
 					DO_NOT_USE_CCFG(measure_data[index]).i_position = 
-						((TMP(measure_data[index][3]) & 0xfffff) - TMP(max_beam_delay[grp]))*
-						get_group_val (p_grp, GROUP_VELOCITY)/20000000.0;
+						(gate_data[index][3])*get_group_val (p_grp, GROUP_VELOCITY)/20000000.0;
 				TMP(field[l]) = DO_NOT_USE_CCFG(measure_data[index]).i_position;
 
 				break;
@@ -17111,13 +17126,12 @@ void calc_measure_data()
 						//break;
 					case 1://Time
 						DO_NOT_USE_CCFG(measure_data[index]).a_sound_path = 
-							((TMP(measure_data[index][1]) & 0xfffff) - TMP(max_beam_delay[grp]))*
-							get_group_val (p_grp, GROUP_VELOCITY)/20000000.0;//Time(A^)*声速/2
+							(gate_data[index][1])*get_group_val (p_grp, GROUP_VELOCITY)/20000000.0;//Time(A^)*声速/2
 						break;
 					case 2://True Depth
 						DO_NOT_USE_CCFG(measure_data[index]).a_sound_path = 
-							((TMP(measure_data[index][1]) & 0xfffff) - TMP(max_beam_delay[grp]))*
-							get_group_val (p_grp, GROUP_VELOCITY)/(cos(a)*20000000.0) +TMP(field_distance[i]);//=DA^/cos(a)+distance				
+							(gate_data[index][1])*get_group_val (p_grp, GROUP_VELOCITY)/(cos(a)*20000000.0) 
+							+ TMP(field_distance[i]);//=DA^/cos(a)+distance				
 						break;
 				}
 				/******由SA^计算DA^*************/	
@@ -17141,13 +17155,12 @@ void calc_measure_data()
 						//break;
 					case 1://Time
 						DO_NOT_USE_CCFG(measure_data[index]).b_sound_path = 
-							((TMP(measure_data[index][2]) & 0xfffff) - TMP(max_beam_delay[grp]))*
-							get_group_val (p_grp, GROUP_VELOCITY)/20000000.0;//Time(A^)*声速/2
+							(gate_data[index][2])*get_group_val (p_grp, GROUP_VELOCITY)/20000000.0;
 						break;
 					case 2://True Depth
 						DO_NOT_USE_CCFG(measure_data[index]).b_sound_path = 
-							((TMP(measure_data[index][2]) & 0xfffff) - TMP(max_beam_delay[grp]))*
-							get_group_val (p_grp, GROUP_VELOCITY)/(cos(a)*20000000.0) +TMP(field_distance[i]);//=DA^/cos(a)+distance				
+							(gate_data[index][2])*get_group_val (p_grp, GROUP_VELOCITY)/20000000.0
+							+ TMP(field_distance[i]);//=DA^/cos(a)+distance				
 						break;
 				}
 				/******由SA^计算DA^*************/	
@@ -17169,16 +17182,14 @@ void calc_measure_data()
 				{
 					case 0://Sound Path
 						DO_NOT_USE_CCFG(measure_data[index]).a_sound_path = 
-							((TMP(measure_data[index][1]) & 0xfffff) - TMP(max_beam_delay[grp]))*
-							get_group_val (p_grp, GROUP_VELOCITY)/20000000.0;//Time(A^)*声速/2
+							(gate_data[index][1])*get_group_val (p_grp, GROUP_VELOCITY)/20000000.0;
 						break;
 					case 1://Time
-						DO_NOT_USE_CCFG(measure_data[index]).a_sound_path = ((TMP(measure_data[index][1])) & 0xfffff)/100.0;//=A^
+						DO_NOT_USE_CCFG(measure_data[index]).a_sound_path = gate_data[index][1];//=A^
 						break;
 					case 2://True Depth
 						DO_NOT_USE_CCFG(measure_data[index]).a_sound_path = 
-							((TMP(measure_data[index][1]) & 0xfffff) - TMP(max_beam_delay[grp]))*
-							get_group_val (p_grp, GROUP_VELOCITY)/(cos(a)*20000000.0) 
+							gate_data[index][1]*get_group_val (p_grp, GROUP_VELOCITY)/(cos(a)*20000000.0) 
 							+ TMP(field_distance[i]);//=DA^/cos(a)+distance				
 						break;
 				}
@@ -17189,17 +17200,14 @@ void calc_measure_data()
 				{
 					case 0://Sound Path
 						DO_NOT_USE_CCFG(measure_data[index]).b_sound_path = 
-							((TMP(measure_data[index][2]) & 0xfffff) - TMP(max_beam_delay[grp]))*
-							get_group_val (p_grp, GROUP_VELOCITY)/20000000.0;//Time(A^)*声速/2
+							(gate_data[index][2])*get_group_val (p_grp, GROUP_VELOCITY)/20000000.0;
 						break;
 					case 1://Time
-						DO_NOT_USE_CCFG(measure_data[index]).b_sound_path = 
-							((TMP(measure_data[index][2]) & 0xfffff) - TMP(max_beam_delay[grp]))/100.0;//=A^
+						DO_NOT_USE_CCFG(measure_data[index]).b_sound_path = gate_data[index][2];
 						break;
 					case 2://True Depth
 						DO_NOT_USE_CCFG(measure_data[index]).b_sound_path = 
-							((TMP(measure_data[index][2]) & 0xfffff) - TMP(max_beam_delay[grp]))*
-							get_group_val (p_grp, GROUP_VELOCITY)/(cos(a)*20000000.0) 
+							(gate_data[index][2]) * get_group_val (p_grp, GROUP_VELOCITY)/(cos(a)*20000000.0) 
 							+ TMP(field_distance[i]);//=DA^/cos(a)+distance			
 						break;
 				}
