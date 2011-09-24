@@ -25,11 +25,11 @@
 #define TT_DEBUG 0
 #define DEBUG 0
 
-static int fd_array;
+int fd_array;
 static int fd_gpio;
 
 /* n为siezof(p)/4 */
-static void little_to_big(unsigned int *p, int n)
+void little_to_big(unsigned int *p, int n)
 {
 	unsigned int i = 0;
 	unsigned int *pt = p;
@@ -215,8 +215,8 @@ int write_focal_data (focal_data_spi *p, unsigned int beam_num)
 	g_print ("tx_info:%x \n", p->tx_info[0]);
 #endif
 
-	p->offset = 64 * beam_num;
-	p->addr = 0x1;
+	p1->offset = 64 * beam_num;
+	p1->addr = 0x1;
 	little_to_big ((unsigned int *)(p1), sizeof(focal_data_spi) / 4);
 #if ARM
 	ioctl (fd_gpio, GPIO43_LOW, &i);
