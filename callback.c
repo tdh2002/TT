@@ -88,6 +88,12 @@ void data_024 (GtkSpinButton *spinbutton, gpointer data);
 void data_0241 (GtkSpinButton *spinbutton, gpointer data);
 void data_0242 (GtkSpinButton *spinbutton, gpointer data);
 void data_0243 (GtkSpinButton *spinbutton, gpointer data);
+void data_032 (GtkSpinButton *spinbutton, gpointer data);
+void data_0321 (GtkSpinButton *spinbutton, gpointer data);
+void data_033 (GtkMenuItem *menuitem, gpointer data);
+void data_0331 (GtkSpinButton *spinbutton, gpointer data);
+void data_0332 (GtkSpinButton *spinbutton, gpointer data);
+void data_034 (GtkSpinButton *spinbutton, gpointer data);
 
 void data_100 (GtkSpinButton *spinbutton, gpointer data);
 void data_101 (GtkSpinButton *spinbutton, gpointer data);
@@ -250,6 +256,7 @@ void data_530 (GtkMenuItem *menuitem, gpointer data);
 void data_531 (GtkSpinButton *spinbutton, gpointer data);
 void data_532 (GtkSpinButton *spinbutton, gpointer data);
 void data_533 (GtkMenuItem *menuitem, gpointer data);
+void data_534 (GtkMenuItem *menuitem, gpointer data);
 
 void data_600 (GtkMenuItem *menuitem, gpointer data);
 void data_601 (GtkSpinButton *spinbutton, gpointer data);
@@ -823,7 +830,8 @@ gboolean eventbox2_function0 (GtkWidget *widget, GdkEventButton *event,	gpointer
 
 static inline void data_process(guchar* data, guint pa)
 {
-	(*data > 0) ? (*data)-- : (*data = pa);
+	//(*data > 0) ? (*data)-- : (*data = pa);
+	(*data < pa) ? (*data)++ : (*data = 0);
 	return ;
 }
 
@@ -878,7 +886,7 @@ void b3_fun0(gpointer pt)
 						default:break;
 					}
 					break;
-				case 3:break;
+				case 3:((p->wstart_qty) > 1) ? (p->wstart_qty) -- : ((p->wstart_qty) = 4);break;
 				default:break;
 			}
 			break;
@@ -1075,7 +1083,7 @@ void b3_fun1(gpointer p)
 					case 0://Group
 						((pp->start_qty) < 9) ? (pp->start_qty) ++ : ((pp->start_qty) = 1); break;
 					case 1://Focal Law
-						((pp->fstart_qty) < 5) ? (pp->fstart_qty) ++ : ((pp->fstart_qty) = 1); 
+						((pp->fstart_qty) < 6) ? (pp->fstart_qty) ++ : ((pp->fstart_qty) = 1); 
 						if((pp->fstart_qty) == 5)
 						{
 							//生成聚焦法则
@@ -1257,7 +1265,7 @@ void b3_fun1(gpointer p)
 							default:break;
 						}
 							break;
-					case 3:break;
+					case 3:((pp->wstart_qty) < 4) ? (pp->wstart_qty) ++ : ((pp->wstart_qty) = 1);break;
 					default:break;
 			}
 			break;
@@ -1398,8 +1406,7 @@ void b3_fun1(gpointer p)
 				   {
 					   case 0: break; 
 					   case 1: break;
-					   case 2: break; 
-					   case 3:
+					   case 2:
 							   switch(GROUP_VAL(col_select_pos)) 
 							   {
 								   case 0:data_process(&(TMP(color_start_reg)), 1 );break;
@@ -1408,7 +1415,7 @@ void b3_fun1(gpointer p)
 							   }
 							   break; 
 
-					   case 4:
+					   case 3:
 							   switch(get_dis_prop_scan(pp->p_config)) 
 							   {
 								   case 0:break;
@@ -1614,7 +1621,12 @@ void b3_fun2(gpointer p)
 										data_process (&(TMP(db_reg)), 4);
  							   }
  							   break;
-						case 3:break;
+						case 3:
+ 							   if(pp->wstart_qty == 3)
+ 							   		data_process (&(TMP(weland_height_reg)), 2);
+ 							   else if(pp->wstart_qty == 4)
+ 							   		data_process (&(TMP(fizone_height_reg)), 2);
+								break;/*p032*/
 						default:break;
 					}
 					break;
@@ -1694,16 +1706,15 @@ void b3_fun2(gpointer p)
 				   {
 					   case 0: break; 
 					   case 1: break;  /*412*/
-					   case 2: break;  /*p422 */
-					   case 3: 
+					   case 2: 
 							   if (GROUP_VAL(col_select_pos) == 0)
-								   data_process(&(TMP(color_end_reg)), 1);  /*432 */
+								   data_process(&(TMP(color_end_reg)), 1);  /*422 */
 							   else if (GROUP_VAL(col_select_pos) == 1)
 								   data_process(&(TMP(brightness_reg)), 1);
 							   else if (GROUP_VAL(col_select_pos) == 2)
 								   data_process(&(TMP(max_reg)), 2);
 							   break;  /*432 */
-					   case 4: break;
+					   case 3: break;
 					   default:break;
 				   }
 				   break;
@@ -1944,7 +1955,12 @@ void b3_fun3(gpointer p)
  							   default: break;
 							}
  							break;
-						case 3:break;
+						case 3:
+ 							   if ( pp->wstart_qty == 3 )
+ 							   		data_process (&(TMP(weland_offset_reg)), 2);
+ 							   else if(pp->wstart_qty == 4)
+ 							   		data_process (&(TMP(fizone_angle_reg)), 2);
+								break;/*p033*/
 						default:break;
 					}
 					break;
@@ -2231,7 +2247,7 @@ void b3_fun4(gpointer p)
  							   }
 
  							   break;
-						case 3:break;
+						case 3: data_process (&(TMP(fizone_radius_reg)), 2);break;
 						default:break;
 					}
 					break;
@@ -2685,6 +2701,11 @@ static gint keypress_event_dialog(GtkWidget *widget, GdkEventKey *event)			/* �
 			if((pp->pos==8)&&(pp->pos1[pp->pos]==0)&&(pp->pos2[pp->pos][pp->pos1[pp->pos]]==2)&&(pp->pos_pos==MENU3_PRESSED))
 				gtk_dialog_response (GTK_DIALOG(widget), GTK_RESPONSE_CANCEL);
 
+			if((pp->pos==9)&&(pp->pos1[pp->pos]==2)&&(pp->pos2[pp->pos][pp->pos1[pp->pos]]==1)&&(pp->pos_pos==MENU3_PRESSED))
+			{
+				gtk_dialog_response (GTK_DIALOG(widget), GTK_RESPONSE_CANCEL);
+			}
+
 			return 0;
 			break;
 		case GDK_Super_L:
@@ -2839,6 +2860,10 @@ static int handler_key(guint keyval, gpointer data)
 	switch (keyval) 
 	{
 		case GDK_KP_0:	/* 选中 P310 cursors 这个位置 */
+			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
+			{
+				main_menu_pop(MENU_HIDE);/*收回主菜单条*/
+			}
 			pp->pos = 3;
 			pp->pos1[pp->pos] = 1;
 			CUR_POS = 0;
@@ -2858,6 +2883,10 @@ static int handler_key(guint keyval, gpointer data)
 			break;
 
 		case GDK_KP_2:	/* 选中 Calibration 这个位置 */
+			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
+			{
+				main_menu_pop(MENU_HIDE);/*收回主菜单条*/
+			}
 			pp->pos = 0;
 			pp->pos1[pp->pos] = 2;
 			//CUR_POS = 0;
@@ -2868,6 +2897,14 @@ static int handler_key(guint keyval, gpointer data)
 			break;
 
 		case GDK_KP_3:	/* 选中 P100 Gain 这个位置 */
+			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
+			{
+				main_menu_pop(MENU_HIDE);/*收回主菜单条*/
+			}
+			else if((MENU31_PRESS == data1)||(MENU32_PRESS == data1)||(MENU33_PRESS == data1)||(MENU34_PRESS == data1)||(MENU35_PRESS == data1)||(MENU36_PRESS == data1))/*当三级菜单中有弹出菜单选项时*/
+			{
+				menu3_pop(MENU3_HIDE);/*隐藏三级菜单的弹出菜单*/
+			}
 			pp->pos = 1;
 			pp->pos1[pp->pos] = 0;
 			CUR_POS = 0;
@@ -2888,6 +2925,10 @@ static int handler_key(guint keyval, gpointer data)
 			break;
 
 		case GDK_KP_5:	/* 选中 P200 Gate 这个位置 */
+			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
+			{
+				main_menu_pop(MENU_HIDE);/*收回主菜单条*/
+			}
 			pp->pos = 2;
 			pp->pos1[pp->pos] = 0;
 			CUR_POS = 0;
@@ -2904,6 +2945,10 @@ static int handler_key(guint keyval, gpointer data)
 			break;
 
 		case GDK_KP_8:	/* 选中 P140 Set 80% 这个位置 */
+			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
+			{
+				main_menu_pop(MENU_HIDE);/*收回主菜单条*/
+			}
 			pp->pos = 1;
 			pp->pos1[pp->pos] = 4;
 			CUR_POS = 0;
@@ -2914,6 +2959,10 @@ static int handler_key(guint keyval, gpointer data)
 			break;
 
 		case GDK_KP_9:	/* 选中 P400 Display 这个位置 */
+			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
+			{
+				main_menu_pop(MENU_HIDE);/*收回主菜单条*/
+			}
 			pp->pos = 4;
 			pp->pos1[pp->pos] = 0;
 			CUR_POS = 0;
@@ -3015,6 +3064,65 @@ static int handler_key(guint keyval, gpointer data)
 				}
 			}
 			esc_calibration();
+			if((pp->pos==0)&&(pp->pos1[pp->pos]==0))
+			{
+				if((MENU31_PRESS == data1)||(MENU32_PRESS == data1)||(MENU33_PRESS == data1)||(MENU34_PRESS == data1)||(MENU35_PRESS == data1)||(MENU36_PRESS == data1))/*当三级菜单中有弹出菜单选项时*/
+				{
+					menu3_pop(MENU3_HIDE);/*隐藏三级菜单的弹出菜单*/
+				}
+				else
+				{
+				pp->pos1[pp->pos]=0;
+				pp->start_qty = 0;
+				gtk_widget_set_sensitive(pp->eventbox2[2],TRUE);
+				gtk_widget_set_sensitive(pp->menubar,TRUE);
+				if(GROUP_VAL(group_mode)==PA_SCAN)
+					gtk_widget_set_sensitive(pp->eventbox2[1],TRUE);
+				else
+					gtk_widget_set_sensitive(pp->eventbox2[1],FALSE);
+
+				draw_menu3(0, NULL);
+				}
+			}
+			else if((pp->pos==0)&&(pp->pos1[pp->pos]==1))
+			{
+				if((MENU31_PRESS == data1)||(MENU32_PRESS == data1)||(MENU33_PRESS == data1)||(MENU34_PRESS == data1)||(MENU35_PRESS == data1)||(MENU36_PRESS == data1))/*当三级菜单中有弹出菜单选项时*/
+				{
+					menu3_pop(MENU3_HIDE);/*隐藏三级菜单的弹出菜单*/
+				}
+				else
+				{
+				pp->pos1[pp->pos]=1;
+				pp->fstart_qty = 0;
+				gtk_widget_set_sensitive(pp->eventbox2[0],TRUE);
+				gtk_widget_set_sensitive(pp->eventbox2[2],TRUE);
+				gtk_widget_set_sensitive(pp->eventbox2[3],TRUE);
+				gtk_widget_set_sensitive(pp->menubar,TRUE);
+
+				draw_menu3(0, NULL);
+				}
+			}
+			else if((pp->pos==0)&&(pp->pos1[pp->pos]==3))
+			{
+				if((MENU31_PRESS == data1)||(MENU32_PRESS == data1)||(MENU33_PRESS == data1)||(MENU34_PRESS == data1)||(MENU35_PRESS == data1)||(MENU36_PRESS == data1))/*当三级菜单中有弹出菜单选项时*/
+				{
+					menu3_pop(MENU3_HIDE);/*隐藏三级菜单的弹出菜单*/
+				}
+				else
+				{
+				pp->pos1[pp->pos]=3;
+				pp->wstart_qty = 1;
+				gtk_widget_set_sensitive(pp->eventbox2[0],TRUE);
+				gtk_widget_set_sensitive(pp->eventbox2[2],TRUE);
+				gtk_widget_set_sensitive(pp->menubar,TRUE);
+				if(GROUP_VAL(group_mode)==PA_SCAN)
+					gtk_widget_set_sensitive(pp->eventbox2[1],TRUE);
+				else
+					gtk_widget_set_sensitive(pp->eventbox2[1],FALSE);
+
+				draw_menu3(0, NULL);
+				}
+			}
 			break;
 		case GDK_Return:	/*回车键*/
 
@@ -3475,6 +3583,53 @@ void data_0027 (GtkSpinButton *spinbutton, gpointer data) /*scanoffset */
 			draw_area_all();
 	else
 			draw_area_calibration();
+}
+
+void data_032 (GtkSpinButton *spinbutton, gpointer data) /*part_thickness*/
+{
+	if(UNIT_MM == get_unit(pp->p_config))
+		set_weland_height (pp->p_config, (GUINT_TO_POINTER
+					((guint) (gtk_spin_button_get_value (spinbutton) * 1000.0))));
+	else
+		set_weland_height (pp->p_config, (GUINT_TO_POINTER
+					((guint) (gtk_spin_button_get_value (spinbutton) * 1000.0/ 0.03937 ))));
+}
+void data_0321 (GtkSpinButton *spinbutton, gpointer data) /*fill zone height*/
+{
+	if(UNIT_MM == get_unit(pp->p_config))
+		set_fizone_height (pp->p_config, (GUINT_TO_POINTER
+					((guint) (gtk_spin_button_get_value (spinbutton) * 1000.0))));
+	else
+		set_fizone_height (pp->p_config, (GUINT_TO_POINTER
+					((guint) (gtk_spin_button_get_value (spinbutton) * 1000.0/ 0.03937 ))));
+}
+
+void data_033 (GtkMenuItem *menuitem, gpointer data) /* wizard weld->symmetry */
+{
+	set_part_symmetry (pp->p_config, data);
+	pp->pos_pos = MENU3_STOP;
+	draw_menu3(0, NULL);
+}
+
+void data_0331 (GtkSpinButton *spinbutton, gpointer data) /*weld land offset*/
+{
+	if(UNIT_MM == get_unit(pp->p_config))
+		set_weland_offset (pp->p_config, (GUINT_TO_POINTER
+					((guint) (gtk_spin_button_get_value (spinbutton) * 1000.0))));
+	else
+		set_weland_offset (pp->p_config, (GUINT_TO_POINTER
+					((guint) (gtk_spin_button_get_value (spinbutton) * 1000.0/ 0.03937 ))));
+}
+void data_0332 (GtkSpinButton *spinbutton, gpointer data) /*fill zone angle*/
+{
+		set_fizone_angle (pp->p_config, (GUINT_TO_POINTER
+					((guint) (gtk_spin_button_get_value (spinbutton) * 1000.0))));
+}
+
+void data_034 (GtkSpinButton *spinbutton, gpointer data) /*fill zone radius*/
+{
+		set_fizone_radius (pp->p_config, (GUINT_TO_POINTER
+					((guint) (gtk_spin_button_get_value (spinbutton) * 1000.0))));
 }
 
 void data_00341 (GtkSpinButton *spinbutton, gpointer data) /* Pulser 发射 P120 */
@@ -5613,6 +5768,12 @@ void data_533 (GtkMenuItem *menuitem, gpointer data)
 	draw_menu3(0, NULL);
 }
 
+void data_534 (GtkMenuItem *menuitem, gpointer data) /* Probe/Part -> Parts -> Weld 534 */
+{
+	set_part_weld (pp->p_config, data);
+	pp->pos_pos = MENU3_STOP;
+	draw_menu3(0, NULL);
+}
 /* 聚焦法则类型 P600 */
 void data_600 (GtkMenuItem *menuitem, gpointer data) 
 {
@@ -6456,7 +6617,12 @@ void esc_calibration()
 		pp->pos1[pp->pos] = 2;
 		pp->cstart_qty = 1;
 		gtk_widget_set_sensitive(pp->eventbox2[0],TRUE);
-		gtk_widget_set_sensitive(pp->eventbox2[1],TRUE);
+		gtk_widget_set_sensitive(pp->eventbox2[3],TRUE);
+		if(GROUP_VAL(group_mode)==PA_SCAN)
+			gtk_widget_set_sensitive(pp->eventbox2[1],TRUE);
+		else
+			gtk_widget_set_sensitive(pp->eventbox2[1],FALSE);
+		//gtk_widget_set_sensitive(pp->eventbox2[1],TRUE);
 		gtk_widget_set_sensitive(pp->menubar,TRUE);
 	}
 	else
@@ -6472,7 +6638,12 @@ void esc_calibration()
 			pp->pos1[pp->pos] = 2;
 			pp->cstart_qty = 1;
 			gtk_widget_set_sensitive(pp->eventbox2[0],TRUE);
-			gtk_widget_set_sensitive(pp->eventbox2[1],TRUE);
+			gtk_widget_set_sensitive(pp->eventbox2[3],TRUE);
+			if(GROUP_VAL(group_mode)==PA_SCAN)
+				gtk_widget_set_sensitive(pp->eventbox2[1],TRUE);
+			else
+				gtk_widget_set_sensitive(pp->eventbox2[1],FALSE);
+			//gtk_widget_set_sensitive(pp->eventbox2[1],TRUE);
 			gtk_widget_set_sensitive(pp->menubar,TRUE);
 		}
 	}

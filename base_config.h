@@ -184,6 +184,13 @@ struct _Part
 	unsigned char	tt[2];			/* 保留 */
 	unsigned int	Thickness;		/* 厚度 */
 	unsigned int	Diameter;		/* 直径 */
+	unsigned char	Weld;			/* 焊缝 */
+	unsigned char   symmetry;		/* 对称 */
+	unsigned int    weland_height;
+	unsigned int    weland_offset;
+	unsigned int	fizone_height;
+	unsigned int	fizone_angle;
+	unsigned int	fizone_radius;
 };
 
 /* 一个阵元的聚焦信息*/
@@ -528,6 +535,20 @@ extern unsigned int	get_part_thickness (CONFIG *p);
 extern void		set_part_thickness (CONFIG *p, void* data);
 extern unsigned int	get_part_diameter (CONFIG *p);
 extern void		set_part_diameter (CONFIG *p, void* data);
+extern unsigned char get_part_weld (CONFIG *p);
+extern void set_part_weld (CONFIG *p, void* data);
+extern unsigned char get_part_symmetry (CONFIG *p);
+extern void set_part_symmetry (CONFIG *p, void* data);
+extern unsigned int	get_weland_height (CONFIG *p);
+extern void		set_weland_height (CONFIG *p, void* data);
+extern unsigned int	get_weland_offset (CONFIG *p);
+extern void		set_weland_offset (CONFIG *p, void* data);
+extern unsigned int	get_fizone_height (CONFIG *p);
+extern void		set_fizone_height (CONFIG *p, void* data);
+extern unsigned int	get_fizone_angle (CONFIG *p);
+extern void		set_fizone_angle (CONFIG *p, void* data);
+extern unsigned int	get_fizone_radius (CONFIG *p);
+extern void		set_fizone_radius (CONFIG *p, void* data);
 
 /* 配置信息的操作start */
 extern GROUP *get_group_by_id (CONFIG *p, int group);
