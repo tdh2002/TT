@@ -19,7 +19,7 @@ typedef struct _DWORD_OBJ
 
 
 typedef struct _Group_data
-{
+{ 
 	/* s_group_reg (-1) 地址 */
 	unsigned int	offset:16;		/* bit:0-15 地址的偏移 */
 	unsigned int	TT:12;		/* bit:16-27 保留*/
@@ -121,8 +121,32 @@ typedef struct _Focal_data
 	unsigned int	beam_delay:16;	/* bit:0-15 16 单位10ns */
 	unsigned int	TT3:16;			/* bit 16-31 保留*/
 
-	/* s_group_reg (2-11) 地址 */
-	unsigned int	TT4[8];			/* 保留 */
+	/* s_group_reg (2) 地址 */
+	unsigned int	gate_a_start:20;/* bit:0-19  单位10ns */
+	unsigned int	TT4:12;			/* bit 20-31 保留*/
+	
+	/* s_group_reg (3) 地址 */
+	unsigned int	gate_a_end:20;  /* bit:0-19  单位10ns */
+	unsigned int	TT5:12;			/* bit 20-31 保留*/
+
+	/* s_group_reg (4) 地址 */
+	unsigned int	gate_b_start:20;/* bit:0-19  单位10ns */
+	unsigned int	TT6:12;			/* bit 20-31 保留*/
+	
+	/* s_group_reg (5) 地址 */
+	unsigned int	gate_b_end:20;  /* bit:0-19  单位10ns */
+	unsigned int	TT7:12;			/* bit 20-31 保留*/
+
+	/* s_group_reg (6) 地址 */
+	unsigned int	gate_i_start:20;/* bit:0-19  单位10ns */
+	unsigned int	TT8:12;			/* bit 20-31 保留*/
+	
+	/* s_group_reg (7) 地址 */
+	unsigned int	gate_i_end:20;  /* bit:0-19  单位10ns */
+	unsigned int	TT9:12;			/* bit 20-31 保留*/
+
+	/* s_group_reg (8-9) 地址 */
+	unsigned int	TT10[2];			/* 保留 */
 
 	unsigned int	tx_enable;
 	unsigned int	rx_enable;
