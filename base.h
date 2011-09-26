@@ -121,7 +121,7 @@ typedef struct tmp_config
 	guchar	prf_reg;			/* 重复频率 PRF 步进	*/
 
 	guchar	receiver_reg;		/* 接收器receiver 步进	*/
-	guchar	filter_reg;			/* 滤波 filter 步进		*/
+	//guchar	filter_reg;			/* 滤波 filter 步进		*/
 	guchar	reject_reg;			/* 抑制reject  步进		*/
 	guchar	scanoffset_reg;		/* scan offset  步进	*/
 	guchar	indexoffset_reg;	/* index offset  步进	*/
@@ -135,13 +135,13 @@ typedef struct tmp_config
 	guchar	skew_reg;
 
 	guchar	gate_width_reg;		/* */
-
 	guchar	agate_start_reg;    /*agate_start步进*/
-	guchar	agate_width_reg;    /*agate_width步进*/
+	//guchar	agate_width_reg;    /*agate_width步进*/
 	guchar	agate_height_reg;	/*agate_height步进*/
 	guchar	count_reg;			/*count步进*/
 	guchar	active_delay_reg;	/* active_delay  步进 */
 	guchar	holdtime_reg;		/* holdtime  步进 */
+
 	guchar  cursors_amplitude_reg;
 	guchar  cursors_ut_reg;
 	guchar	cursors_scan_reg;	/* cursors_scan  步进 */
@@ -165,11 +165,11 @@ typedef struct tmp_config
 	guchar  per_measure_reg;
 	guchar  u_reference_reg;
 	guchar  u_measure_reg;
-	guchar  s_reference_reg;
-	guchar  s_measure_reg;
-	guchar  i_reference_reg;
-	guchar  i_measure_reg;
-	guchar  s_refmeas_reg;
+	guchar  s_reference_reg;/*步进是变化的 *2 */
+	guchar  s_measure_reg;/*步进是变化的 *2 */
+	guchar  i_reference_reg;/*步进是变化的 *3 */
+	guchar  i_measure_reg;/*步进是变化的 *3 */
+	guchar  s_refmeas_reg;/*步进是变化的 *2 */
 	guchar  cursors_angle_reg;
 
 	guchar   dis_range_reg;
@@ -185,6 +185,11 @@ typedef struct tmp_config
 
 	guchar   part_thickness_reg;	/* Probe/Part -> parts -> thickness步进*/
 	guchar   diameter_reg;		/* Probe/Part -> parts -> diameter步进*/
+	guchar   weland_height_reg;
+	guchar   weland_offset_reg;
+	guchar	 fizone_height_reg;
+	guchar	 fizone_angle_reg;
+	guchar	 fizone_radius_reg;
 
 	guchar   connection_P_reg;	/* Focal_Law -> configuration -> connection P*/
 	guchar   connection_R_reg;	/*Focal_Law -> configuration -> connection R*/
@@ -208,7 +213,7 @@ typedef struct tmp_config
 	guchar   beam_skew_min_angle_reg;
 	guchar   beam_skew_max_angle_reg;
 	guchar   beam_skew_angle_step_reg;	
-	guchar   focus_depth_reg;	/* Focal Law -> Beam -> focus_depth*/
+	//guchar   focus_depth_reg;	/* Focal Law -> Beam -> focus_depth*/
 
 
 	guchar	encoder_resolution_reg;	/* Scan -> Encoder -> resolution  */
@@ -542,6 +547,7 @@ typedef struct Draw_interface
 	guchar	wgroup_pos;
 	guchar	fstart_qty;  /* wizard 中 focal law -> start 被点击的次数 */
 	guchar	cstart_qty;
+	guchar	wstart_qty;
 	guchar  ctype_pos;
 	guchar	cmode_pos;
 	guchar	scode_pos;

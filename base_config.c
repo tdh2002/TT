@@ -129,6 +129,75 @@ void set_part_diameter (CONFIG *p, void* data)
 	p->part.Diameter = (unsigned int)((unsigned int) (data));
 }
 
+unsigned char get_part_weld (CONFIG *p)
+{
+	return p->part.Weld;
+}
+
+void set_part_weld (CONFIG *p, void* data)
+{
+	p->part.Weld = (unsigned int)((unsigned int) (data));
+}
+unsigned char get_part_symmetry (CONFIG *p)
+{
+	return p->part.symmetry;
+}
+
+void set_part_symmetry (CONFIG *p, void* data)
+{
+	p->part.symmetry = (unsigned int)((unsigned int) (data));
+}
+
+unsigned int get_weland_height (CONFIG *p)
+{
+	return p->part.weland_height;
+}
+
+void set_weland_height (CONFIG *p, void* data)
+{
+	p->part.weland_height = (unsigned int)((unsigned int) (data));
+}
+
+unsigned int get_weland_offset (CONFIG *p)
+{
+	return p->part.weland_offset;
+}
+
+void set_weland_offset (CONFIG *p, void* data)
+{
+	p->part.weland_offset = (unsigned int)((unsigned int) (data));
+}
+
+unsigned int get_fizone_height (CONFIG *p)
+{
+	return p->part.fizone_height;
+}
+
+void set_fizone_height (CONFIG *p, void* data)
+{
+	p->part.fizone_height = (unsigned int)((unsigned int) (data));
+}
+
+unsigned int get_fizone_angle (CONFIG *p)
+{
+	return p->part.fizone_angle;
+}
+
+void set_fizone_angle (CONFIG *p, void* data)
+{
+	p->part.fizone_angle = (unsigned int)((unsigned int) (data));
+}
+
+unsigned int get_fizone_radius (CONFIG *p)
+{
+	return p->part.fizone_radius;
+}
+
+void set_fizone_radius (CONFIG *p, void* data)
+{
+	p->part.fizone_radius = (unsigned int)((unsigned int) (data));
+}
+
 GROUP *get_group_by_id (CONFIG *p, int group)
 {
 	return &(p->group[group]);
@@ -1498,4 +1567,6 @@ void *get_cfg_val (CONFIG *p, int val_type, int grp)
 	}
 }
 *****/
+
+
 
