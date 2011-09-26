@@ -734,6 +734,12 @@ void report_build_header(char *file_name)
 
     fseek(fp,0,SEEK_END);
 
+	fprintf(fp,"<table width = 100%%>\n");
+	fprintf(fp,"<tr><td align = \"left\"><img src = \"logo.gif\"></td>\n");
+	fprintf(fp,"    <td align = \"rigth\"><h1>doppler report</h1></td></tr>\n");
+	fprintf(fp,"<tr><td align = \"left\" colspan = 2>doppler</td></tr>\n");
+	fprintf(fp,"</table>\n");
+
     fprintf(fp,"<table width=\"690\" border=\"1\">\n");
     fprintf(fp,"<tr><td>\n");
     fprintf(fp,"<table>\n");

@@ -277,6 +277,7 @@ static void set_config (guint groupid)
 	{
 		GROUP_VAL(gain_offset[i]) = 0;
 	}
+
 }
 
 /* 设置config结构体之外的初始值  */
@@ -305,6 +306,126 @@ static void set_init_para()
 	{
 		TMP(clb_real_data[i]) = 0;
 	}
+
+	set_part_weld (pp->p_config, 1);
+	pp->wstart_qty = 1;
+
+	/*各步进初始值*/
+	TMP(db_reg)=2;
+	TMP(start_reg)=1;
+	TMP(range_reg)=0;
+	TMP(wedge_delay_reg)=1;
+	TMP(velocity_reg)=1;
+	TMP(pulser_reg)=0;
+	TMP(frequency_reg)=2;
+	//TMP(pulser_width_reg)=;
+	TMP(prf_reg)=1;
+	//TMP(receiver_reg)=;
+	TMP(reject_reg)=0;
+	//TMP(scan_offset_reg)=;
+	//TMP(index_offset_reg)=;
+	TMP(gain_offset_reg)=2;
+	TMP(beam_delay_reg)=0;
+	TMP(point_qty_reg)=1;
+	TMP(sum_gain_reg)=2;
+
+	TMP(agate_start_reg)=2;
+	TMP(gate_width_reg)=2;
+	TMP(agate_height_reg)=0;
+	TMP(count_reg)=0;
+	TMP(active_delay_reg)=2;
+	TMP(holdtime_reg)=2;
+	TMP(ref_ampl_reg)=1;
+	TMP(ref_ampl_offset_reg)=2;
+	TMP(curve_step_reg)=2;
+	TMP(ref_gain_reg)=2;
+	TMP(position_reg)=2;
+	//TMP(amplitude_reg)=0;
+	TMP(mat_atten_reg)=1;
+	TMP(delay_reg)=1;
+	//TMP(tcg_gain_reg)=;
+
+	TMP(per_reference_reg)=1;
+	TMP(per_measure_reg)=1;
+	TMP(u_reference_reg)=1;
+	TMP(u_measure_reg)=1;
+	TMP(s_reference_reg)=2;
+	TMP(s_measure_reg)=2;
+	TMP(i_reference_reg)=2;
+	TMP(i_measure_reg)=2;
+	TMP(s_refmeas_reg)=2;
+	TMP(cursors_angle_reg)=0;
+	TMP(cursors_amplitude_reg)=1;
+	TMP(cursors_ut_reg)=1;
+	TMP(cursors_scan_reg)=2;	/* cursors_scan  步进 */
+	TMP(cursors_index_reg)=2;	/*cursors_index步进*/
+	TMP(min_thickness_reg)=1;	/*min_thickness步进*/
+	TMP(max_thickness_reg)=1;	/*max_thickness步进*/
+	//TMP(entry_reg)=;			/*entry步进*/
+	TMP(echo_qty_reg)=0;		/*echo_qty步进*/
+
+	TMP(dis_range_reg)=1;
+	TMP(avg_scan_speed_reg)=1;
+
+	TMP(color_contrast_reg)=0;	/* Display -> Color -> contrast  */
+	TMP(brightness_reg)=0;	/* Display -> Color -> brightness*/
+	TMP(color_start_reg)=0;	/* Display -> Color -> Start步进  */
+	TMP(color_end_reg)=0;		/* Display -> Color -> end步进    */
+	TMP(min_reg)=0;			/* Display -> Color -> min       */
+	TMP(max_reg)=0;			/* Display -> Color -> max       */
+	TMP(compress_reg)=0;		/* Display -> Properties -> compress */
+
+	TMP(part_thickness_reg)=1;	/* Probe/Part -> parts -> thickness步进*/
+	TMP(diameter_reg)=1;		/* Probe/Part -> parts -> diameter步进*/
+	TMP(weland_height_reg)=0;
+	TMP(weland_offset_reg)=0;
+	TMP(fizone_height_reg)=0;
+	TMP(fizone_angle_reg)=0;
+	TMP(fizone_radius_reg)=0;
+
+	TMP(connection_P_reg)=0;	/* Focal_Law -> configuration -> connection P*/
+	TMP(connection_R_reg)=0;	/*Focal_Law -> configuration -> connection R*/
+
+	TMP(element_qty_reg)=0;	/* Focal_Law -> aperture -> element qty*/
+	TMP(first_element_reg)=0;	/* Focal_Law -> aperture -> first element*/
+	TMP(last_element_reg)=0;	/* Focal_Law -> aperture -> last_element*/
+	TMP(element_step_reg)=0;	/* Focal_Law -> aperture -> element_step*/
+
+
+	TMP(min_angle_reg)=1;		
+	TMP(max_angle_reg)=1;	
+	TMP(positions_reg)=1;	
+	TMP(offsets_reg)=1;
+	TMP(positione_reg)=1;	
+	TMP(positionstep_reg)=1;
+	TMP(depths_reg)=1;
+	TMP(depthe_reg)=1;
+	TMP(offsete_reg)=1;		
+	TMP(angle_step_reg)=1;
+	TMP(beam_skew_min_angle_reg)=1;
+	TMP(beam_skew_max_angle_reg)=1;
+	TMP(beam_skew_angle_step_reg)=1;	
+	//TMP(focus_depth_reg)=;	/* Focal Law -> Beam -> focus_depth*/
+
+
+	TMP(encoder_resolution_reg)=1;	/* Scan -> Encoder -> resolution  */
+	TMP(origin_reg)=1;
+	TMP(scanspeed_reg)=0;
+	TMP(scanspeed_rpm_reg)=0;
+	TMP(indexspeed_reg)=0;
+
+	TMP(scan_start_reg)=0;	/* Scan -> Area -> Scan start*/
+	TMP(scan_end_reg)=0;		/* Scan -> Area -> Scan end*/
+	TMP(scan_resolution_reg)=2;	/* Scan -> Area -> Scan resolution*/
+
+	TMP(index_start_reg)=0;	/* Scan -> Area -> index_start*/
+	TMP(index_end_reg)=0;	/* Scan -> Area -> index_end*/
+	TMP(index_resolution_reg)=2;	/* Scan -> Area -> index_resolution*/
+
+	TMP(bright_reg)=0;		/*preferences -> pref. -> bright*/
+	TMP(distance_reg)=1;		/*preferences -> pref. -> bright*/
+
+
 }
 
 int main (int argc, char *argv[])
@@ -428,6 +549,8 @@ int main (int argc, char *argv[])
 	TMP(beam_qty[7]) = 0;
 
 	TMP(range_step_min) = ((gint)(GROUP_VAL(point_qty) * 10)+ 5) / 10 * 10;
+
+
 
 #if ARM
 	init_fb ();					

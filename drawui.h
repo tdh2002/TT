@@ -213,6 +213,8 @@
 #define WELDTYPE	(ECHOTYPE + 3)
 #define PROBETYPE	(WELDTYPE + 2)
 #define DAMPING		(PROBETYPE + 4)
+#define WELD		(DAMPING + 2)
+#define SYMMETRY	(WELD + 4)
 //#define LAW_CONFIG	(WGROUP + 3)
 //#define L_CONFIG	(LAW_CONFIG + 4)
 
@@ -374,6 +376,13 @@ extern void data_024 (GtkSpinButton *spinbutton, gpointer data);
 extern void data_0241 (GtkSpinButton *spinbutton, gpointer data);
 extern void data_0242 (GtkSpinButton *spinbutton, gpointer data);
 extern void data_0243 (GtkSpinButton *spinbutton, gpointer data);
+extern void data_032 (GtkSpinButton *spinbutton, gpointer data);
+extern void data_0321 (GtkSpinButton *spinbutton, gpointer data);
+extern void data_033 (GtkMenuItem *menuitem, gpointer data);
+extern void data_0331 (GtkSpinButton *spinbutton, gpointer data);
+extern void data_0332 (GtkSpinButton *spinbutton, gpointer data);
+extern void data_034 (GtkSpinButton *spinbutton, gpointer data);
+
 extern void data_100 (GtkSpinButton *spinbutton, gpointer data);	/* 100 gain增益 */
 extern void data_101 (GtkSpinButton *spinbutton, gpointer data);	/* 101 start 扫描延时 */
 extern void data_102 (GtkSpinButton *spinbutton, gpointer data);	/* 102 range 范围 */
@@ -530,6 +539,7 @@ extern void data_530 (GtkMenuItem *menuitem, gpointer data);
 extern void data_531 (GtkSpinButton *spinbutton, gpointer data);	/*531*/
 extern void data_532 (GtkSpinButton *spinbutton, gpointer data);
 extern void data_533 (GtkMenuItem *menuitem, gpointer data);
+extern void data_534 (GtkMenuItem *menuitem, gpointer data);
 
 extern void data_600 (GtkMenuItem *menuitem, gpointer data);
 extern void data_601 (GtkSpinButton *spinbutton, gpointer data);	/*601*/
