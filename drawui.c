@@ -17752,7 +17752,7 @@ static void key_message_thread(void)
 	}
 }
 
-void key_read_delay()
+int key_read_delay()
 {
 	int ret;
 	pthread_t tid0;
