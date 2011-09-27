@@ -290,9 +290,13 @@ void draw_a_scan (gushort *p, gint width, gint height,
 {
 	gint	i, min, max;
 	/* 清空这块显示区 背景暂定黑色 可以全部一起清空 */
-//	for (i = 0; i < height; i++)
-//		memset (p + FB_WIDTH * (i + yoffset) + xoffset, 0x0, width * 2 );
+	for (i = 0; i < height; i++)
+		memset (p + FB_WIDTH * (i + yoffset) + xoffset, 0x0, width * 2 );
 	/* 画回波 */
+//	fbline(p, xoffset+302, yoffset, xoffset+302, yoffset+390, 0x03e0);
+//	fbline(p, xoffset, yoffset, xoffset+605, yoffset+390, 0xf800);
+
+#if 1
 	for (i = 0; i < width - 1; i++)
 	{
 		min =	MIN (height * HEIGHT_TABLE[data[i]],	height * HEIGHT_TABLE[data[i + 1]]);
@@ -323,6 +327,8 @@ void draw_a_scan (gushort *p, gint width, gint height,
 				yoffset + height,
 				0x0
 			   );
+#endif
+
 #if 0
 		/* 画包络 */
 		if (GROUP_VAL_POS(groupId, ascan_envelope))

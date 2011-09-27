@@ -3784,8 +3784,8 @@ void draw_area_all()
 							set_drawarea_property (&(pp->draw_area[1]), A_SCAN, 0x10);
 							draw_area_ (pp->vbox_area[0], &(pp->draw_area[1]), 655, 213);
 							gtk_widget_show (pp->vbox_area[0]);
-							set_scan_config (0, A_SCAN, 615, 615, 163, 0, 0,  0);
-							set_scan_config (1, A_SCAN, 615, 615, 178, 0, 197, 1);
+							set_scan_config (0, A_SCAN, 610, 610, 185, 0, 0,  0);//163
+							set_scan_config (1, A_SCAN, 610, 610, 185, 0, 212, 1);//178 197
 							/* 显示的位置 偏移等等 */
 							break;
 						case S_SCAN:

@@ -584,6 +584,15 @@ typedef struct Draw_interface
 	gint    clb_encoder;
 	gint    save_ut_unit;
 	gint    clb_count;
+
+	//
+	guint    gate_a_start[ setup_MAX_LAW_QTY ];
+	guint    gate_a_end  [ setup_MAX_LAW_QTY ];
+	guint    gate_b_start[ setup_MAX_LAW_QTY ];
+	guint    gate_b_end  [ setup_MAX_LAW_QTY ];
+	guint    gate_i_start[ setup_MAX_LAW_QTY ];
+	guint    gate_i_end  [ setup_MAX_LAW_QTY ];
+
 } DRAW_UI, *DRAW_UI_P;
 
 typedef struct _MY_SIGNAL_TMP 

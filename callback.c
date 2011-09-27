@@ -4661,36 +4661,36 @@ void data_202 (GtkSpinButton *spinbutton, gpointer data)	/* 闸门开始位置 P
 		{ 
 			if (GROUP_VAL(gate_pos) == GATE_A)
 			{
-				TMP(focal_spi[k]).gate_a_start	= (int)( (GROUP_GATE_POS(start) + delay) / (10*cos(current_angle)) );
-				TMP(focal_spi[k]).gate_a_end	= (int)( (GROUP_GATE_POS(start) + GROUP_GATE_POS(width) + delay) / (10*cos(current_angle)) );
+				pp->gate_a_start[k]	= (int)( (GROUP_GATE_POS(start) + delay) / (10*cos(current_angle)) );
+				pp->gate_a_end[k]	= (int)( (GROUP_GATE_POS(start) + GROUP_GATE_POS(width) + delay) / (10*cos(current_angle)) );
 			}
 			else if (GROUP_VAL(gate_pos) == GATE_B)
 			{ 
-				TMP(focal_spi[k]).gate_b_start	= (int)( (GROUP_GATE_POS(start) + delay) / (10*cos(current_angle)) );
-				TMP(focal_spi[k]).gate_b_end	= (int)( (GROUP_GATE_POS(start) + GROUP_GATE_POS(width) + delay) / (10*cos(current_angle)) );
+				pp->gate_b_start[k]	= (int)( (GROUP_GATE_POS(start) + delay) / (10*cos(current_angle)) );
+				pp->gate_b_end[k]	= (int)( (GROUP_GATE_POS(start) + GROUP_GATE_POS(width) + delay) / (10*cos(current_angle)) );
 			}
 			else if (GROUP_VAL(gate_pos) == GATE_I)
 			{
-				TMP(focal_spi[k]).gate_i_start	= (int)( (GROUP_GATE_POS(start) + delay) / (10*cos(current_angle)) );
-				TMP(focal_spi[k]).gate_i_end	= (int)( (GROUP_GATE_POS(start) + GROUP_GATE_POS(width) + delay) / (10*cos(current_angle)) );
+				pp->gate_i_start[k]	= (int)( (GROUP_GATE_POS(start) + delay) / (10*cos(current_angle)) );
+				pp->gate_i_end[k]	= (int)( (GROUP_GATE_POS(start) + GROUP_GATE_POS(width) + delay) / (10*cos(current_angle)) );
 			}
 		}
 		else //half path
 		{
 			if (GROUP_VAL(gate_pos) == GATE_A)
 			{
-				TMP(focal_spi[k]).gate_a_start	= (int)( GROUP_GATE_POS(start) / 10 );
-				TMP(focal_spi[k]).gate_a_end	= (int)( (GROUP_GATE_POS(start) + GROUP_GATE_POS (width)) / 10 );
+				pp->gate_a_start[k]	= (int)( GROUP_GATE_POS(start) / 10 );
+				pp->gate_a_end[k]	= (int)( (GROUP_GATE_POS(start) + GROUP_GATE_POS (width)) / 10 );
 			}
 			else if (GROUP_VAL(gate_pos) == GATE_B)
 			{ 
-				TMP(focal_spi[k]).gate_b_start	= (int)( GROUP_GATE_POS(start) / 10 );
-				TMP(focal_spi[k]).gate_b_end	= (int)( (GROUP_GATE_POS(start) + GROUP_GATE_POS (width)) / 10 );
+				pp->gate_b_start[k]	= (int)( GROUP_GATE_POS(start) / 10 );
+				pp->gate_b_end[k]	= (int)( (GROUP_GATE_POS(start) + GROUP_GATE_POS (width)) / 10 );
 			}
 			else if (GROUP_VAL(gate_pos) == GATE_I)
 			{
-				TMP(focal_spi[k]).gate_i_start	= (int)( GROUP_GATE_POS(start) / 10 );
-				TMP(focal_spi[k]).gate_i_end	= (int)( (GROUP_GATE_POS(start) + GROUP_GATE_POS (width)) / 10 );
+				pp->gate_i_start[k]	= (int)( GROUP_GATE_POS(start) / 10 );
+				pp->gate_i_end[k]	= (int)( (GROUP_GATE_POS(start) + GROUP_GATE_POS (width)) / 10 );
 			}
 		}
 	}
@@ -4707,9 +4707,7 @@ void data_202 (GtkSpinButton *spinbutton, gpointer data)	/* 闸门开始位置 P
 	TMP(group_spi[grp]).idel_time	=
 			100000000 / (temp_prf / (10)) - 2048 - TMP(group_spi[grp]).rx_time;
 
-	send_spi_data (grp);
 	send_focal_spi (grp);
-
 	gtk_widget_queue_draw (pp->vboxtable);
 
 }
@@ -4790,17 +4788,17 @@ void data_203 (GtkSpinButton *spinbutton, gpointer data) /* 闸门宽度 P203 */
 		{
 			if (GROUP_VAL(gate_pos) == GATE_A)
 			{
-				TMP(focal_spi[k]).gate_a_end	= (GROUP_VAL_POS(grp, gate[0].start) + 
+				pp->gate_a_end[k]	= (GROUP_VAL_POS(grp, gate[0].start) + 
 						GROUP_VAL_POS (grp, gate[0].width)) / (10*cos(current_angle));
 			}
 			else if (GROUP_VAL(gate_pos) == GATE_B)
 			{
-				TMP(focal_spi[k]).gate_b_end	= (GROUP_VAL_POS(grp, gate[1].start) + 
+				pp->gate_b_end[k]	= (GROUP_VAL_POS(grp, gate[1].start) + 
 						GROUP_VAL_POS (grp, gate[1].width)) / (10*cos(current_angle));
 			}
 			else if (GROUP_VAL(gate_pos) == GATE_I)
 			{
-				TMP(focal_spi[k]).gate_i_end	= (GROUP_VAL_POS(grp, gate[2].start) + 
+				pp->gate_i_end[k]	= (GROUP_VAL_POS(grp, gate[2].start) + 
 						GROUP_VAL_POS (grp, gate[2].width)) / (10*cos(current_angle));
 			}
 		}
@@ -4808,17 +4806,17 @@ void data_203 (GtkSpinButton *spinbutton, gpointer data) /* 闸门宽度 P203 */
 		{
 			if (GROUP_VAL(gate_pos) == GATE_A)
 			{
-				TMP(focal_spi[k]).gate_a_end	= (GROUP_VAL_POS(grp, gate[0].start) + 
+				pp->gate_a_end[k]	= (GROUP_VAL_POS(grp, gate[0].start) + 
 						GROUP_VAL_POS (grp, gate[0].width)) / 10;
 			}
 			else if (GROUP_VAL(gate_pos) == GATE_B)
 			{
-				TMP(focal_spi[k]).gate_b_end	= (GROUP_VAL_POS(grp, gate[1].start) + 
+				pp->gate_b_end[k]	= (GROUP_VAL_POS(grp, gate[1].start) + 
 						GROUP_VAL_POS (grp, gate[1].width)) / 10;
 			}
 			else if (GROUP_VAL(gate_pos) == GATE_I)
 			{
-				TMP(focal_spi[k]).gate_i_end	= (GROUP_VAL_POS(grp, gate[2].start) + 
+				pp->gate_i_end[k]	= (GROUP_VAL_POS(grp, gate[2].start) + 
 						GROUP_VAL_POS (grp, gate[2].width)) / 10;
 			}
 		}
@@ -4831,7 +4829,7 @@ void data_203 (GtkSpinButton *spinbutton, gpointer data) /* 闸门宽度 P203 */
 			+ TMP(max_beam_delay[grp])) + TMP(group_spi[grp]).compress_rato   ;
 	//TMP(group_spi[grp]).idel_time	=
 	//		100000000 / (temp_prf / (10)) - 2048 - TMP(group_spi[grp]).rx_time;
-	send_spi_data (grp);
+
 	send_focal_spi (grp);
 	gtk_widget_queue_draw (pp->vboxtable);
 }
