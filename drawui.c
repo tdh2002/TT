@@ -17718,6 +17718,9 @@ static void signal_scan_thread(void)
 	}
 }
 
+
+
+
 static void key_message_thread(void)
 {
 	char key = 0;
@@ -17728,25 +17731,37 @@ static void key_message_thread(void)
 	   {
 				process_key_press (key);
 	   }
-
 	   if (read(pp->fd_key1, bar, 3) > 0)
 	   {
 		   if(bar[0] == 0x55 && bar[1]== 0x55 && bar[2] == 0x55)
 		   {
 
 					//将所有电池信息全部读取出来
-					treadn(pp->fd_key1, &(pp->battery), 28, 0.1);//0.1s
-					if(pp->battery.on_off==0x50)
+					if(treadn(pp->fd_key1, &(pp->battery), 28, 0.1)>=0)//0.1s
+					{
+						if(pp->battery.on_off==0x50)
 							save_config(NULL,NULL,NULL);
 
-					gdk_threads_enter();
-					draw_other_info(pp->drawing_area,NULL,NULL);
-					gdk_threads_leave();
+					    gdk_threads_enter();
+					    draw_other_info(pp->drawing_area,NULL,NULL);
+					    gdk_threads_leave();
+					}
 		   }
 	   }
-
 	   usleep(100000);
 	}
+}
+
+void key_read_delay()
+{
+	int ret;
+	pthread_t tid0;
+	ret = pthread_create (&tid0, NULL, (void*)key_message_thread, NULL);
+	if(ret){
+		perror("in1:");
+	    return 0;
+	}
+	return 0;
 }
 
 static void draw_frame_thread(void)
@@ -17969,7 +17984,7 @@ void init_ui(DRAW_UI_P p)
 {
 	gint	i;
 	gchar	*markup;
-	pthread_t tid0 , tid1, tid2; 
+	pthread_t tid1, tid2;
 	int ret;
 	p_drawui_c = p;
 	gint	grp = get_current_group (pp->p_config);
@@ -18158,6 +18173,9 @@ void init_ui(DRAW_UI_P p)
 	gtk_box_pack_start (GTK_BOX (p->hbox111), pp->event[0], FALSE, FALSE, 0);
 	gtk_widget_set_size_request (GTK_WIDGET(pp->event[0]), 60, 45);
 	update_widget_bg(pp->event[0], /*backpic[3]*/ 3);
+	//****************
+	//printf("label %x\n",(int)(pp->label[0]));
+	//printf("string %s %s\n",con2_p[1][0][6], con2_p[1][0][0]);
 	if (get_group_db_ref (pp->p_config, get_current_group (pp->p_config)))
 		tt_label_show_string (pp->label[0], con2_p[1][0][6], "\n", "(dB)", "white", 10);
 	else
@@ -18376,11 +18394,7 @@ void init_ui(DRAW_UI_P p)
 #if ARM
 	DMA_MARK = (int*)(pp->p_beam_data + 0x800000)  ;
     printf("DMA_MAKR is %d \n", *DMA_MARK);	
-	ret = pthread_create (&tid0, NULL, (void*)key_message_thread, NULL);
-	if(ret){
-		perror("in1:");
-	    return;
-	}
+
 	ret = pthread_create (&tid1, NULL, (void*)draw_frame_thread, NULL);
     if(ret){
 		perror("in1:");
@@ -18392,7 +18406,7 @@ void init_ui(DRAW_UI_P p)
 	    return;
 	}
 #endif
-
+    g_timeout_add (5000, (GSourceFunc) key_read_delay, NULL);
 	g_timeout_add (1000, (GSourceFunc) time_handler1, NULL);
 }
 
