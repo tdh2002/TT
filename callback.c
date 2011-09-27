@@ -90,6 +90,12 @@ void data_024 (GtkSpinButton *spinbutton, gpointer data);
 void data_0241 (GtkSpinButton *spinbutton, gpointer data);
 void data_0242 (GtkSpinButton *spinbutton, gpointer data);
 void data_0243 (GtkSpinButton *spinbutton, gpointer data);
+void data_032 (GtkSpinButton *spinbutton, gpointer data);
+void data_0321 (GtkSpinButton *spinbutton, gpointer data);
+void data_033 (GtkMenuItem *menuitem, gpointer data);
+void data_0331 (GtkSpinButton *spinbutton, gpointer data);
+void data_0332 (GtkSpinButton *spinbutton, gpointer data);
+void data_034 (GtkSpinButton *spinbutton, gpointer data);
 
 void data_100 (GtkSpinButton *spinbutton, gpointer data);
 void data_101 (GtkSpinButton *spinbutton, gpointer data);
@@ -252,6 +258,7 @@ void data_530 (GtkMenuItem *menuitem, gpointer data);
 void data_531 (GtkSpinButton *spinbutton, gpointer data);
 void data_532 (GtkSpinButton *spinbutton, gpointer data);
 void data_533 (GtkMenuItem *menuitem, gpointer data);
+void data_534 (GtkMenuItem *menuitem, gpointer data);
 
 void data_600 (GtkMenuItem *menuitem, gpointer data);
 void data_601 (GtkSpinButton *spinbutton, gpointer data);
@@ -825,7 +832,8 @@ gboolean eventbox2_function0 (GtkWidget *widget, GdkEventButton *event,	gpointer
 
 static inline void data_process(guchar* data, guint pa)
 {
-	(*data > 0) ? (*data)-- : (*data = pa);
+	//(*data > 0) ? (*data)-- : (*data = pa);
+	(*data < pa) ? (*data)++ : (*data = 0);
 	return ;
 }
 
@@ -879,8 +887,10 @@ void b3_fun0(gpointer pt)
 							break;
 						default:break;
 					}
+				//	if((p->cstart_qty) == 1)
+				//			esc_calibration();
 					break;
-				case 3:break;
+				case 3:((p->wstart_qty) > 1) ? (p->wstart_qty) -- : ((p->wstart_qty) = 4);break;
 				default:break;
 			}
 			break;
@@ -1077,7 +1087,7 @@ void b3_fun1(gpointer p)
 					case 0://Group
 						((pp->start_qty) < 9) ? (pp->start_qty) ++ : ((pp->start_qty) = 1); break;
 					case 1://Focal Law
-						((pp->fstart_qty) < 5) ? (pp->fstart_qty) ++ : ((pp->fstart_qty) = 1); 
+						((pp->fstart_qty) < 6) ? (pp->fstart_qty) ++ : ((pp->fstart_qty) = 1); 
 						if((pp->fstart_qty) == 5)
 						{
 							//生成聚焦法则
@@ -1186,37 +1196,38 @@ void b3_fun1(gpointer p)
 										} 
 										break;
 									case 1://Wedge Delay
-										((pp->cstart_qty) < 6) ? (pp->cstart_qty) ++ : ((pp->cstart_qty) = 1);
-										if((pp->cstart_qty) == 2)
+										//校准完之后Accept
+										if(pp->flag)
 										{
-											draw_area_calibration();
-										}
-										else if((pp->cstart_qty) == 4)
-										{
-											//在此获取闸门信息
-											for(i=0;i<((pp->last_angle - pp->first_angle)/LAW_VAL(Angle_step));i++)
+											pp->flag = 0;
+											((pp->cstart_qty) < 6) ? (pp->cstart_qty) ++ : ((pp->cstart_qty) = 1);
+											if((pp->cstart_qty) == 2)
 											{
-												switch(pp->echotype_pos)
-												{
-													case 0://radius
-														TMP_CBA(wd_radius[i]) = pp->radius1;
-														break;
-													case 1://depth
-														TMP_CBA(wd_depth[i]) = pp->depth1;
-														break;
-													case 2://thickness
-														TMP_CBA(wd_thickness[i]) = pp->thickness1;
-														break;
-												}
-												
+												draw_area_calibration();
 											}
-										}
-										else if((pp->cstart_qty) == 5)
-										{
-											//校准完之后Accept
-											if(pp->flag)
+											else if((pp->cstart_qty) == 4)
 											{
-												pp->flag = 0;
+												//在此获取闸门信息
+												for(i=0;i<((pp->last_angle - pp->first_angle)/LAW_VAL(Angle_step));i++)
+												{
+													switch(pp->echotype_pos)
+													{
+														case 0://radius
+															TMP_CBA(wd_radius[i]) = pp->radius1;
+															break;
+														case 1://depth
+															TMP_CBA(wd_depth[i]) = pp->depth1;
+															break;
+														case 2://thickness
+															TMP_CBA(wd_thickness[i]) = pp->thickness1;
+															break;
+													}
+												
+												}
+											}
+											else if((pp->cstart_qty) == 5)
+											{
+
 												for(i=0;i<((pp->last_angle - pp->first_angle)/LAW_VAL(Angle_step));i++)
 														set_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_WEDGE_DELAY,
 																cba_ultrasound_wedgedelay());
@@ -1259,7 +1270,7 @@ void b3_fun1(gpointer p)
 							default:break;
 						}
 							break;
-					case 3:break;
+					case 3:((pp->wstart_qty) < 4) ? (pp->wstart_qty) ++ : ((pp->wstart_qty) = 1);break;
 					default:break;
 			}
 			break;
@@ -1400,8 +1411,7 @@ void b3_fun1(gpointer p)
 				   {
 					   case 0: break; 
 					   case 1: break;
-					   case 2: break; 
-					   case 3:
+					   case 2:
 							   switch(GROUP_VAL(col_select_pos)) 
 							   {
 								   case 0:data_process(&(TMP(color_start_reg)), 1 );break;
@@ -1410,7 +1420,7 @@ void b3_fun1(gpointer p)
 							   }
 							   break; 
 
-					   case 4:
+					   case 3:
 							   switch(get_dis_prop_scan(pp->p_config)) 
 							   {
 								   case 0:break;
@@ -1616,7 +1626,12 @@ void b3_fun2(gpointer p)
 										data_process (&(TMP(db_reg)), 4);
  							   }
  							   break;
-						case 3:break;
+						case 3:
+ 							   if(pp->wstart_qty == 3)
+ 							   		data_process (&(TMP(weland_height_reg)), 2);
+ 							   else if(pp->wstart_qty == 4)
+ 							   		data_process (&(TMP(fizone_height_reg)), 2);
+								break;/*p032*/
 						default:break;
 					}
 					break;
@@ -1696,16 +1711,15 @@ void b3_fun2(gpointer p)
 				   {
 					   case 0: break; 
 					   case 1: break;  /*412*/
-					   case 2: break;  /*p422 */
-					   case 3: 
+					   case 2: 
 							   if (GROUP_VAL(col_select_pos) == 0)
-								   data_process(&(TMP(color_end_reg)), 1);  /*432 */
+								   data_process(&(TMP(color_end_reg)), 1);  /*422 */
 							   else if (GROUP_VAL(col_select_pos) == 1)
 								   data_process(&(TMP(brightness_reg)), 1);
 							   else if (GROUP_VAL(col_select_pos) == 2)
 								   data_process(&(TMP(max_reg)), 2);
 							   break;  /*432 */
-					   case 4: break;
+					   case 3: break;
 					   default:break;
 				   }
 				   break;
@@ -1946,7 +1960,12 @@ void b3_fun3(gpointer p)
  							   default: break;
 							}
  							break;
-						case 3:break;
+						case 3:
+ 							   if ( pp->wstart_qty == 3 )
+ 							   		data_process (&(TMP(weland_offset_reg)), 2);
+ 							   else if(pp->wstart_qty == 4)
+ 							   		data_process (&(TMP(fizone_angle_reg)), 2);
+								break;/*p033*/
 						default:break;
 					}
 					break;
@@ -2233,7 +2252,7 @@ void b3_fun4(gpointer p)
  							   }
 
  							   break;
-						case 3:break;
+						case 3: data_process (&(TMP(fizone_radius_reg)), 2);break;
 						default:break;
 					}
 					break;
@@ -2692,6 +2711,11 @@ static gint keypress_event_dialog(GtkWidget *widget, GdkEventKey *event)			/* �
 			if((pp->pos==8)&&(pp->pos1[pp->pos]==0)&&(pp->pos2[pp->pos][pp->pos1[pp->pos]]==2)&&(pp->pos_pos==MENU3_PRESSED))
 				gtk_dialog_response (GTK_DIALOG(widget), GTK_RESPONSE_CANCEL);
 
+			if((pp->pos==9)&&(pp->pos1[pp->pos]==2)&&(pp->pos2[pp->pos][pp->pos1[pp->pos]]==1)&&(pp->pos_pos==MENU3_PRESSED))
+			{
+				gtk_dialog_response (GTK_DIALOG(widget), GTK_RESPONSE_CANCEL);
+			}
+
 			return 0;
 			break;
 		case GDK_Super_L:
@@ -2880,6 +2904,10 @@ static int handler_key(guint keyval, gpointer data)
 	switch (keyval) 
 	{
 		case GDK_KP_0:	/* 选中 P310 cursors 这个位置 */
+			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
+			{
+				main_menu_pop(MENU_HIDE);/*收回主菜单条*/
+			}
 			pp->pos = 3;
 			pp->pos1[pp->pos] = 1;
 			CUR_POS = 0;
@@ -2899,6 +2927,10 @@ static int handler_key(guint keyval, gpointer data)
 			break;
 
 		case GDK_KP_2:	/* 选中 Calibration 这个位置 */
+			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
+			{
+				main_menu_pop(MENU_HIDE);/*收回主菜单条*/
+			}
 			pp->pos = 0;
 			pp->pos1[pp->pos] = 2;
 			//CUR_POS = 0;
@@ -2909,6 +2941,14 @@ static int handler_key(guint keyval, gpointer data)
 			break;
 
 		case GDK_KP_3:	/* 选中 P100 Gain 这个位置 */
+			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
+			{
+				main_menu_pop(MENU_HIDE);/*收回主菜单条*/
+			}
+			else if((MENU31_PRESS == data1)||(MENU32_PRESS == data1)||(MENU33_PRESS == data1)||(MENU34_PRESS == data1)||(MENU35_PRESS == data1)||(MENU36_PRESS == data1))/*当三级菜单中有弹出菜单选项时*/
+			{
+				menu3_pop(MENU3_HIDE);/*隐藏三级菜单的弹出菜单*/
+			}
 			pp->pos = 1;
 			pp->pos1[pp->pos] = 0;
 			CUR_POS = 0;
@@ -2929,6 +2969,10 @@ static int handler_key(guint keyval, gpointer data)
 			break;
 
 		case GDK_KP_5:	/* 选中 P200 Gate 这个位置 */
+			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
+			{
+				main_menu_pop(MENU_HIDE);/*收回主菜单条*/
+			}
 			pp->pos = 2;
 			pp->pos1[pp->pos] = 0;
 			CUR_POS = 0;
@@ -2945,6 +2989,10 @@ static int handler_key(guint keyval, gpointer data)
 			break;
 
 		case GDK_KP_8:	/* 选中 P140 Set 80% 这个位置 */
+			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
+			{
+				main_menu_pop(MENU_HIDE);/*收回主菜单条*/
+			}
 			pp->pos = 1;
 			pp->pos1[pp->pos] = 4;
 			CUR_POS = 0;
@@ -2955,6 +3003,10 @@ static int handler_key(guint keyval, gpointer data)
 			break;
 
 		case GDK_KP_9:	/* 选中 P400 Display 这个位置 */
+			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
+			{
+				main_menu_pop(MENU_HIDE);/*收回主菜单条*/
+			}
 			pp->pos = 4;
 			pp->pos1[pp->pos] = 0;
 			CUR_POS = 0;
@@ -3056,6 +3108,65 @@ static int handler_key(guint keyval, gpointer data)
 				}
 			}
 			esc_calibration();
+			if((pp->pos==0)&&(pp->pos1[pp->pos]==0))
+			{
+				if((MENU31_PRESS == data1)||(MENU32_PRESS == data1)||(MENU33_PRESS == data1)||(MENU34_PRESS == data1)||(MENU35_PRESS == data1)||(MENU36_PRESS == data1))/*当三级菜单中有弹出菜单选项时*/
+				{
+					menu3_pop(MENU3_HIDE);/*隐藏三级菜单的弹出菜单*/
+				}
+				else
+				{
+				pp->pos1[pp->pos]=0;
+				pp->start_qty = 0;
+				gtk_widget_set_sensitive(pp->eventbox2[2],TRUE);
+				gtk_widget_set_sensitive(pp->menubar,TRUE);
+				if(GROUP_VAL(group_mode)==PA_SCAN)
+					gtk_widget_set_sensitive(pp->eventbox2[1],TRUE);
+				else
+					gtk_widget_set_sensitive(pp->eventbox2[1],FALSE);
+
+				draw_menu3(0, NULL);
+				}
+			}
+			else if((pp->pos==0)&&(pp->pos1[pp->pos]==1))
+			{
+				if((MENU31_PRESS == data1)||(MENU32_PRESS == data1)||(MENU33_PRESS == data1)||(MENU34_PRESS == data1)||(MENU35_PRESS == data1)||(MENU36_PRESS == data1))/*当三级菜单中有弹出菜单选项时*/
+				{
+					menu3_pop(MENU3_HIDE);/*隐藏三级菜单的弹出菜单*/
+				}
+				else
+				{
+				pp->pos1[pp->pos]=1;
+				pp->fstart_qty = 0;
+				gtk_widget_set_sensitive(pp->eventbox2[0],TRUE);
+				gtk_widget_set_sensitive(pp->eventbox2[2],TRUE);
+				gtk_widget_set_sensitive(pp->eventbox2[3],TRUE);
+				gtk_widget_set_sensitive(pp->menubar,TRUE);
+
+				draw_menu3(0, NULL);
+				}
+			}
+			else if((pp->pos==0)&&(pp->pos1[pp->pos]==3))
+			{
+				if((MENU31_PRESS == data1)||(MENU32_PRESS == data1)||(MENU33_PRESS == data1)||(MENU34_PRESS == data1)||(MENU35_PRESS == data1)||(MENU36_PRESS == data1))/*当三级菜单中有弹出菜单选项时*/
+				{
+					menu3_pop(MENU3_HIDE);/*隐藏三级菜单的弹出菜单*/
+				}
+				else
+				{
+				pp->pos1[pp->pos]=3;
+				pp->wstart_qty = 1;
+				gtk_widget_set_sensitive(pp->eventbox2[0],TRUE);
+				gtk_widget_set_sensitive(pp->eventbox2[2],TRUE);
+				gtk_widget_set_sensitive(pp->menubar,TRUE);
+				if(GROUP_VAL(group_mode)==PA_SCAN)
+					gtk_widget_set_sensitive(pp->eventbox2[1],TRUE);
+				else
+					gtk_widget_set_sensitive(pp->eventbox2[1],FALSE);
+
+				draw_menu3(0, NULL);
+				}
+			}
 			break;
 		case GDK_Return:	/*回车键*/
 
@@ -3516,6 +3627,53 @@ void data_0027 (GtkSpinButton *spinbutton, gpointer data) /*scanoffset */
 			draw_area_all();
 	else
 			draw_area_calibration();
+}
+
+void data_032 (GtkSpinButton *spinbutton, gpointer data) /*part_thickness*/
+{
+	if(UNIT_MM == get_unit(pp->p_config))
+		set_weland_height (pp->p_config, (GUINT_TO_POINTER
+					((guint) (gtk_spin_button_get_value (spinbutton) * 1000.0))));
+	else
+		set_weland_height (pp->p_config, (GUINT_TO_POINTER
+					((guint) (gtk_spin_button_get_value (spinbutton) * 1000.0/ 0.03937 ))));
+}
+void data_0321 (GtkSpinButton *spinbutton, gpointer data) /*fill zone height*/
+{
+	if(UNIT_MM == get_unit(pp->p_config))
+		set_fizone_height (pp->p_config, (GUINT_TO_POINTER
+					((guint) (gtk_spin_button_get_value (spinbutton) * 1000.0))));
+	else
+		set_fizone_height (pp->p_config, (GUINT_TO_POINTER
+					((guint) (gtk_spin_button_get_value (spinbutton) * 1000.0/ 0.03937 ))));
+}
+
+void data_033 (GtkMenuItem *menuitem, gpointer data) /* wizard weld->symmetry */
+{
+	set_part_symmetry (pp->p_config, data);
+	pp->pos_pos = MENU3_STOP;
+	draw_menu3(0, NULL);
+}
+
+void data_0331 (GtkSpinButton *spinbutton, gpointer data) /*weld land offset*/
+{
+	if(UNIT_MM == get_unit(pp->p_config))
+		set_weland_offset (pp->p_config, (GUINT_TO_POINTER
+					((guint) (gtk_spin_button_get_value (spinbutton) * 1000.0))));
+	else
+		set_weland_offset (pp->p_config, (GUINT_TO_POINTER
+					((guint) (gtk_spin_button_get_value (spinbutton) * 1000.0/ 0.03937 ))));
+}
+void data_0332 (GtkSpinButton *spinbutton, gpointer data) /*fill zone angle*/
+{
+		set_fizone_angle (pp->p_config, (GUINT_TO_POINTER
+					((guint) (gtk_spin_button_get_value (spinbutton) * 1000.0))));
+}
+
+void data_034 (GtkSpinButton *spinbutton, gpointer data) /*fill zone radius*/
+{
+		set_fizone_radius (pp->p_config, (GUINT_TO_POINTER
+					((guint) (gtk_spin_button_get_value (spinbutton) * 1000.0))));
 }
 
 void data_00341 (GtkSpinButton *spinbutton, gpointer data) /* Pulser 发射 P120 */
@@ -4456,14 +4614,21 @@ void data_201 (GtkMenuItem *menuitem, gpointer data) /* parameter 闸门参数�
 
 void data_202 (GtkSpinButton *spinbutton, gpointer data)	/* 闸门开始位置 P202 */
 {
+	gfloat delay;
+	guint offset, k;
 	gint grp = get_current_group(pp->p_config);
 	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
+	guint beam_qty =TMP(beam_qty[grp]);
+	gfloat depth = LAW_VAL(Position_start)/1000.0;
 	gint tt[4];
 	gint temp_prf ;
     // get current beam Number
 	double current_angle ;
 	double max_angle     ;
 	int BeamNo = pp->p_tmp_config->beam_num[grp];
+	
+	for (offset = 0, k = 0 ; k < grp; k++)
+		offset += TMP(beam_qty[k]);
     if(LAW_VAL(Focal_type) == 0)
     {
     	current_angle = LAW_VAL(Angle_min)/100.0 + BeamNo * LAW_VAL(Angle_step)/100.0 ;
@@ -4475,6 +4640,7 @@ void data_202 (GtkSpinButton *spinbutton, gpointer data)	/* 闸门开始位置 P
     	max_angle = LAW_VAL(Angle_min) * G_PI / 180.0 ;
     }
     current_angle = current_angle * G_PI / 180.0 ;
+    delay = depth / ((get_group_val(p_grp, GROUP_VELOCITY)/100000.0));
 
 
 	if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
@@ -4489,34 +4655,60 @@ void data_202 (GtkSpinButton *spinbutton, gpointer data)	/* 闸门开始位置 P
 	else /* 显示方式为时间 */
 		    GROUP_GATE_POS(start) = (gint) (gtk_spin_button_get_value (spinbutton) * 1000.0) ;
 
-	
-	if (GROUP_VAL(gate_pos) == GATE_A)
+	for (k = offset; k < offset + beam_qty; k++)//k:每个beam
 	{
-		TMP(group_spi[grp]).gate_a_start	= 	(int)GROUP_GATE_POS(start) / 10 ;
-		TMP(group_spi[grp]).gate_a_end	= (int)(GROUP_GATE_POS(start)  +  GROUP_GATE_POS (width)) / 10;
+		if(LAW_VAL(Focal_point_type) == 1)//true depth
+		{ 
+			if (GROUP_VAL(gate_pos) == GATE_A)
+			{
+				TMP(focal_spi[k]).gate_a_start	= (int)( (GROUP_GATE_POS(start) + delay) / (10*cos(current_angle)) );
+				TMP(focal_spi[k]).gate_a_end	= (int)( (GROUP_GATE_POS(start) + GROUP_GATE_POS(width) + delay) / (10*cos(current_angle)) );
+			}
+			else if (GROUP_VAL(gate_pos) == GATE_B)
+			{ 
+				TMP(focal_spi[k]).gate_b_start	= (int)( (GROUP_GATE_POS(start) + delay) / (10*cos(current_angle)) );
+				TMP(focal_spi[k]).gate_b_end	= (int)( (GROUP_GATE_POS(start) + GROUP_GATE_POS(width) + delay) / (10*cos(current_angle)) );
+			}
+			else if (GROUP_VAL(gate_pos) == GATE_I)
+			{
+				TMP(focal_spi[k]).gate_i_start	= (int)( (GROUP_GATE_POS(start) + delay) / (10*cos(current_angle)) );
+				TMP(focal_spi[k]).gate_i_end	= (int)( (GROUP_GATE_POS(start) + GROUP_GATE_POS(width) + delay) / (10*cos(current_angle)) );
+			}
+		}
+		else //half path
+		{
+			if (GROUP_VAL(gate_pos) == GATE_A)
+			{
+				TMP(focal_spi[k]).gate_a_start	= (int)( GROUP_GATE_POS(start) / 10 );
+				TMP(focal_spi[k]).gate_a_end	= (int)( (GROUP_GATE_POS(start) + GROUP_GATE_POS (width)) / 10 );
+			}
+			else if (GROUP_VAL(gate_pos) == GATE_B)
+			{ 
+				TMP(focal_spi[k]).gate_b_start	= (int)( GROUP_GATE_POS(start) / 10 );
+				TMP(focal_spi[k]).gate_b_end	= (int)( (GROUP_GATE_POS(start) + GROUP_GATE_POS (width)) / 10 );
+			}
+			else if (GROUP_VAL(gate_pos) == GATE_I)
+			{
+				TMP(focal_spi[k]).gate_i_start	= (int)( GROUP_GATE_POS(start) / 10 );
+				TMP(focal_spi[k]).gate_i_end	= (int)( (GROUP_GATE_POS(start) + GROUP_GATE_POS (width)) / 10 );
+			}
+		}
 	}
-	else if (GROUP_VAL(gate_pos) == GATE_B)
-	{ 
-		TMP(group_spi[grp]).gate_b_start	= 	(int)GROUP_GATE_POS(start) / (10 * cos(current_angle));
-		TMP(group_spi[grp]).gate_b_end	= (int)(GROUP_GATE_POS(start)  +  GROUP_GATE_POS (width)) / 10;
-	}
-	else if (GROUP_VAL(gate_pos) == GATE_I)
-	{
-		TMP(group_spi[grp]).gate_i_start	= 	(int)GROUP_GATE_POS(start) / (10 * cos(current_angle));
-		TMP(group_spi[grp]).gate_i_end	= (int)(GROUP_GATE_POS(start)  +  GROUP_GATE_POS (width)) / 10;
-	}
+		
+		
 	tt[0] = (GROUP_VAL_POS(grp, gate[0].start) + GROUP_VAL_POS (grp, gate[0].width));
 	tt[1] = (GROUP_VAL_POS(grp, gate[1].start) + GROUP_VAL_POS (grp, gate[1].width));
 	tt[2] = (GROUP_VAL_POS(grp, gate[2].start) + GROUP_VAL_POS (grp, gate[2].width));
-
 	tt[3] = MAX(tt[0], MAX(tt[1],tt[2])) / 10 ;
 	//tt[3] = (gint)(tt[3] / cos(max_angle)) ;
+
 	TMP(group_spi[grp]).rx_time	= MAX (tt[3]  , TMP(group_spi[grp]).sample_range  + TMP(max_beam_delay[grp])) + TMP(group_spi[grp]).compress_rato;
 	temp_prf = TMP(beam_qty[grp]) * GROUP_VAL_POS(grp, prf1);
 	TMP(group_spi[grp]).idel_time	=
 			100000000 / (temp_prf / (10)) - 2048 - TMP(group_spi[grp]).rx_time;
 
 	send_spi_data (grp);
+	send_focal_spi (grp);
 
 	gtk_widget_queue_draw (pp->vboxtable);
 
@@ -4556,9 +4748,29 @@ void data_2021 (GtkMenuItem *menuitem, gpointer data)	/* 闸门同步 */
 
 void data_203 (GtkSpinButton *spinbutton, gpointer data) /* 闸门宽度 P203 */
 {
+	gint tt[4];
+	guint offset, k;
 	gint grp = get_current_group(pp->p_config);
 	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
-	gint tt[4];
+	guint beam_qty =TMP(beam_qty[grp]);
+	// get current beam Number
+	double current_angle ;
+	double max_angle     ;
+	int BeamNo = pp->p_tmp_config->beam_num[grp];
+	
+	for (offset = 0, k = 0 ; k < grp; k++)
+		offset += TMP(beam_qty[k]);
+	if(LAW_VAL(Focal_type) == 0)
+    {
+	    current_angle = LAW_VAL(Angle_min)/100.0 + BeamNo * LAW_VAL(Angle_step)/100.0 ;
+		max_angle = MAX(abs(LAW_VAL(Angle_min)), abs(LAW_VAL(Angle_max))) * G_PI / 180.0 ;
+    }
+    else
+    {
+	    current_angle = LAW_VAL(Angle_min)/100.0 ;
+	    max_angle = LAW_VAL(Angle_min) * G_PI / 180.0 ;
+    }
+    current_angle = current_angle * G_PI / 180.0 ;
 
 	if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 	{
@@ -4572,31 +4784,55 @@ void data_203 (GtkSpinButton *spinbutton, gpointer data) /* 闸门宽度 P203 */
 	else /* 显示方式为时间 */
 		GROUP_GATE_POS(width) = (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0) ; 
 
-	if (GROUP_VAL(gate_pos) == GATE_A)
+	for (k = offset; k < offset + beam_qty; k++)//k:每个beam
 	{
-		TMP(group_spi[grp]).gate_a_end	= (GROUP_VAL_POS(grp, gate[0].start) + 
-				GROUP_VAL_POS (grp, gate[0].width)) / 10;
-	}
-	else if (GROUP_VAL(gate_pos) == GATE_B)
-	{
-		TMP(group_spi[grp]).gate_b_end	= (GROUP_VAL_POS(grp, gate[1].start) + 
-				GROUP_VAL_POS (grp, gate[1].width)) / 10;
-	}
-	else if (GROUP_VAL(gate_pos) == GATE_I)
-	{
-		TMP(group_spi[grp]).gate_i_end	= (GROUP_VAL_POS(grp, gate[2].start) + 
-				GROUP_VAL_POS (grp, gate[2].width)) / 10;
-	}
+		if(LAW_VAL(Focal_point_type) == 1)//true depth
+		{
+			if (GROUP_VAL(gate_pos) == GATE_A)
+			{
+				TMP(focal_spi[k]).gate_a_end	= (GROUP_VAL_POS(grp, gate[0].start) + 
+						GROUP_VAL_POS (grp, gate[0].width)) / (10*cos(current_angle));
+			}
+			else if (GROUP_VAL(gate_pos) == GATE_B)
+			{
+				TMP(focal_spi[k]).gate_b_end	= (GROUP_VAL_POS(grp, gate[1].start) + 
+						GROUP_VAL_POS (grp, gate[1].width)) / (10*cos(current_angle));
+			}
+			else if (GROUP_VAL(gate_pos) == GATE_I)
+			{
+				TMP(focal_spi[k]).gate_i_end	= (GROUP_VAL_POS(grp, gate[2].start) + 
+						GROUP_VAL_POS (grp, gate[2].width)) / (10*cos(current_angle));
+			}
+		}
+		else //half path
+		{
+			if (GROUP_VAL(gate_pos) == GATE_A)
+			{
+				TMP(focal_spi[k]).gate_a_end	= (GROUP_VAL_POS(grp, gate[0].start) + 
+						GROUP_VAL_POS (grp, gate[0].width)) / 10;
+			}
+			else if (GROUP_VAL(gate_pos) == GATE_B)
+			{
+				TMP(focal_spi[k]).gate_b_end	= (GROUP_VAL_POS(grp, gate[1].start) + 
+						GROUP_VAL_POS (grp, gate[1].width)) / 10;
+			}
+			else if (GROUP_VAL(gate_pos) == GATE_I)
+			{
+				TMP(focal_spi[k]).gate_i_end	= (GROUP_VAL_POS(grp, gate[2].start) + 
+						GROUP_VAL_POS (grp, gate[2].width)) / 10;
+			}
+		}
+	}			
 	tt[0] = (GROUP_VAL_POS(grp, gate[0].start) + GROUP_VAL_POS (grp, gate[0].width));
 	tt[1] = (GROUP_VAL_POS(grp, gate[1].start) + GROUP_VAL_POS (grp, gate[1].width));
 	tt[2] = (GROUP_VAL_POS(grp, gate[2].start) + GROUP_VAL_POS (grp, gate[2].width));
-
 	tt[3] = MAX(tt[0], (MAX(tt[1],tt[2]))) / 10;
 	TMP(group_spi[grp]).rx_time		= MAX (tt[3], TMP(group_spi[grp]).sample_range  
 			+ TMP(max_beam_delay[grp])) + TMP(group_spi[grp]).compress_rato   ;
 	//TMP(group_spi[grp]).idel_time	=
 	//		100000000 / (temp_prf / (10)) - 2048 - TMP(group_spi[grp]).rx_time;
 	send_spi_data (grp);
+	send_focal_spi (grp);
 	gtk_widget_queue_draw (pp->vboxtable);
 }
 
@@ -5670,6 +5906,12 @@ void data_533 (GtkMenuItem *menuitem, gpointer data)
 	draw_menu3(0, NULL);
 }
 
+void data_534 (GtkMenuItem *menuitem, gpointer data) /* Probe/Part -> Parts -> Weld 534 */
+{
+	set_part_weld (pp->p_config, data);
+	pp->pos_pos = MENU3_STOP;
+	draw_menu3(0, NULL);
+}
 /* 聚焦法则类型 P600 */
 void data_600 (GtkMenuItem *menuitem, gpointer data) 
 {
@@ -6335,9 +6577,7 @@ void generate_focallaw(int grp)
 		{
 			pp->tmp_gain_off[i + offset] = 0;
 		}
-
 	}
-
 	send_focal_spi(grp);
 	write_group_data (&TMP(group_spi[grp]), grp);
 
@@ -6504,7 +6744,12 @@ void esc_calibration()
 		pp->pos1[pp->pos] = 2;
 		pp->cstart_qty = 1;
 		gtk_widget_set_sensitive(pp->eventbox2[0],TRUE);
-		gtk_widget_set_sensitive(pp->eventbox2[1],TRUE);
+		gtk_widget_set_sensitive(pp->eventbox2[3],TRUE);
+		if(GROUP_VAL(group_mode)==PA_SCAN)
+			gtk_widget_set_sensitive(pp->eventbox2[1],TRUE);
+		else
+			gtk_widget_set_sensitive(pp->eventbox2[1],FALSE);
+		//gtk_widget_set_sensitive(pp->eventbox2[1],TRUE);
 		gtk_widget_set_sensitive(pp->menubar,TRUE);
 	}
 	else
@@ -6520,7 +6765,12 @@ void esc_calibration()
 			pp->pos1[pp->pos] = 2;
 			pp->cstart_qty = 1;
 			gtk_widget_set_sensitive(pp->eventbox2[0],TRUE);
-			gtk_widget_set_sensitive(pp->eventbox2[1],TRUE);
+			gtk_widget_set_sensitive(pp->eventbox2[3],TRUE);
+			if(GROUP_VAL(group_mode)==PA_SCAN)
+				gtk_widget_set_sensitive(pp->eventbox2[1],TRUE);
+			else
+				gtk_widget_set_sensitive(pp->eventbox2[1],FALSE);
+			//gtk_widget_set_sensitive(pp->eventbox2[1],TRUE);
 			gtk_widget_set_sensitive(pp->menubar,TRUE);
 		}
 	}

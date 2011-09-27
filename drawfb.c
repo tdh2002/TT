@@ -1499,13 +1499,13 @@ void draw_scan(guchar scan_num, guchar scan_type, guchar group,
 	double range ;
 	unsigned char* pData ;
 	int offset;
-	guint buff_addr = (pp->p_beam_data) + 256 * 1024 ;
-	//guint temp2 = (pp->p_beam_data) + 4 ;
+	//guint buff_addr = (pp->p_beam_data) + 256 * 1024 ;
+	guint temp2 = (pp->p_beam_data) + 4 ;
 	for (offset = 0, k = 0 ; k < group ; k++)
 	{
 		offset += (GROUP_VAL_POS(k, point_qty) + 32) * TMP(beam_qty[k]);
 	}
-	pData = (unsigned char *)(buff_addr + offset) ;
+	pData = (unsigned char *)(temp2 + offset) ;
 
 	switch (scan_type)
 	{

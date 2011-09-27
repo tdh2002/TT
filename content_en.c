@@ -14,7 +14,7 @@ const gchar *content_en10[] = {
 
 static const gchar *content_en20[] = {
 	/* 二级菜单第0页 */
-	"Group", "Focal Law", "Calibration", NULL, NULL
+	"Group", "Focal Law", "Calibration", "Weld", NULL
 };
 
 static const gchar *content_en21[] = {
@@ -92,7 +92,7 @@ static const gchar *content_en202[] = {
 
 static const gchar *content_en203[] = {
 	/* 二级菜单第0页下的第3页三级菜单 */
-	NULL, NULL, NULL, NULL, NULL, NULL
+	"Back", "Start", "Weld", "Symmetry", NULL, NULL,"Next","Weld land height", "Weld land offset","Finish","Fill zone height", "Fill zone angle","Fill zone radius"
 };
 
 static const gchar *content_en204[] = {
@@ -232,7 +232,7 @@ static const gchar *content_en252[] = {
 
 static const gchar *content_en253[] = {
 	/* 二级菜单第5页下的第3页三级菜单 */
-	"  Geometry  ","  Thickness  ", "  Diameter  ","  Material  ", NULL, NULL
+	"  Geometry  ","  Thickness  ", "  Diameter  ","  Material  ", "Weld", NULL
 };
 
 static const gchar *content_en254[] = {
@@ -536,6 +536,9 @@ const gchar *all_menu_content_en[] =
 	"Compressive", "Tensile",			/* Weld type */
 	"Custom", "Angle Beam", "Contact", "Immersion",	/* Probe Type */
 	"50 Ω","500 Ω",/*Damping*/
+	//"None","I", "V", "V Offset", "Double V", "Double V Offset", "J", "U",	/* Weld */
+	"I","V","Double V", "U",
+	"Symmetric","Straight  Right","Straight  Left",
 	""
 };
 
