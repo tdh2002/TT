@@ -163,7 +163,7 @@ const gchar **field1;
 const gchar **field;
 const gchar **field_unit;
 
-void menuitem0_function(GtkMenuItem *menuitem, gpointer data);
+//void menuitem0_function(GtkMenuItem *menuitem, gpointer data);
 
 gint my_keypress_event(GtkWidget *widget, GdkEventKey *event)
 {
@@ -2716,11 +2716,165 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 			//angle = LAW_VAL (Angle_min);
 			angle = LAW_VAL_POS (p->group,Angle_min);
 			num = TMP(beam_num[get_current_group(pp->p_config)]);
+			break;
 		default:break;
 	}
 	switch (type)
 	{
 		case A_SCAN:
+			if(!pp->clb_flag)
+						{
+							if((get_display_pos (pp->p_config) == A_S_CC_SCAN ) && (get_cscan_source(pp->p_config, 0)==4) && (GROUP_VAL_POS(p->group, ut_unit) == UT_UNIT_TRUE_DEPTH) && (get_display_group(pp->p_config) == DISPLAY_CURRENT_GROUP))
+							{	/*A_S scan 在 true depth时， A scan 需要旋转90度*/
+								if(get_unit(pp->p_config) == UNIT_MM) /* hrule1 */
+								{
+									p->hmin1 = get_group_val (p_grp, GROUP_RANGE)/1000.0 *
+										(get_group_val (p_grp, GROUP_VELOCITY)/200000.0) +
+										get_group_val (p_grp, GROUP_START)/1000.0 *
+										(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
+									p->hmax1 = get_group_val (p_grp, GROUP_START)/1000.0 *
+										(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
+									p->h1_unit = UNIT_MM;
+									p->h1_color = 0xD6ABF1;/*紫色*/
+
+								}
+								else
+								{
+									p->hmin1 = get_group_val (p_grp, GROUP_RANGE)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0)+get_group_val (p_grp, GROUP_START)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
+									p->hmax1 = get_group_val (p_grp, GROUP_START)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
+									p->h1_unit = UNIT_INCH;
+									p->h1_color = 0xD6ABF1;/*紫色*/
+								}
+								p->h1_bit = 2;
+
+								p->wmin1 = 0;
+								p->wmax1 = 100;
+								p->w_unit = UNIT_BFH;
+								p->w_color = 0xEDF169;	/*黄色*/
+
+								p->hmin2 = 0;
+								p->hmax2 = 100;
+								p->h2_unit = UNIT_BFH;
+								p->h2_color = 0xEDF169;	/*黄色*/
+							}
+							else /*除了A scan 需要旋转的那种情况以外*/
+							{
+								p->hmin1 = 0;
+								p->hmin2 = 0;
+								p->h1_unit = UNIT_BFH;
+								p->h1_color = 0xEDF169;	/*黄色*/
+								p->h1_bit = 0;
+								p->hmax1 = 100;
+								p->hmax2 = 100;
+								p->h2_unit = UNIT_BFH;
+								p->h2_color = 0xEDF169;	/*黄色*/
+
+								if(GROUP_VAL_POS(p->group, ut_unit) == UT_UNIT_TIME)	/* wrule */	/*淡黄色*/
+								{
+									//p->wmin1 = get_group_val (p_grp, GROUP_START)/1000.0;
+									//p->wmax1 = get_group_val (p_grp, GROUP_RANGE)/1000.0+get_group_val (p_grp, GROUP_START)/1000.0;
+									p->wmin1 = GROUP_VAL_POS(p->group, start)/1000.0;
+									p->wmax1 = GROUP_VAL_POS(p->group, range)/1000.0+GROUP_VAL_POS(p->group, start)/1000.0;
+									p->w_unit = UNIT_US;
+									p->w_color = 0xF8EAC4;
+								}
+								else
+								{
+									if(get_unit(pp->p_config) == UNIT_MM)
+									{
+										//p->wmin1 = get_group_val (p_grp, GROUP_START)/1000.0*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
+										//p->wmax1 = get_group_val (p_grp, GROUP_RANGE)/1000.0*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0)+get_group_val (p_grp, GROUP_START)/1000.0*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
+										p->wmin1 = GROUP_VAL_POS(p->group, start) * cos(TMP(current_angle[grp]))/1000.0*(GROUP_VAL_POS(p->group, velocity)/200000.0);
+										p->wmax1 = p->wmin1 + GROUP_VAL_POS(p->group, range) * cos(TMP(current_angle[grp]))/1000.0*(GROUP_VAL_POS(p->group, velocity)/200000.0);
+										p->w_unit = UNIT_MM;
+									}
+									else
+									{
+										//p->wmin1 = get_group_val (p_grp, GROUP_START)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
+										//p->wmax1 = get_group_val (p_grp, GROUP_RANGE)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0)+get_group_val (p_grp, GROUP_START)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
+										p->wmin1 = GROUP_VAL_POS(p->group, start)*cos(TMP(current_angle[grp]))/1000.0*0.03937*(GROUP_VAL_POS(p->group, velocity)/200000.0);
+										p->wmax1 = p->wmin1 + GROUP_VAL_POS(p->group, range)*cos(TMP(current_angle[grp]))/1000.0*0.03937*(GROUP_VAL_POS(p->group, velocity)/200000.0);
+										p->w_unit = UNIT_INCH;
+									}
+									if(GROUP_VAL_POS(p->group, ut_unit) == UT_UNIT_TRUE_DEPTH)
+										p->w_color = 0xD6ABF1;	/* 紫色 */
+									else
+										p->w_color = 0xF49CD6;	/* 粉色 */
+								}
+							}
+						}
+						else//Calibration
+						{
+							if(!pp->cmode_pos)
+							{
+								/*A_S scan 在 true depth时， A scan 需要旋转90度*/
+								if(get_unit(pp->p_config) == UNIT_MM) /* hrule1 */
+								{
+									p->hmin1 = get_group_val (p_grp, GROUP_RANGE)/1000.0 *
+										(get_group_val (p_grp, GROUP_VELOCITY)/200000.0) +
+										get_group_val (p_grp, GROUP_START)/1000.0 *
+										(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
+									p->hmax1 = get_group_val (p_grp, GROUP_START)/1000.0 *
+										(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
+									p->h1_unit = UNIT_MM;
+									p->h1_color = 0xD6ABF1;/*紫色*/
+
+								}
+								else
+								{
+									p->hmin1 = get_group_val (p_grp, GROUP_RANGE)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0)+get_group_val (p_grp, GROUP_START)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
+									p->hmax1 = get_group_val (p_grp, GROUP_START)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
+									p->h1_unit = UNIT_INCH;
+									p->h1_color = 0xD6ABF1;/*紫色*/
+								}
+								p->h1_bit = 2;
+
+								p->wmin1 = 0;
+								p->wmax1 = 100;
+								p->w_unit = UNIT_BFH;
+								p->w_color = 0xEDF169;	/*黄色*/
+
+								p->hmin2 = 0;
+								p->hmax2 = 100;
+								p->h2_unit = UNIT_BFH;
+								p->h2_color = 0xEDF169;	/*黄色*/
+							}
+							else//旋转之外的情况
+							{
+								p->hmin1 = 0;
+								p->hmin2 = 0;
+								p->h1_unit = UNIT_BFH;
+								p->h1_color = 0xEDF169;	/*黄色*/
+								p->h1_bit = 0;
+								p->hmax1 = 100;
+								p->hmax2 = 100;
+								p->h2_unit = UNIT_BFH;
+								p->h2_color = 0xEDF169;	/*黄色*/
+
+								if(get_unit(pp->p_config) == UNIT_MM)
+								{
+									//p->wmin1 = get_group_val (p_grp, GROUP_START)/1000.0*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
+									//p->wmax1 = get_group_val (p_grp, GROUP_RANGE)/1000.0*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0)+get_group_val (p_grp, GROUP_START)/1000.0*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
+									p->wmin1 = GROUP_VAL_POS(p->group, start)/1000.0*(GROUP_VAL_POS(p->group, velocity)/200000.0);
+									p->wmax1 = GROUP_VAL_POS(p->group, range)/1000.0*(GROUP_VAL_POS(p->group, velocity)/200000.0)+GROUP_VAL_POS(p->group, start)/1000.0*(GROUP_VAL_POS(p->group, velocity)/200000.0);
+									p->w_unit = UNIT_MM;
+								}
+								else
+								{
+									//p->wmin1 = get_group_val (p_grp, GROUP_START)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
+									//p->wmax1 = get_group_val (p_grp, GROUP_RANGE)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0)+get_group_val (p_grp, GROUP_START)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
+									p->wmin1 = GROUP_VAL_POS(p->group, start)/1000.0*0.03937*(GROUP_VAL_POS(p->group, velocity)/200000.0);
+									p->wmax1 = GROUP_VAL_POS(p->group, range)/1000.0*0.03937*(GROUP_VAL_POS(p->group, velocity)/200000.0)+GROUP_VAL_POS(p->group, start)/1000.0*0.03937*(GROUP_VAL_POS(p->group, velocity)/200000.0);
+									p->w_unit = UNIT_INCH;
+								}
+								p->w_color = 0xD6ABF1;/*紫色*/
+						   }
+						}
+						g_sprintf (p->title, "A scan|Gr %d|CH %0.1f|SK%0.1f|L%d",
+										p->group+1, angle / 100.0, GROUP_VAL_POS(p->group, skew) / 100.0, num + 1);
+								//get_current_group(pp->p_config) + 1, angle / 100.0, GROUP_VAL_POS(p->group, skew) / 100.0, num + 1);
+
+			break ;
 		case A_SCAN_R:
 			if(!pp->clb_flag)
 			{
@@ -2784,16 +2938,16 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 						{
 							//p->wmin1 = get_group_val (p_grp, GROUP_START)/1000.0*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
 							//p->wmax1 = get_group_val (p_grp, GROUP_RANGE)/1000.0*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0)+get_group_val (p_grp, GROUP_START)/1000.0*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
-							p->wmin1 = GROUP_VAL_POS(p->group, start)/1000.0*(GROUP_VAL_POS(p->group, velocity)/200000.0);
-							p->wmax1 = GROUP_VAL_POS(p->group, range)/1000.0*(GROUP_VAL_POS(p->group, velocity)/200000.0)+GROUP_VAL_POS(p->group, start)/1000.0*(GROUP_VAL_POS(p->group, velocity)/200000.0);
+							p->wmin1 = GROUP_VAL_POS(p->group, start) * cos(TMP(current_angle[grp]))/1000.0*(GROUP_VAL_POS(p->group, velocity)/200000.0);
+							p->wmax1 = p->wmin1 + GROUP_VAL_POS(p->group, range) * cos(TMP(current_angle[grp]))/1000.0*(GROUP_VAL_POS(p->group, velocity)/200000.0);
 							p->w_unit = UNIT_MM;
 						}
 						else
 						{
 							//p->wmin1 = get_group_val (p_grp, GROUP_START)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
 							//p->wmax1 = get_group_val (p_grp, GROUP_RANGE)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0)+get_group_val (p_grp, GROUP_START)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
-							p->wmin1 = GROUP_VAL_POS(p->group, start)/1000.0*0.03937*(GROUP_VAL_POS(p->group, velocity)/200000.0);
-							p->wmax1 = GROUP_VAL_POS(p->group, range)/1000.0*0.03937*(GROUP_VAL_POS(p->group, velocity)/200000.0)+GROUP_VAL_POS(p->group, start)/1000.0*0.03937*(GROUP_VAL_POS(p->group, velocity)/200000.0);
+							p->wmin1 = GROUP_VAL_POS(p->group, start)*cos(TMP(current_angle[grp]))/1000.0*0.03937*(GROUP_VAL_POS(p->group, velocity)/200000.0);
+							p->wmax1 = p->wmin1 + GROUP_VAL_POS(p->group, range)*cos(TMP(current_angle[grp]))/1000.0*0.03937*(GROUP_VAL_POS(p->group, velocity)/200000.0);
 							p->w_unit = UNIT_INCH;
 						}
 						if(GROUP_VAL_POS(p->group, ut_unit) == UT_UNIT_TRUE_DEPTH)
@@ -4877,6 +5031,7 @@ void draw3_data0(DRAW_UI_P p)
 					if ( !con2_p[4][4][0] )
 						gtk_widget_hide (p->eventbox30[0]);
 					gtk_widget_hide (p->eventbox31[0]);
+					break;
 				default:break;
 			}
 			break;
@@ -5635,7 +5790,7 @@ void draw3_data1(DRAW_UI_P p)
 							lower =	BEAM_INFO(0,beam_delay) / 1000.0;
 							upper =	(MAX_RANGE_US - get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_RANGE) / 1000.0);
 							step = tmpf;
-							(step < 0.01) ? (step = 0.01) : (step = step);
+							if (step < 0.01)  (step = 0.01) ;
 							pos = 1;
 							digit = 2;
 							unit = UNIT_US;
@@ -8371,10 +8526,12 @@ void draw3_data2(DRAW_UI_P p)
 					if ( !con2_p[0][3][2] )
 						gtk_widget_hide (pp->eventbox30[2]);
 					gtk_widget_hide (pp->eventbox31[2]);
+					break;
 				case 4:
 					if ( !con2_p[0][4][2] )
 						gtk_widget_hide (pp->eventbox30[2]);
 					gtk_widget_hide (pp->eventbox31[2]);
+					break;
 				default:break;
 			}
 			break;
@@ -9030,6 +9187,7 @@ void draw3_data2(DRAW_UI_P p)
 					if ( !con2_p[2][4][2] )
 						gtk_widget_hide (pp->eventbox30[2]);
 					gtk_widget_hide (pp->eventbox31[2]);
+					break;
 				default:break;
 			}
 			break;
@@ -13428,7 +13586,7 @@ void draw3_data4(DRAW_UI_P p)
 										lower = (BEAM_INFO(0,beam_delay) /1000.0) * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
 										upper =	(MAX_RANGE_US - get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_RANGE) / 1000.0) * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0);
 										step = tmpf * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0);
-										(step < 0.01) ? (step = 0.01) : (step = step);
+										if (step < 0.01) step = 0.01 ;
 										digit = 2;
 										pos = 4;
 										unit = UNIT_MM;
@@ -13450,7 +13608,7 @@ void draw3_data4(DRAW_UI_P p)
 									lower =	BEAM_INFO(0,beam_delay) / 1000.0;
 									upper =	(MAX_RANGE_US - get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_RANGE) / 1000.0);
 									step = tmpf;
-									(step < 0.01) ? (step = 0.01) : (step = step);
+									if (step < 0.01)  step = 0.01 ;
 									pos = 4;
 									digit = 2;
 									unit = UNIT_US;
@@ -15269,7 +15427,6 @@ void draw3_data5(DRAW_UI_P p)
 										lower =	GROUP_VAL(point_qty) / 100.0;
 										upper = MIN(max_tmp, max_tmp1);										
 										step = tmpf;
-										tmpfm = tmpfm;
 										digit = 2;
 										pos = 5;
 										unit = UNIT_US;
@@ -16666,65 +16823,6 @@ static gboolean time_handler1 (GtkWidget *widget)
 	return TRUE;
 }
 
-#if ARM
-static void	compress_data (DOT_TYPE *source_data, DOT_TYPE *target_data,
-		gint qty1, gint qty2, guint	rectify)
-{
-	guint	temp_1, temp_2, i, j;
-	for (i = 0; i < qty2; i++) 
-	{
-		temp_2 = qty1 / qty2;
-		temp_1 = i * qty1 / qty2;
-		target_data[i] = source_data[temp_1];
-		for (j = 1; j < temp_2; j++) {
-			if (rectify == RF_WAVE) {
-				if (target_data[i] > 127) {
-					if (source_data[temp_1 + j] > target_data[i]) 
-						target_data[i] = source_data[temp_1 + j];
-				} else {
-					if (source_data[temp_1 + j] < target_data[i]) 
-						target_data[i] = source_data[temp_1 + j];
-				}
-			} else {
-				if (source_data[temp_1 + j] > target_data[i]) 
-					target_data[i] = source_data[temp_1 + j];
-			}
-		}
-	}
-}
-
-
-static void interpolation_data (DOT_TYPE *source_data, DOT_TYPE *target_data,
-		gint qty1, gint qty2)
-{
-	gint	t1, t2, i, j;
-	if (qty1 == qty2)
-		memcpy ((void *)(target_data), (void *)(source_data), qty1 * sizeof(DOT_TYPE));
-	else 
-	{
-		for (i = 0 ; i < qty1 ; i++)
-		{
-			gint tmp = (((gint)(source_data[i + 1]) - (gint)(source_data[i])) / (qty2 / qty1));
-			for (t1 = i * qty2 / qty1, t2 = (i + 1) * qty2 /qty1, j = t1; j < t2; j++)
-			{
-				target_data[j] = (guchar)((gint)(source_data[i]) + 
-						(j - t1) * tmp);//((gint)(source_data[i + 1]) - (gint)(source_data[i])) / (qty2 / qty1));
-			}
-		}
-	}
-}
-/*
-static void interpolation_data1 (DOT_TYPE *source_data, DOT_TYPE *target_data,
-		gint qty1, gint qty2)
-{
-	gint i;
-	for (i = 0 ; i < qty1 ; i++)
-	{
-		target_data[i] = 0x80;
-	}
-}
-*/
-#endif
 
 #if 0
 gboolean bt_release (GtkWidget *widget, GdkEventButton *event,
@@ -17234,12 +17332,13 @@ static void signal_scan_thread(void)
 	{
 		if(*DMA_MARK==0)
 		{
+
                      pthread_mutex_lock(&draw_thread_mutex);
 		             pthread_cond_signal(&draw_thread_signal);
             	     pthread_mutex_unlock(&draw_thread_mutex);
 					//sem_post(&sem) ;
 		}
-		if(*DMA_MARK>2){ printf("DMA_MARK = %d \n", *DMA_MARK) ; *DMA_MARK=1; }
+		//if(*DMA_MARK>2){ printf("DMA_MARK = %d \n", *DMA_MARK) ; *DMA_MARK=1; }
 		usleep(40000);
 	}
 }
@@ -17247,33 +17346,30 @@ static void signal_scan_thread(void)
 static void key_message_thread(void)
 {
 	char key = 0;
-	char bar[2] = {0};
+	char bar[3] = {0};
     while(1)
 	{
-	    if (read(pp->fd_key, &key, 1) > 0) 
-	    {	
-			if(key != 0x55)
+	   if (read(pp->fd_key, &key, 1) > 0)
+	   {
 				process_key_press (key);
-			else
-			{
-				if( read(pp->fd_key, bar, 2) >0 )//读取电池信息
-				{
-					if((bar[0]==0x55) && (bar[1]==0x55))
-					{
-						//将所有电池信息全部读取出来
-						treadn(pp->fd_key, &(pp->battery), 28, 0.1);//0.1s
-//						read(pp->fd_key, &(pp->battery), 28);
-						if(pp->battery.on_off==0x50)  
-								save_config(NULL,NULL,NULL);
-						
-						gdk_threads_enter();
-						draw_other_info(pp->drawing_area,NULL,NULL);
-						gdk_threads_leave();	
-					}
-				}
-			}	 	
-			 
 	   }
+
+	   if (read(pp->fd_key1, bar, 3) > 0)
+	   {
+		   if(bar[0] == 0x55 && bar[1]== 0x55 && bar[2] == 0x55)
+		   {
+
+					//将所有电池信息全部读取出来
+					treadn(pp->fd_key1, &(pp->battery), 28, 0.1);//0.1s
+					if(pp->battery.on_off==0x50)
+							save_config(NULL,NULL,NULL);
+
+					gdk_threads_enter();
+					draw_other_info(pp->drawing_area,NULL,NULL);
+					gdk_threads_leave();
+		   }
+	   }
+
 	   usleep(100000);
 	}
 }
@@ -17282,11 +17378,24 @@ static void draw_frame_thread(void)
 {
 
 	gint i, j, k, offset, offset1;
-	guint temp2 = (pp->p_beam_data)+4;
+	guint temp2 = (pp->p_beam_data) + 4;
+	guint buff_addr = (pp->p_beam_data) + 256 * 1024 ;
     //unsigned int BeamInfoHeader;
 	while (1)
 	{
+
 		pthread_cond_wait( &draw_thread_signal, &draw_thread_mutex);
+
+		for (offset = 0, k = 0 ; k <  get_group_qty(pp->p_config); k++)
+		{
+			offset += (GROUP_VAL_POS(k, point_qty) + 32) * TMP(beam_qty[k]);
+		}
+
+		if(TMP(freeze))
+		{
+			printf("memecpy\n");
+			memcpy ((void*)(buff_addr), (void *)(temp2) , offset );
+		}
 		for (i = 0 ; i < get_group_qty(pp->p_config); i++)
 		{
 			/* 获取数据 */
@@ -17306,7 +17415,9 @@ static void draw_frame_thread(void)
 						//BeamInfoHeader = *((int*)(TMP(measure_data[offset1+j])));
 						//BeamInfoHeader &= 0x1fff ;
 						//printf("Beam info header is %x\n",BeamInfoHeader );
-
+#if 0
+						//delete by shensheng
+						//for modify true depth A scan drawing and reducing calculation
 						if (GROUP_VAL_POS(i, point_qty) <= TMP(a_scan_dot_qty))
 						{
 							/* 只插值当前显示的A扫描 其余不插值 */
@@ -17327,6 +17438,7 @@ static void draw_frame_thread(void)
 									TMP(a_scan_dot_qty),
 									get_group_val (get_group_by_id (pp->p_config, i), GROUP_RECTIFIER));
 						}
+#endif
 					}
 			}
 			if (!pp->clb_flag)
@@ -17334,9 +17446,9 @@ static void draw_frame_thread(void)
 				for (k = 0; ((k < 16) && (TMP(scan_type[k]) != 0xff)); k++)
 				{	
 					if (TMP(scan_group[k]) == i)
-						draw_scan(k, TMP(scan_type[k]), TMP(scan_group[k]), 
-								TMP(scan_xpos[k]), TMP(scan_ypos[k]), dot_temp, 
-								TMP(fb1_addr) + 768*400);
+							draw_scan(k, TMP(scan_type[k]), TMP(scan_group[k]),
+										TMP(scan_xpos[k]), TMP(scan_ypos[k]), dot_temp,
+										TMP(fb1_addr) + 768*400);
 				}
 			} 
 			else
@@ -17344,13 +17456,13 @@ static void draw_frame_thread(void)
 				for (k = 0; ((k < 4) && (TMP(clb_scan_type[k]) != 0xff)); k++)
 				{	
 					if (TMP(clb_scan_group[k]) == i)
-						draw_scan(k, TMP(clb_scan_type[k]), TMP(clb_scan_group[k]), 
-								TMP(clb_scan_xpos[k]), TMP(clb_scan_ypos[k]), dot_temp, 
-								TMP(fb1_addr) + 768*400);
+						draw_scan(k, TMP(scan_type[k]), TMP(scan_group[k]),
+										TMP(scan_xpos[k]), TMP(scan_ypos[k]), dot_temp,
+										TMP(fb1_addr) + 768*400);
 				}
 			}
 		}
-		*DMA_MARK = 1  ;
+		*DMA_MARK = 1 ;
 		calc_measure_data();//计算数据
 		draw_field_value ();
 	}
@@ -17911,6 +18023,17 @@ void init_ui(DRAW_UI_P p)
 void save_config (GtkWidget *widget, GdkEventButton *event,	gpointer data)
 {
 	gint i;
+	/*
+	unsigned char *pData;
+	guint temp2 = (pp->p_beam_data);
+	printf("temp2 %d\n",temp2);
+	pData = (unsigned char*)temp2 ;
+	for(i = 0; i< GROUP_VAL_POS(0, point_qty) + 40; i++)
+	{
+		printf("-%d-%x-",i,*pData);
+		pData ++ ;
+	}
+    */
 	i	=	lseek (TMP(fd_config), 0, SEEK_SET);
 	i	=	write (TMP(fd_config), pp->p_config, sizeof(CONFIG));
 	close (TMP(fd_config));

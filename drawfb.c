@@ -30,15 +30,137 @@ typedef struct _Point
 	int x;
 	int y;
 }POINT, *P_POINT;
-
+typedef struct _VERTICAL_LINE
+{
+	int start;
+	int end  ;
+}VERTICAL_LINE, *P_VERTICAL_LINE;
 
 static POINT CurrentLine_top [MAX_GROUP_QTY][MAX_BEAM_QTY];
 static POINT CurrentLine_bottom [MAX_GROUP_QTY][MAX_BEAM_QTY];
+static VERTICAL_LINE AScanDrawRange[MAX_GROUP_QTY][MAX_BEAM_QTY]  ;
 
 static gchar*	pDraw[MAX_GROUP_QTY]      = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL}; // 是否扇形区域
 static guchar*	pAngleZoom[MAX_GROUP_QTY] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL}; // 处于哪个角度区间
 static guchar*	pDrawRate[MAX_GROUP_QTY]  = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL}; // 填充比例
 static gint*	pDataNo[MAX_GROUP_QTY]    = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL}; // 数据在数组中的列号
+
+
+int calc_line_position (gdouble startAngle, gdouble endAngle, gdouble stepAngle, double StartFocusDepth,
+		                     double FocusEnd, double JunctionOffset, int DataLength, int width, int height, guchar group)
+{
+       // 实际坐标
+       gdouble xLeftmost              ;     //     扇形 最左点坐标
+       gdouble xRightmost             ;     //     扇形 最右点坐标
+       gdouble yTopmost               ;     //     最上点
+       gdouble yBottonmost            ;     //     最下点
+       double FocusRange              ;
+       // 起始\终止\步进  角度
+       gdouble a1, a2 , a3            ;
+       int RowNo                      ;
+       //
+       // 实际窗口 宽 高
+       gdouble tempW , tempH          ;
+       // 实际窗口 入射点坐标
+       gdouble xOrg , yOrg            ;
+       // 拉伸窗口 入射点坐标
+       gdouble xOrgS, yOrgS           ;
+       // 拉伸窗口 信号起 止半径
+       gdouble xScale                 ;
+       gdouble yScale                 ;
+       int i                          ;
+       gdouble tempy                  ;
+
+	   double TempLength              ;
+	   double templength              ;
+       // 为全局指针分配内存
+
+       a1  = startAngle * G_PI/180.0                                       ;
+       a2  = endAngle   * G_PI/180.0                                       ;
+       a3  = stepAngle  * G_PI/180.0                                       ;
+
+       //  扫描数据列数
+	   RowNo = (int) ((endAngle-startAngle) / stepAngle +1)                ;
+
+       // calculate the fan range in real coordinate
+       FocusRange = FocusEnd - StartFocusDepth  ;
+       yBottonmost = JunctionOffset +  FocusEnd  ;
+
+       if( a1 * a2 <= 0)
+	   {
+			xLeftmost   = JunctionOffset * tan(a1) + (StartFocusDepth + FocusRange)*sin(a1)  ;
+			xRightmost  = JunctionOffset * tan(a2) + (StartFocusDepth + FocusRange)*sin(a2)  ;
+
+            if( fabs(a2) > fabs(a1) )
+			   yTopmost = JunctionOffset + StartFocusDepth * cos(a2)  ;
+			else
+			   yTopmost = JunctionOffset + StartFocusDepth * cos(-a1) ;
+
+            TempLength  = StartFocusDepth + FocusRange                ;
+			templength  = StartFocusDepth                             ;
+	   }
+	   else if (a1 < 0 && a2 < 0)
+	   {
+		    yTopmost   = JunctionOffset + (StartFocusDepth / cos(-a2)) * cos(-a1)                    ;
+		    xLeftmost  = JunctionOffset * tan(a1) + sin(a1) * (StartFocusDepth + FocusRange)/cos(a2) ;
+		    xRightmost = (JunctionOffset + StartFocusDepth) * tan(a2)                                ;
+
+            TempLength = (StartFocusDepth + FocusRange) / cos(-a2)								     ;
+			templength = StartFocusDepth / cos(-a2)                                                  ;
+	   }
+	   else if (a1 > 0 && a2 > 0)
+	   {
+	        yTopmost   = JunctionOffset + (StartFocusDepth / cos(a1)) * cos(a2)						 ;
+            xLeftmost  = (JunctionOffset + StartFocusDepth) * tan(a1)								 ;
+		    xRightmost = JunctionOffset * tan(a2) + sin(a2) * (StartFocusDepth + FocusRange)/cos(a1) ;
+
+            TempLength = (StartFocusDepth + FocusRange) / cos(a1)									 ;
+			templength = StartFocusDepth / cos (a1)													 ;
+	   }
+       // 波型的实际宽度和高度
+       // 虚拟发射点坐标
+       tempW = (gdouble)(xRightmost - xLeftmost)           ;
+       tempH = (gdouble)(yBottonmost- yTopmost)            ;
+
+       xOrg  = 0 - xLeftmost                               ;
+       yOrg  = 0 - yTopmost                                ;
+
+       // 实际尺寸 转 显示尺寸 比例
+       xScale = width/tempW                                ;
+       yScale = height/tempH                               ;
+
+       // 显示坐标系中 虚拟发射点坐标
+       xOrgS  = xOrg*xScale                                ;
+       yOrgS  = yOrg*yScale                                ;
+
+       //求每一列波型的 比例尺
+       //和拉伸后显示的扫描角度
+       for(i = 0; i< RowNo ; i++)
+       {
+             tempy = yScale * (cos(a1+i*a3)*(JunctionOffset/cos(a1+i*a3)+TempLength)+yOrg)                  ;
+             //****************************************************************************
+             //keep the location for angle line drawing
+             AScanDrawRange[group][i].end = (int)tempy ;
+
+			 tempy = yScale * (cos(a1+i*a3)*(JunctionOffset/cos(a1+i*a3)+templength)+yOrg)                  ;
+             //****************************************************************************
+             //keep the location for angle line drawing
+			 AScanDrawRange[group][i].start = (int)tempy ;
+             //****************************************************************************
+       }
+       return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
 
 static int fd_fb;
 struct fb_var_screeninfo vinfo;
@@ -131,7 +253,7 @@ void init_mem ()
 void init_serial ()
 {
 	struct termios newtermios;
-	pp->fd_key = open(TTY_DEVICE, O_RDWR | O_NOCTTY | O_NDELAY);
+	pp->fd_key = open(TTY_DEVICE, O_RDWR | O_NOCTTY );
 	if (pp->fd_key < 0) {
 		perror(TTY_DEVICE); 
 		return ;
@@ -166,6 +288,55 @@ void init_serial ()
 	}
 
 	return ;
+}
+
+
+static void	compress_data (DOT_TYPE *source_data, DOT_TYPE *target_data,
+		gint qty1, gint qty2, guint	rectify)
+{
+	guint	temp_1, temp_2, i, j;
+	for (i = 0; i < qty2; i++)
+	{
+		temp_2 = qty1 / qty2;
+		temp_1 = i * qty1 / qty2;
+		target_data[i] = source_data[temp_1];
+		for (j = 1; j < temp_2; j++) {
+			if (rectify == RF_WAVE) {
+				if (target_data[i] > 127) {
+					if (source_data[temp_1 + j] > target_data[i])
+						target_data[i] = source_data[temp_1 + j];
+				} else {
+					if (source_data[temp_1 + j] < target_data[i])
+						target_data[i] = source_data[temp_1 + j];
+				}
+			}
+			else
+			{
+				if (source_data[temp_1 + j] > target_data[i])
+					target_data[i] = source_data[temp_1 + j];
+			}
+		}
+	}
+}
+
+
+static void interpolation_data (DOT_TYPE *source_data, DOT_TYPE *target_data,
+								  int qty1, int qty2)
+{
+	int	t1, t2, i, j;
+	if (qty1 == qty2)
+		memcpy ((void *)(target_data), (void *)(source_data), qty1 * sizeof(DOT_TYPE));
+	else
+	{
+			for (i = 0 ; i < qty1 - 1; i++)
+			{
+				for (t1 = i * qty2 / (qty1 - 1), t2 = (i + 1) * qty2 / (qty1 - 1), j = t1; j < t2; j++)
+				{
+					target_data[j] = (unsigned char)((int)(source_data[i]) +
+							((int)((source_data[i + 1]) - (int)(source_data[i])) * (j - t1) / (qty2 / (qty1 - 1))));
+				}
+			}
+	}
 }
 
 
@@ -293,6 +464,7 @@ void draw_a_scan (gushort *p, gint width, gint height,
 //	for (i = 0; i < height; i++)
 //		memset (p + FB_WIDTH * (i + yoffset) + xoffset, 0x0, width * 2 );
 	/* 画回波 */
+
 	for (i = 0; i < width - 1; i++)
 	{
 		min =	MIN (height * HEIGHT_TABLE[data[i]],	height * HEIGHT_TABLE[data[i + 1]]);
@@ -304,12 +476,14 @@ void draw_a_scan (gushort *p, gint width, gint height,
 			else
 				max =+ 1;
 		}
+		// clear back ground
 		fbliney(p,
 				xoffset + i,
-				yoffset + 0,
-				yoffset + min,
+				yoffset    ,
+				yoffset + height,
 				0x0
 			   );
+		// draw line
 		fbliney(
 				p, 
 				xoffset + i,
@@ -317,12 +491,6 @@ void draw_a_scan (gushort *p, gint width, gint height,
 				yoffset + max, 
 				all_col_16[GROUP_VAL_POS(groupId, ascan_color)]
 				);
-		fbliney(p,
-				xoffset + i,
-				yoffset + max,
-				yoffset + height,
-				0x0
-			   );
 #if 0
 		/* 画包络 */
 		if (GROUP_VAL_POS(groupId, ascan_envelope))
@@ -372,19 +540,21 @@ void draw_a_scan (gushort *p, gint width, gint height,
 /* 画A扫描 data 原始数据 data1 data2 包络数据 */
 void draw_a_scan_r (gushort *p, gint width, gint height, 
 		DOT_TYPE *data, DOT_TYPE *data1, DOT_TYPE *data2,
-		gint xoffset, gint yoffset, guchar groupId)
+		gint xoffset, gint yoffset, gushort point_qty, guchar groupId, int start, int end)
 {
-	gint	i;
+	gint	   i;
+	float scale ;
+	scale = point_qty / (end - start + 1.0) ;
 	/* 清空这块显示区 背景暂定黑色 可以全部一起清空 */
 	for (i = 0; i < height; i++)
 		memset (p + FB_WIDTH * (i + yoffset) + xoffset, 0x0, width * 2 );
 	/* 画回波 */
-	for (i = 0; i < height - 1; i++)
+	for (i = start; i < end ; i++)
 	{
 		fbline (p, 
-				xoffset + width * HEIGHT_TABLE[255 - data[i]],
+				xoffset + width * HEIGHT_TABLE[255 - data[(int)(0.5 + (i-start) * scale)]],
 				yoffset + i,
-				xoffset + width * HEIGHT_TABLE[255 - data[i + 1]],
+				xoffset + width * HEIGHT_TABLE[255 - data[(int)(0.5 + (i + 1 -start) * scale)]],
 				yoffset + i + 1,
 				all_col_16[GROUP_VAL_POS(groupId, ascan_color)]);
 		/* 画包络 */
@@ -923,6 +1093,10 @@ int DrawPixbuff(gushort *p,
        gint pointer2;
        gint tempData ;
        gint waveLength  = endWave - startWave;
+       i= pp->p_tmp_config->beam_num[group] ;
+       fbline(p, xoffset+CurrentLine_top[group][i].x, yoffset+CurrentLine_top[group][i].y, xoffset+CurrentLine_bottom[group][i].x,
+       	                              yoffset+CurrentLine_bottom[group][i].y,  0x001f );
+
        
        for(i = 0; i< height; i++)
        {
@@ -931,9 +1105,9 @@ int DrawPixbuff(gushort *p,
                       pointer = i*width +j ;
                       if(pDraw[group][pointer] != 0)
                       { 
-                           pointer2 = (int)(pAngleZoom[group][pointer] * waveLength + pDataNo[group][pointer]);
+                           pointer2 = (int)(pAngleZoom[group][pointer] * (waveLength + 32) + pDataNo[group][pointer]);
                            tempData = (int)(WaveData[pointer2] * (COLOR_STEP - pDrawRate[group][pointer]) +
-								   WaveData[pointer2 + waveLength]*pDrawRate[group][pointer] ) ;
+								   WaveData[pointer2 + waveLength + 32]*pDrawRate[group][pointer] ) ;
 						   fbdot (p, xoffset + j, yoffset + i - 1, TMP(color_amp[tempData>>COLOR_SHIFT]));
 					  }
              }
@@ -942,8 +1116,8 @@ int DrawPixbuff(gushort *p,
        //draw current angle line
        i= pp->p_tmp_config->beam_num[group] ;
        fbline(p, xoffset+CurrentLine_top[group][i].x, yoffset+CurrentLine_top[group][i].y, xoffset+CurrentLine_bottom[group][i].x,
-    		                              yoffset+CurrentLine_bottom[group][i].y,  0x001f );
-
+       	                              yoffset+CurrentLine_bottom[group][i].y,  0x001f );
+       //fbline(p , xoffset + 100, yoffset, xoffset + 100, yoffset + height, 0x001f);
 	   //	   g_print("pDraw[1] = %d", pDraw[pointer]);
 	   return 0;
 }
@@ -1032,13 +1206,13 @@ void CalcLinearScan(int start_element, int stop_element, int element_step, int e
 	   {
 		   if(_angle >=0 )
 		   {
-		        CurrentLine_top[group][i].x = (int) ( beam_width * i + 0.5) ;
+		        CurrentLine_top[group][i].x = (int) ( beam_width * i  + 0.5) ;
 		        CurrentLine_bottom[group][i].x = (int)( beam_width * i  + 0.5 + xVacc );
 		   }
 		   else
 		   {
 		        CurrentLine_bottom[group][i].x =  (int) ( beam_width * i + 0.5);
-		        CurrentLine_top[group][i].x   = (int)( beam_width * i + xVacc + 0.5);
+		        CurrentLine_top[group][i].x   = (int)( beam_width * i  + xVacc + 0.5);
 		   }
 		   CurrentLine_top[group][i].y = 0 ;
 		   CurrentLine_bottom[group][i].y =	height - 1 ;
@@ -1052,11 +1226,30 @@ void draw_s_scan (gushort *p, guint width, guint height, DOT_TYPE *data, DOT_TYP
 {
 	gint i, j, k, temp;
 	gint beam_qty = TMP(beam_qty[groupId]);
+	gint dot_qty  = GROUP_VAL_POS(groupId, point_qty);
+    unsigned char* pData ;
+    unsigned char* buff  ;
 	switch (ut_unit)	
 	{
 		case UT_UNIT_SOUNDPATH:
 		case UT_UNIT_TIME:
-				if (height < beam_qty)
+		        for(i = 0; i< beam_qty; i++)
+		        {
+		    	    pData = data1 + i * (dot_qty + 32) ;
+					buff  = TMP(scan_data[groupId])+width*i ;
+		    	    if (dot_qty <= width)
+					{
+						interpolation_data ( pData, buff, dot_qty, width);
+					}
+					else if (dot_qty  > width)
+					{
+						compress_data ( pData, buff, dot_qty, width,
+								get_group_val (get_group_by_id (pp->p_config, groupId), GROUP_RECTIFIER));
+					}
+
+		        }
+
+			    if (height < beam_qty)
 				{
 					/* 压缩s扫描 */
 					for (i = 0 ; i < height ; i++)
@@ -1066,7 +1259,7 @@ void draw_s_scan (gushort *p, guint width, guint height, DOT_TYPE *data, DOT_TYP
 						{
 
 						   fbdot (p, xoffset + k, yoffset + i,
-										TMP(color_amp[data1[temp + k]]));
+										TMP(color_amp[TMP(scan_data[groupId])[temp + k]]));
 						}
 					}
 
@@ -1077,7 +1270,7 @@ void draw_s_scan (gushort *p, guint width, guint height, DOT_TYPE *data, DOT_TYP
 					for (i = 0; i < beam_qty; i++)
 							for (k = 0; k < width - 1; k++)
 								fbdot (p, xoffset + k, yoffset + i,
-										TMP(color_amp[data1[width * i + k]]));
+										TMP(color_amp[TMP(scan_data[groupId])[width * i + k]]));
 				}
 				else if (height > beam_qty)
 				{
@@ -1087,7 +1280,7 @@ void draw_s_scan (gushort *p, guint width, guint height, DOT_TYPE *data, DOT_TYP
 							for (k = 0; k < width - 1; k++)
 							{
 								fbdot (p, xoffset + k, yoffset + i * height / beam_qty + j,
-										TMP(color_amp[data1[width * i + k]]));
+										TMP(color_amp[TMP(scan_data[groupId])[width * i + k]]));
 							}
 				}
 				//*********************************
@@ -1100,7 +1293,7 @@ void draw_s_scan (gushort *p, guint width, guint height, DOT_TYPE *data, DOT_TYP
 				if ((!pp->sscan_mark) && pDraw[groupId])
 				{
 					DrawPixbuff(p, xoffset, yoffset, width, width, height,
-							0, TMP(a_scan_dot_qty),  data1, groupId);
+							0,GROUP_VAL_POS(groupId, point_qty) ,  data1, groupId);
 				}
 				break;
 		default:break;
@@ -1270,20 +1463,20 @@ void draw_clb_tcg (gushort *p, gint width, gint height, DOT_TYPE *data, DOT_TYPE
 							DOT_TYPE *data2,gint xoffset, gint yoffset, guchar groupId)
 {
 	gint	i;
-//	gint clb_x1, clb_x2;
-//	gint clb_y1, clb_y2;
-//	gint clb_y1_m, clb_y2_m;
+	//	gint clb_x1, clb_x2;
+	//	gint clb_y1, clb_y2;
+	//	gint clb_y1_m, clb_y2_m;
 
-//	gint count = 0;
-//	gfloat clb_tmp_max_data = 0;
-//	static gfloat clb_his_max_data = 0;
+	//	gint count = 0;
+	//	gfloat clb_tmp_max_data = 0;
+	//	static gfloat clb_his_max_data = 0;
 	gint y1 = (gint)(height*(1- GROUP_VAL(amplitude[0])/10000.0 - pp->tolerance_t/10000.0)) + yoffset;
 	gint y2 = (gint)(height*(1- GROUP_VAL(amplitude[0])/10000.0 + pp->tolerance_t/10000.0)) + yoffset;
 	if(y1 < yoffset)
 			y1 = yoffset;
 	if(y2 < yoffset)
 			y2 = yoffset;
-//	gint step = (gint)( (LAW_VAL(Angle_max) - LAW_VAL(Angle_min)) / LAW_VAL(Angle_step) + 1);
+    //gint step = (gint)( (LAW_VAL(Angle_max) - LAW_VAL(Angle_min)) / LAW_VAL(Angle_step) + 1);
 	/* 清空这块显示区 背景暂定黑色 可以全部一起清空 */
 	for (i = 0; i < height; i++)
 		memset (p + FB_WIDTH * (i + yoffset) + xoffset, 0x0, width * 2 );
@@ -1298,35 +1491,99 @@ void draw_clb_tcg (gushort *p, gint width, gint height, DOT_TYPE *data, DOT_TYPE
 void draw_scan(guchar scan_num, guchar scan_type, guchar group,
 		guint xoff, guint yoff, guchar *dot_temp, gushort *dot_temp1 )
 {
-	gint i;
+	gint i, k ;
 	double RANGE    ;
 	double VELOCITY ;
     double START ;
     double start ;
 	double range ;
+	unsigned char* pData ;
+	int offset;
+	guint buff_addr = (pp->p_beam_data) + 256 * 1024 ;
+	//guint temp2 = (pp->p_beam_data) + 4 ;
+	for (offset = 0, k = 0 ; k < group ; k++)
+	{
+		offset += (GROUP_VAL_POS(k, point_qty) + 32) * TMP(beam_qty[k]);
+	}
+	pData = (unsigned char *)(buff_addr + offset) ;
+
 	switch (scan_type)
 	{
 		case A_SCAN:
 			if(!pp->clb_flag)
 			{
-				draw_a_scan(dot_temp1, TMP(a_scan_width), TMP(a_scan_height),
-						TMP(scan_data[group]) + TMP(a_scan_width) * TMP(beam_num[group]),
-						dot_temp, dot_temp, 
-						xoff, yoff, group);
+				// beam data start address
+				pData = pData + TMP(beam_num[group]) * (GROUP_VAL_POS( group, point_qty) + 32);
+				// scale data to display width
+				if (GROUP_VAL_POS(group, point_qty) <= TMP(a_scan_dot_qty))
+				{
+					interpolation_data ( pData,
+							TMP(scan_data[group]),
+							GROUP_VAL_POS(group, point_qty),
+							TMP(a_scan_dot_qty));
+				}
+				else if (GROUP_VAL_POS(group, point_qty) > TMP(a_scan_dot_qty))
+				{
+					compress_data ( pData,
+							TMP(scan_data[group]),
+							GROUP_VAL_POS(group, point_qty),
+							TMP(a_scan_dot_qty),
+							get_group_val (get_group_by_id (pp->p_config, group), GROUP_RECTIFIER));
+				}
+				draw_a_scan (dot_temp1, TMP(a_scan_width), TMP(a_scan_height),
+						TMP(scan_data[group]), dot_temp, dot_temp, xoff, yoff, group);
 			}
 			else
 			{
+				pData = pData + TMP(beam_num[group]) * (GROUP_VAL_POS( group, point_qty) + 32);
+				// scale data to display width
+				if (GROUP_VAL_POS(group, point_qty) <= TMP(a_scan_dot_qty))
+				{
+					interpolation_data ( pData,
+							TMP(scan_data[group]),
+							GROUP_VAL_POS(group, point_qty),
+							TMP(clb_a_scan_width));
+				}
+				else if (GROUP_VAL_POS(group, point_qty) > TMP(a_scan_dot_qty))
+				{
+					compress_data ( pData,
+							TMP(scan_data[group]),
+							GROUP_VAL_POS(group, point_qty),
+							TMP(clb_a_scan_width),
+							get_group_val (get_group_by_id (pp->p_config, group), GROUP_RECTIFIER));
+				}
+
+
 				draw_a_scan(dot_temp1, TMP(clb_a_scan_width), TMP(clb_a_scan_height),
-						TMP(scan_data[group]) + TMP(clb_a_scan_width) * TMP(beam_num[group]),
-						dot_temp, dot_temp, 
-						xoff, yoff, group);
+						TMP(scan_data[group]),dot_temp, dot_temp, xoff, yoff, group);
 			}
 			break;
 		case A_SCAN_R:
+			// draw a scan line position need the result calculated in the s scan calculation
+			if(pp->sscan_mark)
+			{
+				if (LAW_VAL(Focal_type) == LINEAR_SCAN)
+				{
+					for(i = 0; i< TMP(beam_qty[group]); i++ )
+					{
+						AScanDrawRange[group][i].start = 0;
+						AScanDrawRange[group][i].end   = TMP(a_scan_height);
+					}
+				}
+				else if (LAW_VAL(Focal_type) == AZIMUTHAL_SCAN)
+				{
+					RANGE = get_group_val (get_group_by_id (pp->p_config, group), GROUP_RANGE) / 1000.0      ;
+					VELOCITY = get_group_val (get_group_by_id (pp->p_config, group), GROUP_VELOCITY) / 100.0 ;
+					START  = get_group_val (get_group_by_id (pp->p_config, group), GROUP_START) / 1000.0     ;
+					start = START * VELOCITY / 2000.0 ;
+				    range = RANGE * VELOCITY / 2000.0 ;
+				    calc_line_position(LAW_VAL(Angle_min)/100.0, LAW_VAL(Angle_max)/100.0, LAW_VAL(Angle_step)/100.0,
+						start, range, TMP(Junction), GROUP_VAL_POS(group, point_qty),TMP(s_scan_width),TMP(s_scan_height), group);
+				}
+			}
+			pData = pData + TMP(beam_num[group]) * (GROUP_VAL_POS( group, point_qty) + 32) ;
 			draw_a_scan_r (dot_temp1, TMP(a_scan_width), TMP(a_scan_height),
-					TMP(scan_data[group]) + TMP(a_scan_dot_qty) * TMP(beam_num[group]),
-					dot_temp, dot_temp, 
-					xoff, yoff, group);
+					pData, dot_temp, dot_temp, xoff, yoff, GROUP_VAL_POS( group, point_qty) ,group, AScanDrawRange[group][TMP(beam_num[group])].start ,AScanDrawRange[group][TMP(beam_num[group])].end );
 			break;
 		case B_SCAN:
 			if (pp->bscan_mark)
@@ -1337,14 +1594,30 @@ void draw_scan(guchar scan_num, guchar scan_type, guchar group,
 				pp->bscan_mark = 0;	/* mark 的时候把画图区清空 */
 			}
 			else
+			{
+				pData = pData + TMP(beam_num[group]) * (GROUP_VAL_POS( group, point_qty) + 32);
+				if (GROUP_VAL_POS(group, point_qty) <= TMP(a_scan_dot_qty))
+				{
+					interpolation_data ( pData,
+							TMP(scan_data[group]),
+							GROUP_VAL_POS(group, point_qty),
+							TMP(a_scan_dot_qty));
+				}
+				else if (GROUP_VAL_POS(group, point_qty) > TMP(a_scan_dot_qty))
+				{
+					compress_data ( pData,
+							TMP(scan_data[group]),
+							GROUP_VAL_POS(group, point_qty),
+							TMP(a_scan_dot_qty),
+							get_group_val (get_group_by_id (pp->p_config, group), GROUP_RECTIFIER));
+				}
 				draw_b_scan(dot_temp1, TMP(b_scan_width), TMP(b_scan_height), dot_temp,
-						TMP(scan_data[group]) + TMP(a_scan_width) * TMP(beam_num[group]),
-						xoff, yoff, group, 0);
+						TMP(scan_data[group]), xoff, yoff, group, 0);
+			}
 			break;
 		case S_SCAN:
 			draw_s_scan(dot_temp1, TMP(s_scan_width), TMP(s_scan_height),dot_temp,
-					TMP(scan_data[group]),
-					xoff, yoff, group, GROUP_VAL_POS(group, ut_unit));
+					pData, xoff, yoff, group, GROUP_VAL_POS(group, ut_unit));
 			break;
 		case S_SCAN_A:
 			/* 计算查找表 */
@@ -1359,13 +1632,13 @@ void draw_scan(guchar scan_num, guchar scan_type, guchar group,
 				//	    TMP(s_scan_width), TMP(s_scan_height));	
 				RANGE = get_group_val (get_group_by_id (pp->p_config, group), GROUP_RANGE) / 1000.0      ;
 				VELOCITY = get_group_val (get_group_by_id (pp->p_config, group), GROUP_VELOCITY) / 100.0 ;
-				START  = get_group_val (get_group_by_id (pp->p_config, group), GROUP_START) / 1000.0          ;
-			    	start = START * VELOCITY / 2000.0 ;
+				START  = get_group_val (get_group_by_id (pp->p_config, group), GROUP_START) / 1000.0     ;
+			    start = START * VELOCITY / 2000.0 ;
 				range = RANGE * VELOCITY / 2000.0 ;
 				if(!pp->clb_flag)
 				{
 					CalcFanScan_new (LAW_VAL(Angle_min)/100.0, LAW_VAL(Angle_max)/100.0, LAW_VAL(Angle_step)/100.0,
-									start, range, TMP(Junction), TMP(a_scan_dot_qty),TMP(s_scan_width),TMP(s_scan_height), group);
+									start, range, TMP(Junction), GROUP_VAL_POS(group, point_qty),TMP(s_scan_width),TMP(s_scan_height), group);
 					/* 清空这块显示区 背景暂定黑色 可以全部一起清空 */
 					pp->sscan_mark = 0;
 					for (i = 0; i < TMP(s_scan_height); i++)
@@ -1381,13 +1654,13 @@ void draw_scan(guchar scan_num, guchar scan_type, guchar group,
 							memset (dot_temp1 + FB_WIDTH * (i + yoff) + xoff, 0x0, TMP(clb_s_scan_width) * 2 );
 				}
 
-			  }
+			}
 			if(!pp->clb_flag)    
 				draw_s_scan(dot_temp1, TMP(s_scan_width), TMP(s_scan_height), dot_temp,
-						TMP(scan_data[group]), xoff, yoff, group, GROUP_VAL_POS(group, ut_unit));
+						pData, xoff, yoff, group, GROUP_VAL_POS(group, ut_unit));
 			else 
 				draw_s_scan(dot_temp1, TMP(clb_s_scan_width), TMP(clb_s_scan_height), dot_temp,
-						TMP(scan_data[group]), xoff, yoff, group, GROUP_VAL_POS(group, ut_unit));
+						pData, xoff, yoff, group, GROUP_VAL_POS(group, ut_unit));
 			break;
 		case S_SCAN_L: // Linear -- true depth
 			if ((GROUP_VAL_POS(group, ut_unit) == UT_UNIT_TRUE_DEPTH) &&
@@ -1395,94 +1668,123 @@ void draw_scan(guchar scan_num, guchar scan_type, guchar group,
 			{
 				RANGE = get_group_val (get_group_by_id (pp->p_config, group), GROUP_RANGE) / 1000.0 ;
 				VELOCITY = get_group_val (get_group_by_id (pp->p_config, group), GROUP_VELOCITY) / 100.0 ;
-			    	range = RANGE * VELOCITY / 2000.0 ;
-				if(!pp->clb_flag)
-				{
-					CalcLinearScan(LAW_VAL(First_tx_elem), LAW_VAL (Last_tx_elem), LAW_VAL(Elem_step), LAW_VAL (Elem_qty), LAW_VAL(Angle_min)/100.0, TMP(a_scan_dot_qty),
-					    		range , TMP(s_scan_width), TMP(s_scan_height),  group);
-			    		pp->sscan_mark = 0;
-					for (i = 0; i < TMP(s_scan_height); i++)
-						memset (dot_temp1 + FB_WIDTH * (i + yoff) + xoff, 0x0, TMP(s_scan_width) * 2 );
-				}
-				else
-				{
-					CalcLinearScan(LAW_VAL(First_tx_elem), LAW_VAL (Last_tx_elem), LAW_VAL(Elem_step), LAW_VAL (Elem_qty), LAW_VAL(Angle_min)/100.0, TMP(a_scan_dot_qty),
-					    		range , TMP(clb_s_scan_width), TMP(clb_s_scan_height),  group);
-			    		pp->sscan_mark = 0;
-					for (i = 0; i < TMP(s_scan_height); i++)
-						memset (dot_temp1 + FB_WIDTH * (i + yoff) + xoff, 0x0, TMP(clb_s_scan_width) * 2 );
-				}
+			    range = RANGE * VELOCITY / 2000.0 ;
 
-				
+				CalcLinearScan(LAW_VAL(First_tx_elem), LAW_VAL (Last_tx_elem), LAW_VAL(Elem_step),
+						        LAW_VAL (Elem_qty), LAW_VAL(Angle_min)/100.0, GROUP_VAL_POS(group, point_qty),
+					    		range , TMP(s_scan_width), TMP(s_scan_height),  group);
+
+			    pp->sscan_mark = 0;
+				for (i = 0; i < TMP(s_scan_height); i++)
+						memset (dot_temp1 + FB_WIDTH * (i + yoff) + xoff, 0x0, TMP(s_scan_width) * 2 );
 			}
-			if(!pp->clb_flag)
-				draw_s_scan(dot_temp1, TMP(s_scan_width), TMP(s_scan_height), dot_temp,
-						TMP(scan_data[group]), xoff, yoff, group, GROUP_VAL_POS(group, ut_unit));
-			else
-				draw_s_scan(dot_temp1, TMP(clb_s_scan_width), TMP(clb_s_scan_height), dot_temp,
-						TMP(scan_data[group]), xoff, yoff, group, GROUP_VAL_POS(group, ut_unit));
+			draw_s_scan(dot_temp1, TMP(s_scan_width), TMP(s_scan_height), dot_temp,
+					pData, xoff, yoff, group, GROUP_VAL_POS(group, ut_unit));
 			break;
 		case C_SCAN:
+			pData = pData + TMP(beam_num[group]) * (GROUP_VAL_POS( group, point_qty) + 32);
+			if (GROUP_VAL_POS(group, point_qty) <= TMP(a_scan_dot_qty))
+			{
+				interpolation_data ( pData,
+						TMP(scan_data[group]),
+						GROUP_VAL_POS(group, point_qty),
+						TMP(a_scan_dot_qty));
+			}
+			else if (GROUP_VAL_POS(group, point_qty) > TMP(a_scan_dot_qty))
+			{
+				compress_data ( pData,
+						TMP(scan_data[group]),
+						GROUP_VAL_POS(group, point_qty),
+						TMP(a_scan_dot_qty),
+						get_group_val (get_group_by_id (pp->p_config, group), GROUP_RECTIFIER));
+			}
+
 			if (pp->cscan_mark)
 			{
 				draw_c_scan(dot_temp1, TMP(c_scan_width), TMP(c_scan_height), dot_temp,
-						TMP(scan_data[group]) + TMP(a_scan_width) * TMP(beam_num[group]),
+						TMP(scan_data[group]),
 						xoff, yoff, group, 1, get_cscan_source(pp->p_config, 0));
 				pp->cscan_mark = 0;	/* mark 的时候把画图区清空 */
 			}
 			else
 				draw_c_scan(dot_temp1, TMP(c_scan_width), TMP(c_scan_height),dot_temp,
-						TMP(scan_data[group]) + TMP(a_scan_width) * TMP(beam_num[group]),
+						TMP(scan_data[group]),
 						xoff, yoff, group, 0, get_cscan_source(pp->p_config, 0));
 			break;
 		case CC_SCAN:
+
+			pData = pData + TMP(beam_num[group]) * (GROUP_VAL_POS( group, point_qty) + 32);
+			if (GROUP_VAL_POS(group, point_qty) <= TMP(a_scan_dot_qty))
+			{
+				interpolation_data ( pData,
+						TMP(scan_data[group]),
+						GROUP_VAL_POS(group, point_qty),
+						TMP(a_scan_dot_qty));
+			}
+			else if (GROUP_VAL_POS(group, point_qty) > TMP(a_scan_dot_qty))
+			{
+				compress_data ( pData,
+						TMP(scan_data[group]),
+						GROUP_VAL_POS(group, point_qty),
+						TMP(a_scan_dot_qty),
+						get_group_val (get_group_by_id (pp->p_config, group), GROUP_RECTIFIER));
+			}
+
 			if (pp->ccscan_mark)
 			{
 				draw_c_scan(dot_temp1, TMP(c_scan_width), TMP(c_scan_height), dot_temp,
-						TMP(scan_data[group]) + TMP(a_scan_width) * TMP(beam_num[group]),
+						TMP(scan_data[group]),
 						xoff, yoff, group, 1, get_cscan_source(pp->p_config, 1));
 				pp->ccscan_mark = 0;	/* mark 的时候把画图区清空 */
 			}
 			else
 				draw_c_scan(dot_temp1, TMP(c_scan_width), TMP(c_scan_height),dot_temp,
-						TMP(scan_data[group]) + TMP(a_scan_width) * TMP(beam_num[group]),
+						TMP(scan_data[group]) ,
 						xoff, yoff, group, 0, get_cscan_source(pp->p_config, 1));
 			break;
 		case CCC_SCAN:
+			pData = pData + TMP(beam_num[group]) * (GROUP_VAL_POS( group, point_qty) + 32);
+			if (GROUP_VAL_POS(group, point_qty) <= TMP(a_scan_dot_qty))
+			{
+				interpolation_data ( pData,
+						TMP(scan_data[group]),
+						GROUP_VAL_POS(group, point_qty),
+						TMP(a_scan_dot_qty));
+			}
+			else if (GROUP_VAL_POS(group, point_qty) > TMP(a_scan_dot_qty))
+			{
+				compress_data ( pData,
+						TMP(scan_data[group]),
+						GROUP_VAL_POS(group, point_qty),
+						TMP(a_scan_dot_qty),
+						get_group_val (get_group_by_id (pp->p_config, group), GROUP_RECTIFIER));
+			}
+
+
 			if (pp->cccscan_mark)
 			{
 				draw_c_scan(dot_temp1, TMP(c_scan_width), TMP(c_scan_height), dot_temp,
-						TMP(scan_data[group]) + TMP(a_scan_width) * TMP(beam_num[group]),
+						TMP(scan_data[group]),
 						xoff, yoff, group, 1, get_cscan_source(pp->p_config, 0));
 				pp->cccscan_mark = 0;	/* mark 的时候把画图区清空 */
 			}
 			else
 				draw_c_scan(dot_temp1, TMP(c_scan_width), TMP(c_scan_height),dot_temp,
-						TMP(scan_data[group]) + TMP(a_scan_width) * TMP(beam_num[group]),
-						xoff, yoff, group, 0, get_cscan_source (pp->p_config, 0));
+						TMP(scan_data[group]) ,  xoff, yoff, group, 0, get_cscan_source (pp->p_config, 0));
 			break;
 		case WEDGE_DELAY:
-			draw_clb_wedge_delay(dot_temp1, TMP(clb_width), TMP(clb_height),
-					TMP(scan_data[group]) + TMP(clb_width) * TMP(beam_num[group]),
-					dot_temp, dot_temp, 
-					xoff, yoff, group);
 			break;
 		case SENSITIVITY:
 			draw_clb_sensitivity(dot_temp1, TMP(clb_width), TMP(clb_height),
-					TMP(scan_data[group]) + TMP(clb_width) * TMP(beam_num[group]),
+					NULL,
 					dot_temp, dot_temp, 
 					xoff, yoff, group);
 			break;
 		case TCG:
-			draw_clb_tcg(dot_temp1, TMP(clb_width), TMP(clb_height),
-					TMP(scan_data[group]) + TMP(clb_width) * TMP(beam_num[group]),
-					dot_temp, dot_temp, 
-					xoff, yoff, group);
-			break;
-		case CODER:
 			break;
 		default:break;
 	}
 	return ;
 }
+
 
