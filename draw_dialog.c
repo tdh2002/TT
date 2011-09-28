@@ -31,6 +31,14 @@ GtkWidget *g_law_ebox_save;
 GtkWidget *g_law_ebox_read;
 GtkWidget * g_source_list = NULL;
 static _save_file_name_struct g_save_file_name_struct;
+MY_SIGNAL g_my_signal;
+_my_ip_set entry_ip;
+_my_mask_set entry_mask;
+PROBE g_tmp_probe;
+WEDGE g_tmp_wedge;
+void cd_source_dir_path (GtkTreeView *tree_view,GtkTreePath *path,GtkTreeViewColumn *column,gpointer user_data);
+void cd_target_dir_path (GtkTreeView *tree_view,GtkTreePath *path,GtkTreeViewColumn *column,gpointer user_data);
+gboolean law_save (GtkWidget *widget, GdkEventButton *event, gpointer data);
 
 enum
 {
@@ -46,15 +54,6 @@ void set_dialog_menu_position(GtkMenu *menu, gint *x, gint *y,
 	*y = pp->y_pos;
 	return;
 }
-
-MY_SIGNAL g_my_signal;
-_my_ip_set entry_ip;
-_my_mask_set entry_mask;
-PROBE g_tmp_probe;
-WEDGE g_tmp_wedge;
-void cd_source_dir_path (GtkTreeView *tree_view,GtkTreePath *path,GtkTreeViewColumn *column,gpointer user_data);
-void cd_target_dir_path (GtkTreeView *tree_view,GtkTreePath *path,GtkTreeViewColumn *column,gpointer user_data);
-gboolean law_save (GtkWidget *widget, GdkEventButton *event, gpointer data);
 
 /* Probe 选择探头2个按键的处理 一个是确认 一个是取消 */
 static void da_call_probe (GtkDialog *dialog, gint response_id, gpointer user_data)      
@@ -1307,18 +1306,6 @@ gint open_config_file(GtkWidget *widget,	GdkEventButton *event,	gpointer       d
 	return TRUE; 
 }
 
-/* File Open 回调函数 */
-static void da_call_complex_dialog (GtkDialog *dialog, gint response_id, gpointer user_data)      
-{
-	if (GTK_RESPONSE_OK == response_id)  /* 保存信息 */
-		g_print ("OK_Pressed");
-	else if (GTK_RESPONSE_CANCEL == response_id) /* 取消 */
-		g_print ("CANCEL_Pressed");
-	
-	gtk_widget_destroy (GTK_WIDGET (dialog));
-	change_keypress_event (KEYPRESS_MAIN);
-}
-
 static void response_file_open_main(GtkDialog *dialog, gint response_id, gpointer user_data)
 {
 	if (GTK_RESPONSE_OK == response_id)  /*读配置文件*/
@@ -1495,9 +1482,6 @@ static void draw_file_open_main()
 	g_signal_connect (G_OBJECT (source_selection), "changed", G_CALLBACK(on_changed_open_config_file), (gpointer)source_list);
 
     //g_signal_connect(G_OBJECT(dialog),"destroy_event",G_CALLBACK(dialog_destroy),dialog);
-
-	//g_signal_connect (G_OBJECT(dialog), "response",
-	//		G_CALLBACK(da_call_complex_dialog), NULL);/*发送退出信号*/
 
 	g_signal_connect (G_OBJECT(dialog), "response",
 			G_CALLBACK(response_file_open_main), NULL);/*发送退出信号*/
@@ -1949,9 +1933,6 @@ static void draw_save_setup_as()
 	g_signal_connect_after(G_OBJECT (eventbox_save), "button-press-event",G_CALLBACK(dialog_destroy), dialog);
 
 	g_signal_connect (G_OBJECT (source_selection), "changed", G_CALLBACK(on_changed_save_config_file), (gpointer)&g_save_file_name_struct);
-
-	//g_signal_connect (G_OBJECT(dialog), "response",
-	//		G_CALLBACK(da_call_complex_dialog), NULL);/*发送退出信号*/
 	
 	g_signal_connect (G_OBJECT(dialog), "response",
 			G_CALLBACK(response_save_setup_as), NULL);/*发送退出信号*/
@@ -2070,9 +2051,6 @@ static void draw_system_info ()
 	gtk_box_pack_start(GTK_BOX(full_screen),top_box, FALSE, FALSE, 0);
 
 	gtk_box_pack_start(GTK_BOX(full_screen),bottom_box, FALSE, FALSE, 0);
-
-	//g_signal_connect (G_OBJECT(dialog), "response",
-	//		G_CALLBACK(da_call_complex_dialog), NULL);/*发送退出信号*/
 
 	g_signal_connect (G_OBJECT(dialog), "response",
 			G_CALLBACK(response_system_info), NULL);/*发送退出信号*/
@@ -2239,8 +2217,8 @@ static void draw_file_manage ()
 	GtkWidget *source_label;
 	GtkWidget *target_label;
 
-	GtkWidget *sw_1_1_1_1_1;
-	GtkWidget *sw_1_1_1_1_2;
+	GtkWidget *source_sw;
+	GtkWidget *target_sw;
 
 	GtkWidget *source_list;
 	GtkWidget *target_list;
@@ -2331,12 +2309,12 @@ static void draw_file_manage ()
 	g_object_unref(store);
 
 	//源文件窗口，带滚动条
-	sw_1_1_1_1_1 = gtk_scrolled_window_new (NULL, NULL);
-	gtk_widget_set_size_request(sw_1_1_1_1_1, 343, 485);
+	source_sw = gtk_scrolled_window_new (NULL, NULL);
+	gtk_widget_set_size_request(source_sw, 343, 485);
 
 	//目标文件窗口，带滚动条
-	sw_1_1_1_1_2 = gtk_scrolled_window_new (NULL, NULL);
-	gtk_widget_set_size_request(sw_1_1_1_1_2, 343, 485);
+	target_sw = gtk_scrolled_window_new (NULL, NULL);
+	gtk_widget_set_size_request(target_sw, 343, 485);
 
 	//源文件路径
 	Set_Source_File_Path("/");
@@ -2384,7 +2362,7 @@ static void draw_file_manage ()
 		gtk_container_add(GTK_CONTAINER(hbox_1_1_2_1_1[i]), label_1_1_2_1_1[i]);
 	}   
 
-	gtk_container_add(GTK_CONTAINER(sw_1_1_1_1_1),source_list);
+	gtk_container_add(GTK_CONTAINER(source_sw),source_list);
 	
 	gtk_box_pack_start(GTK_BOX(hbox_1_1_1_1),hbox_1_1_1_1_1,FALSE,FALSE,0);
 
@@ -2392,9 +2370,9 @@ static void draw_file_manage ()
 
 	gtk_box_pack_start(GTK_BOX(vbox_1_1_1_1_1_1),source_label,FALSE,FALSE,0);
 
-	gtk_box_pack_start(GTK_BOX(vbox_1_1_1_1_1_1),sw_1_1_1_1_1,FALSE,FALSE,0);
+	gtk_box_pack_start(GTK_BOX(vbox_1_1_1_1_1_1),source_sw,FALSE,FALSE,0);
 
-	gtk_container_add(GTK_CONTAINER(sw_1_1_1_1_2),target_list);            
+	gtk_container_add(GTK_CONTAINER(target_sw),target_list);            
 
 	gtk_box_pack_start(GTK_BOX(hbox_1_1_1_1),hbox_1_1_1_1_2,FALSE,FALSE,0);
 	
@@ -2402,7 +2380,7 @@ static void draw_file_manage ()
 	
 	gtk_box_pack_start(GTK_BOX(vbox_1_1_1_1_2_1),target_label,FALSE,FALSE,0);
 
-	gtk_box_pack_start(GTK_BOX(vbox_1_1_1_1_2_1),sw_1_1_1_1_2,FALSE,FALSE,0);
+	gtk_box_pack_start(GTK_BOX(vbox_1_1_1_1_2_1),target_sw,FALSE,FALSE,0);
 
 
 	for(i=0;i<7;i++)
@@ -2472,9 +2450,6 @@ static void draw_file_manage ()
 	g_signal_connect(G_OBJECT(source_list),"row-activated",G_CALLBACK(cd_source_dir_path),&dir_path_label_struct);
 
 	g_signal_connect(G_OBJECT(target_list),"row-activated",G_CALLBACK(cd_target_dir_path),&dir_path_label_struct);
-
-	//g_signal_connect (G_OBJECT(dialog), "response",
-	//		G_CALLBACK(da_call_complex_dialog), NULL);/*发送退出信号*/
 
 	g_signal_connect (G_OBJECT(dialog), "response",
 			G_CALLBACK(response_file_manage), NULL);/*发送退出信号*/
@@ -2912,9 +2887,6 @@ static void draw_law_save ()
 	gtk_table_attach(GTK_TABLE(table), vbox_name, 0, 7, 5, 6, 
 			GTK_FILL | GTK_EXPAND, GTK_FILL | GTK_EXPAND, 0, 0);	/* 下方栏 */
 
-	//g_signal_connect (G_OBJECT(dialog), "response",
-	//		G_CALLBACK(da_call_complex_dialog), NULL);/*发送退出信号*/
-
 	g_signal_connect (G_OBJECT(dialog), "response",
 			G_CALLBACK(response_law_save), NULL);/*发送退出信号*/
 
@@ -3091,10 +3063,6 @@ static void draw_law_read ()
 
 	gtk_table_attach(GTK_TABLE(table), ebox_close, 6, 7, 2, 3, 
 			GTK_FILL | GTK_EXPAND, GTK_FILL | GTK_EXPAND, 0, 0);	/* 侧边栏 */
-
-
-	//g_signal_connect (G_OBJECT(dialog), "response",
-	//		G_CALLBACK(da_call_complex_dialog), NULL);/*发送退出信号*/
 	
 	g_signal_connect (G_OBJECT(dialog), "response",
 			G_CALLBACK(response_law_read), NULL);/*发送退出信号*/
@@ -3847,9 +3815,6 @@ void draw_report_build()
 
 	gtk_box_pack_start(GTK_BOX(full_screen), bottom,FALSE,FALSE,0);
 
-	//g_signal_connect (G_OBJECT(dialog), "response",
-	//		G_CALLBACK(da_call_complex_dialog), NULL);/*发送退出信号*/
-
 	g_signal_connect (G_OBJECT(dialog), "response",
 			G_CALLBACK(response_report_build), NULL);/*发送退出信号*/
 
@@ -4147,45 +4112,48 @@ static void signal_define_probe(GtkDialog *dialog, gint response_id, gpointer us
 		if ( pGroup->group_mode == PA_SCAN )		
 		{
 			buf = gtk_entry_get_text(GTK_ENTRY(open_ut_pa_probe_file_p->model_entry));
+			if (strcmp(buf,"") == 0)
+				return ;
 			strcpy(g_tmp_probe.Model,buf);
 	
 			buf = gtk_entry_get_text(GTK_ENTRY(open_ut_pa_probe_file_p->serial_entry));
+			if (strcmp(buf,"") == 0)
+				return ;
 			strcpy(g_tmp_probe.Serial,buf);
 
 			pos = gtk_combo_box_get_active(GTK_COMBO_BOX(open_ut_pa_probe_file_p->probe_type_combo));
-
+			if (pos < 0) 
+				return ;
 			g_tmp_probe.PA_probe_type =  pa_pos[pos];
 
  			buf = gtk_entry_get_text(GTK_ENTRY(open_ut_pa_probe_file_p->frequency_entry));
-
 			g_tmp_probe.Frequency = (unsigned short)( atof(buf) * 1000 );
 
 			buf = gtk_entry_get_text(GTK_ENTRY(open_ut_pa_probe_file_p->element_qty_entry));
-
 			g_tmp_probe.Elem_qty = atoi(buf);
 
 			buf = gtk_entry_get_text(GTK_ENTRY(open_ut_pa_probe_file_p->ref_point_entry));
-
 			g_tmp_probe.Reference_Point = (unsigned short)( atof(buf) * 1000 );
 
 			buf = gtk_entry_get_text(GTK_ENTRY(open_ut_pa_probe_file_p->pitch_entry));
-
 			g_tmp_probe.Pitch = (unsigned int) ( atof(buf) * 1000 );
 		}
 		else //if (pGroup->group_mode == UT_SCAN)
 		{
-			buf = gtk_entry_get_text(GTK_ENTRY(open_ut_pa_probe_file_p->model_entry));
+			buf = gtk_entry_get_text(GTK_ENTRY(open_ut_pa_probe_file_p->model_entry));	
+			if (strcmp(buf,"") == 0)
+				return ;
 			strcpy(g_tmp_probe.Model,buf);
 	
 			buf = gtk_entry_get_text(GTK_ENTRY(open_ut_pa_probe_file_p->serial_entry));
+			if (strcmp(buf,"") == 0)
+				return ;
 			strcpy(g_tmp_probe.Serial,buf);
 
 			buf = gtk_entry_get_text(GTK_ENTRY(open_ut_pa_probe_file_p->frequency_entry));
-
 			g_tmp_probe.Frequency = (unsigned short) ( atof(buf) * 1000 );
 
 			buf = gtk_entry_get_text(GTK_ENTRY(open_ut_pa_probe_file_p->element_size_entry));
-
             g_tmp_probe.Pitch = (unsigned int) ( atof(buf) * 1000 );
 
 			g_tmp_probe.UT_probe_type = 1;
@@ -4662,6 +4630,8 @@ static void signal_define_wedge(GtkDialog *dialog, gint response_id, gpointer us
 
 	int id;
 
+	int pos;
+
 	static int focal_pos = 0;
 
 	GtkWidget *scan_focal[9]; 
@@ -4706,16 +4676,23 @@ static void signal_define_wedge(GtkDialog *dialog, gint response_id, gpointer us
 		if ( pGroup->group_mode == PA_SCAN )
 		{
 			buf = gtk_entry_get_text(GTK_ENTRY(open_ut_pa_wedge_file_p->model_entry));
+			if (strcmp(buf,"") == 0)
+				return ;
 			strcpy(g_tmp_wedge.Model,buf);
 
 			buf = gtk_entry_get_text(GTK_ENTRY(open_ut_pa_wedge_file_p->serial_entry));
+			if (strcmp(buf,""))
+				return ;
 			strcpy(g_tmp_wedge.Serial,buf);
 
 			buf = gtk_entry_get_text(GTK_ENTRY(open_ut_pa_wedge_file_p->angle_entry));
 			g_tmp_wedge.Angle = (unsigned short) ( atof(buf) * 10 );
 
-			g_tmp_wedge.Orientation =  gtk_combo_box_get_active(GTK_COMBO_BOX(open_ut_pa_wedge_file_p->orientation_combo));
-
+			pos =  gtk_combo_box_get_active(GTK_COMBO_BOX(open_ut_pa_wedge_file_p->orientation_combo));
+			if (pos < 0)
+				return ;
+			g_tmp_wedge.Orientation =  pos;
+			
 			buf = gtk_entry_get_text(GTK_ENTRY(open_ut_pa_wedge_file_p->velocity_entry));
 			g_tmp_wedge.Velocity_PA = (unsigned int) ( atof(buf) * 1000 );
 
@@ -4731,9 +4708,13 @@ static void signal_define_wedge(GtkDialog *dialog, gint response_id, gpointer us
 		else// if ( pGroup->group_mode == UT_SCAN )
 		{
 			buf = gtk_entry_get_text(GTK_ENTRY(open_ut_pa_wedge_file_p->model_entry));
+			if (strcmp(buf,"") == 0)
+				return ;
 			strcpy(g_tmp_wedge.Model,buf);
 
 			buf = gtk_entry_get_text(GTK_ENTRY(open_ut_pa_wedge_file_p->serial_entry));
+			if (strcmp(buf,""))
+				return ;
 			strcpy(g_tmp_wedge.Serial,buf);
 
 			buf = gtk_entry_get_text(GTK_ENTRY(open_ut_pa_wedge_file_p->angle_entry));
@@ -4742,8 +4723,11 @@ static void signal_define_wedge(GtkDialog *dialog, gint response_id, gpointer us
 			buf = gtk_entry_get_text(GTK_ENTRY(open_ut_pa_wedge_file_p->probe_delay_entry));	
 			g_tmp_wedge.Probe_delay = (unsigned short) ( atof(buf) * 1000 );
 
-			g_tmp_wedge.Wave_type = gtk_combo_box_get_active(GTK_COMBO_BOX(open_ut_pa_wedge_file_p->wave_type_combo)) + 1; 
-
+			pos = gtk_combo_box_get_active(GTK_COMBO_BOX(open_ut_pa_wedge_file_p->wave_type_combo)) + 1; 
+			if ( pos < 0 )
+				return;
+			g_tmp_wedge.Wave_type = pos; 
+			
 			buf = gtk_entry_get_text(GTK_ENTRY(open_ut_pa_wedge_file_p->ref_point_entry));
 			g_tmp_wedge.Ref_point = (int) ( atof(buf) * 1000 );
 		}
