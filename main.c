@@ -596,7 +596,7 @@ int main (int argc, char *argv[])
 
 void shut_down_power()
 {
-	unsigned char key = 0x55;
+	unsigned char key = 0xFF;
     write(pp->fd_key, &key,1); 
 }
 
