@@ -368,31 +368,31 @@ void show_help(guint i)
 				pp->file_path = "file:///home/tt/TT/source/system/Help/Contextual/Wizard_Menu.html";
 				break;
 			case 1:
-				pp->file_path = "file:///home/gll/arraytop/TT/source/system/Help/Contextual/UT_Settings_Menu.html";
+				pp->file_path = "http://127.0.0.1/source/system/Help/Contextual/UT_Settings_Menu.html";
 				break;
 			case 2:
-				pp->file_path = "file:///home/gll/arraytop/TT/source/system/Help/Contextual/GatesAlarm_Menu.html";
+				pp->file_path = "http://127.0.0.1/source/system/Help/Contextual/GatesAlarm_Menu.html";
 				break;
 			case 3:
-				pp->file_path = "file:///home/gll/arraytop/TT/source/system/Help/Contextual/Measurements_Menu.html";
+				pp->file_path = "http://127.0.0.1/source/system/Help/Contextual/Measurements_Menu.html";
 				break;
 			case 4:
-				pp->file_path = "file:///home/gll/arraytop/TT/source/system/Help/Contextual/Display_Menu.html";
+				pp->file_path = "http://127.0.0.1/source/system/Help/Contextual/Display_Menu.html";
 				break;
 			case 5:
-				pp->file_path = "file:///home/gll/arraytop/TT/source/system/Help/Contextual/PA__UT_Menu.html";
+				pp->file_path = "http://127.0.0.1/source/system/Help/Contextual/PA__UT_Menu.html";
 				break;
 			case 6:
-				pp->file_path = "file:///home/gll/arraytop/TT/source/system/Help/Contextual/FocalLaw_Submenu.html";
+				pp->file_path = "http://127.0.0.1/source/system/Help/Contextual/FocalLaw_Submenu.html";
 				break;
 			case 7:
-				pp->file_path = "file:///home/gll/arraytop/TT/source/system/Help/Contextual/Scan_Menu.html";
+				pp->file_path = "http://127.0.0.1/source/system/Help/Contextual/Scan_Menu.html";
 				break;
 			case 8:
-				pp->file_path = "file:///home/gll/arraytop/TT/source/system/Help/Contextual/File_Menu.html";
+				pp->file_path = "http://127.0.0.1/source/system/Help/Contextual/File_Menu.html";
 				break;
 			case 9:
-				pp->file_path = "file:///home/gll/arraytop/TT/source/system/Help/Contextual/Preferences_Menu.html";
+				pp->file_path = "http://127.0.0.1/source/system/Help/Contextual/Preferences_Menu.html";
 				break;
 			default:break;
 		}
@@ -5754,7 +5754,7 @@ g_print("wstart=%d\n",pp->wstart_qty);
 					draw3_popdown (NULL, 1, 1);
 					if(pp->wstart_qty == 2)
 					{
-						pp->file_path = "file:///home//gll/arraytop/TT/pic/weld/1.jpg";
+						pp->file_path = "http://127.0.0.1/pic/weld/1.jpg";
 						webkit_web_view_load_uri (pp->web_view, pp->file_path);		
 						gtk_widget_hide(pp->hbox211);
 						gtk_widget_show(pp->sw);
@@ -5764,16 +5764,16 @@ g_print("wstart=%d\n",pp->wstart_qty);
 						switch(get_part_weld(pp->p_config))
 						{
 							case 0:
-								pp->file_path = "file:///home//gll/arraytop/TT/pic/weld/2.jpg";
+								pp->file_path = "http://127.0.0.1/pic/weld/2.jpg";
 								break;
 							case 1:
-								pp->file_path = "file:///home//gll/arraytop/TT/pic/weld/3.jpg";
+								pp->file_path = "http://127.0.0.1/pic/weld/3.jpg";
 								break;
 							case 2:
-								pp->file_path = "file:///home//gll/arraytop/TT/pic/weld/5.jpg";
+								pp->file_path = "http://127.0.0.1/pic/weld/5.jpg";
 								break;
 							case 3:
-								pp->file_path = "file:///home//gll/arraytop/TT/pic/weld/7.jpg";
+								pp->file_path = "http://127.0.0.1/pic/weld/7.jpg";
 								break;
 							default:break;
 						}
@@ -5788,13 +5788,13 @@ g_print("wstart=%d\n",pp->wstart_qty);
 							case 0:
 								break;
 							case 1:
-								pp->file_path = "file:///home//gll/arraytop/TT/pic/weld/4.jpg";
+								pp->file_path = "http://127.0.0.1/pic/weld/4.jpg";
 								break;
 							case 2:
-								pp->file_path = "file:///home//gll/arraytop/TT/pic/weld/6.jpg";
+								pp->file_path = "http://127.0.0.1/pic/weld/6.jpg";
 								break;
 							case 3:
-								pp->file_path = "file:///home//gll/arraytop/TT/pic/weld/8.jpg";
+								pp->file_path = "http://127.0.0.1/pic/weld/8.jpg";
 								break;
 							default:break;
 						}
@@ -18381,7 +18381,7 @@ void init_ui(DRAW_UI_P p)
 	webkit_web_view_set_custom_encoding (pp->web_view, "UTF-8");
 	gtk_container_add(GTK_CONTAINER (pp->sw), GTK_WIDGET (pp->web_view));
 
-	pp->file_path = "file:///home/gll/arraytop/TT/source/system/Help/Contextual/UT_Settings_Menu.html";
+	pp->file_path = "http://127.0.0.1/source/system/Help/Contextual/UT_Settings_Menu.html";
 	webkit_web_view_load_uri (pp->web_view, pp->file_path);
 
 	gtk_box_pack_start (GTK_BOX (p->hbox211), p->vboxtable, FALSE, FALSE, 0);
