@@ -375,6 +375,9 @@ static void set_init_para()
 	TMP(max_reg)=0;			/* Display -> Color -> max       */
 	TMP(compress_reg)=0;		/* Display -> Properties -> compress */
 
+	TMP(scanoffset_reg)=1;
+	TMP(indexoffset_reg)=1;
+	TMP(skew_reg)=1;
 	TMP(part_thickness_reg)=1;	/* Probe/Part -> parts -> thickness步进*/
 	TMP(diameter_reg)=1;		/* Probe/Part -> parts -> diameter步进*/
 	TMP(weland_height_reg)=0;

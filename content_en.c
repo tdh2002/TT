@@ -74,7 +74,7 @@ static const gchar *content_en200[] = {
 	/* 二级菜单第0页下的第0页三级菜单 */
 	"Back", "Start", "Operation", "Probe","Auto Detect", NULL, 
 	"Next", "Source", "Group Mode","Connection P", "Select",
-	"Scan Offset","Index Offet", "Skew(°)", "Finish", "Continue", 
+	"Scan Offset","Index Offet", "Skew", "Finish", "Continue", 
 	"Tx/Rx mode","Pulser","Receiver","Connection R"
 };
 
@@ -119,7 +119,7 @@ static const gchar *content_en212[] = {
 
 static const gchar *content_en213[] = {
 	/* 二级菜单第1页下的第3页三级菜单 */
-	"Scan Offset", "Index Offset", "Angle(°)", "Skew(°)", "Beam Delay", "Gain Offset"
+	"Scan Offset", "Index Offset", "Angle(°)", "Skew", "Beam Delay", "Gain Offset"
 };
 
 static const gchar *content_en214[] = {
@@ -222,7 +222,7 @@ static const gchar *content_en250[] = {
 
 static const gchar *content_en251[] = {
 	/* 二级菜单第5页下的第1页三级菜单 */
-	"  Scan Offset  ","  Index Offset  ", "  Skew(°) ", NULL ,NULL, NULL
+	"  Scan Offset  ","  Index Offset  ", "  Skew ", NULL ,NULL, NULL
 };
 
 static const gchar *content_en252[] = {
