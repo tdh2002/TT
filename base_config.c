@@ -4,11 +4,12 @@
  */
 
 #include "base_config.h"
+#include "base.h"
 #include <string.h>
 #include <stdio.h>
 //#define NDEBUG
 #include <assert.h>
-
+DRAW_UI_P	pp;
 void init_group_spi (unsigned int group);
 void send_focal_spi (unsigned int group);
 void send_group_spi (unsigned int group);
@@ -634,8 +635,10 @@ unsigned char get_bright (CONFIG *p)
 
 void set_bright (CONFIG *p, unsigned char data)
 {
-	assert (data < 101);
-	p->bright = data;
+	//assert (data < 101);
+	if(data>100) p->bright = 100 ;
+	else         p->bright = data;
+    write(pp->fd_key, &(p->bright),1);
 }
 
 /* Reading list field 设置当前读取的数值 */

@@ -78,7 +78,7 @@ static void set_config (guint groupid)
 	GROUP_VAL(sum_gain)	= 10;			/* 0是Auto */
 	GROUP_VAL(gate_pos)	= GATE_A;		  
 	GROUP_VAL(gate[GROUP_VAL(gate_pos)].start) = 0;  
-	GROUP_VAL(gate[GROUP_VAL(gate_pos)].width) = 10000;  
+	GROUP_VAL(gate[GROUP_VAL(gate_pos)].width) = 296;  
 	GROUP_VAL(gate[GROUP_VAL(gate_pos)].parameters) = 0;
 	GROUP_VAL(gate[GROUP_VAL(gate_pos)].synchro) = 0;  
 
@@ -305,9 +305,11 @@ static void set_init_para()
 	for(i=0; i < 256; i++)
 	{
 		TMP(clb_real_data[i]) = 0;
+		pp->gate_a_start[i]	=  GROUP_VAL( gate[0].start) / 10 ;
+		pp->gate_a_end[i]	= (GROUP_VAL( gate[0].start) + GROUP_VAL( gate[0].width)) / 10;
 	}
 
-	set_part_weld (pp->p_config, 1);
+	set_part_weld (pp->p_config, (void*)1);
 	pp->wstart_qty = 1;
 
 	/*各步进初始值*/
@@ -570,11 +572,10 @@ int main (int argc, char *argv[])
 	/* 初始化要冲送给fpga的值 */
 	for (i = get_group_qty(pp->p_config) ; i != 0; i--)
 	{
-
-		generate_focallaw (i - 1);
 		init_group_spi (i - 1);
+		generate_focallaw (i - 1);
 		write_group_data (&TMP(group_spi[i - 1]), i - 1);
-		send_focal_spi (i - 1);
+		send_focal_spi (i - 1);//多余generate_focallaw中有
 		g_print ("group %d config init complete\n", i);
 	}
 #endif
@@ -595,7 +596,7 @@ int main (int argc, char *argv[])
 
 void shut_down_power()
 {
-	unsigned char key = 0x55;
+	unsigned char key = 0xFF;
     write(pp->fd_key, &key,1); 
 }
 
@@ -613,6 +614,14 @@ void send_focal_spi (guint group)
 		TMP(focal_spi[k]).all_beam_info	= get_beam_qty() - 1;
 		TMP(focal_spi[k]).gain_offset	= pp->tmp_gain_off[k];//GROUP_VAL_POS(group, gain_offset[k]);
 		TMP(focal_spi[k]).beam_delay	= TMP(focal_law_all_beam[k].G_delay) / 10;//(BEAM_INFO(k,beam_delay)+5)/10;
+		TMP(focal_spi[k]).gate_a_start  = pp->gate_a_start[k];
+		TMP(focal_spi[k]).gate_a_end    = pp->gate_a_end[k];
+		TMP(focal_spi[k]).gate_b_start  = pp->gate_b_start[k];
+		TMP(focal_spi[k]).gate_b_end    = pp->gate_b_end[k];
+		TMP(focal_spi[k]).gate_i_start  = pp->gate_i_start[k];
+		TMP(focal_spi[k]).gate_i_end    = pp->gate_i_end[k];
+		printf("gate_a_start[%d] = %d\n", k, pp->gate_a_start[k]);
+		printf("gate_a_end[%d] = %d\n", k, pp->gate_a_end[k]);
 		/*UT Settings->Pulser->Tx/Rx mode*/		
 		if (get_group_val (p_grp, GROUP_TX_RX_MODE) == PULSE_ECHO )/*单个探头收发模式*/
 		{  
@@ -769,7 +778,7 @@ void init_group_spi (guint group)
 		100000000 / (temp_prf / (10)) - 2048 - TMP(group_spi[group]).rx_time;
 
 	TMP(group_spi[group]).gate_a_height	= GROUP_VAL_POS(group, gate[0].height);
-	TMP(group_spi[group]).gate_a_start	=  GROUP_VAL_POS(group, gate[0].start) / 10 ;
+//	TMP(group_spi[group]).gate_a_start	=  GROUP_VAL_POS(group, gate[0].start) / 10 ;
 	
 	if (GROUP_VAL_POS(group, gate[0].synchro) == 0)
 		tmp = (tmp & 0xfffffff3) | 0x00;
@@ -785,10 +794,10 @@ void init_group_spi (guint group)
 	/* 0-1 表示测量选择 00 波前 Edge 01 波峰 Peak 
 	 * 2-3 表示同步选择 00 发射同步Pulse 01 AGate 10 BGate 11 IGATE
 	 * */
-	TMP(group_spi[group]).gate_a_end	= (GROUP_VAL_POS(group, gate[0].start) + GROUP_VAL_POS (group, gate[0].width)) / 10;
+//	TMP(group_spi[group]).gate_a_end	= (GROUP_VAL_POS(group, gate[0].start) + GROUP_VAL_POS (group, gate[0].width)) / 10;
 
 	TMP(group_spi[group]).gate_b_height	= GROUP_VAL_POS(group, gate[1].height) * 40.96 ;
-	TMP(group_spi[group]).gate_b_start	= (int) GROUP_VAL_POS(group, gate[1].start) / 10;
+//	TMP(group_spi[group]).gate_b_start	= (int) GROUP_VAL_POS(group, gate[1].start) / 10;
 
 	if (GROUP_VAL_POS(group, gate[1].synchro) == 0)
 		tmp = (tmp & 0xfffffff3) | 0x00;
@@ -803,10 +812,10 @@ void init_group_spi (guint group)
 		tmp = (tmp & 0xfffffffc) | 0x00;
 
 	TMP(group_spi[group]).gate_b_logic	= tmp;
-	TMP(group_spi[group]).gate_b_end	= (int)(GROUP_VAL_POS(group, gate[1].start) + GROUP_VAL_POS (group, gate[1].width)) / 10;
+//	TMP(group_spi[group]).gate_b_end	= (int)(GROUP_VAL_POS(group, gate[1].start) + GROUP_VAL_POS (group, gate[1].width)) / 10;
 
 	TMP(group_spi[group]).gate_i_height	= GROUP_VAL_POS(group, gate[2].height);
-	TMP(group_spi[group]).gate_i_start	=  GROUP_VAL_POS(group, gate[3].start) / 10 ;
+//	TMP(group_spi[group]).gate_i_start	=  GROUP_VAL_POS(group, gate[3].start) / 10 ;
 
 	if (GROUP_VAL_POS(group, gate[2].synchro) == 0)
 		tmp = (tmp & 0xfffffff3) | 0x00;
@@ -817,7 +826,7 @@ void init_group_spi (guint group)
 		tmp = (tmp & 0xfffffffc) | 0x00;
 
 	TMP(group_spi[group]).gate_i_logic	= tmp;	
-	TMP(group_spi[group]).gate_i_end	= (GROUP_VAL_POS(group, gate[2].start) + GROUP_VAL_POS (group, gate[2].width)) / 10;
+//	TMP(group_spi[group]).gate_i_end	= (GROUP_VAL_POS(group, gate[2].start) + GROUP_VAL_POS (group, gate[2].width)) / 10;
 
 	TMP(group_spi[group]).reject = get_reject(pp->p_config) * 40.95;	
 
