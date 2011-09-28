@@ -18405,8 +18405,10 @@ void init_ui(DRAW_UI_P p)
 		perror("in1:");
 	    return;
 	}
+
+	 g_timeout_add (5000, (GSourceFunc) key_read_delay, NULL);
 #endif
-    g_timeout_add (5000, (GSourceFunc) key_read_delay, NULL);
+
 	g_timeout_add (1000, (GSourceFunc) time_handler1, NULL);
 }
 
