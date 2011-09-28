@@ -9,7 +9,7 @@
 #include <stdio.h>
 //#define NDEBUG
 #include <assert.h>
-DRAW_UI_P	pp;
+extern DRAW_UI_P  pp;
 void init_group_spi (unsigned int group);
 void send_focal_spi (unsigned int group);
 void send_group_spi (unsigned int group);
@@ -636,8 +636,9 @@ unsigned char get_bright (CONFIG *p)
 void set_bright (CONFIG *p, unsigned char data)
 {
 	//assert (data < 101);
-	if(data>100) p->bright = 100 ;
-	else         p->bright = data;
+	if(data>100)     p->bright = 100 ;
+	else if(data<1)  p->bright = 1   ;
+	else             p->bright = data;
     write(pp->fd_key, &(p->bright),1);
 }
 

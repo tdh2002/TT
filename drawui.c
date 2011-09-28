@@ -5752,6 +5752,62 @@ void draw3_data1(DRAW_UI_P p)
 				case 3:/*Wizard -> Weld -> start p031 */
 g_print("wstart=%d\n",pp->wstart_qty);
 					draw3_popdown (NULL, 1, 1);
+					if(pp->wstart_qty == 2)
+					{
+						pp->file_path = "file:///home//gll/arraytop/TT/pic/weld/1.jpg";
+						webkit_web_view_load_uri (pp->web_view, pp->file_path);		
+						gtk_widget_hide(pp->hbox211);
+						gtk_widget_show(pp->sw);
+					}
+					else if(pp->wstart_qty == 3)
+					{
+						switch(get_part_weld(pp->p_config))
+						{
+							case 0:
+								pp->file_path = "file:///home//gll/arraytop/TT/pic/weld/2.jpg";
+								break;
+							case 1:
+								pp->file_path = "file:///home//gll/arraytop/TT/pic/weld/3.jpg";
+								break;
+							case 2:
+								pp->file_path = "file:///home//gll/arraytop/TT/pic/weld/5.jpg";
+								break;
+							case 3:
+								pp->file_path = "file:///home//gll/arraytop/TT/pic/weld/7.jpg";
+								break;
+							default:break;
+						}
+						webkit_web_view_load_uri (pp->web_view, pp->file_path);		
+						gtk_widget_hide(pp->hbox211);
+						gtk_widget_show(pp->sw);
+					}
+					else if(pp->wstart_qty == 4)
+					{
+						switch(get_part_weld(pp->p_config))
+						{
+							case 0:
+								break;
+							case 1:
+								pp->file_path = "file:///home//gll/arraytop/TT/pic/weld/4.jpg";
+								break;
+							case 2:
+								pp->file_path = "file:///home//gll/arraytop/TT/pic/weld/6.jpg";
+								break;
+							case 3:
+								pp->file_path = "file:///home//gll/arraytop/TT/pic/weld/8.jpg";
+								break;
+							default:break;
+						}
+						webkit_web_view_load_uri (pp->web_view, pp->file_path);		
+						gtk_widget_hide(pp->hbox211);
+						gtk_widget_show(pp->sw);
+					}
+					else
+					{
+						gtk_widget_show(pp->hbox211);
+						gtk_widget_hide(pp->sw);
+					}
+
 					if( (pp->wstart_qty >1) && (pp->wstart_qty < 4) )
 					{
 							draw3_popdown_offset (NULL, 1, 1, 6 );
@@ -5759,6 +5815,7 @@ g_print("wstart=%d\n",pp->wstart_qty);
 							gtk_widget_set_sensitive(pp->eventbox2[1],FALSE);
 							gtk_widget_set_sensitive(pp->eventbox2[2],FALSE);
 							gtk_widget_set_sensitive(pp->menubar,FALSE);
+
 					}
 					else if (pp->wstart_qty ==4)
 					{
@@ -10002,21 +10059,28 @@ void draw3_data2(DRAW_UI_P p)
 							step = tmpf;
 							digit = 1;
 							pos = 2;
-							unit = UNIT_NULL;
+							unit = UNIT_DEG;
 							draw3_digit_pressed (data_5121, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 						}
 						else
 						{
+							if(GROUP_VAL(skew_pos)==4)
+							{
 							str = g_strdup_printf ("%.1f", GROUP_VAL(skew)/100.0);
 							draw3_pop_tt (data_512, NULL, 
 									str, menu_content+PROB_SKEW, 5, 2, GROUP_VAL(skew_pos), 0);
 							g_free(str);
+							}
+							else
+								draw3_pop_tt (data_512, NULL, 
+									menu_content[PROB_SKEW + GROUP_VAL(skew_pos)], menu_content+PROB_SKEW, 5, 2, 
+									GROUP_VAL(skew_pos), 0);
 						}
 					}
 					else 
 					{
 						cur_value = GROUP_VAL(skew)/100.0 ;
-						unit = UNIT_NULL;
+						unit = UNIT_DEG;
 						pos = 2;
 						digit = 1;
 						draw3_digit_stop (cur_value , units[unit], digit, pos, 0);
@@ -14638,8 +14702,6 @@ void draw3_data4(DRAW_UI_P p)
 								case 0:	tmpf = 0.1; break;
 								case 1:	tmpf = 0.5; break;
 								case 2:	tmpf = 1.0; break;
-								case 3:	tmpf = 2.0; break;
-								case 4:	tmpf = 6.0; break;						
 								default:break;
 							}
 							if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
