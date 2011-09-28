@@ -17768,9 +17768,10 @@ static void draw_frame_thread(void)
 {
 
 	gint i, j, k, offset, offset1;
-	guint temp2 = (pp->p_beam_data) + 4;
+	guint temp2 = (pp->p_beam_data) + 3;
 	//guint buff_addr = (pp->p_beam_data) + 256 * 1024 ;
     //unsigned int BeamInfoHeader;
+	//unsigned int data;
 	while (1)
 	{
 
@@ -17805,7 +17806,9 @@ static void draw_frame_thread(void)
 
 						//BeamInfoHeader = *((int*)(TMP(measure_data[offset1+j])));
 						//BeamInfoHeader &= 0x1fff ;
+						//data = ((TMP(measure_data[offset1+j][1])));//>>20) & 0xfff);
 						//printf("Beam info header is %x\n",BeamInfoHeader );
+						//printf("Data is %x\n",data );
 #if 0
 						//delete by shensheng
 						//for modify true depth A scan drawing and reducing calculation
