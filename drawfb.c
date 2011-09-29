@@ -286,9 +286,6 @@ void init_serial ()
 		perror("tcsetattr   error");  
 		exit(1);  
 	}
-
-	printf("serial addr key %d ke1 %d\n", pp->fd_key, pp->fd_key1);
-
 	return ;
 }
 

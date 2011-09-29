@@ -2363,6 +2363,9 @@ static gboolean draw_other_info (GtkWidget *widget, GdkEventExpose *event, gpoin
 
 	gint  y1 = 3;
 	gint  y2 = 23;
+	char  buff[9];
+	static int tmp1 = FALSE;
+	static int tmp2 = FALSE;
 
 	cairo_t *cr;        //声明一支画笔
 	cr = gdk_cairo_create(widget->window);//创建画笔
@@ -2422,33 +2425,107 @@ static gboolean draw_other_info (GtkWidget *widget, GdkEventExpose *event, gpoin
 
 	cairo_stroke (cr);
 
-	cairo_set_source_rgba (cr, 0.3, 0.8, 0.3, 1);
-	cairo_rectangle (cr , 0, y1, 0.5*(pp->battery.power1), 15);
-	cairo_rectangle (cr , 0, y2, 0.5*(pp->battery.power2), 15);
-	cairo_fill (cr);
-	/* 更新电池信息
-	switch(0x01)//(pp->battery.status1)//电池1
+	//cairo_set_source_rgba (cr, 0.3, 0.8, 0.3, 1);
+	//cairo_rectangle (cr , 0, y1, 0.5*(pp->battery.power1), 15);
+	//cairo_rectangle (cr , 0, y2, 0.5*(pp->battery.power2), 15);
+	//cairo_fill (cr);
+	//pp->battery.power2 = 14 ;
+	//pp->battery.status2 = 2 ;
+	switch(pp->battery.status1)//电池1
 	{
 		case 0x00://没连接
 			break;
 		case 0x01://放电
 			//显示剩余电量
-			cairo_set_source_rgba (cr, 1, 0, 0, 1);
-			cairo_rectangle (cr , 0, y1, 50*0.45,15);//;50*(pp->battery.power1), 15);//
-			cairo_rectangle (cr , 0, y2, 50*0.85,15);//;50*(pp->battery.power1), 15);//
+			if(pp->battery.power1>15)
+			  cairo_set_source_rgba (cr, 0.3, 0.8, 0.3, 1);
+			else
+			  cairo_set_source_rgba (cr, 1, 0, 0, 1);
+			cairo_rectangle (cr , 0, y1, 0.5*(pp->battery.power1), 15);//;50*(pp->battery.power1), 15);//
+			//cairo_rectangle (cr , 0, y2, 50*0.85,15);//;50*(pp->battery.power1), 15);//
 			cairo_fill (cr);
+			cairo_set_source_rgba (cr, 1, 1, 0, 1);
+			sprintf(buff, "%3d" , pp->battery.power1);
+			cairo_move_to(cr, 17 , y1+12);
+			cairo_show_text(cr, buff);
+			cairo_stroke (cr);
 			break;
 		case 0x02://充电
-			// 显示充电标志
-
-			cairo_set_source_rgba (cr, 0.3, 0.3, 0.3, 1);
-			cairo_rectangle (cr , 0, y1, 50*(pp->battery.power1), 15);
+			if(pp->battery.power1>15)
+			  cairo_set_source_rgba (cr, 0.3, 0.8, 0.3, 1);
+			else
+			  cairo_set_source_rgba (cr, 1, 0, 0, 1);
+			cairo_rectangle (cr , 0, y1, 0.5*(pp->battery.power1), 15);//;50*(pp->battery.power1), 15);//
+			//cairo_rectangle (cr , 0, y2, 50*0.85,15);//;50*(pp->battery.power1), 15);//
 			cairo_fill (cr);
+			cairo_set_source_rgba (cr, 1, 1, 0, 1);
+			if(tmp1)
+			{
+			   tmp1 = FALSE ;
+			   sprintf(buff, "%3d" , pp->battery.power1);
+			   cairo_move_to(cr, 17 , y1+12);
+			}
+			else
+			{
+			   tmp1 = TRUE ;
+			   sprintf(buff, "charging");
+			   cairo_move_to(cr, 2, y1+12);
+			}
+
+			cairo_show_text(cr, buff);
+			cairo_stroke (cr);
 			break;
 		default :
 			break;
 	}
-*/
+
+	switch(pp->battery.status2)//电池1
+	{
+		case 0x00://没连接
+			break;
+		case 0x01://放电
+			//显示剩余电量
+			if(pp->battery.power2>15)
+			  cairo_set_source_rgba (cr, 0.3, 0.8, 0.3, 1);
+			else
+			  cairo_set_source_rgba (cr, 1, 0, 0, 1);
+			cairo_rectangle (cr , 0, y2, 0.5*(pp->battery.power2), 15);//;50*(pp->battery.power1), 15);//
+			//cairo_rectangle (cr , 0, y2, 50*0.85,15);//;50*(pp->battery.power1), 15);//
+			cairo_fill (cr);
+			cairo_set_source_rgba (cr, 1, 1, 0, 1);
+			sprintf(buff, "%3d" , pp->battery.power2);
+			cairo_move_to(cr, 17 , y2+12);
+			cairo_show_text(cr, buff);
+			cairo_stroke (cr);
+			break;
+		case 0x02://充电
+			if(pp->battery.power2>15)
+			  cairo_set_source_rgba (cr, 0.3, 0.8, 0.3, 1);
+			else
+			  cairo_set_source_rgba (cr, 1, 0, 0, 1);
+			cairo_rectangle (cr , 0, y2, 0.5*(pp->battery.power2), 15);//;50*(pp->battery.power1), 15);//
+			//cairo_rectangle (cr , 0, y2, 50*0.85,15);//;50*(pp->battery.power1), 15);//
+			cairo_fill (cr);
+			cairo_set_source_rgba (cr, 1, 1, 0, 1);
+			if(tmp2)
+			{
+			   tmp2 = FALSE ;
+			   sprintf(buff, "%3d" , pp->battery.power2);
+			   cairo_move_to(cr, 17 , y2+12);
+			}
+			else
+			{
+			   tmp2 = TRUE ;
+			   sprintf(buff, "charging");
+			   cairo_move_to(cr, 2, y2+12);
+			}
+			cairo_show_text(cr, buff);
+			cairo_stroke (cr);
+			break;
+		default :
+			break;
+	}
+
 	cairo_stroke (cr);
 	cairo_destroy(cr);//销毁画笔
 	return TRUE;
@@ -17854,7 +17931,7 @@ static void key_message_thread(void)
 {
 	char key = 0;
 	char bar[3] = {0};
-	unsigned char tmp = 0x55 ;
+	//unsigned char tmp = 0x55 ;
     while(1)
 	{
 	   if (read(pp->fd_key, &key, 1) > 0)
