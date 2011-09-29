@@ -1995,7 +1995,7 @@ void b3_fun3(gpointer p)
 											  if( GROUP_VAL(curve_pos)==1 || GROUP_VAL(curve_pos)==2|| GROUP_VAL(curve_pos)==3 )
 											  {
 												  if((GROUP_VAL(mode_pos)==0 )&&(GROUP_VAL(curve_pos)==1 || GROUP_VAL(curve_pos)==2))
-													  data_process(&(pp->p_tmp_config->ref_ampl_offset_reg), 3); /* 233 ref.ampl.offset  */
+													  data_process(&(pp->p_tmp_config->ref_ampl_offset_reg), 4); /* 233 ref.ampl.offset  */
 												  else if((GROUP_VAL(mode_pos)==1 )&&(GROUP_VAL(curve_pos)==1 || GROUP_VAL(curve_pos)==2))
 													  data_process(&(pp->p_tmp_config->amplitude_reg), 3);
 												  else if((GROUP_VAL(mode_pos)==1 )&&(GROUP_VAL(curve_pos)==3))
@@ -2276,7 +2276,7 @@ void b3_fun4(gpointer p)
 					   case 0:data_process(&(pp->p_tmp_config->agate_height_reg), 1); break; /* 204 threshold  2种步进 */
 					   case 1: /* 弹出一个选择菜单,选择 */ break;
 					   case 2: data_process(&(pp->p_tmp_config->active_delay_reg), 3); break; /*224 Delay*/
-					   case 3: data_process(&(pp->p_tmp_config->curve_step_reg), 4);  break; /* 234  */
+					   case 3: data_process(&(pp->p_tmp_config->curve_step_reg), 2);  break; /* 234  */
 					   case 4: /*  */ break; /* 244 Scale Factor 多少点压缩一点 只能看  */
 					   default:break;
 				   }

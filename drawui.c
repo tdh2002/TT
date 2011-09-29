@@ -368,31 +368,31 @@ void show_help(guint i)
 				pp->file_path = "file:///home/tt/TT/source/system/Help/Contextual/Wizard_Menu.html";
 				break;
 			case 1:
-				pp->file_path = "file:///home/gll/arraytop/TT/source/system/Help/Contextual/UT_Settings_Menu.html";
+				pp->file_path = "http://127.0.0.1/source/system/Help/Contextual/UT_Settings_Menu.html";
 				break;
 			case 2:
-				pp->file_path = "file:///home/gll/arraytop/TT/source/system/Help/Contextual/GatesAlarm_Menu.html";
+				pp->file_path = "http://127.0.0.1/source/system/Help/Contextual/GatesAlarm_Menu.html";
 				break;
 			case 3:
-				pp->file_path = "file:///home/gll/arraytop/TT/source/system/Help/Contextual/Measurements_Menu.html";
+				pp->file_path = "http://127.0.0.1/source/system/Help/Contextual/Measurements_Menu.html";
 				break;
 			case 4:
-				pp->file_path = "file:///home/gll/arraytop/TT/source/system/Help/Contextual/Display_Menu.html";
+				pp->file_path = "http://127.0.0.1/source/system/Help/Contextual/Display_Menu.html";
 				break;
 			case 5:
-				pp->file_path = "file:///home/gll/arraytop/TT/source/system/Help/Contextual/PA__UT_Menu.html";
+				pp->file_path = "http://127.0.0.1/source/system/Help/Contextual/PA__UT_Menu.html";
 				break;
 			case 6:
-				pp->file_path = "file:///home/gll/arraytop/TT/source/system/Help/Contextual/FocalLaw_Submenu.html";
+				pp->file_path = "http://127.0.0.1/source/system/Help/Contextual/FocalLaw_Submenu.html";
 				break;
 			case 7:
-				pp->file_path = "file:///home/gll/arraytop/TT/source/system/Help/Contextual/Scan_Menu.html";
+				pp->file_path = "http://127.0.0.1/source/system/Help/Contextual/Scan_Menu.html";
 				break;
 			case 8:
-				pp->file_path = "file:///home/gll/arraytop/TT/source/system/Help/Contextual/File_Menu.html";
+				pp->file_path = "http://127.0.0.1/source/system/Help/Contextual/File_Menu.html";
 				break;
 			case 9:
-				pp->file_path = "file:///home/gll/arraytop/TT/source/system/Help/Contextual/Preferences_Menu.html";
+				pp->file_path = "http://127.0.0.1/source/system/Help/Contextual/Preferences_Menu.html";
 				break;
 			default:break;
 		}
@@ -5819,6 +5819,62 @@ void draw3_data1(DRAW_UI_P p)
 				case 3:/*Wizard -> Weld -> start p031 */
 g_print("wstart=%d\n",pp->wstart_qty);
 					draw3_popdown (NULL, 1, 1);
+					if(pp->wstart_qty == 2)
+					{
+						pp->file_path = "http://127.0.0.1/pic/weld/1.jpg";
+						webkit_web_view_load_uri (pp->web_view, pp->file_path);		
+						gtk_widget_hide(pp->hbox211);
+						gtk_widget_show(pp->sw);
+					}
+					else if(pp->wstart_qty == 3)
+					{
+						switch(get_part_weld(pp->p_config))
+						{
+							case 0:
+								pp->file_path = "http://127.0.0.1/pic/weld/2.jpg";
+								break;
+							case 1:
+								pp->file_path = "http://127.0.0.1/pic/weld/3.jpg";
+								break;
+							case 2:
+								pp->file_path = "http://127.0.0.1/pic/weld/5.jpg";
+								break;
+							case 3:
+								pp->file_path = "http://127.0.0.1/pic/weld/7.jpg";
+								break;
+							default:break;
+						}
+						webkit_web_view_load_uri (pp->web_view, pp->file_path);		
+						gtk_widget_hide(pp->hbox211);
+						gtk_widget_show(pp->sw);
+					}
+					else if(pp->wstart_qty == 4)
+					{
+						switch(get_part_weld(pp->p_config))
+						{
+							case 0:
+								break;
+							case 1:
+								pp->file_path = "http://127.0.0.1/pic/weld/4.jpg";
+								break;
+							case 2:
+								pp->file_path = "http://127.0.0.1/pic/weld/6.jpg";
+								break;
+							case 3:
+								pp->file_path = "http://127.0.0.1/pic/weld/8.jpg";
+								break;
+							default:break;
+						}
+						webkit_web_view_load_uri (pp->web_view, pp->file_path);		
+						gtk_widget_hide(pp->hbox211);
+						gtk_widget_show(pp->sw);
+					}
+					else
+					{
+						gtk_widget_show(pp->hbox211);
+						gtk_widget_hide(pp->sw);
+					}
+
 					if( (pp->wstart_qty >1) && (pp->wstart_qty < 4) )
 					{
 							draw3_popdown_offset (NULL, 1, 1, 6 );
@@ -5826,6 +5882,7 @@ g_print("wstart=%d\n",pp->wstart_qty);
 							gtk_widget_set_sensitive(pp->eventbox2[1],FALSE);
 							gtk_widget_set_sensitive(pp->eventbox2[2],FALSE);
 							gtk_widget_set_sensitive(pp->menubar,FALSE);
+
 					}
 					else if (pp->wstart_qty ==4)
 					{
@@ -10069,21 +10126,28 @@ void draw3_data2(DRAW_UI_P p)
 							step = tmpf;
 							digit = 1;
 							pos = 2;
-							unit = UNIT_NULL;
+							unit = UNIT_DEG;
 							draw3_digit_pressed (data_5121, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 						}
 						else
 						{
+							if(GROUP_VAL(skew_pos)==4)
+							{
 							str = g_strdup_printf ("%.1f", GROUP_VAL(skew)/100.0);
 							draw3_pop_tt (data_512, NULL, 
 									str, menu_content+PROB_SKEW, 5, 2, GROUP_VAL(skew_pos), 0);
 							g_free(str);
+							}
+							else
+								draw3_pop_tt (data_512, NULL, 
+									menu_content[PROB_SKEW + GROUP_VAL(skew_pos)], menu_content+PROB_SKEW, 5, 2, 
+									GROUP_VAL(skew_pos), 0);
 						}
 					}
 					else 
 					{
 						cur_value = GROUP_VAL(skew)/100.0 ;
-						unit = UNIT_NULL;
+						unit = UNIT_DEG;
 						pos = 2;
 						digit = 1;
 						draw3_digit_stop (cur_value , units[unit], digit, pos, 0);
@@ -14705,8 +14769,6 @@ void draw3_data4(DRAW_UI_P p)
 								case 0:	tmpf = 0.1; break;
 								case 1:	tmpf = 0.5; break;
 								case 2:	tmpf = 1.0; break;
-								case 3:	tmpf = 2.0; break;
-								case 4:	tmpf = 6.0; break;						
 								default:break;
 							}
 							if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
@@ -17839,6 +17901,7 @@ static void draw_frame_thread(void)
 	guint temp2 = (pp->p_beam_data) + 3;
 	//guint buff_addr = (pp->p_beam_data) + 256 * 1024 ;
     //unsigned int BeamInfoHeader;
+	//unsigned int data;
 	while (1)
 	{
 
@@ -17873,7 +17936,9 @@ static void draw_frame_thread(void)
 
 						//BeamInfoHeader = *((int*)(TMP(measure_data[offset1+j])));
 						//BeamInfoHeader &= 0x1fff ;
+						//data = ((TMP(measure_data[offset1+j][1])));//>>20) & 0xfff);
 						//printf("Beam info header is %x\n",BeamInfoHeader );
+						//printf("Data is %x\n",data );
 #if 0
 						//delete by shensheng
 						//for modify true depth A scan drawing and reducing calculation
@@ -18384,7 +18449,7 @@ void init_ui(DRAW_UI_P p)
 	webkit_web_view_set_custom_encoding (pp->web_view, "UTF-8");
 	gtk_container_add(GTK_CONTAINER (pp->sw), GTK_WIDGET (pp->web_view));
 
-	pp->file_path = "file:///home/gll/arraytop/TT/source/system/Help/Contextual/UT_Settings_Menu.html";
+	pp->file_path = "http://127.0.0.1/source/system/Help/Contextual/UT_Settings_Menu.html";
 	webkit_web_view_load_uri (pp->web_view, pp->file_path);
 
 	gtk_box_pack_start (GTK_BOX (p->hbox211), p->vboxtable, FALSE, FALSE, 0);
