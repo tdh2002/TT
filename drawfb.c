@@ -287,6 +287,8 @@ void init_serial ()
 		exit(1);  
 	}
 
+	printf("serial addr key %d ke1 %d\n", pp->fd_key, pp->fd_key1);
+
 	return ;
 }
 
@@ -1500,7 +1502,7 @@ void draw_scan(guchar scan_num, guchar scan_type, guchar group,
 	unsigned char* pData ;
 	int offset;
 	//guint buff_addr = (pp->p_beam_data) + 256 * 1024 ;
-	guint temp2 = (pp->p_beam_data) + 4 ;
+	guint temp2 = (pp->p_beam_data) + 3 ;
 	for (offset = 0, k = 0 ; k < group ; k++)
 	{
 		offset += (GROUP_VAL_POS(k, point_qty) + 32) * TMP(beam_qty[k]);
