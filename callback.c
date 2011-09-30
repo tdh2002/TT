@@ -2981,6 +2981,7 @@ static int handler_key(guint keyval, gpointer data)
 			draw_menu2(0);
 			draw_menu3(0, NULL);
 			break;
+
 		case GDK_KP_5:	/* 选中 P200 Gate 这个位置 */
 			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
 			{
@@ -2994,6 +2995,7 @@ static int handler_key(guint keyval, gpointer data)
 			draw_menu2(0);
 			draw_menu3(0, NULL);
 			break;
+
 		case GDK_KP_6:	/* 开始／停止 */			
 			break;
 
@@ -3036,9 +3038,7 @@ static int handler_key(guint keyval, gpointer data)
 	
 				for (offset = 0, k = 0 ; k < group; k++)
 						offset += TMP(beam_qty[k]);
-
 				BEAM_INFO(offset + TMP(beam_num[group]),beam_delay) = pp->G_delay[ TMP(beam_num[group]) ];
-
 				GROUP_VAL(gain_offset[TMP(beam_num[group]) + offset]) = 
 								pp->tmp_gain_off[TMP(beam_num[group]) + offset];
 
