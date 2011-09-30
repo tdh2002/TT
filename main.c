@@ -623,8 +623,8 @@ void send_focal_spi (guint group)
 		TMP(focal_spi[k]).gate_b_end    = pp->gate_b_end[k];
 		TMP(focal_spi[k]).gate_i_start  = pp->gate_i_start[k];
 		TMP(focal_spi[k]).gate_i_end    = pp->gate_i_end[k];
-		printf("gate_a_start[%d] = %d\n", k, pp->gate_a_start[k]);
-		printf("gate_a_end[%d] = %d\n", k, pp->gate_a_end[k]);
+//		printf("gate_a_start[%d] = %d\n", k, pp->gate_a_start[k]);
+//		printf("gate_a_end[%d] = %d\n", k, pp->gate_a_end[k]);
 		/*UT Settings->Pulser->Tx/Rx mode*/		
 		if (get_group_val (p_grp, GROUP_TX_RX_MODE) == PULSE_ECHO )/*单个探头收发模式*/
 		{  

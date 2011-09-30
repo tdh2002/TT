@@ -365,7 +365,7 @@ void show_help(guint i)
 		switch(pp->pos)		/*改变帮助文档的路径*/
 		{
 			case 0:
-				pp->file_path = "file:///home/tt/TT/source/system/Help/Contextual/Wizard_Menu.html";
+				pp->file_path = "http://127.0.0.1/source/system/Help/Contextual/Wizard_Menu.html";
 				break;
 			case 1:
 				pp->file_path = "http://127.0.0.1/source/system/Help/Contextual/UT_Settings_Menu.html";
@@ -8609,18 +8609,18 @@ void draw3_data2(DRAW_UI_P p)
 								{
 									if (get_unit(pp->p_config) == 0)
 									{
-										cur_value = get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 100.0;
+										cur_value = pp->vel;
 										digit = 1;
 										unit = UNIT_M_S;
 									}
 									else
 									{
-										cur_value = get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) * 0.000000394;
+										cur_value = pp->vel * 0.0000394;
 										digit = 4;
 										unit = UNIT_IN_US;
 									}
 									pos = 2;
-									draw3_digit_stop (cur_value, units[unit], digit, pos, 44);
+									draw3_digit_stop (pp->vel, units[unit], digit, pos, 44);
 									gtk_widget_set_sensitive(pp->eventbox30[2],FALSE);
 									gtk_widget_set_sensitive(pp->eventbox31[2],FALSE);
 
