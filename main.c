@@ -430,7 +430,7 @@ static void set_init_para()
 	TMP(bright_reg)=0;		/*preferences -> pref. -> bright*/
 	TMP(distance_reg)=1;		/*preferences -> pref. -> bright*/
 
-
+	pp->p_config->bright = 50 ;  // default brightness is set to be 50%
 }
 
 int main (int argc, char *argv[])
@@ -568,20 +568,17 @@ int main (int argc, char *argv[])
 	g_print ("serial inited\n");
 	p_ui->p_beam_data = TMP(dma_data_add);		/* FPGA过来的数据 */
 #endif
-	
 	init_ui (p_ui);
-
-#if ARM
 	/* 初始化要冲送给fpga的值 */
 	for (i = get_group_qty(pp->p_config) ; i != 0; i--)
 	{
 		init_group_spi (i - 1);
 		generate_focallaw (i - 1);
+#if ARM
 		write_group_data (&TMP(group_spi[i - 1]), i - 1);
 		send_focal_spi (i - 1);//多余generate_focallaw中有
-		g_print ("group %d config init complete\n", i);
-	}
 #endif
+	}
 
 	for (i = 0; i < setup_MAX_GROUP_QTY; i++)
 		TMP(total_point_qty) += TMP(beam_qty[i]) * (GROUP_VAL_POS (i, point_qty) + 32);
@@ -589,6 +586,10 @@ int main (int argc, char *argv[])
 
 	gtk_widget_show (window);
 	TMP(freeze) = TRUE ;  // freezing the screen
+	//add this function temporarily
+	//for the menu 3 show not refresh
+	draw_menu3(1, NULL);
+	//*****************************
 	gdk_threads_enter();
 	gtk_main();
 	gdk_threads_leave();
@@ -599,8 +600,10 @@ int main (int argc, char *argv[])
 
 void shut_down_power()
 {
-	unsigned char key = 0xFF;
-    write(pp->fd_key, &key,1); 
+	int i;
+	unsigned char key = 10;
+    i = write(pp->fd_key, &key,1);
+    printf("shut down write serial %d\n", i);
 }
 
 void send_focal_spi (guint group)

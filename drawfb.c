@@ -286,7 +286,6 @@ void init_serial ()
 		perror("tcsetattr   error");  
 		exit(1);  
 	}
-
 	return ;
 }
 
