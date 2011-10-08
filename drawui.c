@@ -2363,6 +2363,10 @@ static gboolean draw_other_info (GtkWidget *widget, GdkEventExpose *event, gpoin
 
 	gint  y1 = 3;
 	gint  y2 = 23;
+	char  buff[9];
+	static int tmp1 = TRUE;
+	static int tmp2 = TRUE;
+	unsigned short status;
 
 	cairo_t *cr;        //声明一支画笔
 	cr = gdk_cairo_create(widget->window);//创建画笔
@@ -2422,33 +2426,116 @@ static gboolean draw_other_info (GtkWidget *widget, GdkEventExpose *event, gpoin
 
 	cairo_stroke (cr);
 
-	cairo_set_source_rgba (cr, 0.3, 0.8, 0.3, 1);
-	cairo_rectangle (cr , 0, y1, 0.5*(pp->battery.power1), 15);
-	cairo_rectangle (cr , 0, y2, 0.5*(pp->battery.power2), 15);
-	cairo_fill (cr);
-	/* 更新电池信息
-	switch(0x01)//(pp->battery.status1)//电池1
+#if X86
+	pp->battery.power1 = 100 ;
+    pp->battery.status1 = 0x00e0 ;
+    pp->battery.power2 = 20 ;
+    pp->battery.status2 = 0x0080 ;
+    tmp2 = FALSE ;
+#endif
+	status = 0x0080 & pp->battery.status1 ;
+	if (status)//电池1
 	{
-		case 0x00://没连接
-			break;
-		case 0x01://放电
+		status = 0x0060 & pp->battery.status1;
+		if(status)
+		{
 			//显示剩余电量
-			cairo_set_source_rgba (cr, 1, 0, 0, 1);
-			cairo_rectangle (cr , 0, y1, 50*0.45,15);//;50*(pp->battery.power1), 15);//
-			cairo_rectangle (cr , 0, y2, 50*0.85,15);//;50*(pp->battery.power1), 15);//
+			//status = 0x0020 & pp->battery.status1;
+		    //if(status) pp->battery.power1 = 100 ;
+			if(pp->battery.power1>15)
+			  cairo_set_source_rgba (cr, 0.3, 0.8, 0.3, 1);
+			else
+			  cairo_set_source_rgba (cr, 1, 0, 0, 1);
+			cairo_rectangle (cr , 0, y1, 0.5*(pp->battery.power1), 15);//;50*(pp->battery.power1), 15);//
+			//cairo_rectangle (cr , 0, y2, 50*0.85,15);//;50*(pp->battery.power1), 15);//
 			cairo_fill (cr);
-			break;
-		case 0x02://充电
-			// 显示充电标志
+			cairo_set_source_rgba (cr, 1, 1, 1, 1);
+			sprintf(buff, "%3d" , pp->battery.power1);
+			cairo_move_to(cr, 17 , y1+12);
+			cairo_show_text(cr, buff);
+			cairo_stroke (cr);
+		}
+		else
+		{
+			if(pp->battery.power1>15)
+			  cairo_set_source_rgba (cr, 0.3, 0.8, 0.3, 1);
+			else
+			  cairo_set_source_rgba (cr, 1, 0, 0, 1);
+			cairo_rectangle (cr , 0, y1, 0.5*(pp->battery.power1), 15);//;50*(pp->battery.power1), 15);//
+			//cairo_rectangle (cr , 0, y2, 50*0.85,15);//;50*(pp->battery.power1), 15);//
+			cairo_fill (cr);
 
-			cairo_set_source_rgba (cr, 0.3, 0.3, 0.3, 1);
-			cairo_rectangle (cr , 0, y1, 50*(pp->battery.power1), 15);
-			cairo_fill (cr);
-			break;
-		default :
-			break;
+			if(tmp1)
+			{
+			   tmp1 = FALSE ;
+			   sprintf(buff, "%3d" , pp->battery.power1);
+			   cairo_set_source_rgba (cr, 1, 1, 1, 1);
+			   cairo_move_to(cr, 17 , y1+12);
+			}
+			else
+			{
+			   tmp1 = TRUE ;
+			   sprintf(buff, "charging");
+			   cairo_set_source_rgba (cr, 1, 1, 0, 1);
+			   cairo_move_to(cr, 2, y1+12);
+			}
+
+			cairo_show_text(cr, buff);
+			cairo_stroke (cr);
+		}
 	}
-*/
+
+	status = 0x0080 & pp->battery.status2 ;
+	if (status)//电池1
+	{
+		status = 0x0060 & pp->battery.status2;
+		if(status)
+		{
+			//显示剩余电量
+			//status = 0x0020 & pp->battery.status1;
+		    //if(status) pp->battery.power1 = 100 ;
+			if(pp->battery.power2>15)
+			  cairo_set_source_rgba (cr, 0.3, 0.8, 0.3, 1);
+			else
+			  cairo_set_source_rgba (cr, 1, 0, 0, 1);
+			cairo_rectangle (cr , 0, y2, 0.5*(pp->battery.power2), 15);//;50*(pp->battery.power1), 15);//
+			//cairo_rectangle (cr , 0, y2, 50*0.85,15);//;50*(pp->battery.power1), 15);//
+			cairo_fill (cr);
+			cairo_set_source_rgba (cr, 1, 1, 1, 1);
+			sprintf(buff, "%3d" , pp->battery.power2);
+			cairo_move_to(cr, 17 , y2+12);
+			cairo_show_text(cr, buff);
+			cairo_stroke (cr);
+		}
+		else
+		{
+			if(pp->battery.power2>15)
+			  cairo_set_source_rgba (cr, 0.3, 0.8, 0.3, 1);
+			else
+			  cairo_set_source_rgba (cr, 1, 0, 0, 1);
+			cairo_rectangle (cr , 0, y2, 0.5*(pp->battery.power2), 15);//;50*(pp->battery.power1), 15);//
+			//cairo_rectangle (cr , 0, y2, 50*0.85,15);//;50*(pp->battery.power1), 15);//
+			cairo_fill (cr);
+
+			if(tmp1)
+			{
+			   tmp1 = FALSE ;
+			   sprintf(buff, "%3d" , pp->battery.power2);
+			   cairo_set_source_rgba (cr, 1, 1, 1, 1);
+			   cairo_move_to(cr, 17 , y2+12);
+			}
+			else
+			{
+			   tmp1 = TRUE ;
+			   sprintf(buff, "charging");
+			   cairo_set_source_rgba (cr, 1, 1, 0, 1);
+			   cairo_move_to(cr, 2, y2+12);
+			}
+
+			cairo_show_text(cr, buff);
+			cairo_stroke (cr);
+		}
+	}
 	cairo_stroke (cr);
 	cairo_destroy(cr);//销毁画笔
 	return TRUE;
