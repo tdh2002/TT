@@ -5750,7 +5750,6 @@ void draw3_data1(DRAW_UI_P p)
 					}
 					break;
 				case 3:/*Wizard -> Weld -> start p031 */
-g_print("wstart=%d\n",pp->wstart_qty);
 					draw3_popdown (NULL, 1, 1);
 					if(pp->wstart_qty == 2)
 					{
@@ -14049,7 +14048,7 @@ void draw3_data4(DRAW_UI_P p)
 							}
 							if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
 							{
-								cur_value = pp->tolerance / 1000.0 ;
+								cur_value = pp->tolerance / 100.0 ;
 								lower = 0.0; 
 								upper = 1000.0;
 								step = tmpf;
@@ -14060,7 +14059,7 @@ void draw3_data4(DRAW_UI_P p)
 							}
 							else 
 							{
-								cur_value = pp->tolerance / 1000.0 ;
+								cur_value = pp->tolerance / 100.0 ;
 								digit = 2;
 								pos = 4;
 								unit = UNIT_MM;

@@ -1351,29 +1351,89 @@ void draw_s_scan_r (gushort *p, guint width, guint height, DOT_TYPE *data, DOT_T
 void draw_clb_wedge_delay (gushort *p, gint width, gint height, DOT_TYPE *data, DOT_TYPE *data1, 
 							DOT_TYPE *data2,gint xoffset, gint yoffset, guchar groupId)
 {
-	gint	i;
-//	gint clb_x1, clb_x2;
-//	gint clb_y1, clb_y2;
-//	gint clb_y1_m, clb_y2_m;
+	gint	i, step;
+	gfloat  distance;
+	gint clb_x1, clb_x2;
+	gint clb_y1, clb_y2;
 
-//	gint count = 0;
-//	gfloat clb_tmp_max_data = 0;
-//	static gfloat clb_his_max_data = 0;
-	gint y1 = (gint)(height*(1- pp->ref_amplitude/10000.0 - pp->tolerance_t/10000.0)) + yoffset;
-	gint y2 = (gint)(height*(1- pp->ref_amplitude/10000.0 + pp->tolerance_t/10000.0)) + yoffset;
+	gint count = 0;
+	gfloat clb_tmp_max_data = 0;
+	switch(pp->echotype_pos)
+	{
+		case 0://radius
+			distance = pp->radiusa / 1000.0;
+			break;
+		case 1://depth
+			distance = pp->deptha / 1000.0;
+			break;
+		case 2://thickness
+			distance = pp->thickness1 / 1000.0;
+			break;
+	} 
+	gint y1 = (gint)(height*(1- distance / 100.0 - pp->tolerance / 10000.0)) + yoffset;
+	gint y2 = (gint)(height*(1- distance / 100.0 + pp->tolerance / 10000.0)) + yoffset;
 	if(y1 < yoffset)
 			y1 = yoffset;
 	if(y2 < yoffset)
 			y2 = yoffset;
-//	gint step = (gint)( (LAW_VAL(Angle_max) - LAW_VAL(Angle_min)) / LAW_VAL(Angle_step) + 1);
+	if (LAW_VAL (Focal_type) == AZIMUTHAL_SCAN)
+	{
+		step = (gint)( (LAW_VAL(Angle_max) - LAW_VAL(Angle_min)) / LAW_VAL(Angle_step) + 1);
+	}
+	else if(LAW_VAL (Focal_type) == LINEAR_SCAN) 
+	{
+		step = (gint)( ( LAW_VAL (Last_tx_elem)-LAW_VAL(First_tx_elem) - LAW_VAL(Elem_qty) + 1 ) /
+				LAW_VAL(Elem_step) ) + 1;
+	}
 	/* 清空这块显示区 背景暂定黑色 可以全部一起清空 */
 	for (i = 0; i < height; i++)
 		memset (p + FB_WIDTH * (i + yoffset) + xoffset, 0x0, width * 2 );
 	/*画参考线*/
 	fbline (p,0, y1, width, y1,all_col_16[1]);
 	fbline (p,0, y2, width, y2,all_col_16[1]);
-	/* 画包络线 */
-       
+	/* 画包络线*/ 
+	for (i = 0; i < step; i++)
+	{
+		TMP(clb_real_data[i]) = ((TMP(measure_data[i][1])>>20) & 0xfff)/20.47;
+		if(TMP(clb_real_data[i]) > 100.0)
+				TMP(clb_real_data[i]) = 100.0;
+		if( clb_tmp_max_data < TMP(clb_real_data[i]) )
+		{
+				count = i;//记录最大值时的beam_num
+				clb_tmp_max_data = TMP(clb_real_data[i]);//保存每次循环的最大值
+		}
+
+		if(TMP(clb_max_data[i]) < TMP(clb_real_data[i]))
+				TMP(clb_max_data[i]) = TMP(clb_real_data[i]);
+	}
+
+	if(TMP(clb_max_data[count]) > 100.0)
+			TMP(clb_max_data[count]) = 100.0;
+    	pp->p_tmp_config->beam_num[groupId] = count;
+
+	for (i = 0; i < step - 1; i++)
+	{
+		if (LAW_VAL (Focal_type) == AZIMUTHAL_SCAN)
+		{
+			clb_x1 = (gint)( LAW_VAL(Angle_step)*i*width/(LAW_VAL(Angle_max)-LAW_VAL(Angle_min)) );
+			clb_x2 = (gint)( LAW_VAL(Angle_step)*(i+1)*width/(LAW_VAL(Angle_max)-LAW_VAL(Angle_min)) );
+		}
+		else if(LAW_VAL (Focal_type) == LINEAR_SCAN) 
+		{
+			clb_x1 = (gint)( LAW_VAL(Elem_step)*i*width / 
+						(LAW_VAL (Last_tx_elem)-LAW_VAL(First_tx_elem) - LAW_VAL(Elem_qty) + 1));
+			clb_x2 = (gint)( LAW_VAL(Elem_step)*(i+1)*width /
+						(LAW_VAL (Last_tx_elem)-LAW_VAL(First_tx_elem) - LAW_VAL(Elem_qty) + 1));
+		}
+		clb_y1 = (gint)(height*(1 - TMP(clb_max_data[i])/100.0) + yoffset);
+		clb_y2 = (gint)(height*(1 - TMP(clb_max_data[i+1])/100.0) + yoffset);
+		if(clb_y1 < yoffset)
+				clb_y1 = yoffset;
+		if(clb_y2 < yoffset)
+				clb_y2 = yoffset;
+
+		fbline (p, clb_x1, clb_y1, clb_x2, clb_y2, all_col_16[2]);//包络线
+	}   
 
 }
 
@@ -1772,6 +1832,10 @@ void draw_scan(guchar scan_num, guchar scan_type, guchar group,
 						TMP(scan_data[group]) ,  xoff, yoff, group, 0, get_cscan_source (pp->p_config, 0));
 			break;
 		case WEDGE_DELAY:
+			draw_clb_wedge_delay(dot_temp1, TMP(clb_width), TMP(clb_height),
+					NULL,
+					dot_temp, dot_temp, 
+					xoff, yoff, group);
 			break;
 		case SENSITIVITY:
 			draw_clb_sensitivity(dot_temp1, TMP(clb_width), TMP(clb_height),

@@ -44,9 +44,9 @@ guint get_max_point_qty();
 
 /*add by hefan */
 void generate_focallaw(int grp);
-guint cba_encoder();
-gchar cba_ultrasound_velocity();
-gchar cba_ultrasound_wedgedelay();
+gfloat cba_encoder();
+gfloat cba_ultrasound_velocity();
+gfloat cba_ultrasound_wedgedelay();
 void cba_ultrasound_sensitivity();
 void cba_ultrasound_TCG();
 void esc_calibration();
@@ -1068,6 +1068,11 @@ void b3_fun1(gpointer p)
 		offset += TMP(beam_qty[k]);
 	gint index = offset + TMP(beam_num[grp]);
 	gint thread_count = 10;
+	gint BeamNo = pp->p_tmp_config->beam_num[grp];
+
+	GtkWidget* dialog;
+	GtkWindow *win = GTK_WINDOW (pp->window);
+
 	if (LAW_VAL (Focal_type) == AZIMUTHAL_SCAN)
 	{
 		step = (gint)( (LAW_VAL(Angle_max) - LAW_VAL(Angle_min)) / LAW_VAL(Angle_step) + 1);
@@ -1168,7 +1173,7 @@ void b3_fun1(gpointer p)
 													TMP_CBA(thickness1) = pp->thickness1 / 1000;
 													break;
 											}
-											TMP_CBA(time_start) = ((TMP(measure_data[index][1])) & 0xfffff)/100.0;
+											TMP_CBA(time_start) = ((TMP(measure_data[index][1])) & 0xfffff);
 										}
 										else if((pp->cstart_qty) == 5)
 										{
@@ -1185,7 +1190,7 @@ void b3_fun1(gpointer p)
 													TMP_CBA(thickness2) = pp->thickness2 / 1000;
 													break;
 											}
-											TMP_CBA(time_end) = ((TMP(measure_data[index][1])) & 0xfffff)/100.0;
+											TMP_CBA(time_end) = ((TMP(measure_data[index][1])) & 0xfffff);
 										}
 										else if((pp->cstart_qty) == 6)
 										{
@@ -1193,7 +1198,7 @@ void b3_fun1(gpointer p)
 										} 
 										else if((pp->cstart_qty) == 1)
 										{
-											if((pp->vel > 0) && (pp->vel<10000))
+											if((pp->vel > 635) && (pp->vel<1000000))
 											{
 												//在此调用声速校准函数->此处校准之后的声速用于Wedge Delay校准
 												set_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), 
@@ -1201,45 +1206,61 @@ void b3_fun1(gpointer p)
 												pp->flag = 1;//当该标志为1时才能进行下面的wedge Delay
 											}
 											else
-												;//弹出警告
+											{
+												dialog = gtk_message_dialog_new( win,
+															GTK_DIALOG_DESTROY_WITH_PARENT,
+															GTK_MESSAGE_ERROR,
+															GTK_BUTTONS_CLOSE,
+															" velocity is not reasonable \n");
+												gtk_dialog_run(GTK_DIALOG(dialog));
+												gtk_widget_destroy(dialog);
+											}
+											esc_calibration();		
 										}
 										break;
 									case 1://Wedge Delay
 										//校准完之后Accept
-										if(pp->flag)
+										if(!pp->flag)
 										{
-											pp->flag = 0;
-											((pp->cstart_qty) < 6) ? (pp->cstart_qty) ++ : ((pp->cstart_qty) = 1);
+											dialog = gtk_message_dialog_new( win,
+															GTK_DIALOG_DESTROY_WITH_PARENT,
+															GTK_MESSAGE_ERROR,
+															GTK_BUTTONS_CLOSE,
+															" you must calibration velocity first \n");
+											gtk_dialog_run(GTK_DIALOG(dialog));
+											gtk_widget_destroy(dialog);
+										}
+										else
+										{
+											((pp->cstart_qty) < 5) ? (pp->cstart_qty) ++ : ((pp->cstart_qty) = 1);
 											if((pp->cstart_qty) == 2)
 											{
 												draw_area_calibration();
 											}
 											else if((pp->cstart_qty) == 4)
 											{
-												//在此获取闸门信息
-												for(i=0;i<((pp->last_angle - pp->first_angle)/LAW_VAL(Angle_step));i++)
+												switch(pp->echotype_pos)
 												{
-													switch(pp->echotype_pos)
-													{
-														case 0://radius
-															TMP_CBA(wd_radius[i]) = pp->radius1;
-															break;
-														case 1://depth
-															TMP_CBA(wd_depth[i]) = pp->depth1;
-															break;
-														case 2://thickness
-															TMP_CBA(wd_thickness[i]) = pp->thickness1;
-															break;
-													}
-												
+													case 0://radius
+														TMP_CBA(wd_radius[BeamNo]) = pp->radius1;
+														break;
+													case 1://depth
+														TMP_CBA(wd_depth[BeamNo]) = pp->depth1;
+														break;
+													case 2://thickness
+														TMP_CBA(wd_thickness[BeamNo]) = pp->thickness1;
+														break;
 												}
 											}
-											else if((pp->cstart_qty) == 5)
+											else if((pp->cstart_qty) == 5)//Accept
 											{
-
-												for(i=0;i<((pp->last_angle - pp->first_angle)/LAW_VAL(Angle_step));i++)
-														set_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_WEDGE_DELAY,
-																cba_ultrasound_wedgedelay());
+												set_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_WEDGE_DELAY,
+																pp->wedge_delay );
+												//pp->flag = 0;
+											}
+											else if((pp->cstart_qty) == 1)
+											{
+												esc_calibration();
 											}
 										}
 										break;
@@ -1825,6 +1846,14 @@ void b3_fun3(gpointer p)
 								case 0:
 									break;
 								case 1:
+									if (pp->cstart_qty == 5)//Clear Calibrate
+									{
+										for (i = 0; i < clb_step; i++)
+										{
+										//	TMP(clb_real_data[i]) = ((TMP(measure_data[i][1])>>20) & 0xfff)/20.47;
+											TMP(clb_max_data[i]) = 0;//TMP(clb_real_data[i]);//第一次需初始化
+										}
+									}
 									break;
 								case 2:
 									if(pp->cstart_qty == 6)
@@ -2168,7 +2197,8 @@ void b3_fun4(gpointer p)
 							case 0:
 								break;
 							case 1://wedge delay
-								cba_ultrasound_wedgedelay();
+								if (pp->cstart_qty == 5)//Calibrate
+									pp->wedge_delay = cba_ultrasound_wedgedelay();
 								break;
 							case 2://sensitivity
 								if (pp->cstart_qty == 6)//Calibrate
@@ -2413,6 +2443,16 @@ void b3_fun5(gpointer p)
 									}
 									break;
 								case 1:
+									if(pp->cstart_qty == 5)//Restart
+									{
+										pp->cstart_qty = 1;
+										for (i = 0; i < clb_step; i++)
+										{
+											TMP(clb_real_data[i]) = ((TMP(measure_data[i][1])>>20) & 0xfff)/20.47;
+											TMP(clb_max_data[i]) = TMP(clb_real_data[i]);//第一次需初始化
+										}
+										esc_calibration();
+									}
 									break;
 								case 2:
 									if (pp->cstart_qty == 1)//Clear Calibrate
@@ -6663,7 +6703,7 @@ void generate_focallaw(int grp)
 //****************************************
 //  编码器校准：2011.7.1 何凡
 //****************************************
-guint cba_encoder()
+gfloat cba_encoder()
 {
 	gint K = 483;
 	TMP_CBA(delt_distance) = pp->distance ;//- get_enc_origin (pp->p_config, get_cur_encoder (pp->p_config));
@@ -6676,23 +6716,23 @@ guint cba_encoder()
 //****************************************
 //  声速校准：2011.7.1 何凡
 //****************************************
-gchar cba_ultrasound_velocity()
+gfloat cba_ultrasound_velocity()
 {
 	if(TMP_CBA(time_start) != TMP_CBA(time_end))
 	{
 		switch(pp->echotype_pos)
 		{
 			case 0://Radius
-				TMP_CBA(velocity_last) = 100000000*fabs(TMP_CBA(radius2)-TMP_CBA(radius1)) / fabs(TMP_CBA(time_end)-TMP_CBA(time_start)) ;
+				TMP_CBA(velocity_last) = 200000*fabs(TMP_CBA(radius2)-TMP_CBA(radius1)) / fabs(TMP_CBA(time_end)-TMP_CBA(time_start)) ;
 				break;
 			case 1://Depth
-				TMP_CBA(velocity_last) = 100000000*fabs(TMP_CBA(depth2)-TMP_CBA(depth1)) / fabs(TMP_CBA(time_end)-TMP_CBA(time_start)) ;
+				TMP_CBA(velocity_last) = 200000*fabs(TMP_CBA(depth2)-TMP_CBA(depth1)) / fabs(TMP_CBA(time_end)-TMP_CBA(time_start)) ;
 				break;
 			case 2://Thickness
-				TMP_CBA(velocity_last) = 100000000*fabs(TMP_CBA(thickness2)-TMP_CBA(thickness1)) / fabs(TMP_CBA(time_end)-TMP_CBA(time_start)) ;
+				TMP_CBA(velocity_last) = 200000*fabs(TMP_CBA(thickness2)-TMP_CBA(thickness1)) / fabs(TMP_CBA(time_end)-TMP_CBA(time_start)) ;
 				break;
 		}
-		return TMP_CBA(velocity_last);//单位0.01m/s
+		return TMP_CBA(velocity_last);//单位m/s
 	}
 	else
 		return 0;
@@ -6701,28 +6741,24 @@ gchar cba_ultrasound_velocity()
 //****************************************
 //  延时校准：2011.7.1 何凡
 //****************************************
-gchar cba_ultrasound_wedgedelay()
+gfloat cba_ultrasound_wedgedelay()
 {
-	gint i;
 	gint grp = get_current_group(pp->p_config);
-	gchar val;
-	//在此获取闸门信息
-	for(i=0;i<((pp->last_angle - pp->first_angle)/LAW_VAL(Angle_step));i++)
+	gint BeamNo = pp->p_tmp_config->beam_num[grp];
+	gfloat val;
+	switch(pp->echotype_pos)
 	{
-		switch(pp->echotype_pos)
-		{
-			case 0://radius
-				TMP_CBA(wd_delay[i]) = (TMP_CBA(wd_radius[i])- pp->radiusa)/ get_group_val (get_group_by_id (pp->p_config, grp), GROUP_VELOCITY);
-				break;
-			case 1://depth
-				TMP_CBA(wd_delay[i]) = (TMP_CBA(wd_depth[i])- pp->deptha)/ get_group_val (get_group_by_id (pp->p_config, grp), GROUP_VELOCITY);
-				break;
-			case 2://thickness
-				TMP_CBA(wd_delay[i]) = (TMP_CBA(wd_thickness[i])- pp->thickness1)/ get_group_val (get_group_by_id (pp->p_config, grp), GROUP_VELOCITY);
-				break;
-		}
-		val = TMP_CBA(wd_delay[i]);
+		case 0://radius
+			TMP_CBA(wd_delay[BeamNo]) = (TMP_CBA(wd_radius[BeamNo])- pp->radiusa)/ get_group_val (get_group_by_id (pp->p_config, grp), GROUP_VELOCITY);
+			break;
+		case 1://depth
+			TMP_CBA(wd_delay[BeamNo]) = (TMP_CBA(wd_depth[BeamNo])- pp->deptha)/ get_group_val (get_group_by_id (pp->p_config, grp), GROUP_VELOCITY);
+			break;
+		case 2://thickness
+			TMP_CBA(wd_delay[BeamNo]) = (TMP_CBA(wd_thickness[BeamNo])- pp->thickness1)/ get_group_val (get_group_by_id (pp->p_config, grp), GROUP_VELOCITY);
+			break;
 	}
+	val = TMP_CBA(wd_delay[BeamNo]);
 	return val; 
 }
 
