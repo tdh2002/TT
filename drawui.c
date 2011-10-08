@@ -2809,7 +2809,8 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 		case STATIC_SCAN:
 			//angle = LAW_VAL (Angle_min);
 			angle = LAW_VAL_POS (p->group,Angle_min);
-			num = TMP(beam_num[get_current_group(pp->p_config)]);
+			//num = TMP(beam_num[get_current_group(pp->p_config)]);
+			num = TMP(beam_num[p->group]);
 			break;
 		default:break;
 	}
