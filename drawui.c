@@ -365,7 +365,7 @@ void show_help(guint i)
 		switch(pp->pos)		/*改变帮助文档的路径*/
 		{
 			case 0:
-				pp->file_path = "file:///home/tt/TT/source/system/Help/Contextual/Wizard_Menu.html";
+				pp->file_path = "http://127.0.0.1/source/system/Help/Contextual/Wizard_Menu.html";
 				break;
 			case 1:
 				pp->file_path = "http://127.0.0.1/source/system/Help/Contextual/UT_Settings_Menu.html";
@@ -2887,24 +2887,6 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 			{
 				if((get_display_pos (pp->p_config) == A_S_CC_SCAN ) && (get_cscan_source(pp->p_config, 0)==4) && (GROUP_VAL_POS(p->group, ut_unit) == UT_UNIT_TRUE_DEPTH) && (get_display_group(pp->p_config) == DISPLAY_CURRENT_GROUP))
 				{	/*A_S scan 在 true depth时， A scan 需要旋转90度*/
-				    if(LAW_VAL(Focal_type) == 0)
-				    {
-				    	//current_angle = LAW_VAL(Angle_min)/100.0 + BeamNo * LAW_VAL(Angle_step)/100.0 ;
-				    	if(LAW_VAL(Angle_min)*LAW_VAL(Angle_max)<0)
-				    		min_angle = 0.0;
-				    	else
-				    		min_angle = MIN(abs(LAW_VAL(Angle_min)), abs(LAW_VAL(Angle_max))) * G_PI / 18000.0 ;
-
-				        max_angle = MAX(abs(LAW_VAL(Angle_min)), abs(LAW_VAL(Angle_max))) * G_PI / 18000.0 ;
-				    }
-				    else
-				    {
-				    	//current_angle = LAW_VAL(Angle_min)/100.0 ;
-				    	max_angle = min_angle = LAW_VAL(Angle_min) * G_PI / 18000.0 ;
-				    }
-				    //printf("---------------------enter unit %d\n", get_unit(pp->p_config));
-				    //printf("min_angle %f max_angle %f\n", min_angle*180/G_PI, max_angle*180/G_PI);
-
 					if(get_unit(pp->p_config) == UNIT_MM) /* hrule1 */
 					{
 						p->hmin1 = get_group_val (p_grp, GROUP_RANGE)/1000.0 *
@@ -2913,10 +2895,6 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 							(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
 						p->hmax1 = get_group_val (p_grp, GROUP_START)/1000.0 *
 							(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
-
-						//printf("ruler min %f, max %f\n", p->hmin1, p->hmax1);
-						p->hmin1 *= cos(min_angle);
-						p->hmax1 *= cos(max_angle);
 						p->h1_unit = UNIT_MM;
 						p->h1_color = 0xD6ABF1;/*紫色*/
 
@@ -2925,10 +2903,6 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 					{
 						p->hmin1 = get_group_val (p_grp, GROUP_RANGE)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0)+get_group_val (p_grp, GROUP_START)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
 						p->hmax1 = get_group_val (p_grp, GROUP_START)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
-						printf("ruler min %f, max %f", p->hmin1, p->hmax1);
-						p->hmin1 *= cos(max_angle);
-						p->hmax1 *= cos(min_angle);
-
 						p->h1_unit = UNIT_INCH;
 						p->h1_color = 0xD6ABF1;/*紫色*/
 					}
@@ -3061,6 +3035,8 @@ void set_drawarea_property( DRAW_AREA *p, guint type, guint mask)
 							p->group+1, angle / 100.0, GROUP_VAL_POS(p->group, skew) / 100.0, num + 1);
 					//get_current_group(pp->p_config) + 1, angle / 100.0, GROUP_VAL_POS(p->group, skew) / 100.0, num + 1);
 			break;
+		//case A_SCAN_R:
+			//break;
 		case B_SCAN:
 			/* hrule1 */
 			if(get_inspec_source (pp->p_config)==0)	/* scan -> time */
@@ -3299,68 +3275,25 @@ p->group+1, angle / 100.0, GROUP_VAL_POS(p->group, skew) / 100.0, num + 1);
 				}
 				else if(GROUP_VAL_POS(p->group, ut_unit) == UT_UNIT_TRUE_DEPTH)
 				{
-				    if(LAW_VAL(Focal_type) == 0)
-				    {
-				    	//current_angle = LAW_VAL(Angle_min)/100.0 + BeamNo * LAW_VAL(Angle_step)/100.0 ;
-				    	if(LAW_VAL(Angle_min)*LAW_VAL(Angle_max)<0)
-				    		min_angle = 0.0;
-				    	else
-				    		min_angle = MIN(abs(LAW_VAL(Angle_min)), abs(LAW_VAL(Angle_max))) * G_PI / 18000.0 ;
-
-				        max_angle = MAX(abs(LAW_VAL(Angle_min)), abs(LAW_VAL(Angle_max))) * G_PI / 18000.0 ;
-				    }
-				    else
-				    {
-				    	//current_angle = LAW_VAL(Angle_min)/100.0 ;
-				    	max_angle = min_angle = LAW_VAL(Angle_min) * G_PI / 18000.0 ;
-				    }
 					if(get_unit(pp->p_config) == UNIT_MM) /* hrule1 */
 					{
-						p->hmin1 = get_group_val (p_grp, GROUP_RANGE)/1000.0 *
-							(get_group_val (p_grp, GROUP_VELOCITY)/200000.0) +
-							get_group_val (p_grp, GROUP_START)/1000.0 *
-							(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
-						p->hmax1 = get_group_val (p_grp, GROUP_START)/1000.0 *
-							(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
-
-						//printf("ruler min %f, max %f\n", p->hmin1, p->hmax1);
-						p->hmin1 *= cos(min_angle);
-						p->hmax1 *= cos(max_angle);
+						//p->hmin1 = get_group_val (p_grp, GROUP_RANGE)/1000.0*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0)+get_group_val (p_grp, GROUP_START)/1000.0*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0)+tan((LAW_VAL_POS (p->group, Angle_min) / 100.0)*(3.14/180.0))*tan((LAW_VAL_POS (p->group, Angle_min) / 100.0)*(3.14/180.0))*get_group_val (p_grp, GROUP_RANGE)/1000.0*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
+						//p->hmax1 = get_group_val (p_grp, GROUP_START)/1000.0*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
+						p->hmin1 = GROUP_VAL_POS(p->group, range)/1000.0*(GROUP_VAL_POS(p->group, velocity)/200000.0)+GROUP_VAL_POS(p->group, start)/1000.0*(GROUP_VAL_POS(p->group, velocity)/200000.0)+tan((LAW_VAL_POS (p->group, Angle_min) / 100.0)*(3.14/180.0))*tan((LAW_VAL_POS (p->group, Angle_min) / 100.0)*(3.14/180.0))*GROUP_VAL_POS(p->group, range)/1000.0*(GROUP_VAL_POS(p->group, velocity)/200000.0);
+						p->hmax1 = GROUP_VAL_POS(p->group, start)/1000.0*(GROUP_VAL_POS(p->group, velocity)/200000.0);
 						p->h1_unit = UNIT_MM;
 						p->h1_color = 0xD6ABF1;/*紫色*/
 
 					}
 					else
 					{
-						p->hmin1 = get_group_val (p_grp, GROUP_RANGE)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0)+get_group_val (p_grp, GROUP_START)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
-						p->hmax1 = get_group_val (p_grp, GROUP_START)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
-						//printf("ruler min %f, max %f", p->hmin1, p->hmax1);
-						p->hmin1 *= cos(max_angle);
-						p->hmax1 *= cos(min_angle);
-
+						//p->hmin1 = get_group_val (p_grp, GROUP_RANGE)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0)+get_group_val (p_grp, GROUP_START)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
+						//p->hmax1 = get_group_val (p_grp, GROUP_START)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
+						p->hmin1 = GROUP_VAL_POS(p->group, range)/1000.0*0.03937*(GROUP_VAL_POS(p->group, velocity)/200000.0)+GROUP_VAL_POS(p->group, start)/1000.0*0.03937*(GROUP_VAL_POS(p->group, velocity)/200000.0);
+						p->hmax1 = GROUP_VAL_POS(p->group, start)/1000.0*0.03937*(GROUP_VAL_POS(p->group, velocity)/200000.0);
 						p->h1_unit = UNIT_INCH;
 						p->h1_color = 0xD6ABF1;/*紫色*/
 					}
-
-					//if(get_unit(pp->p_config) == UNIT_MM) /* hrule1 */
-					//{
-						////p->hmin1 = get_group_val (p_grp, GROUP_RANGE)/1000.0*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0)+get_group_val (p_grp, GROUP_START)/1000.0*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0)+tan((LAW_VAL_POS (p->group, Angle_min) / 100.0)*(3.14/180.0))*tan((LAW_VAL_POS (p->group, Angle_min) / 100.0)*(3.14/180.0))*get_group_val (p_grp, GROUP_RANGE)/1000.0*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
-						////p->hmax1 = get_group_val (p_grp, GROUP_START)/1000.0*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
-						//p->hmin1 = GROUP_VAL_POS(p->group, range)/1000.0*(GROUP_VAL_POS(p->group, velocity)/200000.0)+GROUP_VAL_POS(p->group, start)/1000.0*(GROUP_VAL_POS(p->group, velocity)/200000.0)+tan((LAW_VAL_POS (p->group, Angle_min) / 100.0)*(3.14/180.0))*tan((LAW_VAL_POS (p->group, Angle_min) / 100.0)*(3.14/180.0))*GROUP_VAL_POS(p->group, range)/1000.0*(GROUP_VAL_POS(p->group, velocity)/200000.0);
-						//p->hmax1 = GROUP_VAL_POS(p->group, start)/1000.0*(GROUP_VAL_POS(p->group, velocity)/200000.0);
-						//p->h1_unit = UNIT_MM;
-						//p->h1_color = 0xD6ABF1;/*紫色*/
-
-					//}
-					//else
-					//{
-						////p->hmin1 = get_group_val (p_grp, GROUP_RANGE)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0)+get_group_val (p_grp, GROUP_START)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
-						////p->hmax1 = get_group_val (p_grp, GROUP_START)/1000.0*0.03937*(get_group_val (p_grp, GROUP_VELOCITY)/200000.0);
-						//p->hmin1 = GROUP_VAL_POS(p->group, range)/1000.0*0.03937*(GROUP_VAL_POS(p->group, velocity)/200000.0)+GROUP_VAL_POS(p->group, start)/1000.0*0.03937*(GROUP_VAL_POS(p->group, velocity)/200000.0);
-						//p->hmax1 = GROUP_VAL_POS(p->group, start)/1000.0*0.03937*(GROUP_VAL_POS(p->group, velocity)/200000.0);
-						//p->h1_unit = UNIT_INCH;
-						//p->h1_color = 0xD6ABF1;/*紫色*/
-					//}
 					p->h1_bit = 2;
 
 					//p->wmin1 = 0;	/*wrule1*/
@@ -3369,6 +3302,7 @@ p->group+1, angle / 100.0, GROUP_VAL_POS(p->group, skew) / 100.0, num + 1);
 					else*/
 					//mid = (-1) * GROUP_VAL_POS(get_current_group(pp->p_config),wedge.Primary_offset)/1000.0 - (GROUP_VAL_POS(get_current_group(pp->p_config),probe.Elem_qty) * GROUP_VAL_POS(get_current_group(pp->p_config),probe.Pitch)/1000.0)/2.0;
 					mid = (-1) * GROUP_VAL_POS(p->group,wedge.Primary_offset)/1000.0 - (GROUP_VAL_POS(p->group,probe.Elem_qty) * GROUP_VAL_POS(p->group,probe.Pitch)/1000.0)/2.0;
+
 					if(GROUP_VAL_POS(p->group, skew_pos)==0)
 						middle = GROUP_VAL_POS(p->group, scan_offset)/10.0 - mid;
 					else if(GROUP_VAL_POS(p->group, skew_pos)==1)
@@ -8697,18 +8631,18 @@ void draw3_data2(DRAW_UI_P p)
 								{
 									if (get_unit(pp->p_config) == 0)
 									{
-										cur_value = get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 100.0;
+										cur_value = pp->vel;
 										digit = 1;
 										unit = UNIT_M_S;
 									}
 									else
 									{
-										cur_value = get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) * 0.000000394;
+										cur_value = pp->vel * 0.0000394;
 										digit = 4;
 										unit = UNIT_IN_US;
 									}
 									pos = 2;
-									draw3_digit_stop (cur_value, units[unit], digit, pos, 44);
+									draw3_digit_stop (pp->vel, units[unit], digit, pos, 44);
 									gtk_widget_set_sensitive(pp->eventbox30[2],FALSE);
 									gtk_widget_set_sensitive(pp->eventbox31[2],FALSE);
 
@@ -17875,7 +17809,6 @@ static void key_message_thread(void)
 {
 	char key = 0;
 	char bar[3] = {0};
-	unsigned char tmp = 0x55 ;
     while(1)
 	{
 	   if (read(pp->fd_key, &key, 1) > 0)

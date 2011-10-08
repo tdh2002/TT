@@ -584,6 +584,7 @@ typedef struct Draw_interface
 	gint    clb_encoder;
 	gint    save_ut_unit;
 	gint    clb_count;
+	gint    vel;
 
 	//
 	guint    gate_a_start[ setup_MAX_LAW_QTY ];
