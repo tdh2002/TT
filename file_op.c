@@ -35,6 +35,25 @@
 #include <linux/kd.h>
 #include <sys/ioctl.h>
 
+struct _FBInfo;
+typedef struct _FBInfo FBInfo;
+typedef int (*UnpackPixel)(FBInfo* fb, unsigned char* pixel, 
+	unsigned char* r, unsigned char* g, unsigned char* b);
+
+struct _FBInfo
+{
+	int fd;
+	UnpackPixel unpack;
+	unsigned char *bits;
+	struct fb_fix_screeninfo fi;
+	struct fb_var_screeninfo vi;
+};
+
+#define fb_width(fb)  ((fb)->vi.xres)
+#define fb_height(fb) ((fb)->vi.yres)
+#define fb_bpp(fb)    ((fb)->vi.bits_per_pixel>>3)
+#define fb_size(fb)   ((fb)->vi.xres * (fb)->vi.yres * fb_bpp(fb))
+
 char SOURCE_FILE_NAME[FILE_NAME_MAX];
 char SOURCE_FILE_PATH[FILE_NAME_MAX];
 char TARGET_FILE_NAME[FILE_NAME_MAX];
@@ -1429,25 +1448,6 @@ void report_build_end(char *file_name)
 
     fclose(fp);
 }
-
-struct _FBInfo;
-typedef struct _FBInfo FBInfo;
-typedef int (*UnpackPixel)(FBInfo* fb, unsigned char* pixel, 
-	unsigned char* r, unsigned char* g, unsigned char* b);
-
-struct _FBInfo
-{
-	int fd;
-	UnpackPixel unpack;
-	unsigned char *bits;
-	struct fb_fix_screeninfo fi;
-	struct fb_var_screeninfo vi;
-};
-
-#define fb_width(fb)  ((fb)->vi.xres)
-#define fb_height(fb) ((fb)->vi.yres)
-#define fb_bpp(fb)    ((fb)->vi.bits_per_pixel>>3)
-#define fb_size(fb)   ((fb)->vi.xres * (fb)->vi.yres * fb_bpp(fb))
 
 static int fb_unpack_rgb565(FBInfo* fb, unsigned char* pixel, 
 	unsigned char* r, unsigned char* g, unsigned char* b)

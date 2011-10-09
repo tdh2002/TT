@@ -5,11 +5,12 @@
 
 #include "base_config.h"
 #include "base.h"
+#include "main.h"
 #include <string.h>
 #include <stdio.h>
 //#define NDEBUG
 #include <assert.h>
-extern DRAW_UI_P  pp;
+extern DRAW_UI_P	pp;
 void init_group_spi (unsigned int group);
 void send_focal_spi (unsigned int group);
 void send_group_spi (unsigned int group);
@@ -531,6 +532,7 @@ unsigned short	get_1output_alarm_pos (CONFIG *p)
 	for (i = 0; i < 16; i++)
 	{
 		if (get_output_alarm_pos (p, i + 1))
+		if (get_output_alarm_pos (p, i + 1))
 			return (i + 1);
 	}
 	return 0;
@@ -635,10 +637,11 @@ unsigned char get_bright (CONFIG *p)
 
 void set_bright (CONFIG *p, unsigned char data)
 {
-	//assert (data < 101);
+
 	if(data>100)     p->bright = 100 ;
 	else if(data<1)  p->bright = 1   ;
 	else             p->bright = data;
+
     write(pp->fd_key, &(p->bright),1);
 }
 

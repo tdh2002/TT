@@ -65,16 +65,16 @@ typedef struct _calibration
 	gfloat resolution;
 
 	//Ultrasound->Velocity
-	gint radius1;
-	gint radius2;
-	gint depth1;
-	gint depth2;
-	gint thickness1;
-	gint thickness2;
-	gint time_start;
-	gint time_end;
+	gfloat radius1;
+	gfloat radius2;
+	gfloat depth1;
+	gfloat depth2;
+	gfloat thickness1;
+	gfloat thickness2;
+	gfloat time_start;
+	gfloat time_end;
 
-	gchar velocity_last;
+	gfloat velocity_last;
 	//Ultrasound->Wedge Delay
 	gchar data;//保存半径，深度，厚度的值
 	gchar data_measure[20];//保存检测到的实际值
@@ -584,6 +584,8 @@ typedef struct Draw_interface
 	gint    clb_encoder;
 	gint    save_ut_unit;
 	gint    clb_count;
+	gfloat  vel;
+	gfloat  wedge_delay;
 
 	//
 	guint    gate_a_start[ setup_MAX_LAW_QTY ];
