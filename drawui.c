@@ -3596,9 +3596,17 @@ p->group+1, angle / 100.0, GROUP_VAL_POS(p->group, skew) / 100.0, num + 1);
 		case A_B_SCAN:
 			break;
 		case WEDGE_DELAY:
-			p->hmin1 = 0;
-			p->hmax1 = 100;
-			p->h1_unit = UNIT_BFH;
+			if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
+			{
+				p->hmin1 = pp->gate_start_clb / 2000.0;
+				p->hmax1 = (pp->gate_start_clb + pp->gate_width_clb) / 2000.0;
+			}
+			else
+			{
+				p->hmin1 = pp->gate_start_clb / 1000.0;
+				p->hmax1 = (pp->gate_start_clb + pp->gate_width_clb) / 1000.0;
+			}
+			p->h1_unit = UNIT_MM;
 			p->h1_color = 0xEDF169;
 
 			p->hmin2 = 0;

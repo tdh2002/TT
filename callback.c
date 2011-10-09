@@ -1068,7 +1068,7 @@ void b3_fun1(gpointer p)
 		offset += TMP(beam_qty[k]);
 	gint index = offset + TMP(beam_num[grp]);
 	gint thread_count = 10;
-	gint BeamNo = pp->p_tmp_config->beam_num[grp];
+//	gint BeamNo = pp->p_tmp_config->beam_num[grp];
 
 	GtkWidget* dialog;
 	GtkWindow *win = GTK_WINDOW (pp->window);
@@ -1211,7 +1211,7 @@ void b3_fun1(gpointer p)
 															GTK_DIALOG_DESTROY_WITH_PARENT,
 															GTK_MESSAGE_ERROR,
 															GTK_BUTTONS_CLOSE,
-															" velocity is not reasonable \n");
+															"velocity is not reasonable \n");
 												gtk_dialog_run(GTK_DIALOG(dialog));
 												gtk_widget_destroy(dialog);
 											}
@@ -1226,7 +1226,7 @@ void b3_fun1(gpointer p)
 															GTK_DIALOG_DESTROY_WITH_PARENT,
 															GTK_MESSAGE_ERROR,
 															GTK_BUTTONS_CLOSE,
-															" you must calibration velocity first \n");
+															"you must calibration velocity first \n");
 											gtk_dialog_run(GTK_DIALOG(dialog));
 											gtk_widget_destroy(dialog);
 										}
@@ -1237,20 +1237,8 @@ void b3_fun1(gpointer p)
 											{
 												draw_area_calibration();
 											}
-											else if((pp->cstart_qty) == 4)
+											else if((pp->cstart_qty) == 3)
 											{
-												switch(pp->echotype_pos)
-												{
-													case 0://radius
-														TMP_CBA(wd_radius[BeamNo]) = pp->radius1;
-														break;
-													case 1://depth
-														TMP_CBA(wd_depth[BeamNo]) = pp->depth1;
-														break;
-													case 2://thickness
-														TMP_CBA(wd_thickness[BeamNo]) = pp->thickness1;
-														break;
-												}
 											}
 											else if((pp->cstart_qty) == 5)//Accept
 											{
@@ -3863,15 +3851,18 @@ void data_0233 (GtkSpinButton *spinbutton, gpointer data) /* wizard  depth 1 */
 void data_0234 (GtkSpinButton *spinbutton, gpointer data) /* wizard  thickness 1 */
 {
 	pp->thickness1 =  (gint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
+	TMP_CBA(distance) = pp->thickness1 / 1000;
 }
 
 void data_0235 (GtkSpinButton *spinbutton, gpointer data) /* wizard  Radius A */
 {
 	pp->radiusa =  (gint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
+	TMP_CBA(distance) = pp->radiusa / 1000;
 }
 void data_0236 (GtkSpinButton *spinbutton, gpointer data) /* wizard  depth A */
 {
 	pp->deptha =  (gint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
+	TMP_CBA(distance) = pp->deptha / 1000;
 }
 
 void data_0237 (GtkSpinButton *spinbutton, gpointer data) /* wizard  thickness */
@@ -4699,6 +4690,7 @@ void data_202 (GtkSpinButton *spinbutton, gpointer data)	/* 闸门开始位置 P
 
 	if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 	{
+		pp->gate_start_clb = gtk_spin_button_get_value (spinbutton) * 2000.0;
 		if (UNIT_MM == get_unit(pp->p_config))
 			GROUP_GATE_POS(start) = (gint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / 
 					(get_group_val (p_grp, GROUP_VELOCITY) / 100000.0));
@@ -4707,7 +4699,10 @@ void data_202 (GtkSpinButton *spinbutton, gpointer data)	/* 闸门开始位置 P
 					(0.03937 * get_group_val (p_grp, GROUP_VELOCITY) / 100000.0));
 	}
 	else /* 显示方式为时间 */
+	{
 		    GROUP_GATE_POS(start) = (gint) (gtk_spin_button_get_value (spinbutton) * 1000.0) ;
+			pp->gate_start_clb = gtk_spin_button_get_value (spinbutton) * 1000.0;
+	}
 
 	for (k = offset; k < offset + beam_qty; k++)//k:每个beam
 	{
@@ -4765,6 +4760,10 @@ void data_202 (GtkSpinButton *spinbutton, gpointer data)	/* 闸门开始位置 P
 	TMP(group_spi[grp]).idel_time	=
 			100000000 / (temp_prf / (10)) - 2048 - TMP(group_spi[grp]).rx_time;
 
+	if(!pp->clb_flag)
+			draw_area_all();
+	else
+			draw_area_calibration();
 	send_focal_spi (grp);
 	gtk_widget_queue_draw (pp->vboxtable);
 
@@ -4833,6 +4832,7 @@ void data_203 (GtkSpinButton *spinbutton, gpointer data) /* 闸门宽度 P203 */
 
 	if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 	{
+		pp->gate_width_clb = gtk_spin_button_get_value (spinbutton) * 2000.0;
 		if (UNIT_MM == get_unit(pp->p_config))
 			GROUP_GATE_POS(width) = (guint) (gtk_spin_button_get_value (spinbutton) * 2000.0 / 
 					(get_group_val (p_grp, GROUP_VELOCITY) / 100000.0));
@@ -4841,7 +4841,10 @@ void data_203 (GtkSpinButton *spinbutton, gpointer data) /* 闸门宽度 P203 */
 					(0.03937 * get_group_val (p_grp, GROUP_VELOCITY) / 100000.0));
 	}
 	else /* 显示方式为时间 */
+	{
 		GROUP_GATE_POS(width) = (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0) ; 
+		pp->gate_width_clb = gtk_spin_button_get_value (spinbutton) * 1000.0;
+	}
 /*
 	for (k = offset; k < offset + beam_qty; k++)//k:每个beam
 	{
@@ -4939,6 +4942,10 @@ void data_203 (GtkSpinButton *spinbutton, gpointer data) /* 闸门宽度 P203 */
 	//TMP(group_spi[grp]).idel_time	=
 	//		100000000 / (temp_prf / (10)) - 2048 - TMP(group_spi[grp]).rx_time;
 
+	if(!pp->clb_flag)
+			draw_area_all();
+	else
+			draw_area_calibration();
 	send_focal_spi (grp);
 	gtk_widget_queue_draw (pp->vboxtable);
 }
@@ -6754,20 +6761,20 @@ gfloat cba_ultrasound_wedgedelay()
 	gint grp = get_current_group(pp->p_config);
 	gint BeamNo = pp->p_tmp_config->beam_num[grp];
 	gfloat val;
-	switch(pp->echotype_pos)
+/*	switch(pp->echotype_pos)
 	{
 		case 0://radius
-			TMP_CBA(wd_delay[BeamNo]) = (TMP_CBA(wd_radius[BeamNo])- pp->radiusa)/ get_group_val (get_group_by_id (pp->p_config, grp), GROUP_VELOCITY);
+			TMP_CBA(wd_delay[BeamNo]) = (TMP_CBA(wd_radius))/ get_group_val (get_group_by_id (pp->p_config, grp), GROUP_VELOCITY);
 			break;
 		case 1://depth
-			TMP_CBA(wd_delay[BeamNo]) = (TMP_CBA(wd_depth[BeamNo])- pp->deptha)/ get_group_val (get_group_by_id (pp->p_config, grp), GROUP_VELOCITY);
+			TMP_CBA(wd_delay[BeamNo]) = (TMP_CBA(wd_depth))/ get_group_val (get_group_by_id (pp->p_config, grp), GROUP_VELOCITY);
 			break;
 		case 2://thickness
-			TMP_CBA(wd_delay[BeamNo]) = (TMP_CBA(wd_thickness[BeamNo])- pp->thickness1)/ get_group_val (get_group_by_id (pp->p_config, grp), GROUP_VELOCITY);
+			TMP_CBA(wd_delay[BeamNo]) = (TMP_CBA(wd_thickness))/ get_group_val (get_group_by_id (pp->p_config, grp), GROUP_VELOCITY);
 			break;
 	}
-	val = TMP_CBA(wd_delay[BeamNo]);
-	return val; 
+	val = TMP_CBA(wd_delay[BeamNo]);*/
+	return 1;//val; 
 }
 
 //****************************************
