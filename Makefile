@@ -5,7 +5,7 @@ INCS=base_const.h callback.h drawfb.h file_op.h main.h \
 base.h content_en.h drawui.h language.h	base_config.h \
 spi_d.h draw_dialog.h
 
-SRCS=callback.c content_en.c drawfb.c drawui.c file_op.c main.c base_config.c spi_d.c draw_dialog.c
+SRCS=callback.c content_en.c drawfb.c drawui.c file_op.c main.c base_config.c spi_d.c draw_dialog.c content_ch.c
 
 # 从xx.c 文件得到 xx.o 文件
 OBJS=${SRCS:.c=.o}

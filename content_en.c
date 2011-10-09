@@ -222,7 +222,7 @@ static const gchar *content_en250[] = {
 
 static const gchar *content_en251[] = {
 	/* 二级菜单第5页下的第1页三级菜单 */
-	"  Scan Offset  ","  Index Offset  ", "  Skew ", NULL ,NULL, NULL
+	"  Scan Offset  ","  Index Offset  ", "  Skew(°) ", NULL ,NULL, NULL
 };
 
 static const gchar *content_en252[] = {
@@ -338,7 +338,7 @@ static const gchar *content_en290[] = {
 
 static const gchar *content_en291[] = {
 	/* 二级菜单第9页下的第1页三级菜单 */
-	"Clock Set \n(HH:MM:SS)", "Date Set", NULL, NULL, NULL, NULL
+	"Clock Set \n(HH:MM:SS)", "Date Set", "Language", NULL, NULL, NULL
 };
 
 static const gchar *content_en292[] = {
@@ -355,7 +355,7 @@ static const gchar *content_en293[] = {
 static const gchar *content_en294[] = {
 	/* 二级菜单第9页下的第4页三级菜单 */
 	/*"  DHCP  ","  IP Address  ", "  Subnet Mask ","  Apply  ", "  Remote Pc  ", "  Connect  "*/
-	"  IP Address  ", "  Subnet Mask ", NULL, NULL, NULL, NULL
+	NULL, NULL, NULL, NULL, NULL, NULL
 };
 
 const gchar **content1_en[] = 
@@ -539,6 +539,7 @@ const gchar *all_menu_content_en[] =
 	//"None","I", "V", "V Offset", "Double V", "Double V Offset", "J", "U",	/* Weld */
 	"I","V","Double V", "U",
 	"Symmetric","Straight  Right","Straight  Left",
+	"English","Chinese",
 	""
 };
 

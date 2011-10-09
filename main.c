@@ -53,7 +53,7 @@ static void set_config (guint groupid)
 	set_group_val (p_grp, GROUP_WEDGE_DELAY, 0);
 	set_group_val (p_grp, GROUP_RANGE, 12300);
 	set_group_val (p_grp, GROUP_START, 0);
-	set_group_val (p_grp, GROUP_GAIN, 10);
+	set_group_val (p_grp, GROUP_GAIN, 0);
 	set_group_val (p_grp, GROUP_GAINR, 0);
 	set_group_val (p_grp, GROUP_VELOCITY, 592000);
 	set_group_db_ref (pp->p_config, groupid, NORMAL_OFF);
@@ -61,8 +61,8 @@ static void set_config (guint groupid)
 	set_group_val (p_grp, GROUP_PULSER, 1);
 	set_group_val (p_grp, GROUP_RECEIVER, 1);
 
-	set_group_val (p_grp, GROUP_FILTER_POS, 0);
-	set_group_val (p_grp, GROUP_FILTER, FILTER_NONE);
+	set_group_val (p_grp, GROUP_FILTER_POS, 1);
+	//set_group_val (p_grp, GROUP_FILTER, FILTER_AUTO);
 	set_group_val (p_grp, GROUP_RECTIFIER, FULL_WAVE);
 	set_group_val (p_grp, GROUP_AVERAGING, 0);
 	set_group_val (p_grp, GROUP_VIDEO_FILTER, NORMAL_OFF);
@@ -78,7 +78,7 @@ static void set_config (guint groupid)
 	GROUP_VAL(sum_gain)	= 10;			/* 0是Auto */
 	GROUP_VAL(gate_pos)	= GATE_A;		  
 	GROUP_VAL(gate[GROUP_VAL(gate_pos)].start) = 0;  
-	GROUP_VAL(gate[GROUP_VAL(gate_pos)].width) = 296;  
+	GROUP_VAL(gate[GROUP_VAL(gate_pos)].width) = 10000;  
 	GROUP_VAL(gate[GROUP_VAL(gate_pos)].parameters) = 0;
 	GROUP_VAL(gate[GROUP_VAL(gate_pos)].synchro) = 0;  
 
@@ -92,13 +92,14 @@ static void set_config (guint groupid)
 	set_output_pos (pp->p_config, OUTPUT1);
 	for (i = 1; i < 17; i++) 
 		set_output_alarm (pp->p_config, ALARM_OFF, i);
+	set_output_count(pp->p_config,1);
 
 	GROUP_VAL(mode_pos)= 0;				 /* 0是Setup */
 	GROUP_VAL(curve_pos)= 0;			/* 0是NOne */
 	GROUP_VAL(ref_ampl)= 800;
-	GROUP_VAL(ref_ampl_offset)=10; 
-	GROUP_VAL(curve_step)=50;
-	GROUP_VAL(ref_gain)=10;
+	GROUP_VAL(ref_ampl_offset)=0; 
+	GROUP_VAL(curve_step)=100;
+	GROUP_VAL(ref_gain)=1000;
 	GROUP_VAL(point_pos)=0;
 	GROUP_VAL(dac_point_qty) = 3;
 
@@ -126,7 +127,7 @@ static void set_config (guint groupid)
 
 	set_display_table (pp->p_config, NORMAL_OFF);
 	set_entry_image (pp->p_config, NORMAL_OFF);
-	set_cur_entry (pp->p_config, 0);
+	set_cur_entry (pp->p_config, 1);
 	set_entry_qty (pp->p_config, 10);
 	GROUP_VAL(source)=0;   /*0是A^ */
 	set_min_thickness (pp->p_config, 50);
@@ -180,6 +181,8 @@ static void set_config (guint groupid)
 	set_dis_prop_strip_orientation (pp->p_config, NORMAL_OFF);
 
 	set_fft_color (pp->p_config, FFT_YELLOW); /* 0 Yellow*/
+
+	GROUP_VAL(skew_pos) = 1;
 
 	LAW_VAL (Elem_qty)		=	1;
 	LAW_VAL (First_tx_elem)	=	1;
@@ -273,10 +276,20 @@ static void set_config (guint groupid)
 	set_report_paper_size (pp->p_config, PAPER_A4);
 	GROUP_GATE_POS(height) = 20; /*闸门默认高度为20*/
 
+
 	for(i=0; i < 256; i++)
 	{
 		GROUP_VAL(gain_offset[i]) = 0;
 	}
+
+	set_output_pos (pp->p_config, 2);
+ 	set_output_holdtime(pp->p_config,100000);
+	set_output_pos (pp->p_config, 1);
+ 	set_output_holdtime(pp->p_config,100000);
+	set_output_pos (pp->p_config, 0);
+ 	set_output_holdtime(pp->p_config,100000);
+
+	set_bright(pp->p_config, 25);
 
 }
 
