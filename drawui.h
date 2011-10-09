@@ -215,6 +215,7 @@
 #define DAMPING		(PROBETYPE + 4)
 #define WELD		(DAMPING + 2)
 #define SYMMETRY	(WELD + 4)
+#define LANGUAGE	(SYMMETRY + 3)
 //#define LAW_CONFIG	(WGROUP + 3)
 //#define L_CONFIG	(LAW_CONFIG + 4)
 

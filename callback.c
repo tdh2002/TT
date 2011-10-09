@@ -6390,8 +6390,16 @@ void data_904(GtkMenuItem *menuitem, gpointer data) /* Preferences->Pref.->gate 
 {
 }
 
-void data_912(GtkMenuItem *menuitem, gpointer data) /* Preferences->system->select key */
+void data_912 (GtkMenuItem *menuitem, gpointer data)
 {
+	set_language (pp->p_config, (guchar) (GPOINTER_TO_UINT (data)));
+	pp->pos_pos = MENU3_STOP;
+	//draw_menu3(0, NULL);
+
+	change_language (get_language(pp->p_config), pp);
+			draw_menu1();
+			draw_menu2(0);
+			draw_menu3(0, NULL);
 }
 
 void data_913(GtkMenuItem *menuitem, gpointer data) /* Preferences->system->assign key*/

@@ -931,9 +931,9 @@ static void draw3_digit_pressed (void (*fun)(GtkSpinButton*, gpointer), const gc
 	y = pp->pos1[x];
 	z = pos;
 
-	if (!unit )
-		str = g_strdup_printf ("%s", con2_p[x][y][content_pos ? content_pos : pos] );	
-	else
+	//if (!unit )
+		//str = g_strdup_printf ("%s", con2_p[x][y][content_pos ? content_pos : pos] );	
+	//else
 		str = g_strdup_printf ("%s\n%s Δ%0.*f", 
 				con2_p[x][y][content_pos ? content_pos : pos], unit, digit, step);	/* %*.*f 可以指点位数 */		
 
@@ -5538,7 +5538,7 @@ void draw3_data0(DRAW_UI_P p)
 						gtk_label_set_text (GTK_LABEL (p->data3[0]), ip_temp);
 					}
 
-					g_sprintf (temp,"%s", con2_p[9][4][0]);
+					g_sprintf (temp,"%s", con2_p[9][3][0]);
 
 					/* 设置label */
 					gtk_label_set_text (GTK_LABEL (p->label3[0]), temp);
@@ -7403,7 +7403,7 @@ g_print("wstart=%d\n",pp->wstart_qty);
 		case 9:
 			switch (pp->pos1[9])
 			{
-				case 0:/*preferences -> pref. -> bright 901 */
+				case 0:/*preferences -> pref. -> bright p901 */
 					/* 当前步进 */
 					switch (pp->p_tmp_config->bright_reg)
 					{
@@ -7465,7 +7465,7 @@ g_print("wstart=%d\n",pp->wstart_qty);
 						sprintf(mask_temp,"%s\n", inet_ntoa(((struct sockaddr_in*)&(ifr.ifr_addr))->sin_addr));
 						gtk_label_set_text (GTK_LABEL (pp->data3[1]), mask_temp);
 					}
-					g_sprintf (temp,"%s", con2_p[9][4][1]);
+					g_sprintf (temp,"%s", con2_p[9][3][1]);
 
 					/* 设置label */
 					gtk_label_set_text (GTK_LABEL (pp->label3[1]), temp);
@@ -10059,7 +10059,7 @@ void draw3_data2(DRAW_UI_P p)
 							step = tmpf;
 							digit = 1;
 							pos = 2;
-							unit = UNIT_DEG;
+							unit = UNIT_NONE;
 							draw3_digit_pressed (data_5121, units[unit], cur_value , lower, upper, step, digit, p, pos, 0);
 						}
 						else
@@ -10080,7 +10080,7 @@ void draw3_data2(DRAW_UI_P p)
 					else 
 					{
 						cur_value = GROUP_VAL(skew)/100.0 ;
-						unit = UNIT_DEG;
+						unit = UNIT_NULL;
 						pos = 2;
 						digit = 1;
 						draw3_digit_stop (cur_value , units[unit], digit, pos, 0);
@@ -10790,9 +10790,14 @@ void draw3_data2(DRAW_UI_P p)
 					break;
 
 				case 1:/*Preferences -> system -> select key  p912 */
-					if ( !con2_p[9][1][2] )
-						gtk_widget_hide (pp->eventbox30[2]);
-					gtk_widget_hide (pp->eventbox31[2]);
+					pp->x_pos = 605, pp->y_pos = 287-YOFFSET;
+					if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
+						draw3_pop_tt (data_912, NULL, 
+								menu_content[LANGUAGE+get_language (pp->p_config)],
+								menu_content+LANGUAGE, 2, 2,get_language (pp->p_config), 0);
+					else 
+						draw3_popdown (menu_content[LANGUAGE+get_language (pp->p_config)], 2, 0);
+
 					break;
 
 
@@ -16474,6 +16479,8 @@ void draw3_data5(DRAW_UI_P p)
 							draw3_digit_stop (cur_value , units[unit], digit, pos, 0);
 							}
 						}
+						gtk_widget_set_sensitive (pp->eventbox30[5],FALSE);
+						gtk_widget_set_sensitive (pp->eventbox31[5],FALSE);
 					}
 					else
 					{
@@ -17956,6 +17963,35 @@ void change_language (guint lang, DRAW_UI_P p)
 			list1	= list1_en;
 			field1	= field1_en;
 			field	= field_en;
+			break;
+		case CHINESE_:
+			p->con0_p	= content_ch10;
+			p->con1_p	= content1_ch;
+			p->con2_p	= content2_ch;
+
+			p->units	= units_ch;
+			p->menu_content	= all_menu_content_ch;
+
+			p->list		= list_ch;
+			p->list1	= list1_ch;
+			p->field1	= field1_ch;
+			p->field	= field_ch;
+			if(GROUP_VAL(ut_unit)==1)//Time
+				p->field_unit	= field_unit_ch;
+			else//
+				p->field_unit	= field_unit_ch_mm;
+
+			con0_p	= content_ch10;
+			con1_p	= content1_ch;
+			con2_p	= content2_ch;
+
+			units	= units_ch;
+			menu_content	= all_menu_content_ch;
+
+			list		= list_ch;
+			list1	= list1_ch;
+			field1	= field1_ch;
+			field	= field_ch;
 			break;
 		default:break;
 	}
