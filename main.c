@@ -294,10 +294,12 @@ static void set_init_para()
 	pp->clb_count = 0;
 
 	pp->ref_amplitude = 8000;
-	pp->radiusa = 80000;
+//	pp->radiusa = 80000;
 	pp->tolerance_t = 500;
 	pp->tolerance = 500;
 	pp->distance = 10000.0;
+	pp->gate_start_clb = 0;
+	pp->gate_width_clb = 1760;
 	pp->last_angle = LAW_VAL(Angle_max);
 
 	TMP(velocity_data_p[0]) =  TMP(velocity_data[0]);

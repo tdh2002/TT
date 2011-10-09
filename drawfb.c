@@ -1352,30 +1352,32 @@ void draw_clb_wedge_delay (gushort *p, gint width, gint height, DOT_TYPE *data, 
 							DOT_TYPE *data2,gint xoffset, gint yoffset, guchar groupId)
 {
 	gint	i, step;
-	gfloat  distance;
+	gint y1, y2;
 	gint clb_x1, clb_x2;
 	gint clb_y1, clb_y2;
+	gfloat s, vel;
 
 	gint count = 0;
 	gfloat clb_tmp_max_data = 0;
-	switch(pp->echotype_pos)
+	gint grp = get_current_group(pp->p_config);
+	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
+	vel = (get_group_val (p_grp, GROUP_VELOCITY) / 100.0);// m/s
+
+	if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 	{
-		case 0://radius
-			distance = pp->radiusa / 1000.0;
-			break;
-		case 1://depth
-			distance = pp->deptha / 1000.0;
-			break;
-		case 2://thickness
-			distance = pp->thickness1 / 1000.0;
-			break;
-	} 
-	gint y1 = (gint)(height*(1- distance / 100.0 - pp->tolerance / 10000.0)) + yoffset;
-	gint y2 = (gint)(height*(1- distance / 100.0 + pp->tolerance / 10000.0)) + yoffset;
+		y1 = (gint)(height*(1- TMP_CBA(distance)*2000.0/(pp->gate_width_clb + pp->gate_start_clb) - pp->tolerance / 10000.0)) + yoffset;
+		y2 = (gint)(height*(1- TMP_CBA(distance)*2000.0/(pp->gate_width_clb + pp->gate_start_clb) + pp->tolerance / 10000.0)) + yoffset;
+	}
+	else
+	{
+		y1 = (gint)(height*(1- TMP_CBA(distance)*1000.0/(pp->gate_width_clb + pp->gate_start_clb) - pp->tolerance / 10000.0)) + yoffset;
+		y2 = (gint)(height*(1- TMP_CBA(distance)*1000.0/(pp->gate_width_clb + pp->gate_start_clb) + pp->tolerance / 10000.0)) + yoffset;
+	}
 	if(y1 < yoffset)
 			y1 = yoffset;
 	if(y2 < yoffset)
 			y2 = yoffset;
+
 	if (LAW_VAL (Focal_type) == AZIMUTHAL_SCAN)
 	{
 		step = (gint)( (LAW_VAL(Angle_max) - LAW_VAL(Angle_min)) / LAW_VAL(Angle_step) + 1);
@@ -1391,7 +1393,7 @@ void draw_clb_wedge_delay (gushort *p, gint width, gint height, DOT_TYPE *data, 
 	/*画参考线*/
 	fbline (p,0, y1, width, y1,all_col_16[1]);
 	fbline (p,0, y2, width, y2,all_col_16[1]);
-	/* 画包络线*/ 
+	/* 画包络线*/
 	for (i = 0; i < step; i++)
 	{
 		TMP(clb_real_data[i]) = ((TMP(measure_data[i][1])>>20) & 0xfff)/20.47;
@@ -1402,14 +1404,10 @@ void draw_clb_wedge_delay (gushort *p, gint width, gint height, DOT_TYPE *data, 
 				count = i;//记录最大值时的beam_num
 				clb_tmp_max_data = TMP(clb_real_data[i]);//保存每次循环的最大值
 		}
-
-		if(TMP(clb_max_data[i]) < TMP(clb_real_data[i]))
-				TMP(clb_max_data[i]) = TMP(clb_real_data[i]);
 	}
 
-	if(TMP(clb_max_data[count]) > 100.0)
-			TMP(clb_max_data[count]) = 100.0;
-    	pp->p_tmp_config->beam_num[groupId] = count;
+    pp->p_tmp_config->beam_num[groupId] = count;
+	s = ( (TMP(measure_data[count][1]) & 0xfffff) * 10 - pp->G_delay[count] - get_pw() ) * vel / 1000000;//mm
 
 	for (i = 0; i < step - 1; i++)
 	{
@@ -1425,13 +1423,21 @@ void draw_clb_wedge_delay (gushort *p, gint width, gint height, DOT_TYPE *data, 
 			clb_x2 = (gint)( LAW_VAL(Elem_step)*(i+1)*width /
 						(LAW_VAL (Last_tx_elem)-LAW_VAL(First_tx_elem) - LAW_VAL(Elem_qty) + 1));
 		}
-		clb_y1 = (gint)(height*(1 - TMP(clb_max_data[i])/100.0) + yoffset);
-		clb_y2 = (gint)(height*(1 - TMP(clb_max_data[i+1])/100.0) + yoffset);
+		if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
+		{
+			clb_y1 = (gint)(height*(1- s*2000.0/(pp->gate_width_clb + pp->gate_start_clb))) + yoffset;
+			clb_y2 = (gint)(height*(1- s*2000.0/(pp->gate_width_clb + pp->gate_start_clb))) + yoffset;
+		}
+		else
+		{
+			clb_y1 = (gint)(height*(1- s*1000.0/(pp->gate_width_clb + pp->gate_start_clb))) + yoffset;
+			clb_y2 = (gint)(height*(1- s*1000.0/(pp->gate_width_clb + pp->gate_start_clb))) + yoffset;
+		}
 		if(clb_y1 < yoffset)
 				clb_y1 = yoffset;
 		if(clb_y2 < yoffset)
 				clb_y2 = yoffset;
-
+printf("s=%f clb_y1=%d clb_y2=%d \n", s, clb_y1, clb_y2);
 		fbline (p, clb_x1, clb_y1, clb_x2, clb_y2, all_col_16[2]);//包络线
 	}   
 
