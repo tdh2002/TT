@@ -717,7 +717,7 @@ void send_group_spi (guint group)
 /* 初始化需要发给fpga的group参数 */
 void init_group_spi (guint group)
 {
-	gint tmp = 0, tt[4];
+	gint tmp = 0;// tt[4];
 	gint temp_prf;
 	GROUP *p_grp = get_group_by_id (pp->p_config, group);
 	//***************************************************
@@ -784,13 +784,13 @@ void init_group_spi (guint group)
 	TMP(group_spi[group]).point_qty  = GROUP_VAL(point_qty);
 	TMP(group_spi[group]).sample_offset	= 0;
 
-	tt[0] = (GROUP_VAL_POS(group, gate[0].start) +	GROUP_VAL_POS (group, gate[0].width));
-	tt[1] = (GROUP_VAL_POS(group, gate[1].start) +	GROUP_VAL_POS (group, gate[1].width));
-	tt[2] = (GROUP_VAL_POS(group, gate[2].start) +	GROUP_VAL_POS (group, gate[2].width));
+	//tt[0] = (GROUP_VAL_POS(group, gate[0].start) +	GROUP_VAL_POS (group, gate[0].width));
+	//tt[1] = (GROUP_VAL_POS(group, gate[1].start) +	GROUP_VAL_POS (group, gate[1].width));
+	//tt[2] = (GROUP_VAL_POS(group, gate[2].start) +	GROUP_VAL_POS (group, gate[2].width));
 
-	tt[3] = MAX(tt[0], (MAX(tt[1],tt[2]))) / 10;
+	//tt[3] = MAX(tt[0], (MAX(tt[1],tt[2]))) / 10;
 
-	TMP(group_spi[group]).rx_time		= MAX (tt[3], TMP(group_spi[group]).sample_range  + TMP(max_beam_delay[group])) + TMP(group_spi[group]).compress_rato;
+	TMP(group_spi[group]).rx_time		= TMP(group_spi[group]).sample_range  + TMP(max_beam_delay[group]) + TMP(group_spi[group]).compress_rato;
 	TMP(group_spi[group]).gain1			= 0;
 
 	if (get_group_val (p_grp, GROUP_PRF_VAL)  >= 400)
