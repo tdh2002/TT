@@ -387,7 +387,7 @@ const gchar *units_ch[] =
 {
 	"(mm)", "(in)", "(μs)", NULL, "(m/s)", "(in/μs)", "(dB)", 
 	"(1 to 97)", "(%)", "(ms)", "(mm/s)", "(1 to 113)", "(dB/mm)",
-	"(s)", "(°)", "(Step/mm)", "(rpm)", "(dB/in)","(dB/μs)","(in/s)"," "
+	"(s)", "(°)", "(Step/mm)", "(rpm)", "(dB/in)","(dB/μs)","(in/s)","VPA"," "
 };
 
 const gchar *all_menu_content_ch[] = 

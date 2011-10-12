@@ -42,8 +42,10 @@ static void set_config (guint groupid)
 	GROUP_VAL(agate_start)=1000;
 	GROUP_VAL(agate_width)=1000;
 
-	set_part_thickness (pp->p_config, GUINT_TO_POINTER (100));
+	set_part_thickness (pp->p_config, GUINT_TO_POINTER (50000));
 	set_part_diameter (pp->p_config, GUINT_TO_POINTER (1000));
+	set_part_material (pp->p_config, GUINT_TO_POINTER (1));
+	set_part_weld (pp->p_config, GUINT_TO_POINTER (1));
 	set_auto_detect (pp->p_config, NORMAL_OFF);
 
 	set_auto_focal (pp->p_config, NORMAL_ON);
@@ -78,7 +80,7 @@ static void set_config (guint groupid)
 	GROUP_VAL(sum_gain)	= 10;			/* 0是Auto */
 	GROUP_VAL(gate_pos)	= GATE_A;		  
 	GROUP_VAL(gate[GROUP_VAL(gate_pos)].start) = 0;  
-	GROUP_VAL(gate[GROUP_VAL(gate_pos)].width) = 10000;  
+	GROUP_VAL(gate[GROUP_VAL(gate_pos)].width) = 5000;  
 	GROUP_VAL(gate[GROUP_VAL(gate_pos)].parameters) = 0;
 	GROUP_VAL(gate[GROUP_VAL(gate_pos)].synchro) = 0;  
 
@@ -123,6 +125,11 @@ static void set_config (guint groupid)
 	GROUP_VAL(s_measure)=100.0;
 	GROUP_VAL(data_link)=0;  /* 0是none */
 
+	set_reading_field1 (pp->p_config, 0);/*A%*/
+	set_reading_field2 (pp->p_config, 31);/*DA*/
+	set_reading_field3 (pp->p_config, 29);/*PA*/
+	set_reading_field4 (pp->p_config, 33);/*SA*/
+
 	GROUP_VAL(probe.Model[0]) = 32;
 
 	set_display_table (pp->p_config, NORMAL_OFF);
@@ -154,10 +161,10 @@ static void set_config (guint groupid)
 	set_stripscan_data2 (pp->p_config, STRIP_SCAN_A_HEIGHT);
 	set_stripscan_mode (pp->p_config, STRIP_SCAN_ALL_ASCAN);
 	set_stripscan_disrange (pp->p_config, 100);
-	GROUP_VAL(ut_unit)=0;  /* 0 是 Sound Path */
+	GROUP_VAL(ut_unit)=2;  /* 2 是 true depth */
 	set_overlay_grid(pp->p_config, 5);     /*5是 Off*/
 	set_overlay_sizing_curves (pp->p_config, NORMAL_OFF);
-	set_overlay_gate (pp->p_config, NORMAL_OFF);
+	set_overlay_gate (pp->p_config, NORMAL_ON);
 	set_overlay_cursor (pp->p_config, NORMAL_OFF);
 	set_overlay_overlay (pp->p_config, NORMAL_OFF);
 
@@ -172,6 +179,7 @@ static void set_config (guint groupid)
 	GROUP_VAL(col_mode)    = 0;  /*0 Exclusion*/
 
 	set_dis_prop_scan (pp->p_config, DIS_PROP_SCAN_A);/*0 A-Scan*/
+	GROUP_VAL(ascan_color) = 3; 	/*3 Yellow*/
 	GROUP_VAL(ascan_envelope)	=	0; /*0 None*/
 	GROUP_VAL(ascan_appearance)	=	0; /*0 Hollow*/
 	GROUP_VAL(ascan_overlay)	=	0; /*0 None*/
@@ -180,7 +188,7 @@ static void set_config (guint groupid)
 	set_dis_prop_sinterpolation (pp->p_config, NORMAL_OFF);
 	set_dis_prop_strip_orientation (pp->p_config, NORMAL_OFF);
 
-	set_fft_color (pp->p_config, FFT_YELLOW); /* 0 Yellow*/
+	set_fft_color (pp->p_config, FFT_BLUE); /* 0 Blue*/
 
 	GROUP_VAL(skew_pos) = 1;
 
@@ -189,14 +197,14 @@ static void set_config (guint groupid)
 	LAW_VAL (Last_tx_elem)	=	2;
 	LAW_VAL (Elem_step)		=	1;
 	LAW_VAL (Wave_type)		=	LONGITUDINAL_WAVE;
-	LAW_VAL (Angle_min)		=	0;
-	LAW_VAL (Angle_max)		=	0;
+	LAW_VAL (Angle_min)		=	-2000;
+	LAW_VAL (Angle_max)		=	2000;
 	LAW_VAL	(Angle_step)	=	100;
 	LAW_VAL (Angle_beam_skew_min)		=	0;
 	LAW_VAL (Angle_beam_skew_max)		=	0;
 	LAW_VAL	(Angle_beam_skew_step)		=	100;
 	LAW_VAL (Focus_depth)	=	5000;
-	LAW_VAL (Position_start)	=	5000;
+	LAW_VAL (Position_start)	=	30000;
 	LAW_VAL (Position_end)	=	5000;
 	LAW_VAL (Offset_start)	=	2000;
 	LAW_VAL (Offset_end)	=	2000;
@@ -212,15 +220,15 @@ static void set_config (guint groupid)
 	set_inspec_type (pp->p_config, TYPE_ONE_LINE);
 	set_inspec_source (pp->p_config, SCAN_TIME);
 	set_inspec_index (pp->p_config, INDEX_AUTO);
-	set_inspec_speed (pp->p_config, 10);
+	set_inspec_speed (pp->p_config, 60000);
 	set_inspec_rpmspeed (pp->p_config, 10);
 	set_inspec_indexspeed (pp->p_config, 10);
 
 	set_area_scanstart (pp->p_config, 0);
-	set_area_scanend (pp->p_config, 346);
+	set_area_scanend (pp->p_config, 400000);//346);
 	set_area_scanresolution (pp->p_config, 100);
-	set_area_indexstart (pp->p_config, 1);
-	set_area_indexend (pp->p_config, 1);
+	set_area_indexstart (pp->p_config, 0);
+	set_area_indexend (pp->p_config, 400000);
 	set_area_indexresolution (pp->p_config, 100);
 
 	set_start_mode (pp->p_config, RESET_ALL);
@@ -232,10 +240,10 @@ static void set_config (guint groupid)
 	set_file_storage (pp->p_config, STORAGE_CARD);
 	set_file_save_mode (pp->p_config, SAVE_MODE_INSPEC_DATA);
 
-	set_report_format_userfield (pp->p_config, NORMAL_OFF);
-	set_report_format_probe (pp->p_config, NORMAL_OFF);
-	set_report_format_setup (pp->p_config, NORMAL_OFF);
-	set_report_format_note (pp->p_config, NORMAL_OFF);
+	set_report_format_userfield (pp->p_config, NORMAL_ON);
+	set_report_format_probe (pp->p_config, NORMAL_ON);
+	set_report_format_setup (pp->p_config, NORMAL_ON);
+	set_report_format_note (pp->p_config, NORMAL_ON);
 	set_report_format_view (pp->p_config, FILE_VIEW_TABLE);
 
 	set_report_userfield_select (pp->p_config, 0);
@@ -263,8 +271,8 @@ static void set_config (guint groupid)
 	LAW_VAL(Elem_qty)	= 16;
 	LAW_VAL(First_tx_elem)	= 1;
 	LAW_VAL(First_rx_elem)	= 1;
-	LAW_VAL(Last_tx_elem)	= 17;
-	LAW_VAL(Last_rx_elem)	= 17;
+	LAW_VAL(Last_tx_elem)	= 16;
+	LAW_VAL(Last_rx_elem)	= 16;
 	LAW_VAL(Elem_step)	= 1;
 	LAW_VAL(Angle_step)	= 100;
 	LAW_VAL(Focus_depth)	= 50000;
@@ -307,10 +315,12 @@ static void set_init_para()
 	pp->clb_count = 0;
 
 	pp->ref_amplitude = 8000;
-	pp->radiusa = 80000;
+//	pp->radiusa = 80000;
 	pp->tolerance_t = 500;
 	pp->tolerance = 500;
 	pp->distance = 10000.0;
+	pp->gate_start_clb = 0;
+	pp->gate_width_clb = 1760;
 	pp->last_angle = LAW_VAL(Angle_max);
 
 	TMP(velocity_data_p[0]) =  TMP(velocity_data[0]);
@@ -324,7 +334,7 @@ static void set_init_para()
 		pp->gate_a_end[i]	= (GROUP_VAL( gate[0].start) + GROUP_VAL( gate[0].width)) / 10;
 	}
 
-	set_part_weld (pp->p_config, (void*)1);
+	//set_part_weld (pp->p_config, (void*)1);
 	pp->wstart_qty = 1;
 
 	/*各步进初始值*/
@@ -445,7 +455,7 @@ static void set_init_para()
 	TMP(bright_reg)=0;		/*preferences -> pref. -> bright*/
 	TMP(distance_reg)=1;		/*preferences -> pref. -> bright*/
 
-	pp->p_config->bright = 50 ;  // default brightness is set to be 50%
+	//pp->p_config->bright = 50 ;  // default brightness is set to be 50%
 }
 
 int main (int argc, char *argv[])

@@ -78,9 +78,7 @@ typedef struct _calibration
 	//Ultrasound->Wedge Delay
 	gchar data;//保存半径，深度，厚度的值
 	gchar data_measure[20];//保存检测到的实际值
-	gchar wd_radius[20];
-	gchar wd_depth[20];
-	gchar wd_thickness[20];
+	gfloat distance;
 	gchar wd_delay[20];
 	
 } CALIBRATION,*CALIBRATION_P;
@@ -586,6 +584,8 @@ typedef struct Draw_interface
 	gint    clb_count;
 	gfloat  vel;
 	gfloat  wedge_delay;
+	gfloat  gate_start_clb;//
+	gfloat  gate_width_clb;//
 
 	//
 	guint    gate_a_start[ setup_MAX_LAW_QTY ];

@@ -931,9 +931,9 @@ static void draw3_digit_pressed (void (*fun)(GtkSpinButton*, gpointer), const gc
 	y = pp->pos1[x];
 	z = pos;
 
-	//if (!unit )
-		//str = g_strdup_printf ("%s", con2_p[x][y][content_pos ? content_pos : pos] );	
-	//else
+	if (!unit )
+		str = g_strdup_printf ("%s", con2_p[x][y][content_pos ? content_pos : pos] );	
+	else
 		str = g_strdup_printf ("%s\n%s Δ%0.*f", 
 				con2_p[x][y][content_pos ? content_pos : pos], unit, digit, step);	/* %*.*f 可以指点位数 */		
 
@@ -2152,7 +2152,6 @@ if(!(prule->mask & 0x04))
 		cairo_restore(cr);
 
 	}
-
 
 	/* 画ruler */
 
@@ -3596,9 +3595,17 @@ p->group+1, angle / 100.0, GROUP_VAL_POS(p->group, skew) / 100.0, num + 1);
 		case A_B_SCAN:
 			break;
 		case WEDGE_DELAY:
-			p->hmin1 = 0;
-			p->hmax1 = 100;
-			p->h1_unit = UNIT_BFH;
+			if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
+			{
+				p->hmin1 = pp->gate_start_clb / 2000.0;
+				p->hmax1 = (pp->gate_start_clb + pp->gate_width_clb) / 2000.0;
+			}
+			else
+			{
+				p->hmin1 = pp->gate_start_clb / 1000.0;
+				p->hmax1 = (pp->gate_start_clb + pp->gate_width_clb) / 1000.0;
+			}
+			p->h1_unit = UNIT_MM;
 			p->h1_color = 0xEDF169;
 
 			p->hmin2 = 0;
@@ -5583,14 +5590,14 @@ void draw3_data0(DRAW_UI_P p)
 						if(get_unit(pp->p_config) == UNIT_MM)
 						{
 							set_area_scanstart (pp->p_config, 0);
-							digit = 0;
+							digit = 2;
 							pos = 0;
 							unit = UNIT_MM;
 						}
 						else
 						{
 							set_area_scanstart (pp->p_config, 0);
-							digit = 0;
+							digit = 2;
 							pos = 0;
 							unit = UNIT_INCH;
 						}
@@ -7499,14 +7506,16 @@ void draw3_data1(DRAW_UI_P p)
 					{
 						if(get_unit(pp->p_config) == UNIT_MM)
 						{
-							set_area_scanstart (pp->p_config, 346);
+							//set_area_scanstart (pp->p_config, 346);
+							cur_value = get_area_scanend (pp->p_config)/1000.0;
 							digit = 2;
 							pos = 1;
 							unit = UNIT_MM;
 						}
 						else
 						{
-							set_area_scanstart (pp->p_config, 346.0*0.03937);
+							cur_value = get_area_scanend (pp->p_config)/1000.0*0.03937;
+							//set_area_scanstart (pp->p_config, 346.0*0.03937);
 							digit = 3;
 							pos = 1;
 							unit = UNIT_INCH;
@@ -15784,7 +15793,7 @@ void draw3_data4(DRAW_UI_P p)
 					{
 						if( get_unit(pp->p_config) == UNIT_MM )
 						{
-							cur_value = get_area_indexend (pp->p_config);
+							cur_value = get_area_indexend (pp->p_config)/1000.0;
 							digit = 2;
 							pos = 4;
 							unit = UNIT_MM;
