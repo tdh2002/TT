@@ -458,6 +458,36 @@ static void set_init_para()
 	//pp->p_config->bright = 50 ;  // default brightness is set to be 50%
 }
 
+void init_beam_qty()
+{
+	int i;
+    int tmp;
+	for(i = 0; i< get_group_qty (pp->p_config); i++ )
+	{
+		if (LAW_VAL_POS (i, Focal_type) == AZIMUTHAL_SCAN || DEPTH_SCAN == LAW_VAL_POS (i, Focal_type) )
+		{
+			tmp = (LAW_VAL_POS (i, Angle_max) - LAW_VAL_POS (i, Angle_min)) /
+					LAW_VAL_POS (i, Angle_step) + 1;
+
+		}
+		else if(LAW_VAL_POS (i, Focal_type) == LINEAR_SCAN)
+		{
+			tmp = (gint)( ( LAW_VAL_POS (i, Last_tx_elem) - LAW_VAL_POS (i, First_tx_elem) - LAW_VAL_POS (i, Elem_qty) + 1 ) /
+					LAW_VAL_POS (i, Elem_step) ) + 1;
+		}
+		else if(LAW_VAL_POS (i, Focal_type) == STATIC_SCAN)
+		{
+			tmp = 1 ;
+		}
+		TMP(beam_qty[i]) = tmp;
+	}
+}
+
+
+
+
+
+
 int main (int argc, char *argv[])
 {
 	DRAW_UI_P		p_ui;					
@@ -569,14 +599,15 @@ int main (int argc, char *argv[])
 
 
 	memset (TMP(scan_type), 0xff, 16);
-	TMP(beam_qty[0]) = 1;
-	TMP(beam_qty[1]) = 1;
-	TMP(beam_qty[2]) = 0;
-	TMP(beam_qty[3]) = 0;
-	TMP(beam_qty[4]) = 0;
-	TMP(beam_qty[5]) = 0;
-	TMP(beam_qty[6]) = 0;
-	TMP(beam_qty[7]) = 0;
+	//TMP(beam_qty[0]) = 1;
+	//TMP(beam_qty[1]) = 1;
+	//TMP(beam_qty[2]) = 0;
+	//TMP(beam_qty[3]) = 0;
+	//TMP(beam_qty[4]) = 0;
+	//TMP(beam_qty[5]) = 0;
+	//TMP(beam_qty[6]) = 0;
+	//TMP(beam_qty[7]) = 0;
+	init_beam_qty();  // for the virtual focal law needs to initialize the beam number at start
 
 	TMP(range_step_min) = ((gint)(GROUP_VAL(point_qty) * 10)+ 5) / 10 * 10;
 
@@ -599,6 +630,7 @@ int main (int argc, char *argv[])
 	{
 		init_group_spi (i - 1);
 		generate_focallaw (i - 1);
+		_init_group_spi(i-1);
 #if ARM
 		write_group_data (&TMP(group_spi[i - 1]), i - 1);
 		send_focal_spi (i - 1);//多余generate_focallaw中有
@@ -726,11 +758,11 @@ void send_group_spi (guint group)
 void init_group_spi (guint group)
 {
 	gint tmp = 0;// tt[4];
-	gint temp_prf;
+	//gint temp_prf;
 	GROUP *p_grp = get_group_by_id (pp->p_config, group);
 	//***************************************************
 
-	get_prf();
+	//get_prf();
 	if (get_group_val (get_group_by_id (pp->p_config, group), GROUP_FILTER_POS) == 0)
 	{
 		TMP(group_spi[group]).freq_band	= 0;
@@ -804,9 +836,9 @@ void init_group_spi (guint group)
 	if (get_group_val (p_grp, GROUP_PRF_VAL)  >= 400)
 			set_group_val (p_grp, GROUP_PRF_VAL, 400);
 
-	temp_prf = TMP(beam_qty[group]) * get_group_val (p_grp, GROUP_PRF_VAL);
-	TMP(group_spi[group]).idel_time		= 
-		100000000 / (temp_prf / (10)) - 2048 - TMP(group_spi[group]).rx_time;
+	//temp_prf = TMP(beam_qty[group]) * get_group_val (p_grp, GROUP_PRF_VAL);
+	//TMP(group_spi[group]).idel_time		=
+	//	100000000 / (temp_prf / (10)) - 2048 - TMP(group_spi[group]).rx_time;
 
 	TMP(group_spi[group]).gate_a_height	= GROUP_VAL_POS(group, gate[0].height);
 //	TMP(group_spi[group]).gate_a_start	=  GROUP_VAL_POS(group, gate[0].start) / 10 ;
@@ -865,6 +897,31 @@ void init_group_spi (guint group)
 
 }
 
+// add by shensheng
+void _init_group_spi(guint group)
+{
+	gint tmp = 0;// tt[4];
+	int i;
+	gint temp_prf;
+	GROUP *p_grp = get_group_by_id (pp->p_config, group);
 
+	int group_num = get_group_qty (pp->p_config)        ;
+	int beam_sum ;
+	for (beam_sum = 0 , i = 0; i < group_num; i++)
+			beam_sum += TMP(beam_qty[i]);
+	//***************************************************
+
+	get_prf();
+
+
+	TMP(group_spi[group]).rx_time		= TMP(group_spi[group]).sample_range  + TMP(max_beam_delay[group]) + TMP(group_spi[group]).compress_rato;
+
+	//temp_prf should consider multiple group and virtual focal law
+	//temp_prf is the same for
+	temp_prf = beam_sum  * get_group_val (p_grp, GROUP_PRF_VAL);
+	TMP(group_spi[group]).idel_time		=
+	     100000000 / (temp_prf / (10)) - 2048 - TMP(group_spi[group]).rx_time;
+
+}
 
 

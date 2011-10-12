@@ -5869,6 +5869,9 @@ void draw3_data1(DRAW_UI_P p)
 							}
 							GROUP_VAL_POS(get_current_group(pp->p_config), ut_unit) = UT_UNIT_TRUE_DEPTH;
 							generate_focallaw( (int)(get_current_group(pp->p_config)) );
+							send_group_spi ((int)(get_current_group(pp->p_config)));
+							send_focal_spi ((int)(get_current_group(pp->p_config)));
+
 						}
 					}
 					draw3_popdown (NULL, 1, 1);

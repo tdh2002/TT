@@ -1097,6 +1097,8 @@ void b3_fun1(gpointer p)
 						{
 							//生成聚焦法则
 							generate_focallaw(grp);
+							send_group_spi (grp);
+							send_focal_spi (grp);
 						}					
 						break;
 					case 2://Calibration
@@ -1892,6 +1894,8 @@ void b3_fun3(gpointer p)
 				case 4:
 					/* 计算聚焦法则 P643 */
 					generate_focallaw(get_current_group (pp->p_config));
+					send_group_spi (get_current_group (pp->p_config));
+					send_focal_spi (get_current_group (pp->p_config));
 					break;  
 				default:break;
 			}
@@ -6700,8 +6704,8 @@ void generate_focallaw(int grp)
 			pp->tmp_gain_off[i + offset] = 0;
 		}
 	}
-	send_focal_spi(grp);
-	write_group_data (&TMP(group_spi[grp]), grp);
+	//send_focal_spi(grp);
+	//write_group_data (&TMP(group_spi[grp]), grp);
 
  	if(!pp->clb_flag)
 		draw_area_all ();
@@ -6883,6 +6887,8 @@ void esc_calibration()
 			switch_area();//
 			GROUP_VAL_POS(get_current_group(pp->p_config), ut_unit) = pp->save_ut_unit;
 			generate_focallaw(get_current_group(pp->p_config));
+			send_group_spi (get_current_group(pp->p_config));
+		    send_focal_spi (get_current_group(pp->p_config));
 			pp->clb_count = 0;
 
 			pp->pos1[pp->pos] = 2;
