@@ -18030,7 +18030,8 @@ static void draw_frame_thread(void)
 	{
 
 		pthread_cond_wait( &draw_thread_signal, &draw_thread_mutex);
-        /*
+        *DMA_MARK=2 ;
+		/*
 		for (offset = 0, k = 0 ; k <  get_group_qty(pp->p_config); k++)
 		{
 			offset += (GROUP_VAL_POS(k, point_qty) + 32) * TMP(beam_qty[k]);
