@@ -18239,7 +18239,7 @@ void init_ui(DRAW_UI_P p)
 {
 	gint	i;
 	gchar	*markup;
-	pthread_t tid1, tid2;
+	pthread_t /*tid1,*/ tid2;
 	int ret;
 	p_drawui_c = p;
 	gint	grp = get_current_group (pp->p_config);

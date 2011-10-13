@@ -23,6 +23,8 @@ extern void focal_law(gpointer data);/*回调函数*/
 extern void draw_area_calibration();
 extern void switch_area();
 extern void draw_field_value ();
+extern void send_group_spi (guint grp);
+extern void send_focal_spi (guint grp);
 
 static int handler_key(guint keyval, gpointer data);
 static int thread_set_DB_eighty_percent(gpointer data);
@@ -628,9 +630,6 @@ guint get_max_prf()
 	int pulse_width;
 	int point_qty  ;
 	int wedge_delay;
-	int max_beam_delay;
-	int sample_start  ;
-	int sample_range  ;
 	int probe_element_num;
 	int velocity  ;
 	int beam_sum  ;

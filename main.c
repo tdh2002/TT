@@ -19,6 +19,7 @@
 
 DRAW_UI_P	pp;
 void init_group_spi (guint group);
+void _init_group_spi (guint group);
 void send_focal_spi (guint group);
 void send_group_spi (guint group);
 void shut_down_power();
@@ -910,7 +911,7 @@ void init_group_spi (guint group)
 // add by shensheng
 void _init_group_spi(guint group)
 {
-	gint tmp = 0;// tt[4];
+//	gint tmp = 0;// tt[4];
 	int i;
 	gint temp_prf;
 	GROUP *p_grp = get_group_by_id (pp->p_config, group);
