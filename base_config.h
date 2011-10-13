@@ -516,6 +516,8 @@ struct _Config
 	char	probe_type;
 	unsigned char	userfield_select;	/* File->User Field->select 当前选择userfield编号 */
 	unsigned char   damping_pos;
+
+	unsigned int virtual_focallaw    ;
 };
 
 extern unsigned char	get_damping_pos(CONFIG *p);

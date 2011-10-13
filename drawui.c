@@ -18062,6 +18062,8 @@ static void draw_frame_thread(void)
 						memcpy (TMP(measure_data[offset1 + j]), (void *)(temp2 + offset +
 									(GROUP_VAL_POS(i, point_qty) + 32) * j + GROUP_VAL_POS(i, point_qty)), 32);
 
+						//memcpy (TMP(measure_data[offset1 + j]), (void *)(temp2 + offset +
+						//  (GROUP_VAL_POS(i, point_qty) + 32) * (j + (pp->p_config->virtual_focallaw -1)*TMP(beam_qty[i]) ) + GROUP_VAL_POS(i, point_qty)), 32);
 						//BeamInfoHeader = *((int*)(TMP(measure_data[offset1+j])));
 						//BeamInfoHeader &= 0x1fff ;
 						//data = ((TMP(measure_data[offset1+j][1])));//>>20) & 0xfff);
@@ -18683,6 +18685,7 @@ void init_ui(DRAW_UI_P p)
 	pp->scan_count = 1;
 #if ARM
 	DMA_MARK = (int*)(pp->p_beam_data + 0x800000)  ;
+	*DMA_MARK = 0 ;
     printf("DMA_MAKR is %d \n", *DMA_MARK);	
 
 	ret = pthread_create (&tid1, NULL, (void*)draw_frame_thread, NULL);
@@ -18716,6 +18719,7 @@ void save_config (GtkWidget *widget, GdkEventButton *event,	gpointer data)
 		pData ++ ;
 	}
     */
+
 	i	=	lseek (TMP(fd_config), 0, SEEK_SET);
 	i	=	write (TMP(fd_config), pp->p_config, sizeof(CONFIG));
 	close (TMP(fd_config));

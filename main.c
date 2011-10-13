@@ -298,6 +298,7 @@ static void set_config (guint groupid)
  	set_output_holdtime(pp->p_config,100000);
 
 	set_bright(pp->p_config, 25);
+	pp->p_config->virtual_focallaw = 1 ;
 
 }
 
@@ -456,6 +457,7 @@ static void set_init_para()
 	TMP(distance_reg)=1;		/*preferences -> pref. -> bright*/
 
 	//pp->p_config->bright = 50 ;  // default brightness is set to be 50%
+
 }
 
 void init_beam_qty()
@@ -482,10 +484,6 @@ void init_beam_qty()
 		TMP(beam_qty[i]) = tmp;
 	}
 }
-
-
-
-
 
 
 int main (int argc, char *argv[])
@@ -652,6 +650,7 @@ int main (int argc, char *argv[])
 	gdk_threads_leave();
     
 	shut_down_power();
+
 	return 0;
 }
 
@@ -661,20 +660,26 @@ void shut_down_power()
 	unsigned char key = 10;
     i = write(pp->fd_key, &key,1);
     printf("shut down write serial %d\n", i);
+
 }
 
 void send_focal_spi (guint group)
 {
+
 	guint offset, beam_qty =TMP(beam_qty[group]), k, i,enablet = 0, enabler = 0;
 	guint tmp,index,channel_index_num,cnt;
 	GROUP *p_grp = get_group_by_id (pp->p_config, group);
+
+	int t;
+	int virtual_focallaw = pp->p_config->virtual_focallaw  ;
+	int beam_sum = get_beam_qty();
 
 	for (offset = 0, k = 0 ; k < group; k++)
 		offset += TMP(beam_qty[k]);
 	for (k = offset; k < offset + beam_qty; k++)
 	{   
 		TMP(focal_spi[k]).group	= group;
-		TMP(focal_spi[k]).all_beam_info	= get_beam_qty() - 1;
+		TMP(focal_spi[k]).all_beam_info	= beam_sum * virtual_focallaw - 1;
 		TMP(focal_spi[k]).gain_offset	= pp->tmp_gain_off[k];//GROUP_VAL_POS(group, gain_offset[k]);
 		TMP(focal_spi[k]).beam_delay	= TMP(focal_law_all_beam[k].G_delay) / 10;//(BEAM_INFO(k,beam_delay)+5)/10;
 		TMP(focal_spi[k]).gate_a_start  = pp->gate_a_start[k];
@@ -746,6 +751,12 @@ void send_focal_spi (guint group)
 		//}
 		
 		write_focal_data (&TMP(focal_spi[k]), k);
+	}
+
+	for(t = 1; t < virtual_focallaw; t ++)
+	{
+		for (k = offset; k < offset + beam_qty; k++)
+			write_focal_data (&TMP(focal_spi[k]), k + t * beam_sum);
 	}
 }
 
@@ -912,7 +923,7 @@ void _init_group_spi(guint group)
 	//***************************************************
 
 	get_prf();
-
+    //printf("get_prf() = %d\n", get_prf());
 
 	TMP(group_spi[group]).rx_time		= TMP(group_spi[group]).sample_range  + TMP(max_beam_delay[group]) + TMP(group_spi[group]).compress_rato;
 

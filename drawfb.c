@@ -1570,8 +1570,8 @@ void draw_scan(guchar scan_num, guchar scan_type, guchar group,
 	{
 		offset += (GROUP_VAL_POS(k, point_qty) + 32) * TMP(beam_qty[k]);
 	}
-	pData = (unsigned char *)(temp2 + offset) ;
-
+	//pData = (unsigned char *)(temp2 + offset + (pp->p_config->virtual_focallaw -1) * TMP(beam_qty[group]) *  (GROUP_VAL_POS( group, point_qty) + 32) ) ;
+	pData = (unsigned char *)(temp2 + offset );
 	switch (scan_type)
 	{
 		case A_SCAN:
