@@ -930,9 +930,9 @@ static void draw3_digit_pressed (void (*fun)(GtkSpinButton*, gpointer), const gc
 	y = pp->pos1[x];
 	z = pos;
 
-	//if (!unit )
-		//str = g_strdup_printf ("%s", con2_p[x][y][content_pos ? content_pos : pos] );	
-	//else
+	if (!unit )
+		str = g_strdup_printf ("%s", con2_p[x][y][content_pos ? content_pos : pos] );	
+	else
 		str = g_strdup_printf ("%s\n%s Δ%0.*f", 
 				con2_p[x][y][content_pos ? content_pos : pos], unit, digit, step);	/* %*.*f 可以指点位数 */		
 
@@ -2151,7 +2151,6 @@ if(!(prule->mask & 0x04))
 		cairo_restore(cr);
 
 	}
-
 
 	/* 画ruler */
 
@@ -5553,14 +5552,14 @@ void draw3_data0(DRAW_UI_P p)
 						if(get_unit(pp->p_config) == UNIT_MM)
 						{
 							set_area_scanstart (pp->p_config, 0);
-							digit = 0;
+							digit = 2;
 							pos = 0;
 							unit = UNIT_MM;
 						}
 						else
 						{
 							set_area_scanstart (pp->p_config, 0);
-							digit = 0;
+							digit = 2;
 							pos = 0;
 							unit = UNIT_INCH;
 						}
@@ -7474,14 +7473,16 @@ void draw3_data1(DRAW_UI_P p)
 					{
 						if(get_unit(pp->p_config) == UNIT_MM)
 						{
-							set_area_scanstart (pp->p_config, 346);
+							//set_area_scanstart (pp->p_config, 346);
+							cur_value = get_area_scanend (pp->p_config)/1000.0;
 							digit = 2;
 							pos = 1;
 							unit = UNIT_MM;
 						}
 						else
 						{
-							set_area_scanstart (pp->p_config, 346.0*0.03937);
+							cur_value = get_area_scanend (pp->p_config)/1000.0*0.03937;
+							//set_area_scanstart (pp->p_config, 346.0*0.03937);
 							digit = 3;
 							pos = 1;
 							unit = UNIT_INCH;
@@ -15762,7 +15763,7 @@ void draw3_data4(DRAW_UI_P p)
 					{
 						if( get_unit(pp->p_config) == UNIT_MM )
 						{
-							cur_value = get_area_indexend (pp->p_config);
+							cur_value = get_area_indexend (pp->p_config)/1000.0;
 							digit = 2;
 							pos = 4;
 							unit = UNIT_MM;
@@ -17924,22 +17925,6 @@ void calc_measure_data()
 
 
 
-static void signal_scan_thread(void)
-{
-	while(1)
-	{
-		if(*DMA_MARK==0)
-		{
-
-                     pthread_mutex_lock(&draw_thread_mutex);
-		             pthread_cond_signal(&draw_thread_signal);
-            	     pthread_mutex_unlock(&draw_thread_mutex);
-					//sem_post(&sem) ;
-		}
-		//if(*DMA_MARK>2){ printf("DMA_MARK = %d \n", *DMA_MARK) ; *DMA_MARK=1; }
-		usleep(40000);
-	}
-}
 
 
 
@@ -17987,7 +17972,7 @@ int key_read_delay()
 	return 0;
 }
 
-static void draw_frame_thread(void)
+int draw_frame_thread(void)
 {
 
 	gint i, j, k, offset, offset1;
@@ -17995,22 +17980,23 @@ static void draw_frame_thread(void)
 	//guint buff_addr = (pp->p_beam_data) + 256 * 1024 ;
     //unsigned int BeamInfoHeader;
 	//unsigned int data;
-	while (1)
+	//while (1)
+	//{
+
+	//pthread_cond_wait( &draw_thread_signal, &draw_thread_mutex);
+	//DMA_MARK=2 ;
+	/*
+	for (offset = 0, k = 0 ; k <  get_group_qty(pp->p_config); k++)
 	{
+		offset += (GROUP_VAL_POS(k, point_qty) + 32) * TMP(beam_qty[k]);
+	}
 
-		pthread_cond_wait( &draw_thread_signal, &draw_thread_mutex);
-        /*
-		for (offset = 0, k = 0 ; k <  get_group_qty(pp->p_config); k++)
-		{
-			offset += (GROUP_VAL_POS(k, point_qty) + 32) * TMP(beam_qty[k]);
-		}
-
-		if(TMP(freeze))
-		{
-			//printf("memecpy\n");
-			memcpy ((void*)(buff_addr), (void *)(temp2) , offset );
-		}
-		*/
+	if(TMP(freeze))
+	{
+		//printf("memecpy\n");
+		memcpy ((void*)(buff_addr), (void *)(temp2) , offset );
+	}
+	*/
 		for (i = 0 ; i < get_group_qty(pp->p_config); i++)
 		{
 			/* 获取数据 */
@@ -18027,6 +18013,8 @@ static void draw_frame_thread(void)
 						memcpy (TMP(measure_data[offset1 + j]), (void *)(temp2 + offset +
 									(GROUP_VAL_POS(i, point_qty) + 32) * j + GROUP_VAL_POS(i, point_qty)), 32);
 
+						//memcpy (TMP(measure_data[offset1 + j]), (void *)(temp2 + offset +
+						//  (GROUP_VAL_POS(i, point_qty) + 32) * (j + (pp->p_config->virtual_focallaw -1)*TMP(beam_qty[i]) ) + GROUP_VAL_POS(i, point_qty)), 32);
 						//BeamInfoHeader = *((int*)(TMP(measure_data[offset1+j])));
 						//BeamInfoHeader &= 0x1fff ;
 						//data = ((TMP(measure_data[offset1+j][1])));//>>20) & 0xfff);
@@ -18070,8 +18058,32 @@ static void draw_frame_thread(void)
 		*DMA_MARK = 1 ;
 		calc_measure_data();//计算数据
 		draw_field_value ();
+	//}
+		return 0 ;
+}
+
+
+
+static void signal_scan_thread(void)
+{
+	while(1)
+	{
+		if(*DMA_MARK==0)
+		{
+
+                     //pthread_mutex_lock(&draw_thread_mutex);
+		             //pthread_cond_signal(&draw_thread_signal);
+            	     //pthread_mutex_unlock(&draw_thread_mutex);
+					//sem_post(&sem) ;
+			*DMA_MARK = 2 ;
+			g_timeout_add (0, (GSourceFunc) draw_frame_thread, NULL);
+		}
+		//if(*DMA_MARK>2){ printf("DMA_MARK = %d \n", *DMA_MARK) ; *DMA_MARK=1; }
+		usleep(40000);
 	}
 }
+
+
 
 
 #endif
@@ -18636,13 +18648,14 @@ void init_ui(DRAW_UI_P p)
 	pp->scan_count = 1;
 #if ARM
 	DMA_MARK = (int*)(pp->p_beam_data + 0x800000)  ;
+	*DMA_MARK = 0 ;
     printf("DMA_MAKR is %d \n", *DMA_MARK);	
 
-	ret = pthread_create (&tid1, NULL, (void*)draw_frame_thread, NULL);
-    if(ret){
-		perror("in1:");
-	    return;
-	}
+	//ret = pthread_create (&tid1, NULL, (void*)draw_frame_thread, NULL);
+    //if(ret){
+	//	perror("in1:");
+	//    return;
+	//}
 	ret = pthread_create (&tid2, NULL, (void*)signal_scan_thread, NULL);	
 	if(ret){
 		perror("in1:");
@@ -18669,6 +18682,7 @@ void save_config (GtkWidget *widget, GdkEventButton *event,	gpointer data)
 		pData ++ ;
 	}
     */
+
 	i	=	lseek (TMP(fd_config), 0, SEEK_SET);
 	i	=	write (TMP(fd_config), pp->p_config, sizeof(CONFIG));
 	close (TMP(fd_config));

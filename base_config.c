@@ -24,7 +24,7 @@ typedef struct _Material
 	char			Name[20];		/* 材料名字 */
 } st_MATERIAL;
 
-static const st_MATERIAL data[] =
+static const st_MATERIAL data_en[] =
 {
 	{626000, 308000, "Aluminum"},			/* 0 */
 	{592000, 323000, "Steel common"},		/* 1 */
@@ -50,6 +50,33 @@ static const st_MATERIAL data[] =
 	{231100, 0, "Rubber vulcanized"},		/* 21 */
 	{142200, 0, "Teflon"},					/* 22 */
 	{148000, 0, "Water"}					/* 23 */
+};
+static const st_MATERIAL data_ch[] =
+{
+	{626000, 308000, "铝"},			/* 0 */
+	{592000, 323000, "普通钢"},		/* 1 */
+	{566400, 0, "不锈钢"},			/* 2 */
+	{439400, 0, "黄铜"},					/* 3 */
+	{470000, 226000, "铜"},				/* 4 */
+	{589300, 323000, "铁"},				/* 5 */
+	{215900, 0, "铅"},					/* 6 */
+	{220000, 0, "尼龙"},					/* 7 */
+	{360700, 0, "银"},					/* 8 */
+	{325100, 0, "金"},					/* 8 */
+	{421600, 0, "锌"},					/* 10 */
+	{609600, 0, "钛"},				/* 11 */
+	{332700, 0, "锡"},						/* 12 */
+	{254000, 110000, "环氧树脂"},		/* 13 */
+	{398800, 0, "冰"},						/* 14 */
+	{563900, 0, "镍"},					/* 15 */
+	{273000, 146000, "树脂玻璃"},			/* 16 */
+	{235000, 115000, "聚苯乙烯"},		/* 17 */
+	{584200, 0, "瓷器"},				/* 18 */
+	{238800, 0, "聚氯乙烯"},						/* 19 */
+	{563900, 0, "石英玻璃"},			/* 20 */
+	{231100, 0, "硫化橡胶"},		/* 21 */
+	{142200, 0, "聚四氟乙烯"},					/* 22 */
+	{148000, 0, "水"}					/* 23 */
 };
 
 unsigned char get_damping_pos (CONFIG *p)
@@ -78,17 +105,20 @@ static inline int set_bit_value (int val, int bit, int val1)
 
 char *get_material_name (CONFIG *p)
 {
-	return (char *)(data[p->part.Material_pos].Name);
+	if(get_language (pp->p_config)==0)
+		return (char *)(data_en[p->part.Material_pos].Name);
+	else
+		return (char *)(data_ch[p->part.Material_pos].Name);
 }
 
 unsigned int get_material_lw (CONFIG *p)
 {
-	return data[p->part.Material_pos].Velocity_LW;
+	return data_en[p->part.Material_pos].Velocity_LW;
 }
 
 unsigned int get_material_sw (CONFIG *p)
 {
-	return data[p->part.Material_pos].Velocity_SW;
+	return data_en[p->part.Material_pos].Velocity_SW;
 }
 
 unsigned char get_part_geometry (CONFIG *p)

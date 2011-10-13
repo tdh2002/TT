@@ -42,8 +42,10 @@ static void set_config (guint groupid)
 	GROUP_VAL(agate_start)=1000;
 	GROUP_VAL(agate_width)=1000;
 
-	set_part_thickness (pp->p_config, GUINT_TO_POINTER (100));
+	set_part_thickness (pp->p_config, GUINT_TO_POINTER (50000));
 	set_part_diameter (pp->p_config, GUINT_TO_POINTER (1000));
+	set_part_material (pp->p_config, GUINT_TO_POINTER (1));
+	set_part_weld (pp->p_config, GUINT_TO_POINTER (1));
 	set_auto_detect (pp->p_config, NORMAL_OFF);
 
 	set_auto_focal (pp->p_config, NORMAL_ON);
@@ -78,7 +80,7 @@ static void set_config (guint groupid)
 	GROUP_VAL(sum_gain)	= 10;			/* 0是Auto */
 	GROUP_VAL(gate_pos)	= GATE_A;		  
 	GROUP_VAL(gate[GROUP_VAL(gate_pos)].start) = 0;  
-	GROUP_VAL(gate[GROUP_VAL(gate_pos)].width) = 10000;  
+	GROUP_VAL(gate[GROUP_VAL(gate_pos)].width) = 5000;  
 	GROUP_VAL(gate[GROUP_VAL(gate_pos)].parameters) = 0;
 	GROUP_VAL(gate[GROUP_VAL(gate_pos)].synchro) = 0;  
 
@@ -123,6 +125,11 @@ static void set_config (guint groupid)
 	GROUP_VAL(s_measure)=100.0;
 	GROUP_VAL(data_link)=0;  /* 0是none */
 
+	set_reading_field1 (pp->p_config, 0);/*A%*/
+	set_reading_field2 (pp->p_config, 31);/*DA*/
+	set_reading_field3 (pp->p_config, 29);/*PA*/
+	set_reading_field4 (pp->p_config, 33);/*SA*/
+
 	GROUP_VAL(probe.Model[0]) = 32;
 
 	set_display_table (pp->p_config, NORMAL_OFF);
@@ -154,10 +161,10 @@ static void set_config (guint groupid)
 	set_stripscan_data2 (pp->p_config, STRIP_SCAN_A_HEIGHT);
 	set_stripscan_mode (pp->p_config, STRIP_SCAN_ALL_ASCAN);
 	set_stripscan_disrange (pp->p_config, 100);
-	GROUP_VAL(ut_unit)=0;  /* 0 是 Sound Path */
+	GROUP_VAL(ut_unit)=2;  /* 2 是 true depth */
 	set_overlay_grid(pp->p_config, 5);     /*5是 Off*/
 	set_overlay_sizing_curves (pp->p_config, NORMAL_OFF);
-	set_overlay_gate (pp->p_config, NORMAL_OFF);
+	set_overlay_gate (pp->p_config, NORMAL_ON);
 	set_overlay_cursor (pp->p_config, NORMAL_OFF);
 	set_overlay_overlay (pp->p_config, NORMAL_OFF);
 
@@ -172,6 +179,7 @@ static void set_config (guint groupid)
 	GROUP_VAL(col_mode)    = 0;  /*0 Exclusion*/
 
 	set_dis_prop_scan (pp->p_config, DIS_PROP_SCAN_A);/*0 A-Scan*/
+	GROUP_VAL(ascan_color) = 3; 	/*3 Yellow*/
 	GROUP_VAL(ascan_envelope)	=	0; /*0 None*/
 	GROUP_VAL(ascan_appearance)	=	0; /*0 Hollow*/
 	GROUP_VAL(ascan_overlay)	=	0; /*0 None*/
@@ -180,7 +188,7 @@ static void set_config (guint groupid)
 	set_dis_prop_sinterpolation (pp->p_config, NORMAL_OFF);
 	set_dis_prop_strip_orientation (pp->p_config, NORMAL_OFF);
 
-	set_fft_color (pp->p_config, FFT_YELLOW); /* 0 Yellow*/
+	set_fft_color (pp->p_config, FFT_BLUE); /* 0 Blue*/
 
 	GROUP_VAL(skew_pos) = 1;
 
@@ -189,14 +197,14 @@ static void set_config (guint groupid)
 	LAW_VAL (Last_tx_elem)	=	2;
 	LAW_VAL (Elem_step)		=	1;
 	LAW_VAL (Wave_type)		=	LONGITUDINAL_WAVE;
-	LAW_VAL (Angle_min)		=	0;
-	LAW_VAL (Angle_max)		=	0;
+	LAW_VAL (Angle_min)		=	-2000;
+	LAW_VAL (Angle_max)		=	2000;
 	LAW_VAL	(Angle_step)	=	100;
 	LAW_VAL (Angle_beam_skew_min)		=	0;
 	LAW_VAL (Angle_beam_skew_max)		=	0;
 	LAW_VAL	(Angle_beam_skew_step)		=	100;
 	LAW_VAL (Focus_depth)	=	5000;
-	LAW_VAL (Position_start)	=	5000;
+	LAW_VAL (Position_start)	=	30000;
 	LAW_VAL (Position_end)	=	5000;
 	LAW_VAL (Offset_start)	=	2000;
 	LAW_VAL (Offset_end)	=	2000;
@@ -212,15 +220,15 @@ static void set_config (guint groupid)
 	set_inspec_type (pp->p_config, TYPE_ONE_LINE);
 	set_inspec_source (pp->p_config, SCAN_TIME);
 	set_inspec_index (pp->p_config, INDEX_AUTO);
-	set_inspec_speed (pp->p_config, 10);
+	set_inspec_speed (pp->p_config, 60000);
 	set_inspec_rpmspeed (pp->p_config, 10);
 	set_inspec_indexspeed (pp->p_config, 10);
 
 	set_area_scanstart (pp->p_config, 0);
-	set_area_scanend (pp->p_config, 346);
+	set_area_scanend (pp->p_config, 400000);//346);
 	set_area_scanresolution (pp->p_config, 100);
-	set_area_indexstart (pp->p_config, 1);
-	set_area_indexend (pp->p_config, 1);
+	set_area_indexstart (pp->p_config, 0);
+	set_area_indexend (pp->p_config, 400000);
 	set_area_indexresolution (pp->p_config, 100);
 
 	set_start_mode (pp->p_config, RESET_ALL);
@@ -232,10 +240,10 @@ static void set_config (guint groupid)
 	set_file_storage (pp->p_config, STORAGE_CARD);
 	set_file_save_mode (pp->p_config, SAVE_MODE_INSPEC_DATA);
 
-	set_report_format_userfield (pp->p_config, NORMAL_OFF);
-	set_report_format_probe (pp->p_config, NORMAL_OFF);
-	set_report_format_setup (pp->p_config, NORMAL_OFF);
-	set_report_format_note (pp->p_config, NORMAL_OFF);
+	set_report_format_userfield (pp->p_config, NORMAL_ON);
+	set_report_format_probe (pp->p_config, NORMAL_ON);
+	set_report_format_setup (pp->p_config, NORMAL_ON);
+	set_report_format_note (pp->p_config, NORMAL_ON);
 	set_report_format_view (pp->p_config, FILE_VIEW_TABLE);
 
 	set_report_userfield_select (pp->p_config, 0);
@@ -263,8 +271,8 @@ static void set_config (guint groupid)
 	LAW_VAL(Elem_qty)	= 16;
 	LAW_VAL(First_tx_elem)	= 1;
 	LAW_VAL(First_rx_elem)	= 1;
-	LAW_VAL(Last_tx_elem)	= 17;
-	LAW_VAL(Last_rx_elem)	= 17;
+	LAW_VAL(Last_tx_elem)	= 16;
+	LAW_VAL(Last_rx_elem)	= 16;
 	LAW_VAL(Elem_step)	= 1;
 	LAW_VAL(Angle_step)	= 100;
 	LAW_VAL(Focus_depth)	= 50000;
@@ -290,6 +298,7 @@ static void set_config (guint groupid)
  	set_output_holdtime(pp->p_config,100000);
 
 	set_bright(pp->p_config, 25);
+	pp->p_config->virtual_focallaw = 1 ;
 
 }
 
@@ -325,7 +334,6 @@ static void set_init_para()
 		pp->gate_a_start[i]	=  GROUP_VAL( gate[0].start) / 10 ;
 		pp->gate_a_end[i]	= (GROUP_VAL( gate[0].start) + GROUP_VAL( gate[0].width)) / 10;
 	}
-	
 	set_part_weld (pp->p_config, (void*)1);
 	pp->wstart_qty = 1;
 
@@ -447,8 +455,35 @@ static void set_init_para()
 	TMP(bright_reg)=0;		/*preferences -> pref. -> bright*/
 	TMP(distance_reg)=1;		/*preferences -> pref. -> bright*/
 
-	pp->p_config->bright = 50 ;  // default brightness is set to be 50%
+	//pp->p_config->bright = 50 ;  // default brightness is set to be 50%
+
 }
+
+void init_beam_qty()
+{
+	int i;
+    int tmp;
+	for(i = 0; i< get_group_qty (pp->p_config); i++ )
+	{
+		if (LAW_VAL_POS (i, Focal_type) == AZIMUTHAL_SCAN || DEPTH_SCAN == LAW_VAL_POS (i, Focal_type) )
+		{
+			tmp = (LAW_VAL_POS (i, Angle_max) - LAW_VAL_POS (i, Angle_min)) /
+					LAW_VAL_POS (i, Angle_step) + 1;
+
+		}
+		else if(LAW_VAL_POS (i, Focal_type) == LINEAR_SCAN)
+		{
+			tmp = (gint)( ( LAW_VAL_POS (i, Last_tx_elem) - LAW_VAL_POS (i, First_tx_elem) - LAW_VAL_POS (i, Elem_qty) + 1 ) /
+					LAW_VAL_POS (i, Elem_step) ) + 1;
+		}
+		else if(LAW_VAL_POS (i, Focal_type) == STATIC_SCAN)
+		{
+			tmp = 1 ;
+		}
+		TMP(beam_qty[i]) = tmp;
+	}
+}
+
 
 int main (int argc, char *argv[])
 {
@@ -561,14 +596,15 @@ int main (int argc, char *argv[])
 
 
 	memset (TMP(scan_type), 0xff, 16);
-	TMP(beam_qty[0]) = 1;
-	TMP(beam_qty[1]) = 1;
-	TMP(beam_qty[2]) = 0;
-	TMP(beam_qty[3]) = 0;
-	TMP(beam_qty[4]) = 0;
-	TMP(beam_qty[5]) = 0;
-	TMP(beam_qty[6]) = 0;
-	TMP(beam_qty[7]) = 0;
+	//TMP(beam_qty[0]) = 1;
+	//TMP(beam_qty[1]) = 1;
+	//TMP(beam_qty[2]) = 0;
+	//TMP(beam_qty[3]) = 0;
+	//TMP(beam_qty[4]) = 0;
+	//TMP(beam_qty[5]) = 0;
+	//TMP(beam_qty[6]) = 0;
+	//TMP(beam_qty[7]) = 0;
+	init_beam_qty();  // for the virtual focal law needs to initialize the beam number at start
 
 	TMP(range_step_min) = ((gint)(GROUP_VAL(point_qty) * 10)+ 5) / 10 * 10;
 
@@ -591,6 +627,7 @@ int main (int argc, char *argv[])
 	{
 		init_group_spi (i - 1);
 		generate_focallaw (i - 1);
+		_init_group_spi(i-1);
 #if ARM
 		write_group_data (&TMP(group_spi[i - 1]), i - 1);
 		send_focal_spi (i - 1);//多余generate_focallaw中有
@@ -612,6 +649,7 @@ int main (int argc, char *argv[])
 	gdk_threads_leave();
     
 	shut_down_power();
+
 	return 0;
 }
 
@@ -621,20 +659,26 @@ void shut_down_power()
 	unsigned char key = 10;
     i = write(pp->fd_key, &key,1);
     printf("shut down write serial %d\n", i);
+
 }
 
 void send_focal_spi (guint group)
 {
+
 	guint offset, beam_qty =TMP(beam_qty[group]), k, i,enablet = 0, enabler = 0;
 	guint tmp,index,channel_index_num,cnt;
 	GROUP *p_grp = get_group_by_id (pp->p_config, group);
+
+	int t;
+	int virtual_focallaw = pp->p_config->virtual_focallaw  ;
+	int beam_sum = get_beam_qty();
 
 	for (offset = 0, k = 0 ; k < group; k++)
 		offset += TMP(beam_qty[k]);
 	for (k = offset; k < offset + beam_qty; k++)
 	{   
 		TMP(focal_spi[k]).group	= group;
-		TMP(focal_spi[k]).all_beam_info	= get_beam_qty() - 1;
+		TMP(focal_spi[k]).all_beam_info	= beam_sum * virtual_focallaw - 1;
 		TMP(focal_spi[k]).gain_offset	= pp->tmp_gain_off[k];//GROUP_VAL_POS(group, gain_offset[k]);
 		TMP(focal_spi[k]).beam_delay	= TMP(focal_law_all_beam[k].G_delay) / 10;//(BEAM_INFO(k,beam_delay)+5)/10;
 		TMP(focal_spi[k]).gate_a_start  = pp->gate_a_start[k];
@@ -707,6 +751,12 @@ void send_focal_spi (guint group)
 		
 		write_focal_data (&TMP(focal_spi[k]), k);
 	}
+
+	for(t = 1; t < virtual_focallaw; t ++)
+	{
+		for (k = offset; k < offset + beam_qty; k++)
+			write_focal_data (&TMP(focal_spi[k]), k + t * beam_sum);
+	}
 }
 
 void send_group_spi (guint group)
@@ -717,12 +767,12 @@ void send_group_spi (guint group)
 /* 初始化需要发给fpga的group参数 */
 void init_group_spi (guint group)
 {
-	gint tmp = 0, tt[4];
-	gint temp_prf;
+	gint tmp = 0;// tt[4];
+	//gint temp_prf;
 	GROUP *p_grp = get_group_by_id (pp->p_config, group);
 	//***************************************************
 
-	get_prf();
+	//get_prf();
 	if (get_group_val (get_group_by_id (pp->p_config, group), GROUP_FILTER_POS) == 0)
 	{
 		TMP(group_spi[group]).freq_band	= 0;
@@ -784,21 +834,21 @@ void init_group_spi (guint group)
 	TMP(group_spi[group]).point_qty  = GROUP_VAL(point_qty);
 	TMP(group_spi[group]).sample_offset	= 0;
 
-	tt[0] = (GROUP_VAL_POS(group, gate[0].start) +	GROUP_VAL_POS (group, gate[0].width));
-	tt[1] = (GROUP_VAL_POS(group, gate[1].start) +	GROUP_VAL_POS (group, gate[1].width));
-	tt[2] = (GROUP_VAL_POS(group, gate[2].start) +	GROUP_VAL_POS (group, gate[2].width));
+	//tt[0] = (GROUP_VAL_POS(group, gate[0].start) +	GROUP_VAL_POS (group, gate[0].width));
+	//tt[1] = (GROUP_VAL_POS(group, gate[1].start) +	GROUP_VAL_POS (group, gate[1].width));
+	//tt[2] = (GROUP_VAL_POS(group, gate[2].start) +	GROUP_VAL_POS (group, gate[2].width));
 
-	tt[3] = MAX(tt[0], (MAX(tt[1],tt[2]))) / 10;
+	//tt[3] = MAX(tt[0], (MAX(tt[1],tt[2]))) / 10;
 
-	TMP(group_spi[group]).rx_time		= MAX (tt[3], TMP(group_spi[group]).sample_range  + TMP(max_beam_delay[group])) + TMP(group_spi[group]).compress_rato;
+	TMP(group_spi[group]).rx_time		= TMP(group_spi[group]).sample_range  + TMP(max_beam_delay[group]) + TMP(group_spi[group]).compress_rato;
 	TMP(group_spi[group]).gain1			= 0;
 
 	if (get_group_val (p_grp, GROUP_PRF_VAL)  >= 400)
 			set_group_val (p_grp, GROUP_PRF_VAL, 400);
 
-	temp_prf = TMP(beam_qty[group]) * get_group_val (p_grp, GROUP_PRF_VAL);
-	TMP(group_spi[group]).idel_time		= 
-		100000000 / (temp_prf / (10)) - 2048 - TMP(group_spi[group]).rx_time;
+	//temp_prf = TMP(beam_qty[group]) * get_group_val (p_grp, GROUP_PRF_VAL);
+	//TMP(group_spi[group]).idel_time		=
+	//	100000000 / (temp_prf / (10)) - 2048 - TMP(group_spi[group]).rx_time;
 
 	TMP(group_spi[group]).gate_a_height	= GROUP_VAL_POS(group, gate[0].height);
 //	TMP(group_spi[group]).gate_a_start	=  GROUP_VAL_POS(group, gate[0].start) / 10 ;
@@ -857,6 +907,31 @@ void init_group_spi (guint group)
 
 }
 
+// add by shensheng
+void _init_group_spi(guint group)
+{
+	gint tmp = 0;// tt[4];
+	int i;
+	gint temp_prf;
+	GROUP *p_grp = get_group_by_id (pp->p_config, group);
 
+	int group_num = get_group_qty (pp->p_config)        ;
+	int beam_sum ;
+	for (beam_sum = 0 , i = 0; i < group_num; i++)
+			beam_sum += TMP(beam_qty[i]);
+	//***************************************************
+
+	get_prf();
+    //printf("get_prf() = %d\n", get_prf());
+
+	TMP(group_spi[group]).rx_time		= TMP(group_spi[group]).sample_range  + TMP(max_beam_delay[group]) + TMP(group_spi[group]).compress_rato;
+
+	//temp_prf should consider multiple group and virtual focal law
+	//temp_prf is the same for
+	temp_prf = beam_sum  * get_group_val (p_grp, GROUP_PRF_VAL);
+	TMP(group_spi[group]).idel_time		=
+	     100000000 / (temp_prf / (10)) - 2048 - TMP(group_spi[group]).rx_time;
+
+}
 
 
