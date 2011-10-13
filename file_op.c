@@ -1362,9 +1362,9 @@ void report_build_group_config(char *file_name,int group)
 void report_build_image(char *file_name)
 {
 
-	char *screen_filename = "fb.jpg";
+	//char *screen_filename = "fb.jpg";
 
-	char *fbfilename = "/dev/fb1";
+	//char *fbfilename = "/dev/fb1";
 
     assert(file_name != NULL);
 

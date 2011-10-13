@@ -79,7 +79,6 @@ typedef struct _calibration
 	gchar data;//保存半径，深度，厚度的值
 	gchar data_measure[20];//保存检测到的实际值
 	gfloat distance;
-	gchar wd_delay[20];
 	
 } CALIBRATION,*CALIBRATION_P;
 
@@ -291,18 +290,19 @@ typedef struct tmp_config
 //	guint	clb_a_scan_dot_qty;		/*  */
 	guint   clb_width;//Calibration
 	guint   clb_height;//Calibration
-	guint	clb_a_scan_width;
-	guint	clb_a_scan_height;
-	guint	clb_s_scan_width;
-	guint	clb_s_scan_height;
-	gfloat	clb_real_data[setup_MAX_LAW_QTY];
-	gfloat	clb_max_data[setup_MAX_LAW_QTY];
+//	guint	clb_a_scan_width;
+//	guint	clb_a_scan_height;
+//	guint	clb_s_scan_width;
+//	guint	clb_s_scan_height;
+	gfloat	clb_real_data[setup_MAX_LAW_QTY];//A%
+	gfloat	clb_max_data[setup_MAX_LAW_QTY];//A%
+	gfloat	clb_wedge_data[setup_MAX_LAW_QTY];//A^
 	gfloat  clb_his_max_data;
 
-	guchar	clb_scan_type[16];	/* 16个窗口显示的类型 */
-	guchar	clb_scan_group[16];	/* 16个窗口对应的group */
-	guint	clb_scan_xpos[16];
-	guint	clb_scan_ypos[16];
+//	guchar	clb_scan_type[16];	/* 16个窗口显示的类型 */
+//	guchar	clb_scan_group[16];	/* 16个窗口对应的group */
+//	guint	clb_scan_xpos[16];
+//	guint	clb_scan_ypos[16];
 
 	gchar	velocity_data[3][20];
 	gchar	*velocity_data_p[3];
@@ -397,7 +397,7 @@ typedef struct Draw_interface
 
 	GtkWidget		*drawing_area;
 	DRAW_AREA		draw_area[16];
-	DRAW_AREA		draw_area_clb[16];//Calibration
+	
 	/*boxes*/
 	GtkWidget		*vbox;			/* 整个window */
 	GtkWidget		*hbox1;			/* 上方数据显示 */
@@ -413,11 +413,10 @@ typedef struct Draw_interface
 	GtkWidget		*vbox21;		/* 一、二级菜单， 及画图区域 */
 	GtkWidget		*hbox211;		/* 画图区域 及 vscalebox  */
 	GtkWidget		*vboxtable;             /* 各个画图区域            */
+	GtkWidget		*vbox_draw_area;             /* 各个画图区域            */
 
 	GtkWidget		*vbox_area[4];
 	GtkWidget		*hbox_area[4];
-	GtkWidget		*vbox_area_clb[4];//Clibration
-	GtkWidget		*hbox_area_clb[4];//Clibration
 
 	GtkWidget		*hbox212;		/*一级菜单 二级菜单显示*/
 
@@ -575,6 +574,7 @@ typedef struct Draw_interface
 	int		mark_go_back;
 
 	gint    G_delay[256];//保存每一个beam的延时
+	gint    tmp_delay[256];//保存每一个beam的延时
 	guint   tmp_gain_off[256];
 	gint    count;
 	gint	flag;
@@ -583,7 +583,6 @@ typedef struct Draw_interface
 	gint    save_ut_unit;
 	gint    clb_count;
 	gfloat  vel;
-	gfloat  wedge_delay;
 	gfloat  gate_start_clb;//
 	gfloat  gate_width_clb;//
 

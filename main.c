@@ -309,7 +309,7 @@ static void set_init_para()
 	pp->ref_amplitude = 8000;
 //	pp->radiusa = 80000;
 	pp->tolerance_t = 500;
-	pp->tolerance = 500;
+	pp->tolerance = 200;
 	pp->distance = 10000.0;
 	pp->gate_start_clb = 0;
 	pp->gate_width_clb = 1760;
@@ -325,7 +325,7 @@ static void set_init_para()
 		pp->gate_a_start[i]	=  GROUP_VAL( gate[0].start) / 10 ;
 		pp->gate_a_end[i]	= (GROUP_VAL( gate[0].start) + GROUP_VAL( gate[0].width)) / 10;
 	}
-
+	
 	set_part_weld (pp->p_config, (void*)1);
 	pp->wstart_qty = 1;
 

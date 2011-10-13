@@ -46,7 +46,7 @@ guint get_max_point_qty();
 void generate_focallaw(int grp);
 gfloat cba_encoder();
 gfloat cba_ultrasound_velocity();
-gfloat cba_ultrasound_wedgedelay();
+void cba_ultrasound_wedgedelay();
 void cba_ultrasound_sensitivity();
 void cba_ultrasound_TCG();
 void esc_calibration();
@@ -675,9 +675,9 @@ guint get_pw ()
 	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
 
 	if (get_group_val (p_grp, GROUP_PW_POS))
-		return (get_group_val (p_grp, GROUP_PW_VAL));
+		return (guint)((get_group_val (p_grp, GROUP_PW_VAL)) / 100.0);
 	else
-		return ((int)(( 5000*10000 / get_group_val (p_grp, GROUP_FREQ_VAL))) / 250)  * 250; /* 改变脉冲宽度 */
+		return (guint)(( 5000*10000 / get_group_val (p_grp, GROUP_FREQ_VAL)) / 100);/// 250) * 250; /* 改变脉冲宽度 */
 }
 
 /* 计算滤波 0 1 None 和 Auto 时候怎么计算 */
@@ -1063,14 +1063,18 @@ void b3_fun1(gpointer p)
 	/*	pp->pos_pos = MENU3_PRESSED;*/
 
 	gint offset,k,step;
-	gint grp = get_current_group(pp->p_config);//当前group
+	gfloat s, vel, wedge_delay;
+	gint grp = get_current_group(pp->p_config);
+	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
 	for (offset = 0, k = 0 ; k < grp; k++)
 		offset += TMP(beam_qty[k]);
 	gint index = offset + TMP(beam_num[grp]);
 	gint thread_count = 10;
+	gint count = 0;
+	wedge_delay = get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_WEDGE_DELAY) / 1000.0;
 //	gint BeamNo = pp->p_tmp_config->beam_num[grp];
 
-	GtkWidget* dialog;
+	GtkWidget* dialog = NULL;
 	GtkWindow *win = GTK_WINDOW (pp->window);
 
 	if (LAW_VAL (Focal_type) == AZIMUTHAL_SCAN)
@@ -1219,7 +1223,6 @@ void b3_fun1(gpointer p)
 										}
 										break;
 									case 1://Wedge Delay
-										//校准完之后Accept
 										if(!pp->flag)
 										{
 											dialog = gtk_message_dialog_new( win,
@@ -1236,19 +1239,55 @@ void b3_fun1(gpointer p)
 											if((pp->cstart_qty) == 2)
 											{
 												draw_area_calibration();
+												vel = get_group_val (p_grp, GROUP_VELOCITY) / 100000.0 ;
+												if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
+												{
+													if (UNIT_MM == get_unit(pp->p_config))
+													{
+														pp->gate_start_clb = GROUP_GATE_POS(start)* vel;
+														pp->gate_width_clb = GROUP_GATE_POS(width)* vel;
+													}
+													else  /* 英寸 */
+													{
+														pp->gate_start_clb = GROUP_GATE_POS(start)* vel * 0.03937;
+														pp->gate_width_clb = GROUP_GATE_POS(width)* vel * 0.03937;
+													}
+												}
+												else /* 显示方式为时间 */
+												{
+													pp->gate_start_clb = GROUP_GATE_POS(start); 
+													pp->gate_width_clb = GROUP_GATE_POS(width); 
+												}
 											}
 											else if((pp->cstart_qty) == 3)
 											{
 											}
-											else if((pp->cstart_qty) == 5)//Accept
+											else if((pp->cstart_qty) == 1)//Accept
 											{
-												set_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_WEDGE_DELAY,
-																pp->wedge_delay );
+												for (i = 0; i < step; i++)
+												{
+													vel = (get_group_val (p_grp, GROUP_VELOCITY) / 100.0);// m/s
+													s   = (TMP(clb_wedge_data[i]) - wedge_delay - pp->G_delay[i] - get_pw()) * vel / 2000000;//mm
+													if(s<0) s = 0;
+													if( fabs(TMP_CBA(distance) - s) >  (pp->tolerance / 100.0) )
+													{
+														if(!dialog)
+														{
+															dialog = gtk_message_dialog_new( win,
+																		GTK_DIALOG_DESTROY_WITH_PARENT,
+																		GTK_MESSAGE_ERROR,
+																		GTK_BUTTONS_CLOSE,
+																		"At least one context has no amplitude peak in \ngate A. Wedge delay calibration cannot be performed. ");
+															gtk_dialog_run(GTK_DIALOG(dialog));
+															gtk_widget_destroy(dialog);
+															pp->cstart_qty = 5;
+															count = 1;
+														}
+													}
+												}
+												if(!count)
+													esc_calibration();
 												//pp->flag = 0;
-											}
-											else if((pp->cstart_qty) == 1)
-											{
-												esc_calibration();
 											}
 										}
 										break;
@@ -1838,8 +1877,7 @@ void b3_fun3(gpointer p)
 									{
 										for (i = 0; i < clb_step; i++)
 										{
-										//	TMP(clb_real_data[i]) = ((TMP(measure_data[i][1])>>20) & 0xfff)/20.47;
-											TMP(clb_max_data[i]) = 0;//TMP(clb_real_data[i]);//第一次需初始化
+											TMP(clb_wedge_data[i]) = (TMP(measure_data[i][1]) & 0xfffff) * 10;
 										}
 									}
 									break;
@@ -2186,7 +2224,7 @@ void b3_fun4(gpointer p)
 								break;
 							case 1://wedge delay
 								if (pp->cstart_qty == 5)//Calibrate
-									pp->wedge_delay = cba_ultrasound_wedgedelay();
+									cba_ultrasound_wedgedelay();
 								break;
 							case 2://sensitivity
 								if (pp->cstart_qty == 6)//Calibrate
@@ -2451,7 +2489,7 @@ void b3_fun5(gpointer p)
 											TMP(clb_max_data[i]) = TMP(clb_real_data[i]);//第一次需初始化
 											TMP(clb_his_max_data) = 0;
 											GROUP_VAL(gain_offset[i+offset]) =  0;
-											pp->tmp_gain_off[ i+offset] = 0; 
+											pp->tmp_gain_off[i+offset] = 0; 
 										}
 									}
 									else if(pp->cstart_qty == 5)//Clear env
@@ -3086,7 +3124,6 @@ static int handler_key(guint keyval, gpointer data)
 					draw_area_all();
 				else
 					draw_area_calibration();
-				//send_focal_spi(get_current_group(pp->p_config));
 			}
 			break;
 
@@ -3149,7 +3186,7 @@ static int handler_key(guint keyval, gpointer data)
 					draw_menu3(0, NULL);
 				}
 			}
-			esc_calibration();
+
 			if((pp->pos==0)&&(pp->pos1[pp->pos]==0))
 			{
 				if((MENU31_PRESS == data1)||(MENU32_PRESS == data1)||(MENU33_PRESS == data1)||(MENU34_PRESS == data1)||(MENU35_PRESS == data1)||(MENU36_PRESS == data1))/*当三级菜单中有弹出菜单选项时*/
@@ -3209,6 +3246,8 @@ static int handler_key(guint keyval, gpointer data)
 				draw_menu3(0, NULL);
 				}
 			}
+			if(pp->clb_flag)
+				esc_calibration();
 			break;
 		case GDK_Return:	/*回车键*/
 
@@ -4884,7 +4923,6 @@ void data_203 (GtkSpinButton *spinbutton, gpointer data) /* 闸门宽度 P203 */
 				{
 					pp->gate_i_end[k]	= (GROUP_VAL_POS(grp, gate[2].start) + 
 							GROUP_VAL_POS (grp, gate[2].width)) / 10;
-				}
 			}
 		}
 	}			
@@ -6756,25 +6794,36 @@ gfloat cba_ultrasound_velocity()
 //****************************************
 //  延时校准：2011.7.1 何凡
 //****************************************
-gfloat cba_ultrasound_wedgedelay()
+void cba_ultrasound_wedgedelay()
 {
+	gint i, step;
+	gfloat s, vel, t1, wedge_delay;
 	gint grp = get_current_group(pp->p_config);
-	gint BeamNo = pp->p_tmp_config->beam_num[grp];
-	gfloat val;
-/*	switch(pp->echotype_pos)
+	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
+	
+	if (LAW_VAL (Focal_type) == AZIMUTHAL_SCAN)
 	{
-		case 0://radius
-			TMP_CBA(wd_delay[BeamNo]) = (TMP_CBA(wd_radius))/ get_group_val (get_group_by_id (pp->p_config, grp), GROUP_VELOCITY);
-			break;
-		case 1://depth
-			TMP_CBA(wd_delay[BeamNo]) = (TMP_CBA(wd_depth))/ get_group_val (get_group_by_id (pp->p_config, grp), GROUP_VELOCITY);
-			break;
-		case 2://thickness
-			TMP_CBA(wd_delay[BeamNo]) = (TMP_CBA(wd_thickness))/ get_group_val (get_group_by_id (pp->p_config, grp), GROUP_VELOCITY);
-			break;
+		step = (gint)( (LAW_VAL(Angle_max) - LAW_VAL(Angle_min)) / LAW_VAL(Angle_step) + 1);
 	}
-	val = TMP_CBA(wd_delay[BeamNo]);*/
-	return 1;//val; 
+	else if(LAW_VAL (Focal_type) == LINEAR_SCAN) 
+	{
+		step = (gint)( ( LAW_VAL (Last_tx_elem)-LAW_VAL(First_tx_elem) - LAW_VAL(Elem_qty) + 1 ) /
+				LAW_VAL(Elem_step) ) + 1;
+	}
+	
+	vel = (get_group_val (p_grp, GROUP_VELOCITY) / 100.0);// m/s
+	t1  = 2000000 * TMP_CBA(distance) / vel ;//ns
+	wedge_delay = get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_WEDGE_DELAY) / 1000.0;
+	for (i = 0; i < step; i++)
+	{
+		s   = (TMP(clb_wedge_data[i]) - wedge_delay - pp->G_delay[i] - get_pw()) * vel / 2000000;//mm
+		if(s<0) s = 0;
+//		printf("s=%f dis=%f \n", s, TMP_CBA(distance));
+		if( fabs( TMP_CBA(distance) - s ) >  (pp->tolerance / 100.0) )
+		{
+			pp->G_delay[i] = (gint)(fabs(TMP(clb_wedge_data[i]) - t1 - get_pw()));
+		}
+	}
 }
 
 //****************************************
@@ -6864,39 +6913,23 @@ void esc_calibration()
 	if(!pp->ctype_pos)//当位Encoder时无需更新扫描
 	{
 		pp->clb_encoder = 0;
-		pp->pos1[pp->pos] = 2;
-		pp->cstart_qty = 1;
-		gtk_widget_set_sensitive(pp->eventbox2[0],TRUE);
-		gtk_widget_set_sensitive(pp->eventbox2[3],TRUE);
-		if(GROUP_VAL(group_mode)==PA_SCAN)
-			gtk_widget_set_sensitive(pp->eventbox2[1],TRUE);
-		else
-			gtk_widget_set_sensitive(pp->eventbox2[1],FALSE);
-		//gtk_widget_set_sensitive(pp->eventbox2[1],TRUE);
-		gtk_widget_set_sensitive(pp->menubar,TRUE);
 	}
 	else
 	{
-		if((pp->pos == 0) && (pp->pos1[pp->pos] == 2) && (pp->clb_flag))//Calibration
-		{
-			pp->clb_flag = 0;
-			switch_area();//
-			GROUP_VAL_POS(get_current_group(pp->p_config), ut_unit) = pp->save_ut_unit;
-			generate_focallaw(get_current_group(pp->p_config));
-			pp->clb_count = 0;
-
-			pp->pos1[pp->pos] = 2;
-			pp->cstart_qty = 1;
-			gtk_widget_set_sensitive(pp->eventbox2[0],TRUE);
-			gtk_widget_set_sensitive(pp->eventbox2[3],TRUE);
-			if(GROUP_VAL(group_mode)==PA_SCAN)
-				gtk_widget_set_sensitive(pp->eventbox2[1],TRUE);
-			else
-				gtk_widget_set_sensitive(pp->eventbox2[1],FALSE);
-			//gtk_widget_set_sensitive(pp->eventbox2[1],TRUE);
-			gtk_widget_set_sensitive(pp->menubar,TRUE);
-		}
+		GROUP_VAL_POS(get_current_group(pp->p_config), ut_unit) = pp->save_ut_unit;
+		pp->clb_count = 0;
 	}
+	draw_area_all();
+	pp->clb_flag = 0;
+	pp->cstart_qty = 1;
+	pp->pos1[pp->pos] = 2;
+	gtk_widget_set_sensitive(pp->eventbox2[0],TRUE);
+	gtk_widget_set_sensitive(pp->eventbox2[3],TRUE);
+	if(GROUP_VAL(group_mode)==PA_SCAN)
+			gtk_widget_set_sensitive(pp->eventbox2[1],TRUE);
+	else
+			gtk_widget_set_sensitive(pp->eventbox2[1],FALSE);
+	gtk_widget_set_sensitive(pp->menubar,TRUE);
 	draw_menu3(0, NULL);
 }
 
