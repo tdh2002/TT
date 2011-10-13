@@ -17958,22 +17958,6 @@ void calc_measure_data()
 
 
 
-static void signal_scan_thread(void)
-{
-	while(1)
-	{
-		if(*DMA_MARK==0)
-		{
-
-                     pthread_mutex_lock(&draw_thread_mutex);
-		             pthread_cond_signal(&draw_thread_signal);
-            	     pthread_mutex_unlock(&draw_thread_mutex);
-					//sem_post(&sem) ;
-		}
-		//if(*DMA_MARK>2){ printf("DMA_MARK = %d \n", *DMA_MARK) ; *DMA_MARK=1; }
-		usleep(40000);
-	}
-}
 
 
 
@@ -18021,7 +18005,7 @@ int key_read_delay()
 	return 0;
 }
 
-static void draw_frame_thread(void)
+int draw_frame_thread(void)
 {
 
 	gint i, j, k, offset, offset1;
@@ -18029,23 +18013,23 @@ static void draw_frame_thread(void)
 	//guint buff_addr = (pp->p_beam_data) + 256 * 1024 ;
     //unsigned int BeamInfoHeader;
 	//unsigned int data;
-	while (1)
+	//while (1)
+	//{
+
+	//pthread_cond_wait( &draw_thread_signal, &draw_thread_mutex);
+	//DMA_MARK=2 ;
+	/*
+	for (offset = 0, k = 0 ; k <  get_group_qty(pp->p_config); k++)
 	{
+		offset += (GROUP_VAL_POS(k, point_qty) + 32) * TMP(beam_qty[k]);
+	}
 
-		pthread_cond_wait( &draw_thread_signal, &draw_thread_mutex);
-        *DMA_MARK=2 ;
-		/*
-		for (offset = 0, k = 0 ; k <  get_group_qty(pp->p_config); k++)
-		{
-			offset += (GROUP_VAL_POS(k, point_qty) + 32) * TMP(beam_qty[k]);
-		}
-
-		if(TMP(freeze))
-		{
-			//printf("memecpy\n");
-			memcpy ((void*)(buff_addr), (void *)(temp2) , offset );
-		}
-		*/
+	if(TMP(freeze))
+	{
+		//printf("memecpy\n");
+		memcpy ((void*)(buff_addr), (void *)(temp2) , offset );
+	}
+	*/
 		for (i = 0 ; i < get_group_qty(pp->p_config); i++)
 		{
 			/* 获取数据 */
@@ -18119,8 +18103,32 @@ static void draw_frame_thread(void)
 		*DMA_MARK = 1 ;
 		calc_measure_data();//计算数据
 		draw_field_value ();
+	//}
+		return 0 ;
+}
+
+
+
+static void signal_scan_thread(void)
+{
+	while(1)
+	{
+		if(*DMA_MARK==0)
+		{
+
+                     //pthread_mutex_lock(&draw_thread_mutex);
+		             //pthread_cond_signal(&draw_thread_signal);
+            	     //pthread_mutex_unlock(&draw_thread_mutex);
+					//sem_post(&sem) ;
+			*DMA_MARK = 2 ;
+			g_timeout_add (0, (GSourceFunc) draw_frame_thread, NULL);
+		}
+		//if(*DMA_MARK>2){ printf("DMA_MARK = %d \n", *DMA_MARK) ; *DMA_MARK=1; }
+		usleep(40000);
 	}
 }
+
+
 
 
 #endif
@@ -18688,11 +18696,11 @@ void init_ui(DRAW_UI_P p)
 	*DMA_MARK = 0 ;
     printf("DMA_MAKR is %d \n", *DMA_MARK);	
 
-	ret = pthread_create (&tid1, NULL, (void*)draw_frame_thread, NULL);
-    if(ret){
-		perror("in1:");
-	    return;
-	}
+	//ret = pthread_create (&tid1, NULL, (void*)draw_frame_thread, NULL);
+    //if(ret){
+	//	perror("in1:");
+	//    return;
+	//}
 	ret = pthread_create (&tid2, NULL, (void*)signal_scan_thread, NULL);	
 	if(ret){
 		perror("in1:");
