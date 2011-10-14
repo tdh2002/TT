@@ -905,6 +905,230 @@ void b2_fun0(DRAW_UI_P p, guint pos)
 			p->pos_last2 = 0xff;
 			draw_menu2(0);
 			draw_menu3(0, NULL);
+
+			if(pp->help_yn)
+			{
+				switch(p->pos)
+				{
+					case 0:
+						switch(p->pos1[p->pos])
+						{
+							case 0:
+								show_help(HELP_Y, LABEL_00);
+								break;
+							case 1:
+								show_help(HELP_Y, LABEL_01);
+								break;
+							case 2:
+								show_help(HELP_Y, LABEL_02);
+								break;
+							case 3:
+								//show_help(HELP_Y, "#346475");
+								break;
+							case 4:
+								//show_help(HELP_Y, "#346475");
+								break;
+							default :break;
+						}
+						break;
+
+					case 1:
+						switch(p->pos1[p->pos])
+						{
+							case 0:
+								show_help(HELP_Y, LABEL_10);
+								break;
+							case 1:
+								show_help(HELP_Y, LABEL_11);
+								break;
+							case 2:
+								show_help(HELP_Y, LABEL_12);
+								break;
+							case 3:
+								show_help(HELP_Y, LABEL_13);
+								break;
+							case 4:
+								show_help(HELP_Y, LABEL_14);
+								break;
+							default :break;
+						}
+						break;
+
+					case 2:
+						switch(p->pos1[p->pos])
+						{
+							case 0:
+								show_help(HELP_Y, LABEL_20);
+								break;
+							case 1:
+								show_help(HELP_Y, LABEL_21);
+								break;
+							case 2:
+								show_help(HELP_Y, LABEL_22);
+								break;
+							case 3:
+								show_help(HELP_Y, LABEL_23);
+								break;
+							case 4:
+								//show_help(HELP_Y, "");
+								break;
+							default :break;
+						}
+						break;
+
+					case 3:
+						switch(p->pos1[p->pos])
+						{
+							case 0:
+								show_help(HELP_Y, LABEL_30);
+								break;
+							case 1:
+								show_help(HELP_Y, LABEL_31);
+								break;
+							case 2:
+								show_help(HELP_Y, LABEL_32);
+								break;
+							case 3:
+								show_help(HELP_Y, LABEL_33);
+								break;
+							case 4:
+								show_help(HELP_Y, LABEL_34);
+								break;
+							default :break;
+						}
+						break;
+
+					case 4:
+						switch(p->pos1[p->pos])
+						{
+							case 0:
+								show_help(HELP_Y, LABEL_40);
+								break;
+							case 1:
+								show_help(HELP_Y, LABEL_41);
+								break;
+							case 2:
+								show_help(HELP_Y, LABEL_42);
+								break;
+							case 3:
+								show_help(HELP_Y, LABEL_43);
+								break;
+							case 4:
+								//show_help(HELP_Y, LABEL_44);
+								break;
+							default :break;
+						}
+						break;
+					case 5:
+						switch(p->pos1[p->pos])
+						{
+							case 0:
+								show_help(HELP_Y, LABEL_50);
+								break;
+							case 1:
+								show_help(HELP_Y, LABEL_51);
+								break;
+							case 2:
+								show_help(HELP_Y, LABEL_52);
+								break;
+							case 3:
+								show_help(HELP_Y, LABEL_53);
+								break;
+							case 4:
+								//show_help(HELP_Y, LABEL_54);
+								break;
+							default :break;
+						}
+						break;
+					case 6:
+						switch(p->pos1[p->pos])
+						{
+							case 0:
+								show_help(HELP_Y, LABEL_60);
+								break;
+							case 1:
+								show_help(HELP_Y, LABEL_61);
+								break;
+							case 2:
+								show_help(HELP_Y, LABEL_62);
+								break;
+							case 3:
+								show_help(HELP_Y, LABEL_63);
+								break;
+							case 4:
+								show_help(HELP_Y, LABEL_64);
+								break;
+							default :break;
+						}
+						break;
+					case 7:
+						switch(p->pos1[p->pos])
+						{
+							case 0:
+								show_help(HELP_Y, LABEL_70);
+								break;
+							case 1:
+								show_help(HELP_Y, LABEL_71);
+								break;
+							case 2:
+								show_help(HELP_Y, LABEL_72);
+								break;
+							case 3:
+								show_help(HELP_Y, LABEL_73);
+								break;
+							case 4:
+								show_help(HELP_Y, LABEL_74);
+								break;
+							default :break;
+						}
+						break;
+					case 8:
+						switch(p->pos1[p->pos])
+						{
+							case 0:
+								show_help(HELP_Y, LABEL_80);
+								break;
+							case 1:
+								show_help(HELP_Y, LABEL_81);
+								break;
+							case 2:
+								show_help(HELP_Y, LABEL_82);
+								break;
+							case 3:
+								show_help(HELP_Y, LABEL_83);
+								break;
+							case 4:
+								show_help(HELP_Y, LABEL_84);
+								break;
+							default :break;
+						}
+						break;
+					case 9:
+						switch(p->pos1[p->pos])
+						{
+							case 0:
+								show_help(HELP_Y, LABEL_90);
+								break;
+							case 1:
+								show_help(HELP_Y, LABEL_91);
+								break;
+							case 2:
+								show_help(HELP_Y, LABEL_92);
+								break;
+							case 3:
+								show_help(HELP_Y, LABEL_93);
+								break;
+							case 4:
+								//show_help(HELP_Y, LABEL_94);
+								break;
+							default :break;
+						}
+						break;
+					default: break;
+				}
+
+			}
+
 		}
 		if((p->pos == 0) && (p->pos1[p->pos] == 2))//Calibration
 		{
@@ -3416,9 +3640,9 @@ static int handler_key(guint keyval, gpointer data)
 
 		case GDK_F1:
 			if(pp->help_yn == 1)
-				show_help(HELP_N);/*隐藏帮助窗口*/
+				show_help(HELP_N, 0);/*隐藏帮助窗口*/
 			else if(pp->help_yn == 0)
-				show_help(HELP_Y);/*弹出帮助窗口*/
+				show_help(HELP_Y, 0);/*弹出帮助窗口*/
 			pp->help_yn = !pp->help_yn;
 			break;
 		case GDK_F2:

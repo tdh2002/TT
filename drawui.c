@@ -357,44 +357,47 @@ void menu3_pop(guint action)
 }
 
 /* 弹出 隐藏 帮助窗口 */
-void show_help(guint i)
+void show_help(guint i, char *src)
 {
+	memset(pp->file_path,0,128);
 	if (i == HELP_Y) /*弹出帮助窗口*/
 	{
 		switch(pp->pos)		/*改变帮助文档的路径*/
 		{
 			case 0:
-				pp->file_path = "http://127.0.0.1/source/system/Help/Contextual/Help_Wizard_Menu.html";
+				strcpy(pp->file_path, HELP_WIZARD_PATH);
 				break;
 			case 1:
-				pp->file_path = "http://127.0.0.1/source/system/Help/Contextual/Help_UT_Settings_Menu.html";
+				strcpy(pp->file_path, HELP_UT_SETTING_PATH);
 				break;
 			case 2:
-				pp->file_path = "http://127.0.0.1/source/system/Help/Contextual/Help_GateAlarm_Menu.html";
+				strcpy(pp->file_path, HELP_GATE_ALARM_PATH);
 				break;
 			case 3:
-				pp->file_path = "http://127.0.0.1/source/system/Help/Contextual/Help_Measurements_Menu.html";
+				strcpy(pp->file_path, HELP_MEASUREMENTS_PATH);
 				break;
 			case 4:
-				pp->file_path = "http://127.0.0.1/source/system/Help/Contextual/Help_Display_Menu.html";
+				strcpy(pp->file_path, HELP_DISPLAY_PATH);
 				break;
 			case 5:
-				pp->file_path = "http://127.0.0.1/source/system/Help/Contextual/Help_ProbePart_Menu.html";
+				strcpy(pp->file_path, HELP_PROBE_PART_PATH);
 				break;
 			case 6:
-				pp->file_path = "http://127.0.0.1/source/system/Help/Contextual/Help_FocalLaw_Submenu.html";
+				strcpy(pp->file_path, HELP_FOCAL_LAW_PATH );
 				break;
 			case 7:
-				pp->file_path = "http://127.0.0.1/source/system/Help/Contextual/Help_Scan_Menu.html";
+				strcpy(pp->file_path, HELP_SCAN_PATH);
 				break;
 			case 8:
-				pp->file_path = "http://127.0.0.1/source/system/Help/Contextual/Help_File_Menu.html";
+				strcpy(pp->file_path, HELP_FILE_PATH);
 				break;
 			case 9:
-				pp->file_path = "http://127.0.0.1/source/system/Help/Contextual/Help_Preferences_Menu.html";
+				strcpy(pp->file_path, HELP_PREFERENCES_PATH);
 				break;
 			default:break;
 		}
+		if(src)
+			strcat(pp->file_path, src);	
 		webkit_web_view_load_uri (pp->web_view, pp->file_path);		
 		gtk_widget_hide(pp->hbox211);
 		gtk_widget_show(pp->sw);
@@ -459,6 +462,10 @@ void menuitem_function (GtkMenuItem *menuitem, gpointer data)
 			p->menu2_qty = 4;
 			break;
 		default:break;
+	}
+	if(pp->help_yn)
+	{
+		show_help(HELP_Y, 0);/*弹出帮助窗口*/
 	}
 	MENU_STATUS = MENU3_STOP; /* */
 	draw_menu2(1);
@@ -5904,7 +5911,8 @@ void draw3_data1(DRAW_UI_P p)
 					draw3_popdown (NULL, 1, 1);
 					if(pp->wstart_qty == 2)
 					{
-						pp->file_path = "http://127.0.0.1/pic/weld/1.jpg";
+//						pp->file_path = "http://127.0.0.1/pic/weld/1.jpg";
+						strcpy(pp->file_path, "http://127.0.0.1/pic/weld/1.jpg");
 						webkit_web_view_load_uri (pp->web_view, pp->file_path);		
 						gtk_widget_hide(pp->hbox211);
 						gtk_widget_show(pp->sw);
@@ -5914,16 +5922,16 @@ void draw3_data1(DRAW_UI_P p)
 						switch(get_part_weld(pp->p_config))
 						{
 							case 0:
-								pp->file_path = "http://127.0.0.1/pic/weld/2.jpg";
+//								pp->file_path = "http://127.0.0.1/pic/weld/2.jpg";
 								break;
 							case 1:
-								pp->file_path = "http://127.0.0.1/pic/weld/3.jpg";
+//								pp->file_path = "http://127.0.0.1/pic/weld/3.jpg";
 								break;
 							case 2:
-								pp->file_path = "http://127.0.0.1/pic/weld/5.jpg";
+//						pp->file_path = "http://127.0.0.1/pic/weld/5.jpg";
 								break;
 							case 3:
-								pp->file_path = "http://127.0.0.1/pic/weld/7.jpg";
+//						pp->file_path = "http://127.0.0.1/pic/weld/7.jpg";
 								break;
 							default:break;
 						}
@@ -5938,13 +5946,13 @@ void draw3_data1(DRAW_UI_P p)
 							case 0:
 								break;
 							case 1:
-								pp->file_path = "http://127.0.0.1/pic/weld/4.jpg";
+	//					pp->file_path = "http://127.0.0.1/pic/weld/4.jpg";
 								break;
 							case 2:
-								pp->file_path = "http://127.0.0.1/pic/weld/6.jpg";
+		//				pp->file_path = "http://127.0.0.1/pic/weld/6.jpg";
 								break;
 							case 3:
-								pp->file_path = "http://127.0.0.1/pic/weld/8.jpg";
+			//			pp->file_path = "http://127.0.0.1/pic/weld/8.jpg";
 								break;
 							default:break;
 						}
@@ -18571,7 +18579,10 @@ void init_ui(DRAW_UI_P p)
 	webkit_web_view_set_custom_encoding (pp->web_view, "UTF-8");
 	gtk_container_add(GTK_CONTAINER (pp->sw), GTK_WIDGET (pp->web_view));
 
-	pp->file_path = "http://127.0.0.1/source/system/Help/Contextual/UT_Settings_Menu.html";
+	memset(pp->file_path,0,128);
+//p->file_path = "http://127.0.0.1/source/system/Help/Contextual/Help_UT_Settings_Menu.html";
+	strcpy(pp->file_path, "http://127.0.0.1/source/system/Help/Contextual/Help_UT_Settings_Menu.html");
+
 	webkit_web_view_load_uri (pp->web_view, pp->file_path);
 
 	gtk_box_pack_start (GTK_BOX (p->hbox211), p->vbox_draw_area, FALSE, FALSE, 0);

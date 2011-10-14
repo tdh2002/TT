@@ -389,7 +389,7 @@ typedef struct Draw_interface
 	guchar			pos_last2;          /* 三级菜单位置上一位置  */
 	guchar			menu2_qty;          /*  */
 
-	gchar			*file_path;	/* 帮助文档的路径 */
+	gchar			file_path[128];	/* 帮助文档的路径 */
 	WebKitWebView	*web_view;
 	WebKitWebView	*web_view_tmp;
 	GtkAdjustment	*adj;

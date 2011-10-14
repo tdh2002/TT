@@ -446,4 +446,73 @@ receiver. PR is for separate pulser and receiver.收发分离 或者收发一体
 #define RESPONSE_DELECT_FILE	13
 #define RESPONSE_RENAME_FILE	14
 
+/*帮助文档路径*/
+#define HELP_WIZARD_PATH 		 "http://127.0.0.1/source/system/Help/Contextual/Help_Wizard_Menu.html"
+#define HELP_UT_SETTING_PATH	 "http://127.0.0.1/source/system/Help/Contextual/Help_UT_Settings_Menu.html"
+#define HELP_GATE_ALARM_PATH	 "http://127.0.0.1/source/system/Help/Contextual/Help_GateAlarm_Menu.html"
+#define HELP_MEASUREMENTS_PATH	 "http://127.0.0.1/source/system/Help/Contextual/Help_Measurements_Menu.html"
+#define HELP_DISPLAY_PATH		 "http://127.0.0.1/source/system/Help/Contextual/Help_Display_Menu.html"
+#define HELP_PROBE_PART_PATH	 "http://127.0.0.1/source/system/Help/Contextual/Help_ProbePart_Menu.html"		
+#define HELP_FOCAL_LAW_PATH 	 "http://127.0.0.1/source/system/Help/Contextual/Help_Focal_Law_Menu.html"
+#define HELP_SCAN_PATH 			 "http://127.0.0.1/source/system/Help/Contextual/Help_Scan_Menu.html"
+#define HELP_FILE_PATH 			 "http://127.0.0.1/source/system/Help/Contextual/Help_File_Menu.html"
+#define HELP_PREFERENCES_PATH  	 "http://127.0.0.1/source/system/Help/Contextual/Help_Preferences_Menu.html"
+
+
+/*帮助文档 标签信息*/
+#define LABEL_00   "#512875"
+#define LABEL_01   "#641413"
+#define LABEL_02   "#314552"
+
+#define LABEL_10   "#346475"
+#define LABEL_11   "#315062"
+#define LABEL_12   "#315092"
+#define LABEL_13   "#315156"
+#define LABEL_14   "#315170"
+
+#define LABEL_20   "#383759"
+#define LABEL_21   "#315385"
+#define LABEL_22   "#315446"
+#define LABEL_23   "#315504"
+
+#define LABEL_30   "#315694"
+#define LABEL_31   "#522686"
+#define LABEL_32   "#316136"
+#define LABEL_33   "#319518"
+#define LABEL_34   "#582690"
+
+#define LABEL_40   "#HelpID_10434"
+#define LABEL_41   "#382525"
+#define LABEL_42   "#316930"
+#define LABEL_43   "#316990"
+
+#define LABEL_50   "#584040"
+#define LABEL_51   "#584371"
+#define LABEL_52   "#584524"
+#define LABEL_53   "#584552"
+
+#define LABEL_60   "#643961"
+#define LABEL_61   "#644073"
+#define LABEL_62   0
+#define LABEL_63   "#644028"
+#define LABEL_64   "#644119"
+
+#define LABEL_70   "#584719"
+#define LABEL_71   "#584779"
+#define LABEL_72   "#584845"
+#define LABEL_73   "#584879"
+#define LABEL_74   "#584906"
+
+#define LABEL_80   "#151491"
+#define LABEL_81   "#151558"
+#define LABEL_82   "#306577"
+#define LABEL_83   "#151607"
+#define LABEL_84   "#151625"
+
+#define LABEL_90   "#151729"
+#define LABEL_91   "#321439"
+#define LABEL_92   "#525460"
+#define LABEL_93   "#586053"
+//#define LABEL_94   
+
 #endif
