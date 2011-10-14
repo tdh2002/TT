@@ -3596,9 +3596,21 @@ p->group+1, angle / 100.0, GROUP_VAL_POS(p->group, skew) / 100.0, num + 1);
 			p->h2_unit = UNIT_BFH;
 			p->h2_color = 0xEDF169;
 
-			p->wmin1 = LAW_VAL (Angle_min)/100;
-			p->wmax1 = LAW_VAL (Angle_max)/100;
-			p->w_unit = UNIT_DEG;
+			if(LAW_VAL_POS(p->group,Focal_type) == AZIMUTHAL_SCAN)
+			{
+				p->wmin1 = LAW_VAL (Angle_min)/100;
+				p->wmax1 = LAW_VAL (Angle_max)/100;
+				p->w_unit = UNIT_DEG;
+			}
+    		else if (LAW_VAL_POS(p->group,Focal_type) == LINEAR_SCAN)
+			{
+				p->wmin1 = (gfloat)(LAW_VAL_POS(p->group,First_tx_elem));
+				p->wmax1 = (gfloat)((( LAW_VAL_POS (p->group,Last_tx_elem)-LAW_VAL_POS(p->group,First_tx_elem) -
+								LAW_VAL_POS(p->group,Elem_qty) + 1 ) / LAW_VAL_POS(p->group,Elem_step)) + 1);
+				p->w_unit = UNIT_VPA;
+//				p->wrule_copies = (gfloat)((( LAW_VAL (Last_tx_elem)-LAW_VAL(First_tx_elem) - LAW_VAL(Elem_qty) + 1 ) /
+//							LAW_VAL(Elem_step)) + 1);
+			}
 			p->w_color = 0xCCD9D5;	/*浅灰色*/;
 			g_sprintf (p->title, "Calibration:Wedge Delay");
 			break;
@@ -3613,14 +3625,12 @@ p->group+1, angle / 100.0, GROUP_VAL_POS(p->group, skew) / 100.0, num + 1);
 			p->h2_unit = UNIT_BFH;
 			p->h2_color = 0xEDF169;
 
-			//if(LAW_VAL(Focal_type) == AZIMUTHAL_SCAN)
 			if(LAW_VAL_POS(p->group,Focal_type) == AZIMUTHAL_SCAN)
 			{
 				p->wmin1 = LAW_VAL (Angle_min)/100;
 				p->wmax1 = LAW_VAL (Angle_max)/100;
 				p->w_unit = UNIT_DEG;
 			}
-    		//else if (LAW_VAL(Focal_type) == LINEAR_SCAN)
     		else if (LAW_VAL_POS(p->group,Focal_type) == LINEAR_SCAN)
 			{
 				p->wmin1 = (gfloat)(LAW_VAL_POS(p->group,First_tx_elem));
