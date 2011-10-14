@@ -1357,9 +1357,6 @@ void b3_fun1(gpointer p)
 													pp->gate_width_clb = GROUP_GATE_POS(width); 
 												}
 											}
-											else if((pp->cstart_qty) == 3)
-											{
-											}
 											else if((pp->cstart_qty) == 1)//Accept
 											{
 												for (i = 0; i < step; i++)
@@ -1409,7 +1406,6 @@ void b3_fun1(gpointer p)
 				//								TMP(clb_real_data[i]) = ((TMP(measure_data[i][1])>>20) & 0xfff)/20.47;
 												TMP(clb_max_data[i]) = TMP(clb_real_data[i]);//第一次需初始化
 											}
-
 											esc_calibration();		
 										}
 										break;
@@ -2555,7 +2551,7 @@ void b3_fun5(gpointer p)
 						case 0:
 							if((pp->cstart_qty) == 4)
 							{
-								(pp->cstart_qty) = 1;
+								(pp->cstart_qty) = 2;
 							}
 							break;
 						case 1:
@@ -2564,20 +2560,19 @@ void b3_fun5(gpointer p)
 								case 0:
 									if((pp->cstart_qty) == 6)
 									{
-										(pp->cstart_qty) = 1;
+										(pp->cstart_qty) = 2;
 										pp->vel = 0;
 									}
 									break;
 								case 1:
 									if(pp->cstart_qty == 5)//Restart
 									{
-										pp->cstart_qty = 1;
+										pp->cstart_qty = 2;
 										for (i = 0; i < clb_step; i++)
 										{
 											TMP(clb_real_data[i]) = ((TMP(measure_data[i][1])>>20) & 0xfff)/20.47;
 											TMP(clb_max_data[i]) = TMP(clb_real_data[i]);//第一次需初始化
 										}
-										esc_calibration();
 									}
 									break;
 								case 2:
@@ -2602,7 +2597,7 @@ void b3_fun5(gpointer p)
 									}
 									else if(pp->cstart_qty == 6)//Restart
 									{
-										pp->cstart_qty = 1;
+										pp->cstart_qty = 2;
 										for (i = 0; i < clb_step; i++)
 										{
 											TMP(clb_real_data[i]) = ((TMP(measure_data[i][1])>>20) & 0xfff)/20.47;
@@ -3347,7 +3342,10 @@ static int handler_key(guint keyval, gpointer data)
 				}
 			}
 			if(pp->clb_flag)
+			{
 				esc_calibration();
+				draw_menu3(0, NULL);
+			}
 			break;
 		case GDK_Return:	/*回车键*/
 
@@ -7019,10 +7017,9 @@ void esc_calibration()
 		GROUP_VAL_POS(get_current_group(pp->p_config), ut_unit) = pp->save_ut_unit;
 		pp->clb_count = 0;
 	}
-	draw_area_all();
 	pp->clb_flag = 0;
-	pp->cstart_qty = 1;
 	pp->pos1[pp->pos] = 2;
+	pp->cstart_qty = 1;
 	gtk_widget_set_sensitive(pp->eventbox2[0],TRUE);
 	gtk_widget_set_sensitive(pp->eventbox2[3],TRUE);
 	if(GROUP_VAL(group_mode)==PA_SCAN)
@@ -7030,7 +7027,7 @@ void esc_calibration()
 	else
 			gtk_widget_set_sensitive(pp->eventbox2[1],FALSE);
 	gtk_widget_set_sensitive(pp->menubar,TRUE);
-	draw_menu3(0, NULL);
+	draw_area_all();
 }
 
 void draw_encoder_value(gpointer data)
@@ -7068,7 +7065,6 @@ static int thread_set_DB_eighty_percent(gpointer data)
 
 	for (k = 0 ; k < grp; k++)
 		offset += TMP(beam_qty[k]);
-
 	int index = offset + TMP(beam_num[grp]);
 
 	while(i)
