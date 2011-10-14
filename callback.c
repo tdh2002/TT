@@ -3599,7 +3599,7 @@ static int handler_key(guint keyval, gpointer data)
 					draw_menu3(0, NULL);
 					}
 				}
-			}
+//			}
 			if(pp->clb_flag)
 			{
 				esc_calibration();
@@ -3979,7 +3979,7 @@ static int handler_key(guint keyval, gpointer data)
 			break;
 		default:break;
 	}
-
+//}
 	return 0;
 }
 
