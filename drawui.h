@@ -302,6 +302,7 @@
 #define CURVE_POS_DSP		0x3024
 #define POINT_POS_DSP		0x3025
 
+
 extern const gchar **menu_content;
 extern _group_wizard g_group_wizard_struct;
 extern GROUP g_tmp_group_struct;
@@ -613,7 +614,7 @@ extern void cal_focal_law (guint group);
 
 extern gboolean key_press_handler (GtkWidget* pWidget, GdkEventKey* pEvent, gpointer data);
 extern void main_menu_pop();
-extern void show_help(guint i);
+extern void show_help(guint i, char *src);
 extern void menu3_pop();
 
 extern void draw_warning(guint btn_qty, const gchar *warn_info);
