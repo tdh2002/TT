@@ -923,10 +923,10 @@ void b2_fun0(DRAW_UI_P p, guint pos)
 								show_help(HELP_Y, LABEL_02);
 								break;
 							case 3:
-								//show_help(HELP_Y, "#346475");
+								show_help(HELP_Y, LABEL_03);
 								break;
 							case 4:
-								//show_help(HELP_Y, "#346475");
+								//show_help(HELP_Y, LABEL_04);
 								break;
 							default :break;
 						}
@@ -3308,82 +3308,100 @@ static int handler_key(guint keyval, gpointer data)
 	switch (keyval) 
 	{
 		case GDK_KP_0:	/* 选中 P310 cursors 这个位置 */
-			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
+			if(!pp->help_yn)
 			{
-				main_menu_pop(MENU_HIDE);/*收回主菜单条*/
+				if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
+				{
+					main_menu_pop(MENU_HIDE);/*收回主菜单条*/
+				}
+				pp->pos = 3;
+				pp->pos1[pp->pos] = 1;
+				CUR_POS = 0;
+				pp->pos_pos = MENU3_PRESSED;
+				draw_menu1();
+				draw_menu2(0);
+				draw_menu3(0, NULL);
 			}
-			pp->pos = 3;
-			pp->pos1[pp->pos] = 1;
-			CUR_POS = 0;
-			pp->pos_pos = MENU3_PRESSED;
-			draw_menu1();
-			draw_menu2(0);
-			draw_menu3(0, NULL);
 			break;
 
 		case GDK_KP_1:	/* 冻结 */
-			TMP(freeze) = !TMP(freeze);
-			if(TMP(freeze))
-				//gtk_widget_modify_fg(pp->event[18], GTK_STATE_NORMAL, &color_black);
-				update_widget_bg(pp->event[18], /*backpic[12]*/ 16);
-			else
-				update_widget_bg(pp->event[18], /*backpic[12]*/ 15);
+			if(!pp->help_yn)
+			{
+				TMP(freeze) = !TMP(freeze);
+				if(TMP(freeze))
+					//gtk_widget_modify_fg(pp->event[18], GTK_STATE_NORMAL, &color_black);
+					update_widget_bg(pp->event[18], /*backpic[12]*/ 16);
+				else
+					update_widget_bg(pp->event[18], /*backpic[12]*/ 15);
+			}
 			break;
 
 		case GDK_KP_2:	/* 选中 Calibration 这个位置 */
-			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
+			if(!pp->help_yn)
 			{
-				main_menu_pop(MENU_HIDE);/*收回主菜单条*/
+				if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
+				{
+					main_menu_pop(MENU_HIDE);/*收回主菜单条*/
+				}
+				pp->pos = 0;
+				pp->pos1[pp->pos] = 2;
+				//CUR_POS = 0;
+				pp->pos_pos = MENU2_PRESSED;
+				draw_menu1();
+				draw_menu2(0);
+				draw_menu3(0, NULL);
 			}
-			pp->pos = 0;
-			pp->pos1[pp->pos] = 2;
-			//CUR_POS = 0;
-			pp->pos_pos = MENU2_PRESSED;
-			draw_menu1();
-			draw_menu2(0);
-			draw_menu3(0, NULL);
 			break;
 
 		case GDK_KP_3:	/* 选中 P100 Gain 这个位置 */
-			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
+			if(!pp->help_yn)
 			{
-				main_menu_pop(MENU_HIDE);/*收回主菜单条*/
+				if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
+				{
+					main_menu_pop(MENU_HIDE);/*收回主菜单条*/
+				}
+				else if((MENU31_PRESS == data1)||(MENU32_PRESS == data1)||(MENU33_PRESS == data1)||(MENU34_PRESS == data1)||(MENU35_PRESS == data1)||(MENU36_PRESS == data1))/*当三级菜单中有弹出菜单选项时*/
+				{
+					menu3_pop(MENU3_HIDE);/*隐藏三级菜单的弹出菜单*/
+				}
+				pp->pos = 1;
+				pp->pos1[pp->pos] = 0;
+				CUR_POS = 0;
+				pp->pos_pos = MENU3_PRESSED;
+				draw_menu1();
+				draw_menu2(0);
+				draw_menu3(0, NULL);
 			}
-			else if((MENU31_PRESS == data1)||(MENU32_PRESS == data1)||(MENU33_PRESS == data1)||(MENU34_PRESS == data1)||(MENU35_PRESS == data1)||(MENU36_PRESS == data1))/*当三级菜单中有弹出菜单选项时*/
-			{
-				menu3_pop(MENU3_HIDE);/*隐藏三级菜单的弹出菜单*/
-			}
-			pp->pos = 1;
-			pp->pos1[pp->pos] = 0;
-			CUR_POS = 0;
-			pp->pos_pos = MENU3_PRESSED;
-			draw_menu1();
-			draw_menu2(0);
-			draw_menu3(0, NULL);
 			break;
 
 		case GDK_KP_4:	/* 选中 P801 Open 这个位置 */
-			pp->pos = 8;
-			pp->pos1[pp->pos] = 0;
-			CUR_POS = 1;
-			pp->pos_pos = MENU3_PRESSED;
-			draw_menu1();
-			draw_menu2(0);
-			draw_menu3(0, NULL);
+			if(!pp->help_yn)
+			{
+				pp->pos = 8;
+				pp->pos1[pp->pos] = 0;
+				CUR_POS = 1;
+				pp->pos_pos = MENU3_PRESSED;
+				draw_menu1();
+				draw_menu2(0);
+				draw_menu3(0, NULL);
+			}
 			break;
 
 		case GDK_KP_5:	/* 选中 P200 Gate 这个位置 */
-			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
+			if(!pp->help_yn)
 			{
-				main_menu_pop(MENU_HIDE);/*收回主菜单条*/
+				if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
+				{
+					main_menu_pop(MENU_HIDE);/*收回主菜单条*/
+				}
+				pp->pos = 2;
+				pp->pos1[pp->pos] = 0;
+				CUR_POS = 0;
+				pp->pos_pos = MENU3_PRESSED;
+				draw_menu1();
+				draw_menu2(0);
+				draw_menu3(0, NULL);
 			}
-			pp->pos = 2;
-			pp->pos1[pp->pos] = 0;
-			CUR_POS = 0;
-			pp->pos_pos = MENU3_PRESSED;
-			draw_menu1();
-			draw_menu2(0);
-			draw_menu3(0, NULL);
 			break;
 
 		case GDK_KP_6:	/* 开始／停止 */			
@@ -3393,61 +3411,70 @@ static int handler_key(guint keyval, gpointer data)
 			break;
 
 		case GDK_KP_8:	/* 选中 P140 Set 80% 这个位置 */
-			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
+			if(!pp->help_yn)
 			{
-				main_menu_pop(MENU_HIDE);/*收回主菜单条*/
+				if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
+				{
+					main_menu_pop(MENU_HIDE);/*收回主菜单条*/
+				}
+				pp->pos = 1;
+				pp->pos1[pp->pos] = 4;
+				CUR_POS = 0;
+				pp->pos_pos = MENU3_PRESSED;
+				draw_menu1();
+				draw_menu2(0);
+				draw_menu3(0, NULL);
 			}
-			pp->pos = 1;
-			pp->pos1[pp->pos] = 4;
-			CUR_POS = 0;
-			pp->pos_pos = MENU3_PRESSED;
-			draw_menu1();
-			draw_menu2(0);
-			draw_menu3(0, NULL);
 			break;
 
 		case GDK_KP_9:	/* 选中 P400 Display 这个位置 */
-			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
+			if(!pp->help_yn)
 			{
-				main_menu_pop(MENU_HIDE);/*收回主菜单条*/
+				if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
+				{
+					main_menu_pop(MENU_HIDE);/*收回主菜单条*/
+				}
+				pp->pos = 4;
+				pp->pos1[pp->pos] = 0;
+				CUR_POS = 0;
+				pp->pos_pos = MENU3_PRESSED;
+				draw_menu1();
+				draw_menu2(0);
+				draw_menu3(0, NULL);
 			}
-			pp->pos = 4;
-			pp->pos1[pp->pos] = 0;
-			CUR_POS = 0;
-			pp->pos_pos = MENU3_PRESSED;
-			draw_menu1();
-			draw_menu2(0);
-			draw_menu3(0, NULL);
 			break;
 
 		case GDK_KP_Subtract:  /* +/- */
-			if(!pp->clb_flag)
+			if(!pp->help_yn)
 			{
-				(TMP(beam_num[group]) < (TMP(beam_qty[group]) - 1))	?
-					(TMP(beam_num[group]) += 1)	: (TMP(beam_num[group]) = 0);
-	
-				for (offset = 0, k = 0 ; k < group; k++)
-						offset += TMP(beam_qty[k]);
-				BEAM_INFO(offset + TMP(beam_num[group]),beam_delay) = pp->G_delay[ TMP(beam_num[group]) ];
-				GROUP_VAL(gain_offset[TMP(beam_num[group]) + offset]) = 
-								pp->tmp_gain_off[TMP(beam_num[group]) + offset];
-
-				BeamNo = pp->p_tmp_config->beam_num[group];
-			    if(LAW_VAL(Focal_type) == 0)
-			    {
-			    	current_angle = LAW_VAL(Angle_min)/100.0 + BeamNo * LAW_VAL(Angle_step)/100.0 ;
-			    }
-			    else
-			    {
-			    	current_angle = LAW_VAL(Angle_min)/100.0 ;
-			    }
-			    TMP(current_angle[group]) = current_angle * G_PI / 180.0 ;
-
-				draw_menu3(0, NULL);
 				if(!pp->clb_flag)
-					draw_area_all();
-				else
-					draw_area_calibration();
+				{
+					(TMP(beam_num[group]) < (TMP(beam_qty[group]) - 1))	?
+						(TMP(beam_num[group]) += 1)	: (TMP(beam_num[group]) = 0);
+	
+					for (offset = 0, k = 0 ; k < group; k++)
+							offset += TMP(beam_qty[k]);
+					BEAM_INFO(offset + TMP(beam_num[group]),beam_delay) = pp->G_delay[ TMP(beam_num[group]) ];
+					GROUP_VAL(gain_offset[TMP(beam_num[group]) + offset]) = 
+									pp->tmp_gain_off[TMP(beam_num[group]) + offset];
+
+					BeamNo = pp->p_tmp_config->beam_num[group];
+					if(LAW_VAL(Focal_type) == 0)
+					{
+						current_angle = LAW_VAL(Angle_min)/100.0 + BeamNo * LAW_VAL(Angle_step)/100.0 ;
+					}
+					else
+					{
+						current_angle = LAW_VAL(Angle_min)/100.0 ;
+					}
+					TMP(current_angle[group]) = current_angle * G_PI / 180.0 ;
+
+					draw_menu3(0, NULL);
+					if(!pp->clb_flag)
+						draw_area_all();
+					else
+						draw_area_calibration();
+				}
 			}
 			break;
 
@@ -3472,172 +3499,175 @@ static int handler_key(guint keyval, gpointer data)
 			break;
 
 		case GDK_Escape:
-			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
-			{
-				main_menu_pop(MENU_HIDE);/*收回主菜单条*/
-			}
-			else if((MENU31_PRESS == data1)||(MENU32_PRESS == data1)||(MENU33_PRESS == data1)||(MENU34_PRESS == data1)||(MENU35_PRESS == data1)||(MENU36_PRESS == data1))/*当三级菜单中有弹出菜单选项时*/
-			{
-				menu3_pop(MENU3_HIDE);/*隐藏三级菜单的弹出菜单*/
-			}
-			/*if(PROBE_DIALOG_KEYPRESS == data1)
-			{
-				pp->response_id = GTK_RESPONSE_CANCEL;
-			}*/
-			else/*当主菜单条处于收回状态时*/
-			{
-				if ( pp->mark_pop_change == 1)
-					pp->mark_pop_change = 0;
-				switch (pp->pos_pos)
+				if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
 				{
-					case MENU2_STOP:
-						break;
-					case MENU2_PRESSED:
-						pp->pos_pos = MENU2_STOP;
-						break;
-					case MENU3_STOP:
-						pp->pos_pos = MENU2_STOP;
-						break;
-					case MENU3_PRESSED:
-						gtk_spin_button_set_value (GTK_SPIN_BUTTON (pp->sbutton[CUR_POS]), tttmp);
-						pp->pos_pos = MENU3_STOP;
-						break;
-					default:break;
+					main_menu_pop(MENU_HIDE);/*收回主菜单条*/
 				}
-				if ((tmp != pp->pos_pos) || (tmp1 != pp->mark_pop_change))
-				{
-					draw_menu2(0);
-					draw_menu3(0, NULL);
-				}
-			}
-
-			if((pp->pos==0)&&(pp->pos1[pp->pos]==0))
-			{
-				if((MENU31_PRESS == data1)||(MENU32_PRESS == data1)||(MENU33_PRESS == data1)||(MENU34_PRESS == data1)||(MENU35_PRESS == data1)||(MENU36_PRESS == data1))/*当三级菜单中有弹出菜单选项时*/
+				else if((MENU31_PRESS == data1)||(MENU32_PRESS == data1)||(MENU33_PRESS == data1)||(MENU34_PRESS == data1)||(MENU35_PRESS == data1)||(MENU36_PRESS == data1))/*当三级菜单中有弹出菜单选项时*/
 				{
 					menu3_pop(MENU3_HIDE);/*隐藏三级菜单的弹出菜单*/
 				}
-				else
+				/*if(PROBE_DIALOG_KEYPRESS == data1)
 				{
-				pp->pos1[pp->pos]=0;
-				pp->start_qty = 0;
-				gtk_widget_set_sensitive(pp->eventbox2[2],TRUE);
-				gtk_widget_set_sensitive(pp->menubar,TRUE);
-				if(GROUP_VAL(group_mode)==PA_SCAN)
-					gtk_widget_set_sensitive(pp->eventbox2[1],TRUE);
-				else
-					gtk_widget_set_sensitive(pp->eventbox2[1],FALSE);
-
-				draw_menu3(0, NULL);
-				}
-			}
-			else if((pp->pos==0)&&(pp->pos1[pp->pos]==1))
-			{
-				if((MENU31_PRESS == data1)||(MENU32_PRESS == data1)||(MENU33_PRESS == data1)||(MENU34_PRESS == data1)||(MENU35_PRESS == data1)||(MENU36_PRESS == data1))/*当三级菜单中有弹出菜单选项时*/
+					pp->response_id = GTK_RESPONSE_CANCEL;
+				}*/
+				else/*当主菜单条处于收回状态时*/
 				{
-					menu3_pop(MENU3_HIDE);/*隐藏三级菜单的弹出菜单*/
-				}
-				else
-				{
-				pp->pos1[pp->pos]=1;
-				pp->fstart_qty = 0;
-				gtk_widget_set_sensitive(pp->eventbox2[0],TRUE);
-				gtk_widget_set_sensitive(pp->eventbox2[2],TRUE);
-				gtk_widget_set_sensitive(pp->eventbox2[3],TRUE);
-				gtk_widget_set_sensitive(pp->menubar,TRUE);
-
-				draw_menu3(0, NULL);
-				}
-			}
-			else if((pp->pos==0)&&(pp->pos1[pp->pos]==3))
-			{
-				if((MENU31_PRESS == data1)||(MENU32_PRESS == data1)||(MENU33_PRESS == data1)||(MENU34_PRESS == data1)||(MENU35_PRESS == data1)||(MENU36_PRESS == data1))/*当三级菜单中有弹出菜单选项时*/
-				{
-					menu3_pop(MENU3_HIDE);/*隐藏三级菜单的弹出菜单*/
-				}
-				else
-				{
-				pp->pos1[pp->pos]=3;
-				pp->wstart_qty = 1;
-				gtk_widget_set_sensitive(pp->eventbox2[0],TRUE);
-				gtk_widget_set_sensitive(pp->eventbox2[2],TRUE);
-				gtk_widget_set_sensitive(pp->menubar,TRUE);
-				if(GROUP_VAL(group_mode)==PA_SCAN)
-					gtk_widget_set_sensitive(pp->eventbox2[1],TRUE);
-				else
-					gtk_widget_set_sensitive(pp->eventbox2[1],FALSE);
-
-				draw_menu3(0, NULL);
-				}
-			}
-			if(pp->clb_flag)
-				esc_calibration();
-			break;
-		case GDK_Return:	/*回车键*/
-
-			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
-			{
-				main_menu_pop(MENU_ENTER);/*选中当前主菜单，并收回主菜单条*/
-			}
-			else if((MENU31_PRESS == data1)||(MENU32_PRESS == data1)||(MENU33_PRESS == data1)||(MENU34_PRESS == data1)||(MENU35_PRESS == data1)||(MENU36_PRESS == data1))/*当三级菜单中有弹出菜单选项时*/
-			{
-				menu3_pop(MENU3_ENTER);/*选中当前三级菜单，并收回三级菜单条*/
-			}
-			else/*当主菜单条 三级菜单条 都处于收回状态时*/
-			{
-
-				switch (pp->pos_pos)
-				{
-				case MENU2_STOP:
-					pp->pos_pos = MENU2_PRESSED;
-					pp->pos_pos = MENU3_STOP;
-					break;
-				case MENU2_PRESSED:
-					pp->pos_pos = MENU3_STOP;
-					break;
-				case MENU3_STOP:
-					if(gtk_widget_get_sensitive(pp->eventbox30[CUR_POS]))
-						pp->pos_pos = MENU3_PRESSED;
-					else
-						pp->pos_pos = MENU3_STOP;
-
-					/* 按下的动作在这里实现 */
-					break;
-				case MENU3_PRESSED:
-					pp->pos_pos = MENU3_STOP;
-					switch (CUR_POS)
+					if ( pp->mark_pop_change == 1)
+						pp->mark_pop_change = 0;
+					switch (pp->pos_pos)
 					{
-						case 0:
-							b3_fun0(NULL);
+						case MENU2_STOP:
 							break;
-						case 1:
-							b3_fun1(NULL);
+						case MENU2_PRESSED:
+							pp->pos_pos = MENU2_STOP;
 							break;
-						case 2:
-							b3_fun2(NULL);
+						case MENU3_STOP:
+							pp->pos_pos = MENU2_STOP;
 							break;
-						case 3:
-							b3_fun3(NULL);
-							break;
-						case 4:
-							b3_fun4(NULL);
-							break;
-						case 5:
-							b3_fun5(NULL);
+						case MENU3_PRESSED:
+							gtk_spin_button_set_value (GTK_SPIN_BUTTON (pp->sbutton[CUR_POS]), tttmp);
+							pp->pos_pos = MENU3_STOP;
 							break;
 						default:break;
 					}
-					pp->pos_pos = MENU3_STOP;
-					break;
-				default:break;
+					if ((tmp != pp->pos_pos) || (tmp1 != pp->mark_pop_change))
+					{
+						draw_menu2(0);
+						draw_menu3(0, NULL);
+					}
 				}
-				if ((tmp != pp->pos_pos) || (tmp1 != pp->mark_pop_change))
+
+				if((pp->pos==0)&&(pp->pos1[pp->pos]==0))
 				{
-					draw_menu2(0);
+					if((MENU31_PRESS == data1)||(MENU32_PRESS == data1)||(MENU33_PRESS == data1)||(MENU34_PRESS == data1)||(MENU35_PRESS == data1)||(MENU36_PRESS == data1))/*当三级菜单中有弹出菜单选项时*/
+					{
+						menu3_pop(MENU3_HIDE);/*隐藏三级菜单的弹出菜单*/
+					}
+					else
+					{
+					pp->pos1[pp->pos]=0;
+					pp->start_qty = 0;
+					gtk_widget_set_sensitive(pp->eventbox2[2],TRUE);
+					gtk_widget_set_sensitive(pp->menubar,TRUE);
+					if(GROUP_VAL(group_mode)==PA_SCAN)
+						gtk_widget_set_sensitive(pp->eventbox2[1],TRUE);
+					else
+						gtk_widget_set_sensitive(pp->eventbox2[1],FALSE);
+
 					draw_menu3(0, NULL);
-					tttmp = gtk_spin_button_get_value (GTK_SPIN_BUTTON (pp->sbutton[CUR_POS]));
+					}
 				}
-			}
+				else if((pp->pos==0)&&(pp->pos1[pp->pos]==1))
+				{
+					if((MENU31_PRESS == data1)||(MENU32_PRESS == data1)||(MENU33_PRESS == data1)||(MENU34_PRESS == data1)||(MENU35_PRESS == data1)||(MENU36_PRESS == data1))/*当三级菜单中有弹出菜单选项时*/
+					{
+						menu3_pop(MENU3_HIDE);/*隐藏三级菜单的弹出菜单*/
+					}
+					else
+					{
+					pp->pos1[pp->pos]=1;
+					pp->fstart_qty = 0;
+					gtk_widget_set_sensitive(pp->eventbox2[0],TRUE);
+					gtk_widget_set_sensitive(pp->eventbox2[2],TRUE);
+					gtk_widget_set_sensitive(pp->eventbox2[3],TRUE);
+					gtk_widget_set_sensitive(pp->menubar,TRUE);
+
+					draw_menu3(0, NULL);
+					}
+				}
+				else if((pp->pos==0)&&(pp->pos1[pp->pos]==3))
+				{
+					if((MENU31_PRESS == data1)||(MENU32_PRESS == data1)||(MENU33_PRESS == data1)||(MENU34_PRESS == data1)||(MENU35_PRESS == data1)||(MENU36_PRESS == data1))/*当三级菜单中有弹出菜单选项时*/
+					{
+						menu3_pop(MENU3_HIDE);/*隐藏三级菜单的弹出菜单*/
+					}
+					else
+					{
+					pp->pos1[pp->pos]=3;
+					pp->wstart_qty = 1;
+					gtk_widget_set_sensitive(pp->eventbox2[0],TRUE);
+					gtk_widget_set_sensitive(pp->eventbox2[2],TRUE);
+					gtk_widget_set_sensitive(pp->menubar,TRUE);
+					if(GROUP_VAL(group_mode)==PA_SCAN)
+						gtk_widget_set_sensitive(pp->eventbox2[1],TRUE);
+					else
+						gtk_widget_set_sensitive(pp->eventbox2[1],FALSE);
+
+					draw_menu3(0, NULL);
+					}
+				}
+				if(pp->clb_flag)
+					esc_calibration();
+			break;
+		case GDK_Return:	/*回车键*/
+
+				if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
+				{
+					main_menu_pop(MENU_ENTER);/*选中当前主菜单，并收回主菜单条*/
+				}
+				else if((MENU31_PRESS == data1)||(MENU32_PRESS == data1)||(MENU33_PRESS == data1)||(MENU34_PRESS == data1)||(MENU35_PRESS == data1)||(MENU36_PRESS == data1))/*当三级菜单中有弹出菜单选项时*/
+				{
+					menu3_pop(MENU3_ENTER);/*选中当前三级菜单，并收回三级菜单条*/
+				}
+				else/*当主菜单条 三级菜单条 都处于收回状态时*/
+				{
+					if(!pp->help_yn)
+					{
+						switch (pp->pos_pos)
+						{
+						case MENU2_STOP:
+							pp->pos_pos = MENU2_PRESSED;
+							pp->pos_pos = MENU3_STOP;
+							break;
+						case MENU2_PRESSED:
+							pp->pos_pos = MENU3_STOP;
+							break;
+						case MENU3_STOP:
+							if(gtk_widget_get_sensitive(pp->eventbox30[CUR_POS]))
+								pp->pos_pos = MENU3_PRESSED;
+							else
+								pp->pos_pos = MENU3_STOP;
+
+							/* 按下的动作在这里实现 */
+							break;
+						case MENU3_PRESSED:
+							pp->pos_pos = MENU3_STOP;
+							switch (CUR_POS)
+							{
+								case 0:
+									b3_fun0(NULL);
+									break;
+								case 1:
+									b3_fun1(NULL);
+									break;
+								case 2:
+									b3_fun2(NULL);
+									break;
+								case 3:
+									b3_fun3(NULL);
+									break;
+								case 4:
+									b3_fun4(NULL);
+									break;
+								case 5:
+									b3_fun5(NULL);
+									break;
+								default:break;
+							}
+							pp->pos_pos = MENU3_STOP;
+							break;
+						default:break;
+						}
+					}
+					if ((tmp != pp->pos_pos) || (tmp1 != pp->mark_pop_change))
+					{
+						draw_menu2(0);
+						draw_menu3(0, NULL);
+						tttmp = gtk_spin_button_get_value (GTK_SPIN_BUTTON (pp->sbutton[CUR_POS]));
+					}
+				}
+
 			break;
 
 		case GDK_F1:
@@ -3723,101 +3753,118 @@ static int handler_key(guint keyval, gpointer data)
 			}			
 			break;
 		case GDK_F7:
-			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
+			if(!pp->help_yn)
 			{
-				main_menu_pop(MENU_HIDE);/*收回主菜单条*/
-			}
-			if(gtk_widget_get_sensitive(pp->eventbox30[5]))
-			{
-				if (MENU36_PRESS == data1)
-					menu3_pop(MENU3_TURN);
-				else
+				if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
 				{
-					menu3_pop(MENU3_HIDE); 
-					b3_fun5(NULL);
+					main_menu_pop(MENU_HIDE);/*收回主菜单条*/
+				}
+				if(gtk_widget_get_sensitive(pp->eventbox30[5]))
+				{
+					if (MENU36_PRESS == data1)
+						menu3_pop(MENU3_TURN);
+					else
+					{
+						menu3_pop(MENU3_HIDE); 
+						b3_fun5(NULL);
+					}
 				}
 			}			
 			break;
 		case GDK_F8:
-			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
+			if(!pp->help_yn)
 			{
-				main_menu_pop(MENU_HIDE);/*收回主菜单条*/
-			}
-			if(gtk_widget_get_sensitive(pp->eventbox30[4]))
-			{
-				if (MENU35_PRESS == data1)
-					menu3_pop(MENU3_TURN);
-				else
+				if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
 				{
-					menu3_pop(MENU3_HIDE); 
-					b3_fun4(NULL);
+					main_menu_pop(MENU_HIDE);/*收回主菜单条*/
+				}
+				if(gtk_widget_get_sensitive(pp->eventbox30[4]))
+				{
+					if (MENU35_PRESS == data1)
+						menu3_pop(MENU3_TURN);
+					else
+					{
+						menu3_pop(MENU3_HIDE); 
+						b3_fun4(NULL);
+					}
 				}
 			}			
 			break;
 		case GDK_F9:
-			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
+			if(!pp->help_yn)
 			{
-				main_menu_pop(MENU_HIDE);/*收回主菜单条*/
-			}
-			if(gtk_widget_get_sensitive(pp->eventbox30[3]))
-			{
-				if (MENU34_PRESS == data1)
-					menu3_pop(MENU3_TURN);
-				else
+				if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
 				{
-					menu3_pop(MENU3_HIDE); 
-					b3_fun3(NULL);
+					main_menu_pop(MENU_HIDE);/*收回主菜单条*/
+				}
+				if(gtk_widget_get_sensitive(pp->eventbox30[3]))
+				{
+					if (MENU34_PRESS == data1)
+						menu3_pop(MENU3_TURN);
+					else
+					{
+						menu3_pop(MENU3_HIDE); 
+						b3_fun3(NULL);
+					}
 				}
 			}			
 			break;
 		case GDK_F10:
-			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
+			if(!pp->help_yn)
 			{
-				main_menu_pop(MENU_HIDE);/*收回主菜单条*/
-			}
-			if(gtk_widget_get_sensitive(pp->eventbox30[2]))
-			{
-				if (MENU33_PRESS == data1)	
-					menu3_pop(MENU3_TURN);
-				else
+				if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
 				{
-					menu3_pop(MENU3_HIDE); 
-					b3_fun2(NULL);
-				}	
+					main_menu_pop(MENU_HIDE);/*收回主菜单条*/
+				}
+				if(gtk_widget_get_sensitive(pp->eventbox30[2]))
+				{
+					if (MENU33_PRESS == data1)	
+						menu3_pop(MENU3_TURN);
+					else
+					{
+						menu3_pop(MENU3_HIDE); 
+						b3_fun2(NULL);
+					}	
+				}
 			}		
 			break;
 		case GDK_F11:
-			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
+			if(!pp->help_yn)
 			{
-				main_menu_pop(MENU_HIDE);/*收回主菜单条*/
-			}
-			if(gtk_widget_get_sensitive(pp->eventbox30[1]))
-			{
-				if (MENU32_PRESS == data1)
-					menu3_pop(MENU3_TURN);
-				else
+				if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
 				{
-					menu3_pop(MENU3_HIDE); 
-					b3_fun1(NULL);
+					main_menu_pop(MENU_HIDE);/*收回主菜单条*/
 				}
-			}			
+				if(gtk_widget_get_sensitive(pp->eventbox30[1]))
+				{
+					if (MENU32_PRESS == data1)
+						menu3_pop(MENU3_TURN);
+					else
+					{
+						menu3_pop(MENU3_HIDE); 
+						b3_fun1(NULL);
+					}
+				}	
+			}		
 			break;
 		case GDK_F12:
-			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
+			if(!pp->help_yn)
 			{
-				main_menu_pop(MENU_HIDE);/*收回主菜单条*/
-			}
-			if(gtk_widget_get_sensitive(pp->eventbox30[0]))
-			{
-				if (MENU31_PRESS == data1)
-					menu3_pop(MENU3_TURN);
-				else
+				if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
 				{
-					menu3_pop(MENU3_HIDE); 
-					b3_fun0(pp);
+					main_menu_pop(MENU_HIDE);/*收回主菜单条*/
+				}
+				if(gtk_widget_get_sensitive(pp->eventbox30[0]))
+				{
+					if (MENU31_PRESS == data1)
+						menu3_pop(MENU3_TURN);
+					else
+					{
+						menu3_pop(MENU3_HIDE); 
+						b3_fun0(pp);
+					}
 				}
 			}
-
 			break;
 
 		case GDK_Left:
@@ -3952,15 +3999,18 @@ gboolean data_function0 (GtkWidget *widget,	GdkEventButton *event,	gpointer data
 	guint num = GPOINTER_TO_UINT (data);
 	gpointer p = pp;
 	printf("\n num = %d \n", num);
-	switch (num)
+	if(!pp->help_yn)
 	{
-		case 0:b3_fun0(p);break;
-		case 1:b3_fun1(p);break;
-		case 2:b3_fun2(p);break;
-		case 3:b3_fun3(p);break;
-		case 4:b3_fun4(p);break;
-		case 5:b3_fun5(p);break;
-		default:break;
+		switch (num)
+		{
+			case 0:b3_fun0(p);break;
+			case 1:b3_fun1(p);break;
+			case 2:b3_fun2(p);break;
+			case 3:b3_fun3(p);break;
+			case 4:b3_fun4(p);break;
+			case 5:b3_fun5(p);break;
+			default:break;
+		}
 	}
 	return TRUE;
 }

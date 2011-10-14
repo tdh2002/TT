@@ -463,6 +463,7 @@ receiver. PR is for separate pulser and receiver.收发分离 或者收发一体
 #define LABEL_00   "#512875"
 #define LABEL_01   "#641413"
 #define LABEL_02   "#314552"
+#define LABEL_03   "#586060"
 
 #define LABEL_10   "#346475"
 #define LABEL_11   "#315062"
@@ -493,8 +494,8 @@ receiver. PR is for separate pulser and receiver.收发分离 或者收发一体
 
 #define LABEL_60   "#643961"
 #define LABEL_61   "#644073"
-#define LABEL_62   0
-#define LABEL_63   "#644028"
+#define LABEL_62   "#644028"
+#define LABEL_63   "#587020"
 #define LABEL_64   "#644119"
 
 #define LABEL_70   "#584719"
