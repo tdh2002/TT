@@ -8374,44 +8374,60 @@ void draw3_data2(DRAW_UI_P p)
 							else if ((pp->ctype_pos == 1) && ((pp->cmode_pos == 1)||(pp->cmode_pos == 2)||(pp->cmode_pos == 3)))
 							{
 
-								cur_value = LAW_VAL (Angle_min) / 100.0;
-								digit = 1;
-								pos = 2;
-								unit = UNIT_DEG;
-								draw3_digit_stop (cur_value, units[unit], digit, pos, 27);
-								gtk_widget_set_sensitive(p->eventbox30[2],FALSE);
-								gtk_widget_set_sensitive(p->eventbox31[2],FALSE);
-#if 0
-								switch (TMP(first_angle_reg))
+								if (LAW_VAL (Focal_type) == AZIMUTHAL_SCAN)
 								{
-									case 0:	tmpf = 0.1; break;
-									case 1:	tmpf = 1.0; break;
-									case 2:	tmpf = 10.0; break;
-									default:break;
-								}
-								if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 2))
-								{
-									cur_value = pp->first_angle/100.0 ;
-									lower =	0.0;
-									upper =	89.9;
-									step = tmpf;
+									cur_value = LAW_VAL (Angle_min) / 100.0;
 									digit = 1;
 									pos = 2;
 									unit = UNIT_DEG;
-									draw3_digit_pressed (data_0222, units[unit], cur_value,
-											lower, upper, step, digit, p, pos, 27);
+									draw3_digit_stop (cur_value, units[unit], digit, pos, 27);
+									gtk_widget_set_sensitive(p->eventbox30[2],FALSE);
+									gtk_widget_set_sensitive(p->eventbox31[2],FALSE);
 								}
-								else
+								else if(LAW_VAL (Focal_type) == LINEAR_SCAN) 
 								{
-									cur_value = pp->first_angle/100.0 ;
-									unit = UNIT_DEG;
-									pos = 2;
-									digit = 1;
-									draw3_digit_stop (cur_value , units[unit], digit, pos, 27);
+									switch (TMP(first_element_reg))
+									{
+										case 0:	tmpf = 1.0; break;
+										case 1:	tmpf = 10.0; break;
+										case 2:	tmpf = 100.0; break;
+										default:break;
+									}
+									if(get_auto_focal (pp->p_config) == AUTO_FOCAL_ON)/* 聚焦法则自动计算开启时, First Element才可调节 */
+									{
+										if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 2))
+										{
+											cur_value = LAW_VAL(First_tx_elem);
+											lower = 1.0;
+											/* 计算最大值 */
+											upper = (gfloat)MIN((GROUP_VAL(probe.Elem_qty) - LAW_VAL(Elem_qty) + 1),
+												  (128 + 1 - get_group_val (&pp->p_config->group[get_current_group(pp->p_config)], GROUP_PULSER)));
+											step = tmpf;
+											digit = 0;
+											pos = 2;
+											unit = UNIT_NONE;
+											draw3_digit_pressed (data_631, units[unit], cur_value , lower, upper, step, digit, p, pos, 45);
+										}
+										else 
+										{
+											cur_value = LAW_VAL(First_tx_elem);
+											digit = 0;
+											pos = 2;
+											unit = UNIT_NONE;
+											draw3_digit_stop (cur_value, units[unit], digit, pos, 45);
+										}
+									}
+									else /* 聚焦法则自动计算为off时, First Element 不可以调节 */
+									{ 
+										cur_value = LAW_VAL(First_tx_elem);
+										digit = 0;
+										pos = 2;
+										unit = UNIT_NONE;
+										draw3_digit_stop (cur_value, units[unit], digit, pos, 45);
+										gtk_widget_set_sensitive(pp->eventbox30[1],FALSE);
+										gtk_widget_set_sensitive(pp->eventbox31[1],FALSE);
+									}
 								}
-								gtk_widget_set_sensitive(pp->eventbox30[2],FALSE);
-								gtk_widget_set_sensitive(pp->eventbox31[2],FALSE);
-#endif
 							}
 							else if((pp->ctype_pos == 2)&&(pp->scode_pos == 1))
 							{
@@ -11669,34 +11685,83 @@ void draw3_data3(DRAW_UI_P p)
 									draw3_digit_stop (cur_value, units[unit], digit, pos, 28);
 								}
 #endif
-								switch (TMP(last_angle_reg))
+								if (LAW_VAL (Focal_type) == AZIMUTHAL_SCAN)
 								{
-									case 0:	tmpf = 0.1; break;
-									case 1:	tmpf = 1.0; break;
-									case 2:	tmpf = 10.0; break;
-									default:break;
+									switch (TMP(last_angle_reg))
+									{
+										case 0:	tmpf = 0.1; break;
+										case 1:	tmpf = 1.0; break;
+										case 2:	tmpf = 10.0; break;
+										default:break;
+									}
+									if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 3))
+									{
+										cur_value = pp->last_angle/100.0 ;
+										lower =	LAW_VAL (Angle_min) / 100.0;
+										upper =	LAW_VAL(Angle_max) / 100.0;
+										step = tmpf;
+										digit = 1;
+										pos = 3;
+										unit = UNIT_DEG;
+										draw3_digit_pressed (data_0238, units[unit], cur_value,
+												lower, upper, step, digit, p, pos, 28);
+									}
+									else
+									{
+										cur_value = pp->last_angle/100.0 ;
+										unit = UNIT_DEG;
+										pos = 3;
+										digit = 1;
+										draw3_digit_stop (cur_value , units[unit], digit, pos, 28);
+									}
 								}
-								if ((MENU_STATUS == MENU3_PRESSED) && (CUR_POS == 3))
+								else if(LAW_VAL (Focal_type) == LINEAR_SCAN) 
 								{
-									cur_value = pp->last_angle/100.0 ;
-									lower =	LAW_VAL (Angle_min) / 100.0;
-									upper =	LAW_VAL(Angle_max) / 100.0;
-									step = tmpf;
-									digit = 1;
-									pos = 3;
-									unit = UNIT_DEG;
-									draw3_digit_pressed (data_0238, units[unit], cur_value,
-											lower, upper, step, digit, p, pos, 28);
-								}
-								else
-								{
-									cur_value = pp->last_angle/100.0 ;
-									unit = UNIT_DEG;
-									pos = 3;
-									digit = 1;
-									draw3_digit_stop (cur_value , units[unit], digit, pos, 28);
-								}
 
+
+									switch (TMP(last_element_reg))
+									{
+										case 0:	tmpf = 1.0; break;
+										case 1:	tmpf = 10.0; break;
+										case 2:	tmpf = 100.0; break;
+										default:break;
+									}
+									/* 聚焦法则自动计算开启时  */
+									if ((get_auto_focal (pp->p_config) == AUTO_FOCAL_ON) &&
+											(LAW_VAL(Focal_type) == LINEAR_SCAN))
+									{
+										/*Law Config 为 Linear 时，Last Element可调*/
+										if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 3))
+										{
+											cur_value = LAW_VAL (Last_tx_elem);
+											lower = LAW_VAL (First_tx_elem) + LAW_VAL (Elem_qty) - 1; 
+											upper = GROUP_VAL (probe.Elem_qty);
+											step = tmpf;
+											digit = 0;
+											pos = 3;
+											unit = UNIT_NONE;
+											draw3_digit_pressed (data_632, units[unit], cur_value , lower, upper, step, digit, p, pos, 46);
+										}
+										else 
+										{
+											cur_value = LAW_VAL(Last_tx_elem);
+											digit = 0;
+											pos = 3;
+											unit = UNIT_NONE;
+											draw3_digit_stop (cur_value, units[unit], digit, pos, 46);
+										}
+									}
+									else /*Law Config 不为 Linear 时，Last Element  Unsensitive*/
+									{
+										cur_value = LAW_VAL(Last_tx_elem);
+										digit = 0;
+										pos = 3;
+										unit = UNIT_NONE;
+										draw3_digit_stop (cur_value, units[unit], digit, pos, 46);
+										gtk_widget_set_sensitive(pp->eventbox30[2],FALSE);
+										gtk_widget_set_sensitive(pp->eventbox31[2],FALSE);
+									}
+								}
 							}
 							else if((pp->ctype_pos == 2)&&(pp->scode_pos == 1))
 							{

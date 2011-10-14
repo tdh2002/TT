@@ -1978,6 +1978,8 @@ void b3_fun2(gpointer p)
  							   {
 									if(pp->ctype_pos == 0)
  							   			data_process(&(TMP(distance_reg)), 2);
+									else if(pp->ctype_pos == 1)
+										data_process(&(TMP(first_element_reg)),2);
 									else if((pp->ctype_pos == 2)&&(pp->scode_pos == 1))
  							   			data_process(&(TMP(cstart_reg)), 3);
  							   }
@@ -2006,6 +2008,8 @@ void b3_fun2(gpointer p)
  							   		data_process (&(TMP(weland_height_reg)), 2);
  							   else if(pp->wstart_qty == 4)
  							   		data_process (&(TMP(fizone_height_reg)), 2);
+
+
 								break;/*p032*/
 						default:break;
 					}
@@ -2331,7 +2335,10 @@ void b3_fun3(gpointer p)
 								 	 }
 								 	 else if ((pp->ctype_pos == 1) && ((pp->cmode_pos == 1)||(pp->cmode_pos == 2)||(pp->cmode_pos == 3)))
 								 	 {
-											data_process (&(TMP(last_angle_reg)), 2);
+											if (LAW_VAL (Focal_type) == AZIMUTHAL_SCAN)
+												data_process (&(TMP(last_angle_reg)), 2);
+											else if(LAW_VAL (Focal_type) == LINEAR_SCAN) 
+												data_process(&(TMP(last_element_reg)),2);
 									 }
 								 	 else if ((pp->ctype_pos == 2) && (pp->scode_pos == 1))
 								 	 {
