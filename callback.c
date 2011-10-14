@@ -13,6 +13,9 @@
 #include <gdk/gdkkeysyms.h>
 #include <pthread.h>
 
+#define MAX_DMA_FREQUENCY    200
+
+
 pthread_cond_t qready = PTHREAD_COND_INITIALIZER;
 pthread_mutex_t qlock = PTHREAD_MUTEX_INITIALIZER;
 
@@ -20,6 +23,8 @@ extern void focal_law(gpointer data);/*回调函数*/
 extern void draw_area_calibration();
 extern void switch_area();
 extern void draw_field_value ();
+extern void send_group_spi (guint grp);
+extern void send_focal_spi (guint grp);
 
 static int handler_key(guint keyval, gpointer data);
 static int thread_set_DB_eighty_percent(gpointer data);
@@ -46,7 +51,7 @@ guint get_max_point_qty();
 void generate_focallaw(int grp);
 gfloat cba_encoder();
 gfloat cba_ultrasound_velocity();
-gfloat cba_ultrasound_wedgedelay();
+void cba_ultrasound_wedgedelay();
 void cba_ultrasound_sensitivity();
 void cba_ultrasound_TCG();
 void esc_calibration();
@@ -462,7 +467,7 @@ static void save_cal_law(gint offset, gint group, PARAMETER_P p)
 		TMP(field_distance[i]) = (gfloat)(p->field_distance[i]);//每束 中心正元到出射点的距离 单位mm
 		pp->G_delay[i] = (gint)p->G_delay[i];////保存每一个beam的延时  方便用于显示
 		BEAM_INFO(i+offset,beam_delay) = pp->G_delay[i];//modified by hefan
-	//	printf("beam_delay[%d]=%d \n", i, pp->G_delay[i]);
+	    //printf("beam_delay[%d]=%d \n", i, pp->G_delay[i]);
 		//***************************************
 		if(LAW_VAL_POS(group, Focal_type) == 1)//Linear
 		{
@@ -620,11 +625,93 @@ guint get_point_qty ()
 
 guint get_max_prf()
 {
-	guint i, point_qty = 0 ;
-	for (i = 0; i < setup_MAX_GROUP_QTY; i++)
+	unsigned int result;
+	int i          ;
+	int pulse_width;
+	int point_qty  ;
+	int wedge_delay;
+	int probe_element_num;
+	int velocity  ;
+	int beam_sum  ;
+	int group_num ;
+	int max_element_power;
+	int total_power      ;
+	int voltage ;
+	int rx_time[8] ;
+	int max_rx_time;
+	int single_beam_time;
+	double prf_limit[3];
+    // get group number
+	group_num = get_group_qty (pp->p_config) ;
+	// pulse width for every group is the same
+	pulse_width = get_group_val (get_group_by_id (pp->p_config, 0), GROUP_PW_VAL) / 100;
+	// velocity in specimen , for every group is the same
+	velocity = get_group_val(get_group_by_id (pp->p_config, 0), GROUP_VELOCITY ) / 100;
+	// wedge delay , mostly is to be zero
+	wedge_delay = get_group_val(get_group_by_id (pp->p_config, 0) , GROUP_WEDGE_DELAY);
+    //
+	if(get_voltage (pp->p_config, 0 )==0)
+	      voltage = 50 ;
+	else if (get_voltage (pp->p_config, 0 )==1)
+		  voltage = 100;
+    // get sum beam number
+	for (beam_sum = 0 , i = 0; i < group_num; i++)
+		beam_sum += TMP(beam_qty[i]);
+    // get total wave data size
+	for (point_qty = 0 , i = 0; i < group_num; i++)
 		point_qty += TMP(beam_qty[i]) * (GROUP_VAL_POS (i, point_qty) + 32);
-//	return ((192000 / (point_qty + 32)) * 25);
-	return 400;
+	// get max element number
+    for(probe_element_num = LAW_VAL_POS(0, Elem_qty),i = 1; i< group_num; i++)
+    	if(LAW_VAL_POS(i, Elem_qty)>probe_element_num)  probe_element_num = LAW_VAL_POS(i, Elem_qty);
+    //  max single element power
+    for(i = 0; i< group_num; i++)
+    {
+    	// these a problem here for the max beam delay is calculated after generate focal law
+    	// where the group_spi structure should be initialized first
+    	rx_time[i] =  TMP(group_spi[i]).sample_range + TMP(max_beam_delay[i]);
+    	//printf("TMP(group_spi[i]).sample_range %d TMP(max_beam_delay[i]) %d \n", TMP(group_spi[i]).sample_range , TMP(max_beam_delay[i]));
+    }
+    for(max_rx_time = rx_time[0], i = 1; i< group_num; i++)
+    {
+    	if(max_rx_time < rx_time[i]) max_rx_time = rx_time[i] ;
+    }
+    single_beam_time = 4 * max_rx_time                        ;   // unit -- 10nm
+    prf_limit[0] = 100000000.0 / single_beam_time             ;
+    prf_limit[0] = prf_limit[0] / beam_sum                    ;
+    //printf("prf_limit[0] %f \n", prf_limit[0]);
+    max_element_power = voltage * voltage * pulse_width / 50  ;
+    total_power = max_element_power * probe_element_num       ;
+    prf_limit[1] = 125000000.0 / max_element_power            ;
+    if(probe_element_num  > 16) prf_limit[1] = 2000000000.0 / total_power ;
+    prf_limit[1] = prf_limit[1] / beam_sum                    ;
+
+    prf_limit[2] = MAX_DMA_FREQUENCY * (int)(MIN(192 * 1024.0 / point_qty , 1024 / beam_sum )) / 10;
+
+    prf_limit[0] = MIN(prf_limit[0], prf_limit[1]);
+    prf_limit[0] = MIN(prf_limit[0], prf_limit[2]);
+    result = (int) prf_limit[0]                   ;
+
+#if 0
+    printf("****************\n");
+    printf("TMP(beam_qty[0]) %d \n", TMP(beam_qty[0]));
+    printf("GROUP_VAL_POS (0, point_qty) %d \n", GROUP_VAL_POS (0, point_qty));
+    printf("group_num %d\n", group_num)       ;
+    printf("probe_element_num %d \n", probe_element_num);
+    printf("pulse_width %d\n", pulse_width)   ;
+    printf("velocity  %d\n", velocity)        ;
+    printf("wedge_delay  %d\n",wedge_delay)   ;
+    printf("voltage %d\n", voltage)           ;
+    printf("beam_sum %d\n", beam_sum)         ;
+    printf("point_qty %d\n", point_qty)       ;
+    printf("max_rx_time %d \n", max_rx_time)  ;
+    printf("max_element_power %d\n", max_element_power);
+    printf("prf_limit[1] %f \n", prf_limit[1]);
+    printf("prf_limit[2] %f \n", prf_limit[2]);
+    printf("result %d\n", result)             ;
+    printf("******************\n")            ;
+#endif
+
+	return result * 10;
 }
 
 /* 计算prf,并且附加限制 限制计算 */
@@ -633,20 +720,19 @@ guint get_prf ()
 	guint	prf_temp = get_max_prf();
 	gint	grp = get_current_group (pp->p_config);
 	GROUP	*p_grp = get_group_by_id (pp->p_config, grp);
-	/*
-	range_all =	GROUP_VAL(start) + GROUP_VAL(range);
-	gate_range_all[0] = GROUP_VAL(gate[0].start) + GROUP_VAL(gate[0].width);
-	gate_range_all[1] = GROUP_VAL(gate[1].start) + GROUP_VAL(gate[1].width);
-	gate_range_all[2] = GROUP_VAL(gate[2].start) + GROUP_VAL(gate[2].width);
-	prf_temp = 	MAX((MAX(range_all, gate_range_all[0])), (MAX(gate_range_all[1], gate_range_all[2])));
-	prf_temp = (guint)((1000000 / 4) / (prf_temp /1000.0));
-	(prf_temp > 20000) ? (prf_temp = 20000) : (prf_temp = prf_temp) ;
-	TMP(max_prf) = prf_temp;
-	*/
+
 	if (get_group_val (p_grp, GROUP_PRF_POS) == 3)
 	{
 		if (get_group_val (p_grp, GROUP_PRF_VAL) > prf_temp )
 			set_group_val (p_grp, GROUP_PRF_VAL, prf_temp);
+		if(get_group_val (p_grp, GROUP_PRF_VAL) <= MAX_DMA_FREQUENCY )
+		{
+			      pp->p_config->virtual_focallaw = 1 ;
+		}
+		else
+		{
+		          pp->p_config->virtual_focallaw = prf_temp % MAX_DMA_FREQUENCY ? (prf_temp/MAX_DMA_FREQUENCY + 1 ): (prf_temp / MAX_DMA_FREQUENCY) ;
+		}
 	}
 	else 
 	{
@@ -654,19 +740,29 @@ guint get_prf ()
 		{
 			case 0:
 				set_group_val (p_grp, GROUP_PRF_VAL, prf_temp);
+				pp->p_config->virtual_focallaw = prf_temp % MAX_DMA_FREQUENCY ? (prf_temp/MAX_DMA_FREQUENCY + 1 ): (prf_temp / MAX_DMA_FREQUENCY) ;
+				//printf("pp->p_config->virtual_focal_law %d \n", pp->p_config->virtual_focal_law );
 				break;
 			case 1:
-				set_group_val (p_grp, GROUP_PRF_VAL, prf_temp / 2);
+				prf_temp = prf_temp / 2 ;
+				set_group_val (p_grp, GROUP_PRF_VAL, prf_temp );
+				pp->p_config->virtual_focallaw = prf_temp % MAX_DMA_FREQUENCY ? (prf_temp/MAX_DMA_FREQUENCY + 1 ): (prf_temp / MAX_DMA_FREQUENCY) ;
+			    //printf("pp->p_config->virtual_focal_law %d \n", pp->p_config->virtual_focal_law );
 				break;
 			case 2:
 				set_group_val (p_grp, GROUP_PRF_VAL,
 						(prf_temp > 600 ) ? 600 : prf_temp );
+				if(prf_temp > 600 )
+				    prf_temp = 600 ;
+				pp->p_config->virtual_focallaw = prf_temp % MAX_DMA_FREQUENCY ? (prf_temp/MAX_DMA_FREQUENCY + 1 ): (prf_temp / MAX_DMA_FREQUENCY) ;
 				break;
 			default:break;
 		}
 	}
+    printf("get_group_val (p_grp, GROUP_PRF_VAL) = %d\n" ,get_group_val (p_grp, GROUP_PRF_VAL));
 	return get_group_val (p_grp, GROUP_PRF_VAL);
 }
+
 
 /* 计算脉冲宽度 */
 guint get_pw ()
@@ -675,9 +771,9 @@ guint get_pw ()
 	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
 
 	if (get_group_val (p_grp, GROUP_PW_POS))
-		return (get_group_val (p_grp, GROUP_PW_VAL));
+		return (guint)((get_group_val (p_grp, GROUP_PW_VAL)) / 100.0);
 	else
-		return ((int)(( 5000*10000 / get_group_val (p_grp, GROUP_FREQ_VAL))) / 250)  * 250; /* 改变脉冲宽度 */
+		return (guint)(( 5000*10000 / get_group_val (p_grp, GROUP_FREQ_VAL)) / 100);/// 250) * 250; /* 改变脉冲宽度 */
 }
 
 /* 计算滤波 0 1 None 和 Auto 时候怎么计算 */
@@ -1287,14 +1383,18 @@ void b3_fun1(gpointer p)
 	/*	pp->pos_pos = MENU3_PRESSED;*/
 
 	gint offset,k,step;
-	gint grp = get_current_group(pp->p_config);//当前group
+	gfloat s, vel, wedge_delay;
+	gint grp = get_current_group(pp->p_config);
+	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
 	for (offset = 0, k = 0 ; k < grp; k++)
 		offset += TMP(beam_qty[k]);
 	gint index = offset + TMP(beam_num[grp]);
 	gint thread_count = 10;
+	gint count = 0;
+	wedge_delay = get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_WEDGE_DELAY) / 1000.0;
 //	gint BeamNo = pp->p_tmp_config->beam_num[grp];
 
-	GtkWidget* dialog;
+	GtkWidget* dialog = NULL;
 	GtkWindow *win = GTK_WINDOW (pp->window);
 
 	if (LAW_VAL (Focal_type) == AZIMUTHAL_SCAN)
@@ -1321,6 +1421,8 @@ void b3_fun1(gpointer p)
 						{
 							//生成聚焦法则
 							generate_focallaw(grp);
+							send_group_spi (grp);
+							send_focal_spi (grp);
 						}					
 						break;
 					case 2://Calibration
@@ -1443,7 +1545,6 @@ void b3_fun1(gpointer p)
 										}
 										break;
 									case 1://Wedge Delay
-										//校准完之后Accept
 										if(!pp->flag)
 										{
 											dialog = gtk_message_dialog_new( win,
@@ -1460,19 +1561,55 @@ void b3_fun1(gpointer p)
 											if((pp->cstart_qty) == 2)
 											{
 												draw_area_calibration();
+												vel = get_group_val (p_grp, GROUP_VELOCITY) / 100000.0 ;
+												if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
+												{
+													if (UNIT_MM == get_unit(pp->p_config))
+													{
+														pp->gate_start_clb = GROUP_GATE_POS(start)* vel;
+														pp->gate_width_clb = GROUP_GATE_POS(width)* vel;
+													}
+													else  /* 英寸 */
+													{
+														pp->gate_start_clb = GROUP_GATE_POS(start)* vel * 0.03937;
+														pp->gate_width_clb = GROUP_GATE_POS(width)* vel * 0.03937;
+													}
+												}
+												else /* 显示方式为时间 */
+												{
+													pp->gate_start_clb = GROUP_GATE_POS(start); 
+													pp->gate_width_clb = GROUP_GATE_POS(width); 
+												}
 											}
 											else if((pp->cstart_qty) == 3)
 											{
 											}
-											else if((pp->cstart_qty) == 5)//Accept
+											else if((pp->cstart_qty) == 1)//Accept
 											{
-												set_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_WEDGE_DELAY,
-																pp->wedge_delay );
+												for (i = 0; i < step; i++)
+												{
+													vel = (get_group_val (p_grp, GROUP_VELOCITY) / 100.0);// m/s
+													s   = (TMP(clb_wedge_data[i]) - wedge_delay - pp->G_delay[i] - get_pw()) * vel / 2000000;//mm
+													if(s<0) s = 0;
+													if( fabs(TMP_CBA(distance) - s) >  (pp->tolerance / 100.0) )
+													{
+														if(!dialog)
+														{
+															dialog = gtk_message_dialog_new( win,
+																		GTK_DIALOG_DESTROY_WITH_PARENT,
+																		GTK_MESSAGE_ERROR,
+																		GTK_BUTTONS_CLOSE,
+																		"At least one context has no amplitude peak in \ngate A. Wedge delay calibration cannot be performed. ");
+															gtk_dialog_run(GTK_DIALOG(dialog));
+															gtk_widget_destroy(dialog);
+															pp->cstart_qty = 5;
+															count = 1;
+														}
+													}
+												}
+												if(!count)
+													esc_calibration();
 												//pp->flag = 0;
-											}
-											else if((pp->cstart_qty) == 1)
-											{
-												esc_calibration();
 											}
 										}
 										break;
@@ -2062,8 +2199,7 @@ void b3_fun3(gpointer p)
 									{
 										for (i = 0; i < clb_step; i++)
 										{
-										//	TMP(clb_real_data[i]) = ((TMP(measure_data[i][1])>>20) & 0xfff)/20.47;
-											TMP(clb_max_data[i]) = 0;//TMP(clb_real_data[i]);//第一次需初始化
+											TMP(clb_wedge_data[i]) = (TMP(measure_data[i][1]) & 0xfffff) * 10;
 										}
 									}
 									break;
@@ -2116,6 +2252,8 @@ void b3_fun3(gpointer p)
 				case 4:
 					/* 计算聚焦法则 P643 */
 					generate_focallaw(get_current_group (pp->p_config));
+					send_group_spi (get_current_group (pp->p_config));
+					send_focal_spi (get_current_group (pp->p_config));
 					break;  
 				default:break;
 			}
@@ -2410,7 +2548,7 @@ void b3_fun4(gpointer p)
 								break;
 							case 1://wedge delay
 								if (pp->cstart_qty == 5)//Calibrate
-									pp->wedge_delay = cba_ultrasound_wedgedelay();
+									cba_ultrasound_wedgedelay();
 								break;
 							case 2://sensitivity
 								if (pp->cstart_qty == 6)//Calibrate
@@ -2675,7 +2813,7 @@ void b3_fun5(gpointer p)
 											TMP(clb_max_data[i]) = TMP(clb_real_data[i]);//第一次需初始化
 											TMP(clb_his_max_data) = 0;
 											GROUP_VAL(gain_offset[i+offset]) =  0;
-											pp->tmp_gain_off[ i+offset] = 0; 
+											pp->tmp_gain_off[i+offset] = 0; 
 										}
 									}
 									else if(pp->cstart_qty == 5)//Clear env
@@ -3310,7 +3448,6 @@ static int handler_key(guint keyval, gpointer data)
 					draw_area_all();
 				else
 					draw_area_calibration();
-				//send_focal_spi(get_current_group(pp->p_config));
 			}
 			break;
 
@@ -3373,7 +3510,7 @@ static int handler_key(guint keyval, gpointer data)
 					draw_menu3(0, NULL);
 				}
 			}
-			esc_calibration();
+
 			if((pp->pos==0)&&(pp->pos1[pp->pos]==0))
 			{
 				if((MENU31_PRESS == data1)||(MENU32_PRESS == data1)||(MENU33_PRESS == data1)||(MENU34_PRESS == data1)||(MENU35_PRESS == data1)||(MENU36_PRESS == data1))/*当三级菜单中有弹出菜单选项时*/
@@ -3433,6 +3570,8 @@ static int handler_key(guint keyval, gpointer data)
 				draw_menu3(0, NULL);
 				}
 			}
+			if(pp->clb_flag)
+				esc_calibration();
 			break;
 		case GDK_Return:	/*回车键*/
 
@@ -4527,8 +4666,8 @@ void data_1151 (GtkSpinButton *spinbutton, gpointer data) /* PRF P115 */
 			"<span foreground='white' font_desc='10'>V: %.2f mm/s</span>",(gfloat)(get_group_val (p_grp, GROUP_PRF_VAL) / 10.0));
 	gtk_label_set_markup (GTK_LABEL (pp->label[5]), markup); ;
 	g_free(markup);
-	if (get_group_val (p_grp, GROUP_PRF_VAL) >= 400)
-		set_group_val (p_grp, GROUP_PRF_VAL, 400);
+	//if (get_group_val (p_grp, GROUP_PRF_VAL) >= 400)
+	//	set_group_val (p_grp, GROUP_PRF_VAL, 400);
 	temp_prf = TMP(beam_qty[grp]) * get_group_val (p_grp, GROUP_PRF_VAL);
 	TMP(group_spi[grp]).idel_time	= 
 		100000000 / (temp_prf / (10)) - 2048 - TMP(group_spi[grp]).rx_time;
@@ -4574,8 +4713,8 @@ void data_115 (GtkMenuItem *menuitem, gpointer data) /* PRF */
 		tttmp = gtk_spin_button_get_value (GTK_SPIN_BUTTON (pp->sbutton[5]));
 	}
 
-	if (get_group_val (p_grp, GROUP_PRF_VAL)  >= 400)
-		set_group_val (p_grp, GROUP_PRF_VAL, 400);
+	//if (get_group_val (p_grp, GROUP_PRF_VAL)  >= 400)
+	//	set_group_val (p_grp, GROUP_PRF_VAL, 400);
 	temp_prf = TMP(beam_qty[grp]) * get_group_val (p_grp, GROUP_PRF_VAL);
 	TMP(group_spi[grp]).idel_time		= 
 /*		100000000 / (get_group_val (p_grp, GROUP_PRF_VAL) / (10)) - 2048 - TMP(group_spi[grp]).rx_time;*/
@@ -5108,7 +5247,6 @@ void data_203 (GtkSpinButton *spinbutton, gpointer data) /* 闸门宽度 P203 */
 				{
 					pp->gate_i_end[k]	= (GROUP_VAL_POS(grp, gate[2].start) + 
 							GROUP_VAL_POS (grp, gate[2].width)) / 10;
-				}
 			}
 		}
 	}			
@@ -6924,8 +7062,8 @@ void generate_focallaw(int grp)
 			pp->tmp_gain_off[i + offset] = 0;
 		}
 	}
-	send_focal_spi(grp);
-	write_group_data (&TMP(group_spi[grp]), grp);
+	//send_focal_spi(grp);
+	//write_group_data (&TMP(group_spi[grp]), grp);
 
  	if(!pp->clb_flag)
 		draw_area_all ();
@@ -6980,25 +7118,36 @@ gfloat cba_ultrasound_velocity()
 //****************************************
 //  延时校准：2011.7.1 何凡
 //****************************************
-gfloat cba_ultrasound_wedgedelay()
+void cba_ultrasound_wedgedelay()
 {
+	gint i, step;
+	gfloat s, vel, t1, wedge_delay;
 	gint grp = get_current_group(pp->p_config);
-	gint BeamNo = pp->p_tmp_config->beam_num[grp];
-	gfloat val;
-/*	switch(pp->echotype_pos)
+	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
+	
+	if (LAW_VAL (Focal_type) == AZIMUTHAL_SCAN)
 	{
-		case 0://radius
-			TMP_CBA(wd_delay[BeamNo]) = (TMP_CBA(wd_radius))/ get_group_val (get_group_by_id (pp->p_config, grp), GROUP_VELOCITY);
-			break;
-		case 1://depth
-			TMP_CBA(wd_delay[BeamNo]) = (TMP_CBA(wd_depth))/ get_group_val (get_group_by_id (pp->p_config, grp), GROUP_VELOCITY);
-			break;
-		case 2://thickness
-			TMP_CBA(wd_delay[BeamNo]) = (TMP_CBA(wd_thickness))/ get_group_val (get_group_by_id (pp->p_config, grp), GROUP_VELOCITY);
-			break;
+		step = (gint)( (LAW_VAL(Angle_max) - LAW_VAL(Angle_min)) / LAW_VAL(Angle_step) + 1);
 	}
-	val = TMP_CBA(wd_delay[BeamNo]);*/
-	return 1;//val; 
+	else if(LAW_VAL (Focal_type) == LINEAR_SCAN) 
+	{
+		step = (gint)( ( LAW_VAL (Last_tx_elem)-LAW_VAL(First_tx_elem) - LAW_VAL(Elem_qty) + 1 ) /
+				LAW_VAL(Elem_step) ) + 1;
+	}
+	
+	vel = (get_group_val (p_grp, GROUP_VELOCITY) / 100.0);// m/s
+	t1  = 2000000 * TMP_CBA(distance) / vel ;//ns
+	wedge_delay = get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_WEDGE_DELAY) / 1000.0;
+	for (i = 0; i < step; i++)
+	{
+		s   = (TMP(clb_wedge_data[i]) - wedge_delay - pp->G_delay[i] - get_pw()) * vel / 2000000;//mm
+		if(s<0) s = 0;
+//		printf("s=%f dis=%f \n", s, TMP_CBA(distance));
+		if( fabs( TMP_CBA(distance) - s ) >  (pp->tolerance / 100.0) )
+		{
+			pp->G_delay[i] = (gint)(fabs(TMP(clb_wedge_data[i]) - t1 - get_pw()));
+		}
+	}
 }
 
 //****************************************
@@ -7088,39 +7237,23 @@ void esc_calibration()
 	if(!pp->ctype_pos)//当位Encoder时无需更新扫描
 	{
 		pp->clb_encoder = 0;
-		pp->pos1[pp->pos] = 2;
-		pp->cstart_qty = 1;
-		gtk_widget_set_sensitive(pp->eventbox2[0],TRUE);
-		gtk_widget_set_sensitive(pp->eventbox2[3],TRUE);
-		if(GROUP_VAL(group_mode)==PA_SCAN)
-			gtk_widget_set_sensitive(pp->eventbox2[1],TRUE);
-		else
-			gtk_widget_set_sensitive(pp->eventbox2[1],FALSE);
-		//gtk_widget_set_sensitive(pp->eventbox2[1],TRUE);
-		gtk_widget_set_sensitive(pp->menubar,TRUE);
 	}
 	else
 	{
-		if((pp->pos == 0) && (pp->pos1[pp->pos] == 2) && (pp->clb_flag))//Calibration
-		{
-			pp->clb_flag = 0;
-			switch_area();//
-			GROUP_VAL_POS(get_current_group(pp->p_config), ut_unit) = pp->save_ut_unit;
-			generate_focallaw(get_current_group(pp->p_config));
-			pp->clb_count = 0;
-
-			pp->pos1[pp->pos] = 2;
-			pp->cstart_qty = 1;
-			gtk_widget_set_sensitive(pp->eventbox2[0],TRUE);
-			gtk_widget_set_sensitive(pp->eventbox2[3],TRUE);
-			if(GROUP_VAL(group_mode)==PA_SCAN)
-				gtk_widget_set_sensitive(pp->eventbox2[1],TRUE);
-			else
-				gtk_widget_set_sensitive(pp->eventbox2[1],FALSE);
-			//gtk_widget_set_sensitive(pp->eventbox2[1],TRUE);
-			gtk_widget_set_sensitive(pp->menubar,TRUE);
-		}
+		GROUP_VAL_POS(get_current_group(pp->p_config), ut_unit) = pp->save_ut_unit;
+		pp->clb_count = 0;
 	}
+	draw_area_all();
+	pp->clb_flag = 0;
+	pp->cstart_qty = 1;
+	pp->pos1[pp->pos] = 2;
+	gtk_widget_set_sensitive(pp->eventbox2[0],TRUE);
+	gtk_widget_set_sensitive(pp->eventbox2[3],TRUE);
+	if(GROUP_VAL(group_mode)==PA_SCAN)
+			gtk_widget_set_sensitive(pp->eventbox2[1],TRUE);
+	else
+			gtk_widget_set_sensitive(pp->eventbox2[1],FALSE);
+	gtk_widget_set_sensitive(pp->menubar,TRUE);
 	draw_menu3(0, NULL);
 }
 
