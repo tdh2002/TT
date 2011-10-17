@@ -180,7 +180,7 @@ static void set_config (guint groupid)
 	GROUP_VAL(col_mode)    = 0;  /*0 Exclusion*/
 
 	set_dis_prop_scan (pp->p_config, DIS_PROP_SCAN_A);/*0 A-Scan*/
-	GROUP_VAL(ascan_color) = 3; 	/*3 Yellow*/
+	GROUP_VAL(ascan_color) = 0; 	/*3 Yellow*/
 	GROUP_VAL(ascan_envelope)	=	0; /*0 None*/
 	GROUP_VAL(ascan_appearance)	=	0; /*0 Hollow*/
 	GROUP_VAL(ascan_overlay)	=	0; /*0 None*/

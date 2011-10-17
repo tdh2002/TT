@@ -338,8 +338,8 @@ static void setup_para(PARAMETER_P p, guint group)
 	/* 探头 */
 	p->probe_p->D1_D2 = 0;			/* 0 1d 1 2d*/
 	p->probe_p->Pitch_Catch = 
-//		!GROUP_VAL_POS(group, tx_rxmode);	/* 0 PE 1 PT 与我的相反 */
-	!get_group_val (p_grp, GROUP_TX_RX_MODE);	/* 0 PE 1 PT 与我的相反 */
+		//		!GROUP_VAL_POS(group, tx_rxmode);	/* 0 PE 1 PT 与我的相反 */
+		!get_group_val (p_grp, GROUP_TX_RX_MODE);	/* 0 PE 1 PT 与我的相反 */
 	p->probe_p->transmi_trans_longi = 0;	/* 1 SW 横波慢 0 LW 纵波快 */
 	p->probe_p->recev_trans_longi	= 0;	/* */
 	p->probe_p->pb_skew_angle	= GROUP_VAL_POS(group, skew) / 100.0;	/* ffff*/
@@ -362,93 +362,93 @@ static void setup_para(PARAMETER_P p, guint group)
 	p->probe_p->sec_ele_size_r = 0;	/*ffff */
 
 	/* 楔块 */
-    p->wedge_p->wg_wedge_angle = GROUP_VAL_POS (group, wedge.Angle) / 10.0; /* 楔块角 度 */
-    p->wedge_p->wg_roof_angle	= 0;	/* 顶角 度 还没有找到对应的 */
-    p->wedge_p->wg_lon_vel		= GROUP_VAL_POS (group, wedge.Velocity_PA) / 1000.0;		/*纵波声速m/s*/
-    p->wedge_p->wg_trans_vel	= 0;
-    p->wedge_p->wg_density= 7.8;/* 密度 */
-    p->wedge_p->wg_heigh_fir	= GROUP_VAL_POS (group, wedge.Height) / 1000.0;	/*第一阵元高度mm*/
-    p->wedge_p->wg_pri_elem_offset_fir = fabs(GROUP_VAL_POS (group, wedge.Primary_offset) / 1000.0);/*11111111111第一主轴阵元偏移mm*/
-    p->wedge_p->wg_sec_elem_offset_fir = fabs(GROUP_VAL_POS (group, wedge.Secondary_offset) / 1000.0);/*11111111111第一次轴阵元偏移mm*/
-    p->wedge_p->wg_pri_axis_reference = 0;/*主轴楔块参考位置mm*/
-    p->wedge_p->wg_sec_axis_reference = 0;/*次轴楔块参考位置mm*/
-    p->wedge_p->wg_length = 1;/*楔块长度mm*/
-    p->wedge_p->wg_width = 1;/*楔块宽度mm*/
-    p->wedge_p->wg_height = 1;/*楔块高mm*/
-    p->wedge_p->wg_separation = 0;
+	p->wedge_p->wg_wedge_angle = GROUP_VAL_POS (group, wedge.Angle) / 10.0; /* 楔块角 度 */
+	p->wedge_p->wg_roof_angle	= 0;	/* 顶角 度 还没有找到对应的 */
+	p->wedge_p->wg_lon_vel		= GROUP_VAL_POS (group, wedge.Velocity_PA) / 1000.0;		/*纵波声速m/s*/
+	p->wedge_p->wg_trans_vel	= 0;
+	p->wedge_p->wg_density= 7.8;/* 密度 */
+	p->wedge_p->wg_heigh_fir	= GROUP_VAL_POS (group, wedge.Height) / 1000.0;	/*第一阵元高度mm*/
+	p->wedge_p->wg_pri_elem_offset_fir = fabs(GROUP_VAL_POS (group, wedge.Primary_offset) / 1000.0);/*11111111111第一主轴阵元偏移mm*/
+	p->wedge_p->wg_sec_elem_offset_fir = fabs(GROUP_VAL_POS (group, wedge.Secondary_offset) / 1000.0);/*11111111111第一次轴阵元偏移mm*/
+	p->wedge_p->wg_pri_axis_reference = 0;/*主轴楔块参考位置mm*/
+	p->wedge_p->wg_sec_axis_reference = 0;/*次轴楔块参考位置mm*/
+	p->wedge_p->wg_length = 1;/*楔块长度mm*/
+	p->wedge_p->wg_width = 1;/*楔块宽度mm*/
+	p->wedge_p->wg_height = 1;/*楔块高mm*/
+	p->wedge_p->wg_separation = 0;
 
-    p->wedge_r->wg_wedge_angle = GROUP_VAL_POS(group, wedge.Angle) / 10.0; /* 楔块角 度 */
-    p->wedge_r->wg_roof_angle=0;/* 顶角 度*/
-    p->wedge_r->wg_lon_vel = 3230;/*纵波声速m/s*/
-    p->wedge_r->wg_trans_vel = 3230;/*横波声速m/s*/
-    p->wedge_r->wg_density= 7.8;/* 密度 */
-    p->wedge_r->wg_heigh_fir	= GROUP_VAL_POS(group, wedge.Height) / 1000.0;	/*第一阵元高度mm*/
-    p->wedge_r->wg_pri_elem_offset_fir = GROUP_VAL_POS (group, wedge.Primary_offset) / 1000.0;/*11111111111第一主轴阵元偏移mm*/
-    p->wedge_r->wg_sec_elem_offset_fir = GROUP_VAL_POS (group, wedge.Secondary_offset) / 1000.0;/*11111111111第一次轴阵元偏移mm*/
-    p->wedge_r->wg_pri_axis_reference = 0;/*主轴楔块参考位置mm*/
-    p->wedge_r->wg_sec_axis_reference = 0;/*次轴楔块参考位置mm*/
-    p->wedge_r->wg_length = 1;/*楔块长度mm*/
-    p->wedge_r->wg_width = 1;/*楔块宽度mm*/
-    p->wedge_r->wg_height = 1;/*楔块高度mm*/
-    p->wedge_r->wg_separation = 0;
-	
+	p->wedge_r->wg_wedge_angle = GROUP_VAL_POS(group, wedge.Angle) / 10.0; /* 楔块角 度 */
+	p->wedge_r->wg_roof_angle=0;/* 顶角 度*/
+	p->wedge_r->wg_lon_vel = 3230;/*纵波声速m/s*/
+	p->wedge_r->wg_trans_vel = 3230;/*横波声速m/s*/
+	p->wedge_r->wg_density= 7.8;/* 密度 */
+	p->wedge_r->wg_heigh_fir	= GROUP_VAL_POS(group, wedge.Height) / 1000.0;	/*第一阵元高度mm*/
+	p->wedge_r->wg_pri_elem_offset_fir = GROUP_VAL_POS (group, wedge.Primary_offset) / 1000.0;/*11111111111第一主轴阵元偏移mm*/
+	p->wedge_r->wg_sec_elem_offset_fir = GROUP_VAL_POS (group, wedge.Secondary_offset) / 1000.0;/*11111111111第一次轴阵元偏移mm*/
+	p->wedge_r->wg_pri_axis_reference = 0;/*主轴楔块参考位置mm*/
+	p->wedge_r->wg_sec_axis_reference = 0;/*次轴楔块参考位置mm*/
+	p->wedge_r->wg_length = 1;/*楔块长度mm*/
+	p->wedge_r->wg_width = 1;/*楔块宽度mm*/
+	p->wedge_r->wg_height = 1;/*楔块高度mm*/
+	p->wedge_r->wg_separation = 0;
+
 	/* BEAM */
-    p->beam_angle->beam_pri_steer_angle_start = 0 ;
-    p->beam_angle->beam_pri_steer_angle_stop = 0;
-    p->beam_angle->beam_pri_steer_angle_resolution = 0;
-    //
-    p->beam_angle->beam_sec_steer_angle_start = 0;
+	p->beam_angle->beam_pri_steer_angle_start = 0 ;
+	p->beam_angle->beam_pri_steer_angle_stop = 0;
+	p->beam_angle->beam_pri_steer_angle_resolution = 0;
+	//
+	p->beam_angle->beam_sec_steer_angle_start = 0;
 	p->beam_angle->beam_sec_steer_angle_stop = 0;
-    p->beam_angle->beam_sec_steer_angle_resolution = 0;
-    //
-    p->beam_angle->beam_refrac_angle_start = LAW_VAL_POS (group, Angle_min) / 100.0;  
-    p->beam_angle->beam_refrac_angle_stop = LAW_VAL_POS (group, Angle_max) / 100.0;
-    p->beam_angle->beam_refrac_angle_resolution = LAW_VAL_POS (group, Angle_step) / 100.0; 
-    // 
-    p->beam_angle->beam_skew_angle_start = 0;  
-    p->beam_angle->beam_skew_angle_stop = 0;
-    p->beam_angle->beam_skew_angle_resolution = 0;
+	p->beam_angle->beam_sec_steer_angle_resolution = 0;
+	//
+	p->beam_angle->beam_refrac_angle_start = LAW_VAL_POS (group, Angle_min) / 100.0;  
+	p->beam_angle->beam_refrac_angle_stop = LAW_VAL_POS (group, Angle_max) / 100.0;
+	p->beam_angle->beam_refrac_angle_resolution = LAW_VAL_POS (group, Angle_step) / 100.0; 
+	// 
+	p->beam_angle->beam_skew_angle_start = 0;  
+	p->beam_angle->beam_skew_angle_stop = 0;
+	p->beam_angle->beam_skew_angle_resolution = 0;
 
-    //与P600 Law Type 对应起来
- 	p->beam_angle->beam_type = LAW_VAL_POS(group,Focal_type);//何凡修改
+	//与P600 Law Type 对应起来
+	p->beam_angle->beam_type = LAW_VAL_POS(group,Focal_type);//何凡修改
 	p->beam_angle->beam_angle_sel = 0;//只有Refracted angle一种情况 何凡修改
 
 	/* 样本 */
-    p->specimen->speci_longitudinal_wave	= get_group_val (get_group_by_id (pp->p_config, group), GROUP_VELOCITY) / 100;
-    p->specimen->speci_transverse_wave		= get_group_val (get_group_by_id (pp->p_config, group), GROUP_VELOCITY) / 100;
-    //
-//    p->specimen->speci_length_flat = 0;
-//    p->specimen->speci_height_flat = 0;
-//    p->specimen->speci_width_flat = 0;  
-    //
-    p->specimen->speci_inside_cylindrical = 0;
-    p->specimen->speci_outside_cylindrical = 0;
-//    p->specimen->speci_length_cylindrical = 0; 
-    p->specimen->flat_cylindrical = 0;
-    //
-    p->specimen->Inspection_od_id[0] = 0;  
-    p->specimen->Inspection_od_id[1] = 1;  
+	p->specimen->speci_longitudinal_wave	= get_group_val (get_group_by_id (pp->p_config, group), GROUP_VELOCITY) / 100;
+	p->specimen->speci_transverse_wave		= get_group_val (get_group_by_id (pp->p_config, group), GROUP_VELOCITY) / 100;
+	//
+	//    p->specimen->speci_length_flat = 0;
+	//    p->specimen->speci_height_flat = 0;
+	//    p->specimen->speci_width_flat = 0;  
+	//
+	p->specimen->speci_inside_cylindrical = 0;
+	p->specimen->speci_outside_cylindrical = 0;
+	//    p->specimen->speci_length_cylindrical = 0; 
+	p->specimen->flat_cylindrical = 0;
+	//
+	p->specimen->Inspection_od_id[0] = 0;  
+	p->specimen->Inspection_od_id[1] = 1;  
 
-    /* 聚焦点 */
-    p->focal_point->focal_focus_type = LAW_VAL(Focal_point_type);	/* 0 half path 1 TURE DEPTH */
-//  p->focal_point->focal_focus_point_start = LAW_VAL_POS (group, Focus_depth) / 1000.0;	/* type =0 是 声程 type =1 是深度 */   
-    p->focal_point->focal_focus_point_start = LAW_VAL(Position_start)/ 1000.0;	/* type =0 是 声程 type =1 是深度 */
-    p->focal_point->focal_focus_point_stop = LAW_VAL(Position_end)/ 1000.0; 
-    p->focal_point->focal_focus_point_resolution = LAW_VAL(Position_step)/ 1000.0;
-    p->focal_point->offset_start = LAW_VAL(Position_start)/1000.0 ;//true depth 何凡添加
-    p->focal_point->offset_end = 0;//
-    p->focal_point->depth_start = 0;//
-    p->focal_point->depth_end = 0;//
-    
-    p->element_sel->pri_axis_ape = LAW_VAL_POS (group, Elem_qty);
-    p->element_sel->sec_axis_ape = 1;
-    p->element_sel->primary_axis_s = LAW_VAL_POS (group, First_tx_elem);
-    p->element_sel->primary_axis_e = LAW_VAL_POS (group, Last_tx_elem)-LAW_VAL_POS (group, Elem_qty)+1;//
-    p->element_sel->primary_axis_r = LAW_VAL_POS (group, Elem_step);//
+	/* 聚焦点 */
+	p->focal_point->focal_focus_type = LAW_VAL(Focal_point_type);	/* 0 half path 1 TURE DEPTH */
+	//  p->focal_point->focal_focus_point_start = LAW_VAL_POS (group, Focus_depth) / 1000.0;	/* type =0 是 声程 type =1 是深度 */   
+	p->focal_point->focal_focus_point_start = LAW_VAL(Position_start)/ 1000.0;	/* type =0 是 声程 type =1 是深度 */
+	p->focal_point->focal_focus_point_stop = LAW_VAL(Position_end)/ 1000.0; 
+	p->focal_point->focal_focus_point_resolution = LAW_VAL(Position_step)/ 1000.0;
+	p->focal_point->offset_start = LAW_VAL(Position_start)/1000.0 ;//true depth 何凡添加
+	p->focal_point->offset_end = 0;//
+	p->focal_point->depth_start = 0;//
+	p->focal_point->depth_end = 0;//
 
-    p->location->rotation_x = 0;
-    p->location->rotation_y = 0;
-    p->location->rotation_z = 90;
+	p->element_sel->pri_axis_ape = LAW_VAL_POS (group, Elem_qty);
+	p->element_sel->sec_axis_ape = 1;
+	p->element_sel->primary_axis_s = LAW_VAL_POS (group, First_tx_elem);
+	p->element_sel->primary_axis_e = LAW_VAL_POS (group, Last_tx_elem)-LAW_VAL_POS (group, Elem_qty)+1;//
+	p->element_sel->primary_axis_r = LAW_VAL_POS (group, Elem_step);//
+
+	p->location->rotation_x = 0;
+	p->location->rotation_y = 0;
+	p->location->rotation_z = 90;
 }
 
 static void save_cal_law(gint offset, gint group, PARAMETER_P p)
@@ -467,7 +467,7 @@ static void save_cal_law(gint offset, gint group, PARAMETER_P p)
 		TMP(field_distance[i]) = (gfloat)(p->field_distance[i]);//每束 中心正元到出射点的距离 单位mm
 		pp->G_delay[i] = (gint)p->G_delay[i];////保存每一个beam的延时  方便用于显示
 		BEAM_INFO(i+offset,beam_delay) = pp->G_delay[i];//modified by hefan
-	    //printf("beam_delay[%d]=%d \n", i, pp->G_delay[i]);
+		//printf("beam_delay[%d]=%d \n", i, pp->G_delay[i]);
 		//***************************************
 		if(LAW_VAL_POS(group, Focal_type) == 1)//Linear
 		{
@@ -515,8 +515,8 @@ static void save_cal_law(gint offset, gint group, PARAMETER_P p)
 	tmp_max_beam_delay  = pp->G_delay[0];
 	for (i = 1; i < TMP(beam_qty[group]); i++)
 	{
-           if(tmp_max_beam_delay < pp->G_delay[i])
-			   tmp_max_beam_delay = pp->G_delay[i] ;
+		if(tmp_max_beam_delay < pp->G_delay[i])
+			tmp_max_beam_delay = pp->G_delay[i] ;
 	}
 	TMP(max_beam_delay[group]) = tmp_max_beam_delay / 10 ;
 }
@@ -525,35 +525,35 @@ void cal_focal_law (guint group)
 {
 	gint offset, k;
 	PARAMETER_P p;
-	
+
 	p = (PARAMETER_P)g_malloc0(sizeof(PARAMETER));
 
-    PROBEF        probe_p;
-    WEDGEF        wedge_p;
-    WEDGEF        wedge_r;
-    BEAM_ANGLE   beam_angle;
-    SPECIMEN     specimen;
-    FOCAL_POINT  focal_point;
-    ELEMENT_SEL  element_sel;
-    LOCATION     location;
+	PROBEF        probe_p;
+	WEDGEF        wedge_p;
+	WEDGEF        wedge_r;
+	BEAM_ANGLE   beam_angle;
+	SPECIMEN     specimen;
+	FOCAL_POINT  focal_point;
+	ELEMENT_SEL  element_sel;
+	LOCATION     location;
 
-    p->probe_p	= &probe_p;
+	p->probe_p	= &probe_p;
 	p->wedge_p	= &wedge_p;
 	p->wedge_r	= &wedge_r;
 	p->beam_angle = &beam_angle;
 	p->specimen	= &specimen;
 	p->focal_point = &focal_point;
 	p->element_sel = &element_sel;
-        p->location = &location;
+	p->location = &location;
 	p->k = 0 ;	            
-    
+
 	setup_para(p, group);
 	focal_law(p);
-	
+
 	/* 把聚集法则信息保存起来 */
 	for (offset = 0, k = 0 ; k < group; k++)
 		offset += TMP(beam_qty[k]);
-			
+
 	save_cal_law (offset, group, p);
 
 	g_free (p);
@@ -641,7 +641,7 @@ guint get_max_prf()
 	int max_rx_time;
 	int single_beam_time;
 	double prf_limit[3];
-    // get group number
+	// get group number
 	group_num = get_group_qty (pp->p_config) ;
 	// pulse width for every group is the same
 	pulse_width = get_group_val (get_group_by_id (pp->p_config, 0), GROUP_PW_VAL) / 100;
@@ -649,66 +649,66 @@ guint get_max_prf()
 	velocity = get_group_val(get_group_by_id (pp->p_config, 0), GROUP_VELOCITY ) / 100;
 	// wedge delay , mostly is to be zero
 	wedge_delay = get_group_val(get_group_by_id (pp->p_config, 0) , GROUP_WEDGE_DELAY);
-    //
+	//
 	if(get_voltage (pp->p_config, 0 )==0)
-	      voltage = 50 ;
+		voltage = 50 ;
 	else if (get_voltage (pp->p_config, 0 )==1)
-		  voltage = 100;
-    // get sum beam number
+		voltage = 100;
+	// get sum beam number
 	for (beam_sum = 0 , i = 0; i < group_num; i++)
 		beam_sum += TMP(beam_qty[i]);
-    // get total wave data size
+	// get total wave data size
 	for (point_qty = 0 , i = 0; i < group_num; i++)
 		point_qty += TMP(beam_qty[i]) * (GROUP_VAL_POS (i, point_qty) + 32);
 	// get max element number
-    for(probe_element_num = LAW_VAL_POS(0, Elem_qty),i = 1; i< group_num; i++)
-    	if(LAW_VAL_POS(i, Elem_qty)>probe_element_num)  probe_element_num = LAW_VAL_POS(i, Elem_qty);
-    //  max single element power
-    for(i = 0; i< group_num; i++)
-    {
-    	// these a problem here for the max beam delay is calculated after generate focal law
-    	// where the group_spi structure should be initialized first
-    	rx_time[i] =  TMP(group_spi[i]).sample_range + TMP(max_beam_delay[i]);
-    	//printf("TMP(group_spi[i]).sample_range %d TMP(max_beam_delay[i]) %d \n", TMP(group_spi[i]).sample_range , TMP(max_beam_delay[i]));
-    }
-    for(max_rx_time = rx_time[0], i = 1; i< group_num; i++)
-    {
-    	if(max_rx_time < rx_time[i]) max_rx_time = rx_time[i] ;
-    }
-    single_beam_time = 4 * max_rx_time                        ;   // unit -- 10nm
-    prf_limit[0] = 100000000.0 / single_beam_time             ;
-    prf_limit[0] = prf_limit[0] / beam_sum                    ;
-    //printf("prf_limit[0] %f \n", prf_limit[0]);
-    max_element_power = voltage * voltage * pulse_width / 50  ;
-    total_power = max_element_power * probe_element_num       ;
-    prf_limit[1] = 125000000.0 / max_element_power            ;
-    if(probe_element_num  > 16) prf_limit[1] = 2000000000.0 / total_power ;
-    prf_limit[1] = prf_limit[1] / beam_sum                    ;
+	for(probe_element_num = LAW_VAL_POS(0, Elem_qty),i = 1; i< group_num; i++)
+		if(LAW_VAL_POS(i, Elem_qty)>probe_element_num)  probe_element_num = LAW_VAL_POS(i, Elem_qty);
+	//  max single element power
+	for(i = 0; i< group_num; i++)
+	{
+		// these a problem here for the max beam delay is calculated after generate focal law
+		// where the group_spi structure should be initialized first
+		rx_time[i] =  TMP(group_spi[i]).sample_range + TMP(max_beam_delay[i]);
+		//printf("TMP(group_spi[i]).sample_range %d TMP(max_beam_delay[i]) %d \n", TMP(group_spi[i]).sample_range , TMP(max_beam_delay[i]));
+	}
+	for(max_rx_time = rx_time[0], i = 1; i< group_num; i++)
+	{
+		if(max_rx_time < rx_time[i]) max_rx_time = rx_time[i] ;
+	}
+	single_beam_time = 4 * max_rx_time                        ;   // unit -- 10nm
+	prf_limit[0] = 100000000.0 / single_beam_time             ;
+	prf_limit[0] = prf_limit[0] / beam_sum                    ;
+	//printf("prf_limit[0] %f \n", prf_limit[0]);
+	max_element_power = voltage * voltage * pulse_width / 50  ;
+	total_power = max_element_power * probe_element_num       ;
+	prf_limit[1] = 125000000.0 / max_element_power            ;
+	if(probe_element_num  > 16) prf_limit[1] = 2000000000.0 / total_power ;
+	prf_limit[1] = prf_limit[1] / beam_sum                    ;
 
-    prf_limit[2] = MAX_DMA_FREQUENCY * (int)(MIN(192 * 1024.0 / point_qty , 1024 / beam_sum )) / 10;
+	prf_limit[2] = MAX_DMA_FREQUENCY * (int)(MIN(192 * 1024.0 / point_qty , 1024 / beam_sum )) / 10;
 
-    prf_limit[0] = MIN(prf_limit[0], prf_limit[1]);
-    prf_limit[0] = MIN(prf_limit[0], prf_limit[2]);
-    result = (int) prf_limit[0]                   ;
+	prf_limit[0] = MIN(prf_limit[0], prf_limit[1]);
+	prf_limit[0] = MIN(prf_limit[0], prf_limit[2]);
+	result = (int) prf_limit[0]                   ;
 
 #if 0
-    printf("****************\n");
-    printf("TMP(beam_qty[0]) %d \n", TMP(beam_qty[0]));
-    printf("GROUP_VAL_POS (0, point_qty) %d \n", GROUP_VAL_POS (0, point_qty));
-    printf("group_num %d\n", group_num)       ;
-    printf("probe_element_num %d \n", probe_element_num);
-    printf("pulse_width %d\n", pulse_width)   ;
-    printf("velocity  %d\n", velocity)        ;
-    printf("wedge_delay  %d\n",wedge_delay)   ;
-    printf("voltage %d\n", voltage)           ;
-    printf("beam_sum %d\n", beam_sum)         ;
-    printf("point_qty %d\n", point_qty)       ;
-    printf("max_rx_time %d \n", max_rx_time)  ;
-    printf("max_element_power %d\n", max_element_power);
-    printf("prf_limit[1] %f \n", prf_limit[1]);
-    printf("prf_limit[2] %f \n", prf_limit[2]);
-    printf("result %d\n", result)             ;
-    printf("******************\n")            ;
+	printf("****************\n");
+	printf("TMP(beam_qty[0]) %d \n", TMP(beam_qty[0]));
+	printf("GROUP_VAL_POS (0, point_qty) %d \n", GROUP_VAL_POS (0, point_qty));
+	printf("group_num %d\n", group_num)       ;
+	printf("probe_element_num %d \n", probe_element_num);
+	printf("pulse_width %d\n", pulse_width)   ;
+	printf("velocity  %d\n", velocity)        ;
+	printf("wedge_delay  %d\n",wedge_delay)   ;
+	printf("voltage %d\n", voltage)           ;
+	printf("beam_sum %d\n", beam_sum)         ;
+	printf("point_qty %d\n", point_qty)       ;
+	printf("max_rx_time %d \n", max_rx_time)  ;
+	printf("max_element_power %d\n", max_element_power);
+	printf("prf_limit[1] %f \n", prf_limit[1]);
+	printf("prf_limit[2] %f \n", prf_limit[2]);
+	printf("result %d\n", result)             ;
+	printf("******************\n")            ;
 #endif
 
 	return result * 10;
@@ -727,11 +727,11 @@ guint get_prf ()
 			set_group_val (p_grp, GROUP_PRF_VAL, prf_temp);
 		if(get_group_val (p_grp, GROUP_PRF_VAL) <= MAX_DMA_FREQUENCY )
 		{
-			      pp->p_config->virtual_focallaw = 1 ;
+			pp->p_config->virtual_focallaw = 1 ;
 		}
 		else
 		{
-		          pp->p_config->virtual_focallaw = prf_temp % MAX_DMA_FREQUENCY ? (prf_temp/MAX_DMA_FREQUENCY + 1 ): (prf_temp / MAX_DMA_FREQUENCY) ;
+			pp->p_config->virtual_focallaw = prf_temp % MAX_DMA_FREQUENCY ? (prf_temp/MAX_DMA_FREQUENCY + 1 ): (prf_temp / MAX_DMA_FREQUENCY) ;
 		}
 	}
 	else 
@@ -747,19 +747,19 @@ guint get_prf ()
 				prf_temp = prf_temp / 2 ;
 				set_group_val (p_grp, GROUP_PRF_VAL, prf_temp );
 				pp->p_config->virtual_focallaw = prf_temp % MAX_DMA_FREQUENCY ? (prf_temp/MAX_DMA_FREQUENCY + 1 ): (prf_temp / MAX_DMA_FREQUENCY) ;
-			    //printf("pp->p_config->virtual_focal_law %d \n", pp->p_config->virtual_focal_law );
+				//printf("pp->p_config->virtual_focal_law %d \n", pp->p_config->virtual_focal_law );
 				break;
 			case 2:
 				set_group_val (p_grp, GROUP_PRF_VAL,
 						(prf_temp > 600 ) ? 600 : prf_temp );
 				if(prf_temp > 600 )
-				    prf_temp = 600 ;
+					prf_temp = 600 ;
 				pp->p_config->virtual_focallaw = prf_temp % MAX_DMA_FREQUENCY ? (prf_temp/MAX_DMA_FREQUENCY + 1 ): (prf_temp / MAX_DMA_FREQUENCY) ;
 				break;
 			default:break;
 		}
 	}
-    printf("get_group_val (p_grp, GROUP_PRF_VAL) = %d\n" ,get_group_val (p_grp, GROUP_PRF_VAL));
+	printf("get_group_val (p_grp, GROUP_PRF_VAL) = %d\n" ,get_group_val (p_grp, GROUP_PRF_VAL));
 	return get_group_val (p_grp, GROUP_PRF_VAL);
 }
 
@@ -1132,13 +1132,13 @@ void b2_fun0(DRAW_UI_P p, guint pos)
 		}
 		if((p->pos == 0) && (p->pos1[p->pos] == 2))//Calibration
 		{
-		//	gtk_widget_set_sensitive(p->eventbox2[0],FALSE);
-		//	gtk_widget_set_sensitive(p->eventbox2[1],FALSE);
-		//	gtk_widget_set_sensitive(p->eventbox2[2],FALSE);
-		//	gtk_widget_set_sensitive(p->menubar,FALSE);
-		//	pp->clb_flag = 1;
+			//	gtk_widget_set_sensitive(p->eventbox2[0],FALSE);
+			//	gtk_widget_set_sensitive(p->eventbox2[1],FALSE);
+			//	gtk_widget_set_sensitive(p->eventbox2[2],FALSE);
+			//	gtk_widget_set_sensitive(p->menubar,FALSE);
+			//	pp->clb_flag = 1;
 			pp->cstart_qty = 1;
-		//	draw_menu3(0, NULL);
+			//	draw_menu3(0, NULL);
 		}
 	}
 }
@@ -1167,7 +1167,7 @@ void b3_fun0(gpointer pt)
 	/* 之前的位置 */
 	p->pos_last2 = p->pos2[p->pos][p->pos1[p->pos]];
 	p->pos2[p->pos][p->pos1[p->pos]] = 0;
-	
+
 	/* 单击处理 */
 	switch (p->pos)
 	{
@@ -1207,8 +1207,8 @@ void b3_fun0(gpointer pt)
 							break;
 						default:break;
 					}
-				//	if((p->cstart_qty) == 1)
-				//			esc_calibration();
+					//	if((p->cstart_qty) == 1)
+					//			esc_calibration();
 					break;
 				case 3:((p->wstart_qty) > 1) ? (p->wstart_qty) -- : ((p->wstart_qty) = 4);break;
 				default:break;
@@ -1219,10 +1219,10 @@ void b3_fun0(gpointer pt)
 			{
 				case 4: 
 #if ARM
-					 ret = pthread_create (&thread_id, NULL, (void*)thread_set_DB_eighty_percent, p);
+					ret = pthread_create (&thread_id, NULL, (void*)thread_set_DB_eighty_percent, p);
 					if(ret){
 						perror("in1:");
-					    return;
+						return;
 					}
 #endif
 					break; /* P140 自动80%  */
@@ -1236,7 +1236,7 @@ void b3_fun0(gpointer pt)
 					set_display_table (pp->p_config, !get_display_table(pp->p_config)); /* P320 */
 					break; 
 				default:break;
-			 }
+			}
 			break;
 		case 4:
 			switch(p->pos1[4])
@@ -1356,7 +1356,7 @@ void b3_fun0(gpointer pt)
 				break;
 			default:break;
 		}
-//		g_print ("b0 preslkjaflsdjf\n");
+		//		g_print ("b0 preslkjaflsdjf\n");
 	}
 	else
 	{
@@ -1392,7 +1392,7 @@ void b3_fun1(gpointer p)
 	gint thread_count = 10;
 	gint count = 0;
 	wedge_delay = get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_WEDGE_DELAY) / 1000.0;
-//	gint BeamNo = pp->p_tmp_config->beam_num[grp];
+	//	gint BeamNo = pp->p_tmp_config->beam_num[grp];
 
 	GtkWidget* dialog = NULL;
 	GtkWindow *win = GTK_WINDOW (pp->window);
@@ -1413,240 +1413,240 @@ void b3_fun1(gpointer p)
 		case 0:
 			switch (pp->pos1[0])
 			{
-					case 0://Group
-						((pp->start_qty) < 9) ? (pp->start_qty) ++ : ((pp->start_qty) = 1); break;
-					case 1://Focal Law
-						((pp->fstart_qty) < 6) ? (pp->fstart_qty) ++ : ((pp->fstart_qty) = 1); 
-						if((pp->fstart_qty) == 5)
-						{
-							//生成聚焦法则
-							generate_focallaw(grp);
-							send_group_spi (grp);
-							send_focal_spi (grp);
-						}					
-						break;
-					case 2://Calibration
-						switch(pp->ctype_pos)
-						{
-							case 0://Encoder
-								((pp->cstart_qty) < 4) ? (pp->cstart_qty) ++ : ((pp->cstart_qty) = 1);
-								if((pp->cstart_qty) == 2)
-								{
-									err = pthread_create(&encoder, NULL, (void*)draw_encoder_value, pp);
-									if(err != 0)
-										perror("can't create thread: encoder");
-								}
-								if((pp->cstart_qty) == 3)
-								{
-									//先让编码器的起点值与origin一致
-									TMP_CBA(measure_start) = TMP(measure_data[index][4]);
+				case 0://Group
+					((pp->start_qty) < 9) ? (pp->start_qty) ++ : ((pp->start_qty) = 1); break;
+				case 1://Focal Law
+					((pp->fstart_qty) < 6) ? (pp->fstart_qty) ++ : ((pp->fstart_qty) = 1); 
+					if((pp->fstart_qty) == 5)
+					{
+						//生成聚焦法则
+						generate_focallaw(grp);
+						send_group_spi (grp);
+						send_focal_spi (grp);
+					}					
+					break;
+				case 2://Calibration
+					switch(pp->ctype_pos)
+					{
+						case 0://Encoder
+							((pp->cstart_qty) < 4) ? (pp->cstart_qty) ++ : ((pp->cstart_qty) = 1);
+							if((pp->cstart_qty) == 2)
+							{
+								err = pthread_create(&encoder, NULL, (void*)draw_encoder_value, pp);
+								if(err != 0)
+									perror("can't create thread: encoder");
+							}
+							if((pp->cstart_qty) == 3)
+							{
+								//先让编码器的起点值与origin一致
+								TMP_CBA(measure_start) = TMP(measure_data[index][4]);
 
-									markup = g_markup_printf_escaped ("<span foreground='white' font_desc='10'>X: %.1f mm</span>",
-											get_enc_origin (pp->p_config, get_cur_encoder (pp->p_config))/1000.0);
-									gtk_label_set_markup (GTK_LABEL (pp->label[7]), markup); 
+								markup = g_markup_printf_escaped ("<span foreground='white' font_desc='10'>X: %.1f mm</span>",
+										get_enc_origin (pp->p_config, get_cur_encoder (pp->p_config))/1000.0);
+								gtk_label_set_markup (GTK_LABEL (pp->label[7]), markup); 
 
-									while(thread_count)
-									{
-										thread_count-- ;
-										tmp_data = TMP(measure_data[index][4]);
+								while(thread_count)
+								{
+									thread_count-- ;
+									tmp_data = TMP(measure_data[index][4]);
 									//	if(tmp_data != TMP_CBA(measure_start))
 									//					break;
-									}
-									//printf("\ntmp_data = %d\n",tmp_data);
-									if(tmp_data != TMP_CBA(measure_start))
+								}
+								//printf("\ntmp_data = %d\n",tmp_data);
+								if(tmp_data != TMP_CBA(measure_start))
+								{
+									pthread_mutex_lock(&qlock);
+									pthread_cond_signal(&qready);
+									pthread_mutex_unlock(&qlock);
+								}
+								else
+									TMP_CBA(measure_end) = TMP_CBA(measure_start);
+							}
+							else if((pp->cstart_qty) == 4)
+							{
+								//调用校准函数cba_encoder()								
+								set_enc_resolution (pp->p_config, cba_encoder()*1000,
+										get_cur_encoder (pp->p_config));
+							}
+							else if((pp->cstart_qty) == 1)//Accpet
+							{
+								pp->p_config->encoder1[get_cur_encoder (pp->p_config)].Resolution = TMP_CBA(resolution);	
+								esc_calibration();
+							}
+							break;
+						case 1://Ultrasound
+							switch(pp->cmode_pos)
+							{
+								case 0://Velocity
+									((pp->cstart_qty) < 6) ? (pp->cstart_qty) ++ : ((pp->cstart_qty) = 1);
+									if((pp->cstart_qty) == 2)
 									{
-										pthread_mutex_lock(&qlock);
-										pthread_cond_signal(&qready);
-										pthread_mutex_unlock(&qlock);
+										//点击start进入A-
+										draw_area_calibration();
+									}	
+									else if((pp->cstart_qty) == 4)
+									{
+										//获取闸门1信息
+										switch(pp->echotype_pos)
+										{
+											case 0://Radius
+												TMP_CBA(radius1) = pp->radius1 / 1000;
+												break;
+											case 1://Depth
+												TMP_CBA(depth1) =  pp->depth1 / 1000;
+												break;
+											case 2://Thickness
+												TMP_CBA(thickness1) = pp->thickness1 / 1000;
+												break;
+										}
+										TMP_CBA(time_start) = ((TMP(measure_data[index][1])) & 0xfffff);
 									}
-									else
-										TMP_CBA(measure_end) = TMP_CBA(measure_start);
-								}
-								else if((pp->cstart_qty) == 4)
-								{
-									//调用校准函数cba_encoder()								
-									set_enc_resolution (pp->p_config, cba_encoder()*1000,
-											get_cur_encoder (pp->p_config));
-								}
-								else if((pp->cstart_qty) == 1)//Accpet
-								{
-									pp->p_config->encoder1[get_cur_encoder (pp->p_config)].Resolution = TMP_CBA(resolution);	
-									esc_calibration();
-								}
-								break;
-							case 1://Ultrasound
-								switch(pp->cmode_pos)
-								{
-									case 0://Velocity
-										((pp->cstart_qty) < 6) ? (pp->cstart_qty) ++ : ((pp->cstart_qty) = 1);
-										if((pp->cstart_qty) == 2)
+									else if((pp->cstart_qty) == 5)
+									{
+										//获取闸门2信息
+										switch(pp->echotype_pos)
 										{
-											//点击start进入A-
-											draw_area_calibration();
-										}	
-										else if((pp->cstart_qty) == 4)
-										{
-											//获取闸门1信息
-											switch(pp->echotype_pos)
-											{
-												case 0://Radius
-													TMP_CBA(radius1) = pp->radius1 / 1000;
-													break;
-												case 1://Depth
-													TMP_CBA(depth1) =  pp->depth1 / 1000;
-													break;
-												case 2://Thickness
-													TMP_CBA(thickness1) = pp->thickness1 / 1000;
-													break;
-											}
-											TMP_CBA(time_start) = ((TMP(measure_data[index][1])) & 0xfffff);
+											case 0://Radius
+												TMP_CBA(radius2) = pp->radius2 / 1000;
+												break;
+											case 1://Depth
+												TMP_CBA(depth2) = pp->depth2 / 1000;
+												break;
+											case 2://Thickness
+												TMP_CBA(thickness2) = pp->thickness2 / 1000;
+												break;
 										}
-										else if((pp->cstart_qty) == 5)
+										TMP_CBA(time_end) = ((TMP(measure_data[index][1])) & 0xfffff);
+									}
+									else if((pp->cstart_qty) == 6)
+									{
+										pp->vel = cba_ultrasound_velocity();
+									} 
+									else if((pp->cstart_qty) == 1)
+									{
+										if((pp->vel > 635) && (pp->vel<1000000))
 										{
-											//获取闸门2信息
-											switch(pp->echotype_pos)
-											{
-												case 0://Radius
-													TMP_CBA(radius2) = pp->radius2 / 1000;
-													break;
-												case 1://Depth
-													TMP_CBA(depth2) = pp->depth2 / 1000;
-													break;
-												case 2://Thickness
-													TMP_CBA(thickness2) = pp->thickness2 / 1000;
-													break;
-											}
-											TMP_CBA(time_end) = ((TMP(measure_data[index][1])) & 0xfffff);
-										}
-										else if((pp->cstart_qty) == 6)
-										{
-											pp->vel = cba_ultrasound_velocity();
-										} 
-										else if((pp->cstart_qty) == 1)
-										{
-											if((pp->vel > 635) && (pp->vel<1000000))
-											{
-												//在此调用声速校准函数->此处校准之后的声速用于Wedge Delay校准
-												set_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), 
-														GROUP_VELOCITY, 100*pp->vel);
-												pp->flag = 1;//当该标志为1时才能进行下面的wedge Delay
-											}
-											else
-											{
-												dialog = gtk_message_dialog_new( win,
-															GTK_DIALOG_DESTROY_WITH_PARENT,
-															GTK_MESSAGE_ERROR,
-															GTK_BUTTONS_CLOSE,
-															"velocity is not reasonable \n");
-												gtk_dialog_run(GTK_DIALOG(dialog));
-												gtk_widget_destroy(dialog);
-											}
+											//在此调用声速校准函数->此处校准之后的声速用于Wedge Delay校准
+											set_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), 
+													GROUP_VELOCITY, 100*pp->vel);
+											pp->flag = 1;//当该标志为1时才能进行下面的wedge Delay
 											esc_calibration();		
-										}
-										break;
-									case 1://Wedge Delay
-										if(!pp->flag)
-										{
-											dialog = gtk_message_dialog_new( win,
-															GTK_DIALOG_DESTROY_WITH_PARENT,
-															GTK_MESSAGE_ERROR,
-															GTK_BUTTONS_CLOSE,
-															"you must calibration velocity first \n");
-											gtk_dialog_run(GTK_DIALOG(dialog));
-											gtk_widget_destroy(dialog);
 										}
 										else
 										{
-											((pp->cstart_qty) < 5) ? (pp->cstart_qty) ++ : ((pp->cstart_qty) = 1);
-											if((pp->cstart_qty) == 2)
-											{
-												draw_area_calibration();
-												vel = get_group_val (p_grp, GROUP_VELOCITY) / 100000.0 ;
-												if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
-												{
-													if (UNIT_MM == get_unit(pp->p_config))
-													{
-														pp->gate_start_clb = GROUP_GATE_POS(start)* vel;
-														pp->gate_width_clb = GROUP_GATE_POS(width)* vel;
-													}
-													else  /* 英寸 */
-													{
-														pp->gate_start_clb = GROUP_GATE_POS(start)* vel * 0.03937;
-														pp->gate_width_clb = GROUP_GATE_POS(width)* vel * 0.03937;
-													}
-												}
-												else /* 显示方式为时间 */
-												{
-													pp->gate_start_clb = GROUP_GATE_POS(start); 
-													pp->gate_width_clb = GROUP_GATE_POS(width); 
-												}
-											}
-											else if((pp->cstart_qty) == 1)//Accept
-											{
-												for (i = 0; i < step; i++)
-												{
-													vel = (get_group_val (p_grp, GROUP_VELOCITY) / 100.0);// m/s
-													s   = (TMP(clb_wedge_data[i]) - wedge_delay - pp->G_delay[i] - get_pw()) * vel / 2000000;//mm
-													if(s<0) s = 0;
-													if( fabs(TMP_CBA(distance) - s) >  (pp->tolerance / 100.0) )
-													{
-														if(!dialog)
-														{
-															dialog = gtk_message_dialog_new( win,
-																		GTK_DIALOG_DESTROY_WITH_PARENT,
-																		GTK_MESSAGE_ERROR,
-																		GTK_BUTTONS_CLOSE,
-																		"At least one context has no amplitude peak in \ngate A. Wedge delay calibration cannot be performed. ");
-															gtk_dialog_run(GTK_DIALOG(dialog));
-															gtk_widget_destroy(dialog);
-															pp->cstart_qty = 5;
-															count = 1;
-														}
-													}
-												}
-												if(!count)
-													esc_calibration();
-												//pp->flag = 0;
-											}
+											dialog = gtk_message_dialog_new( win,
+													GTK_DIALOG_DESTROY_WITH_PARENT,
+													GTK_MESSAGE_ERROR,
+													GTK_BUTTONS_CLOSE,
+													"velocity is not reasonable \n");
+											gtk_dialog_run(GTK_DIALOG(dialog));
+											gtk_widget_destroy(dialog);
+											pp->cstart_qty = 6 ;
 										}
-										break;
-									case 2://Sensitivity
-										((pp->cstart_qty) < 6) ? (pp->cstart_qty) ++ : ((pp->cstart_qty) = 1);
+									}
+									break;
+								case 1://Wedge Delay
+									if(!pp->flag)
+									{
+										dialog = gtk_message_dialog_new( win,
+												GTK_DIALOG_DESTROY_WITH_PARENT,
+												GTK_MESSAGE_ERROR,
+												GTK_BUTTONS_CLOSE,
+												"you must calibration velocity first \n");
+										gtk_dialog_run(GTK_DIALOG(dialog));
+										gtk_widget_destroy(dialog);
+									}
+									else
+									{
+										((pp->cstart_qty) < 5) ? (pp->cstart_qty) ++ : ((pp->cstart_qty) = 1);
 										if((pp->cstart_qty) == 2)
 										{
-											//点击start进入A-
 											draw_area_calibration();
-										}	
-										else if((pp->cstart_qty) == 1)//最后一步
-										{
-											//Accept 所做的事情就是把校准之后值显示在控件上
-											for (i = 0; i < step; i++)
+											vel = get_group_val (p_grp, GROUP_VELOCITY) / 100000.0 ;
+											if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 											{
-												GROUP_VAL(gain_offset[i+offset]) =  pp->tmp_gain_off[ i+offset]; 
+												if (UNIT_MM == get_unit(pp->p_config))
+												{
+													pp->gate_start_clb = GROUP_GATE_POS(start)* vel;
+													pp->gate_width_clb = GROUP_GATE_POS(width)* vel;
+												}
+												else  /* 英寸 */
+												{
+													pp->gate_start_clb = GROUP_GATE_POS(start)* vel * 0.03937;
+													pp->gate_width_clb = GROUP_GATE_POS(width)* vel * 0.03937;
+												}
 											}
-											//校准完之后清除包络线
-											for (i = 0; i < step; i++)
+											else /* 显示方式为时间 */
 											{
-				//								TMP(clb_real_data[i]) = ((TMP(measure_data[i][1])>>20) & 0xfff)/20.47;
-												TMP(clb_max_data[i]) = TMP(clb_real_data[i]);//第一次需初始化
+												pp->gate_start_clb = GROUP_GATE_POS(start); 
+												pp->gate_width_clb = GROUP_GATE_POS(width); 
 											}
-											esc_calibration();		
 										}
-										break;
-									case 3://TCG
-										((pp->cstart_qty) < 5) ? (pp->cstart_qty) ++ : ((pp->cstart_qty) = 1);
-										break;
-									default:break;
-								}
-								break;
-							case 2://Code
-								((pp->cstart_qty) < 5) ? (pp->cstart_qty) ++ : ((pp->cstart_qty) = 1);
-								break;
-							default:break;
-						}
+										else if((pp->cstart_qty) == 1)//Accept
+										{
+											for (i = 0; i < step; i++)
+											{
+												vel = (get_group_val (p_grp, GROUP_VELOCITY) / 100.0);// m/s
+												s   = (TMP(clb_wedge_data[i]) - wedge_delay - pp->G_delay[i] - get_pw()) * vel / 2000000;//mm
+												if(s<0) s = 0;
+												if( fabs(TMP_CBA(distance) - s) >  (pp->tolerance / 100.0) )
+												{
+													if(!dialog)
+													{
+														dialog = gtk_message_dialog_new( win,
+																GTK_DIALOG_DESTROY_WITH_PARENT,
+																GTK_MESSAGE_ERROR,
+																GTK_BUTTONS_CLOSE,
+																"At least one context has no amplitude peak in \ngate A. Wedge delay calibration cannot be performed. ");
+														gtk_dialog_run(GTK_DIALOG(dialog));
+														gtk_widget_destroy(dialog);
+														pp->cstart_qty = 5;
+														count = 1;
+													}
+												}
+											}
+											if(!count)
+												esc_calibration();
+											//pp->flag = 0;
+										}
+									}
+									break;
+								case 2://Sensitivity
+									((pp->cstart_qty) < 6) ? (pp->cstart_qty) ++ : ((pp->cstart_qty) = 1);
+									if((pp->cstart_qty) == 2)
+									{
+										//点击start进入A-
+										draw_area_calibration();
+									}	
+									else if((pp->cstart_qty) == 1)//最后一步
+									{
+										//Accept 所做的事情就是把校准之后值显示在控件上
+										for (i = 0; i < step; i++)
+										{
+											GROUP_VAL(gain_offset[i+offset]) =  pp->tmp_gain_off[ i+offset]; 
+										}
+										//校准完之后清除包络线
+										for (i = 0; i < step; i++)
+										{
+											TMP(clb_max_data[i]) = TMP(clb_real_data[i]);//第一次需初始化
+										}
+										esc_calibration();		
+									}
+									break;
+								case 3://TCG
+									((pp->cstart_qty) < 5) ? (pp->cstart_qty) ++ : ((pp->cstart_qty) = 1);
+									break;
+								default:break;
+							}
 							break;
-					case 3:((pp->wstart_qty) < 4) ? (pp->wstart_qty) ++ : ((pp->wstart_qty) = 1);break;
-					default:break;
+						case 2://Code
+							((pp->cstart_qty) < 5) ? (pp->cstart_qty) ++ : ((pp->cstart_qty) = 1);
+							break;
+						default:break;
+					}
+					break;
+				case 3:((pp->wstart_qty) < 4) ? (pp->wstart_qty) ++ : ((pp->wstart_qty) = 1);break;
+				default:break;
 			}
 			break;
 		case 1:
@@ -1714,7 +1714,7 @@ void b3_fun1(gpointer p)
 				case 3: 
 					set_report_userfield_enable (pp->p_config, 
 							!get_report_userfield_enable (pp->p_config, get_report_userfield_select (pp->p_config)),
-							 get_report_userfield_select (pp->p_config));
+							get_report_userfield_select (pp->p_config));
 					break;
 				default:break;
 			}
@@ -1730,141 +1730,141 @@ void b3_fun1(gpointer p)
 		switch (pp->pos) 
 		{
 			case 0:
-					break;
+				break;
 			case 1:
-				   switch (pp->pos1[1])
-				   {
-					   case 0:data_process(&(pp->p_tmp_config->start_reg), 2); break; /* 101start扫描延时 3种步进 */
-					   case 1: /* 弹出一个选择菜单,选择 */ break; /*111 收发模式Tx/Rx Mode  */
-					   case 2: /* 弹出一个选择菜单,选择 */ break; /*121 滤波Filter  */
-					   case 3: data_process (&(pp->p_tmp_config->indexoffset_reg), 2);	break; /* 131 */
-					   case 4: /* Set Ref. */ break; /*141 Set Ref.参考增益  */
-					   default:break;
-				   }
-				   break;
+				switch (pp->pos1[1])
+				{
+					case 0:data_process(&(pp->p_tmp_config->start_reg), 2); break; /* 101start扫描延时 3种步进 */
+					case 1: /* 弹出一个选择菜单,选择 */ break; /*111 收发模式Tx/Rx Mode  */
+					case 2: /* 弹出一个选择菜单,选择 */ break; /*121 滤波Filter  */
+					case 3: data_process (&(pp->p_tmp_config->indexoffset_reg), 2);	break; /* 131 */
+					case 4: /* Set Ref. */ break; /*141 Set Ref.参考增益  */
+					default:break;
+				}
+				break;
 			case 2: 
-				   switch (pp->pos1[2])
-				   {
-					   case 0: break; 
-					   case 1: break;
-					   case 2: break;/* 221 Alarm#*/ 
-					   case 3: data_process(&(pp->p_tmp_config->mat_atten_reg), 3);break;  /*231 Mat.Attenuatior*/
-					   case 4: break; 
-					   default:break;
-				   }
-				   break;
+				switch (pp->pos1[2])
+				{
+					case 0: break; 
+					case 1: break;
+					case 2: break;/* 221 Alarm#*/ 
+					case 3: data_process(&(pp->p_tmp_config->mat_atten_reg), 3);break;  /*231 Mat.Attenuatior*/
+					case 4: break; 
+					default:break;
+				}
+				break;
 			case 3:
-				   switch (pp->pos1[3])
-				   {
-					   case 0: break; 
-					   case 1:
-					   	  switch(GROUP_VAL(selection))  
-					   	  {
-							case 0:
-								data_process(&(TMP(per_reference_reg)), 2);break;
-							case 1:
-							case 2:
-							case 3:
-								data_process(&(TMP(s_reference_reg)), 3);break;
-							case 4:
-							case 5:
-							case 6:
-							case 7:
-							case 8:
-								data_process(&(TMP(cursors_angle_reg)), 1);break;
-							default:break;
-					  	  }
-					  	   break;	/*p311*/
-					   case 2: break; /* 321 entry image*/ 
-					   case 3: data_process(&(pp->p_tmp_config->min_thickness_reg), 3); break;  /*331 */
-					   case 4: /* Set Ref. */ break; 
-					   default:break;
-				   }
-				   break;
+				switch (pp->pos1[3])
+				{
+					case 0: break; 
+					case 1:
+							switch(GROUP_VAL(selection))  
+							{
+								case 0:
+									data_process(&(TMP(per_reference_reg)), 2);break;
+								case 1:
+								case 2:
+								case 3:
+									data_process(&(TMP(s_reference_reg)), 3);break;
+								case 4:
+								case 5:
+								case 6:
+								case 7:
+								case 8:
+									data_process(&(TMP(cursors_angle_reg)), 1);break;
+								default:break;
+							}
+							break;	/*p311*/
+					case 2: break; /* 321 entry image*/ 
+					case 3: data_process(&(pp->p_tmp_config->min_thickness_reg), 3); break;  /*331 */
+					case 4: /* Set Ref. */ break; 
+					default:break;
+				}
+				break;
 			case 4: 
-				   switch (pp->pos1[4])
-				   {
-					   case 0: break; 
-					   case 1: break;
-					   case 2:
-							   switch(GROUP_VAL(col_select_pos)) 
-							   {
-								   case 0:data_process(&(TMP(color_start_reg)), 1 );break;
-								   case 1:data_process(&(TMP(color_contrast_reg)), 1 );break;
-								   case 2:data_process(&(TMP(min_reg)), 2);break;
-							   }
-							   break; 
+				switch (pp->pos1[4])
+				{
+					case 0: break; 
+					case 1: break;
+					case 2:
+							switch(GROUP_VAL(col_select_pos)) 
+							{
+								case 0:data_process(&(TMP(color_start_reg)), 1 );break;
+								case 1:data_process(&(TMP(color_contrast_reg)), 1 );break;
+								case 2:data_process(&(TMP(min_reg)), 2);break;
+							}
+							break; 
 
-					   case 3:
-							   switch(get_dis_prop_scan(pp->p_config)) 
-							   {
-								   case 0:break;
-								   case 1:data_process(&(TMP(compress_reg)), 2 );break;
-								   case 2:break;
-								   case 3:break;
-							   }
-							   break; 
-					   default:break;
-				   }
-				   break;
+					case 3:
+							switch(get_dis_prop_scan(pp->p_config)) 
+							{
+								case 0:break;
+								case 1:data_process(&(TMP(compress_reg)), 2 );break;
+								case 2:break;
+								case 3:break;
+							}
+							break; 
+					default:break;
+				}
+				break;
 
 			case 5:
-				   switch (pp->pos1[5])
-				   {
-					   case 0: break; 
-					   case 1: data_process (&(pp->p_tmp_config->indexoffset_reg), 2);  break; /*511 */
-					   case 2: data_process (&(pp->p_tmp_config->db_reg), 4);  break;     /*521*/
-					   case 3: data_process (&(pp->p_tmp_config->part_thickness_reg), 3);  break;     /*531*/
-					   case 4: break; 
-					   default:break;
-				   }
-				   break;
+				switch (pp->pos1[5])
+				{
+					case 0: break; 
+					case 1: data_process (&(pp->p_tmp_config->indexoffset_reg), 2);  break; /*511 */
+					case 2: data_process (&(pp->p_tmp_config->db_reg), 4);  break;     /*521*/
+					case 3: data_process (&(pp->p_tmp_config->part_thickness_reg), 3);  break;     /*531*/
+					case 4: break; 
+					default:break;
+				}
+				break;
 
 			case 6:
-				   switch (pp->pos1[6])
-				   {
-					   case 0: data_process (&(pp->p_tmp_config->connection_P_reg), 3);  break;  /*601 */
-					   case 1: data_process (&(pp->p_tmp_config->max_angle_reg), 2);  break;     /*611 */
-					   case 2:
-							   if((LAW_VAL(Focal_point_type)==HALFPATH_P)||(LAW_VAL(Focal_point_type)==DEPTH_P))
-							       data_process (&(pp->p_tmp_config->positions_reg), 2);
-							   else if((LAW_VAL(Focal_point_type)==PROJECTION_P)||(LAW_VAL(Focal_point_type)==FOCALPLANE_P))
-							       data_process (&(pp->p_tmp_config->offsets_reg), 2);
-  							   break; /*621 */
-					   case 3: data_process (&(TMP(first_element_reg)), 2); break; 
-					   default:break;
-				   }
-				   break;
+				switch (pp->pos1[6])
+				{
+					case 0: data_process (&(pp->p_tmp_config->connection_P_reg), 3);  break;  /*601 */
+					case 1: data_process (&(pp->p_tmp_config->max_angle_reg), 2);  break;     /*611 */
+					case 2:
+							if((LAW_VAL(Focal_point_type)==HALFPATH_P)||(LAW_VAL(Focal_point_type)==DEPTH_P))
+								data_process (&(pp->p_tmp_config->positions_reg), 2);
+							else if((LAW_VAL(Focal_point_type)==PROJECTION_P)||(LAW_VAL(Focal_point_type)==FOCALPLANE_P))
+								data_process (&(pp->p_tmp_config->offsets_reg), 2);
+							break; /*621 */
+					case 3: data_process (&(TMP(first_element_reg)), 2); break; 
+					default:break;
+				}
+				break;
 			case 7:
-				   switch (pp->pos1[7])
-				   {
-					   case 0: break; /*    */
-					   case 1: break; /*710 */
-					   case 2: data_process (&(pp->p_tmp_config->scan_end_reg), 2);  break;   /*721  */
-					   case 3: break; /*731*/ 
-					   default:break;
-				   }
-				   break;
+				switch (pp->pos1[7])
+				{
+					case 0: break; /*    */
+					case 1: break; /*710 */
+					case 2: data_process (&(pp->p_tmp_config->scan_end_reg), 2);  break;   /*721  */
+					case 3: break; /*731*/ 
+					default:break;
+				}
+				break;
 			case 8:
-				   switch (pp->pos1[8])
-				   {
-					   case 0: break; 
-					   case 1: break;
-					   case 2: break;   /*821  */
-					   case 3: break;          /*831  */ 
-					   default:break;
-				   }
-				   break;
+				switch (pp->pos1[8])
+				{
+					case 0: break; 
+					case 1: break;
+					case 2: break;   /*821  */
+					case 3: break;          /*831  */ 
+					default:break;
+				}
+				break;
 			case 9:
-				   switch (pp->pos1[9])
-				   {
-					   case 0: data_process (&(pp->p_tmp_config->bright_reg), 2);  break; /*901  */
-					   case 1: break; /*710 */
-					   case 2: break;   /*721  */
-					   case 3: //pp->p_config->ezview = !pp->p_config->ezview;break;  /*931*/
-					   default:break;
-				   }
-				   break;
+				switch (pp->pos1[9])
+				{
+					case 0: data_process (&(pp->p_tmp_config->bright_reg), 2);  break; /*901  */
+					case 1: break; /*710 */
+					case 2: break;   /*721  */
+					case 3: //pp->p_config->ezview = !pp->p_config->ezview;break;  /*931*/
+					default:break;
+				}
+				break;
 			default:break;
 		}
 	}
@@ -1948,207 +1948,207 @@ void b3_fun2(gpointer p)
 		switch (pp->pos) 
 		{
 			case 0:
-					switch (pp->pos1[0])
-					{
-						case 0:	/* 002 */
- 							   if ( pp->start_qty == 4 )
- 							   		data_process(&(TMP(connection_P_reg)), 2);
- 							   if ( pp->start_qty == 7 )
-									data_process (&(pp->p_tmp_config->scanoffset_reg), 2);
- 							   break;
-						case 1: /* 012 */
- 							   if ( pp->fstart_qty == 3 )
- 							   		data_process(&(TMP(element_qty_reg)), 2);
- 							   else if ( pp->fstart_qty == 4 )
- 							   		data_process(&(TMP(min_angle_reg)), 2);
- 							   break;
-						case 2:	/* 022 */
- 							   if ( pp->cstart_qty == 2 )
- 							   {
-									if(pp->ctype_pos == 0)
- 							   			data_process(&(TMP(origin_reg)), 2);
-									else if ((pp->ctype_pos == 1) && (pp->cmode_pos == 0))
- 							   			data_process(&(TMP(cangle_reg)), 1);
- 							   		else if((pp->ctype_pos == 1) && (pp->cmode_pos == 2))
- 							   			data_process(&(TMP(ref_amplitude_reg)), 2);
-									else if ((pp->ctype_pos == 1) && (pp->cmode_pos == 3))
- 							   			data_process(&(TMP(ref_ampl_reg)), 2);
- 							   }
- 							   else if ( pp->cstart_qty == 3 )
- 							   {
-									if(pp->ctype_pos == 0)
- 							   			data_process(&(TMP(distance_reg)), 2);
-									else if(pp->ctype_pos == 1)
-										data_process(&(TMP(first_element_reg)),2);
-									else if((pp->ctype_pos == 2)&&(pp->scode_pos == 1))
- 							   			data_process(&(TMP(cstart_reg)), 3);
- 							   }
- 							   else if ( pp->cstart_qty == 4 )
- 							   {
-									if((pp->ctype_pos == 2)&&(pp->scode_pos == 1))
- 							   			data_process(&(TMP(db_reg)), 4);
-									else
- 							   			data_process(&(TMP(cstart_reg)), 3);
- 							   }
- 							   else if ( pp->cstart_qty == 5 )
- 							   {
- 							   		if((pp->ctype_pos == 1) && (pp->cmode_pos == 2))
- 							   			data_process(&(TMP(compdb_reg)), 1);
-							  		else if ((pp->ctype_pos == 1) && ((pp->cmode_pos == 1)||(pp->cmode_pos == 3)) )
- 							   			data_process(&(TMP(db_reg)), 4);
- 							   }
- 							   else if(pp->cstart_qty == 6)
- 							   {
-									if ((pp->ctype_pos == 1) && (pp->cmode_pos == 2))
-										data_process (&(TMP(db_reg)), 4);
- 							   }
- 							   break;
-						case 3:
- 							   if(pp->wstart_qty == 3)
- 							   		data_process (&(TMP(weland_height_reg)), 2);
- 							   else if(pp->wstart_qty == 4)
- 							   		data_process (&(TMP(fizone_height_reg)), 2);
-
-
-								break;/*p032*/
-						default:break;
-					}
-					break;
-			case 1:
-				   switch (pp->pos1[1])
-				   {
-					   case 0:data_process(&(pp->p_tmp_config->range_reg), 2); break; /* 102range范围 3种步进 */
-					   case 1:
-							  if (pp->mark_pop_change)
-								  data_process(&(TMP(frequency_reg)), 2); /* 112 频率范围 3种步进 */
-							  break; /* 112 频率 Freq.  */
-					   case 2: /* 弹出一个选择菜单,选择 */ break; /* 122 检波 Recitify  */
-					   case 3:  /* 132 角度 PA 不能更改 UT 可以修改 */  data_process(&(TMP(angle_reg)), 2); break; 
-					   case 4: break;/* dB Ref P142 开关 */
-					   default:break;
-				   }
-				   break;
-			case 2:
-				   switch (pp->pos1[2])
-				   {
-					   case 0:data_process(&(pp->p_tmp_config->agate_start_reg), 3); break; /* 202 agate start*/
-					   case 1:
-							  /* 弹出一个选择菜单,选择 */                         break; 
-					   case 2:data_process(&(pp->p_tmp_config->count_reg), 1); break; /* 222 output count*/
-					   case 3:
-							if(GROUP_VAL(mode_pos) == 1)
-							{
-								if( GROUP_VAL(curve_pos) == 1|| GROUP_VAL(curve_pos)==3)
-  									data_process(&(pp->p_tmp_config->position_reg),3);
-								else if(GROUP_VAL(curve_pos) == 2)
-									data_process(&(pp->p_tmp_config->delay_reg), 3);
-							}
+				switch (pp->pos1[0])
+				{
+					case 0:	/* 002 */
+						if ( pp->start_qty == 4 )
+							data_process(&(TMP(connection_P_reg)), 2);
+						if ( pp->start_qty == 7 )
+							data_process (&(pp->p_tmp_config->scanoffset_reg), 2);
+						break;
+					case 1: /* 012 */
+						if ( pp->fstart_qty == 3 )
+							data_process(&(TMP(element_qty_reg)), 2);
+						else if ( pp->fstart_qty == 4 )
+							data_process(&(TMP(min_angle_reg)), 2);
+						break;
+					case 2:	/* 022 */
+						if ( pp->cstart_qty == 2 )
+						{
+							if(pp->ctype_pos == 0)
+								data_process(&(TMP(origin_reg)), 2);
+							else if ((pp->ctype_pos == 1) && (pp->cmode_pos == 0))
+								data_process(&(TMP(cangle_reg)), 1);
+							else if((pp->ctype_pos == 1) && (pp->cmode_pos == 2))
+								data_process(&(TMP(ref_amplitude_reg)), 2);
+							else if ((pp->ctype_pos == 1) && (pp->cmode_pos == 3))
+								data_process(&(TMP(ref_ampl_reg)), 2);
+						}
+						else if ( pp->cstart_qty == 3 )
+						{
+							if(pp->ctype_pos == 0)
+								data_process(&(TMP(distance_reg)), 2);
+							else if(pp->ctype_pos == 1)
+								data_process(&(TMP(first_element_reg)),2);
+							else if((pp->ctype_pos == 2)&&(pp->scode_pos == 1))
+								data_process(&(TMP(cstart_reg)), 3);
+						}
+						else if ( pp->cstart_qty == 4 )
+						{
+							if((pp->ctype_pos == 2)&&(pp->scode_pos == 1))
+								data_process(&(TMP(db_reg)), 4);
 							else
-							{
-								if(GROUP_VAL(curve_pos) == 1|| GROUP_VAL(curve_pos)==2)
-									data_process(&(pp->p_tmp_config->ref_ampl_reg), 2);
-							}
-							break; /*232 Ref.Amplitude*/
+								data_process(&(TMP(cstart_reg)), 3);
+						}
+						else if ( pp->cstart_qty == 5 )
+						{
+							if((pp->ctype_pos == 1) && (pp->cmode_pos == 2))
+								data_process(&(TMP(compdb_reg)), 1);
+							else if ((pp->ctype_pos == 1) && ((pp->cmode_pos == 1)||(pp->cmode_pos == 3)) )
+								data_process(&(TMP(db_reg)), 4);
+						}
+						else if(pp->cstart_qty == 6)
+						{
+							if ((pp->ctype_pos == 1) && (pp->cmode_pos == 2))
+								data_process (&(TMP(db_reg)), 4);
+						}
+						break;
+					case 3:
+						if(pp->wstart_qty == 3)
+							data_process (&(TMP(weland_height_reg)), 2);
+						else if(pp->wstart_qty == 4)
+							data_process (&(TMP(fizone_height_reg)), 2);
 
-					   case 4: break;
-					   default:break;
-				   }
-				   break;
+
+						break;/*p032*/
+					default:break;
+				}
+				break;
+			case 1:
+				switch (pp->pos1[1])
+				{
+					case 0:data_process(&(pp->p_tmp_config->range_reg), 2); break; /* 102range范围 3种步进 */
+					case 1:
+						   if (pp->mark_pop_change)
+							   data_process(&(TMP(frequency_reg)), 2); /* 112 频率范围 3种步进 */
+						   break; /* 112 频率 Freq.  */
+					case 2: /* 弹出一个选择菜单,选择 */ break; /* 122 检波 Recitify  */
+					case 3:  /* 132 角度 PA 不能更改 UT 可以修改 */  data_process(&(TMP(angle_reg)), 2); break; 
+					case 4: break;/* dB Ref P142 开关 */
+					default:break;
+				}
+				break;
+			case 2:
+				switch (pp->pos1[2])
+				{
+					case 0:data_process(&(pp->p_tmp_config->agate_start_reg), 3); break; /* 202 agate start*/
+					case 1:
+						   /* 弹出一个选择菜单,选择 */                         break; 
+					case 2:data_process(&(pp->p_tmp_config->count_reg), 1); break; /* 222 output count*/
+					case 3:
+						   if(GROUP_VAL(mode_pos) == 1)
+						   {
+							   if( GROUP_VAL(curve_pos) == 1|| GROUP_VAL(curve_pos)==3)
+								   data_process(&(pp->p_tmp_config->position_reg),3);
+							   else if(GROUP_VAL(curve_pos) == 2)
+								   data_process(&(pp->p_tmp_config->delay_reg), 3);
+						   }
+						   else
+						   {
+							   if(GROUP_VAL(curve_pos) == 1|| GROUP_VAL(curve_pos)==2)
+								   data_process(&(pp->p_tmp_config->ref_ampl_reg), 2);
+						   }
+						   break; /*232 Ref.Amplitude*/
+
+					case 4: break;
+					default:break;
+				}
+				break;
 			case 3:
-				   switch (pp->pos1[3])
-				   {
-					   case 0: break; 
-					   case 1:/*312*/
-					   	  switch(GROUP_VAL(selection))  
-					   	  {
-							case 0:
-								data_process(&(TMP(per_measure_reg)), 2);break;
-							case 1:
-							case 2:
-							case 3:
-								data_process(&(TMP(s_measure_reg)), 3);break;
-							case 4:
-								data_process(&(TMP(u_reference_reg)), 3);break;
-							case 5:
-							case 6:
-							case 7:
-								data_process(&(TMP(cursors_amplitude_reg)), 2);break;
-							case 8:
-								data_process(&(TMP(cursors_scan_reg)), 3);break;
-							default:break;
-					  	  }
-						   break;
+				switch (pp->pos1[3])
+				{
+					case 0: break; 
+					case 1:/*312*/
+							switch(GROUP_VAL(selection))  
+							{
+								case 0:
+									data_process(&(TMP(per_measure_reg)), 2);break;
+								case 1:
+								case 2:
+								case 3:
+									data_process(&(TMP(s_measure_reg)), 3);break;
+								case 4:
+									data_process(&(TMP(u_reference_reg)), 3);break;
+								case 5:
+								case 6:
+								case 7:
+									data_process(&(TMP(cursors_amplitude_reg)), 2);break;
+								case 8:
+									data_process(&(TMP(cursors_scan_reg)), 3);break;
+								default:break;
+							}
+							break;
 
-					   case 2: break;
-					   case 3: data_process(&(pp->p_tmp_config->max_thickness_reg), 3); break; /*332 */
-					   case 4: break;
-					   default:break;
-				   }
-				   break;
+					case 2: break;
+					case 3: data_process(&(pp->p_tmp_config->max_thickness_reg), 3); break; /*332 */
+					case 4: break;
+					default:break;
+				}
+				break;
 			case 4:
-				   switch (pp->pos1[4])
-				   {
-					   case 0: break; 
-					   case 1: break;  /*412*/
-					   case 2: 
-							   if (GROUP_VAL(col_select_pos) == 0)
-								   data_process(&(TMP(color_end_reg)), 1);  /*422 */
-							   else if (GROUP_VAL(col_select_pos) == 1)
-								   data_process(&(TMP(brightness_reg)), 1);
-							   else if (GROUP_VAL(col_select_pos) == 2)
-								   data_process(&(TMP(max_reg)), 2);
-							   break;  /*432 */
-					   case 3: break;
-					   default:break;
-				   }
-				   break;
+				switch (pp->pos1[4])
+				{
+					case 0: break; 
+					case 1: break;  /*412*/
+					case 2: 
+							if (GROUP_VAL(col_select_pos) == 0)
+								data_process(&(TMP(color_end_reg)), 1);  /*422 */
+							else if (GROUP_VAL(col_select_pos) == 1)
+								data_process(&(TMP(brightness_reg)), 1);
+							else if (GROUP_VAL(col_select_pos) == 2)
+								data_process(&(TMP(max_reg)), 2);
+							break;  /*432 */
+					case 3: break;
+					default:break;
+				}
+				break;
 			case 5:
-				   switch (pp->pos1[5])
-				   {
-					   case 0: break; 
-					   case 1: data_process(&(TMP(skew_reg)), 2); break;  /*512*/ 
-					   case 2: data_process(&(TMP(agate_start_reg)), 3); break;  /*522*/
-					   case 3: data_process(&(TMP(diameter_reg)), 3); break;  /*532*/
-					   case 4: break;
-					   default:break;
-				   }
-				   break;
+				switch (pp->pos1[5])
+				{
+					case 0: break; 
+					case 1: data_process(&(TMP(skew_reg)), 2); break;  /*512*/ 
+					case 2: data_process(&(TMP(agate_start_reg)), 3); break;  /*522*/
+					case 3: data_process(&(TMP(diameter_reg)), 3); break;  /*532*/
+					case 4: break;
+					default:break;
+				}
+				break;
 			case 6:
-				   switch (pp->pos1[6])
-				   {
-					   case 0: data_process(&(TMP(connection_R_reg)), 2); break;	/*602*/
-					   case 1: data_process(&(TMP(angle_step_reg)), 2); break;		/*612*/
-					   case 2:
-							   if((LAW_VAL(Focal_point_type)==HALFPATH_P)||(LAW_VAL(Focal_point_type)==DEPTH_P))
-							       data_process (&(pp->p_tmp_config->positione_reg), 2);
-							   else if((LAW_VAL(Focal_point_type)==PROJECTION_P)||(LAW_VAL(Focal_point_type)==FOCALPLANE_P))
-							       data_process (&(pp->p_tmp_config->offsete_reg), 2);
-								 break;	/*622 */ 
-					   case 3: data_process(&(TMP(last_element_reg)), 2); break;  /*632*/
-					   case 4: break;
-					   default:break;
-				   }
-				   break;
+				switch (pp->pos1[6])
+				{
+					case 0: data_process(&(TMP(connection_R_reg)), 2); break;	/*602*/
+					case 1: data_process(&(TMP(angle_step_reg)), 2); break;		/*612*/
+					case 2:
+							if((LAW_VAL(Focal_point_type)==HALFPATH_P)||(LAW_VAL(Focal_point_type)==DEPTH_P))
+								data_process (&(pp->p_tmp_config->positione_reg), 2);
+							else if((LAW_VAL(Focal_point_type)==PROJECTION_P)||(LAW_VAL(Focal_point_type)==FOCALPLANE_P))
+								data_process (&(pp->p_tmp_config->offsete_reg), 2);
+							break;	/*622 */ 
+					case 3: data_process(&(TMP(last_element_reg)), 2); break;  /*632*/
+					case 4: break;
+					default:break;
+				}
+				break;
 			case 7:
-				   switch (pp->pos1[7])
-				   {
-					   case 0: break; /*    */
-					   case 1: break; /*712 */
-					   case 2: data_process (&(TMP(scan_resolution_reg)), 2);  break;   /*722  */
-					   case 3: break; 
-					   default:break;
-				   }
-				   break;
+				switch (pp->pos1[7])
+				{
+					case 0: break; /*    */
+					case 1: break; /*712 */
+					case 2: data_process (&(TMP(scan_resolution_reg)), 2);  break;   /*722  */
+					case 3: break; 
+					default:break;
+				}
+				break;
 			case 8:
-				   switch (pp->pos1[8])
-				   {
-					   case 0: break; 
-					   case 1: break;
-					   case 2: break;   /*822  */
-					   case 3: break; 
-					   default:break;
-				   }
-				   break;
+				switch (pp->pos1[8])
+				{
+					case 0: break; 
+					case 1: break;
+					case 2: break;   /*822  */
+					case 3: break; 
+					default:break;
+				}
+				break;
 
 
 			default:break;
@@ -2208,7 +2208,7 @@ void b3_fun3(gpointer p)
 									{
 										for (i = 0; i < clb_step; i++)
 										{
-				//							TMP(clb_real_data[i]) = ((TMP(measure_data[i][1])>>20) & 0xfff)/20.47;
+											//							TMP(clb_real_data[i]) = ((TMP(measure_data[i][1])>>20) & 0xfff)/20.47;
 											TMP(clb_max_data[i]) = TMP(clb_real_data[i]);//第一次需初始化
 										}
 									}
@@ -2228,7 +2228,7 @@ void b3_fun3(gpointer p)
 					set_group_val (get_group_by_id(pp->p_config, grp), GROUP_VIDEO_FILTER, 
 							!get_group_val (get_group_by_id(pp->p_config, grp), GROUP_VIDEO_FILTER));
 					TMP(group_spi[grp]).video_filter	= 
-							get_group_val (get_group_by_id(pp->p_config, grp), GROUP_VIDEO_FILTER);
+						get_group_val (get_group_by_id(pp->p_config, grp), GROUP_VIDEO_FILTER);
 					g_print ("videofilter=%d\n",
 							get_group_val (get_group_by_id(pp->p_config, grp), GROUP_VIDEO_FILTER));
 					send_spi_data (grp);
@@ -2277,230 +2277,230 @@ void b3_fun3(gpointer p)
 		switch (pp->pos) 
 		{
 			case 0:
-					switch (pp->pos1[0])
-					{
-						case 0:	/* 003 */
- 							   if ( pp->start_qty == 7 )
-									data_process (&(TMP(indexoffset_reg)), 2);
- 							   break;
-						case 1: /* 013 */
- 							   if ( pp->fstart_qty == 3 )
- 							   		data_process(&(TMP(first_element_reg)), 2);
- 							   else if ( pp->fstart_qty == 4 )
-									data_process (&(TMP(max_angle_reg)), 2);
- 							   break;
-						case 2:	/* 023 */
-							switch(pp->cstart_qty)
-							{
- 							   case 2:
-									 if ((pp->ctype_pos == 1) && (pp->cmode_pos == 1))
-									 {
-											if(pp->echotype_pos == 0)
-											{
-												data_process (&(TMP(radiusa_reg)), 3);
-											}
-											else if(pp->echotype_pos == 1)
-											{
-												data_process (&(TMP(deptha_reg)), 3);
-											}
-											else
-											{
-												data_process (&(TMP(thickness1_reg)), 3);
-											}
-								 	 }
-									 else if ((pp->ctype_pos == 1) && ((pp->cmode_pos == 2)||(pp->cmode_pos == 3)))
-											data_process (&(TMP(tolerance_t_reg)), 2);
-
-									 else if ((pp->ctype_pos == 1) && (pp->cmode_pos == 0))
-									 {
-											data_process (&(TMP(db_reg)), 4);
-								 	 }
-
- 							  		 break;
- 							   case 3:
-								 	 if ((pp->ctype_pos == 1) && (pp->cmode_pos == 0))
-									 {
-											if(pp->echotype_pos == 0)
-											{
-												data_process (&(TMP(radius1_reg)), 3);
-											}
-											else if(pp->echotype_pos == 1)
-											{
-												data_process (&(TMP(depth1_reg)), 3);
-											}
-											else
-											{
-												data_process (&(TMP(thickness1_reg)), 3);
-											}
-								 	 }
-								 	 else if ((pp->ctype_pos == 1) && ((pp->cmode_pos == 1)||(pp->cmode_pos == 2)||(pp->cmode_pos == 3)))
-								 	 {
-											if (LAW_VAL (Focal_type) == AZIMUTHAL_SCAN)
-												data_process (&(TMP(last_angle_reg)), 2);
-											else if(LAW_VAL (Focal_type) == LINEAR_SCAN) 
-												data_process(&(TMP(last_element_reg)),2);
-									 }
-								 	 else if ((pp->ctype_pos == 2) && (pp->scode_pos == 1))
-								 	 {
-											data_process (&(TMP(cwidth_reg)), 3);
-									 }
- 							   		 break;
- 							   case 4:
- 							   			data_process(&(TMP(cwidth_reg)), 3);
- 							  			break;
- 							   default: break;
-							}
- 							break;
-						case 3:
- 							   if ( pp->wstart_qty == 3 )
- 							   		data_process (&(TMP(weland_offset_reg)), 2);
- 							   else if(pp->wstart_qty == 4)
- 							   		data_process (&(TMP(fizone_angle_reg)), 2);
-								break;/*p033*/
-						default:break;
-					}
-					break;
-			case 1:
-				   switch (pp->pos1[1])
-				   {
-					   case 0:data_process(&(pp->p_tmp_config->wedge_delay_reg), 2); break;   /* 103wedge delay 楔款延时 3种步进 */
-					   case 1: /* 弹出一个选择菜单,选择 */ break; 
-					   case 2: 
-														   break;   /* 123 视频滤波 on or off  */
-					   case 3:break; /* 133 Skew (deg)  */
-					   case 4:
-							  if (pp->mark_pop_change)
-								  data_process(&(pp->p_tmp_config->point_qty_reg), 2); /* 143 Points Qty. 3种步进 */
-							  break; /* 143 Points Qty.  */
-
-					   default:break;
-				   }
-				   break;
-			case 2:
-				   switch (pp->pos1[2])
-				   {
-					   case 0:data_process(&(pp->p_tmp_config->gate_width_reg), 3); break; /* 203 agate width 3种步进 */
-					   case 1: /* 弹出一个选择菜单,选择 */ break;
-					   case 2: /* 视频滤波 */ break; /* 123 视频滤波 on or off  */
-					   case 3: 
-											  if( GROUP_VAL(curve_pos)==1 || GROUP_VAL(curve_pos)==2|| GROUP_VAL(curve_pos)==3 )
-											  {
-												  if((GROUP_VAL(mode_pos)==0 )&&(GROUP_VAL(curve_pos)==1 || GROUP_VAL(curve_pos)==2))
-													  data_process(&(pp->p_tmp_config->ref_ampl_offset_reg), 4); /* 233 ref.ampl.offset  */
-												  else if((GROUP_VAL(mode_pos)==1 )&&(GROUP_VAL(curve_pos)==1 || GROUP_VAL(curve_pos)==2))
-													  data_process(&(pp->p_tmp_config->amplitude_reg), 3);
-												  else if((GROUP_VAL(mode_pos)==1 )&&(GROUP_VAL(curve_pos)==3))
-													  data_process(&(pp->p_tmp_config->tcg_gain_reg), 4);
-											  }
-											  break; /*233 Ref.Amplitude*/
-
-					   case 4: /* 弹出一个选择菜单,选择 */ break;
-					   default:break;
-				   }
-				   break;
-			case 3:
-				   switch (pp->pos1[3])
-				   {
-					   case 0: break;
-					   case 1: /* 313 */
-					   	  switch(GROUP_VAL(selection))  
-					   	  {
-							case 0:
-							case 1:
-								data_process(&(TMP(u_reference_reg)), 3);break;
-							case 4:
-								data_process(&(TMP(u_measure_reg)), 3);break;
+				switch (pp->pos1[0])
+				{
+					case 0:	/* 003 */
+						if ( pp->start_qty == 7 )
+							data_process (&(TMP(indexoffset_reg)), 2);
+						break;
+					case 1: /* 013 */
+						if ( pp->fstart_qty == 3 )
+							data_process(&(TMP(first_element_reg)), 2);
+						else if ( pp->fstart_qty == 4 )
+							data_process (&(TMP(max_angle_reg)), 2);
+						break;
+					case 2:	/* 023 */
+						switch(pp->cstart_qty)
+						{
 							case 2:
-								data_process(&(TMP(i_reference_reg)), 3);break;
-							case 3:
-								data_process(&(TMP(s_refmeas_reg)), 3);break;
-							case 5:
-							case 6:
-							case 7:
-								data_process(&(TMP(cursors_ut_reg)), 3);break;
-							case 8:
-								data_process(&(TMP(cursors_index_reg)), 3);break;
-							default:break;
-					  	  }
-						   break;
+								if ((pp->ctype_pos == 1) && (pp->cmode_pos == 1))
+								{
+									if(pp->echotype_pos == 0)
+									{
+										data_process (&(TMP(radiusa_reg)), 3);
+									}
+									else if(pp->echotype_pos == 1)
+									{
+										data_process (&(TMP(deptha_reg)), 3);
+									}
+									else
+									{
+										data_process (&(TMP(thickness1_reg)), 3);
+									}
+								}
+								else if ((pp->ctype_pos == 1) && ((pp->cmode_pos == 2)||(pp->cmode_pos == 3)))
+									data_process (&(TMP(tolerance_t_reg)), 2);
 
-					   case 2: /* 视频滤波 */ break; 
-					   case 3: data_process(&(TMP(echo_qty_reg)), 1); break;  /*333 */
-					   case 4: /* 弹出一个选择菜单,选择 */ break; 
-					   default:break;
-				   }
-				   break;
+								else if ((pp->ctype_pos == 1) && (pp->cmode_pos == 0))
+								{
+									data_process (&(TMP(db_reg)), 4);
+								}
+
+								break;
+							case 3:
+								if ((pp->ctype_pos == 1) && (pp->cmode_pos == 0))
+								{
+									if(pp->echotype_pos == 0)
+									{
+										data_process (&(TMP(radius1_reg)), 3);
+									}
+									else if(pp->echotype_pos == 1)
+									{
+										data_process (&(TMP(depth1_reg)), 3);
+									}
+									else
+									{
+										data_process (&(TMP(thickness1_reg)), 3);
+									}
+								}
+								else if ((pp->ctype_pos == 1) && ((pp->cmode_pos == 1)||(pp->cmode_pos == 2)||(pp->cmode_pos == 3)))
+								{
+									if (LAW_VAL (Focal_type) == AZIMUTHAL_SCAN)
+										data_process (&(TMP(last_angle_reg)), 2);
+									else if(LAW_VAL (Focal_type) == LINEAR_SCAN) 
+										data_process(&(TMP(last_element_reg)),2);
+								}
+								else if ((pp->ctype_pos == 2) && (pp->scode_pos == 1))
+								{
+									data_process (&(TMP(cwidth_reg)), 3);
+								}
+								break;
+							case 4:
+								data_process(&(TMP(cwidth_reg)), 3);
+								break;
+							default: break;
+						}
+						break;
+					case 3:
+						if ( pp->wstart_qty == 3 )
+							data_process (&(TMP(weland_offset_reg)), 2);
+						else if(pp->wstart_qty == 4)
+							data_process (&(TMP(fizone_angle_reg)), 2);
+						break;/*p033*/
+					default:break;
+				}
+				break;
+			case 1:
+				switch (pp->pos1[1])
+				{
+					case 0:data_process(&(pp->p_tmp_config->wedge_delay_reg), 2); break;   /* 103wedge delay 楔款延时 3种步进 */
+					case 1: /* 弹出一个选择菜单,选择 */ break; 
+					case 2: 
+														break;   /* 123 视频滤波 on or off  */
+					case 3:break; /* 133 Skew (deg)  */
+					case 4:
+						   if (pp->mark_pop_change)
+							   data_process(&(pp->p_tmp_config->point_qty_reg), 2); /* 143 Points Qty. 3种步进 */
+						   break; /* 143 Points Qty.  */
+
+					default:break;
+				}
+				break;
+			case 2:
+				switch (pp->pos1[2])
+				{
+					case 0:data_process(&(pp->p_tmp_config->gate_width_reg), 3); break; /* 203 agate width 3种步进 */
+					case 1: /* 弹出一个选择菜单,选择 */ break;
+					case 2: /* 视频滤波 */ break; /* 123 视频滤波 on or off  */
+					case 3: 
+										   if( GROUP_VAL(curve_pos)==1 || GROUP_VAL(curve_pos)==2|| GROUP_VAL(curve_pos)==3 )
+										   {
+											   if((GROUP_VAL(mode_pos)==0 )&&(GROUP_VAL(curve_pos)==1 || GROUP_VAL(curve_pos)==2))
+												   data_process(&(pp->p_tmp_config->ref_ampl_offset_reg), 4); /* 233 ref.ampl.offset  */
+											   else if((GROUP_VAL(mode_pos)==1 )&&(GROUP_VAL(curve_pos)==1 || GROUP_VAL(curve_pos)==2))
+												   data_process(&(pp->p_tmp_config->amplitude_reg), 3);
+											   else if((GROUP_VAL(mode_pos)==1 )&&(GROUP_VAL(curve_pos)==3))
+												   data_process(&(pp->p_tmp_config->tcg_gain_reg), 4);
+										   }
+										   break; /*233 Ref.Amplitude*/
+
+					case 4: /* 弹出一个选择菜单,选择 */ break;
+					default:break;
+				}
+				break;
+			case 3:
+				switch (pp->pos1[3])
+				{
+					case 0: break;
+					case 1: /* 313 */
+							switch(GROUP_VAL(selection))  
+							{
+								case 0:
+								case 1:
+									data_process(&(TMP(u_reference_reg)), 3);break;
+								case 4:
+									data_process(&(TMP(u_measure_reg)), 3);break;
+								case 2:
+									data_process(&(TMP(i_reference_reg)), 3);break;
+								case 3:
+									data_process(&(TMP(s_refmeas_reg)), 3);break;
+								case 5:
+								case 6:
+								case 7:
+									data_process(&(TMP(cursors_ut_reg)), 3);break;
+								case 8:
+									data_process(&(TMP(cursors_index_reg)), 3);break;
+								default:break;
+							}
+							break;
+
+					case 2: /* 视频滤波 */ break; 
+					case 3: data_process(&(TMP(echo_qty_reg)), 1); break;  /*333 */
+					case 4: /* 弹出一个选择菜单,选择 */ break; 
+					default:break;
+				}
+				break;
 			case 4:
-				   switch (pp->pos1[4])
-				   {
-					   case 0: break;
-					   case 1: break; /*413*/
-					   case 2: break; /*423*/
-					   case 3: break;  
-					   case 4: break; 
-					   default:break;
-				   }
-				   break;
+				switch (pp->pos1[4])
+				{
+					case 0: break;
+					case 1: break; /*413*/
+					case 2: break; /*423*/
+					case 3: break;  
+					case 4: break; 
+					default:break;
+				}
+				break;
 
 			case 5:
-				   switch (pp->pos1[5])
-				   {
-					   case 0: break;
-					   case 1: break;
-					   case 2: data_process(&(pp->p_tmp_config->gate_width_reg), 3);  break; /* 523 */
-					   case 3: break;  
-					   case 4: break; 
-					   default:break;
-				   }
-				   break;
+				switch (pp->pos1[5])
+				{
+					case 0: break;
+					case 1: break;
+					case 2: data_process(&(pp->p_tmp_config->gate_width_reg), 3);  break; /* 523 */
+					case 3: break;  
+					case 4: break; 
+					default:break;
+				}
+				break;
 
 			case 6:
-				   switch (pp->pos1[6])
-				   {
-					   case 0: break;
-					   case 1: data_process(&TMP(beam_skew_min_angle_reg), 2);  break; /*613 */
-					   case 2: 
-							   if((LAW_VAL(Focal_point_type)==HALFPATH_P)||(LAW_VAL(Focal_point_type)==DEPTH_P))
-							       data_process (&(pp->p_tmp_config->positionstep_reg), 2);
-							   else if((LAW_VAL(Focal_point_type)==PROJECTION_P)||(LAW_VAL(Focal_point_type)==FOCALPLANE_P))
-							       data_process (&(pp->p_tmp_config->depths_reg), 2);
-								 break;	/*623 */
-					   case 3:  data_process(&TMP(element_step_reg), 2);break;  
-					   case 4: break; 
-					   default:break;
-				   }
-				   break;
+				switch (pp->pos1[6])
+				{
+					case 0: break;
+					case 1: data_process(&TMP(beam_skew_min_angle_reg), 2);  break; /*613 */
+					case 2: 
+							if((LAW_VAL(Focal_point_type)==HALFPATH_P)||(LAW_VAL(Focal_point_type)==DEPTH_P))
+								data_process (&(pp->p_tmp_config->positionstep_reg), 2);
+							else if((LAW_VAL(Focal_point_type)==PROJECTION_P)||(LAW_VAL(Focal_point_type)==FOCALPLANE_P))
+								data_process (&(pp->p_tmp_config->depths_reg), 2);
+							break;	/*623 */
+					case 3:  data_process(&TMP(element_step_reg), 2);break;  
+					case 4: break; 
+					default:break;
+				}
+				break;
 			case 7:
-				   switch (pp->pos1[7])
-				   {
-					   case 0: data_process(&(pp->p_tmp_config->encoder_resolution_reg), 2);break;
-					   case 1: data_process(&(pp->p_tmp_config->scanspeed_reg), 2);  break; 
-					   case 2: data_process(&(pp->p_tmp_config->index_start_reg), 2);  break; 
-					   case 3: break;  
-					   case 4: break; 
-					   default:break;
-				   }
-				   break;
+				switch (pp->pos1[7])
+				{
+					case 0: data_process(&(pp->p_tmp_config->encoder_resolution_reg), 2);break;
+					case 1: data_process(&(pp->p_tmp_config->scanspeed_reg), 2);  break; 
+					case 2: data_process(&(pp->p_tmp_config->index_start_reg), 2);  break; 
+					case 3: break;  
+					case 4: break; 
+					default:break;
+				}
+				break;
 			case 8:
-				   switch (pp->pos1[8])
-				   {
-					   case 0: break; 
-					   case 1: break;
-					   case 2: break;   /*823  */
-					   case 3: break; 
-					   default:break;
-				   }
-				   break;
+				switch (pp->pos1[8])
+				{
+					case 0: break; 
+					case 1: break;
+					case 2: break;   /*823  */
+					case 3: break; 
+					default:break;
+				}
+				break;
 			case 9:
-				   switch (pp->pos1[9])
-				   {
-					   case 0: break; 
-					   case 1: break;
-					   case 2: break;   /*923  */
-					   case 3: break;   /*933  */ 
-					   default:break;
-				   }
-				   break;
+				switch (pp->pos1[9])
+				{
+					case 0: break; 
+					case 1: break;
+					case 2: break;   /*923  */
+					case 3: break;   /*933  */ 
+					default:break;
+				}
+				break;
 
 			default:break;
 		}
@@ -2522,7 +2522,7 @@ void b3_fun4(gpointer p)
 	gint grp = get_current_group(pp->p_config);//当前group
 	for (offset = 0, k = 0 ; k < grp; k++)
 		offset += TMP(beam_qty[k]);
-//	gint index = offset + TMP(beam_num[grp]);	
+	//	gint index = offset + TMP(beam_num[grp]);	
 	if (LAW_VAL (Focal_type) == AZIMUTHAL_SCAN)
 	{
 		step = (gint)( (LAW_VAL(Angle_max) - LAW_VAL(Angle_min)) / LAW_VAL(Angle_step) + 1);
@@ -2539,28 +2539,28 @@ void b3_fun4(gpointer p)
 			switch (pp->pos1[0])
 			{
 				case 0:	/* p004 */
- 						if ( pp->start_qty == 5 )
-							set_auto_detect (pp->p_config, !get_auto_detect(pp->p_config));
-						break;
+					if ( pp->start_qty == 5 )
+						set_auto_detect (pp->p_config, !get_auto_detect(pp->p_config));
+					break;
 				case 1:break;
 				case 2:/*p024*/
 					   //在此调用校准函数
 					   switch(pp->cmode_pos)
 					   {
-							case 0:
-								break;
-							case 1://wedge delay
-								if (pp->cstart_qty == 5)//Calibrate
-									cba_ultrasound_wedgedelay();
-								break;
-							case 2://sensitivity
-								if (pp->cstart_qty == 6)//Calibrate
-								{
-									cba_ultrasound_sensitivity();
-								}
-								break;
-							case 3:
-								break;
+						   case 0:
+							   break;
+						   case 1://wedge delay
+							   if (pp->cstart_qty == 5)//Calibrate
+								   cba_ultrasound_wedgedelay();
+							   break;
+						   case 2://sensitivity
+							   if (pp->cstart_qty == 6)//Calibrate
+							   {
+								   cba_ultrasound_sensitivity();
+							   }
+							   break;
+						   case 3:
+							   break;
 					   }
 					   break;
 				case 3:break;
@@ -2587,155 +2587,155 @@ void b3_fun4(gpointer p)
 		switch (pp->pos) 
 		{
 			case 0:
-					switch (pp->pos1[0])
-					{
-						case 0:	/* 004 */
- 								if ( pp->start_qty == 7 )
-									data_process(&(TMP(skew_reg)), 2); 
- 							    break;
-						case 1: /* 014 */
- 							   if ( pp->fstart_qty == 3 )
- 							   		data_process(&(TMP(last_element_reg)), 2);
- 							   else if ( pp->fstart_qty == 4 )
- 							   		data_process(&(TMP(angle_step_reg)), 2);
- 							   break;
-						case 2: /* 024 */
- 							   if(pp->cstart_qty == 2)
- 							   {
-								if ((pp->ctype_pos == 1) && (pp->cmode_pos == 1))
-								{
-									data_process (&(TMP(tolerance_reg)), 3);
-								}
- 							   }
+				switch (pp->pos1[0])
+				{
+					case 0:	/* 004 */
+						if ( pp->start_qty == 7 )
+							data_process(&(TMP(skew_reg)), 2); 
+						break;
+					case 1: /* 014 */
+						if ( pp->fstart_qty == 3 )
+							data_process(&(TMP(last_element_reg)), 2);
+						else if ( pp->fstart_qty == 4 )
+							data_process(&(TMP(angle_step_reg)), 2);
+						break;
+					case 2: /* 024 */
+						if(pp->cstart_qty == 2)
+						{
+							if ((pp->ctype_pos == 1) && (pp->cmode_pos == 1))
+							{
+								data_process (&(TMP(tolerance_reg)), 3);
+							}
+						}
 
- 							   else if(pp->cstart_qty == 3)
- 							   {
-								if ((pp->ctype_pos == 1) && (pp->cmode_pos == 0))
+						else if(pp->cstart_qty == 3)
+						{
+							if ((pp->ctype_pos == 1) && (pp->cmode_pos == 0))
+							{
+								if(pp->echotype_pos == 0)
 								{
-									if(pp->echotype_pos == 0)
-									{
-										data_process (&(TMP(radius2_reg)), 3);
-									}
-									else if(pp->echotype_pos == 1)
-									{
-										data_process (&(TMP(depth2_reg)), 3);
-									}
-									else
-									{
-										data_process (&(TMP(thickness2_reg)), 3);
-									}
+									data_process (&(TMP(radius2_reg)), 3);
 								}
-								else if(pp->ctype_pos == 2)
+								else if(pp->echotype_pos == 1)
 								{
-										data_process (&(TMP(cheight_reg)), 1);
+									data_process (&(TMP(depth2_reg)), 3);
 								}
- 							   }
- 							   else if(pp->cstart_qty == 4)
- 							   {
-									if(pp->ctype_pos == 1)
-										data_process (&(TMP(cheight_reg)), 1);
-									else if(pp->ctype_pos == 2)
-										data_process (&(TMP(thickness_reg)), 3);
- 							   }
- 							   else if(pp->cstart_qty == 5)
- 							   {
-									if ((pp->ctype_pos == 1) && (pp->cmode_pos == 2))
-										data_process (&(TMP(db_reg)), 4);
- 							   }
+								else
+								{
+									data_process (&(TMP(thickness2_reg)), 3);
+								}
+							}
+							else if(pp->ctype_pos == 2)
+							{
+								data_process (&(TMP(cheight_reg)), 1);
+							}
+						}
+						else if(pp->cstart_qty == 4)
+						{
+							if(pp->ctype_pos == 1)
+								data_process (&(TMP(cheight_reg)), 1);
+							else if(pp->ctype_pos == 2)
+								data_process (&(TMP(thickness_reg)), 3);
+						}
+						else if(pp->cstart_qty == 5)
+						{
+							if ((pp->ctype_pos == 1) && (pp->cmode_pos == 2))
+								data_process (&(TMP(db_reg)), 4);
+						}
 
- 							   break;
-						case 3: data_process (&(TMP(fizone_radius_reg)), 2);break;
-						default:break;
-					}
-					break;
+						break;
+					case 3: data_process (&(TMP(fizone_radius_reg)), 2);break;
+					default:break;
+				}
+				break;
 			case 1:
-				   switch (pp->pos1[1])
-				   {
-					   case 0:data_process(&(pp->p_tmp_config->velocity_reg), 3); break; /* 104velocity声速  3种步进 */
-					   case 1:
-							  if (pp->mark_pop_change)
-								  data_process(&(pp->p_tmp_config->pulser_width_reg), 2); /* 114 脉宽范围 3种步进 */
-							  break; /* 114 脉冲宽度 PW   */
-					   case 2: /* 弹出一个选择菜单,选择 */ break; /* 124 平均 averaging  */
-					   case 3:data_process(&(pp->p_tmp_config->beam_delay_reg), 2); break; /* 134 beamdelay 波束延时 */
-					   case 4: /*  */ break; /* 144 Scale Factor 多少点压缩一点 只能看  */
-					   default:break;
-				   }
-				   break;
+				switch (pp->pos1[1])
+				{
+					case 0:data_process(&(pp->p_tmp_config->velocity_reg), 3); break; /* 104velocity声速  3种步进 */
+					case 1:
+						   if (pp->mark_pop_change)
+							   data_process(&(pp->p_tmp_config->pulser_width_reg), 2); /* 114 脉宽范围 3种步进 */
+						   break; /* 114 脉冲宽度 PW   */
+					case 2: /* 弹出一个选择菜单,选择 */ break; /* 124 平均 averaging  */
+					case 3:data_process(&(pp->p_tmp_config->beam_delay_reg), 2); break; /* 134 beamdelay 波束延时 */
+					case 4: /*  */ break; /* 144 Scale Factor 多少点压缩一点 只能看  */
+					default:break;
+				}
+				break;
 			case 2:
-				   switch (pp->pos1[2])
-				   {
-					   case 0:data_process(&(pp->p_tmp_config->agate_height_reg), 1); break; /* 204 threshold  2种步进 */
-					   case 1: /* 弹出一个选择菜单,选择 */ break;
-					   case 2: data_process(&(pp->p_tmp_config->active_delay_reg), 3); break; /*224 Delay*/
-					   case 3: data_process(&(pp->p_tmp_config->curve_step_reg), 2);  break; /* 234  */
-					   case 4: /*  */ break; /* 244 Scale Factor 多少点压缩一点 只能看  */
-					   default:break;
-				   }
-				   break;
+				switch (pp->pos1[2])
+				{
+					case 0:data_process(&(pp->p_tmp_config->agate_height_reg), 1); break; /* 204 threshold  2种步进 */
+					case 1: /* 弹出一个选择菜单,选择 */ break;
+					case 2: data_process(&(pp->p_tmp_config->active_delay_reg), 3); break; /*224 Delay*/
+					case 3: data_process(&(pp->p_tmp_config->curve_step_reg), 2);  break; /* 234  */
+					case 4: /*  */ break; /* 244 Scale Factor 多少点压缩一点 只能看  */
+					default:break;
+				}
+				break;
 			case 3:
-				   switch (pp->pos1[3])
-				   {
-					   case 0: break;
-					   case 1:  /* 314 */ 
-					   	  switch(GROUP_VAL(selection))  
-					   	  {
-							case 0:
-							case 1:
-								data_process(&(TMP(u_measure_reg)), 3);break;
-							case 4:
-								data_process(&(TMP(i_reference_reg)), 3);break;
-							case 2:
-								data_process(&(TMP(i_measure_reg)), 3);break;
-							case 5:
-							case 6:
-							case 7:
-								data_process(&(TMP(cursors_scan_reg)), 3);break;
-							default:break;
-					  	  }
-						   break;
+				switch (pp->pos1[3])
+				{
+					case 0: break;
+					case 1:  /* 314 */ 
+							switch(GROUP_VAL(selection))  
+							{
+								case 0:
+								case 1:
+									data_process(&(TMP(u_measure_reg)), 3);break;
+								case 4:
+									data_process(&(TMP(i_reference_reg)), 3);break;
+								case 2:
+									data_process(&(TMP(i_measure_reg)), 3);break;
+								case 5:
+								case 6:
+								case 7:
+									data_process(&(TMP(cursors_scan_reg)), 3);break;
+								default:break;
+							}
+							break;
 
-					   case 2: data_process(&(pp->p_tmp_config->entry_reg), 1); break;  /*324 */
-					   case 3: break;  /*334 */
-					   case 4: break; 
-					   default:break;
-				   }
-				   break;
+					case 2: data_process(&(pp->p_tmp_config->entry_reg), 1); break;  /*324 */
+					case 3: break;  /*334 */
+					case 4: break; 
+					default:break;
+				}
+				break;
 			case 4:
-				   switch (pp->pos1[4])
-				   {
-					   case 0:
-						   if( get_display_pos(pp->p_config)==10) 
-							   data_process(&(TMP(dis_range_reg)), 2);
-						   break; /*404*/
-					   case 1:break; /*414*/
-					   case 2:break; /*424*/
-					   case 3:break; 
-					   case 4:break; 
-					   default:break;
-				   }
-				   break;
+				switch (pp->pos1[4])
+				{
+					case 0:
+						if( get_display_pos(pp->p_config)==10) 
+							data_process(&(TMP(dis_range_reg)), 2);
+						break; /*404*/
+					case 1:break; /*414*/
+					case 2:break; /*424*/
+					case 3:break; 
+					case 4:break; 
+					default:break;
+				}
+				break;
 			case 6:
-				   switch (pp->pos1[6])
-				   {
-					   case 0:break;
-					   case 1: data_process(&TMP(beam_skew_max_angle_reg), 2);  break; /*614 */
-					   case 2: data_process(&TMP(depthe_reg), 2);  break;
-					   case 3:break; 
-					   case 4:break; 
-					   default:break;
-				   }
+				switch (pp->pos1[6])
+				{
+					case 0:break;
+					case 1: data_process(&TMP(beam_skew_max_angle_reg), 2);  break; /*614 */
+					case 2: data_process(&TMP(depthe_reg), 2);  break;
+					case 3:break; 
+					case 4:break; 
+					default:break;
+				}
 			case 7:
-				   switch (pp->pos1[7])
-				   {
-					   case 0:data_process(&(pp->p_tmp_config->origin_reg), 2);break; /* 704 */
-					   case 1:data_process(&(pp->p_tmp_config->scanspeed_rpm_reg), 2);break;  /* 714 */
-					   case 2:data_process(&(pp->p_tmp_config->index_end_reg), 2);  break; /* 724 */
-					   case 3:break; 
-					   case 4:break; 
-					   default:break;
-				   }
-				   break;
+				switch (pp->pos1[7])
+				{
+					case 0:data_process(&(pp->p_tmp_config->origin_reg), 2);break; /* 704 */
+					case 1:data_process(&(pp->p_tmp_config->scanspeed_rpm_reg), 2);break;  /* 714 */
+					case 2:data_process(&(pp->p_tmp_config->index_end_reg), 2);  break; /* 724 */
+					case 3:break; 
+					case 4:break; 
+					default:break;
+				}
+				break;
 
 			default:break;
 
@@ -2841,12 +2841,12 @@ void b3_fun5(gpointer p)
 							}
 							break;
 						case 2:
-								break;
+							break;
 						case 3:
-								break;
+							break;
 					}
 					break;
-			 }
+			}
 			break;
 		case 4:
 			switch (pp->pos1[4])
@@ -2877,150 +2877,150 @@ void b3_fun5(gpointer p)
 		switch (pp->pos) 
 		{
 			case 0:
-					switch (pp->pos1[0])
-					{
-						case 0:	/* 005 */
- 							   break;
-						case 1: /* 015 */
- 							   if ( pp->fstart_qty == 3 )
- 							   		data_process(&(TMP(element_step_reg)), 2);
- 							   break;
-						case 2: /* 025 */
- 							   if(pp->cstart_qty == 4)
- 							   {
-								 if ((pp->ctype_pos == 1) && (pp->cmode_pos == 1))
-								 {
-									if(pp->echotype_pos == 0)
-									{
-										data_process (&(TMP(radiusa_reg)), 3);
-									}
-									else if(pp->echotype_pos == 1)
-									{
-										data_process (&(TMP(deptha_reg)), 3);
-									}
-									else
-									{
-										data_process (&(TMP(thickness1_reg)), 3);
-									}
-								 }
+				switch (pp->pos1[0])
+				{
+					case 0:	/* 005 */
+						break;
+					case 1: /* 015 */
+						if ( pp->fstart_qty == 3 )
+							data_process(&(TMP(element_step_reg)), 2);
+						break;
+					case 2: /* 025 */
+						if(pp->cstart_qty == 4)
+						{
+							if ((pp->ctype_pos == 1) && (pp->cmode_pos == 1))
+							{
+								if(pp->echotype_pos == 0)
+								{
+									data_process (&(TMP(radiusa_reg)), 3);
+								}
+								else if(pp->echotype_pos == 1)
+								{
+									data_process (&(TMP(deptha_reg)), 3);
+								}
+								else
+								{
+									data_process (&(TMP(thickness1_reg)), 3);
+								}
+							}
 
-								 else if ((pp->ctype_pos == 1) && (pp->cmode_pos == 0))
-								 {
-									if(pp->echotype_pos == 0)
-									{
-										data_process (&(TMP(radius1_reg)), 3);
-									}
-									else if(pp->echotype_pos == 1)
-									{
-										data_process (&(TMP(depth1_reg)), 3);
-									}
-									else
-									{
-										data_process (&(TMP(thickness1_reg)), 3);
-									}
-								 }
- 							   }
+							else if ((pp->ctype_pos == 1) && (pp->cmode_pos == 0))
+							{
+								if(pp->echotype_pos == 0)
+								{
+									data_process (&(TMP(radius1_reg)), 3);
+								}
+								else if(pp->echotype_pos == 1)
+								{
+									data_process (&(TMP(depth1_reg)), 3);
+								}
+								else
+								{
+									data_process (&(TMP(thickness1_reg)), 3);
+								}
+							}
+						}
 
- 							   break;
-						case 3:break;
-						default:break;
-					}
-					break;
+						break;
+					case 3:break;
+					default:break;
+				}
+				break;
 			case 1:
-				   switch (pp->pos1[1])
-				   {
-					   case 0: break; /* 105 空 */
-					   case 1: 
-							   if (pp->mark_pop_change)
-								   data_process(&(pp->p_tmp_config->prf_reg), 2); /* 115 PRF重复频率 3种步进 */
-							   break; /* 115 PRF重复频率  */
+				switch (pp->pos1[1])
+				{
+					case 0: break; /* 105 空 */
+					case 1: 
+							if (pp->mark_pop_change)
+								data_process(&(pp->p_tmp_config->prf_reg), 2); /* 115 PRF重复频率 3种步进 */
+							break; /* 115 PRF重复频率  */
 
-					   case 2:data_process(&(pp->p_tmp_config->reject_reg), 2); break; /* 125 Reject 抑制  */
-					   case 3:data_process(&(pp->p_tmp_config->gain_offset_reg), 4); break; /* 135 Gain Offset  */
-					   case 4: 
-							  if (pp->mark_pop_change)
-								  data_process(&(pp->p_tmp_config->sum_gain_reg), 4); /* 145 Sum Gain  5种步进 */
-							  break; /* 145 Sum Gain   */
+					case 2:data_process(&(pp->p_tmp_config->reject_reg), 2); break; /* 125 Reject 抑制  */
+					case 3:data_process(&(pp->p_tmp_config->gain_offset_reg), 4); break; /* 135 Gain Offset  */
+					case 4: 
+						   if (pp->mark_pop_change)
+							   data_process(&(pp->p_tmp_config->sum_gain_reg), 4); /* 145 Sum Gain  5种步进 */
+						   break; /* 145 Sum Gain   */
 
-					   default:break;
-				   }
-				   break;
+					default:break;
+				}
+				break;
 			case 2:
-				   switch (pp->pos1[2])
-				   {
-					   case 0: break; 
-					   case 1: break;
-					   case 2: data_process(&(pp->p_tmp_config->holdtime_reg), 3); break; 
-					   case 3: data_process(&(pp->p_tmp_config->ref_gain_reg), 4); break; 
-					   case 4: break; 
-					   default:break;
-				   }
-				   break;
+				switch (pp->pos1[2])
+				{
+					case 0: break; 
+					case 1: break;
+					case 2: data_process(&(pp->p_tmp_config->holdtime_reg), 3); break; 
+					case 3: data_process(&(pp->p_tmp_config->ref_gain_reg), 4); break; 
+					case 4: break; 
+					default:break;
+				}
+				break;
 			case 3:
-				   switch (pp->pos1[3])
-				   {
-					   case 0: break; 
-					   case 1: /* P315 */ 
-					   	  switch(GROUP_VAL(selection))  
-					   	  {
-							case 4:
-								data_process(&(TMP(i_measure_reg)), 3);break;
-							case 5:
-							case 6:
-							case 7:
-								data_process(&(TMP(cursors_index_reg)), 3);break;
-							default:break;
-					  	  }
-						   break;
-					   case 2: break; 
-					   case 3: break; 
-					   case 4: break; 
-					   default:break;
-				   }
-				   break;
+				switch (pp->pos1[3])
+				{
+					case 0: break; 
+					case 1: /* P315 */ 
+							switch(GROUP_VAL(selection))  
+							{
+								case 4:
+									data_process(&(TMP(i_measure_reg)), 3);break;
+								case 5:
+								case 6:
+								case 7:
+									data_process(&(TMP(cursors_index_reg)), 3);break;
+								default:break;
+							}
+							break;
+					case 2: break; 
+					case 3: break; 
+					case 4: break; 
+					default:break;
+				}
+				break;
 			case 4:
-				   switch (pp->pos1[4])
-				   {
-					   case 0:break; /*405*/
-					   case 1:break; /*415*/
-					   case 2:break; /*425*/
-					   case 3:break; 
-					   case 4:break; 
-					   default:break;
-				   }
-				   break;
+				switch (pp->pos1[4])
+				{
+					case 0:break; /*405*/
+					case 1:break; /*415*/
+					case 2:break; /*425*/
+					case 3:break; 
+					case 4:break; 
+					default:break;
+				}
+				break;
 			case 5:
-				   switch (pp->pos1[5])
-				   {
-					   case 0:break;  /*505*/
-					   case 1:break; /*515*/
-					   case 2:break;
-					   case 3:break; 
-					   case 4:break; 
-					   default:break;
-				   }
-				   break;
+				switch (pp->pos1[5])
+				{
+					case 0:break;  /*505*/
+					case 1:break; /*515*/
+					case 2:break;
+					case 3:break; 
+					case 4:break; 
+					default:break;
+				}
+				break;
 			case 6:
-				   switch (pp->pos1[6])
-				   {
-					   case 0:break;
-					   case 1: data_process(&TMP(beam_skew_angle_step_reg), 2);  break; /*615*/
-					   case 2:break;
-					   case 3:break; 
-					   case 4:break; 
-					   default:break;
-				   }
+				switch (pp->pos1[6])
+				{
+					case 0:break;
+					case 1: data_process(&TMP(beam_skew_angle_step_reg), 2);  break; /*615*/
+					case 2:break;
+					case 3:break; 
+					case 4:break; 
+					default:break;
+				}
 			case 7:
-				   switch (pp->pos1[7])
-				   {
-					   case 0:break; 
-					   case 1:data_process(&(pp->p_tmp_config->indexspeed_reg), 2);break;  /* 715 */
-					   case 2:data_process(&(pp->p_tmp_config->index_resolution_reg), 2);  break; /*725*/
-					   case 3:break; 
-					   case 4:break; 
-					   default:break;
-				   }
-				   break;
+				switch (pp->pos1[7])
+				{
+					case 0:break; 
+					case 1:data_process(&(pp->p_tmp_config->indexspeed_reg), 2);break;  /* 715 */
+					case 2:data_process(&(pp->p_tmp_config->index_resolution_reg), 2);  break; /*725*/
+					case 3:break; 
+					case 4:break; 
+					default:break;
+				}
+				break;
 			default:break;
 		}
 	}
@@ -3099,10 +3099,10 @@ static gint keypress_event_dialog(GtkWidget *widget, GdkEventKey *event)			/* �
 
 			if((pp->pos==5)&&(pp->pos1[pp->pos]==0)&&(pp->pos2[5][0]==4)&&(pp->pos_pos==MENU3_PRESSED))
 				gtk_dialog_response (GTK_DIALOG(widget), RESPONSE_CHANGE_FOCAL);			
-						
+
 			if((pp->pos==6)&&(pp->pos1[pp->pos]==4)&&(pp->pos2[6][4]==2)&&(pp->pos_pos==MENU3_PRESSED))
 				gtk_dialog_response (GTK_DIALOG(widget), RESPONSE_LAW_SAVE);			
-			
+
 			if((pp->pos==6)&&(pp->pos1[pp->pos]==4)&&(pp->pos2[6][4]==1)&&(pp->pos_pos==MENU3_PRESSED))
 				gtk_dialog_response (GTK_DIALOG(widget), RESPONSE_LAW_READ);			
 			return 0;
@@ -3110,7 +3110,7 @@ static gint keypress_event_dialog(GtkWidget *widget, GdkEventKey *event)			/* �
 		case GDK_F11:
 			if((pp->pos==6)&&(pp->pos1[6]==4)&&((pp->pos2[6][4]==1)||(pp->pos2[6][4]==2))&&(pp->pos_pos==MENU3_PRESSED))
 				gtk_dialog_response (GTK_DIALOG(widget), GTK_RESPONSE_CANCEL);
-			
+
 			if((pp->pos==8)&&(pp->pos1[pp->pos]==0)&&(pp->pos2[pp->pos][pp->pos1[pp->pos]]==1)&&(pp->pos_pos==MENU3_PRESSED))
 				gtk_dialog_response (GTK_DIALOG(widget), GTK_RESPONSE_CANCEL);
 
@@ -3139,7 +3139,7 @@ static gint keypress_event_dialog(GtkWidget *widget, GdkEventKey *event)			/* �
 			break;
 
 		case GDK_F2:
-			
+
 			if((pp->pos==8)&&(pp->pos1[pp->pos]==0)&&(pp->pos2[pp->pos][pp->pos1[pp->pos]]==2)&&(pp->pos_pos==MENU3_PRESSED))
 			{
 				gtk_dialog_response (GTK_DIALOG(widget), RESPONSE_CONFIG_FILE_FOCAL);
@@ -3174,7 +3174,7 @@ static gint keypress_event_dialog(GtkWidget *widget, GdkEventKey *event)			/* �
 			break;
 
 		case GDK_F6:
-			
+
 			if((pp->pos==9)&&(pp->pos1[pp->pos]==2)&&(pp->pos2[pp->pos][pp->pos1[pp->pos]]==0)&&(pp->pos_pos==MENU3_PRESSED))
 			{
 				gtk_dialog_response (GTK_DIALOG(widget), RESPONSE_SAVE_AND_CLOSE);
@@ -3200,7 +3200,7 @@ static gint keypress_event_dialog(GtkWidget *widget, GdkEventKey *event)			/* �
 			break;
 
 		case GDK_F1:
-			
+
 			if((pp->pos==9)&&(pp->pos1[pp->pos]==2)&&(pp->pos2[pp->pos][pp->pos1[pp->pos]]==0)&&(pp->pos_pos==MENU3_PRESSED))
 			{
 				gtk_dialog_response (GTK_DIALOG(widget), RESPONSE_CLOSE);
@@ -3302,8 +3302,8 @@ static int handler_key(guint keyval, gpointer data)
 	guint offset,k;
 	guint group = get_current_group(pp->p_config);
 
-//	double current_angle ;
-//	double max_angle     ;
+	//	double current_angle ;
+	//	double max_angle     ;
 	int BeamNo ;
 	float current_angle;
 
@@ -3453,12 +3453,12 @@ static int handler_key(guint keyval, gpointer data)
 				{
 					(TMP(beam_num[group]) < (TMP(beam_qty[group]) - 1))	?
 						(TMP(beam_num[group]) += 1)	: (TMP(beam_num[group]) = 0);
-	
+
 					for (offset = 0, k = 0 ; k < group; k++)
-							offset += TMP(beam_qty[k]);
+						offset += TMP(beam_qty[k]);
 					BEAM_INFO(offset + TMP(beam_num[group]),beam_delay) = pp->G_delay[ TMP(beam_num[group]) ];
 					GROUP_VAL(gain_offset[TMP(beam_num[group]) + offset]) = 
-									pp->tmp_gain_off[TMP(beam_num[group]) + offset];
+						pp->tmp_gain_off[TMP(beam_num[group]) + offset];
 
 					BeamNo = pp->p_tmp_config->beam_num[group];
 					if(LAW_VAL(Focal_type) == 0)
@@ -3501,53 +3501,53 @@ static int handler_key(guint keyval, gpointer data)
 			break;
 
 		case GDK_Escape:
-				if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
+			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
+			{
+				main_menu_pop(MENU_HIDE);/*收回主菜单条*/
+			}
+			else if((MENU31_PRESS == data1)||(MENU32_PRESS == data1)||(MENU33_PRESS == data1)||(MENU34_PRESS == data1)||(MENU35_PRESS == data1)||(MENU36_PRESS == data1))/*当三级菜单中有弹出菜单选项时*/
+			{
+				menu3_pop(MENU3_HIDE);/*隐藏三级菜单的弹出菜单*/
+			}
+			/*if(PROBE_DIALOG_KEYPRESS == data1)
+			  {
+			  pp->response_id = GTK_RESPONSE_CANCEL;
+			  }*/
+			else/*当主菜单条处于收回状态时*/
+			{
+				if ( pp->mark_pop_change == 1)
+					pp->mark_pop_change = 0;
+				switch (pp->pos_pos)
 				{
-					main_menu_pop(MENU_HIDE);/*收回主菜单条*/
+					case MENU2_STOP:
+						break;
+					case MENU2_PRESSED:
+						pp->pos_pos = MENU2_STOP;
+						break;
+					case MENU3_STOP:
+						pp->pos_pos = MENU2_STOP;
+						break;
+					case MENU3_PRESSED:
+						gtk_spin_button_set_value (GTK_SPIN_BUTTON (pp->sbutton[CUR_POS]), tttmp);
+						pp->pos_pos = MENU3_STOP;
+						break;
+					default:break;
 				}
-				else if((MENU31_PRESS == data1)||(MENU32_PRESS == data1)||(MENU33_PRESS == data1)||(MENU34_PRESS == data1)||(MENU35_PRESS == data1)||(MENU36_PRESS == data1))/*当三级菜单中有弹出菜单选项时*/
+				if ((tmp != pp->pos_pos) || (tmp1 != pp->mark_pop_change))
+				{
+					draw_menu2(0);
+					draw_menu3(0, NULL);
+				}
+			}
+
+			if((pp->pos==0)&&(pp->pos1[pp->pos]==0))
+			{
+				if((MENU31_PRESS == data1)||(MENU32_PRESS == data1)||(MENU33_PRESS == data1)||(MENU34_PRESS == data1)||(MENU35_PRESS == data1)||(MENU36_PRESS == data1))/*当三级菜单中有弹出菜单选项时*/
 				{
 					menu3_pop(MENU3_HIDE);/*隐藏三级菜单的弹出菜单*/
 				}
-				/*if(PROBE_DIALOG_KEYPRESS == data1)
+				else
 				{
-					pp->response_id = GTK_RESPONSE_CANCEL;
-				}*/
-				else/*当主菜单条处于收回状态时*/
-				{
-					if ( pp->mark_pop_change == 1)
-						pp->mark_pop_change = 0;
-					switch (pp->pos_pos)
-					{
-						case MENU2_STOP:
-							break;
-						case MENU2_PRESSED:
-							pp->pos_pos = MENU2_STOP;
-							break;
-						case MENU3_STOP:
-							pp->pos_pos = MENU2_STOP;
-							break;
-						case MENU3_PRESSED:
-							gtk_spin_button_set_value (GTK_SPIN_BUTTON (pp->sbutton[CUR_POS]), tttmp);
-							pp->pos_pos = MENU3_STOP;
-							break;
-						default:break;
-					}
-					if ((tmp != pp->pos_pos) || (tmp1 != pp->mark_pop_change))
-					{
-						draw_menu2(0);
-						draw_menu3(0, NULL);
-					}
-				}
-
-				if((pp->pos==0)&&(pp->pos1[pp->pos]==0))
-				{
-					if((MENU31_PRESS == data1)||(MENU32_PRESS == data1)||(MENU33_PRESS == data1)||(MENU34_PRESS == data1)||(MENU35_PRESS == data1)||(MENU36_PRESS == data1))/*当三级菜单中有弹出菜单选项时*/
-					{
-						menu3_pop(MENU3_HIDE);/*隐藏三级菜单的弹出菜单*/
-					}
-					else
-					{
 					pp->pos1[pp->pos]=0;
 					pp->start_qty = 0;
 					gtk_widget_set_sensitive(pp->eventbox2[2],TRUE);
@@ -3558,16 +3558,16 @@ static int handler_key(guint keyval, gpointer data)
 						gtk_widget_set_sensitive(pp->eventbox2[1],FALSE);
 
 					draw_menu3(0, NULL);
-					}
 				}
-				else if((pp->pos==0)&&(pp->pos1[pp->pos]==1))
+			}
+			else if((pp->pos==0)&&(pp->pos1[pp->pos]==1))
+			{
+				if((MENU31_PRESS == data1)||(MENU32_PRESS == data1)||(MENU33_PRESS == data1)||(MENU34_PRESS == data1)||(MENU35_PRESS == data1)||(MENU36_PRESS == data1))/*当三级菜单中有弹出菜单选项时*/
 				{
-					if((MENU31_PRESS == data1)||(MENU32_PRESS == data1)||(MENU33_PRESS == data1)||(MENU34_PRESS == data1)||(MENU35_PRESS == data1)||(MENU36_PRESS == data1))/*当三级菜单中有弹出菜单选项时*/
-					{
-						menu3_pop(MENU3_HIDE);/*隐藏三级菜单的弹出菜单*/
-					}
-					else
-					{
+					menu3_pop(MENU3_HIDE);/*隐藏三级菜单的弹出菜单*/
+				}
+				else
+				{
 					pp->pos1[pp->pos]=1;
 					pp->fstart_qty = 0;
 					gtk_widget_set_sensitive(pp->eventbox2[0],TRUE);
@@ -3576,16 +3576,16 @@ static int handler_key(guint keyval, gpointer data)
 					gtk_widget_set_sensitive(pp->menubar,TRUE);
 
 					draw_menu3(0, NULL);
-					}
 				}
-				else if((pp->pos==0)&&(pp->pos1[pp->pos]==3))
+			}
+			else if((pp->pos==0)&&(pp->pos1[pp->pos]==3))
+			{
+				if((MENU31_PRESS == data1)||(MENU32_PRESS == data1)||(MENU33_PRESS == data1)||(MENU34_PRESS == data1)||(MENU35_PRESS == data1)||(MENU36_PRESS == data1))/*当三级菜单中有弹出菜单选项时*/
 				{
-					if((MENU31_PRESS == data1)||(MENU32_PRESS == data1)||(MENU33_PRESS == data1)||(MENU34_PRESS == data1)||(MENU35_PRESS == data1)||(MENU36_PRESS == data1))/*当三级菜单中有弹出菜单选项时*/
-					{
-						menu3_pop(MENU3_HIDE);/*隐藏三级菜单的弹出菜单*/
-					}
-					else
-					{
+					menu3_pop(MENU3_HIDE);/*隐藏三级菜单的弹出菜单*/
+				}
+				else
+				{
 					pp->pos1[pp->pos]=3;
 					pp->wstart_qty = 1;
 					gtk_widget_set_sensitive(pp->eventbox2[0],TRUE);
@@ -3597,31 +3597,31 @@ static int handler_key(guint keyval, gpointer data)
 						gtk_widget_set_sensitive(pp->eventbox2[1],FALSE);
 
 					draw_menu3(0, NULL);
-					}
 				}
-//			}
+			}
+			//			}
 			if(pp->clb_flag)
 			{
 				esc_calibration();
 				draw_menu3(0, NULL);
 			}
 			break;
-		case GDK_Return:	/*回车键*/
+	case GDK_Return:	/*回车键*/
 
-				if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
+			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
+			{
+				main_menu_pop(MENU_ENTER);/*选中当前主菜单，并收回主菜单条*/
+			}
+			else if((MENU31_PRESS == data1)||(MENU32_PRESS == data1)||(MENU33_PRESS == data1)||(MENU34_PRESS == data1)||(MENU35_PRESS == data1)||(MENU36_PRESS == data1))/*当三级菜单中有弹出菜单选项时*/
+			{
+				menu3_pop(MENU3_ENTER);/*选中当前三级菜单，并收回三级菜单条*/
+			}
+			else/*当主菜单条 三级菜单条 都处于收回状态时*/
+			{
+				if(!pp->help_yn)
 				{
-					main_menu_pop(MENU_ENTER);/*选中当前主菜单，并收回主菜单条*/
-				}
-				else if((MENU31_PRESS == data1)||(MENU32_PRESS == data1)||(MENU33_PRESS == data1)||(MENU34_PRESS == data1)||(MENU35_PRESS == data1)||(MENU36_PRESS == data1))/*当三级菜单中有弹出菜单选项时*/
-				{
-					menu3_pop(MENU3_ENTER);/*选中当前三级菜单，并收回三级菜单条*/
-				}
-				else/*当主菜单条 三级菜单条 都处于收回状态时*/
-				{
-					if(!pp->help_yn)
+					switch (pp->pos_pos)
 					{
-						switch (pp->pos_pos)
-						{
 						case MENU2_STOP:
 							pp->pos_pos = MENU2_PRESSED;
 							pp->pos_pos = MENU3_STOP;
@@ -3664,26 +3664,26 @@ static int handler_key(guint keyval, gpointer data)
 							pp->pos_pos = MENU3_STOP;
 							break;
 						default:break;
-						}
-					}
-					if ((tmp != pp->pos_pos) || (tmp1 != pp->mark_pop_change))
-					{
-						draw_menu2(0);
-						draw_menu3(0, NULL);
-						tttmp = gtk_spin_button_get_value (GTK_SPIN_BUTTON (pp->sbutton[CUR_POS]));
 					}
 				}
+				if ((tmp != pp->pos_pos) || (tmp1 != pp->mark_pop_change))
+				{
+					draw_menu2(0);
+					draw_menu3(0, NULL);
+					tttmp = gtk_spin_button_get_value (GTK_SPIN_BUTTON (pp->sbutton[CUR_POS]));
+				}
+			}
 
 			break;
 
-		case GDK_F1:
+	case GDK_F1:
 			if(pp->help_yn == 1)
 				show_help(HELP_N, 0);/*隐藏帮助窗口*/
 			else if(pp->help_yn == 0)
 				show_help(HELP_Y, 0);/*弹出帮助窗口*/
 			pp->help_yn = !pp->help_yn;
 			break;
-		case GDK_F2:
+	case GDK_F2:
 			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
 			{
 				main_menu_pop(MENU_HIDE);/*收回主菜单条*/
@@ -3695,10 +3695,10 @@ static int handler_key(guint keyval, gpointer data)
 					;
 				else 
 					pp->pos_pos = MENU2_PRESSED;
-					b2_fun0(pp,0);
+				b2_fun0(pp,0);
 			}			
 			break;
-		case GDK_F3:
+	case GDK_F3:
 			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
 			{
 				main_menu_pop(MENU_HIDE);/*收回主菜单条*/
@@ -3710,10 +3710,10 @@ static int handler_key(guint keyval, gpointer data)
 					;
 				else 
 					pp->pos_pos = MENU2_PRESSED;
-					b2_fun0(pp,1);
+				b2_fun0(pp,1);
 			}		
 			break;
-		case GDK_F4:
+	case GDK_F4:
 			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
 			{
 				main_menu_pop(MENU_HIDE);/*收回主菜单条*/
@@ -3725,10 +3725,10 @@ static int handler_key(guint keyval, gpointer data)
 					;
 				else 
 					pp->pos_pos = MENU2_PRESSED;
-					b2_fun0(pp,2);
+				b2_fun0(pp,2);
 			}		
 			break;
-		case GDK_F5:
+	case GDK_F5:
 			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
 			{
 				main_menu_pop(MENU_HIDE);/*收回主菜单条*/
@@ -3740,10 +3740,10 @@ static int handler_key(guint keyval, gpointer data)
 					;
 				else 
 					pp->pos_pos = MENU2_PRESSED;
-					b2_fun0(pp,3);
+				b2_fun0(pp,3);
 			}			
 			break;
-		case GDK_F6:
+	case GDK_F6:
 			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
 			{
 				main_menu_pop(MENU_HIDE);/*收回主菜单条*/
@@ -3755,10 +3755,10 @@ static int handler_key(guint keyval, gpointer data)
 					;
 				else 
 					pp->pos_pos = MENU2_PRESSED;
-					b2_fun0(pp,4);
+				b2_fun0(pp,4);
 			}			
 			break;
-		case GDK_F7:
+	case GDK_F7:
 			if(!pp->help_yn)
 			{
 				if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
@@ -3777,7 +3777,7 @@ static int handler_key(guint keyval, gpointer data)
 				}
 			}			
 			break;
-		case GDK_F8:
+	case GDK_F8:
 			if(!pp->help_yn)
 			{
 				if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
@@ -3796,7 +3796,7 @@ static int handler_key(guint keyval, gpointer data)
 				}
 			}			
 			break;
-		case GDK_F9:
+	case GDK_F9:
 			if(!pp->help_yn)
 			{
 				if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
@@ -3815,7 +3815,7 @@ static int handler_key(guint keyval, gpointer data)
 				}
 			}			
 			break;
-		case GDK_F10:
+	case GDK_F10:
 			if(!pp->help_yn)
 			{
 				if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
@@ -3834,7 +3834,7 @@ static int handler_key(guint keyval, gpointer data)
 				}
 			}		
 			break;
-		case GDK_F11:
+	case GDK_F11:
 			if(!pp->help_yn)
 			{
 				if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
@@ -3853,7 +3853,7 @@ static int handler_key(guint keyval, gpointer data)
 				}	
 			}		
 			break;
-		case GDK_F12:
+	case GDK_F12:
 			if(!pp->help_yn)
 			{
 				if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
@@ -3873,8 +3873,8 @@ static int handler_key(guint keyval, gpointer data)
 			}
 			break;
 
-		case GDK_Left:
-		case GDK_Up:
+	case GDK_Left:
+	case GDK_Up:
 			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
 			{
 				main_menu_pop(MENU_UP);/*被选中的主菜单向上切换*/
@@ -3926,8 +3926,8 @@ static int handler_key(guint keyval, gpointer data)
 				}
 			}
 			break;
-		case GDK_Right:
-		case GDK_Down:
+	case GDK_Right:
+	case GDK_Down:
 			if (MAIN_MENU_PRESS == data1)/*当主菜单条处于被弹出状态时*/
 			{
 				main_menu_pop(MENU_DOWN);/*被选中的主菜单向下切换*/
@@ -3977,10 +3977,10 @@ static int handler_key(guint keyval, gpointer data)
 				}
 			}
 			break;
-		default:break;
-	}
+	default:break;
+}
 //}
-	return 0;
+return 0;
 }
 
 /* 快捷键处理函数 */
@@ -4041,9 +4041,9 @@ void data_0023 (GtkMenuItem *menuitem, gpointer data) /* */
 {
 	g_tmp_group_struct.group_mode = (gchar) (GPOINTER_TO_UINT (data));
 	//if(!g_tmp_group_struct.group_mode) /*group mode 选择UT时，focal law 不可用*/
-		//gtk_widget_set_sensitive(pp->menuitem[6],FALSE);
+	//gtk_widget_set_sensitive(pp->menuitem[6],FALSE);
 	//else
-		//gtk_widget_set_sensitive(pp->menuitem[6],TRUE);
+	//gtk_widget_set_sensitive(pp->menuitem[6],TRUE);
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
 }
@@ -4085,9 +4085,9 @@ void data_0027 (GtkSpinButton *spinbutton, gpointer data) /*scanoffset */
 	}
 
 	if(!pp->clb_flag)
-			draw_area_all();
+		draw_area_all();
 	else
-			draw_area_calibration();
+		draw_area_calibration();
 }
 
 void data_032 (GtkSpinButton *spinbutton, gpointer data) /*part_thickness*/
@@ -4127,14 +4127,14 @@ void data_0331 (GtkSpinButton *spinbutton, gpointer data) /*weld land offset*/
 }
 void data_0332 (GtkSpinButton *spinbutton, gpointer data) /*fill zone angle*/
 {
-		set_fizone_angle (pp->p_config, (GUINT_TO_POINTER
-					((guint) (gtk_spin_button_get_value (spinbutton) * 1000.0))));
+	set_fizone_angle (pp->p_config, (GUINT_TO_POINTER
+				((guint) (gtk_spin_button_get_value (spinbutton) * 1000.0))));
 }
 
 void data_034 (GtkSpinButton *spinbutton, gpointer data) /*fill zone radius*/
 {
-		set_fizone_radius (pp->p_config, (GUINT_TO_POINTER
-					((guint) (gtk_spin_button_get_value (spinbutton) * 1000.0))));
+	set_fizone_radius (pp->p_config, (GUINT_TO_POINTER
+				((guint) (gtk_spin_button_get_value (spinbutton) * 1000.0))));
 }
 
 void data_00341 (GtkSpinButton *spinbutton, gpointer data) /* Pulser 发射 P120 */
@@ -4173,7 +4173,7 @@ void data_00472 (GtkMenuItem *menuitem, gpointer data) /* Skew (deg) */
 {
 	gushort temp = GPOINTER_TO_UINT (data);
 	g_tmp_group_struct.skew_pos = (guchar) (GPOINTER_TO_UINT (data));
-	
+
 	switch (g_tmp_group_struct.skew_pos)
 	{
 		case 0:g_tmp_group_struct.skew = 0;break;
@@ -4341,7 +4341,7 @@ void data_100 (GtkSpinButton *spinbutton, gpointer data) /* 增益Gain P100 */
 		markup = g_markup_printf_escaped (
 				"<span foreground='white' font_desc='16'>%0.1f(%0.1f)</span>",
 				(get_group_val (p_grp, GROUP_GAIN) -
-				get_group_val (p_grp, GROUP_GAINR)) / 100.0,
+				 get_group_val (p_grp, GROUP_GAINR)) / 100.0,
 				get_group_val (p_grp, GROUP_GAINR) / 100.0);
 	else
 		markup = g_markup_printf_escaped ("<span foreground='white' font_desc='24'>%0.1f</span>",
@@ -4358,9 +4358,9 @@ void data_100 (GtkSpinButton *spinbutton, gpointer data) /* 增益Gain P100 */
 	p1->offset = 16 * grp;
 	p1->addr = 0x2;
 	little_to_big ((unsigned int *)(p1),2);
-        
+
 #if ARM
-/*	ioctl (fd_gpio, GPIO43_LOW, &i);*/ /* 发送group参数不复位 */
+	/*	ioctl (fd_gpio, GPIO43_LOW, &i);*/ /* 发送group参数不复位 */
 	write (fd_array, (unsigned char *)(p1), 8);
 
 	//write_group_data (&TMP(group_spi[grp]), grp);
@@ -4380,17 +4380,17 @@ void data_101 (GtkSpinButton *spinbutton, gpointer data) /*Start 扫描延时 P1
 	double current_angle ;
 	double max_angle     ;
 	int BeamNo = pp->p_tmp_config->beam_num[grp];
-    if(LAW_VAL(Focal_type) == 0)
-    {
-    	current_angle = LAW_VAL(Angle_min)/100.0 + BeamNo * LAW_VAL(Angle_step)/100.0 ;
-        max_angle = MAX(abs(LAW_VAL(Angle_min)), abs(LAW_VAL(Angle_max))) * G_PI / 180.0 ;
-    }
-    else
-    {
-    	current_angle = LAW_VAL(Angle_min)/100.0 ;
-    	max_angle = LAW_VAL(Angle_min) * G_PI / 180.0 ;
-    }
-    current_angle = current_angle * G_PI / 180.0 ;
+	if(LAW_VAL(Focal_type) == 0)
+	{
+		current_angle = LAW_VAL(Angle_min)/100.0 + BeamNo * LAW_VAL(Angle_step)/100.0 ;
+		max_angle = MAX(abs(LAW_VAL(Angle_min)), abs(LAW_VAL(Angle_max))) * G_PI / 180.0 ;
+	}
+	else
+	{
+		current_angle = LAW_VAL(Angle_min)/100.0 ;
+		max_angle = LAW_VAL(Angle_min) * G_PI / 180.0 ;
+	}
+	current_angle = current_angle * G_PI / 180.0 ;
 
 	if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 	{
@@ -4406,19 +4406,19 @@ void data_101 (GtkSpinButton *spinbutton, gpointer data) /*Start 扫描延时 P1
 	else /* 显示方式为时间 */
 		set_group_val (p_grp, GROUP_START,
 				(gint) (gtk_spin_button_get_value (spinbutton) * 1000.0)); 
-	
+
 	set_group_val (p_grp, GROUP_START,
 			((get_group_val (p_grp, GROUP_START) + 5) / 10 ) * 10);
 
 	if(!pp->clb_flag)
-			draw_area_all();
+		draw_area_all();
 	else
-			draw_area_calibration();
+		draw_area_calibration();
 
 	TMP(group_spi[grp]).sample_start	= (get_group_val (p_grp, GROUP_START) +
 			get_group_val (p_grp, GROUP_WEDGE_DELAY)) / 10;
 	TMP(group_spi[grp]).sample_range	= TMP(group_spi[grp]).sample_start + 
-		    get_group_val (p_grp, GROUP_RANGE) / 10;
+		get_group_val (p_grp, GROUP_RANGE) / 10;
 
 	//tt[0] = (GROUP_VAL_POS(grp, gate[0].start) +	GROUP_VAL_POS (grp, gate[0].width));
 	//tt[1] = (GROUP_VAL_POS(grp, gate[1].start) +	GROUP_VAL_POS (grp, gate[1].width));
@@ -4431,7 +4431,7 @@ void data_101 (GtkSpinButton *spinbutton, gpointer data) /*Start 扫描延时 P1
 	temp_prf = TMP(beam_qty[grp]) * get_group_val (p_grp, GROUP_PRF_VAL);
 	TMP(group_spi[grp]).idel_time	= 
 		100000000 / (temp_prf / (10)) - 2048 - TMP(group_spi[grp]).rx_time;
-/*		100000000 / (get_group_val (p_grp, GROUP_PRF_VAL) / (10)) - 2048 - TMP(group_spi[grp]).rx_time;*/
+	/*		100000000 / (get_group_val (p_grp, GROUP_PRF_VAL) / (10)) - 2048 - TMP(group_spi[grp]).rx_time;*/
 	send_spi_data (grp);
 	/*发送给硬件*/
 }
@@ -4447,17 +4447,17 @@ void data_102 (GtkSpinButton *spinbutton, gpointer data) /*Range 范围 P102 */
 	double current_angle ;
 	double max_angle     ;
 	int BeamNo = pp->p_tmp_config->beam_num[grp];
-    if(LAW_VAL(Focal_type) == 0)
-    {
-    	current_angle = LAW_VAL(Angle_min)/100.0 + BeamNo * LAW_VAL(Angle_step)/100.0 ;
-        max_angle = MAX(abs(LAW_VAL(Angle_min)), abs(LAW_VAL(Angle_max))) * G_PI / 180.0 ;
-    }
-    else
-    {
-    	current_angle = LAW_VAL(Angle_min)/100.0 ;
-    	max_angle = LAW_VAL(Angle_min) * G_PI / 180.0 ;
-    }
-    current_angle = current_angle * G_PI / 180.0 ;
+	if(LAW_VAL(Focal_type) == 0)
+	{
+		current_angle = LAW_VAL(Angle_min)/100.0 + BeamNo * LAW_VAL(Angle_step)/100.0 ;
+		max_angle = MAX(abs(LAW_VAL(Angle_min)), abs(LAW_VAL(Angle_max))) * G_PI / 180.0 ;
+	}
+	else
+	{
+		current_angle = LAW_VAL(Angle_min)/100.0 ;
+		max_angle = LAW_VAL(Angle_min) * G_PI / 180.0 ;
+	}
+	current_angle = current_angle * G_PI / 180.0 ;
 
 	if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 	{
@@ -4478,9 +4478,9 @@ void data_102 (GtkSpinButton *spinbutton, gpointer data) /*Range 范围 P102 */
 			rounding(0, get_group_val (p_grp, GROUP_RANGE), GROUP_VAL(point_qty) * 10));
 
 	if(!pp->clb_flag)
-			draw_area_all();
+		draw_area_all();
 	else
-			draw_area_calibration();
+		draw_area_calibration();
 	TMP(group_spi[grp]).compress_rato	= 
 		((get_group_val (p_grp, GROUP_RANGE) / 10.0) / GROUP_VAL_POS(grp, point_qty)) > 1 ? 
 		((get_group_val (p_grp, GROUP_RANGE) / 10.0) / GROUP_VAL_POS(grp, point_qty)) : 1;
@@ -4493,14 +4493,14 @@ void data_102 (GtkSpinButton *spinbutton, gpointer data) /*Range 范围 P102 */
 	//tt[3] = (int)( tt[3] / cos(max_angle));
 
 	TMP(group_spi[grp]).rx_time		=  TMP(group_spi[grp]).sample_range  +
-			TMP(max_beam_delay[grp]) + TMP(group_spi[grp]).compress_rato;
+		TMP(max_beam_delay[grp]) + TMP(group_spi[grp]).compress_rato;
 	temp_prf = TMP(beam_qty[grp]) * get_group_val (p_grp, GROUP_PRF_VAL);
 	TMP(group_spi[grp]).idel_time	= 
 		100000000 / (temp_prf / (10)) - 2048 - TMP(group_spi[grp]).rx_time;
-/*		100000000 / (get_group_val (p_grp, GROUP_PRF_VAL) / (10)) - 2048 - TMP(group_spi[grp]).rx_time;*/
+	/*		100000000 / (get_group_val (p_grp, GROUP_PRF_VAL) / (10)) - 2048 - TMP(group_spi[grp]).rx_time;*/
 
-//	draw_menu3(0, NULL);
-//	gtk_widget_queue_draw (spinbutton);
+	//	draw_menu3(0, NULL);
+	//	gtk_widget_queue_draw (spinbutton);
 	send_spi_data (grp);
 	/*发送给硬件*/
 }
@@ -4515,17 +4515,17 @@ void data_103 (GtkSpinButton *spinbutton, gpointer data) /*楔块延时  P103 */
 	double current_angle ;
 	double max_angle     ;
 	int BeamNo = pp->p_tmp_config->beam_num[grp];
-    if(LAW_VAL(Focal_type) == 0)
-    {
-    	current_angle = LAW_VAL(Angle_min)/100.0 + BeamNo * LAW_VAL(Angle_step)/100.0 ;
-        max_angle = MAX(abs(LAW_VAL(Angle_min)), abs(LAW_VAL(Angle_max))) * G_PI / 180.0 ;
-    }
-    else
-    {
-    	current_angle = LAW_VAL(Angle_min)/100.0 ;
-    	max_angle = LAW_VAL(Angle_min) * G_PI / 180.0 ;
-    }
-    current_angle = current_angle * G_PI / 180.0 ;
+	if(LAW_VAL(Focal_type) == 0)
+	{
+		current_angle = LAW_VAL(Angle_min)/100.0 + BeamNo * LAW_VAL(Angle_step)/100.0 ;
+		max_angle = MAX(abs(LAW_VAL(Angle_min)), abs(LAW_VAL(Angle_max))) * G_PI / 180.0 ;
+	}
+	else
+	{
+		current_angle = LAW_VAL(Angle_min)/100.0 ;
+		max_angle = LAW_VAL(Angle_min) * G_PI / 180.0 ;
+	}
+	current_angle = current_angle * G_PI / 180.0 ;
 
 	set_group_val (p_grp, GROUP_WEDGE_DELAY, 
 			(gint) (gtk_spin_button_get_value (spinbutton) * 1000.0));
@@ -4545,7 +4545,7 @@ void data_103 (GtkSpinButton *spinbutton, gpointer data) /*楔块延时  P103 */
 	temp_prf = TMP(beam_qty[grp]) * get_group_val (p_grp, GROUP_PRF_VAL);
 	TMP(group_spi[grp]).idel_time	= 
 		100000000 / (temp_prf / (10)) - 2048 - TMP(group_spi[grp]).rx_time;
-/*		100000000 / (get_group_val (p_grp, GROUP_PRF_VAL) / (10)) - 2048 - TMP(group_spi[grp]).rx_time;*/
+	/*		100000000 / (get_group_val (p_grp, GROUP_PRF_VAL) / (10)) - 2048 - TMP(group_spi[grp]).rx_time;*/
 	send_spi_data (grp);
 	/*发送给硬件*/
 }
@@ -4563,24 +4563,24 @@ void data_104 (GtkSpinButton *spinbutton, gpointer data) /*声速 P104 */
 				(gint) (gtk_spin_button_get_value (spinbutton) * 25400 * 100));
 
 	//double RANGE = get_group_val (get_group_by_id (pp->p_config, grp), GROUP_RANGE) / 1000.0 ;
-    //double VELOCITY = get_group_val (get_group_by_id (pp->p_config, grp), GROUP_VELOCITY) / 100.0 ;
+	//double VELOCITY = get_group_val (get_group_by_id (pp->p_config, grp), GROUP_VELOCITY) / 100.0 ;
 	//double range =  get_group_val (get_group_by_id (pp->p_config, grp), GROUP_RANGE)* get_group_val (get_group_by_id (pp->p_config, grp), GROUP_VELOCITY) ;
-    //double range = RANGE * VELOCITY / 2000.0 ;
-    //printf("\n*****\n");
-    //printf("range = %f\n",range );
-    //printf("get_group_val (get_group_by_id (pp->p_config, grp), GROUP_RANGE) = %d \n", get_group_val (get_group_by_id (pp->p_config, grp), GROUP_RANGE));
-    //printf("get_group_val (get_group_by_id (pp->p_config, grp), GROUP_VELOCITY) = %d \n", get_group_val (get_group_by_id (pp->p_config, grp), GROUP_VELOCITY));
+	//double range = RANGE * VELOCITY / 2000.0 ;
+	//printf("\n*****\n");
+	//printf("range = %f\n",range );
+	//printf("get_group_val (get_group_by_id (pp->p_config, grp), GROUP_RANGE) = %d \n", get_group_val (get_group_by_id (pp->p_config, grp), GROUP_RANGE));
+	//printf("get_group_val (get_group_by_id (pp->p_config, grp), GROUP_VELOCITY) = %d \n", get_group_val (get_group_by_id (pp->p_config, grp), GROUP_VELOCITY));
 
 	if(!pp->clb_flag)
-			draw_area_all();
+		draw_area_all();
 	else
-			draw_area_calibration();
+		draw_area_calibration();
 	/*发送给硬件*/
 }
 
 void data_110 (GtkSpinButton *spinbutton, gpointer data) /* Pulser 发射 P110 */
 {
-//	set_group_val (&pp->p_config->group[get_current_group(pp->p_config)],
+	//	set_group_val (&pp->p_config->group[get_current_group(pp->p_config)],
 	gint grp = get_current_group(pp->p_config);
 	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
 	set_group_val (p_grp,
@@ -4619,7 +4619,7 @@ void data_1121 (GtkSpinButton *spinbutton, gpointer data) /* 频率 Freq 数值�
 	set_group_val (p_grp, GROUP_FREQ_VAL, (int) ((gtk_spin_button_get_value (spinbutton)) * 1000.0));
 	if (!get_group_val (p_grp, GROUP_PW_POS))
 		set_group_val (p_grp, GROUP_PW_VAL, 
-			((int)(( 5000*10000 / get_group_val (p_grp, GROUP_FREQ_VAL))) / 250)  * 250) ; /* 改变脉冲宽度 */
+				((int)(( 5000*10000 / get_group_val (p_grp, GROUP_FREQ_VAL))) / 250)  * 250) ; /* 改变脉冲宽度 */
 	/* 发送给硬件 */
 }
 
@@ -4633,7 +4633,7 @@ void data_112 (GtkMenuItem *menuitem, gpointer data) /* 频率 Freq P112 */
 
 	if (!get_group_val (p_grp, GROUP_PW_POS))
 		set_group_val (p_grp, GROUP_PW_VAL, 
-			((int)(( 5000*10000 / get_group_val (p_grp, GROUP_FREQ_VAL))) / 250)  * 250) ; /* 改变脉冲宽度 */
+				((int)(( 5000*10000 / get_group_val (p_grp, GROUP_FREQ_VAL))) / 250)  * 250) ; /* 改变脉冲宽度 */
 	if (temp != 12)
 	{
 		pp->pos_pos = MENU3_STOP;
@@ -4727,7 +4727,7 @@ void data_1151 (GtkSpinButton *spinbutton, gpointer data) /* PRF P115 */
 	temp_prf = TMP(beam_qty[grp]) * get_group_val (p_grp, GROUP_PRF_VAL);
 	TMP(group_spi[grp]).idel_time	= 
 		100000000 / (temp_prf / (10)) - 2048 - TMP(group_spi[grp]).rx_time;
-/*		100000000 / (get_group_val (p_grp, GROUP_PRF_VAL) / (10)) - 2048 - TMP(group_spi[grp]).rx_time;*/
+	/*		100000000 / (get_group_val (p_grp, GROUP_PRF_VAL) / (10)) - 2048 - TMP(group_spi[grp]).rx_time;*/
 
 
 	write_group_data (&TMP(group_spi[grp]), grp);
@@ -4773,7 +4773,7 @@ void data_115 (GtkMenuItem *menuitem, gpointer data) /* PRF */
 	//	set_group_val (p_grp, GROUP_PRF_VAL, 400);
 	temp_prf = TMP(beam_qty[grp]) * get_group_val (p_grp, GROUP_PRF_VAL);
 	TMP(group_spi[grp]).idel_time		= 
-/*		100000000 / (get_group_val (p_grp, GROUP_PRF_VAL) / (10)) - 2048 - TMP(group_spi[grp]).rx_time;*/
+		/*		100000000 / (get_group_val (p_grp, GROUP_PRF_VAL) / (10)) - 2048 - TMP(group_spi[grp]).rx_time;*/
 		100000000 / (temp_prf / (10)) - 2048 - TMP(group_spi[grp]).rx_time;
 	/* 如何 */
 	write_group_data (&TMP(group_spi[grp]), grp);
@@ -4853,7 +4853,7 @@ void data_124 (GtkMenuItem *menuitem, gpointer data)  /* averaging 平均 TAN1 P
 	gint grp = get_current_group(pp->p_config);
 	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
 	set_group_val (p_grp, GROUP_AVERAGING,
-		(GPOINTER_TO_UINT (data)));
+			(GPOINTER_TO_UINT (data)));
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
 }
@@ -4894,16 +4894,16 @@ void data_134 (GtkSpinButton *spinbutton, gpointer data) /* beam delay */
 	guint offset,k;
 	guint group = get_current_group(pp->p_config);
 	guint index = TMP(beam_num[get_current_group(pp->p_config)]);
-	
+
 	for (offset = 0, k = 0 ; k < group; k++)
 		offset += TMP(beam_qty[k]);
 	BEAM_INFO(index + offset,beam_delay) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
 	pp->G_delay[index] = BEAM_INFO(index + offset,beam_delay);
 	//g_print("current_beam_delay=%d\n", (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0) );
 	TMP(focal_law_all_beam[offset + index]).G_delay			= 
-			get_group_val (get_group_by_id (pp->p_config, group), GROUP_WEDGE_DELAY)
-			+	GROUP_VAL_POS (group, wedge.Probe_delay) + BEAM_INFO(index,beam_delay);//modified by hefan 
-		
+		get_group_val (get_group_by_id (pp->p_config, group), GROUP_WEDGE_DELAY)
+		+	GROUP_VAL_POS (group, wedge.Probe_delay) + BEAM_INFO(index,beam_delay);//modified by hefan 
+
 	/*发送给硬件*/
 	send_focal_spi(get_current_group(pp->p_config));
 }
@@ -4954,11 +4954,11 @@ void data_1431 (GtkSpinButton *spinbutton, gpointer data) /* point qty P143 */
 	//tt[3] = MAX(tt[0], (MAX(tt[1],tt[2]))) / 10;
 
 	TMP(group_spi[grp]).rx_time		= TMP(group_spi[grp]).sample_range  +
-			TMP(max_beam_delay[grp]) + TMP(group_spi[grp]).compress_rato;
+		TMP(max_beam_delay[grp]) + TMP(group_spi[grp]).compress_rato;
 	temp_prf = TMP(beam_qty[grp]) * get_group_val (p_grp, GROUP_PRF_VAL);
 	TMP(group_spi[grp]).idel_time	= 
 		100000000 / (temp_prf / (10)) - 2048 - TMP(group_spi[grp]).rx_time;
-/*		100000000 / (get_group_val (p_grp, GROUP_PRF_VAL) / (10)) - 2048 - TMP(group_spi[grp]).rx_time;*/
+	/*		100000000 / (get_group_val (p_grp, GROUP_PRF_VAL) / (10)) - 2048 - TMP(group_spi[grp]).rx_time;*/
 	send_spi_data (grp);
 	/* 重新确认每次dma的点数 */
 }
@@ -5007,25 +5007,25 @@ void data_143 (GtkMenuItem *menuitem, gpointer data) /* point qty P143 */
 	temp_prf = TMP(beam_qty[grp]) * get_group_val (p_grp, GROUP_PRF_VAL);
 	TMP(group_spi[grp]).idel_time	= 
 		100000000 / (temp_prf / (10)) - 2048 - TMP(group_spi[grp]).rx_time;
-/*		100000000 / (get_group_val (p_grp, GROUP_PRF_VAL) / (10)) - 2048 - TMP(group_spi[grp]).rx_time;*/
+	/*		100000000 / (get_group_val (p_grp, GROUP_PRF_VAL) / (10)) - 2048 - TMP(group_spi[grp]).rx_time;*/
 	send_spi_data (grp);
 	/* 重新确认每次dma的点数 */
 }
 
 void data_1451 (GtkSpinButton *spinbutton, gpointer data) /* Sum Gain ->user_define*/
 {
-//	gint	grp	= get_current_group(pp->p_config);
+	//	gint	grp	= get_current_group(pp->p_config);
 	GROUP_VAL(sum_gain) =  (gushort) ((gtk_spin_button_get_value (spinbutton)) * 100.0);
 
 	/* 发送给硬件 
-//	if (GROUP_VAL_POS(grp, probe.Elem_qty) == 1)	
+	//	if (GROUP_VAL_POS(grp, probe.Elem_qty) == 1)	
 	if (LAW_VAL_POS(grp, Elem_qty) == 1)	
-		TMP(group_spi[grp]).sum_gain	= 4095;	
+	TMP(group_spi[grp]).sum_gain	= 4095;	
 	else 
-		TMP(group_spi[grp]).sum_gain	= 
-			4096 / GROUP_VAL_POS(grp, probe.Elem_qty);*/	
-//	TMP(group_spi[grp]).sum_gain	= GROUP_VAL(sum_gain)/100;
-//	send_spi_data (grp);
+	TMP(group_spi[grp]).sum_gain	= 
+	4096 / GROUP_VAL_POS(grp, probe.Elem_qty);*/	
+	//	TMP(group_spi[grp]).sum_gain	= GROUP_VAL(sum_gain)/100;
+	//	send_spi_data (grp);
 	/* 发送给硬件 */
 }
 
@@ -5033,7 +5033,7 @@ void data_1451 (GtkSpinButton *spinbutton, gpointer data) /* Sum Gain ->user_def
 void data_145 (GtkMenuItem *menuitem, gpointer data) /* Sum Gain ->Atuo*/
 {
 	guint	temp= GPOINTER_TO_UINT (data);
-//	gint	grp	= get_current_group(pp->p_config);
+	//	gint	grp	= get_current_group(pp->p_config);
 	GROUP_VAL(sum_gain_pos) = temp;
 	GROUP_VAL(sum_gain) = get_sum_gain();
 	if (temp != 1)
@@ -5051,12 +5051,12 @@ void data_145 (GtkMenuItem *menuitem, gpointer data) /* Sum Gain ->Atuo*/
 	}
 
 	/* 发送给硬件 
-//	if (GROUP_VAL_POS(grp, probe.Elem_qty) == 1)	
+	//	if (GROUP_VAL_POS(grp, probe.Elem_qty) == 1)	
 	if (LAW_VAL_POS(grp, Elem_qty) == 1)	
-		TMP(group_spi[grp]).sum_gain	= 4095;	
+	TMP(group_spi[grp]).sum_gain	= 4095;	
 	else 
-		TMP(group_spi[grp]).sum_gain	= 
-			4096 / GROUP_VAL_POS(grp, probe.Elem_qty);	
+	TMP(group_spi[grp]).sum_gain	= 
+	4096 / GROUP_VAL_POS(grp, probe.Elem_qty);	
 	send_spi_data (grp);*/
 }
 
@@ -5083,29 +5083,29 @@ void data_202 (GtkSpinButton *spinbutton, gpointer data)	/* 闸门开始位置 P
 	gint grp = get_current_group(pp->p_config);
 	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
 	guint beam_qty =TMP(beam_qty[grp]);
-//	gfloat depth = LAW_VAL(Position_start)/1000.0;
+	//	gfloat depth = LAW_VAL(Position_start)/1000.0;
 	//gint tt[4];
 	gint temp_prf ;
-    // get current beam Number
+	// get current beam Number
 	double current_angle ;
 	double max_angle     ;
 	int BeamNo = pp->p_tmp_config->beam_num[grp];
-	
+
 	for (offset = 0, k = 0 ; k < grp; k++)
 		offset += TMP(beam_qty[k]);
-    if(LAW_VAL(Focal_type) == 0)
-    {
-    	current_angle = LAW_VAL(Angle_min)/100.0 + BeamNo * LAW_VAL(Angle_step)/100.0 ;
-        max_angle = MAX(abs(LAW_VAL(Angle_min)), abs(LAW_VAL(Angle_max))) * G_PI / 180.0 ;
-    }
-    else
-    {
-    	current_angle = LAW_VAL(Angle_min)/100.0 ;
-    	max_angle = LAW_VAL(Angle_min) * G_PI / 180.0 ;
-    }
-    current_angle = current_angle * G_PI / 180.0 ;
-//    delay = 1000000*depth / ((get_group_val(p_grp, GROUP_VELOCITY)/100.0));
-//	printf("depth =%f delay=%f \n", depth, delay);
+	if(LAW_VAL(Focal_type) == 0)
+	{
+		current_angle = LAW_VAL(Angle_min)/100.0 + BeamNo * LAW_VAL(Angle_step)/100.0 ;
+		max_angle = MAX(abs(LAW_VAL(Angle_min)), abs(LAW_VAL(Angle_max))) * G_PI / 180.0 ;
+	}
+	else
+	{
+		current_angle = LAW_VAL(Angle_min)/100.0 ;
+		max_angle = LAW_VAL(Angle_min) * G_PI / 180.0 ;
+	}
+	current_angle = current_angle * G_PI / 180.0 ;
+	//    delay = 1000000*depth / ((get_group_val(p_grp, GROUP_VELOCITY)/100.0));
+	//	printf("depth =%f delay=%f \n", depth, delay);
 
 	if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 	{
@@ -5119,8 +5119,8 @@ void data_202 (GtkSpinButton *spinbutton, gpointer data)	/* 闸门开始位置 P
 	}
 	else /* 显示方式为时间 */
 	{
-		    GROUP_GATE_POS(start) = (gint) (gtk_spin_button_get_value (spinbutton) * 1000.0) ;
-			pp->gate_start_clb = gtk_spin_button_get_value (spinbutton) * 1000.0;
+		GROUP_GATE_POS(start) = (gint) (gtk_spin_button_get_value (spinbutton) * 1000.0) ;
+		pp->gate_start_clb = gtk_spin_button_get_value (spinbutton) * 1000.0;
 	}
 
 	for (k = offset; k < offset + beam_qty; k++)//k:每个beam
@@ -5166,8 +5166,8 @@ void data_202 (GtkSpinButton *spinbutton, gpointer data)	/* 闸门开始位置 P
 			}
 		}
 	}
-		
-		
+
+
 	//tt[0] = (GROUP_VAL_POS(grp, gate[0].start) + GROUP_VAL_POS (grp, gate[0].width));
 	//tt[1] = (GROUP_VAL_POS(grp, gate[1].start) + GROUP_VAL_POS (grp, gate[1].width));
 	//tt[2] = (GROUP_VAL_POS(grp, gate[2].start) + GROUP_VAL_POS (grp, gate[2].width));
@@ -5177,12 +5177,12 @@ void data_202 (GtkSpinButton *spinbutton, gpointer data)	/* 闸门开始位置 P
 	TMP(group_spi[grp]).rx_time	= TMP(group_spi[grp]).sample_range  + TMP(max_beam_delay[grp]) + TMP(group_spi[grp]).compress_rato;
 	temp_prf = TMP(beam_qty[grp]) * GROUP_VAL_POS(grp, prf1);
 	TMP(group_spi[grp]).idel_time	=
-			100000000 / (temp_prf / (10)) - 2048 - TMP(group_spi[grp]).rx_time;
+		100000000 / (temp_prf / (10)) - 2048 - TMP(group_spi[grp]).rx_time;
 
 	if(!pp->clb_flag)
-			draw_area_all();
+		draw_area_all();
 	else
-			draw_area_calibration();
+		draw_area_calibration();
 	send_focal_spi (grp);
 	gtk_widget_queue_draw (pp->vboxtable);
 
@@ -5209,7 +5209,7 @@ void data_2021 (GtkMenuItem *menuitem, gpointer data)	/* 闸门同步 */
 		tmp = (tmp & 0xfffffff3) | 0x0c;
 	else if (GROUP_VAL (gate[GROUP_VAL(gate_pos)].synchro) == 2)
 		tmp = (tmp & 0xfffffff3) | 0x04;
-	
+
 	if (GROUP_VAL(gate_pos) == GATE_A)
 		TMP(group_spi[group]).gate_a_logic = tmp;
 	else if (GROUP_VAL(gate_pos) == GATE_B)
@@ -5228,26 +5228,26 @@ void data_203 (GtkSpinButton *spinbutton, gpointer data) /* 闸门宽度 P203 */
 	gint grp = get_current_group(pp->p_config);
 	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
 	guint beam_qty =TMP(beam_qty[grp]);
-//	gfloat depth = LAW_VAL(Position_start)/1000.0;
+	//	gfloat depth = LAW_VAL(Position_start)/1000.0;
 	// get current beam Number
 	double current_angle ;
 	double max_angle     ;
 	int BeamNo = pp->p_tmp_config->beam_num[grp];
-	
+
 	for (offset = 0, k = 0 ; k < grp; k++)
 		offset += TMP(beam_qty[k]);
 	if(LAW_VAL(Focal_type) == 0)
-    {
-	    current_angle = LAW_VAL(Angle_min)/100.0 + BeamNo * LAW_VAL(Angle_step)/100.0 ;
+	{
+		current_angle = LAW_VAL(Angle_min)/100.0 + BeamNo * LAW_VAL(Angle_step)/100.0 ;
 		max_angle = MAX(abs(LAW_VAL(Angle_min)), abs(LAW_VAL(Angle_max))) * G_PI / 180.0 ;
-    }
-    else
-    {
-	    current_angle = LAW_VAL(Angle_min)/100.0 ;
-	    max_angle = LAW_VAL(Angle_min) * G_PI / 180.0 ;
-    }
-    current_angle = current_angle * G_PI / 180.0 ;
-//    delay = 1000000*depth / ((get_group_val(p_grp, GROUP_VELOCITY)/100.0));
+	}
+	else
+	{
+		current_angle = LAW_VAL(Angle_min)/100.0 ;
+		max_angle = LAW_VAL(Angle_min) * G_PI / 180.0 ;
+	}
+	current_angle = current_angle * G_PI / 180.0 ;
+	//    delay = 1000000*depth / ((get_group_val(p_grp, GROUP_VELOCITY)/100.0));
 
 	if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 	{
@@ -5264,49 +5264,49 @@ void data_203 (GtkSpinButton *spinbutton, gpointer data) /* 闸门宽度 P203 */
 		GROUP_GATE_POS(width) = (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0) ; 
 		pp->gate_width_clb = gtk_spin_button_get_value (spinbutton) * 1000.0;
 	}
-/*
-	for (k = offset; k < offset + beam_qty; k++)//k:每个beam
-	{
-		if( (k - offset) == BeamNo )//只能修改当前beam
-		{
-			if(LAW_VAL(Focal_point_type) == 1)//true depth
-			{
-				if (GROUP_VAL(gate_pos) == GATE_A)
-				{
-					pp->gate_a_end[k]	= (GROUP_VAL_POS(grp, gate[0].start) + 
-							GROUP_VAL_POS (grp, gate[0].width)) / (10*cos(current_angle));
-				}
-				else if (GROUP_VAL(gate_pos) == GATE_B)
-				{
-					pp->gate_b_end[k]	= (GROUP_VAL_POS(grp, gate[1].start) + 
-							GROUP_VAL_POS (grp, gate[1].width)) / (10*cos(current_angle));
-				}
-				else if (GROUP_VAL(gate_pos) == GATE_I)
-				{
-					pp->gate_i_end[k]	= (GROUP_VAL_POS(grp, gate[2].start) + 
-							GROUP_VAL_POS (grp, gate[2].width)) / (10*cos(current_angle));
-				}
-			}
-			else //half path
-			{
-				if (GROUP_VAL(gate_pos) == GATE_A)
-				{
-					pp->gate_a_end[k]	= (GROUP_VAL_POS(grp, gate[0].start) + 
-							GROUP_VAL_POS (grp, gate[0].width)) / 10;
-				}
-				else if (GROUP_VAL(gate_pos) == GATE_B)
-				{
-					pp->gate_b_end[k]	= (GROUP_VAL_POS(grp, gate[1].start) + 
-							GROUP_VAL_POS (grp, gate[1].width)) / 10;
-				}
-				else if (GROUP_VAL(gate_pos) == GATE_I)
-				{
-					pp->gate_i_end[k]	= (GROUP_VAL_POS(grp, gate[2].start) + 
-							GROUP_VAL_POS (grp, gate[2].width)) / 10;
-			}
-		}
-	}			
-	*/
+	/*
+	   for (k = offset; k < offset + beam_qty; k++)//k:每个beam
+	   {
+	   if( (k - offset) == BeamNo )//只能修改当前beam
+	   {
+	   if(LAW_VAL(Focal_point_type) == 1)//true depth
+	   {
+	   if (GROUP_VAL(gate_pos) == GATE_A)
+	   {
+	   pp->gate_a_end[k]	= (GROUP_VAL_POS(grp, gate[0].start) + 
+	   GROUP_VAL_POS (grp, gate[0].width)) / (10*cos(current_angle));
+	   }
+	   else if (GROUP_VAL(gate_pos) == GATE_B)
+	   {
+	   pp->gate_b_end[k]	= (GROUP_VAL_POS(grp, gate[1].start) + 
+	   GROUP_VAL_POS (grp, gate[1].width)) / (10*cos(current_angle));
+	   }
+	   else if (GROUP_VAL(gate_pos) == GATE_I)
+	   {
+	   pp->gate_i_end[k]	= (GROUP_VAL_POS(grp, gate[2].start) + 
+	   GROUP_VAL_POS (grp, gate[2].width)) / (10*cos(current_angle));
+	   }
+	   }
+	   else //half path
+	   {
+	   if (GROUP_VAL(gate_pos) == GATE_A)
+	   {
+	   pp->gate_a_end[k]	= (GROUP_VAL_POS(grp, gate[0].start) + 
+	   GROUP_VAL_POS (grp, gate[0].width)) / 10;
+	   }
+	   else if (GROUP_VAL(gate_pos) == GATE_B)
+	   {
+	   pp->gate_b_end[k]	= (GROUP_VAL_POS(grp, gate[1].start) + 
+	   GROUP_VAL_POS (grp, gate[1].width)) / 10;
+	   }
+	   else if (GROUP_VAL(gate_pos) == GATE_I)
+	   {
+	   pp->gate_i_end[k]	= (GROUP_VAL_POS(grp, gate[2].start) + 
+	   GROUP_VAL_POS (grp, gate[2].width)) / 10;
+	   }
+	   }
+	   }			
+	   */
 	for (k = offset; k < offset + beam_qty; k++)//k:每个beam
 	{
 		if( (k - offset) == BeamNo )//只能修改当前beam
@@ -5356,14 +5356,14 @@ void data_203 (GtkSpinButton *spinbutton, gpointer data) /* 闸门宽度 P203 */
 	//tt[2] = (GROUP_VAL_POS(grp, gate[2].start) + GROUP_VAL_POS (grp, gate[2].width));
 	//tt[3] = MAX(tt[0], (MAX(tt[1],tt[2]))) / 10;
 	TMP(group_spi[grp]).rx_time		= TMP(group_spi[grp]).sample_range
-			+ TMP(max_beam_delay[grp]) + TMP(group_spi[grp]).compress_rato   ;
+		+ TMP(max_beam_delay[grp]) + TMP(group_spi[grp]).compress_rato   ;
 	//TMP(group_spi[grp]).idel_time	=
 	//		100000000 / (temp_prf / (10)) - 2048 - TMP(group_spi[grp]).rx_time;
 
 	if(!pp->clb_flag)
-			draw_area_all();
+		draw_area_all();
 	else
-			draw_area_calibration();
+		draw_area_calibration();
 	send_focal_spi (grp);
 	gtk_widget_queue_draw (pp->vboxtable);
 }
@@ -5387,7 +5387,7 @@ void data_2031 (GtkMenuItem *menuitem, gpointer data)	/* 波峰或者前沿 测�
 		tmp = (tmp & 0xfffffffc) | 0x01;
 	else if (GROUP_VAL (gate[GROUP_VAL(gate_pos)].measure) == 1)
 		tmp = (tmp & 0xfffffffc) | 0x00;
-	
+
 	if (GROUP_VAL(gate_pos) == GATE_A)
 		TMP(group_spi[group]).gate_a_logic = tmp;
 	else if (GROUP_VAL(gate_pos) == GATE_B)
@@ -5555,9 +5555,9 @@ void data_231 (GtkMenuItem *menuitem, gpointer data) /* Gate/Alarm->Sizing Curve
 	GROUP_VAL(curve_pos) = (guchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	if(!pp->clb_flag)
-			draw_area_all();
+		draw_area_all();
 	else
-			draw_area_calibration();
+		draw_area_calibration();
 	draw_menu3(0, NULL);
 }
 
@@ -5580,9 +5580,9 @@ void data_2312 (GtkSpinButton *spinbutton, gpointer data) /* Mat.Attenuatior P23
 	else /* 显示方式为时间 */
 		GROUP_VAL(mat_atten) = (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 * 0.338) ;
 	if(!pp->clb_flag)
-			draw_area_all();
+		draw_area_all();
 	else
-			draw_area_calibration();
+		draw_area_calibration();
 }
 
 void data_232 (GtkSpinButton *spinbutton, gpointer data) /* Ref.Amplitude P232 */
@@ -5610,11 +5610,11 @@ void data_2321 (GtkSpinButton *spinbutton, gpointer data) /* Position P2321 */
 			GROUP_VAL(position[GROUP_VAL(point_pos)]) = (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 / 0.03937 );
 	}
 	else /* 显示方式为时间 */
-			GROUP_VAL(position[GROUP_VAL(point_pos)]) = (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 * 0.1159 / 0.03937);
+		GROUP_VAL(position[GROUP_VAL(point_pos)]) = (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 * 0.1159 / 0.03937);
 	if(!pp->clb_flag)
-			draw_area_all();
+		draw_area_all();
 	else
-			draw_area_calibration();
+		draw_area_calibration();
 }
 void data_2322 (GtkSpinButton *spinbutton, gpointer data) /* Delay P2322 */
 {
@@ -5628,18 +5628,18 @@ void data_2322 (GtkSpinButton *spinbutton, gpointer data) /* Delay P2322 */
 	else /* 显示方式为时间 */
 		GROUP_VAL(delay) = (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 * 2.945 ) ;
 	if(!pp->clb_flag)
-			draw_area_all();
+		draw_area_all();
 	else
-			draw_area_calibration();
+		draw_area_calibration();
 }
 
 void data_233 (GtkSpinButton *spinbutton, gpointer data) /*Ref.Amplitude.Offset */
 {
 	GROUP_VAL(ref_ampl_offset) =  (guint) (gtk_spin_button_get_value (spinbutton) * 100.0);
 	if(!pp->clb_flag)
-			draw_area_all();
+		draw_area_all();
 	else
-			draw_area_calibration();
+		draw_area_calibration();
 }
 
 void data_2331 (GtkSpinButton *spinbutton, gpointer data) /*Ref.Amplitude.Offset */
@@ -5652,73 +5652,73 @@ void data_2331 (GtkSpinButton *spinbutton, gpointer data) /*Ref.Amplitude.Offset
 			GROUP_VAL(amplitude[i]) = GROUP_VAL(amplitude[GROUP_VAL(point_pos)]);
 	}
 	if(!pp->clb_flag)
-			draw_area_all();
+		draw_area_all();
 	else
-			draw_area_calibration();
+		draw_area_calibration();
 }
 void data_2332 (GtkSpinButton *spinbutton, gpointer data) /*Ref.Amplitude.Offset */
 {
 	GROUP_VAL(tcg_gain) =  (guint) (gtk_spin_button_get_value (spinbutton) * 100.0);
 	if(!pp->clb_flag)
-			draw_area_all();
+		draw_area_all();
 	else
-			draw_area_calibration();
+		draw_area_calibration();
 }
 
 void data_234 (GtkSpinButton *spinbutton, gpointer data) /*   */
 {
 	GROUP_VAL(curve_step) =  (guint) (gtk_spin_button_get_value (spinbutton) * 100.0);
 	if(!pp->clb_flag)
-			draw_area_all();
+		draw_area_all();
 	else
-			draw_area_calibration();
+		draw_area_calibration();
 }
 
 void data_234_add_point (DRAW_UI_P p) /*   */
 {
-     GROUP_VAL(dac_point_qty) = GROUP_VAL(dac_point_qty)+1;
-     if(GROUP_VAL(dac_point_qty)>=16)
-    	 GROUP_VAL(dac_point_qty)= 16 ;
-     else
-     {
-    	 GROUP_VAL(point_pos) = GROUP_VAL(dac_point_qty)-1;
-    	 GROUP_VAL(position[GROUP_VAL(point_pos)]) = GROUP_VAL(position[GROUP_VAL(point_pos-1)]) ;
-    	 GROUP_VAL(amplitude[GROUP_VAL(point_pos)]) = GROUP_VAL(amplitude[GROUP_VAL(point_pos-1)]) ;
+	GROUP_VAL(dac_point_qty) = GROUP_VAL(dac_point_qty)+1;
+	if(GROUP_VAL(dac_point_qty)>=16)
+		GROUP_VAL(dac_point_qty)= 16 ;
+	else
+	{
+		GROUP_VAL(point_pos) = GROUP_VAL(dac_point_qty)-1;
+		GROUP_VAL(position[GROUP_VAL(point_pos)]) = GROUP_VAL(position[GROUP_VAL(point_pos-1)]) ;
+		GROUP_VAL(amplitude[GROUP_VAL(point_pos)]) = GROUP_VAL(amplitude[GROUP_VAL(point_pos-1)]) ;
 
- 	     pp->pos_pos = MENU3_STOP;
- 	     draw_menu3(0, NULL);
+		pp->pos_pos = MENU3_STOP;
+		draw_menu3(0, NULL);
 		if(!pp->clb_flag)
-				draw_area_all();
+			draw_area_all();
 		else
-				draw_area_calibration();
-     }
+			draw_area_calibration();
+	}
 }
 
 void data_235_del_point  (DRAW_UI_P p) /*   */
 {
-    GROUP_VAL(dac_point_qty) = GROUP_VAL(dac_point_qty)-1 ;
-    if(GROUP_VAL(dac_point_qty)<=3)
-    	GROUP_VAL(dac_point_qty)= 3 ;
-    else
-    {
-   	    GROUP_VAL(point_pos) = GROUP_VAL(dac_point_qty)-1;
-   	    //GROUP_VAL(position[GROUP_VAL(point_pos)]) = GROUP_VAL(position[GROUP_VAL(point_pos-1)]) ;
-	    pp->pos_pos = MENU3_STOP;
-	    draw_menu3(0, NULL);
+	GROUP_VAL(dac_point_qty) = GROUP_VAL(dac_point_qty)-1 ;
+	if(GROUP_VAL(dac_point_qty)<=3)
+		GROUP_VAL(dac_point_qty)= 3 ;
+	else
+	{
+		GROUP_VAL(point_pos) = GROUP_VAL(dac_point_qty)-1;
+		//GROUP_VAL(position[GROUP_VAL(point_pos)]) = GROUP_VAL(position[GROUP_VAL(point_pos-1)]) ;
+		pp->pos_pos = MENU3_STOP;
+		draw_menu3(0, NULL);
 		if(!pp->clb_flag)
-				draw_area_all();
+			draw_area_all();
 		else
-				draw_area_calibration();
-    }
+			draw_area_calibration();
+	}
 }
 
 void data_235 (GtkSpinButton *spinbutton, gpointer data) /*   */
 {
 	GROUP_VAL(ref_gain) =  (guint) (gtk_spin_button_get_value (spinbutton) * 100.0);
 	if(!pp->clb_flag)
-			draw_area_all();
+		draw_area_all();
 	else
-			draw_area_calibration();
+		draw_area_calibration();
 }
 
 
@@ -5731,7 +5731,7 @@ void data_235 (GtkSpinButton *spinbutton, gpointer data) /*   */
 void data_300 (GtkMenuItem *menuitem, gpointer data) /* Measurements->Reading->list 300 */
 {
 	set_reading_list (pp->p_config, (gchar)(GPOINTER_TO_UINT (data)));
-	
+
 	if (get_reading_list(pp->p_config) == 0)
 	{
 		set_reading_field1 (pp->p_config, 0);
@@ -5887,7 +5887,7 @@ void data_314 (GtkSpinButton *spinbutton, gpointer data) /* */
 {
 	gint grp = get_current_group(pp->p_config);
 	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
-	
+
 	if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 	{
 		if (UNIT_MM == get_unit(pp->p_config))
@@ -6002,16 +6002,16 @@ void data_400 (GtkMenuItem *menuitem, gpointer data) /* Display->Selection->disp
 		case A_S_CC_SCAN:
 			pp->sscan_mark = 1;
 			pp->cccscan_mark = 1;
-/*			pp->cscan_mark = 1;*/
+			/*			pp->cscan_mark = 1;*/
 			break;
 		default:break;
 	}
 	//generate_focallaw(get_current_group (pp->p_config));
 	draw_menu3 (0, NULL);
 	if(!pp->clb_flag)
-			draw_area_all();
+		draw_area_all();
 	else
-			draw_area_calibration();
+		draw_area_calibration();
 }
 
 void data_401 (GtkMenuItem *menuitem, gpointer data) /* Display->Selection Ascan->group p401 */
@@ -6020,10 +6020,10 @@ void data_401 (GtkMenuItem *menuitem, gpointer data) /* Display->Selection Ascan
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
 	if(!pp->clb_flag)
-			draw_area_all();
+		draw_area_all();
 	else
-			draw_area_calibration();
-/*	gtk_widget_queue_draw (pp->vboxtable);*/
+		draw_area_calibration();
+	/*	gtk_widget_queue_draw (pp->vboxtable);*/
 }
 
 void data_4011 (GtkMenuItem *menuitem, gpointer data) /* Display->Selection->C-Scan1 地一个Cscan p401 */
@@ -6032,9 +6032,9 @@ void data_4011 (GtkMenuItem *menuitem, gpointer data) /* Display->Selection->C-S
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
 	if(!pp->clb_flag)
-			draw_area_all();
+		draw_area_all();
 	else
-			draw_area_calibration();
+		draw_area_calibration();
 	pp->sscan_mark = 1;
 }
 
@@ -6044,9 +6044,9 @@ void data_4012 (GtkMenuItem *menuitem, gpointer data) /* ASC显示模式后时�
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
 	if(!pp->clb_flag)
-			draw_area_all();
+		draw_area_all();
 	else
-			draw_area_calibration();
+		draw_area_calibration();
 }
 
 void data_4013 (GtkMenuItem *menuitem, gpointer data) /* Display->Selection->Data1 p401 */
@@ -6062,9 +6062,9 @@ void data_402 (GtkMenuItem *menuitem, gpointer data) /* Display->Selection->C-Sc
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
 	if(!pp->clb_flag)
-			draw_area_all();
+		draw_area_all();
 	else
-			draw_area_calibration();
+		draw_area_calibration();
 }
 void data_4021 (GtkMenuItem *menuitem, gpointer data) /* Display->Selection->C-Scan2 p402 */
 {
@@ -6096,9 +6096,9 @@ void data_410 (GtkMenuItem *menuitem, gpointer data) /* Display->Overlay->UT Uni
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
 	if(!pp->clb_flag)
-			draw_area_all();
+		draw_area_all();
 	else
-			draw_area_calibration();
+		draw_area_calibration();
 }
 
 void data_411 (GtkMenuItem *menuitem, gpointer data) /* 选择栅格颜色  P411 */
@@ -6289,7 +6289,7 @@ void data_500 (GtkMenuItem *menuitem, gpointer data) /* 增加删除选择group 
 		markup = g_markup_printf_escaped (
 				"<span foreground='white' font_desc='16'>%0.1f(%0.1f)</span>",
 				(get_group_val (p_grp, GROUP_GAIN) -
-				get_group_val (p_grp, GROUP_GAINR)) / 100.0,
+				 get_group_val (p_grp, GROUP_GAINR)) / 100.0,
 				get_group_val (p_grp, GROUP_GAINR) / 100.0);
 	else
 		markup = g_markup_printf_escaped ("<span foreground='white' font_desc='24'>%0.1f</span>",
@@ -6307,9 +6307,9 @@ void data_500 (GtkMenuItem *menuitem, gpointer data) /* 增加删除选择group 
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
 	if(!pp->clb_flag)
-			draw_area_all();
+		draw_area_all();
 	else
-			draw_area_calibration();
+		draw_area_calibration();
 }
 
 void data_501 (GtkMenuItem *menuitem, gpointer data) /* Probe/Part->Select->Group Mode 501 */
@@ -6333,31 +6333,31 @@ void data_502 (GtkMenuItem *menuitem, gpointer data) /* Probe/Part->Select->Sele
 void data_510 (GtkSpinButton *spinbutton, gpointer data) /*scanoffset */
 {
 	if(get_unit(pp->p_config) == UNIT_MM)
-	GROUP_VAL(scan_offset) =  (gint) (gtk_spin_button_get_value (spinbutton) * 10.0);
+		GROUP_VAL(scan_offset) =  (gint) (gtk_spin_button_get_value (spinbutton) * 10.0);
 	else
-	GROUP_VAL(scan_offset) =  (gint) (gtk_spin_button_get_value (spinbutton) * 10.0 / 0.03937);
+		GROUP_VAL(scan_offset) =  (gint) (gtk_spin_button_get_value (spinbutton) * 10.0 / 0.03937);
 
 	if(!pp->clb_flag)
-			draw_area_all();
+		draw_area_all();
 	else
-			draw_area_calibration();
+		draw_area_calibration();
 }
 
 void data_511 (GtkSpinButton *spinbutton, gpointer data) /*indexoffset */
 {
 	if(get_unit(pp->p_config) == UNIT_MM)
-	GROUP_VAL(index_offset) =  (gint) (gtk_spin_button_get_value (spinbutton) * 10.0);
+		GROUP_VAL(index_offset) =  (gint) (gtk_spin_button_get_value (spinbutton) * 10.0);
 	else
-	GROUP_VAL(index_offset) =  (gint) (gtk_spin_button_get_value (spinbutton) * 10.0 / 0.03937);
+		GROUP_VAL(index_offset) =  (gint) (gtk_spin_button_get_value (spinbutton) * 10.0 / 0.03937);
 }
 
 void data_5121 (GtkSpinButton *spinbutton, gpointer data) /* Skew (deg) */
 {
 	GROUP_VAL(skew) =  (gushort) (gtk_spin_button_get_value (spinbutton) * 100.0);
 	if(!pp->clb_flag)
-			draw_area_all();
+		draw_area_all();
 	else
-			draw_area_calibration();
+		draw_area_calibration();
 }
 
 void data_512 (GtkMenuItem *menuitem, gpointer data) /* Skew (deg) */
@@ -6379,9 +6379,9 @@ void data_512 (GtkMenuItem *menuitem, gpointer data) /* Skew (deg) */
 		tttmp = gtk_spin_button_get_value (GTK_SPIN_BUTTON (pp->sbutton[2]));
 	}
 	if(!pp->clb_flag)
-			draw_area_all();
+		draw_area_all();
 	else
-			draw_area_calibration();
+		draw_area_calibration();
 }
 
 void data_521 (GtkSpinButton *spinbutton, gpointer data) /*gain */
@@ -6460,9 +6460,9 @@ void data_600 (GtkMenuItem *menuitem, gpointer data)
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
 	if(!pp->clb_flag)
-			draw_area_all();
+		draw_area_all();
 	else
-			draw_area_calibration();
+		draw_area_calibration();
 	//gtk_widget_queue_draw (pp->vboxtable);
 }
 
@@ -6493,9 +6493,9 @@ void data_610 (GtkSpinButton *spinbutton, gpointer data)
 		LAW_VAL(Angle_max) = LAW_VAL(Angle_min);
 	}
 	if(!pp->clb_flag)
-			draw_area_all();
+		draw_area_all();
 	else
-			draw_area_calibration();
+		draw_area_calibration();
 }
 
 
@@ -6524,12 +6524,12 @@ void data_612 (GtkSpinButton *spinbutton, gpointer data)
 	{
 		LAW_VAL(Angle_step) = (gushort) (gtk_spin_button_get_value (spinbutton) * 100.0);
 		LAW_VAL(Angle_max) = rounding(LAW_VAL(Angle_min),
-					LAW_VAL(Angle_max),	(LAW_VAL(Angle_step) + 5) / 10 * 10);
+				LAW_VAL(Angle_max),	(LAW_VAL(Angle_step) + 5) / 10 * 10);
 	}
 	if(!pp->clb_flag)
-			draw_area_all();
+		draw_area_all();
 	else
-			draw_area_calibration();
+		draw_area_calibration();
 }
 
 
@@ -6612,19 +6612,19 @@ void data_630 (GtkSpinButton *spinbutton, gpointer data)
 	gint	grp	= get_current_group(pp->p_config);
 	LAW_VAL (Elem_qty) = (guchar) (gtk_spin_button_get_value (spinbutton));
 	if(LAW_VAL(Focal_type) == 0)//Azimuthal
-			LAW_VAL (Last_tx_elem) = (guchar) (LAW_VAL (First_tx_elem) + LAW_VAL (Elem_qty)) - 1;
+		LAW_VAL (Last_tx_elem) = (guchar) (LAW_VAL (First_tx_elem) + LAW_VAL (Elem_qty)) - 1;
 	else//Linear
 	{
 		if( LAW_VAL (Last_tx_elem) < ((guchar) (LAW_VAL (First_tx_elem) + LAW_VAL (Elem_qty)) - 1) )
-				LAW_VAL (Last_tx_elem) = (guchar) (LAW_VAL (First_tx_elem) + LAW_VAL (Elem_qty)) - 1;
+			LAW_VAL (Last_tx_elem) = (guchar) (LAW_VAL (First_tx_elem) + LAW_VAL (Elem_qty)) - 1;
 	}
 
 	/*计算聚焦法则时，sumgain默认为Auto*/
 	if (LAW_VAL_POS(grp, Elem_qty) == 1)	
-			TMP(group_spi[grp]).sum_gain	= 4095;	
+		TMP(group_spi[grp]).sum_gain	= 4095;	
 	else 
-			TMP(group_spi[grp]).sum_gain	= 
-				4096 / LAW_VAL_POS(grp, Elem_qty) ;
+		TMP(group_spi[grp]).sum_gain	= 
+			4096 / LAW_VAL_POS(grp, Elem_qty) ;
 }
 
 /* first_element 第一个接收阵元 */
@@ -6632,20 +6632,20 @@ void data_631 (GtkSpinButton *spinbutton, gpointer data)
 {
 	LAW_VAL(First_tx_elem) =  (guchar) (gtk_spin_button_get_value (spinbutton));
 	if(LAW_VAL(Focal_type) == 0)//Azimuthal
-			LAW_VAL (Last_tx_elem) = (guchar) (LAW_VAL (First_tx_elem) + LAW_VAL (Elem_qty)) - 1;
+		LAW_VAL (Last_tx_elem) = (guchar) (LAW_VAL (First_tx_elem) + LAW_VAL (Elem_qty)) - 1;
 	else//Linear
 	{
 		if( LAW_VAL (Last_tx_elem) < ((guchar) (LAW_VAL (First_tx_elem) + LAW_VAL (Elem_qty)) - 1) )
-				LAW_VAL (Last_tx_elem) = (guchar) (LAW_VAL (First_tx_elem) + LAW_VAL (Elem_qty)) - 1;
+			LAW_VAL (Last_tx_elem) = (guchar) (LAW_VAL (First_tx_elem) + LAW_VAL (Elem_qty)) - 1;
 	}
 }
 /* last_element 最后一个阵元编号 */
 void data_632 (GtkSpinButton *spinbutton, gpointer data) 
 {
 	if( LAW_VAL (Last_tx_elem) < ((guchar) (LAW_VAL (First_tx_elem) + LAW_VAL (Elem_qty)) - 1) )
-			LAW_VAL (Last_tx_elem) = (guchar) (LAW_VAL (First_tx_elem) + LAW_VAL (Elem_qty)) - 1;
+		LAW_VAL (Last_tx_elem) = (guchar) (LAW_VAL (First_tx_elem) + LAW_VAL (Elem_qty)) - 1;
 	else
-			LAW_VAL(Last_tx_elem) =  (guchar) (gtk_spin_button_get_value (spinbutton));
+		LAW_VAL(Last_tx_elem) =  (guchar) (gtk_spin_button_get_value (spinbutton));
 }
 
 void data_633 (GtkSpinButton *spinbutton, gpointer data) /*element_step*/
@@ -6717,9 +6717,9 @@ void data_710 (GtkMenuItem *menuitem, gpointer data) /* Scan->Inspection->type *
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
 	if(!pp->clb_flag)
-			draw_area_all();
+		draw_area_all();
 	else
-			draw_area_calibration();
+		draw_area_calibration();
 	//gtk_widget_queue_draw (pp->vboxtable);
 }
 
@@ -6730,7 +6730,7 @@ void data_711 (GtkMenuItem *menuitem, gpointer data) /* Scan->Inspection->scan *
 	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
 
 	set_inspec_source (pp->p_config, (guchar) (GPOINTER_TO_UINT (data)));
-	
+
 	if(get_inspec_source (pp->p_config)==0)
 		markup = g_markup_printf_escaped ("<span foreground='white' font_desc='10'>X: %.1f s</span>",
 				(gfloat)(get_group_val (p_grp, GROUP_PRF_VAL)));
@@ -6743,9 +6743,9 @@ void data_711 (GtkMenuItem *menuitem, gpointer data) /* Scan->Inspection->scan *
 	draw_menu3(0, NULL);
 	gtk_widget_queue_draw (pp->vboxtable);
 	if(!pp->clb_flag)
-			draw_area_all();
+		draw_area_all();
 	else
-			draw_area_calibration();
+		draw_area_calibration();
 
 }
 
@@ -6782,9 +6782,9 @@ void data_720 (GtkSpinButton *spinbutton, gpointer data) /* P720 scan_start */
 		set_area_scanstart (pp->p_config, (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 / 0.03937 ));
 
 	if(!pp->clb_flag)
-			draw_area_all();
+		draw_area_all();
 	else
-			draw_area_calibration();
+		draw_area_calibration();
 }
 
 void data_721 (GtkSpinButton *spinbutton, gpointer data) /* P721 scan_end*/
@@ -6795,9 +6795,9 @@ void data_721 (GtkSpinButton *spinbutton, gpointer data) /* P721 scan_end*/
 		set_area_scanend (pp->p_config, (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 / 0.03937 ));
 
 	if(!pp->clb_flag)
-			draw_area_all();
+		draw_area_all();
 	else
-			draw_area_calibration();
+		draw_area_calibration();
 }
 
 void data_722 (GtkSpinButton *spinbutton, gpointer data) /* P722 scan_resolution*/
@@ -6815,9 +6815,9 @@ void data_723 (GtkSpinButton *spinbutton, gpointer data) /* P723 index_start*/
 	else
 		set_area_indexstart (pp->p_config, (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 / 0.03937));
 	if(!pp->clb_flag)
-			draw_area_all();
+		draw_area_all();
 	else
-			draw_area_calibration();
+		draw_area_calibration();
 }
 
 void data_724 (GtkSpinButton *spinbutton, gpointer data) /* P724 index_end*/
@@ -6827,9 +6827,9 @@ void data_724 (GtkSpinButton *spinbutton, gpointer data) /* P724 index_end*/
 	else
 		set_area_indexend (pp->p_config, (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0 / 0.03937));
 	if(!pp->clb_flag)
-			draw_area_all();
+		draw_area_all();
 	else
-			draw_area_calibration();
+		draw_area_calibration();
 }
 
 void data_725 (GtkSpinButton *spinbutton, gpointer data) /* P725 index_resolution*/
@@ -6911,9 +6911,9 @@ void data_900(GtkMenuItem *menuitem, gpointer data) /* Preferences->Pref.->Units
 	draw_menu3(0, NULL);
 
 	if(!pp->clb_flag)
-			draw_area_all();
+		draw_area_all();
 	else
-			draw_area_calibration();
+		draw_area_calibration();
 }
 
 void data_903(GtkMenuItem *menuitem, gpointer data) /* Preferences->Pref.->scheme */
@@ -6931,9 +6931,9 @@ void data_912 (GtkMenuItem *menuitem, gpointer data)
 	//draw_menu3(0, NULL);
 
 	change_language (get_language(pp->p_config), pp);
-			draw_menu1();
-			draw_menu2(0);
-			draw_menu3(0, NULL);
+	draw_menu1();
+	draw_menu2(0);
+	draw_menu3(0, NULL);
 }
 
 void data_913(GtkMenuItem *menuitem, gpointer data) /* Preferences->system->assign key*/
@@ -7053,7 +7053,7 @@ void generate_focallaw(int grp)
 	for (offset = 0, k = 0 ; k < grp; k++)
 		offset += TMP(beam_qty[k]);
 	GROUP	*p_grp = get_group_by_id (pp->p_config, grp);
-	
+
 	temp_beam = 1;
 	if (LAW_VAL (Focal_type) == AZIMUTHAL_SCAN)
 	{
@@ -7092,11 +7092,11 @@ void generate_focallaw(int grp)
 
 	/*计算聚焦法则时，sumgain默认为Auto*/
 	if (LAW_VAL_POS(grp, Elem_qty) == 1)	
-			TMP(group_spi[grp]).sum_gain	= 4095;	
+		TMP(group_spi[grp]).sum_gain	= 4095;	
 	else 
-			TMP(group_spi[grp]).sum_gain	= 
-				4096 / LAW_VAL_POS(grp, Elem_qty) ;
-	
+		TMP(group_spi[grp]).sum_gain	= 
+			4096 / LAW_VAL_POS(grp, Elem_qty) ;
+
 	TMP(group_spi[grp]).sample_start	= (get_group_val (p_grp, GROUP_START) +
 			get_group_val (p_grp, GROUP_WEDGE_DELAY)) / 10 ;
 	TMP(group_spi[grp]).sample_range	= TMP(group_spi[grp]).sample_start +
@@ -7121,7 +7121,7 @@ void generate_focallaw(int grp)
 	//send_focal_spi(grp);
 	//write_group_data (&TMP(group_spi[grp]), grp);
 
- 	if(!pp->clb_flag)
+	if(!pp->clb_flag)
 		draw_area_all ();
 	else
 		draw_area_calibration();
@@ -7142,7 +7142,7 @@ gfloat cba_encoder()
 	TMP_CBA(delt_distance) = pp->distance ;//- get_enc_origin (pp->p_config, get_cur_encoder (pp->p_config));
 	TMP_CBA(delt_measure) = TMP_CBA(measure_end) - TMP_CBA(measure_start);
 	TMP_CBA(resolution) = K*TMP_CBA(delt_measure)/TMP_CBA(delt_distance);
-	
+
 	return TMP_CBA(resolution);
 }
 
@@ -7180,7 +7180,7 @@ void cba_ultrasound_wedgedelay()
 	gfloat s, vel, t1, wedge_delay;
 	gint grp = get_current_group(pp->p_config);
 	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
-	
+
 	if (LAW_VAL (Focal_type) == AZIMUTHAL_SCAN)
 	{
 		step = (gint)( (LAW_VAL(Angle_max) - LAW_VAL(Angle_min)) / LAW_VAL(Angle_step) + 1);
@@ -7190,7 +7190,7 @@ void cba_ultrasound_wedgedelay()
 		step = (gint)( ( LAW_VAL (Last_tx_elem)-LAW_VAL(First_tx_elem) - LAW_VAL(Elem_qty) + 1 ) /
 				LAW_VAL(Elem_step) ) + 1;
 	}
-	
+
 	vel = (get_group_val (p_grp, GROUP_VELOCITY) / 100.0);// m/s
 	t1  = 2000000 * TMP_CBA(distance) / vel ;//ns
 	wedge_delay = get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_WEDGE_DELAY) / 1000.0;
@@ -7198,7 +7198,7 @@ void cba_ultrasound_wedgedelay()
 	{
 		s   = (TMP(clb_wedge_data[i]) - wedge_delay - pp->G_delay[i] - get_pw()) * vel / 2000000;//mm
 		if(s<0) s = 0;
-//		printf("s=%f dis=%f \n", s, TMP_CBA(distance));
+		//		printf("s=%f dis=%f \n", s, TMP_CBA(distance));
 		if( fabs( TMP_CBA(distance) - s ) >  (pp->tolerance / 100.0) )
 		{
 			pp->G_delay[i] = (gint)(fabs(TMP(clb_wedge_data[i]) - t1 - get_pw()));
@@ -7215,7 +7215,7 @@ void cba_ultrasound_sensitivity()
 	gint offset,k,step;
 	GtkWidget* dialog;
 	GtkWindow *win = GTK_WINDOW (pp->window);
-	
+
 	gint count = 0;
 	if (LAW_VAL (Focal_type) == AZIMUTHAL_SCAN)
 	{
@@ -7239,15 +7239,15 @@ void cba_ultrasound_sensitivity()
 			if(count == 1)
 			{
 				dialog = gtk_message_dialog_new( win,
-							GTK_DIALOG_DESTROY_WITH_PARENT,
-							GTK_MESSAGE_ERROR,
-							GTK_BUTTONS_CLOSE,
-							"At least one context has an amplitude peak of %s \nThe calibration cannot be performed",
-							"100%" );
+						GTK_DIALOG_DESTROY_WITH_PARENT,
+						GTK_MESSAGE_ERROR,
+						GTK_BUTTONS_CLOSE,
+						"At least one context has an amplitude peak of %s \nThe calibration cannot be performed",
+						"100%" );
 				gtk_dialog_run(GTK_DIALOG(dialog));
 				gtk_widget_destroy(dialog);
 			}
-	//		return 0;//最好能弹出一个警告框
+			//		return 0;//最好能弹出一个警告框
 		}
 		else if(TMP(clb_max_data[i]) <= 0.0)
 		{	
@@ -7255,19 +7255,19 @@ void cba_ultrasound_sensitivity()
 			if(count == 1)
 			{
 				dialog = gtk_message_dialog_new( win,
-							GTK_DIALOG_DESTROY_WITH_PARENT,
-							GTK_MESSAGE_ERROR,
-							GTK_BUTTONS_CLOSE,
-							"At least one context has an amplitude peak of %s \nThe calibration cannot be performed",
-							"0%" );
+						GTK_DIALOG_DESTROY_WITH_PARENT,
+						GTK_MESSAGE_ERROR,
+						GTK_BUTTONS_CLOSE,
+						"At least one context has an amplitude peak of %s \nThe calibration cannot be performed",
+						"0%" );
 				gtk_dialog_run(GTK_DIALOG(dialog));
 				gtk_widget_destroy(dialog);
 			}
-	//		return 0;//最好能弹出一个警告框
+			//		return 0;//最好能弹出一个警告框
 		}
 		//*****************************************
 		if(TMP(clb_his_max_data) < TMP(clb_real_data[i]))
-				TMP(clb_his_max_data) = TMP(clb_real_data[i]);
+			TMP(clb_his_max_data) = TMP(clb_real_data[i]);
 	}
 	for (i = 0; i < step; i++)
 	{
@@ -7305,9 +7305,9 @@ void esc_calibration()
 	gtk_widget_set_sensitive(pp->eventbox2[0],TRUE);
 	gtk_widget_set_sensitive(pp->eventbox2[3],TRUE);
 	if(GROUP_VAL(group_mode)==PA_SCAN)
-			gtk_widget_set_sensitive(pp->eventbox2[1],TRUE);
+		gtk_widget_set_sensitive(pp->eventbox2[1],TRUE);
 	else
-			gtk_widget_set_sensitive(pp->eventbox2[1],FALSE);
+		gtk_widget_set_sensitive(pp->eventbox2[1],FALSE);
 	gtk_widget_set_sensitive(pp->menubar,TRUE);
 	draw_area_all();
 }
@@ -7330,7 +7330,7 @@ void draw_encoder_value(gpointer data)
 
 		TMP_CBA(measure_end) = TMP(measure_data[index][4]);
 		markup = g_markup_printf_escaped ("<span foreground='white' font_desc='10'>X: %.1f mm</span>",
-							(TMP_CBA(measure_end) - TMP_CBA(measure_start)) );
+				(TMP_CBA(measure_end) - TMP_CBA(measure_start)) );
 		gtk_label_set_markup (GTK_LABEL (pp->label[7]), markup); 
 	}
 
@@ -7365,5 +7365,5 @@ static int thread_set_DB_eighty_percent(gpointer data)
 		draw_field_value ();
 		usleep(200000);
 	}
-    return 0;
+	return 0;
 }

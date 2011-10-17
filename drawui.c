@@ -6095,7 +6095,7 @@ void draw3_data1(DRAW_UI_P p)
 						else 
 						{
 							cur_value = get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_START) / 1000.0 ;
-							lower =	BEAM_INFO(0,beam_delay) / 1000.0;
+							lower =	0;//BEAM_INFO(0,beam_delay) / 1000.0;
 							upper =	(MAX_RANGE_US - get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_RANGE) / 1000.0);
 							step = tmpf;
 							if (step < 0.01)  (step = 0.01) ;
@@ -8456,7 +8456,7 @@ void draw3_data2(DRAW_UI_P p)
 										if (UNIT_MM == get_unit(pp->p_config))
 										{
 											cur_value = (GROUP_VAL(gate[0].start) / 1000.0) * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0);   /* 当前显示的起位数值mm */
-											lower = (BEAM_INFO(0,beam_delay) /1000.0) * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0);
+											lower = 0;//(BEAM_INFO(0,beam_delay) /1000.0) * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0);
 											upper =	(MAX_RANGE_US - GROUP_GATE_POS(width) / 1000.0) * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0);
 											step = tmpf * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0);
 											digit = 2;
@@ -8466,7 +8466,7 @@ void draw3_data2(DRAW_UI_P p)
 										else
 										{
 											cur_value = (GROUP_VAL(gate[0].start) / 1000.0) * 0.03937 * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0); /* 当前显示的范围inch */
-											lower = (BEAM_INFO(0,beam_delay) / 1000.0) * 0.03937 * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
+											lower = 0;//(BEAM_INFO(0,beam_delay) / 1000.0) * 0.03937 * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
 											upper =	(MAX_RANGE_US - GROUP_GATE_POS(width) / 1000.0 ) * 0.03937 * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
 											step = tmpf * 0.03937 * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
 											digit = 3;
@@ -8477,7 +8477,7 @@ void draw3_data2(DRAW_UI_P p)
 									else
 									{
 											cur_value = GROUP_VAL(gate[0].start) / 1000.0 ;   /* us */
-											lower = BEAM_INFO(0,beam_delay) /1000.0;
+											lower = 0;//BEAM_INFO(0,beam_delay) /1000.0;
 											upper =	MAX_RANGE_US - GROUP_GATE_POS(width) / 1000.0;
 											step = tmpf;
 											digit = 2;
@@ -8659,7 +8659,7 @@ void draw3_data2(DRAW_UI_P p)
 										if (UNIT_MM == get_unit(pp->p_config))
 										{
 											cur_value = (GROUP_VAL(gate[0].start) / 1000.0) * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0);   /* 当前显示的起位数值mm */
-											lower = (BEAM_INFO(0,beam_delay) /1000.0) * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0);
+											lower = 0;//(BEAM_INFO(0,beam_delay) /1000.0) * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0);
 											upper =	(MAX_RANGE_US - GROUP_GATE_POS(width) / 1000.0) * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0);
 											step = tmpf * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0);
 											digit = 2;
@@ -8669,7 +8669,7 @@ void draw3_data2(DRAW_UI_P p)
 										else
 										{
 											cur_value = (GROUP_VAL(gate[0].start) / 1000.0) * 0.03937 * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0); /* 当前显示的范围inch */
-											lower = (BEAM_INFO(0,beam_delay) / 1000.0) * 0.03937 * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
+											lower = 0;//(BEAM_INFO(0,beam_delay) / 1000.0) * 0.03937 * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
 											upper =	(MAX_RANGE_US - GROUP_GATE_POS(width) / 1000.0 ) * 0.03937 * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
 											step = tmpf * 0.03937 * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
 											digit = 3;
@@ -8680,7 +8680,7 @@ void draw3_data2(DRAW_UI_P p)
 									else
 									{
 											cur_value = GROUP_VAL(gate[0].start) / 1000.0 ;   /* us */
-											lower = BEAM_INFO(0,beam_delay) /1000.0;
+											lower = 0;//BEAM_INFO(0,beam_delay) /1000.0;
 											upper =	MAX_RANGE_US - GROUP_GATE_POS(width) / 1000.0;
 											step = tmpf;
 											digit = 2;
@@ -10323,7 +10323,7 @@ void draw3_data2(DRAW_UI_P p)
 							if (UNIT_MM == get_unit(pp->p_config)) 
 							{
 								cur_value = (GROUP_VAL(gate[0].start) / 1000.0) * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0);   /* 当前显示的起位数值mm */
-								lower = (BEAM_INFO(0,beam_delay) /1000.0) * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0);
+								lower = 0;//(BEAM_INFO(0,beam_delay) /1000.0) * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0);
 								upper =	(MAX_RANGE_US - GROUP_GATE_POS(width) / 1000.0) * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0);
 								step = tmpf * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0);
 								digit = 2;
@@ -10333,7 +10333,7 @@ void draw3_data2(DRAW_UI_P p)
 							else 
 							{
 								cur_value = (GROUP_VAL(gate[0].start) / 1000.0) * 0.03937 * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0); /* 当前显示的范围inch */
-								lower = (BEAM_INFO(0,beam_delay) / 1000.0) * 0.03937 * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
+								lower = 0;//(BEAM_INFO(0,beam_delay) / 1000.0) * 0.03937 * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
 								upper =	(MAX_RANGE_US - GROUP_GATE_POS(width) / 1000.0 ) * 0.03937 * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
 								step = tmpf * 0.03937 * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
 								digit = 3;
@@ -10344,7 +10344,7 @@ void draw3_data2(DRAW_UI_P p)
 						else 
 						{
 							cur_value = GROUP_VAL(gate[0].start) / 1000.0 ;
-							lower =	BEAM_INFO(0,beam_delay) / 1000.0;
+							lower =	0;//BEAM_INFO(0,beam_delay) / 1000.0;
 							upper =	(MAX_RANGE_US - GROUP_GATE_POS(width) / 1000.0);
 							step = tmpf;
 							digit = 2;
@@ -11888,7 +11888,8 @@ void draw3_data3(DRAW_UI_P p)
 										else
 										{
 											cur_value = (GROUP_GATE_POS(width) / 1000.0) * 0.03937 * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0); /* 当前显示的范围inch */
-											lower =	3.2 * 0.03937 * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
+											//lower =	3.2 * 0.03937 * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
+											lower = 0;
 											upper =	((MAX_RANGE_US - GROUP_GATE_POS(start) / 1000.0) > 6400.0 ? 6400.0 :
 													(MAX_RANGE_US - GROUP_GATE_POS(start) / 1000.0)) * 0.03937 * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0);
 											step = tmpf * 0.03937 * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
