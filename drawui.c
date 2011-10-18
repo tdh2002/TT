@@ -16191,7 +16191,34 @@ void draw3_data5(DRAW_UI_P p)
 								}
 								else if(pp->echotype_pos == 1)
 								{
-									draw3_popdown_offset(NULL, 5, 1, 29);
+//									draw3_popdown_offset(NULL, 5, 1, 29);
+									switch (TMP(depth1_reg))
+									{
+										case 0:	tmpf = 0.01; break;
+										case 1:	tmpf = 0.1; break;
+										case 2:	tmpf = 1.0; break;
+										case 3:	tmpf = 10.0; break;						
+										default:break;
+									}
+									if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 5))
+									{
+										cur_value = pp->depth1 / 1000.0;
+										lower = 0.0;
+										upper = 1000.0;
+										step = tmpf;
+										digit = 2;
+										pos = 5;
+										unit = UNIT_MM;
+										draw3_digit_pressed (data_0233, units[unit], cur_value , lower, upper, step, digit, p, pos, 15);
+									}
+									else 
+									{
+										cur_value = pp->depth2 / 1000.0;
+										digit = 2;
+										pos = 5;
+										unit = UNIT_MM;
+										draw3_digit_stop (cur_value, units[unit], digit, pos, 15);
+									}
 								}
 								else
 								{
