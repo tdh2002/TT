@@ -2199,7 +2199,7 @@ void b3_fun3(gpointer p)
 									{
 										for (i = 0; i < clb_step; i++)
 										{
-											TMP(clb_wedge_data[i]) = (TMP(measure_data[i][1]) & 0xfffff) * 10;
+											TMP(clb_wedge_data[i]) = 0;//(TMP(measure_data[i][1]) & 0xfffff) * 10;
 										}
 									}
 									break;
@@ -4362,12 +4362,9 @@ void data_100 (GtkSpinButton *spinbutton, gpointer data) /* 增益Gain P100 */
 #if ARM
 	/*	ioctl (fd_gpio, GPIO43_LOW, &i);*/ /* 发送group参数不复位 */
 	write (fd_array, (unsigned char *)(p1), 8);
-
 	//write_group_data (&TMP(group_spi[grp]), grp);
-
-	/* 发送给硬件 */
 #endif
-	/* 发送给硬件 */
+
 }
 
 void data_101 (GtkSpinButton *spinbutton, gpointer data) /*Start 扫描延时 P101 */
@@ -5096,7 +5093,7 @@ void data_202 (GtkSpinButton *spinbutton, gpointer data)	/* 闸门开始位置 P
 	if(LAW_VAL(Focal_type) == 0)
 	{
 		current_angle = LAW_VAL(Angle_min)/100.0 + BeamNo * LAW_VAL(Angle_step)/100.0 ;
-		max_angle = MAX(abs(LAW_VAL(Angle_min)), abs(LAW_VAL(Angle_max))) * G_PI / 180.0 ;
+		max_angle = MAX(fabs(LAW_VAL(Angle_min)), fabs(LAW_VAL(Angle_max))) * G_PI / 180.0 ;
 	}
 	else
 	{
@@ -6314,13 +6311,20 @@ void data_500 (GtkMenuItem *menuitem, gpointer data) /* 增加删除选择group 
 
 void data_501 (GtkMenuItem *menuitem, gpointer data) /* Probe/Part->Select->Group Mode 501 */
 {
+	gint group = get_current_group(pp->p_config);
 	GROUP_VAL(group_mode) = (gchar) (GPOINTER_TO_UINT (data));
-	if(GROUP_VAL(group_mode)!=1) /*group mode 选择UT,UT1,UT2时，focal law 不可用*/
+	TMP(group_spi[group]).UT2			= (GROUP_VAL_POS (group, group_mode) == 3) ? 1 : 0;		
+	TMP(group_spi[group]).UT1			= (GROUP_VAL_POS (group, group_mode) == 2) ? 1 : 0;		
+	TMP(group_spi[group]).PA			= (GROUP_VAL_POS (group, group_mode) == 1) ? 1 : 0;		
+	/*group mode 选择UT,UT1,UT2时，focal law 不可用*/
+	if(GROUP_VAL(group_mode)!=1) 
 		gtk_widget_set_sensitive(pp->menuitem[6],FALSE);
 	else
 		gtk_widget_set_sensitive(pp->menuitem[6],TRUE);
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
+	
+	write_group_data (&TMP(group_spi[group]), group);
 }
 
 void data_502 (GtkMenuItem *menuitem, gpointer data) /* Probe/Part->Select->Select 502 */

@@ -1406,7 +1406,7 @@ void draw_clb_wedge_delay (gushort *p, gint width, gint height, DOT_TYPE *data, 
 				count = i;//记录最大值时的beam_num
 				clb_tmp_max_data = TMP(clb_real_data[i]);//保存每次循环的最大值
 		}
-		if( clb_tmp_max_data > GROUP_GATE_POS(height) )
+//		if( clb_tmp_max_data > GROUP_GATE_POS(height) )
 			TMP(clb_wedge_data[i]) = (TMP(measure_data[i][1]) & 0xfffff) * 10;
 //		else
 //			TMP(clb_wedge_data[i]) = 0;
@@ -1437,13 +1437,13 @@ void draw_clb_wedge_delay (gushort *p, gint width, gint height, DOT_TYPE *data, 
 //		printf("vel=%f s=%f \n beam_delay=%d pw=%d \n", vel, s, pp->G_delay[count], get_pw() );
 		if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 		{
-			clb_y1 = (gint)(height*(1- (s   - pp->gate_start_clb/2000.0)*2000.0/pp->gate_width_clb)) + yoffset;
-			clb_y2 = (gint)(height*(1- (s_1 - pp->gate_start_clb/2000.0)*2000.0/pp->gate_width_clb)) + yoffset;
+			clb_y1 = (gint)(height*(1- (2*s   - pp->gate_start_clb/2000.0)*2000.0/pp->gate_width_clb)) + yoffset;
+			clb_y2 = (gint)(height*(1- (2*s_1 - pp->gate_start_clb/2000.0)*2000.0/pp->gate_width_clb)) + yoffset;
 		}
 		else
 		{
-			clb_y1 = (gint)(height*(1- (s   - pp->gate_start_clb/1000.0)*1000.0/pp->gate_width_clb)) + yoffset;
-			clb_y2 = (gint)(height*(1- (s_1 - pp->gate_start_clb/1000.0)*1000.0/pp->gate_width_clb)) + yoffset;
+			clb_y1 = (gint)(height*(1- (2*s   - pp->gate_start_clb/1000.0)*1000.0/pp->gate_width_clb)) + yoffset;
+			clb_y2 = (gint)(height*(1- (2*s_1 - pp->gate_start_clb/1000.0)*1000.0/pp->gate_width_clb)) + yoffset;
 		}
 		if(clb_y1 < yoffset)
 				clb_y1 = yoffset;

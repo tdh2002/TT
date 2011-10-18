@@ -16213,7 +16213,7 @@ void draw3_data5(DRAW_UI_P p)
 									}
 									else 
 									{
-										cur_value = pp->depth2 / 1000.0;
+										cur_value = pp->depth1 / 1000.0;
 										digit = 2;
 										pos = 5;
 										unit = UNIT_MM;

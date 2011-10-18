@@ -34,10 +34,10 @@ typedef struct _Group_data
 	unsigned int	gain:10;				/* bit:22-31 Gain	*/
 
 	/* s_group_reg (1) */
-	unsigned int	tcg_point_qty:8;			/* bit:0-7 TCG点个数 */
+	unsigned int	tcg_point_qty:8;		/* bit:0-7 TCG点个数 */
 	unsigned int	tcg_en:1;				/* bit:8   TCG使能	 */
-	unsigned int	UT2:1;					/* bit:9  UT2		 */	
-	unsigned int	UT1:1;					/* bit:10 UT1		 */
+	unsigned int	UT1:1;					/* bit:9  UT2		 */	
+	unsigned int	UT2:1;					/* bit:10 UT1		 */
 	unsigned int	PA:1;					/* bit:11 PA	 	 */
 	unsigned int	_sample_start:20;		/* bit:12-31 采样起点*/
 
