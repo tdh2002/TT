@@ -475,6 +475,7 @@ void draw_a_scan (gushort *p, gint width, gint height,
 			else
 				max =+ 1;
 		}
+
 		// clear back ground
 		fbliney(p,
 				xoffset + i,
@@ -482,6 +483,7 @@ void draw_a_scan (gushort *p, gint width, gint height,
 				yoffset + height,
 				0x0
 			   );
+#if 1		
 		// draw line
 		fbliney(
 				p, 
@@ -490,6 +492,8 @@ void draw_a_scan (gushort *p, gint width, gint height,
 				yoffset + max, 
 				all_col_16[GROUP_VAL_POS(groupId, ascan_color)]
 				);
+#endif
+
 #if 0
 		/* 画包络 */
 		if (GROUP_VAL_POS(groupId, ascan_envelope))
@@ -498,6 +502,7 @@ void draw_a_scan (gushort *p, gint width, gint height,
 		}
 #endif
 	}
+//	fbline(p, xoffset+0, yoffset+0, xoffset+400, yoffset+400, 0x001f);
 }
 
 #if 0
@@ -1437,13 +1442,13 @@ void draw_clb_wedge_delay (gushort *p, gint width, gint height, DOT_TYPE *data, 
 //		printf("vel=%f s=%f \n beam_delay=%d pw=%d \n", vel, s, pp->G_delay[count], get_pw() );
 		if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 		{
-			clb_y1 = (gint)(height*(1- (2*s   - pp->gate_start_clb/2000.0)*2000.0/pp->gate_width_clb)) + yoffset;
-			clb_y2 = (gint)(height*(1- (2*s_1 - pp->gate_start_clb/2000.0)*2000.0/pp->gate_width_clb)) + yoffset;
+			clb_y1 = (gint)(height*(1- (s   - pp->gate_start_clb/2000.0)*2000.0/pp->gate_width_clb)) + yoffset;
+			clb_y2 = (gint)(height*(1- (s_1 - pp->gate_start_clb/2000.0)*2000.0/pp->gate_width_clb)) + yoffset;
 		}
 		else
 		{
-			clb_y1 = (gint)(height*(1- (2*s   - pp->gate_start_clb/1000.0)*1000.0/pp->gate_width_clb)) + yoffset;
-			clb_y2 = (gint)(height*(1- (2*s_1 - pp->gate_start_clb/1000.0)*1000.0/pp->gate_width_clb)) + yoffset;
+			clb_y1 = (gint)(height*(1- (s   - pp->gate_start_clb/1000.0)*1000.0/pp->gate_width_clb)) + yoffset;
+			clb_y2 = (gint)(height*(1- (s_1 - pp->gate_start_clb/1000.0)*1000.0/pp->gate_width_clb)) + yoffset;
 		}
 		if(clb_y1 < yoffset)
 				clb_y1 = yoffset;

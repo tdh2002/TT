@@ -759,7 +759,7 @@ guint get_prf ()
 			default:break;
 		}
 	}
-	printf("get_group_val (p_grp, GROUP_PRF_VAL) = %d\n" ,get_group_val (p_grp, GROUP_PRF_VAL));
+//	printf("get_group_val (p_grp, GROUP_PRF_VAL) = %d\n" ,get_group_val (p_grp, GROUP_PRF_VAL));
 	return get_group_val (p_grp, GROUP_PRF_VAL);
 }
 
@@ -5161,9 +5161,9 @@ void data_202 (GtkSpinButton *spinbutton, gpointer data)	/* 闸门开始位置 P
 					pp->gate_i_end[k]	= (int)( (GROUP_GATE_POS(start) + GROUP_GATE_POS (width) + delay) / 10 );
 				}
 			}
+			printf("gate_a_start[%d] = %d beam_num = %d \n", k, pp->gate_a_start[k], BeamNo);
 		}
 	}
-
 
 	//tt[0] = (GROUP_VAL_POS(grp, gate[0].start) + GROUP_VAL_POS (grp, gate[0].width));
 	//tt[1] = (GROUP_VAL_POS(grp, gate[1].start) + GROUP_VAL_POS (grp, gate[1].width));
@@ -5182,7 +5182,6 @@ void data_202 (GtkSpinButton *spinbutton, gpointer data)	/* 闸门开始位置 P
 		draw_area_calibration();
 	send_focal_spi (grp);
 	gtk_widget_queue_draw (pp->vboxtable);
-
 }
 
 void data_2021 (GtkMenuItem *menuitem, gpointer data)	/* 闸门同步 */
@@ -6259,8 +6258,8 @@ void data_500 (GtkMenuItem *menuitem, gpointer data) /* 增加删除选择group 
 	{
 		case 0:
 			set_group_qty (pp->p_config, get_group_qty(pp->p_config) + 1);
-			grpcpy (pp->p_config, get_group_qty(pp->p_config) - 1, 0);
-			set_current_group (pp->p_config, get_group_qty(pp->p_config) - 1, 1);
+//			grpcpy (pp->p_config, get_group_qty(pp->p_config) - 1, 0);
+//			set_current_group (pp->p_config, get_group_qty(pp->p_config) - 1, 1);
 			break;						/* 增加*/
 		case 1:
 		case 2:
@@ -6271,7 +6270,7 @@ void data_500 (GtkMenuItem *menuitem, gpointer data) /* 增加删除选择group 
 		case 7:
 		case 8:
 			/* 把参数切换到当前选择的group 未完成 */
-			set_current_group(pp->p_config, temp - 1, 1);
+//			set_current_group(pp->p_config, temp - 1, 1);
 			break;
 		case 9:
 			set_group_qty (pp->p_config, get_group_qty(pp->p_config) - 1);

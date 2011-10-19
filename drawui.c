@@ -4083,12 +4083,12 @@ void draw_area_all()
 							gtk_box_pack_start (GTK_BOX (pp->vboxtable), pp->vbox_area[0], FALSE, FALSE, 0);
 							set_drawarea_property (&(pp->draw_area[0]), A_SCAN, 0);
 							g_sprintf (pp->draw_area[0].title, "multiple A scan");
-							draw_area_ (pp->vbox_area[0], &(pp->draw_area[0]), 655, 212);
+							draw_area_ (pp->vbox_area[0], &(pp->draw_area[0]), 655, 220);//212
 							set_drawarea_property (&(pp->draw_area[1]), A_SCAN, 0x10);
-							draw_area_ (pp->vbox_area[0], &(pp->draw_area[1]), 655, 213);
+							draw_area_ (pp->vbox_area[0], &(pp->draw_area[1]), 655, 205);//213
 							gtk_widget_show (pp->vbox_area[0]);
-							set_scan_config (0, A_SCAN, 610, 610, 185, 0, 0,  0);//163
-							set_scan_config (1, A_SCAN, 610, 610, 185, 0, 212, 1);//178 197
+							set_scan_config (0, A_SCAN, 605, 605, 185, 0, 0,  0);//163
+							set_scan_config (1, A_SCAN, 605, 605, 185, 0, 205, 1);//178 197
 							/* 显示的位置 偏移等等 */
 							break;
 						case S_SCAN:
