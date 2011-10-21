@@ -18188,7 +18188,7 @@ static void signal_scan_thread(void)
 			g_timeout_add (0, (GSourceFunc) draw_frame_thread, NULL);
 		}
 		//if(*DMA_MARK>2){ printf("DMA_MARK = %d \n", *DMA_MARK) ; *DMA_MARK=1; }
-		usleep(40000);
+		usleep(10000);
 	}
 }
 

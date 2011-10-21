@@ -13,7 +13,7 @@
 #include <gdk/gdkkeysyms.h>
 #include <pthread.h>
 
-#define MAX_DMA_FREQUENCY    200
+#define MAX_DMA_FREQUENCY    400
 
 
 pthread_cond_t qready = PTHREAD_COND_INITIALIZER;

@@ -635,6 +635,13 @@ int main (int argc, char *argv[])
 #endif
 	}
 
+#if ARM   // confirm the group data is send to FPGA --shen sheng
+	for (i = get_group_qty(pp->p_config) ; i != 0; i--)
+	{
+		write_group_data (&TMP(group_spi[i - 1]), i - 1);
+	}
+#endif
+
 	for (i = 0; i < setup_MAX_GROUP_QTY; i++)
 		TMP(total_point_qty) += TMP(beam_qty[i]) * (GROUP_VAL_POS (i, point_qty) + 32);
 
