@@ -658,8 +658,8 @@ void shut_down_power()
 {
 	int i;
 	unsigned char key = 10;
-    i = write(pp->fd_key, &key,1);
-    printf("shut down write serial %d\n", i);
+    	i = write(pp->fd_key, &key,1);
+    	printf("shut down write serial %d\n", i);
 
 }
 
