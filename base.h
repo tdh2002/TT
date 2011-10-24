@@ -390,6 +390,7 @@ typedef struct Draw_interface
 	guchar			menu2_qty;          /*  */
 
 	gchar			file_path[128];	/* 帮助文档的路径 */
+	gchar			picture_path[56];/*向导中weld图片*/
 	WebKitWebView	*web_view;
 	WebKitWebView	*web_view_tmp;
 	GtkAdjustment	*adj;
