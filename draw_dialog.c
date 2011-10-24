@@ -4713,7 +4713,7 @@ static void signal_define_wedge(GtkDialog *dialog, gint response_id, gpointer us
 			strcpy(g_tmp_wedge.Model,buf);
 
 			buf = gtk_entry_get_text(GTK_ENTRY(open_ut_pa_wedge_file_p->serial_entry));
-			if (strcmp(buf,""))
+			if (strcmp(buf,"") == 0)
 				return ;
 			strcpy(g_tmp_wedge.Serial,buf);
 
