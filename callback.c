@@ -3685,13 +3685,12 @@ static int handler_key(guint keyval, gpointer data)
 						break;
 					default:break;
 				}
-
-			}
-			if ((tmp != pp->pos_pos) || (tmp1 != pp->mark_pop_change))
-			{
-				draw_menu2(0);
-				draw_menu3(0, NULL);
-				tttmp = gtk_spin_button_get_value (GTK_SPIN_BUTTON (pp->sbutton[CUR_POS]));
+				if ((tmp != pp->pos_pos) || (tmp1 != pp->mark_pop_change))
+				{
+					draw_menu2(0);
+					draw_menu3(0, NULL);
+					tttmp = gtk_spin_button_get_value (GTK_SPIN_BUTTON (pp->sbutton[CUR_POS]));
+				}
 			}
 
 			break;
