@@ -475,6 +475,7 @@ void draw_a_scan (gushort *p, gint width, gint height,
 			else
 				max =+ 1;
 		}
+
 		// clear back ground
 		fbliney(p,
 				xoffset + i,
@@ -482,6 +483,7 @@ void draw_a_scan (gushort *p, gint width, gint height,
 				yoffset + height,
 				0x0
 			   );
+#if 1		
 		// draw line
 		fbliney(
 				p, 
@@ -490,6 +492,8 @@ void draw_a_scan (gushort *p, gint width, gint height,
 				yoffset + max, 
 				all_col_16[GROUP_VAL_POS(groupId, ascan_color)]
 				);
+#endif
+
 #if 0
 		/* 画包络 */
 		if (GROUP_VAL_POS(groupId, ascan_envelope))
@@ -498,6 +502,7 @@ void draw_a_scan (gushort *p, gint width, gint height,
 		}
 #endif
 	}
+//	fbline(p, xoffset+0, yoffset+0, xoffset+400, yoffset+400, 0x001f);
 }
 
 #if 0
@@ -1406,7 +1411,7 @@ void draw_clb_wedge_delay (gushort *p, gint width, gint height, DOT_TYPE *data, 
 				count = i;//记录最大值时的beam_num
 				clb_tmp_max_data = TMP(clb_real_data[i]);//保存每次循环的最大值
 		}
-		if( clb_tmp_max_data > GROUP_GATE_POS(height) )
+//		if( clb_tmp_max_data > GROUP_GATE_POS(height) )
 			TMP(clb_wedge_data[i]) = (TMP(measure_data[i][1]) & 0xfffff) * 10;
 //		else
 //			TMP(clb_wedge_data[i]) = 0;

@@ -180,7 +180,7 @@ static void set_config (guint groupid)
 	GROUP_VAL(col_mode)    = 0;  /*0 Exclusion*/
 
 	set_dis_prop_scan (pp->p_config, DIS_PROP_SCAN_A);/*0 A-Scan*/
-	GROUP_VAL(ascan_color) = 3; 	/*3 Yellow*/
+	GROUP_VAL(ascan_color) = 0; 	/*3 Yellow*/
 	GROUP_VAL(ascan_envelope)	=	0; /*0 None*/
 	GROUP_VAL(ascan_appearance)	=	0; /*0 Hollow*/
 	GROUP_VAL(ascan_overlay)	=	0; /*0 None*/
@@ -635,6 +635,13 @@ int main (int argc, char *argv[])
 #endif
 	}
 
+#if ARM   // confirm the group data is send to FPGA --shen sheng
+	for (i = get_group_qty(pp->p_config) ; i != 0; i--)
+	{
+		write_group_data (&TMP(group_spi[i - 1]), i - 1);
+	}
+#endif
+
 	for (i = 0; i < setup_MAX_GROUP_QTY; i++)
 		TMP(total_point_qty) += TMP(beam_qty[i]) * (GROUP_VAL_POS (i, point_qty) + 32);
 
@@ -658,8 +665,8 @@ void shut_down_power()
 {
 	int i;
 	unsigned char key = 10;
-    i = write(pp->fd_key, &key,1);
-    printf("shut down write serial %d\n", i);
+    	i = write(pp->fd_key, &key,1);
+    	printf("shut down write serial %d\n", i);
 
 }
 
@@ -815,8 +822,8 @@ void init_group_spi (guint group)
 
 	TMP(group_spi[group]).tcg_point_qty	= 0;		/* 未完成 */
 	TMP(group_spi[group]).tcg_en		= 0;		/* 未完成 */
-	TMP(group_spi[group]).UT2			= (GROUP_VAL_POS (group, group_mode) == 2) ? 1 : 0;		
-	TMP(group_spi[group]).UT1			= (GROUP_VAL_POS (group, group_mode) == 0) ? 1 : 0;		
+	TMP(group_spi[group]).UT2			= (GROUP_VAL_POS (group, group_mode) == 3) ? 1 : 0;		
+	TMP(group_spi[group]).UT1			= (GROUP_VAL_POS (group, group_mode) == 2) ? 1 : 0;		
 	TMP(group_spi[group]).PA			= (GROUP_VAL_POS (group, group_mode) == 1) ? 1 : 0;		
 	TMP(group_spi[group]).sample_start	= 
 		(get_group_val (get_group_by_id (pp->p_config, group), GROUP_START) + 

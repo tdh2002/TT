@@ -249,7 +249,7 @@ void set_current_group (CONFIG *p, unsigned char data, int cal)	/* 设置p当前
 	{
 		generate_focallaw (data);
 		init_group_spi (data);
-//		write_group_data (&(pp->p_tmp_config->group_spi[data]), data);
+		write_group_data (&(pp->p_tmp_config->group_spi[data]), data);
 		send_group_spi (data);
 		send_focal_spi (data);
 	}
@@ -1581,6 +1581,7 @@ void grpcpy (CONFIG *p, unsigned int dst, unsigned int src)		/* 把src group 配
 	assert (dst < 8);
 	assert (src != dst);
 	memcpy (&p->group[dst], &p->group[src] , sizeof(GROUP));
+	TMP(beam_qty[dst]) = TMP(beam_qty[src]);
 }
 
 

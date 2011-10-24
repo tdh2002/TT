@@ -13,7 +13,7 @@
 #include <gdk/gdkkeysyms.h>
 #include <pthread.h>
 
-#define MAX_DMA_FREQUENCY    200
+#define MAX_DMA_FREQUENCY    400
 
 
 pthread_cond_t qready = PTHREAD_COND_INITIALIZER;
@@ -333,8 +333,8 @@ static inline void data_process(guchar *data, guint pa);
 
 static void setup_para(PARAMETER_P p, guint group)
 {
-	gint grp = get_current_group (pp->p_config);
-	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
+	//	gint grp = get_current_group (pp->p_config);
+	GROUP *p_grp = get_group_by_id (pp->p_config, group);
 	/* 探头 */
 	p->probe_p->D1_D2 = 0;			/* 0 1d 1 2d*/
 	p->probe_p->Pitch_Catch = 
@@ -456,8 +456,8 @@ static void save_cal_law(gint offset, gint group, PARAMETER_P p)
 	gint i, j,k;
 	gint ElementStart;
 	gint ElementStop ;
-	gint grp = get_current_group (pp->p_config);
-	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
+	//	gint grp = get_current_group (pp->p_config);
+	GROUP *p_grp = get_group_by_id (pp->p_config, group);
 	unsigned int tmp_max_beam_delay;
 
 
@@ -759,7 +759,7 @@ guint get_prf ()
 			default:break;
 		}
 	}
-	printf("get_group_val (p_grp, GROUP_PRF_VAL) = %d\n" ,get_group_val (p_grp, GROUP_PRF_VAL));
+
 	return get_group_val (p_grp, GROUP_PRF_VAL);
 }
 
@@ -908,224 +908,224 @@ void b2_fun0(DRAW_UI_P p, guint pos)
 		}
 		if(pp->help_yn)
 		{
-				switch(p->pos)
-				{
-					case 0:
-						switch(p->pos1[p->pos])
-						{
-							case 0:
-								show_help(HELP_Y, LABEL_00);
-								break;
-							case 1:
-								show_help(HELP_Y, LABEL_01);
-								break;
-							case 2:
-								show_help(HELP_Y, LABEL_02);
-								break;
-							case 3:
-								show_help(HELP_Y, LABEL_03);
-								break;
-							case 4:
-								//show_help(HELP_Y, LABEL_04);
-								break;
-							default :break;
-						}
-						break;
+			switch(p->pos)
+			{
+				case 0:
+					switch(p->pos1[p->pos])
+					{
+						case 0:
+							show_help(HELP_Y, LABEL_00);
+							break;
+						case 1:
+							show_help(HELP_Y, LABEL_01);
+							break;
+						case 2:
+							show_help(HELP_Y, LABEL_02);
+							break;
+						case 3:
+							show_help(HELP_Y, LABEL_03);
+							break;
+						case 4:
+							//show_help(HELP_Y, LABEL_04);
+							break;
+						default :break;
+					}
+					break;
 
-					case 1:
-						switch(p->pos1[p->pos])
-						{
-							case 0:
-								show_help(HELP_Y, LABEL_10);
-								break;
-							case 1:
-								show_help(HELP_Y, LABEL_11);
-								break;
-							case 2:
-								show_help(HELP_Y, LABEL_12);
-								break;
-							case 3:
-								show_help(HELP_Y, LABEL_13);
-								break;
-							case 4:
-								show_help(HELP_Y, LABEL_14);
-								break;
-							default :break;
-						}
-						break;
+				case 1:
+					switch(p->pos1[p->pos])
+					{
+						case 0:
+							show_help(HELP_Y, LABEL_10);
+							break;
+						case 1:
+							show_help(HELP_Y, LABEL_11);
+							break;
+						case 2:
+							show_help(HELP_Y, LABEL_12);
+							break;
+						case 3:
+							show_help(HELP_Y, LABEL_13);
+							break;
+						case 4:
+							show_help(HELP_Y, LABEL_14);
+							break;
+						default :break;
+					}
+					break;
 
-					case 2:
-						switch(p->pos1[p->pos])
-						{
-							case 0:
-								show_help(HELP_Y, LABEL_20);
-								break;
-							case 1:
-								show_help(HELP_Y, LABEL_21);
-								break;
-							case 2:
-								show_help(HELP_Y, LABEL_22);
-								break;
-							case 3:
-								show_help(HELP_Y, LABEL_23);
-								break;
-							case 4:
-								//show_help(HELP_Y, "");
-								break;
-							default :break;
-						}
-						break;
+				case 2:
+					switch(p->pos1[p->pos])
+					{
+						case 0:
+							show_help(HELP_Y, LABEL_20);
+							break;
+						case 1:
+							show_help(HELP_Y, LABEL_21);
+							break;
+						case 2:
+							show_help(HELP_Y, LABEL_22);
+							break;
+						case 3:
+							show_help(HELP_Y, LABEL_23);
+							break;
+						case 4:
+							//show_help(HELP_Y, "");
+							break;
+						default :break;
+					}
+					break;
 
-					case 3:
-						switch(p->pos1[p->pos])
-						{
-							case 0:
-								show_help(HELP_Y, LABEL_30);
-								break;
-							case 1:
-								show_help(HELP_Y, LABEL_31);
-								break;
-							case 2:
-								show_help(HELP_Y, LABEL_32);
-								break;
-							case 3:
-								show_help(HELP_Y, LABEL_33);
-								break;
-							case 4:
-								show_help(HELP_Y, LABEL_34);
-								break;
-							default :break;
-						}
-						break;
+				case 3:
+					switch(p->pos1[p->pos])
+					{
+						case 0:
+							show_help(HELP_Y, LABEL_30);
+							break;
+						case 1:
+							show_help(HELP_Y, LABEL_31);
+							break;
+						case 2:
+							show_help(HELP_Y, LABEL_32);
+							break;
+						case 3:
+							show_help(HELP_Y, LABEL_33);
+							break;
+						case 4:
+							show_help(HELP_Y, LABEL_34);
+							break;
+						default :break;
+					}
+					break;
 
-					case 4:
-						switch(p->pos1[p->pos])
-						{
-							case 0:
-								show_help(HELP_Y, LABEL_40);
-								break;
-							case 1:
-								show_help(HELP_Y, LABEL_41);
-								break;
-							case 2:
-								show_help(HELP_Y, LABEL_42);
-								break;
-							case 3:
-								show_help(HELP_Y, LABEL_43);
-								break;
-							case 4:
-								//show_help(HELP_Y, LABEL_44);
-								break;
-							default :break;
-						}
-						break;
-					case 5:
-						switch(p->pos1[p->pos])
-						{
-							case 0:
-								show_help(HELP_Y, LABEL_50);
-								break;
-							case 1:
-								show_help(HELP_Y, LABEL_51);
-								break;
-							case 2:
-								show_help(HELP_Y, LABEL_52);
-								break;
-							case 3:
-								show_help(HELP_Y, LABEL_53);
-								break;
-							case 4:
-								//show_help(HELP_Y, LABEL_54);
-								break;
-							default :break;
-						}
-						break;
-					case 6:
-						switch(p->pos1[p->pos])
-						{
-							case 0:
-								show_help(HELP_Y, LABEL_60);
-								break;
-							case 1:
-								show_help(HELP_Y, LABEL_61);
-								break;
-							case 2:
-								show_help(HELP_Y, LABEL_62);
-								break;
-							case 3:
-								show_help(HELP_Y, LABEL_63);
-								break;
-							case 4:
-								show_help(HELP_Y, LABEL_64);
-								break;
-							default :break;
-						}
-						break;
-					case 7:
-						switch(p->pos1[p->pos])
-						{
-							case 0:
-								show_help(HELP_Y, LABEL_70);
-								break;
-							case 1:
-								show_help(HELP_Y, LABEL_71);
-								break;
-							case 2:
-								show_help(HELP_Y, LABEL_72);
-								break;
-							case 3:
-								show_help(HELP_Y, LABEL_73);
-								break;
-							case 4:
-								show_help(HELP_Y, LABEL_74);
-								break;
-							default :break;
-						}
-						break;
-					case 8:
-						switch(p->pos1[p->pos])
-						{
-							case 0:
-								show_help(HELP_Y, LABEL_80);
-								break;
-							case 1:
-								show_help(HELP_Y, LABEL_81);
-								break;
-							case 2:
-								show_help(HELP_Y, LABEL_82);
-								break;
-							case 3:
-								show_help(HELP_Y, LABEL_83);
-								break;
-							case 4:
-								show_help(HELP_Y, LABEL_84);
-								break;
-							default :break;
-						}
-						break;
-					case 9:
-						switch(p->pos1[p->pos])
-						{
-							case 0:
-								show_help(HELP_Y, LABEL_90);
-								break;
-							case 1:
-								show_help(HELP_Y, LABEL_91);
-								break;
-							case 2:
-								show_help(HELP_Y, LABEL_92);
-								break;
-							case 3:
-								show_help(HELP_Y, LABEL_93);
-								break;
-							case 4:
-								//show_help(HELP_Y, LABEL_94);
-								break;
-							default :break;
-						}
-						break;
-					default: break;
-				}
+				case 4:
+					switch(p->pos1[p->pos])
+					{
+						case 0:
+							show_help(HELP_Y, LABEL_40);
+							break;
+						case 1:
+							show_help(HELP_Y, LABEL_41);
+							break;
+						case 2:
+							show_help(HELP_Y, LABEL_42);
+							break;
+						case 3:
+							show_help(HELP_Y, LABEL_43);
+							break;
+						case 4:
+							//show_help(HELP_Y, LABEL_44);
+							break;
+						default :break;
+					}
+					break;
+				case 5:
+					switch(p->pos1[p->pos])
+					{
+						case 0:
+							show_help(HELP_Y, LABEL_50);
+							break;
+						case 1:
+							show_help(HELP_Y, LABEL_51);
+							break;
+						case 2:
+							show_help(HELP_Y, LABEL_52);
+							break;
+						case 3:
+							show_help(HELP_Y, LABEL_53);
+							break;
+						case 4:
+							//show_help(HELP_Y, LABEL_54);
+							break;
+						default :break;
+					}
+					break;
+				case 6:
+					switch(p->pos1[p->pos])
+					{
+						case 0:
+							show_help(HELP_Y, LABEL_60);
+							break;
+						case 1:
+							show_help(HELP_Y, LABEL_61);
+							break;
+						case 2:
+							show_help(HELP_Y, LABEL_62);
+							break;
+						case 3:
+							show_help(HELP_Y, LABEL_63);
+							break;
+						case 4:
+							show_help(HELP_Y, LABEL_64);
+							break;
+						default :break;
+					}
+					break;
+				case 7:
+					switch(p->pos1[p->pos])
+					{
+						case 0:
+							show_help(HELP_Y, LABEL_70);
+							break;
+						case 1:
+							show_help(HELP_Y, LABEL_71);
+							break;
+						case 2:
+							show_help(HELP_Y, LABEL_72);
+							break;
+						case 3:
+							show_help(HELP_Y, LABEL_73);
+							break;
+						case 4:
+							show_help(HELP_Y, LABEL_74);
+							break;
+						default :break;
+					}
+					break;
+				case 8:
+					switch(p->pos1[p->pos])
+					{
+						case 0:
+							show_help(HELP_Y, LABEL_80);
+							break;
+						case 1:
+							show_help(HELP_Y, LABEL_81);
+							break;
+						case 2:
+							show_help(HELP_Y, LABEL_82);
+							break;
+						case 3:
+							show_help(HELP_Y, LABEL_83);
+							break;
+						case 4:
+							show_help(HELP_Y, LABEL_84);
+							break;
+						default :break;
+					}
+					break;
+				case 9:
+					switch(p->pos1[p->pos])
+					{
+						case 0:
+							show_help(HELP_Y, LABEL_90);
+							break;
+						case 1:
+							show_help(HELP_Y, LABEL_91);
+							break;
+						case 2:
+							show_help(HELP_Y, LABEL_92);
+							break;
+						case 3:
+							show_help(HELP_Y, LABEL_93);
+							break;
+						case 4:
+							//show_help(HELP_Y, LABEL_94);
+							break;
+						default :break;
+					}
+					break;
+				default: break;
+			}
 
 		}
 
@@ -1529,6 +1529,7 @@ void b3_fun1(gpointer p)
 											set_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), 
 													GROUP_VELOCITY, 100*pp->vel);
 											pp->flag = 1;//当该标志为1时才能进行下面的wedge Delay
+											esc_calibration();		
 										}
 										else
 										{
@@ -1539,8 +1540,8 @@ void b3_fun1(gpointer p)
 													"velocity is not reasonable \n");
 											gtk_dialog_run(GTK_DIALOG(dialog));
 											gtk_widget_destroy(dialog);
+											pp->cstart_qty = 6 ;
 										}
-										esc_calibration();		
 									}
 									break;
 								case 1://Wedge Delay
@@ -1626,7 +1627,6 @@ void b3_fun1(gpointer p)
 										//校准完之后清除包络线
 										for (i = 0; i < step; i++)
 										{
-											//								TMP(clb_real_data[i]) = ((TMP(measure_data[i][1])>>20) & 0xfff)/20.47;
 											TMP(clb_max_data[i]) = TMP(clb_real_data[i]);//第一次需初始化
 										}
 										esc_calibration();		
@@ -2198,7 +2198,7 @@ void b3_fun3(gpointer p)
 									{
 										for (i = 0; i < clb_step; i++)
 										{
-											TMP(clb_wedge_data[i]) = (TMP(measure_data[i][1]) & 0xfffff) * 10;
+											TMP(clb_wedge_data[i]) = 0;//(TMP(measure_data[i][1]) & 0xfffff) * 10;
 										}
 									}
 									break;
@@ -3616,83 +3616,84 @@ static int handler_key(guint keyval, gpointer data)
 			}
 			else/*当主菜单条 三级菜单条 都处于收回状态时*/
 			{
-					switch (pp->pos_pos)
-					{
-						case MENU2_STOP:
-							pp->pos_pos = MENU2_PRESSED;
+				switch (pp->pos_pos)
+				{
+					case MENU2_STOP:
+						pp->pos_pos = MENU2_PRESSED;
+						pp->pos_pos = MENU3_STOP;
+						switch (pp->pos1[pp->pos])
+						{
+							case 0:
+								b2_fun0(pp,0);
+								break;
+							case 1:
+								b2_fun0(pp,1);
+								break;
+							case 2:
+								b2_fun0(pp,2);
+								break;
+							case 3:
+								b2_fun0(pp,3);
+								break;
+							case 4:
+								b2_fun0(pp,4);
+								break;
+							default:break;
+						}
+						break;
+					case MENU2_PRESSED:
+						pp->pos_pos = MENU3_STOP;
+						break;
+					case MENU3_STOP:
+						if(!pp->help_yn)
+						{
+							if(gtk_widget_get_sensitive(pp->eventbox30[CUR_POS]))
+								pp->pos_pos = MENU3_PRESSED;
+							else
+								pp->pos_pos = MENU3_STOP;
+							/* 按下的动作在这里实现 */
+						}
+						break;
+					case MENU3_PRESSED:
+						if(!pp->help_yn)
+						{
 							pp->pos_pos = MENU3_STOP;
-							switch (pp->pos1[pp->pos])
+							switch (CUR_POS)
 							{
 								case 0:
-									b2_fun0(pp,0);
+									b3_fun0(NULL);
 									break;
 								case 1:
-									b2_fun0(pp,1);
+									b3_fun1(NULL);
 									break;
 								case 2:
-									b2_fun0(pp,2);
+									b3_fun2(NULL);
 									break;
 								case 3:
-									b2_fun0(pp,3);
+									b3_fun3(NULL);
 									break;
 								case 4:
-									b2_fun0(pp,4);
+									b3_fun4(NULL);
+									break;
+								case 5:
+									b3_fun5(NULL);
 									break;
 								default:break;
 							}
-							break;
-						case MENU2_PRESSED:
 							pp->pos_pos = MENU3_STOP;
-							break;
-						case MENU3_STOP:
-							if(!pp->help_yn)
-							{
-								if(gtk_widget_get_sensitive(pp->eventbox30[CUR_POS]))
-									pp->pos_pos = MENU3_PRESSED;
-								else
-									pp->pos_pos = MENU3_STOP;
-								/* 按下的动作在这里实现 */
-							}
-							break;
-						case MENU3_PRESSED:
-							if(!pp->help_yn)
-							{
-								pp->pos_pos = MENU3_STOP;
-								switch (CUR_POS)
-								{
-									case 0:
-										b3_fun0(NULL);
-										break;
-									case 1:
-										b3_fun1(NULL);
-										break;
-									case 2:
-										b3_fun2(NULL);
-										break;
-									case 3:
-										b3_fun3(NULL);
-										break;
-									case 4:
-										b3_fun4(NULL);
-										break;
-									case 5:
-										b3_fun5(NULL);
-										break;
-									default:break;
-								}
-								pp->pos_pos = MENU3_STOP;
-							}
-							break;
-						default:break;
-					}
-
-				if ((tmp != pp->pos_pos) || (tmp1 != pp->mark_pop_change))
-				{
-					draw_menu2(0);
-					draw_menu3(0, NULL);
-					tttmp = gtk_spin_button_get_value (GTK_SPIN_BUTTON (pp->sbutton[CUR_POS]));
+						}
+						break;
+					default:break;
 				}
+
 			}
+			if ((tmp != pp->pos_pos) || (tmp1 != pp->mark_pop_change))
+			{
+				draw_menu2(0);
+				draw_menu3(0, NULL);
+				tttmp = gtk_spin_button_get_value (GTK_SPIN_BUTTON (pp->sbutton[CUR_POS]));
+			}
+
 			break;
 
 		case GDK_F1:
@@ -4380,12 +4381,9 @@ void data_100 (GtkSpinButton *spinbutton, gpointer data) /* 增益Gain P100 */
 #if ARM
 	/*	ioctl (fd_gpio, GPIO43_LOW, &i);*/ /* 发送group参数不复位 */
 	write (fd_array, (unsigned char *)(p1), 8);
-
 	//write_group_data (&TMP(group_spi[grp]), grp);
-
-	/* 发送给硬件 */
 #endif
-	/* 发送给硬件 */
+
 }
 
 void data_101 (GtkSpinButton *spinbutton, gpointer data) /*Start 扫描延时 P101 */
@@ -5114,7 +5112,7 @@ void data_202 (GtkSpinButton *spinbutton, gpointer data)	/* 闸门开始位置 P
 	if(LAW_VAL(Focal_type) == 0)
 	{
 		current_angle = LAW_VAL(Angle_min)/100.0 + BeamNo * LAW_VAL(Angle_step)/100.0 ;
-		max_angle = MAX(abs(LAW_VAL(Angle_min)), abs(LAW_VAL(Angle_max))) * G_PI / 180.0 ;
+		max_angle = MAX(fabs(LAW_VAL(Angle_min)), fabs(LAW_VAL(Angle_max))) * G_PI / 180.0 ;
 	}
 	else
 	{
@@ -5182,9 +5180,9 @@ void data_202 (GtkSpinButton *spinbutton, gpointer data)	/* 闸门开始位置 P
 					pp->gate_i_end[k]	= (int)( (GROUP_GATE_POS(start) + GROUP_GATE_POS (width) + delay) / 10 );
 				}
 			}
+			printf("gate_a_start[%d] = %d beam_num = %d \n", k, pp->gate_a_start[k], BeamNo);
 		}
 	}
-
 
 	//tt[0] = (GROUP_VAL_POS(grp, gate[0].start) + GROUP_VAL_POS (grp, gate[0].width));
 	//tt[1] = (GROUP_VAL_POS(grp, gate[1].start) + GROUP_VAL_POS (grp, gate[1].width));
@@ -5203,7 +5201,6 @@ void data_202 (GtkSpinButton *spinbutton, gpointer data)	/* 闸门开始位置 P
 		draw_area_calibration();
 	send_focal_spi (grp);
 	gtk_widget_queue_draw (pp->vboxtable);
-
 }
 
 void data_2021 (GtkMenuItem *menuitem, gpointer data)	/* 闸门同步 */
@@ -6332,13 +6329,20 @@ void data_500 (GtkMenuItem *menuitem, gpointer data) /* 增加删除选择group 
 
 void data_501 (GtkMenuItem *menuitem, gpointer data) /* Probe/Part->Select->Group Mode 501 */
 {
+	gint group = get_current_group(pp->p_config);
 	GROUP_VAL(group_mode) = (gchar) (GPOINTER_TO_UINT (data));
-	if(GROUP_VAL(group_mode)!=1) /*group mode 选择UT,UT1,UT2时，focal law 不可用*/
+	TMP(group_spi[group]).UT2			= (GROUP_VAL_POS (group, group_mode) == 3) ? 1 : 0;		
+	TMP(group_spi[group]).UT1			= (GROUP_VAL_POS (group, group_mode) == 2) ? 1 : 0;		
+	TMP(group_spi[group]).PA			= (GROUP_VAL_POS (group, group_mode) == 1) ? 1 : 0;		
+	/*group mode 选择UT,UT1,UT2时，focal law 不可用*/
+	if(GROUP_VAL(group_mode)!=1) 
 		gtk_widget_set_sensitive(pp->menuitem[6],FALSE);
 	else
 		gtk_widget_set_sensitive(pp->menuitem[6],TRUE);
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
+
+	write_group_data (&TMP(group_spi[group]), group);
 }
 
 void data_502 (GtkMenuItem *menuitem, gpointer data) /* Probe/Part->Select->Select 502 */
@@ -7075,19 +7079,19 @@ void generate_focallaw(int grp)
 	temp_beam = 1;
 	if (LAW_VAL (Focal_type) == AZIMUTHAL_SCAN)
 	{
-		i = (LAW_VAL(Angle_max) - LAW_VAL(Angle_min)) /
-			LAW_VAL(Angle_step) + 1;
-		j = (LAW_VAL(Angle_beam_skew_min) - LAW_VAL(Angle_beam_skew_max)) /
-			LAW_VAL(Angle_beam_skew_step) + 1;
+		i = (LAW_VAL_POS(grp, Angle_max) - LAW_VAL_POS(grp, Angle_min)) /
+			LAW_VAL_POS(grp, Angle_step) + 1;
+		j = (LAW_VAL_POS(grp, Angle_beam_skew_min) - LAW_VAL_POS(grp, Angle_beam_skew_max)) /
+			LAW_VAL_POS(grp, Angle_beam_skew_step) + 1;
 		temp_beam = i * j;
-		step = (gint)( (LAW_VAL(Angle_max) - LAW_VAL(Angle_min)) / LAW_VAL(Angle_step) + 1);
+		step = (gint)( (LAW_VAL_POS(grp, Angle_max) - LAW_VAL_POS(grp, Angle_min)) / LAW_VAL_POS(grp, Angle_step) + 1);
 	}
 	else if(LAW_VAL (Focal_type) == LINEAR_SCAN) 
 	{
-		temp_beam = (gint)( ( LAW_VAL (Last_tx_elem) - LAW_VAL(First_tx_elem) - LAW_VAL(Elem_qty) + 1 ) /
-				LAW_VAL(Elem_step) ) + 1;
-		step = (gint)( ( LAW_VAL (Last_tx_elem)-LAW_VAL(First_tx_elem) - LAW_VAL(Elem_qty) + 1 ) /
-				LAW_VAL(Elem_step) ) + 1;
+		temp_beam = (gint)( ( LAW_VAL_POS (grp, Last_tx_elem) - LAW_VAL_POS(grp, First_tx_elem) - LAW_VAL_POS(grp, Elem_qty) + 1 ) /
+				LAW_VAL_POS(grp, Elem_step) ) + 1;
+		step = (gint)( ( LAW_VAL_POS (grp, Last_tx_elem)-LAW_VAL_POS(grp, First_tx_elem) - LAW_VAL_POS(grp, Elem_qty) + 1 ) /
+				LAW_VAL_POS(grp, Elem_step) ) + 1;
 	}
 	else if(LAW_VAL (Focal_type) == DEPTH_SCAN) 
 	{
@@ -7101,9 +7105,9 @@ void generate_focallaw(int grp)
 
 	TMP(beam_qty[grp])	= temp_beam;
 	TMP(beam_num[grp]) = 0;
-	TMP(current_angle[grp]) = LAW_VAL(Angle_min) * G_PI / 18000.0 ;
+	TMP(current_angle[grp]) = LAW_VAL_POS(grp, Angle_min) * G_PI / 18000.0 ;
 
-	TMP(group_spi[grp]).point_qty = GROUP_VAL(point_qty);
+	TMP(group_spi[grp]).point_qty = GROUP_VAL_POS(grp, point_qty);
 
 	cal_focal_law (grp);
 	//send_focal_spi (grp);
