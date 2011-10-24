@@ -13961,10 +13961,13 @@ void draw3_data4(DRAW_UI_P p)
 	gfloat tmpf = 0.0;
 	gchar *str;
 
+	guint k, offset;
 	gfloat cur_value, lower, upper, step;
 	guint digit, pos, unit, content_pos, temp_beam, menu_status = 0, temp_qty =0, temp_pos = 0;
 	gint grp = get_current_group (pp->p_config);
 	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
+	for (offset = 0, k = 0 ; k < grp; k++)
+		offset += TMP(beam_qty[k]);
 
 	switch (pp->pos) 
 	{
@@ -14797,7 +14800,7 @@ void draw3_data4(DRAW_UI_P p)
 						}
 						if ((pp->pos_pos == MENU3_PRESSED) && (CUR_POS == 4))
 						{
-							cur_value = BEAM_INFO(TMP(beam_num[get_current_group(pp->p_config)]),beam_delay)/1000.0;
+							cur_value = BEAM_INFO(offset + TMP(beam_num[get_current_group(pp->p_config)]),beam_delay)/1000.0;
 							lower = 0.0;
 							upper = 1000.0;
 							step = tmpf;
@@ -14808,7 +14811,7 @@ void draw3_data4(DRAW_UI_P p)
 						}
 						else 
 						{
-							cur_value = BEAM_INFO(TMP(beam_num[get_current_group(pp->p_config)]),beam_delay)/1000.0;
+							cur_value = BEAM_INFO(offset + TMP(beam_num[get_current_group(pp->p_config)]),beam_delay)/1000.0;
 							digit = 2;
 							pos = 4;
 							unit = UNIT_US;

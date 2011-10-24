@@ -1606,8 +1606,18 @@ void b3_fun1(gpointer p)
 												}
 											}
 											if(!count)
+											{
+												for (i = 0; i < step; i++)
+												{
+													BEAM_INFO(offset + i, beam_delay) = pp->G_delay[i];
+													TMP(focal_law_all_beam[offset + i]).G_delay			= 
+															get_group_val (get_group_by_id (pp->p_config, grp), GROUP_WEDGE_DELAY)
+															+	GROUP_VAL_POS (grp, wedge.Probe_delay) + pp->G_delay[i];//modified by hefan 
+												}	
+												send_focal_spi(get_current_group(pp->p_config));
+												//pp->flag = 0;
 												esc_calibration();
-											//pp->flag = 0;
+											}
 										}
 									}
 									break;
@@ -3476,6 +3486,10 @@ static int handler_key(guint keyval, gpointer data)
 						draw_area_all();
 					else
 						draw_area_calibration();
+					TMP(focal_law_all_beam[offset + BeamNo]).G_delay			= 
+						get_group_val (get_group_by_id (pp->p_config, group), GROUP_WEDGE_DELAY)
+						+	GROUP_VAL_POS (group, wedge.Probe_delay) + BEAM_INFO(BeamNo + offset, beam_delay);//modified by hefan 
+					gtk_widget_queue_draw (pp->vboxtable);
 				}
 			}
 			break;
@@ -4899,7 +4913,7 @@ void data_134 (GtkSpinButton *spinbutton, gpointer data) /* beam delay */
 	//g_print("current_beam_delay=%d\n", (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0) );
 	TMP(focal_law_all_beam[offset + index]).G_delay			= 
 		get_group_val (get_group_by_id (pp->p_config, group), GROUP_WEDGE_DELAY)
-		+	GROUP_VAL_POS (group, wedge.Probe_delay) + BEAM_INFO(index,beam_delay);//modified by hefan 
+		+	GROUP_VAL_POS (group, wedge.Probe_delay) + BEAM_INFO(index + offset, beam_delay);//modified by hefan 
 
 	/*发送给硬件*/
 	send_focal_spi(get_current_group(pp->p_config));
@@ -5122,8 +5136,8 @@ void data_202 (GtkSpinButton *spinbutton, gpointer data)	/* 闸门开始位置 P
 
 	for (k = offset; k < offset + beam_qty; k++)//k:每个beam
 	{
-		if( (k - offset) == BeamNo )//只能修改当前beam
-		{
+//		if( (k - offset) == BeamNo )//只能修改当前beam
+//		{
 			delay = pp->G_delay[k - offset];
 			if(LAW_VAL(Focal_point_type) == 1)//true depth
 			{ 
@@ -5161,8 +5175,8 @@ void data_202 (GtkSpinButton *spinbutton, gpointer data)	/* 闸门开始位置 P
 					pp->gate_i_end[k]	= (int)( (GROUP_GATE_POS(start) + GROUP_GATE_POS (width) + delay) / 10 );
 				}
 			}
-			printf("gate_a_start[%d] = %d beam_num = %d \n", k, pp->gate_a_start[k], BeamNo);
-		}
+//			printf("gate_a_start[%d] = %d beam_num = %d \n", k, pp->gate_a_start[k], BeamNo);
+//		}
 	}
 
 	//tt[0] = (GROUP_VAL_POS(grp, gate[0].start) + GROUP_VAL_POS (grp, gate[0].width));
