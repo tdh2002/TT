@@ -214,8 +214,8 @@ static void set_config (guint groupid)
 
 	set_cur_encoder (pp->p_config, ENCODER_1);
 	set_enc_polarity (pp->p_config, ENC_NORMAL, get_cur_encoder (pp->p_config));
-	set_enc_type (pp->p_config, ENC_CLOCK_DIR, get_cur_encoder (pp->p_config));
-	set_enc_resolution (pp->p_config, 1000, get_cur_encoder (pp->p_config));
+	set_enc_type (pp->p_config, ENC_QUAD, get_cur_encoder (pp->p_config));
+	set_enc_resolution (pp->p_config, 12000, get_cur_encoder (pp->p_config));
 	set_enc_origin (pp->p_config, 0, get_cur_encoder (pp->p_config));
 
 	set_inspec_type (pp->p_config, TYPE_ONE_LINE);
@@ -259,7 +259,7 @@ static void set_config (guint groupid)
 	set_report_userfield_enable (pp->p_config, FALSE, 8);
 	set_report_userfield_enable (pp->p_config, FALSE, 9);
 	set_report_userfield_label (pp->p_config, "Author", 0);
-	set_report_userfield_content (pp->p_config, "TanDenghua", 0);
+	set_report_userfield_content (pp->p_config, "Content", 0);
 
 	/* 探头信息 */
 	GROUP_VAL(probe.Elem_qty)	= 32; /*  */

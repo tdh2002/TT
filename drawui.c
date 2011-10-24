@@ -398,6 +398,9 @@ void show_help(guint i, char *src)
 		}
 		if(src)
 			strcat(pp->file_path, src);	
+		
+		//g_print("pp->pos = %d ,src = %s, file_name = %s,help = %d\n",pp->pos,src,pp->file_path,i);
+
 		webkit_web_view_load_uri (pp->web_view, pp->file_path);		
 		gtk_widget_hide(pp->hbox211);
 		gtk_widget_show(pp->sw);
@@ -465,7 +468,7 @@ void menuitem_function (GtkMenuItem *menuitem, gpointer data)
 	}
 	if(pp->help_yn)
 	{
-		show_help(HELP_Y, 0);/*弹出帮助窗口*/
+		show_help(HELP_Y, NULL);/*弹出帮助窗口*/
 	}
 	MENU_STATUS = MENU3_STOP; /* */
 	draw_menu2(1);
@@ -1177,88 +1180,6 @@ static gboolean draw_info(GtkWidget *widget, GdkEventExpose *event, gpointer dat
 	}
 
 
-	/* 调色条信息 */
-if(!(prule->mask & 0x04))
-{
-	cairo_set_source_rgba (cr, 1.0, 1.0, 1.0, 1.0);
-	cairo_rectangle (cr, w-30, 0, 10, h-20);
-	cairo_fill (cr);
-	for ( i = 21; i < h ; i++ )
-	{
-		switch (((DRAW_AREA_P)(data))->scan_type)
-		{
-			case	A_SCAN:
-			case	A_SCAN_R:
-			case	B_SCAN:
-			case	S_SCAN:
-			case	S_SCAN_A:
-            case    S_SCAN_L:  // modified by shensheng for Linear S scan color bar is gray
-				color_r = ((TMP(color_amp[i * 256 / h]) >> 11)) / 32.0;
-				color_g = ((TMP(color_amp[i * 256 / h]) & 0x07e0) >> 5) / 64.0;
-				color_b = ((TMP(color_amp[i * 256 / h]) & 0x1f)) /  32.0;
-				break;
-			case	C_SCAN:
-				switch (get_cscan_source(pp->p_config, 0))
-				{
-					case C_SCAN_A_HEIGHT:
-					case C_SCAN_B_HEIGHT:
-						color_r = ((TMP(color_amp[i * 256 / h]) >> 11)) / 32.0;
-						color_g = ((TMP(color_amp[i * 256 / h]) & 0x07e0) >> 5) / 64.0;
-						color_b = ((TMP(color_amp[i * 256 / h]) & 0x1f)) /  32.0;
-						break;
-					case C_SCAN_THICKNESS:
-					case C_SCAN_I_GATE:
-						color_r = ((TMP(color_depth[i * 256 / h]) >> 11)) / 32.0;
-						color_g = ((TMP(color_depth[i * 256 / h]) & 0x07e0) >> 5) / 64.0;
-						color_b = ((TMP(color_depth[i * 256 / h]) & 0x1f)) /  32.0;
-						break;
-					default:break;
-				}
-				break;
-			case	CC_SCAN:
-				switch (get_cscan_source(pp->p_config, 1))
-				{
-					case C_SCAN_A_HEIGHT:
-					case C_SCAN_B_HEIGHT:
-						color_r = ((TMP(color_amp[i * 256 / h]) >> 11)) / 32.0;
-						color_g = ((TMP(color_amp[i * 256 / h]) & 0x07e0) >> 5) / 64.0;
-						color_b = ((TMP(color_amp[i * 256 / h]) & 0x1f)) /  32.0;
-						break;
-					case C_SCAN_THICKNESS:
-					case C_SCAN_I_GATE:
-						color_r = ((TMP(color_depth[i * 256 / h]) >> 11)) / 32.0;
-						color_g = ((TMP(color_depth[i * 256 / h]) & 0x07e0) >> 5) / 64.0;
-						color_b = ((TMP(color_depth[i * 256 / h]) & 0x1f)) /  32.0;
-						break;
-					default:break;
-				}
-				break;
-			case	CCC_SCAN:
-				switch (get_cscan_source(pp->p_config, 0))
-				{
-					case C_SCAN_A_HEIGHT:
-					case C_SCAN_B_HEIGHT:
-						color_r = ((TMP(color_amp[i * 256 / h]) >> 11)) / 32.0;
-						color_g = ((TMP(color_amp[i * 256 / h]) & 0x07e0) >> 5) / 64.0;
-						color_b = ((TMP(color_amp[i * 256 / h]) & 0x1f)) /  32.0;
-						break;
-					case C_SCAN_THICKNESS:
-					case C_SCAN_I_GATE:
-						color_r = ((TMP(color_depth[i * 256 / h]) >> 11)) / 32.0;
-						color_g = ((TMP(color_depth[i * 256 / h]) & 0x07e0) >> 5) / 64.0;
-						color_b = ((TMP(color_depth[i * 256 / h]) & 0x1f)) /  32.0;
-						break;
-					default:break;
-				}
-				break;
-			default:break;
-		}
-		cairo_set_source_rgba (cr, color_r, color_g, color_b, 1.0);
-		cairo_move_to (cr, w - 29, h - i);
-		cairo_line_to (cr, w - 21, h - i);
-		cairo_stroke (cr);
-	}
-}
 	/* 画 overlay */
 	if (get_overlay_overlay(pp->p_config) == 1)
 	{
@@ -2158,6 +2079,90 @@ if(!(prule->mask & 0x04))
 		cairo_restore(cr);
 
 	}
+
+
+	/* 调色条信息 */
+if(!(prule->mask & 0x04))
+{
+	cairo_set_source_rgba (cr, 1.0, 1.0, 1.0, 1.0);
+	cairo_rectangle (cr, w-30, 0, 10, h-20);
+	cairo_fill (cr);
+	for ( i = 21; i < h ; i++ )
+	{
+		switch (((DRAW_AREA_P)(data))->scan_type)
+		{
+			case	A_SCAN:
+			case	A_SCAN_R:
+			case	B_SCAN:
+			case	S_SCAN:
+			case	S_SCAN_A:
+            case    S_SCAN_L:  // modified by shensheng for Linear S scan color bar is gray
+				color_r = ((TMP(color_amp[i * 256 / h]) >> 11)) / 32.0;
+				color_g = ((TMP(color_amp[i * 256 / h]) & 0x07e0) >> 5) / 64.0;
+				color_b = ((TMP(color_amp[i * 256 / h]) & 0x1f)) /  32.0;
+				break;
+			case	C_SCAN:
+				switch (get_cscan_source(pp->p_config, 0))
+				{
+					case C_SCAN_A_HEIGHT:
+					case C_SCAN_B_HEIGHT:
+						color_r = ((TMP(color_amp[i * 256 / h]) >> 11)) / 32.0;
+						color_g = ((TMP(color_amp[i * 256 / h]) & 0x07e0) >> 5) / 64.0;
+						color_b = ((TMP(color_amp[i * 256 / h]) & 0x1f)) /  32.0;
+						break;
+					case C_SCAN_THICKNESS:
+					case C_SCAN_I_GATE:
+						color_r = ((TMP(color_depth[i * 256 / h]) >> 11)) / 32.0;
+						color_g = ((TMP(color_depth[i * 256 / h]) & 0x07e0) >> 5) / 64.0;
+						color_b = ((TMP(color_depth[i * 256 / h]) & 0x1f)) /  32.0;
+						break;
+					default:break;
+				}
+				break;
+			case	CC_SCAN:
+				switch (get_cscan_source(pp->p_config, 1))
+				{
+					case C_SCAN_A_HEIGHT:
+					case C_SCAN_B_HEIGHT:
+						color_r = ((TMP(color_amp[i * 256 / h]) >> 11)) / 32.0;
+						color_g = ((TMP(color_amp[i * 256 / h]) & 0x07e0) >> 5) / 64.0;
+						color_b = ((TMP(color_amp[i * 256 / h]) & 0x1f)) /  32.0;
+						break;
+					case C_SCAN_THICKNESS:
+					case C_SCAN_I_GATE:
+						color_r = ((TMP(color_depth[i * 256 / h]) >> 11)) / 32.0;
+						color_g = ((TMP(color_depth[i * 256 / h]) & 0x07e0) >> 5) / 64.0;
+						color_b = ((TMP(color_depth[i * 256 / h]) & 0x1f)) /  32.0;
+						break;
+					default:break;
+				}
+				break;
+			case	CCC_SCAN:
+				switch (get_cscan_source(pp->p_config, 0))
+				{
+					case C_SCAN_A_HEIGHT:
+					case C_SCAN_B_HEIGHT:
+						color_r = ((TMP(color_amp[i * 256 / h]) >> 11)) / 32.0;
+						color_g = ((TMP(color_amp[i * 256 / h]) & 0x07e0) >> 5) / 64.0;
+						color_b = ((TMP(color_amp[i * 256 / h]) & 0x1f)) /  32.0;
+						break;
+					case C_SCAN_THICKNESS:
+					case C_SCAN_I_GATE:
+						color_r = ((TMP(color_depth[i * 256 / h]) >> 11)) / 32.0;
+						color_g = ((TMP(color_depth[i * 256 / h]) & 0x07e0) >> 5) / 64.0;
+						color_b = ((TMP(color_depth[i * 256 / h]) & 0x1f)) /  32.0;
+						break;
+					default:break;
+				}
+				break;
+			default:break;
+		}
+		cairo_set_source_rgba (cr, color_r, color_g, color_b, 1.0);
+		cairo_move_to (cr, w - 29, h - i);
+		cairo_line_to (cr, w - 21, h - i);
+		cairo_stroke (cr);
+	}
+}
 
 	/* 画ruler */
 
@@ -5909,9 +5914,10 @@ void draw3_data1(DRAW_UI_P p)
 					break;
 				case 3:/*Wizard -> Weld -> start p031 */
 					draw3_popdown (NULL, 1, 1);
+g_print("wstart_qty = %d\n",pp->wstart_qty);
 					if(pp->wstart_qty == 2)
 					{
-//						pp->file_path = "http://127.0.0.1/pic/weld/1.jpg";
+						memset(pp->file_path,0,128);
 						strcpy(pp->file_path, "http://127.0.0.1/pic/weld/1.jpg");
 						webkit_web_view_load_uri (pp->web_view, pp->file_path);		
 						gtk_widget_hide(pp->hbox211);
@@ -5919,19 +5925,20 @@ void draw3_data1(DRAW_UI_P p)
 					}
 					else if(pp->wstart_qty == 3)
 					{
+						memset(pp->file_path,0,128);
 						switch(get_part_weld(pp->p_config))
 						{
 							case 0:
-//								pp->file_path = "http://127.0.0.1/pic/weld/2.jpg";
+								strcpy(pp->file_path,"http://127.0.0.1/pic/weld/2.jpg");
 								break;
 							case 1:
-//								pp->file_path = "http://127.0.0.1/pic/weld/3.jpg";
+								strcpy(pp->file_path,"http://127.0.0.1/pic/weld/3.jpg");
 								break;
 							case 2:
-//						pp->file_path = "http://127.0.0.1/pic/weld/5.jpg";
+								strcpy(pp->file_path,"http://127.0.0.1/pic/weld/5.jpg");
 								break;
 							case 3:
-//						pp->file_path = "http://127.0.0.1/pic/weld/7.jpg";
+								strcpy(pp->file_path,"http://127.0.0.1/pic/weld/7.jpg");
 								break;
 							default:break;
 						}
@@ -5941,18 +5948,20 @@ void draw3_data1(DRAW_UI_P p)
 					}
 					else if(pp->wstart_qty == 4)
 					{
+						memset(pp->file_path,0,128);
 						switch(get_part_weld(pp->p_config))
 						{
 							case 0:
+								strcpy(pp->file_path,"http://127.0.0.1/pic/weld/2.jpg");
 								break;
 							case 1:
-	//					pp->file_path = "http://127.0.0.1/pic/weld/4.jpg";
+								strcpy(pp->file_path, "http://127.0.0.1/pic/weld/4.jpg");
 								break;
 							case 2:
-		//				pp->file_path = "http://127.0.0.1/pic/weld/6.jpg";
+								strcpy(pp->file_path, "http://127.0.0.1/pic/weld/6.jpg");
 								break;
 							case 3:
-			//			pp->file_path = "http://127.0.0.1/pic/weld/8.jpg";
+								strcpy(pp->file_path, "http://127.0.0.1/pic/weld/8.jpg");
 								break;
 							default:break;
 						}
@@ -5962,8 +5971,16 @@ void draw3_data1(DRAW_UI_P p)
 					}
 					else
 					{
-						gtk_widget_show(pp->hbox211);
-						gtk_widget_hide(pp->sw);
+						if(pp->help_yn)/*帮助文档打开时则显示帮助文档*/
+						{
+							gtk_widget_hide(pp->hbox211);
+							gtk_widget_show(pp->sw);
+						}
+						else
+						{
+							gtk_widget_show(pp->hbox211);
+							gtk_widget_hide(pp->sw);
+						}
 					}
 
 					if( (pp->wstart_qty >1) && (pp->wstart_qty < 4) )
@@ -18645,8 +18662,7 @@ void init_ui(DRAW_UI_P p)
 	gtk_container_add(GTK_CONTAINER (pp->sw), GTK_WIDGET (pp->web_view));
 
 	memset(pp->file_path,0,128);
-//p->file_path = "http://127.0.0.1/source/system/Help/Contextual/Help_UT_Settings_Menu.html";
-	strcpy(pp->file_path, "http://127.0.0.1/source/system/Help/Contextual/Help_UT_Settings_Menu.html");
+	strcpy(pp->file_path, HELP_UT_SETTING_PATH);
 
 	webkit_web_view_load_uri (pp->web_view, pp->file_path);
 
