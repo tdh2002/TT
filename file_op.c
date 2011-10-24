@@ -70,7 +70,7 @@ void read_probe_file (const gchar *file_path, PROBE_P p)
 	if ((fd = open(file_path, O_RDONLY ))<0) 
 	{
 		perror("open:");
-		exit(1);
+		//exit(1);
 	}
 	else 
 	{
@@ -97,7 +97,7 @@ void save_probe_file (const gchar *file_path, PROBE_P p)
 	if ((fd = open(file_path,  O_CREAT| O_RDWR,0666))<0) 
 	{
 		perror("open:");
-		exit(1);
+		//exit(1);
 	}
 	else 
 	{
@@ -126,7 +126,7 @@ void read_wedge_file (const gchar *file_path, WEDGE_P p)
 	if ((fd = open(file_path, O_RDONLY ))<0) 
 	{
 		perror("open:");
-		exit(1);
+		//exit(1);
 	}
 	else 
 	{
@@ -148,7 +148,7 @@ void save_wedge_file (const gchar *file_path, WEDGE_P p)
 	if ((fd = open(file_path, O_CREAT| O_RDWR,0666))<0) 
 	{
 		perror("open:");
-		exit(1);
+		//exit(1);
 	}
 	else 
 	{

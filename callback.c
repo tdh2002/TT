@@ -7094,11 +7094,13 @@ void generate_focallaw(int grp)
 	}
 	else if(LAW_VAL (Focal_type) == DEPTH_SCAN) 
 	{
-
+		temp_beam = 1;
+		step = 0;
 	}
 	else if(LAW_VAL (Focal_type) == STATIC_SCAN) 
 	{
-
+		temp_beam = 1;
+		step = 0;
 	}
 
 
