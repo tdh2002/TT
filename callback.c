@@ -132,6 +132,8 @@ void data_132 (GtkSpinButton *spinbutton, gpointer data);
 void data_134 (GtkSpinButton *spinbutton, gpointer data);
 void data_135 (GtkSpinButton *spinbutton, gpointer data);
 
+void data_140 (GtkSpinButton *spinbutton, gpointer data);
+
 void data_1431(GtkSpinButton *spinbutton, gpointer data);        /* 143 Points Qty */
 void data_143 (GtkMenuItem *menuitem, gpointer data);            /* 143 Points Qty */
 void data_1451(GtkSpinButton *spinbutton, gpointer data);        /* 145 Sum Gain */
@@ -1163,8 +1165,7 @@ static inline void data_process(guchar* data, guint pa)
 void b3_fun0(gpointer pt)
 {
 	DRAW_UI_P p = pp;
-	pthread_t thread_id;
-	int ret;
+
 	/* 之前的位置 */
 	p->pos_last2 = p->pos2[p->pos][p->pos1[p->pos]];
 	p->pos2[p->pos][p->pos1[p->pos]] = 0;
@@ -1218,14 +1219,8 @@ void b3_fun0(gpointer pt)
 		case 1: /* UT Settings*/
 			switch (p->pos1[1])
 			{
-				case 4: 
-#if ARM
-					ret = pthread_create (&thread_id, NULL, (void*)thread_set_DB_eighty_percent, p);
-					if(ret){
-						perror("in1:");
-						return;
-					}
-#endif
+				case 4:
+					data_140 (NULL, (gpointer)p);
 					break; /* P140 自动80%  */
 				default:break;
 			}
@@ -3440,6 +3435,7 @@ static int handler_key(guint keyval, gpointer data)
 				draw_menu2(0);
 				draw_menu3(0, NULL);
 			}
+			data_140 (NULL, (gpointer)pp);
 			break;
 
 		case GDK_KP_9:	/* 选中 P400 Display 这个位置 */
@@ -4971,6 +4967,21 @@ void data_135 (GtkSpinButton *spinbutton, gpointer data) /*gain offset */
 	/*发送给硬件*/
 	send_focal_spi(get_current_group(pp->p_config));
 }
+
+void data_140 (GtkSpinButton *spinbutton, gpointer data)
+{
+#if ARM
+	    pthread_t thread_id;
+	    int ret;
+		ret = pthread_create (&thread_id, NULL, (void*)thread_set_DB_eighty_percent, data);
+		if(ret){
+			perror("in1:");
+			return;
+		}
+#endif
+}
+
+
 
 void data_1431 (GtkSpinButton *spinbutton, gpointer data) /* point qty P143 */
 {
@@ -7397,11 +7408,17 @@ void draw_encoder_value(gpointer data)
 static int thread_set_DB_eighty_percent(gpointer data)
 {
 	DRAW_UI_P pp = (DRAW_UI_P) data;
-	int i = 10;
+	int i = 15;
 	int k;
 	int offset = 0;
 	float scale   ;
+	//group_data_spi *p1;
+
 	int grp = pp->p_config->groupId ;   //当前group
+	//memcpy (&new, &TMP(group_spi[grp]), sizeof (group_data_spi));
+	//p1 = &TMP(group_spi[grp]) ;
+	//p1->offset = 16 * grp;
+	//p1->addr = 0x2;
 
 	for (k = 0 ; k < grp; k++)
 		offset += TMP(beam_qty[k]);
@@ -7409,7 +7426,9 @@ static int thread_set_DB_eighty_percent(gpointer data)
 
 	while(i)
 	{
-		if(fabs(DO_NOT_USE_CCFG(measure_data[index]).a_height-80.0) <=3 )  break  ;
+		//printf("thread run times %d \n", i)  ;
+		if(fabs(DO_NOT_USE_CCFG(measure_data[index]).a_height-80.0) <=1 )  break  ;
+		//printf("gate is %f", DO_NOT_USE_CCFG(measure_data[index]).a_height);
 		scale =  80.0/DO_NOT_USE_CCFG(measure_data[index]).a_height  ;
 		//printf("\n**********  %d   ******\n", i);
 		//printf("a_height = %f \n", DO_NOT_USE_CCFG(measure_data[index]).a_height);
@@ -7418,10 +7437,12 @@ static int thread_set_DB_eighty_percent(gpointer data)
 		GROUP_VAL (gain) =  GROUP_VAL (gain) + (short)(log10(scale)*2000) ;
 		//printf("post gain = %d \n" , GROUP_VAL(gain));
 		if(GROUP_VAL(gain) > 8000)  {GROUP_VAL(gain) = 8000; break;}
-		write_group_data (&TMP(group_spi[grp]), grp);
+		TMP(group_spi[grp]).gain = GROUP_VAL (gain) / 10;
+		//printf("gain %d\n", TMP(group_spi[grp]).gain);
+		send_group_spi (grp);
 		i--;
 		draw_field_value ();
-		usleep(200000);
+		usleep(400000);
 	}
 	return 0;
 }
