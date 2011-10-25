@@ -7380,7 +7380,13 @@ static int thread_set_DB_eighty_percent(gpointer data)
 	int k;
 	int offset = 0;
 	float scale   ;
+	//group_data_spi *p1;
+
 	int grp = pp->p_config->groupId ;   //当前group
+	//memcpy (&new, &TMP(group_spi[grp]), sizeof (group_data_spi));
+	//p1 = &TMP(group_spi[grp]) ;
+	//p1->offset = 16 * grp;
+	//p1->addr = 0x2;
 
 	for (k = 0 ; k < grp; k++)
 		offset += TMP(beam_qty[k]);
@@ -7388,7 +7394,9 @@ static int thread_set_DB_eighty_percent(gpointer data)
 
 	while(i)
 	{
-		if(fabs(DO_NOT_USE_CCFG(measure_data[index]).a_height-80.0) <=3 )  break  ;
+		//printf("thread run times %d \n", i)  ;
+		if(fabs(DO_NOT_USE_CCFG(measure_data[index]).a_height-80.0) <=1 )  break  ;
+		//printf("gate is %f", DO_NOT_USE_CCFG(measure_data[index]).a_height);
 		scale =  80.0/DO_NOT_USE_CCFG(measure_data[index]).a_height  ;
 		//printf("\n**********  %d   ******\n", i);
 		//printf("a_height = %f \n", DO_NOT_USE_CCFG(measure_data[index]).a_height);
@@ -7397,7 +7405,9 @@ static int thread_set_DB_eighty_percent(gpointer data)
 		GROUP_VAL (gain) =  GROUP_VAL (gain) + (short)(log10(scale)*2000) ;
 		//printf("post gain = %d \n" , GROUP_VAL(gain));
 		if(GROUP_VAL(gain) > 8000)  {GROUP_VAL(gain) = 8000; break;}
-		write_group_data (&TMP(group_spi[grp]), grp);
+		TMP(group_spi[grp]).gain = GROUP_VAL (gain) / 10;
+		//printf("gain %d\n", TMP(group_spi[grp]).gain);
+		send_group_spi (grp);
 		i--;
 		draw_field_value ();
 		usleep(200000);
