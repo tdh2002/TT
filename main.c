@@ -745,6 +745,10 @@ void send_focal_spi (guint group)
 			enabler = (cnt >> (32-channel_index_num)) | (cnt<<channel_index_num);//循环左移channel_index_num位 ，使能控制
 
 		}	
+		else if (get_group_val (p_grp, GROUP_TX_RX_MODE) == PITCH_CATCH)
+		{
+		
+		}
 		else 
 		{
 			//其他模式待加

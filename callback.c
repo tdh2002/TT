@@ -7,6 +7,7 @@
 #include "focallaw.h"		/* 计算聚焦法则的头文件 */
 #include "base_config.h"
 #include "spi_d.h"
+#include "file_op.h"
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
@@ -466,6 +467,7 @@ static void save_cal_law(gint offset, gint group, PARAMETER_P p)
 		//***************************************
 		TMP(field_distance[i]) = (gfloat)(p->field_distance[i]);//每束 中心正元到出射点的距离 单位mm
 		pp->G_delay[i] = (gint)p->G_delay[i];////保存每一个beam的延时  方便用于显示
+//		printf("focal_beam_delay = %d \n", pp->G_delay[i]);
 		BEAM_INFO(i+offset,beam_delay) = pp->G_delay[i];//modified by hefan
 		//printf("beam_delay[%d]=%d \n", i, pp->G_delay[i]);
 		//***************************************
@@ -1609,11 +1611,13 @@ void b3_fun1(gpointer p)
 												for (i = 0; i < step; i++)
 												{
 													BEAM_INFO(offset + i, beam_delay) = pp->G_delay[i];
+//													printf("clb_beam_delay = %d \n", pp->G_delay[i]);
 													TMP(focal_law_all_beam[offset + i]).G_delay			= 
 															get_group_val (get_group_by_id (pp->p_config, grp), GROUP_WEDGE_DELAY)
-															+	GROUP_VAL_POS (grp, wedge.Probe_delay) + pp->G_delay[i];//modified by hefan 
+															+ GROUP_VAL_POS (grp, wedge.Probe_delay) + BEAM_INFO(i + offset, beam_delay);//modified by hefan 
 												}	
 												send_focal_spi(get_current_group(pp->p_config));
+												gtk_widget_queue_draw (pp->vboxtable);
 												//pp->flag = 0;
 												esc_calibration();
 											}
@@ -3485,10 +3489,10 @@ static int handler_key(guint keyval, gpointer data)
 						draw_area_all();
 					else
 						draw_area_calibration();
-					TMP(focal_law_all_beam[offset + BeamNo]).G_delay			= 
-						get_group_val (get_group_by_id (pp->p_config, group), GROUP_WEDGE_DELAY)
-						+	GROUP_VAL_POS (group, wedge.Probe_delay) + BEAM_INFO(BeamNo + offset, beam_delay);//modified by hefan 
-					gtk_widget_queue_draw (pp->vboxtable);
+//					TMP(focal_law_all_beam[offset + BeamNo]).G_delay			= 
+//						get_group_val (get_group_by_id (pp->p_config, group), GROUP_WEDGE_DELAY)
+//						+	GROUP_VAL_POS (group, wedge.Probe_delay) + BEAM_INFO(BeamNo + offset, beam_delay);//modified by hefan 
+//					gtk_widget_queue_draw (pp->vboxtable);
 				}
 			}
 			break;
@@ -4862,14 +4866,29 @@ void data_121 (GtkMenuItem *menuitem, gpointer data)
 	write_group_data (&TMP(group_spi[grp]), grp);
 }
 
+#define RF_PATH	"source/system/Sample/Palette/ONDT_RFTOFD.pal"
 void data_122 (GtkMenuItem *menuitem, gpointer data)  /* Rectifier 检波 P122 */
 {
+	gint i;
 	gint grp = get_current_group(pp->p_config);
 	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
 	set_group_val (p_grp, GROUP_RECTIFIER,
 			(GPOINTER_TO_UINT (data)));
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
+
+	if(!GPOINTER_TO_UINT (data))
+	{
+		read_palette_file (RF_PATH, TMP(t_special_col), TMP(t_color));  /*   */
+		if (TMP(t_special_col[0]) != 0x12345678)
+		{
+			TMP(special_col_amp[0]) = COL_24_TO_16(TMP(t_special_col)[0]);
+			TMP(special_col_amp[1]) = COL_24_TO_16(TMP(t_special_col)[1]);
+			TMP(special_col_amp[2]) = COL_24_TO_16(TMP(t_special_col)[2]);
+		}
+		for (i = 0; i < 256; i ++)
+			TMP(color_amp[i]) = COL_24_TO_16(TMP(t_color)[i]);
+	}
 
 	/* 发送给硬件 */
 	TMP(group_spi[grp]).rectifier =
@@ -4928,7 +4947,7 @@ void data_134 (GtkSpinButton *spinbutton, gpointer data) /* beam delay */
 		offset += TMP(beam_qty[k]);
 	BEAM_INFO(index + offset,beam_delay) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
 	pp->G_delay[index] = BEAM_INFO(index + offset,beam_delay);
-	//g_print("current_beam_delay=%d\n", (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0) );
+//	printf("UT_beam_delay = %d \n", pp->G_delay[index]);
 	TMP(focal_law_all_beam[offset + index]).G_delay			= 
 		get_group_val (get_group_by_id (pp->p_config, group), GROUP_WEDGE_DELAY)
 		+	GROUP_VAL_POS (group, wedge.Probe_delay) + BEAM_INFO(index + offset, beam_delay);//modified by hefan 
@@ -6355,7 +6374,9 @@ void data_501 (GtkMenuItem *menuitem, gpointer data) /* Probe/Part->Select->Grou
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
 
-	write_group_data (&TMP(group_spi[group]), group);
+//	write_group_data (&TMP(group_spi[group]), group);
+	send_focal_spi(group);
+	send_group_spi(group);
 }
 
 void data_502 (GtkMenuItem *menuitem, gpointer data) /* Probe/Part->Select->Select 502 */
