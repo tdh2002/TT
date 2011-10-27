@@ -51,7 +51,11 @@ GROUP g_tmp_group_struct;
 
 pthread_mutex_t draw_thread_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t  draw_thread_signal = PTHREAD_COND_INITIALIZER;
-volatile int *DMA_MARK ;
+volatile int *DMA_MARK    ;
+
+int REFRESH_REQUEST ;
+int REFRESH_RESPONSE;
+
 extern float tttmp;
 #if 0
 static char *keyboard_display[] = 
@@ -138,6 +142,8 @@ void draw_field_name ();
 void draw_field_value ();
 void calc_measure_data();//Defined by hefan
 extern void generate_focallaw(int grp);
+extern void send_group_spi (guint grp);
+extern void send_focal_spi (guint grp);
 
 void (*draw_data3[6])(DRAW_UI_P p) =
 {
@@ -9035,12 +9041,33 @@ void draw3_data2(DRAW_UI_P p)
 							{
 								cur_value = (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_RANGE) / 1000.0) * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0);   /* 当前显示的范围数值mm */
 								cur_value = cur_value * cos(TMP(current_angle[grp]));
-								lower = (GROUP_VAL(point_qty) / 100.0) * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
+								if(GROUP_VAL(point_qty_pos)== 0)
+								{
+									lower = ( 32 / 100.0) * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
+								}
+								else
+								{
+									lower = (GROUP_VAL(point_qty) / 100.0) * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
+								}
 								lower = lower * cos(TMP(current_angle[grp]));
 								upper = MIN(max_tmp, max_tmp1) * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0);
 								upper = upper * cos(TMP(current_angle[grp]));
-								step = tmpf * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0);
-								step = step * cos(TMP(current_angle[grp]));
+								if(GROUP_VAL(point_qty_pos)== 0)
+								{
+									switch (TMP(range_reg))
+									{
+										case 0:	tmpf = 100.0; break;
+										case 1:	tmpf = 10.0; break;
+										case 2:	tmpf = 1.0; break;
+										default:break;
+									}
+									step = tmpf ;
+								}
+								else
+								{
+								     step = tmpf * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0);
+								     step = step * cos(TMP(current_angle[grp]));
+								}
 								tmpfm = tmpfm * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0);
 								digit = 2;
 								pos = 2;
@@ -9050,12 +9077,33 @@ void draw3_data2(DRAW_UI_P p)
 							{
 								cur_value = (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_RANGE) / 1000.0) * 0.03937 * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0); /* 当前显示的范围inch */
 								cur_value = cur_value * cos(TMP(current_angle[grp]));
-								lower =	(GROUP_VAL(point_qty) / 100.0) * 0.03937 * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
+								if(GROUP_VAL(point_qty_pos)== 0)
+								{
+									lower =	( 32 / 100.0) * 0.03937 * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
+								}
+								else
+								{
+									lower =	(GROUP_VAL(point_qty) / 100.0) * 0.03937 * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
+								}
 								lower = lower * cos(TMP(current_angle[grp]));
 								upper = MIN(max_tmp, max_tmp1) * 0.03937 * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0);
 								upper = upper * cos(TMP(current_angle[grp]));
-								step = tmpf * 0.03937 * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
-								step = step * cos(TMP(current_angle[grp]));
+								if(GROUP_VAL(point_qty_pos)== 0)
+								{
+									switch (TMP(range_reg))
+									{
+										case 0:	tmpf = 10.0; break;
+										case 1:	tmpf = 1.0; break;
+										case 2:	tmpf = 0.1; break;
+										default:break;
+									}
+									step = tmpf ;
+								}
+								else
+								{
+									step = tmpf * 0.03937 * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
+									step = step * cos(TMP(current_angle[grp]));
+								}
 								tmpfm = tmpfm * 0.03937 * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
 								digit = 3;
 								pos = 2;
@@ -9067,9 +9115,33 @@ void draw3_data2(DRAW_UI_P p)
 							if (UNIT_MM == get_unit(pp->p_config))
 							{
 								cur_value = (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_RANGE) / 1000.0) * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0);   /* 当前显示的范围数值mm */
-								lower = (GROUP_VAL(point_qty) / 100.0) * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
+
+								if(GROUP_VAL(point_qty_pos)== 0)
+								{
+									lower = ( 32 / 100.0) * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
+								}
+								else
+								{
+									lower = (GROUP_VAL(point_qty) / 100.0) * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
+								}
+
 								upper = MIN(max_tmp, max_tmp1) * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0);
-								step = tmpf * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0);
+								if(GROUP_VAL(point_qty_pos)== 0)
+								{
+									switch (TMP(range_reg))
+									{
+										case 0:	tmpf = 100.0; break;
+										case 1:	tmpf = 10.0; break;
+										case 2:	tmpf = 1.0; break;
+										default:break;
+									}
+									step = tmpf ;
+								}
+								else
+								{
+									step = tmpf * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0);
+								}
+
 								tmpfm = tmpfm * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0);
 								digit = 2;
 								pos = 2;
@@ -9078,21 +9150,65 @@ void draw3_data2(DRAW_UI_P p)
 							else
 							{
 								cur_value = (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_RANGE) / 1000.0) * 0.03937 * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0); /* 当前显示的范围inch */
-								lower =	(GROUP_VAL(point_qty) / 100.0) * 0.03937 * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
+								if(GROUP_VAL(point_qty_pos)== 0)
+								{
+									lower =	(32 / 100.0) * 0.03937 * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
+								}
+								else
+								{
+									lower =	(GROUP_VAL(point_qty) / 100.0) * 0.03937 * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
+								}
+
 								upper = MIN(max_tmp, max_tmp1) * 0.03937 * (get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0);
-								step = tmpf * 0.03937 * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
+								if(GROUP_VAL(point_qty_pos)== 0)
+								{
+									switch (TMP(range_reg))
+									{
+										case 0:	tmpf = 10.0; break;
+										case 1:	tmpf = 1.0; break;
+										case 2:	tmpf = 0.1; break;
+										default:break;
+									}
+									step = tmpf ;
+								}
+								else
+								{
+									step = tmpf * 0.03937 * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
+								}
 								tmpfm = tmpfm * 0.03937 * get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_VELOCITY) / 200000.0;
 								digit = 3;
-								pos = 2;
+								pos = 2  ;
 								unit = UNIT_INCH;
 							}
 						}
 						else
 						{
 								cur_value = get_group_val (get_group_by_id (pp->p_config, get_current_group(pp->p_config)), GROUP_RANGE) / 1000.0 ;
-								lower =	GROUP_VAL(point_qty) / 100.0;
+								if(GROUP_VAL(point_qty_pos)== 0)
+								{
+									lower =	32 / 100.0;
+								}
+								else
+								{
+									lower =	GROUP_VAL(point_qty) / 100.0;
+								}
+
 								upper = MIN(max_tmp, max_tmp1);
-								step = tmpf;
+								if(GROUP_VAL(point_qty_pos)== 0)
+								{
+									switch (TMP(range_reg))
+									{
+										case 0:	tmpf = 10.0; break;
+										case 1:	tmpf = 1.0; break;
+										case 2:	tmpf = 0.1; break;
+										default:break;
+									}
+									step = tmpf ;
+								}
+								else
+								{
+									step = tmpf;
+								}
 								digit = 2;
 								pos = 2;
 								unit = UNIT_US;
@@ -9144,7 +9260,6 @@ void draw3_data2(DRAW_UI_P p)
 							    pos = 2;
 							    digit = 2;
 						}
-
 						draw3_digit_stop (cur_value , units[unit], digit, pos, 0);
 					}
 					break;
@@ -17545,6 +17660,40 @@ static gboolean time_handler1 (GtkWidget *widget)
 	return TRUE;
 }
 
+void Refresh_all()
+{
+	get_prf () ;
+	generate_focallaw(get_current_group (pp->p_config));
+	send_group_spi (get_current_group (pp->p_config));
+	send_focal_spi (get_current_group (pp->p_config));
+}
+
+static gboolean RefressFocalLaw()
+{
+
+	if(get_auto_focal (pp->p_config))
+	{
+		if(REFRESH_REQUEST || REFRESH_RESPONSE)
+		{
+			if(REFRESH_REQUEST)
+			{
+				REFRESH_REQUEST  = 0 ;
+				REFRESH_RESPONSE = 1 ;
+				DMA_MARK[0]      = 2 ;
+			}
+			else
+			{
+				REFRESH_RESPONSE = 0 ;
+				DMA_MARK[0]      = 0 ;
+				Refresh_all();
+			}
+		}
+
+	}
+	return TRUE ;
+}
+
+
 
 #if 0
 gboolean bt_release (GtkWidget *widget, GdkEventButton *event,
@@ -18205,7 +18354,7 @@ static void signal_scan_thread(void)
             	     //pthread_mutex_unlock(&draw_thread_mutex);
 					//sem_post(&sem) ;
 			*DMA_MARK = 2 ;
-			g_timeout_add (0, (GSourceFunc) draw_frame_thread, NULL);
+			 g_timeout_add (0, (GSourceFunc) draw_frame_thread, NULL);
 		}
 		//if(*DMA_MARK>2){ printf("DMA_MARK = %d \n", *DMA_MARK) ; *DMA_MARK=1; }
 		usleep(10000);
@@ -18587,9 +18736,10 @@ void init_ui(DRAW_UI_P p)
 	gtk_widget_set_size_request (GTK_WIDGET(pp->event[3]), 172, 22);
 	gtk_label_set_justify (GTK_LABEL (pp->label[3]), PANGO_ELLIPSIZE_START);
 	markup = g_markup_printf_escaped ("<span foreground='white' font_desc='10'>PRF: %d(%d)</span>",
-			get_group_val (p_grp, GROUP_PRF_VAL) / 10, get_group_val (p_grp, GROUP_PRF_VAL) / 10);
+			get_group_val (p_grp, GROUP_PRF_VAL) / 10,  get_group_val (p_grp, GROUP_PRF_VAL) * get_beam_qty() / 10);
 	gtk_label_set_markup (GTK_LABEL (pp->label[3]), markup); 
 	g_free (markup);
+
 	update_widget_bg(pp->event[3], /*backpic[5]*/ 5);
 
 	gtk_box_pack_start (GTK_BOX (p->vbox1111[1]), pp->event[4], FALSE, FALSE, 0);
@@ -18792,8 +18942,8 @@ void init_ui(DRAW_UI_P p)
 		perror("in1:");
 	    return;
 	}
-
-	 g_timeout_add (5000, (GSourceFunc) key_read_delay, NULL);
+	g_timeout_add (500 , (GSourceFunc) RefressFocalLaw, NULL) ;
+	g_timeout_add (5000, (GSourceFunc) key_read_delay, NULL);
 #endif
 
 	g_timeout_add (1000, (GSourceFunc) time_handler1, NULL);
