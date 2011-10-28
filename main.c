@@ -769,7 +769,7 @@ void send_focal_spi (guint group)
 	{
 		for (k = 0; k < beam_qty; k++)
 		{   
-			TMP(focal_spi[k]).group	= 0;
+			TMP(focal_spi[k]).group	= group;
 			TMP(focal_spi[k]).all_beam_info	= 0;
 			TMP(focal_spi[k]).gain_offset	= pp->tmp_gain_off[k];//GROUP_VAL_POS(group, gain_offset[k]);
 			TMP(focal_spi[k]).beam_delay	= 0;

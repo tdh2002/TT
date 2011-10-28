@@ -3514,6 +3514,9 @@ static int handler_key(guint keyval, gpointer data)
 						pp->tmp_gain_off[TMP(beam_num[group]) + offset];
 
 					BeamNo = pp->p_tmp_config->beam_num[group];
+					update_gate_info();
+					send_focal_spi (group);
+					send_group_spi (group);
 					if(LAW_VAL(Focal_type) == 0)
 					{
 						current_angle = LAW_VAL(Angle_min)/100.0 + BeamNo * LAW_VAL(Angle_step)/100.0 ;
@@ -7275,7 +7278,8 @@ void esc_calibration()
 	}
 	pp->clb_flag = 0;
 	pp->pos1[pp->pos] = 2;
-	pp->cstart_qty = 1;
+	if(pp->cstart_qty != 1)
+		pp->cstart_qty = 1;
 	gtk_widget_set_sensitive(pp->eventbox2[0],TRUE);
 	gtk_widget_set_sensitive(pp->eventbox2[3],TRUE);
 	if(GROUP_VAL(group_mode)==PA_SCAN)
