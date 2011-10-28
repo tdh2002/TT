@@ -3515,7 +3515,7 @@ static int handler_key(guint keyval, gpointer data)
 
 					BeamNo = pp->p_tmp_config->beam_num[group];
 					update_gate_info();
-					send_focal_spi_without_reset (group);
+					send_focal_spi(group);
 					if(LAW_VAL(Focal_type) == 0)
 					{
 						current_angle = LAW_VAL(Angle_min)/100.0 + BeamNo * LAW_VAL(Angle_step)/100.0 ;

@@ -2383,6 +2383,7 @@ static gboolean draw_other_info (GtkWidget *widget, GdkEventExpose *event, gpoin
 	int i;
 	short max_temperature ;
 	short* temp ;
+	short xxx ;
 	static int tmp1 = TRUE;
 #if X86
 	static int tmp2 = TRUE;
