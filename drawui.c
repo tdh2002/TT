@@ -2558,16 +2558,17 @@ static gboolean draw_other_info (GtkWidget *widget, GdkEventExpose *event, gpoin
 		}
 	}
 	// display max temperature
-	max_temperature = pp->battery.temp1 ;
+	max_temperature = (short)(pp->battery.temp1>>8) + (short)(pp->battery.temp1<<8) ;
 	temp = &(pp->battery.temp2) ;
 	for(i = 1 ; i< 5; i++)
 	{
-		if(*temp > max_temperature)  max_temperature = *temp ;
+		xxx = (short)(*temp>>8) + (short)(*temp<< 8) ;
+		if(xxx > max_temperature)  max_temperature = xxx ;
 		temp++ ;
 	}
-#if X86
-	max_temperature = 2000;
-#endif
+
+	max_temperature = 0x1340;
+
 	if(max_temperature> 0)
 	     max_temperature = (max_temperature>>7)&0x00ff    ;
     else

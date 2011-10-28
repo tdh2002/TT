@@ -193,6 +193,7 @@ int write_group_data (group_data_spi *p, unsigned int group)
 	return 0;
 }
 
+
 int write_focal_data (focal_data_spi *p, unsigned int beam_num)
 {
 	focal_data_spi new, *p1;
