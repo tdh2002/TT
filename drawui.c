@@ -17996,7 +17996,7 @@ void process_key_press (gchar key)
 			fakekey_release(pp->fk);
 			break;
 		case 0xe9:
-			fakekey_press_keysym(pp->fk, XK_Help, 0);
+			fakekey_press_keysym(pp->fk, GDK_F1, 0);
 			fakekey_release(pp->fk);
 			break;
 		case 0xea:
@@ -18279,7 +18279,7 @@ int draw_frame_thread(void)
 {
 
 	gint i, j, k, offset, offset1;
-	guint temp2 = (pp->p_beam_data) + 3;
+	guint temp2 = (pp->p_beam_data) + 2;
 	//guint buff_addr = (pp->p_beam_data) + 256 * 1024 ;
     //unsigned int BeamInfoHeader;
 	//unsigned int data;
