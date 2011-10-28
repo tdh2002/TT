@@ -635,7 +635,8 @@ int main (int argc, char *argv[])
 #endif
 	}
 
-#if ARM   // confirm the group data is send to FPGA --shen sheng
+#if ARM   
+	// confirm the group data is send to FPGA --shen sheng
 	for (i = get_group_qty(pp->p_config) ; i != 0; i--)
 	{
 		write_group_data (&TMP(group_spi[i - 1]), i - 1);
@@ -672,102 +673,169 @@ void shut_down_power()
 
 void send_focal_spi (guint group)
 {
-
 	guint offset, beam_qty =TMP(beam_qty[group]), k, i,enablet = 0, enabler = 0;
 	guint tmp,index,channel_index_num,cnt;
 	GROUP *p_grp = get_group_by_id (pp->p_config, group);
-
 	int t;
 	int virtual_focallaw = pp->p_config->virtual_focallaw  ;
 	int beam_sum = get_beam_qty();
 
 	for (offset = 0, k = 0 ; k < group; k++)
-		offset += TMP(beam_qty[k]);
-	for (k = offset; k < offset + beam_qty; k++)
-	{   
-		TMP(focal_spi[k]).group	= group;
-		TMP(focal_spi[k]).all_beam_info	= beam_sum * virtual_focallaw - 1;
-		TMP(focal_spi[k]).gain_offset	= pp->tmp_gain_off[k];//GROUP_VAL_POS(group, gain_offset[k]);
-		TMP(focal_spi[k]).beam_delay	= TMP(focal_law_all_beam[k].G_delay) / 10;//(BEAM_INFO(k,beam_delay)+5)/10;
-		TMP(focal_spi[k]).gate_a_start  = pp->gate_a_start[k];
-		TMP(focal_spi[k]).gate_a_end    = pp->gate_a_end[k];
-		TMP(focal_spi[k]).gate_b_start  = pp->gate_b_start[k];
-		TMP(focal_spi[k]).gate_b_end    = pp->gate_b_end[k];
-		TMP(focal_spi[k]).gate_i_start  = pp->gate_i_start[k];
-		TMP(focal_spi[k]).gate_i_end    = pp->gate_i_end[k];
-//		printf("gate_a_start[%d] = %d\n", k, pp->gate_a_start[k]);
-//		printf("gate_a_end[%d] = %d\n", k, pp->gate_a_end[k]);
-		/*UT Settings->Pulser->Tx/Rx mode*/		
-		if (get_group_val (p_grp, GROUP_TX_RX_MODE) == PULSE_ECHO )/*单个探头收发模式*/
-		{  
-			set_group_val (&pp->p_config->group[group],	GROUP_RECEIVER, 
-					get_group_val (&pp->p_config->group[group],	GROUP_PULSER));
-			if(LAW_VAL_POS(group, Focal_type) == 1)/*Linear*/
-			{
-				TMP(focal_spi[k]).rx_sel	= 
-					channel_select(
-							(guint)(get_group_val (&pp->p_config->group[group], GROUP_PULSER))+
-							(guint)(LAW_VAL_POS(group, First_tx_elem))+(k-offset)*LAW_VAL_POS(group, Elem_step)-1 ); //何凡修改
-				TMP(focal_spi[k]).tx_sel	= 
-					channel_select(
-							(guint)(get_group_val (&pp->p_config->group[group], GROUP_RECEIVER))+ (guint)(LAW_VAL_POS(group, First_tx_elem))+(k-offset)*LAW_VAL_POS(group, Elem_step)-1 );//何凡修改
-				tmp = (guint) (get_group_val (&pp->p_config->group[group], GROUP_RECEIVER))+(guint)(LAW_VAL_POS(group, First_tx_elem)+(k-offset)*LAW_VAL_POS(group, Elem_step))-1 ;
-			}
-			else
-			{
-				TMP(focal_spi[k]).rx_sel	= 
-					channel_select((guint)(get_group_val (&pp->p_config->group[group], GROUP_PULSER))+ (guint)(LAW_VAL_POS(group, First_tx_elem))-1 ); //何凡修改 
-				TMP(focal_spi[k]).tx_sel	= 
-					channel_select((guint)(get_group_val (&pp->p_config->group[group], GROUP_RECEIVER))+ (guint)(LAW_VAL_POS(group, First_tx_elem))-1 );//何凡修改
-				tmp = (guint) (get_group_val (&pp->p_config->group[group], GROUP_RECEIVER))+(guint)(LAW_VAL_POS(group, First_tx_elem))-1 ;
-			}
-			channel_index_num = (tmp % 32 == 0)? 31 : (tmp % 32 -1); 
-
-			cnt = pow(2,LAW_VAL_POS(group, Elem_qty))-1; 
-			for (i = 0;i < TMP(focal_law_all_beam[k].N_ActiveElements); i++)
-			{
-				index = (channel_index_num + i) & 0x0000001f; 
-				TMP(focal_spi[k]).tx_info[index]	= 
-					(4 + (guint)(TMP(focal_law_all_elem[k][i].T_delay) / 2.5)) |
-					((4 + (guint)(TMP(focal_law_all_elem[k][i].T_delay) / 2.5)) +
-					((guint)(get_group_val (p_grp, GROUP_PW_VAL) / (2.5*100)))) << 16;// | (0x3 << 30);//何凡修改	
-				if (index < 16)
-					TMP(focal_spi[k]).rx_info[index]	= 
-						(TMP(focal_spi[group]).rx_info[index] & 0xffff0000) |
-						((guint)(TMP(focal_law_all_elem[k][i].R_delay) / 2.5));
-				else
-					TMP(focal_spi[k]).rx_info[index - 16]	= 
-						(TMP(focal_spi[group]).rx_info[index - 16] & 0x0000ffff) |
-						((guint)(TMP(focal_law_all_elem[k][i].R_delay) / 2.5) << 16);
-				//printf("tx_info is %x  index = %d \n ", TMP(focal_spi[k]).tx_info[index], index) ;
-			}		
-			enablet = (cnt >> (32-channel_index_num)) | (cnt<<channel_index_num);//循环左移channel_index_num位 ，使能控制
-			enabler = (cnt >> (32-channel_index_num)) | (cnt<<channel_index_num);//循环左移channel_index_num位 ，使能控制
-
-		}	
-		else if (get_group_val (p_grp, GROUP_TX_RX_MODE) == PITCH_CATCH)
-		{
-		
-		}
-		else 
-		{
-			//其他模式待加
-		}		
-		TMP(focal_spi[k]).tx_enable	= enablet;
-		TMP(focal_spi[k]).rx_enable	= enabler;
-		//if (TMP(focal_law_all_beam[k].N_ActiveElements) < 32)
-		//{
-		//	for (i = TMP(focal_law_all_beam[k].N_ActiveElements); i < 32; i++)
-		//		TMP(focal_spi[k]).rx_info[i] &= 0x3fffffff;
-		//}
-		
-		write_focal_data (&TMP(focal_spi[k]), k);
-	}
-
-	for(t = 1; t < virtual_focallaw; t ++)
+			offset += TMP(beam_qty[k]);
+	if(GROUP_VAL(group_mode) == 1)//PA
 	{
 		for (k = offset; k < offset + beam_qty; k++)
-			write_focal_data (&TMP(focal_spi[k]), k + t * beam_sum);
+		{   
+			TMP(focal_spi[k]).group	= group;
+			TMP(focal_spi[k]).all_beam_info	= beam_sum * virtual_focallaw - 1;
+			TMP(focal_spi[k]).gain_offset	= pp->tmp_gain_off[k];//GROUP_VAL_POS(group, gain_offset[k]);
+			TMP(focal_spi[k]).beam_delay	= TMP(focal_law_all_beam[k].G_delay) / 10;//(BEAM_INFO(k,beam_delay)+5)/10;
+			TMP(focal_spi[k]).gate_a_start  = pp->gate_a_start[k];
+			TMP(focal_spi[k]).gate_a_end    = pp->gate_a_end[k];
+			TMP(focal_spi[k]).gate_b_start  = pp->gate_b_start[k];
+			TMP(focal_spi[k]).gate_b_end    = pp->gate_b_end[k];
+			TMP(focal_spi[k]).gate_i_start  = pp->gate_i_start[k];
+			TMP(focal_spi[k]).gate_i_end    = pp->gate_i_end[k];
+	//		printf("gate_a_start[%d] = %d\n", k, pp->gate_a_start[k]);
+	//		printf("gate_a_end[%d] = %d\n", k, pp->gate_a_end[k]);
+			/*UT Settings->Pulser->Tx/Rx mode*/		
+			if (get_group_val (p_grp, GROUP_TX_RX_MODE) == PULSE_ECHO )/*单个探头收发模式*/
+			{  
+				set_group_val (&pp->p_config->group[group],	GROUP_RECEIVER, 
+						get_group_val (&pp->p_config->group[group],	GROUP_PULSER));
+				if(LAW_VAL_POS(group, Focal_type) == 1)/*Linear*/
+				{
+					TMP(focal_spi[k]).rx_sel	= 
+						channel_select(
+								(guint)(get_group_val (&pp->p_config->group[group], GROUP_PULSER))+
+								(guint)(LAW_VAL_POS(group, First_tx_elem))+(k-offset)*LAW_VAL_POS(group, Elem_step)-1 ); //何凡修改
+					TMP(focal_spi[k]).tx_sel	= 
+						channel_select(
+								(guint)(get_group_val (&pp->p_config->group[group], GROUP_RECEIVER))+ (guint)(LAW_VAL_POS(group, First_tx_elem))+(k-offset)*LAW_VAL_POS(group, Elem_step)-1 );//何凡修改
+					tmp = (guint) (get_group_val (&pp->p_config->group[group], GROUP_RECEIVER))+(guint)(LAW_VAL_POS(group, First_tx_elem)+(k-offset)*LAW_VAL_POS(group, Elem_step))-1 ;
+				}
+				else
+				{
+					TMP(focal_spi[k]).rx_sel	= 
+						channel_select((guint)(get_group_val (&pp->p_config->group[group], GROUP_PULSER))+ (guint)(LAW_VAL_POS(group, First_tx_elem))-1 ); //何凡修改 
+					TMP(focal_spi[k]).tx_sel	= 
+						channel_select((guint)(get_group_val (&pp->p_config->group[group], GROUP_RECEIVER))+ (guint)(LAW_VAL_POS(group, First_tx_elem))-1 );//何凡修改
+					tmp = (guint) (get_group_val (&pp->p_config->group[group], GROUP_RECEIVER))+(guint)(LAW_VAL_POS(group, First_tx_elem))-1 ;
+				}
+				channel_index_num = (tmp % 32 == 0)? 31 : (tmp % 32 -1); 
+
+				cnt = pow(2,LAW_VAL_POS(group, Elem_qty))-1; 
+				for (i = 0;i < TMP(focal_law_all_beam[k].N_ActiveElements); i++)
+				{
+					index = (channel_index_num + i) & 0x0000001f; 
+					TMP(focal_spi[k]).tx_info[index]	= 
+						(4 + (guint)(TMP(focal_law_all_elem[k][i].T_delay) / 2.5)) |
+						((4 + (guint)(TMP(focal_law_all_elem[k][i].T_delay) / 2.5)) +
+						((guint)(get_group_val (p_grp, GROUP_PW_VAL) / (2.5*100)))) << 16;// | (0x3 << 30);//何凡修改	
+					if (index < 16)
+						TMP(focal_spi[k]).rx_info[index]	= 
+							(TMP(focal_spi[group]).rx_info[index] & 0xffff0000) |
+							((guint)(TMP(focal_law_all_elem[k][i].R_delay) / 2.5));
+					else
+						TMP(focal_spi[k]).rx_info[index - 16]	= 
+							(TMP(focal_spi[group]).rx_info[index - 16] & 0x0000ffff) |
+							((guint)(TMP(focal_law_all_elem[k][i].R_delay) / 2.5) << 16);
+					//printf("tx_info is %x  index = %d \n ", TMP(focal_spi[k]).tx_info[index], index) ;
+				}		
+				enablet = (cnt >> (32-channel_index_num)) | (cnt<<channel_index_num);//循环左移channel_index_num位 ，使能控制
+				enabler = (cnt >> (32-channel_index_num)) | (cnt<<channel_index_num);//循环左移channel_index_num位 ，使能控制
+
+			}	
+			else if (get_group_val (p_grp, GROUP_TX_RX_MODE) == PITCH_CATCH)
+			{
+		
+			}
+			else 
+			{
+				//其他模式待加
+			}		
+			TMP(focal_spi[k]).tx_enable	= enablet;
+			TMP(focal_spi[k]).rx_enable	= enabler;
+			write_focal_data (&TMP(focal_spi[k]), k);
+		}
+
+		for(t = 1; t < virtual_focallaw; t ++)
+		{
+			for (k = offset; k < offset + beam_qty; k++)
+				write_focal_data (&TMP(focal_spi[k]), k + t * beam_sum);
+		}
+	}
+	else//UT
+	{
+		for (k = 0; k < beam_qty; k++)
+		{   
+			TMP(focal_spi[k]).group	= 0;
+			TMP(focal_spi[k]).all_beam_info	= 0;
+			TMP(focal_spi[k]).gain_offset	= pp->tmp_gain_off[k];//GROUP_VAL_POS(group, gain_offset[k]);
+			TMP(focal_spi[k]).beam_delay	= 0;
+			TMP(focal_spi[k]).gate_a_start  = pp->gate_a_start[k];
+			TMP(focal_spi[k]).gate_a_end    = pp->gate_a_end[k];
+			TMP(focal_spi[k]).gate_b_start  = pp->gate_b_start[k];
+			TMP(focal_spi[k]).gate_b_end    = pp->gate_b_end[k];
+			TMP(focal_spi[k]).gate_i_start  = pp->gate_i_start[k];
+			TMP(focal_spi[k]).gate_i_end    = pp->gate_i_end[k];
+			/*UT Settings->Pulser->Tx/Rx mode*/		
+			if (get_group_val (p_grp, GROUP_TX_RX_MODE) == PULSE_ECHO )/*单个探头收发模式*/
+			{  
+				set_group_val (&pp->p_config->group[group],	GROUP_RECEIVER, 
+						get_group_val (&pp->p_config->group[group],	GROUP_PULSER));
+				if(LAW_VAL_POS(group, Focal_type) == 1)/*Linear*/
+				{
+					TMP(focal_spi[k]).rx_sel	= 
+						channel_select(
+								(guint)(get_group_val (&pp->p_config->group[group], GROUP_PULSER))+
+								(guint)(LAW_VAL_POS(group, First_tx_elem))+k*LAW_VAL_POS(group, Elem_step)-1 ); //何凡修改
+					TMP(focal_spi[k]).tx_sel	= 
+						channel_select(
+								(guint)(get_group_val (&pp->p_config->group[group], GROUP_RECEIVER))+ (guint)(LAW_VAL_POS(group, First_tx_elem))+k*LAW_VAL_POS(group, Elem_step)-1 );//何凡修改
+					tmp = (guint) (get_group_val (&pp->p_config->group[group], GROUP_RECEIVER))+(guint)(LAW_VAL_POS(group, First_tx_elem)+k*LAW_VAL_POS(group, Elem_step))-1 ;
+				}
+				else
+				{
+					TMP(focal_spi[k]).rx_sel	= 
+						channel_select((guint)(get_group_val (&pp->p_config->group[group], GROUP_PULSER))+ (guint)(LAW_VAL_POS(group, First_tx_elem))-1 ); //何凡修改 
+					TMP(focal_spi[k]).tx_sel	= 
+						channel_select((guint)(get_group_val (&pp->p_config->group[group], GROUP_RECEIVER))+ (guint)(LAW_VAL_POS(group, First_tx_elem))-1 );//何凡修改
+					tmp = (guint) (get_group_val (&pp->p_config->group[group], GROUP_RECEIVER))+(guint)(LAW_VAL_POS(group, First_tx_elem))-1 ;
+				}
+				channel_index_num = (tmp % 32 == 0)? 31 : (tmp % 32 -1); 
+				cnt = pow(2,LAW_VAL_POS(group, Elem_qty))-1; 
+				for (i = 0;i < TMP(focal_law_all_beam[k].N_ActiveElements); i++)
+				{
+					index = (channel_index_num + i) & 0x0000001f; 
+					TMP(focal_spi[k]).tx_info[index]	= 
+						(4 + (guint)(TMP(focal_law_all_elem[k][i].T_delay) / 2.5)) |
+						((4 + (guint)(TMP(focal_law_all_elem[k][i].T_delay) / 2.5)) +
+						((guint)(get_group_val (p_grp, GROUP_PW_VAL) / (2.5*100)))) << 16;// | (0x3 << 30);//何凡修改	
+					if (index < 16)
+						TMP(focal_spi[k]).rx_info[index]	= 
+							(TMP(focal_spi[group]).rx_info[index] & 0xffff0000) |
+							((guint)(TMP(focal_law_all_elem[k][i].R_delay) / 2.5));
+					else
+						TMP(focal_spi[k]).rx_info[index - 16]	= 
+							(TMP(focal_spi[group]).rx_info[index - 16] & 0x0000ffff) |
+							((guint)(TMP(focal_law_all_elem[k][i].R_delay) / 2.5) << 16);
+				}		
+				enablet = (cnt >> (32-channel_index_num)) | (cnt<<channel_index_num);//循环左移channel_index_num位 ，使能控制
+				enabler = (cnt >> (32-channel_index_num)) | (cnt<<channel_index_num);//循环左移channel_index_num位 ，使能控制
+			}	
+			else if (get_group_val (p_grp, GROUP_TX_RX_MODE) == PITCH_CATCH)
+			{
+		
+			}
+			else 
+			{
+				//其他模式待加
+			}		
+			TMP(focal_spi[k]).tx_enable	= enablet;
+			TMP(focal_spi[k]).rx_enable	= enabler;		
+			write_focal_data (&TMP(focal_spi[k]), k);
+		}
 	}
 }
 

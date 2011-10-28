@@ -17971,7 +17971,7 @@ void process_key_press (gchar key)
 			fakekey_release(pp->fk);
 			break;
 		case 0xe9:
-			fakekey_press_keysym(pp->fk, XK_Help, 0);
+			fakekey_press_keysym(pp->fk, GDK_F1, 0);
 			fakekey_release(pp->fk);
 			break;
 		case 0xea:

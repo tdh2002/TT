@@ -52,6 +52,7 @@ guint get_filter ();
 guint get_max_point_qty();
 
 /*add by hefan */
+void update_gate_info();
 void generate_focallaw(int grp);
 gfloat cba_encoder();
 gfloat cba_ultrasound_velocity();
@@ -4445,7 +4446,6 @@ void data_100 (GtkSpinButton *spinbutton, gpointer data) /* 增益Gain P100 */
 
 void data_101 (GtkSpinButton *spinbutton, gpointer data) /*Start 扫描延时 P101 */
 {
-	//gint tt[4];
 	request_refresh() ;
 
 	gint grp = get_current_group(pp->p_config);
@@ -4465,7 +4465,10 @@ void data_101 (GtkSpinButton *spinbutton, gpointer data) /*Start 扫描延时 P1
 		current_angle = LAW_VAL(Angle_min)/100.0 ;
 		max_angle = LAW_VAL(Angle_min) * G_PI / 180.0 ;
 	}
-	current_angle = current_angle * G_PI / 180.0 ;
+	if(GROUP_VAL(group_mode) == 1) //PA
+		current_angle = current_angle * G_PI / 180.0 ;
+	else
+		current_angle = 0 ;
 
 	if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 	{
@@ -4495,20 +4498,21 @@ void data_101 (GtkSpinButton *spinbutton, gpointer data) /*Start 扫描延时 P1
 	TMP(group_spi[grp]).sample_range	= TMP(group_spi[grp]).sample_start + 
 		get_group_val (p_grp, GROUP_RANGE) / 10;
 
-	//tt[0] = (GROUP_VAL_POS(grp, gate[0].start) +	GROUP_VAL_POS (grp, gate[0].width));
-	//tt[1] = (GROUP_VAL_POS(grp, gate[1].start) +	GROUP_VAL_POS (grp, gate[1].width));
-	//tt[2] = (GROUP_VAL_POS(grp, gate[2].start) +	GROUP_VAL_POS (grp, gate[2].width));
 
-	//tt[3] = MAX(tt[0], (MAX(tt[1],tt[2]))) / 10;
-	//tt[3] = (int) (tt[3] / cos(max_angle))  ;
-
-	TMP(group_spi[grp]).rx_time		= TMP(group_spi[grp]).sample_range + TMP(max_beam_delay[grp]) + TMP(group_spi[grp]).compress_rato;
-	temp_prf = TMP(beam_qty[grp]) * get_group_val (p_grp, GROUP_PRF_VAL);
-	TMP(group_spi[grp]).idel_time	= 
-		100000000 / (temp_prf / (10)) - 2048 - TMP(group_spi[grp]).rx_time;
-	/*		100000000 / (get_group_val (p_grp, GROUP_PRF_VAL) / (10)) - 2048 - TMP(group_spi[grp]).rx_time;*/
-
-	/*发送给硬件*/
+	if(GROUP_VAL(group_mode) == 1) //PA
+	{
+		TMP(group_spi[grp]).rx_time	= TMP(group_spi[grp]).sample_range  + TMP(max_beam_delay[grp]) + TMP(group_spi[grp]).compress_rato;
+		temp_prf = TMP(beam_qty[grp]) * GROUP_VAL_POS(grp, prf1);
+		TMP(group_spi[grp]).idel_time	=
+			100000000 / (temp_prf / (10)) - 2048 - TMP(group_spi[grp]).rx_time;
+	}
+	else  //UT
+	{
+		TMP(group_spi[grp]).rx_time	= TMP(group_spi[grp]).sample_range + TMP(group_spi[grp]).compress_rato;
+		temp_prf = TMP(beam_qty[grp]) * GROUP_VAL_POS(grp, prf1);
+		TMP(group_spi[grp]).idel_time	=
+			100000000 / (temp_prf / (10)) - 2048 - TMP(group_spi[grp]).rx_time;
+	}
 }
 
 void data_102 (GtkSpinButton *spinbutton, gpointer data) /*Range 范围 P102 */
@@ -4517,7 +4521,6 @@ void data_102 (GtkSpinButton *spinbutton, gpointer data) /*Range 范围 P102 */
 
 	gint grp = get_current_group(pp->p_config);
 	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
-	//gint tt[4];
 	gint temp_prf;
 
 	double current_angle ;
@@ -4533,7 +4536,10 @@ void data_102 (GtkSpinButton *spinbutton, gpointer data) /*Range 范围 P102 */
 		current_angle = LAW_VAL(Angle_min)/100.0 ;
 		max_angle = LAW_VAL(Angle_min) * G_PI / 180.0 ;
 	}
-	current_angle = current_angle * G_PI / 180.0 ;
+	if(GROUP_VAL(group_mode) == 1) //PA
+		current_angle = current_angle * G_PI / 180.0 ;
+	else
+		current_angle = 0 ;
 
 	if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 	{
@@ -4579,24 +4585,22 @@ void data_102 (GtkSpinButton *spinbutton, gpointer data) /*Range 范围 P102 */
 		((get_group_val (p_grp, GROUP_RANGE) / 10.0) / GROUP_VAL_POS(grp, point_qty)) : 1;
 	TMP(group_spi[grp]).sample_range	= TMP(group_spi[grp]).sample_start + 
 		get_group_val (p_grp, GROUP_RANGE) / 10;		
-	//tt[0] = (GROUP_VAL_POS(grp, gate[0].start) + GROUP_VAL_POS (grp, gate[0].width));
-	//tt[1] = (GROUP_VAL_POS(grp, gate[1].start) + GROUP_VAL_POS (grp, gate[1].width));
-	//tt[2] = (GROUP_VAL_POS(grp, gate[2].start) + GROUP_VAL_POS (grp, gate[2].width));
-	//tt[3] = MAX(tt[0], (MAX(tt[1],tt[2]))) / 10;
-	//tt[3] = (int)( tt[3] / cos(max_angle));
 
-	TMP(group_spi[grp]).rx_time		=  TMP(group_spi[grp]).sample_range  +
-		TMP(max_beam_delay[grp]) + TMP(group_spi[grp]).compress_rato;
-	temp_prf = TMP(beam_qty[grp]) * get_group_val (p_grp, GROUP_PRF_VAL);
-	TMP(group_spi[grp]).idel_time	= 
-		100000000 / (temp_prf / (10)) - 2048 - TMP(group_spi[grp]).rx_time;
-	/*		100000000 / (get_group_val (p_grp, GROUP_PRF_VAL) / (10)) - 2048 - TMP(group_spi[grp]).rx_time;*/
+	if(GROUP_VAL(group_mode) == 1) //PA
+	{
+		TMP(group_spi[grp]).rx_time	= TMP(group_spi[grp]).sample_range  + TMP(max_beam_delay[grp]) + TMP(group_spi[grp]).compress_rato;
+		temp_prf = TMP(beam_qty[grp]) * GROUP_VAL_POS(grp, prf1);
+		TMP(group_spi[grp]).idel_time	=
+			100000000 / (temp_prf / (10)) - 2048 - TMP(group_spi[grp]).rx_time;
+	}
+	else  //UT
+	{
+		TMP(group_spi[grp]).rx_time	= TMP(group_spi[grp]).sample_range + TMP(group_spi[grp]).compress_rato;
+		temp_prf = TMP(beam_qty[grp]) * GROUP_VAL_POS(grp, prf1);
+		TMP(group_spi[grp]).idel_time	=
+			100000000 / (temp_prf / (10)) - 2048 - TMP(group_spi[grp]).rx_time;
+	}
 
-	//	draw_menu3(0, NULL);
-	//	gtk_widget_queue_draw (spinbutton);
-	//send_spi_data (grp);
-
-	/*发送给硬件*/
 }
 
 void data_103 (GtkSpinButton *spinbutton, gpointer data) /*楔块延时  P103 */
@@ -5217,34 +5221,8 @@ void data_201 (GtkMenuItem *menuitem, gpointer data) /* parameter 闸门参数�
 
 void data_202 (GtkSpinButton *spinbutton, gpointer data)	/* 闸门开始位置 P202 */
 {
-	gfloat delay;
-	guint offset, k;
 	gint grp = get_current_group(pp->p_config);
 	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
-	guint beam_qty =TMP(beam_qty[grp]);
-	//	gfloat depth = LAW_VAL(Position_start)/1000.0;
-	//gint tt[4];
-	gint temp_prf ;
-	// get current beam Number
-	double current_angle ;
-	double max_angle     ;
-	int BeamNo = pp->p_tmp_config->beam_num[grp];
-
-	for (offset = 0, k = 0 ; k < grp; k++)
-		offset += TMP(beam_qty[k]);
-	if(LAW_VAL(Focal_type) == 0)
-	{
-		current_angle = LAW_VAL(Angle_min)/100.0 + BeamNo * LAW_VAL(Angle_step)/100.0 ;
-		max_angle = MAX(fabs(LAW_VAL(Angle_min)), fabs(LAW_VAL(Angle_max))) * G_PI / 180.0 ;
-	}
-	else
-	{
-		current_angle = LAW_VAL(Angle_min)/100.0 ;
-		max_angle = LAW_VAL(Angle_min) * G_PI / 180.0 ;
-	}
-	current_angle = current_angle * G_PI / 180.0 ;
-	//    delay = 1000000*depth / ((get_group_val(p_grp, GROUP_VELOCITY)/100.0));
-	//	printf("depth =%f delay=%f \n", depth, delay);
 
 	if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 	{
@@ -5262,67 +5240,13 @@ void data_202 (GtkSpinButton *spinbutton, gpointer data)	/* 闸门开始位置 P
 		pp->gate_start_clb = gtk_spin_button_get_value (spinbutton) * 1000.0;
 	}
 
-	for (k = offset; k < offset + beam_qty; k++)//k:每个beam
-	{
-//		if( (k - offset) == BeamNo )//只能修改当前beam
-//		{
-			delay = pp->G_delay[k - offset];
-			if(LAW_VAL(Focal_point_type) == 1)//true depth
-			{ 
-				if (GROUP_VAL(gate_pos) == GATE_A)
-				{
-					pp->gate_a_start[k]	= (int)( (GROUP_GATE_POS(start) + delay) / (10*cos(current_angle)) );
-					pp->gate_a_end[k]	= (int)( (GROUP_GATE_POS(start) + GROUP_GATE_POS(width) + delay) / (10*cos(current_angle)) );
-				}
-				else if (GROUP_VAL(gate_pos) == GATE_B)
-				{ 
-					pp->gate_b_start[k]	= (int)( (GROUP_GATE_POS(start) + delay) / (10*cos(current_angle)) );
-					pp->gate_b_end[k]	= (int)( (GROUP_GATE_POS(start) + GROUP_GATE_POS(width) + delay) / (10*cos(current_angle)) );
-				}
-				else if (GROUP_VAL(gate_pos) == GATE_I)
-				{
-					pp->gate_i_start[k]	= (int)( (GROUP_GATE_POS(start) + delay) / (10*cos(current_angle)) );
-					pp->gate_i_end[k]	= (int)( (GROUP_GATE_POS(start) + GROUP_GATE_POS(width) + delay) / (10*cos(current_angle)) );
-				}
-			}
-			else //half path
-			{
-				if (GROUP_VAL(gate_pos) == GATE_A)
-				{
-					pp->gate_a_start[k]	= (int)( (GROUP_GATE_POS(start) + delay) / 10 );
-					pp->gate_a_end[k]	= (int)( (GROUP_GATE_POS(start) + GROUP_GATE_POS (width) + delay) / 10 );
-				}
-				else if (GROUP_VAL(gate_pos) == GATE_B)
-				{ 
-					pp->gate_b_start[k]	= (int)( (GROUP_GATE_POS(start) + delay) / 10 );
-					pp->gate_b_end[k]	= (int)( (GROUP_GATE_POS(start) + GROUP_GATE_POS (width) + delay) / 10 );
-				}
-				else if (GROUP_VAL(gate_pos) == GATE_I)
-				{
-					pp->gate_i_start[k]	= (int)( (GROUP_GATE_POS(start) + delay) / 10 );
-					pp->gate_i_end[k]	= (int)( (GROUP_GATE_POS(start) + GROUP_GATE_POS (width) + delay) / 10 );
-				}
-			}
-//			printf("gate_a_start[%d] = %d beam_num = %d \n", k, pp->gate_a_start[k], BeamNo);
-//		}
-	}
-
-	//tt[0] = (GROUP_VAL_POS(grp, gate[0].start) + GROUP_VAL_POS (grp, gate[0].width));
-	//tt[1] = (GROUP_VAL_POS(grp, gate[1].start) + GROUP_VAL_POS (grp, gate[1].width));
-	//tt[2] = (GROUP_VAL_POS(grp, gate[2].start) + GROUP_VAL_POS (grp, gate[2].width));
-	//tt[3] = MAX(tt[0], MAX(tt[1],tt[2])) / 10 ;
-	//tt[3] = (gint)(tt[3] / cos(max_angle)) ;
-
-	TMP(group_spi[grp]).rx_time	= TMP(group_spi[grp]).sample_range  + TMP(max_beam_delay[grp]) + TMP(group_spi[grp]).compress_rato;
-	temp_prf = TMP(beam_qty[grp]) * GROUP_VAL_POS(grp, prf1);
-	TMP(group_spi[grp]).idel_time	=
-		100000000 / (temp_prf / (10)) - 2048 - TMP(group_spi[grp]).rx_time;
-
+	update_gate_info();
 	if(!pp->clb_flag)
 		draw_area_all();
 	else
 		draw_area_calibration();
 	send_focal_spi (grp);
+	send_group_spi (grp);
 	gtk_widget_queue_draw (pp->vboxtable);
 }
 
@@ -5360,32 +5284,8 @@ void data_2021 (GtkMenuItem *menuitem, gpointer data)	/* 闸门同步 */
 
 void data_203 (GtkSpinButton *spinbutton, gpointer data) /* 闸门宽度 P203 */
 {
-	gfloat delay;
-	//gint tt[4];
-	guint offset, k;
 	gint grp = get_current_group(pp->p_config);
 	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
-	guint beam_qty =TMP(beam_qty[grp]);
-	//	gfloat depth = LAW_VAL(Position_start)/1000.0;
-	// get current beam Number
-	double current_angle ;
-	double max_angle     ;
-	int BeamNo = pp->p_tmp_config->beam_num[grp];
-
-	for (offset = 0, k = 0 ; k < grp; k++)
-		offset += TMP(beam_qty[k]);
-	if(LAW_VAL(Focal_type) == 0)
-	{
-		current_angle = LAW_VAL(Angle_min)/100.0 + BeamNo * LAW_VAL(Angle_step)/100.0 ;
-		max_angle = MAX(abs(LAW_VAL(Angle_min)), abs(LAW_VAL(Angle_max))) * G_PI / 180.0 ;
-	}
-	else
-	{
-		current_angle = LAW_VAL(Angle_min)/100.0 ;
-		max_angle = LAW_VAL(Angle_min) * G_PI / 180.0 ;
-	}
-	current_angle = current_angle * G_PI / 180.0 ;
-	//    delay = 1000000*depth / ((get_group_val(p_grp, GROUP_VELOCITY)/100.0));
 
 	if ((UT_UNIT_TRUE_DEPTH == GROUP_VAL(ut_unit)) || (UT_UNIT_SOUNDPATH == GROUP_VAL(ut_unit)))
 	{
@@ -5402,108 +5302,16 @@ void data_203 (GtkSpinButton *spinbutton, gpointer data) /* 闸门宽度 P203 */
 		GROUP_GATE_POS(width) = (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0) ; 
 		pp->gate_width_clb = gtk_spin_button_get_value (spinbutton) * 1000.0;
 	}
-	/*
-	   for (k = offset; k < offset + beam_qty; k++)//k:每个beam
-	   {
-	   if( (k - offset) == BeamNo )//只能修改当前beam
-	   {
-	   if(LAW_VAL(Focal_point_type) == 1)//true depth
-	   {
-	   if (GROUP_VAL(gate_pos) == GATE_A)
-	   {
-	   pp->gate_a_end[k]	= (GROUP_VAL_POS(grp, gate[0].start) + 
-	   GROUP_VAL_POS (grp, gate[0].width)) / (10*cos(current_angle));
-	   }
-	   else if (GROUP_VAL(gate_pos) == GATE_B)
-	   {
-	   pp->gate_b_end[k]	= (GROUP_VAL_POS(grp, gate[1].start) + 
-	   GROUP_VAL_POS (grp, gate[1].width)) / (10*cos(current_angle));
-	   }
-	   else if (GROUP_VAL(gate_pos) == GATE_I)
-	   {
-	   pp->gate_i_end[k]	= (GROUP_VAL_POS(grp, gate[2].start) + 
-	   GROUP_VAL_POS (grp, gate[2].width)) / (10*cos(current_angle));
-	   }
-	   }
-	   else //half path
-	   {
-	   if (GROUP_VAL(gate_pos) == GATE_A)
-	   {
-	   pp->gate_a_end[k]	= (GROUP_VAL_POS(grp, gate[0].start) + 
-	   GROUP_VAL_POS (grp, gate[0].width)) / 10;
-	   }
-	   else if (GROUP_VAL(gate_pos) == GATE_B)
-	   {
-	   pp->gate_b_end[k]	= (GROUP_VAL_POS(grp, gate[1].start) + 
-	   GROUP_VAL_POS (grp, gate[1].width)) / 10;
-	   }
-	   else if (GROUP_VAL(gate_pos) == GATE_I)
-	   {
-	   pp->gate_i_end[k]	= (GROUP_VAL_POS(grp, gate[2].start) + 
-	   GROUP_VAL_POS (grp, gate[2].width)) / 10;
-	   }
-	   }
-	   }			
-	   */
-	for (k = offset; k < offset + beam_qty; k++)//k:每个beam
-	{
-		if( (k - offset) == BeamNo )//只能修改当前beam
-		{
-			delay = pp->G_delay[k - offset];
-			if(LAW_VAL(Focal_point_type) == 1)//true depth
-			{ 
-				if (GROUP_VAL(gate_pos) == GATE_A)
-				{
-					pp->gate_a_start[k]	= (int)( (GROUP_GATE_POS(start) + delay) / (10*cos(current_angle)) );
-					pp->gate_a_end[k]	= (int)( (GROUP_GATE_POS(start) + GROUP_GATE_POS(width) + delay) / (10*cos(current_angle)) );
-				}
-				else if (GROUP_VAL(gate_pos) == GATE_B)
-				{ 
-					pp->gate_b_start[k]	= (int)( (GROUP_GATE_POS(start) + delay) / (10*cos(current_angle)) );
-					pp->gate_b_end[k]	= (int)( (GROUP_GATE_POS(start) + GROUP_GATE_POS(width) + delay) / (10*cos(current_angle)) );
-				}
-				else if (GROUP_VAL(gate_pos) == GATE_I)
-				{
-					pp->gate_i_start[k]	= (int)( (GROUP_GATE_POS(start) + delay) / (10*cos(current_angle)) );
-					pp->gate_i_end[k]	= (int)( (GROUP_GATE_POS(start) + GROUP_GATE_POS(width) + delay) / (10*cos(current_angle)) );
-				}
-			}
-			else //half path
-			{
-				if (GROUP_VAL(gate_pos) == GATE_A)
-				{
-					pp->gate_a_start[k]	= (int)( (GROUP_GATE_POS(start) + delay) / 10 );
-					pp->gate_a_end[k]	= (int)( (GROUP_GATE_POS(start) + GROUP_GATE_POS (width) + delay) / 10 );
-				}
-				else if (GROUP_VAL(gate_pos) == GATE_B)
-				{ 
-					pp->gate_b_start[k]	= (int)( (GROUP_GATE_POS(start) + delay) / 10 );
-					pp->gate_b_end[k]	= (int)( (GROUP_GATE_POS(start) + GROUP_GATE_POS (width) + delay) / 10 );
-				}
-				else if (GROUP_VAL(gate_pos) == GATE_I)
-				{
-					pp->gate_i_start[k]	= (int)( (GROUP_GATE_POS(start) + delay) / 10 );
-					pp->gate_i_end[k]	= (int)( (GROUP_GATE_POS(start) + GROUP_GATE_POS (width) + delay) / 10 );
-				}
-			}
-		}
-	}
-
-	//tt[0] = (GROUP_VAL_POS(grp, gate[0].start) + GROUP_VAL_POS (grp, gate[0].width));
-	//tt[1] = (GROUP_VAL_POS(grp, gate[1].start) + GROUP_VAL_POS (grp, gate[1].width));
-	//tt[2] = (GROUP_VAL_POS(grp, gate[2].start) + GROUP_VAL_POS (grp, gate[2].width));
-	//tt[3] = MAX(tt[0], (MAX(tt[1],tt[2]))) / 10;
-	TMP(group_spi[grp]).rx_time		= TMP(group_spi[grp]).sample_range
-		+ TMP(max_beam_delay[grp]) + TMP(group_spi[grp]).compress_rato   ;
-	//TMP(group_spi[grp]).idel_time	=
-	//		100000000 / (temp_prf / (10)) - 2048 - TMP(group_spi[grp]).rx_time;
-
+	
+	update_gate_info();
 	if(!pp->clb_flag)
 		draw_area_all();
 	else
 		draw_area_calibration();
 	send_focal_spi (grp);
+	send_group_spi (grp);
 	gtk_widget_queue_draw (pp->vboxtable);
+
 }
 
 void data_2031 (GtkMenuItem *menuitem, gpointer data)	/* 波峰或者前沿 测量选项 */
@@ -6452,6 +6260,7 @@ void data_500 (GtkMenuItem *menuitem, gpointer data) /* 增加删除选择group 
 
 void data_501 (GtkMenuItem *menuitem, gpointer data) /* Probe/Part->Select->Group Mode 501 */
 {
+	gint temp_prf ;
 	gint group = get_current_group(pp->p_config);
 	GROUP_VAL(group_mode) = (gchar) (GPOINTER_TO_UINT (data));
 	TMP(group_spi[group]).UT2			= (GROUP_VAL_POS (group, group_mode) == 3) ? 1 : 0;		
@@ -6465,9 +6274,23 @@ void data_501 (GtkMenuItem *menuitem, gpointer data) /* Probe/Part->Select->Grou
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
 
-//	write_group_data (&TMP(group_spi[group]), group);
-	send_focal_spi(group);
+	if(GROUP_VAL(group_mode) == 1) //PA
+	{
+		TMP(group_spi[group]).rx_time	= TMP(group_spi[group]).sample_range  + TMP(max_beam_delay[group]) + TMP(group_spi[group]).compress_rato;
+		temp_prf = TMP(beam_qty[group]) * GROUP_VAL_POS(group, prf1);
+		TMP(group_spi[group]).idel_time	=
+			100000000 / (temp_prf / (10)) - 2048 - TMP(group_spi[group]).rx_time;
+	}
+	else  //UT
+	{
+		TMP(group_spi[group]).rx_time	= TMP(group_spi[group]).sample_range + TMP(group_spi[group]).compress_rato;
+		temp_prf = TMP(beam_qty[group]) * GROUP_VAL_POS(group, prf1);
+		TMP(group_spi[group]).idel_time	=
+			100000000 / (temp_prf / (10)) - 2048 - TMP(group_spi[group]).rx_time;
+	}
 	send_group_spi(group);
+	send_focal_spi(group);
+
 }
 
 void data_502 (GtkMenuItem *menuitem, gpointer data) /* Probe/Part->Select->Select 502 */
@@ -7212,11 +7035,8 @@ void generate_focallaw(int grp)
 {
 	gint	i, j;
 	guint	temp_beam;
-	gint	temp_prf;
-	//gint	tt[4];
 	gint    k, offset;
 	gint step;
-
 	for (offset = 0, k = 0 ; k < grp; k++)
 		offset += TMP(beam_qty[k]);
 	GROUP	*p_grp = get_group_by_id (pp->p_config, grp);
@@ -7249,36 +7069,24 @@ void generate_focallaw(int grp)
 		step = 0;
 	}
 
-
 	TMP(beam_qty[grp])	= temp_beam;
 	TMP(beam_num[grp]) = 0;
 	TMP(current_angle[grp]) = LAW_VAL_POS(grp, Angle_min) * G_PI / 18000.0 ;
-
 	TMP(group_spi[grp]).point_qty = GROUP_VAL_POS(grp, point_qty);
 
 	cal_focal_law (grp);
-	//send_focal_spi (grp);
-
 	/*计算聚焦法则时，sumgain默认为Auto*/
 	if (LAW_VAL_POS(grp, Elem_qty) == 1)	
 		TMP(group_spi[grp]).sum_gain	= 4095;	
 	else 
 		TMP(group_spi[grp]).sum_gain	= 
 			4096 / LAW_VAL_POS(grp, Elem_qty) ;
-
 	TMP(group_spi[grp]).sample_start	= (get_group_val (p_grp, GROUP_START) +
 			get_group_val (p_grp, GROUP_WEDGE_DELAY)) / 10 ;
 	TMP(group_spi[grp]).sample_range	= TMP(group_spi[grp]).sample_start +
 		get_group_val (p_grp, GROUP_RANGE) / 10 ;
-	//tt[0] = (GROUP_VAL_POS(grp, gate[0].start) +	GROUP_VAL_POS (grp, gate[0].width));
-	//tt[1] = (GROUP_VAL_POS(grp, gate[1].start) +	GROUP_VAL_POS (grp, gate[1].width));
-	//tt[2] = (GROUP_VAL_POS(grp, gate[2].start) +	GROUP_VAL_POS (grp, gate[2].width));
-	//tt[3] = MAX(tt[0], (MAX(tt[1],tt[2]))) / 10;
-
-	TMP(group_spi[grp]).rx_time		= TMP(group_spi[grp]).sample_range + TMP(max_beam_delay[grp]) + TMP(group_spi[grp]).compress_rato;
-	temp_prf = TMP(beam_qty[grp]) * get_group_val (p_grp, GROUP_PRF_VAL);
-	TMP(group_spi[grp]).idel_time	=
-		100000000 / (temp_prf / (10)) - 2048 - TMP(group_spi[grp]).rx_time;
+	
+	update_gate_info();
 	if(!pp->clb_count)
 	{
 		//每次计算之后gain_offset清零
@@ -7287,9 +7095,6 @@ void generate_focallaw(int grp)
 			pp->tmp_gain_off[i + offset] = 0;
 		}
 	}
-	//send_focal_spi(grp);
-	//write_group_data (&TMP(group_spi[grp]), grp);
-
 	if(!pp->clb_flag)
 		draw_area_all ();
 	else
@@ -7546,3 +7351,94 @@ static int thread_set_DB_eighty_percent(gpointer data)
 	}
 	return 0;
 }
+
+void update_gate_info()
+{
+	gfloat delay;
+	guint offset, k;
+	gint grp = get_current_group(pp->p_config);
+	guint beam_qty =TMP(beam_qty[grp]);
+	gint temp_prf ;
+	// get current beam Number
+	double current_angle ;
+	double max_angle     ;
+	int BeamNo = pp->p_tmp_config->beam_num[grp];
+
+	for (offset = 0, k = 0 ; k < grp; k++)
+		offset += TMP(beam_qty[k]);
+	if(LAW_VAL(Focal_type) == 0)
+	{
+		current_angle = LAW_VAL(Angle_min)/100.0 + BeamNo * LAW_VAL(Angle_step)/100.0 ;
+		max_angle = MAX(fabs(LAW_VAL(Angle_min)), fabs(LAW_VAL(Angle_max))) * G_PI / 180.0 ;
+	}
+	else
+	{
+		current_angle = LAW_VAL(Angle_min)/100.0 ;
+		max_angle = LAW_VAL(Angle_min) * G_PI / 180.0 ;
+	}
+	if(GROUP_VAL(group_mode) == 1) //PA
+		current_angle = current_angle * G_PI / 180.0 ;
+	else
+		current_angle = 0 ;
+
+	for (k = offset; k < offset + beam_qty; k++)//k:每个beam
+	{
+		delay = pp->G_delay[k - offset];
+		if(LAW_VAL(Focal_point_type) == 1)//true depth
+		{ 
+			if (GROUP_VAL(gate_pos) == GATE_A)
+			{
+				pp->gate_a_start[k]	= (int)( (GROUP_GATE_POS(start) + delay) / (10*cos(current_angle)) );
+				pp->gate_a_end[k]	= (int)( (GROUP_GATE_POS(start) + GROUP_GATE_POS(width) + delay) / (10*cos(current_angle)) );
+			}
+			else if (GROUP_VAL(gate_pos) == GATE_B)
+			{ 
+				pp->gate_b_start[k]	= (int)( (GROUP_GATE_POS(start) + delay) / (10*cos(current_angle)) );
+				pp->gate_b_end[k]	= (int)( (GROUP_GATE_POS(start) + GROUP_GATE_POS(width) + delay) / (10*cos(current_angle)) );
+			}
+			else if (GROUP_VAL(gate_pos) == GATE_I)
+			{
+				pp->gate_i_start[k]	= (int)( (GROUP_GATE_POS(start) + delay) / (10*cos(current_angle)) );
+				pp->gate_i_end[k]	= (int)( (GROUP_GATE_POS(start) + GROUP_GATE_POS(width) + delay) / (10*cos(current_angle)) );
+			}
+		}
+		else //half path
+		{
+			if (GROUP_VAL(gate_pos) == GATE_A)
+			{
+				pp->gate_a_start[k]	= (int)( (GROUP_GATE_POS(start) + delay) / 10 );
+				pp->gate_a_end[k]	= (int)( (GROUP_GATE_POS(start) + GROUP_GATE_POS (width) + delay) / 10 );
+			}
+			else if (GROUP_VAL(gate_pos) == GATE_B)
+			{ 
+				pp->gate_b_start[k]	= (int)( (GROUP_GATE_POS(start) + delay) / 10 );
+				pp->gate_b_end[k]	= (int)( (GROUP_GATE_POS(start) + GROUP_GATE_POS (width) + delay) / 10 );
+			}
+			else if (GROUP_VAL(gate_pos) == GATE_I)
+			{
+				pp->gate_i_start[k]	= (int)( (GROUP_GATE_POS(start) + delay) / 10 );
+				pp->gate_i_end[k]	= (int)( (GROUP_GATE_POS(start) + GROUP_GATE_POS (width) + delay) / 10 );
+			}
+		}
+
+	}
+
+	if(GROUP_VAL(group_mode) == 1) //PA
+	{
+		TMP(group_spi[grp]).rx_time	= TMP(group_spi[grp]).sample_range  + TMP(max_beam_delay[grp]) + TMP(group_spi[grp]).compress_rato;
+		temp_prf = TMP(beam_qty[grp]) * GROUP_VAL_POS(grp, prf1);
+		TMP(group_spi[grp]).idel_time	=
+			100000000 / (temp_prf / (10)) - 2048 - TMP(group_spi[grp]).rx_time;
+	}
+	else  //UT
+	{
+//		grp = 0;
+		TMP(group_spi[grp]).rx_time	= TMP(group_spi[grp]).sample_range + TMP(group_spi[grp]).compress_rato;
+		temp_prf = TMP(beam_qty[grp]) * GROUP_VAL_POS(grp, prf1);
+		TMP(group_spi[grp]).idel_time	=
+			100000000 / (temp_prf / (10)) - 2048 - TMP(group_spi[grp]).rx_time;
+	}
+
+}
+
+
