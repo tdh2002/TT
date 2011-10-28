@@ -26,6 +26,7 @@ extern void switch_area();
 extern void draw_field_value ();
 extern void send_group_spi (guint grp);
 extern void send_focal_spi (guint grp);
+extern void send_focal_spi_without_reset (guint group) ;
 
 static int handler_key(guint keyval, gpointer data);
 static int thread_set_DB_eighty_percent(gpointer data);
@@ -3515,7 +3516,7 @@ static int handler_key(guint keyval, gpointer data)
 
 					BeamNo = pp->p_tmp_config->beam_num[group];
 					update_gate_info();
-					send_focal_spi(group);
+					send_focal_spi_without_reset(group);
 					if(LAW_VAL(Focal_type) == 0)
 					{
 						current_angle = LAW_VAL(Angle_min)/100.0 + BeamNo * LAW_VAL(Angle_step)/100.0 ;
