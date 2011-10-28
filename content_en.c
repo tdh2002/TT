@@ -92,7 +92,8 @@ static const gchar *content_en202[] = {
 	"Depth 2", "Thickness 1", "Thickness 2",	"Next", "Width", "Threshold","Get Position","Radius A",
 	"Depth A", "Thickness A", "Tolerance","First Angle", "Last Angle", "Clear Env.", "Calibrate",
 	"Restart", "Accept", "Ref.Amplitude", "Comp.Gain", "Apply", "Amplitude", "Add Point", "Weld Type",
-	"Thickness", "Encoder", "Origin", "Distance", "Resolution", "Velocity","First Element","Last Element"
+	"Thickness", "Encoder", "Origin", "Distance", "Resolution", "Velocity","First VPA","Last VPA",
+	"Get Position1", "Get Position2"
 };
 
 static const gchar *content_en203[] = {

@@ -5916,14 +5916,14 @@ void draw3_data1(DRAW_UI_P p)
 						else if (pp->cstart_qty == 4)
 						{
 							if (pp->cmode_pos == 0)
-								draw3_popdown_offset (NULL, 1, 1, 22 );
+								draw3_popdown_offset (NULL, 1, 1, 47 );//
 							else
 								draw3_popdown_offset (NULL, 1, 1, 19 );
 						}
 						else if (pp->cstart_qty == 5)
 						{
 							if (pp->cmode_pos == 0)
-								draw3_popdown_offset (NULL, 1, 1, 22 );
+								draw3_popdown_offset (NULL, 1, 1, 48 );//
 							else if (pp->cmode_pos == 1)
 								draw3_popdown_offset (NULL, 1, 1, 32 );
 							else if (pp->cmode_pos == 3)
