@@ -2380,6 +2380,9 @@ static gboolean draw_other_info (GtkWidget *widget, GdkEventExpose *event, gpoin
 	gint  y1 = 3;
 	gint  y2 = 23;
 	char  buff[9];
+	int i;
+	short max_temperature ;
+	short* temp ;
 	static int tmp1 = TRUE;
 #if X86
 	static int tmp2 = TRUE;
@@ -2450,6 +2453,7 @@ static gboolean draw_other_info (GtkWidget *widget, GdkEventExpose *event, gpoin
     pp->battery.status2 = 0x0080 ;
     tmp2 = FALSE ;
 #endif
+
 	status = 0x0080 & pp->battery.status1 ;
 	if (status)//电池1
 	{
@@ -2467,14 +2471,14 @@ static gboolean draw_other_info (GtkWidget *widget, GdkEventExpose *event, gpoin
 			//cairo_rectangle (cr , 0, y2, 50*0.85,15);//;50*(pp->battery.power1), 15);//
 			cairo_fill (cr);
 			cairo_set_source_rgba (cr, 1, 1, 1, 1);
-			sprintf(buff, "%3d" , pp->battery.power1);
-			cairo_move_to(cr, 17 , y1+12);
+			sprintf(buff, "%3d%%" , pp->battery.power1);
+			cairo_move_to(cr, 13 , y1+12);
 			cairo_show_text(cr, buff);
 			cairo_stroke (cr);
 		}
 		else
 		{
-			if(pp->battery.power1>15)
+			if(pp->battery.power1 > 15)
 			  cairo_set_source_rgba (cr, 0.3, 0.8, 0.3, 1);
 			else
 			  cairo_set_source_rgba (cr, 1, 0, 0, 1);
@@ -2485,9 +2489,9 @@ static gboolean draw_other_info (GtkWidget *widget, GdkEventExpose *event, gpoin
 			if(tmp1)
 			{
 			   tmp1 = FALSE ;
-			   sprintf(buff, "%3d" , pp->battery.power1);
+			   sprintf(buff, "%3d%%" , pp->battery.power1);
 			   cairo_set_source_rgba (cr, 1, 1, 1, 1);
-			   cairo_move_to(cr, 17 , y1+12);
+			   cairo_move_to(cr, 13 , y1+12);
 			}
 			else
 			{
@@ -2519,8 +2523,8 @@ static gboolean draw_other_info (GtkWidget *widget, GdkEventExpose *event, gpoin
 			//cairo_rectangle (cr , 0, y2, 50*0.85,15);//;50*(pp->battery.power1), 15);//
 			cairo_fill (cr);
 			cairo_set_source_rgba (cr, 1, 1, 1, 1);
-			sprintf(buff, "%3d" , pp->battery.power2);
-			cairo_move_to(cr, 17 , y2+12);
+			sprintf(buff, "%3d%%" , pp->battery.power2);
+			cairo_move_to(cr, 13 , y2+12);
 			cairo_show_text(cr, buff);
 			cairo_stroke (cr);
 		}
@@ -2537,9 +2541,9 @@ static gboolean draw_other_info (GtkWidget *widget, GdkEventExpose *event, gpoin
 			if(tmp1)
 			{
 			   tmp1 = FALSE ;
-			   sprintf(buff, "%3d" , pp->battery.power2);
+			   sprintf(buff, "%3d%%" , pp->battery.power2);
 			   cairo_set_source_rgba (cr, 1, 1, 1, 1);
-			   cairo_move_to(cr, 17 , y2+12);
+			   cairo_move_to(cr, 13 , y2+12);
 			}
 			else
 			{
@@ -2553,6 +2557,27 @@ static gboolean draw_other_info (GtkWidget *widget, GdkEventExpose *event, gpoin
 			cairo_stroke (cr);
 		}
 	}
+	// display max temperature
+	max_temperature = pp->battery.temp1 ;
+	temp = &(pp->battery.temp2) ;
+	for(i = 1 ; i< 5; i++)
+	{
+		if(*temp > max_temperature)  max_temperature = *temp ;
+		temp++ ;
+	}
+#if X86
+	max_temperature = 2000;
+#endif
+	if(max_temperature> 0)
+	     max_temperature = (max_temperature>>7)&0x00ff    ;
+    else
+    	 max_temperature = -((max_temperature>>7)&0x00ff) ;
+	sprintf(buff, "%3d℃" , max_temperature);
+	cairo_set_font_size (cr, 12 );
+	cairo_set_source_rgba (cr, 1, 0, 0, 1);
+	cairo_move_to(cr, 60 , y1+12);
+	cairo_show_text(cr, buff);
+
 	cairo_stroke (cr);
 	cairo_destroy(cr);//销毁画笔
 	return TRUE;
@@ -14888,7 +14913,7 @@ void draw3_data4(DRAW_UI_P p)
 					else 
 					{
 						/* 这个选中Auto 时候显示 Auto + 数值 */
-						if (!get_group_val (p_grp, GROUP_PW_POS))
+						if (get_group_val (p_grp, GROUP_PW_POS))
 						{
 							/* Auto 时候计算脉冲宽度 */
 							str = g_strdup_printf ("%s %0.1f", 
@@ -14898,7 +14923,7 @@ void draw3_data4(DRAW_UI_P p)
 						}
 						else 
 						{
-							cur_value = get_group_val (p_grp, GROUP_PW_VAL) / 100.0;
+							cur_value = get_pw();
 							unit = UNIT_NULL;
 							pos = 4;
 							digit = 1;
