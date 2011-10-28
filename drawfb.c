@@ -1207,7 +1207,7 @@ void CalcLinearScan(int start_element, int stop_element, int element_step, int e
 
 	   //keep the points for drawing current beam line
 	   beam_width = beam_width / beam_qty ;
-	   for(i = 0 ; i< beam_qty ; i++)
+	   for(i = 0 ; i<= beam_qty ; i++)
 	   {
 		   if(_angle >=0 )
 		   {
@@ -1222,7 +1222,11 @@ void CalcLinearScan(int start_element, int stop_element, int element_step, int e
 		   CurrentLine_top[group][i].y = 0 ;
 		   CurrentLine_bottom[group][i].y =	height - 1 ;
 	   }
-
+	   if(beam_qty)
+	   {
+            CurrentLine_top[group][beam_qty].x--  ;
+            CurrentLine_bottom[group][beam_qty].x-- ;
+	   }
 }
 
 /* 画S扫描 角度扫查 */
