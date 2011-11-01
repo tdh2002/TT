@@ -193,6 +193,37 @@ int write_group_data (group_data_spi *p, unsigned int group)
 	return 0;
 }
 
+int write_focal_data_without_reset (focal_data_spi *p, unsigned int beam_num)
+{
+	focal_data_spi new, *p1;
+	int i;
+	memcpy (&new, p, sizeof (focal_data_spi));
+	p1 = &new;
+
+#if TT_DEBUG
+	ioctl (fd_gpio, GPIO43_LOW, &i);
+	return 0;
+#endif
+
+#if DEBUG
+	/*
+	unsigned int tmp = p->gain;
+	printf ("Gain= %d\n", tmp);
+	tmp = p->freq_band;
+	*/
+	g_print ("tx:%x rx:%x\n", p->tx_enable, p->rx_enable);
+	g_print ("tx_info:%x \n", p->tx_info[0]);
+#endif
+
+	p1->offset = 64 * beam_num;
+	p1->addr = 0x1;
+	little_to_big ((unsigned int *)(p1), sizeof(focal_data_spi) / 4);
+#if ARM
+	i = write (fd_array, (unsigned char *)(p1), sizeof(focal_data_spi));
+#endif
+
+	return 0;
+}
 int write_focal_data (focal_data_spi *p, unsigned int beam_num)
 {
 	focal_data_spi new, *p1;

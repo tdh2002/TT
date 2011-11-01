@@ -2171,115 +2171,275 @@ if(!(prule->mask & 0x04))
 }
 
 	/* 画ruler */
+	double interval       ;
+	double ten_interval   ;
+	int    int_mark_qty   ;
+	double pixel_per_mm   ;
+	double current_mark   ;
+	int first_mark_length ;
+	int first_mark_offset ;
+
+
+	double start          ;
+	double end            ;
 
 	if (!(prule->mask & 0x08))//垂直尺左
 	{
 
-	cairo_set_source_rgba(cr,((prule->h1_color)>>16)/255.0, (((prule->h1_color)>>8)&0x00FF)/255.0, ((prule->h1_color)&0xFF)/255.0, 1.0);
-	cairo_rectangle(cr,0.0,0.0,20.0,h-20);		/* hruler1 */
-	cairo_fill (cr);
-	cairo_stroke(cr);
-	cairo_set_source_rgba(cr,0.0,0.0,0.0,1.0);	/* 标尺及单位颜色为黑色 */
-	cairo_set_font_size(cr,8);
+		cairo_set_source_rgba(cr,((prule->h1_color)>>16)/255.0, (((prule->h1_color)>>8)&0x00FF)/255.0, ((prule->h1_color)&0xFF)/255.0, 1.0);
+		cairo_rectangle(cr,0.0,0.0,20.0,h-20);		/* hruler1 */
+		cairo_fill (cr);
+		cairo_stroke(cr);
+		cairo_set_source_rgba(cr,0.0,0.0,0.0,1.0);	/* 标尺及单位颜色为黑色 */
+		cairo_set_font_size(cr,8);
 
-	cairo_save (cr);				/* 保存当前画笔 */
-	if(prule->hmax1 > prule->hmin1)
-	{
-		cairo_move_to (cr, 12, (h-40));	/*hruler1 单位位置(底端) ％*/
-		cairo_rotate (cr, G_PI * 3/2);
-		cairo_show_text (cr, units[prule->h1_unit]);
-	}
-	else
-	{
-		cairo_move_to (cr, 12, 20);	/*hruler1 单位位置（顶端） ％*/
-		cairo_rotate (cr, G_PI * 3/2);
-		cairo_show_text (cr, units[prule->h1_unit]);
-	}
-	cairo_restore (cr);
-
-	i=0;
-	for( k=h-20.0;k>0;k=k-(h-20.0)/prule->hrule1_copies)	/* hruler1 标尺 */
-	{
-		if(i%10 == 0)
+		cairo_save (cr);				/* 保存当前画笔 */
+		if(prule->hmax1 > prule->hmin1)
 		{
-			cairo_save(cr);/* 保存当前画笔 */
-			cairo_move_to(cr,5,(int)k+0.5);
-			cairo_line_to(cr,20,(int)k+0.5);
-			cairo_stroke(cr);
-			cairo_move_to(cr,12,(int)k-3.5);
-			cairo_rotate(cr, G_PI * 3/2);		/*旋转270度*/
-			if(prule->hmax1 > prule->hmin1)
-				str=g_strdup_printf("%.*f",prule->h1_bit,  (float)((prule->hmax1-prule->hmin1)*i/(prule->hrule1_copies)+prule->hmin1) );
-			else
-				str=g_strdup_printf("%.*f",prule->h1_bit,  prule->hmin1-(float)(prule->hmin1-prule->hmax1)*i/(prule->hrule1_copies) );
-			cairo_show_text(cr,str); 
-			cairo_restore(cr);/* 恢复当前画笔 */
-		}
-		else if(i%5 == 0)
-		{
+			cairo_move_to (cr, 12, (h-40));	/*hruler1 单位位置(底端) ％*/
+			cairo_rotate (cr, G_PI * 3/2);
+			cairo_show_text (cr, units[prule->h1_unit]);
+			cairo_restore (cr);
 
-			cairo_move_to(cr,10,(int)k+0.5);
-			cairo_line_to(cr,20,(int)k+0.5);
-			cairo_stroke(cr);
+			i=0;
+			for( k=h-20.0;k>0;k=k-(h-20.0)/prule->hrule1_copies)	/* hruler1 标尺 */
+			{
+				if(i%10 == 0)
+				{
+					cairo_save(cr);/* 保存当前画笔 */
+					cairo_move_to(cr,5,(int)k+0.5);
+					cairo_line_to(cr,20,(int)k+0.5);
+					cairo_stroke(cr);
+					cairo_move_to(cr,12,(int)k-3.5);
+					cairo_rotate(cr, G_PI * 3/2);		/*旋转270度*/
+					if(prule->hmax1 > prule->hmin1)
+						str=g_strdup_printf("%.*f",prule->h1_bit,  (float)((prule->hmax1-prule->hmin1)*i/(prule->hrule1_copies)+prule->hmin1) );
+					else
+						str=g_strdup_printf("%.*f",prule->h1_bit,  prule->hmin1-(float)(prule->hmin1-prule->hmax1)*i/(prule->hrule1_copies) );
+					cairo_show_text(cr,str);
+					cairo_restore(cr);/* 恢复当前画笔 */
+				}
+				else if(i%5 == 0)
+				{
+
+					cairo_move_to(cr,10,(int)k+0.5);
+					cairo_line_to(cr,20,(int)k+0.5);
+					cairo_stroke(cr);
+				}
+				else
+				{
+					cairo_move_to(cr,15,(int)k+0.5);
+					cairo_line_to(cr,20,(int)k+0.5);
+					cairo_stroke(cr);
+				}
+				i++;
+			}
 		}
 		else
 		{
-			cairo_move_to(cr,15,(int)k+0.5);
-			cairo_line_to(cr,20,(int)k+0.5);
-			cairo_stroke(cr);
-		}
+			start   = prule->hmax1 ;
+			end = prule->hmin1 ;
+			int_mark_qty = (int)(prule->hrule1_copies * 0.8);
 
-		i++;
-	}
+			interval = 10 * (end - start)/int_mark_qty ;
+			if (interval < 0.1 )
+				interval = 0.1 ;
+			else if( 0.1 <interval < 1.0)
+				interval = ((int)(interval * 10.0)) / 10.0 ;
+			else if (interval >= 1.0 && interval <= 5.0)
+				interval = (int)interval               ;
+			else if (interval > 5 && interval <= 10 )
+				interval = 10                          ;
+			else if (interval > 10 && interval < 50)
+				interval = 10 * (1 + (int)(interval / 10)) ;
+			else if (interval >= 50 && interval <= 100 )
+				interval = 100                          ;
+			else if (interval > 100 && interval <= 200)
+				interval = 200                         ;
+			else if (interval > 200)
+				interval = 100 * (1 + (int)(interval / 100)) ;
+			pixel_per_mm =  (h-20) /(end - start);
+			ten_interval = interval ;
+			interval = interval / 10.0 ;
+
+			i = (int)(start / interval) ;
+			if(start > 0) i++ ;
+			current_mark = i * interval  ;
+			while (current_mark < end)
+			{
+				k = (current_mark - start) * pixel_per_mm ;
+				if(i%10 == 0)
+				{
+					cairo_save(cr);/* 保存当前画笔 */
+					cairo_move_to(cr,5,(int)k+0.5);
+					cairo_line_to(cr,20,(int)k+0.5);
+					cairo_stroke(cr);
+					cairo_move_to(cr,12,(int)k-3.5);
+					cairo_rotate(cr, G_PI * 3/2);		/*旋转270度*/
+					if(ten_interval >= 1.0)
+						str=g_strdup_printf("%.0f", current_mark);
+					else
+						str=g_strdup_printf("%.1f", current_mark);
+					cairo_show_text(cr,str);
+					cairo_restore(cr);/* 恢复当前画笔 */
+					first_mark_offset = k ;
+				}
+				else if(i%5 == 0)
+				{
+
+					cairo_move_to(cr,10,(int)k+0.5);
+					cairo_line_to(cr,20,(int)k+0.5);
+					cairo_stroke(cr);
+				}
+				else
+				{
+					cairo_move_to(cr,15,(int)k+0.5);
+					cairo_line_to(cr,20,(int)k+0.5);
+					cairo_stroke(cr);
+				}
+				i++;
+				current_mark = i * interval  ;
+			};
+			if(first_mark_offset <= h - 50)
+			{
+				cairo_move_to (cr, 12, (h-25));	/*hruler1 单位位置(底端) ％*/
+				cairo_rotate (cr, G_PI * 3/2);
+				cairo_show_text (cr, units[prule->h1_unit]);
+				cairo_restore (cr);
+			}
+			else
+			{
+				first_mark_length = strlen(str) ;
+				cairo_move_to(cr, 12, (first_mark_offset-6*first_mark_length));/*hruler 单位 mm*/
+				cairo_rotate (cr, G_PI * 3/2);
+				cairo_show_text (cr, units[prule->h1_unit]);
+				cairo_restore (cr);
+			}
+		}
 	}
 
 
 	if (!(prule->mask & 0x01))//水平尺
 	{
-	//cairo_set_source_rgba(cr,0.72,0.94,0.1,1.0);    /* wruler颜色为绿色 */
-	cairo_set_source_rgba(cr,((prule->w_color)>>16)/255.0, (((prule->w_color)>>8)&0x00FF)/255.0, ((prule->w_color)&0xFF)/255.0, 1.0);
-	cairo_rectangle(cr,20.0,h-20,w-50,20.0);	/* wruler */
-	cairo_fill (cr);
-	cairo_stroke(cr);
-	cairo_set_source_rgba(cr,0.0,0.0,0.0,1.0);	/* 标尺及单位颜色为黑色 */
-	cairo_set_font_size(cr,8);
-	cairo_move_to(cr,50,(h-5));/*hruler 单位 mm*/
-	//cairo_show_text(cr,data->w_unit);
-	//cairo_show_text(cr,"mm");
-	cairo_show_text(cr,units[prule->w_unit]);
+		//cairo_set_source_rgba(cr,0.72,0.94,0.1,1.0);    /* wruler颜色为绿色 */
+		cairo_set_source_rgba(cr,((prule->w_color)>>16)/255.0, (((prule->w_color)>>8)&0x00FF)/255.0, ((prule->w_color)&0xFF)/255.0, 1.0);
+		cairo_rectangle(cr,20.0,h-20,w-50,20.0);	/* wruler */
+		cairo_fill (cr);
+		cairo_stroke(cr);
+		cairo_set_source_rgba(cr,0.0,0.0,0.0,1.0);	/* 标尺及单位颜色为黑色 */
+		cairo_set_font_size(cr,8);
 
-	i=0;
-	for( k=0;k<w-50;k=k+(w-50.0)/prule->wrule_copies )	/* wruler 标尺 */
-	{
+		if( prule->w_unit == UNIT_BFH )
+        {
+			cairo_move_to(cr,50,(h-5));/*hruler 单位 mm*/
+			cairo_show_text(cr,units[prule->w_unit]);
+        	i=0;
+        	for( k=0;k<w-50;k=k+(w-50.0)/prule->wrule_copies )	/* wruler 标尺 */
+        	{
 
-		if(i%10 == 0)
-		{
-			cairo_move_to(cr,20+(int)k+0.5,h-20);
-			cairo_line_to(cr,20+(int)k+0.5,h-5);
-			cairo_stroke(cr);
-			cairo_move_to(cr,23.5+(int)k,h-5);
-			//		cairo_set_font_size(cr, 7);		/*设置字体大小*/
-			//		cairo_translate(cr,250,0);		/*平移*/
-			//		cairo_rotate(cr, G_PI*3/2);		/*旋转270度*/
-			//str=g_strdup_printf("%d",prule->wmin1 + i);
-			str=g_strdup_printf("%.2f",prule->wmin1 + (float)(prule->wmax1-prule->wmin1)*i/(prule->wrule_copies));
-			cairo_show_text(cr,str);   		/*标签*/
-			//		cairo_show_text(cr,"mm");   		/*标签*/
-		}
-		else if(i%5 == 0)
-		{
-			cairo_move_to(cr,20+(int)k+0.5,h-20);
-			cairo_line_to(cr,20+(int)k+0.5,h-10);
-			cairo_stroke(cr);
-		}
-		else
-		{
-			cairo_move_to(cr,20+(int)k+0.5,h-20);
-			cairo_line_to(cr,20+(int)k+0.5,h-15);
-			cairo_stroke(cr);
-		}
-		i++;
-	}
+        		if(i%10 == 0)
+        		{
+        			cairo_move_to(cr,20+(int)k+0.5,h-20);
+        			cairo_line_to(cr,20+(int)k+0.5,h-5);
+        			cairo_stroke(cr);
+        			cairo_move_to(cr,23.5+(int)k,h-5);
+        			//		cairo_set_font_size(cr, 7);		/*设置字体大小*/
+        			//		cairo_translate(cr,250,0);		/*平移*/
+        			//		cairo_rotate(cr, G_PI*3/2);		/*旋转270度*/
+        			//str=g_strdup_printf("%d",prule->wmin1 + i);
+        			str=g_strdup_printf("%.2f",prule->wmin1 + (float)(prule->wmax1-prule->wmin1)*i/(prule->wrule_copies));
+        			cairo_show_text(cr,str);   		/*标签*/
+        			//		cairo_show_text(cr,"mm");   		/*标签*/
+        		}
+        		else if(i%5 == 0)
+        		{
+        			cairo_move_to(cr,20+(int)k+0.5,h-20);
+        			cairo_line_to(cr,20+(int)k+0.5,h-10);
+        			cairo_stroke(cr);
+        		}
+        		else
+        		{
+        			cairo_move_to(cr,20+(int)k+0.5,h-20);
+        			cairo_line_to(cr,20+(int)k+0.5,h-15);
+        			cairo_stroke(cr);
+        		}
+        		i++;
+        	}
+        }
+        else
+        {
+			first_mark_offset = -1 ;
+			end   = prule->wmax1 ;
+			start = prule->wmin1 ;
+			int_mark_qty = prule->wrule_copies ;
+
+			interval = 10 * (end - start)/int_mark_qty ;
+			if (interval < 0.1 )
+				interval = 0.1 ;
+			else if( 0.1 <interval < 1.0)
+				interval = ((int)(interval * 10.0)) / 10.0 ;
+			else if (interval >= 1.0 && interval <= 5.0)
+				interval = (int)interval               ;
+			else if (interval > 5 && interval <= 10 )
+				interval = 10                          ;
+			else if (interval > 10 && interval < 50)
+				interval = 10 * (1 + (int)(interval / 10)) ;
+			else if (interval >= 50 && interval <= 100 )
+				interval = 100                          ;
+			else if (interval > 100 && interval <= 200)
+				interval = 200                         ;
+			else if (interval > 200)
+				interval = 100 * (1 + (int)(interval / 100)) ;
+			pixel_per_mm =  w /(end - start);
+			ten_interval = interval ;
+			interval = interval / 10.0 ;
+
+			i = (int)(start / interval) ;
+			if(start > 0) i++ ;
+			current_mark = i * interval  ;
+			while (current_mark < end)
+			{
+				k = (current_mark - start) * pixel_per_mm ;
+				if(i%10 == 0)
+				{
+					cairo_move_to(cr,20+(int)k+0.5,h-20);
+					cairo_line_to(cr,20+(int)k+0.5,h-5);
+					cairo_stroke(cr);
+					cairo_move_to(cr,23.5+(int)k,h-5);
+					if(ten_interval >= 1.0)
+					   str=g_strdup_printf("%.0f", current_mark);
+					else
+						str=g_strdup_printf("%.1f", current_mark);
+					cairo_show_text(cr,str);   		/*标签*/
+					if(first_mark_offset == -1) {first_mark_offset = k ; first_mark_length = strlen(str) ;}
+				}
+				else if(i%5 == 0)
+				{
+					cairo_move_to(cr,20+(int)k+0.5,h-20);
+					cairo_line_to(cr,20+(int)k+0.5,h-10);
+					cairo_stroke(cr);
+				}
+				else
+				{
+					cairo_move_to(cr,20+(int)k+0.5,h-20);
+					cairo_line_to(cr,20+(int)k+0.5,h-15);
+					cairo_stroke(cr);
+				}
+				i++;
+				current_mark = i * interval  ;
+			};
+
+			if(first_mark_offset >= 30)
+			{
+				cairo_move_to(cr,25,(h-5));
+				cairo_show_text(cr,units[prule->w_unit]);
+			}
+			else
+			{
+				cairo_move_to(cr,first_mark_offset + 23 +first_mark_length * 6 , (h-5));/*hruler 单位 mm*/
+				cairo_show_text(cr,units[prule->w_unit]);
+			}
+        }
 	}
 
 
@@ -2383,6 +2543,7 @@ static gboolean draw_other_info (GtkWidget *widget, GdkEventExpose *event, gpoin
 	int i;
 	short max_temperature ;
 	short* temp ;
+	short xxx ;
 	static int tmp1 = TRUE;
 #if X86
 	static int tmp2 = TRUE;
@@ -2558,16 +2719,17 @@ static gboolean draw_other_info (GtkWidget *widget, GdkEventExpose *event, gpoin
 		}
 	}
 	// display max temperature
-	max_temperature = pp->battery.temp1 ;
+	max_temperature = (short)(pp->battery.temp1>>8) + (short)(pp->battery.temp1<<8) ;
 	temp = &(pp->battery.temp2) ;
 	for(i = 1 ; i< 5; i++)
 	{
-		if(*temp > max_temperature)  max_temperature = *temp ;
+		xxx = (short)(*temp>>8) + (short)(*temp<< 8) ;
+		if(xxx > max_temperature)  max_temperature = xxx ;
 		temp++ ;
 	}
-#if X86
-	max_temperature = 2000;
-#endif
+
+	max_temperature = 0x1340;
+
 	if(max_temperature> 0)
 	     max_temperature = (max_temperature>>7)&0x00ff    ;
     else
