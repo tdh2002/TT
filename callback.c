@@ -4709,11 +4709,11 @@ void data_111 (GtkMenuItem *menuitem, gpointer data) /* 收发模式 Tx/Rx Mode 
 	set_group_val (p_grp, GROUP_TX_RX_MODE, (int)(GPOINTER_TO_UINT (data)));
 	if (get_group_val (p_grp, GROUP_TX_RX_MODE) == PITCH_CATCH )
 	{
-		TMP(group_spi[grp]).twin	= 2;// 10
+		TMP(group_spi[grp]).twin_on_off	= 0;
 	}
 	else if (get_group_val (p_grp, GROUP_TX_RX_MODE) == PULSE_ECHO )
 	{
-		TMP(group_spi[grp]).twin	= 1;// 01
+		TMP(group_spi[grp]).twin_on_off	= 1;
 	}
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
@@ -6282,6 +6282,7 @@ void data_501 (GtkMenuItem *menuitem, gpointer data) /* Probe/Part->Select->Grou
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
 
+
 	if(GROUP_VAL(group_mode) == 1) //PA
 	{
 		TMP(group_spi[group]).rx_time	= TMP(group_spi[group]).sample_range  + TMP(max_beam_delay[group]) + TMP(group_spi[group]).compress_rato;
@@ -6289,9 +6290,19 @@ void data_501 (GtkMenuItem *menuitem, gpointer data) /* Probe/Part->Select->Grou
 		TMP(group_spi[group]).idel_time	=
 			100000000 / (temp_prf / (10)) - 2048 - TMP(group_spi[group]).rx_time;
 	}
-	else  //UT
+	else if(GROUP_VAL(group_mode) == 2) //UT1
 	{
-		//		set_group_val (p_grp, GROUP_PW_VAL, 40);//UT 脉宽100/2.5
+		TMP(group_spi[group]).twin_ut	= 0;
+		TMP(group_spi[group]).tx_start	= 2;
+		TMP(group_spi[group]).tx_end	= 42;// pw/2.5
+		TMP(group_spi[group]).rx_time	= TMP(group_spi[group]).sample_range + TMP(group_spi[group]).compress_rato;
+		temp_prf = TMP(beam_qty[group]) * GROUP_VAL_POS(group, prf1);
+		TMP(group_spi[group]).idel_time	=
+			100000000 / (temp_prf / (10)) - 2048 - TMP(group_spi[group]).rx_time;
+	}
+	else if(GROUP_VAL(group_mode) == 3) //UT2
+	{
+		TMP(group_spi[group]).twin_ut	= 1;
 		TMP(group_spi[group]).tx_start	= 2;
 		TMP(group_spi[group]).tx_end	= 42;// pw/2.5
 		TMP(group_spi[group]).rx_time	= TMP(group_spi[group]).sample_range + TMP(group_spi[group]).compress_rato;
