@@ -482,7 +482,7 @@ static void save_cal_law(gint offset, gint group, PARAMETER_P p)
 		//***************************************
 		TMP(field_distance[i]) = (gfloat)(p->field_distance[i]);//每束 中心正元到出射点的距离 单位mm
 		pp->G_delay[i] = (gint)p->G_delay[i];////保存每一个beam的延时  方便用于显示
-//		printf("focal_beam_delay = %d \n", pp->G_delay[i]);
+		//		printf("focal_beam_delay = %d \n", pp->G_delay[i]);
 		BEAM_INFO(i+offset,beam_delay) = pp->G_delay[i];//modified by hefan
 		//printf("beam_delay[%d]=%d \n", i, pp->G_delay[i]);
 		//***************************************
@@ -1650,10 +1650,10 @@ void b3_fun1(gpointer p)
 												for (i = 0; i < step; i++)
 												{
 													BEAM_INFO(offset + i, beam_delay) = pp->G_delay[i];
-//													printf("clb_beam_delay = %d \n", pp->G_delay[i]);
+													//													printf("clb_beam_delay = %d \n", pp->G_delay[i]);
 													TMP(focal_law_all_beam[offset + i]).G_delay			= 
-															get_group_val (get_group_by_id (pp->p_config, grp), GROUP_WEDGE_DELAY)
-															+ GROUP_VAL_POS (grp, wedge.Probe_delay) + BEAM_INFO(i + offset, beam_delay);//modified by hefan 
+														get_group_val (get_group_by_id (pp->p_config, grp), GROUP_WEDGE_DELAY)
+														+ GROUP_VAL_POS (grp, wedge.Probe_delay) + BEAM_INFO(i + offset, beam_delay);//modified by hefan 
 												}	
 												send_focal_spi(get_current_group(pp->p_config));
 												gtk_widget_queue_draw (pp->vboxtable);
@@ -3532,10 +3532,10 @@ static int handler_key(guint keyval, gpointer data)
 						draw_area_all();
 					else
 						draw_area_calibration();
-//					TMP(focal_law_all_beam[offset + BeamNo]).G_delay			= 
-//						get_group_val (get_group_by_id (pp->p_config, group), GROUP_WEDGE_DELAY)
-//						+	GROUP_VAL_POS (group, wedge.Probe_delay) + BEAM_INFO(BeamNo + offset, beam_delay);//modified by hefan 
-//					gtk_widget_queue_draw (pp->vboxtable);
+					//					TMP(focal_law_all_beam[offset + BeamNo]).G_delay			= 
+					//						get_group_val (get_group_by_id (pp->p_config, group), GROUP_WEDGE_DELAY)
+					//						+	GROUP_VAL_POS (group, wedge.Probe_delay) + BEAM_INFO(BeamNo + offset, beam_delay);//modified by hefan 
+					//					gtk_widget_queue_draw (pp->vboxtable);
 				}
 			}
 			break;
@@ -3721,25 +3721,25 @@ static int handler_key(guint keyval, gpointer data)
 							pp->pos_pos = MENU3_STOP;
 							switch (CUR_POS)
 							{
-							    request_refresh() ;
+								request_refresh() ;
 								case 0:
-									b3_fun0(NULL);
-									break;
+								b3_fun0(NULL);
+								break;
 								case 1:
-									b3_fun1(NULL);
-									break;
+								b3_fun1(NULL);
+								break;
 								case 2:
-									b3_fun2(NULL);
-									break;
+								b3_fun2(NULL);
+								break;
 								case 3:
-									b3_fun3(NULL);
-									break;
+								b3_fun3(NULL);
+								break;
 								case 4:
-									b3_fun4(NULL);
-									break;
+								b3_fun4(NULL);
+								break;
 								case 5:
-									b3_fun5(NULL);
-									break;
+								b3_fun5(NULL);
+								break;
 								default:break;
 							}
 							pp->pos_pos = MENU3_STOP;
@@ -4571,8 +4571,8 @@ void data_102 (GtkSpinButton *spinbutton, gpointer data) /*Range 范围 P102 */
 			double float_compress_rate ;
 			int    int_compress_rate   ;
 			float_compress_rate = get_group_val (p_grp, GROUP_RANGE) / 6400.0 ;
-            int_compress_rate   = (get_group_val (p_grp, GROUP_RANGE) % 6400) ? (int) (float_compress_rate + 1) : (int)float_compress_rate ;
-            GROUP_VAL(point_qty) = get_group_val (p_grp, GROUP_RANGE) / (int_compress_rate * 10 );
+			int_compress_rate   = (get_group_val (p_grp, GROUP_RANGE) % 6400) ? (int) (float_compress_rate + 1) : (int)float_compress_rate ;
+			GROUP_VAL(point_qty) = get_group_val (p_grp, GROUP_RANGE) / (int_compress_rate * 10 );
 		}
 	}
 
@@ -4707,14 +4707,18 @@ void data_111 (GtkMenuItem *menuitem, gpointer data) /* 收发模式 Tx/Rx Mode 
 	gint grp = get_current_group(pp->p_config);
 	GROUP *p_grp = get_group_by_id (pp->p_config, grp);
 	set_group_val (p_grp, GROUP_TX_RX_MODE, (int)(GPOINTER_TO_UINT (data)));
-	if (get_group_val (p_grp, GROUP_TX_RX_MODE) == PULSE_ECHO )
+	if (get_group_val (p_grp, GROUP_TX_RX_MODE) == PITCH_CATCH )
 	{
-		set_group_val (&pp->p_config->group[grp], GROUP_RECEIVER, 
-				get_group_val (&pp->p_config->group[grp], GROUP_PULSER));
+		TMP(group_spi[grp]).twin	= 2;// 10
+	}
+	else if (get_group_val (p_grp, GROUP_TX_RX_MODE) == PULSE_ECHO )
+	{
+		TMP(group_spi[grp]).twin	= 1;// 01
 	}
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
 	/* 发送给硬件 */
+	send_group_spi(grp);
 }
 
 void data_1121 (GtkSpinButton *spinbutton, gpointer data) /* 频率 Freq 数值改变 */
@@ -5026,7 +5030,7 @@ void data_134 (GtkSpinButton *spinbutton, gpointer data) /* beam delay */
 		offset += TMP(beam_qty[k]);
 	BEAM_INFO(index + offset,beam_delay) =  (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0);
 	pp->G_delay[index] = BEAM_INFO(index + offset,beam_delay);
-//	printf("UT_beam_delay = %d \n", pp->G_delay[index]);
+	//	printf("UT_beam_delay = %d \n", pp->G_delay[index]);
 	TMP(focal_law_all_beam[offset + index]).G_delay			= 
 		get_group_val (get_group_by_id (pp->p_config, group), GROUP_WEDGE_DELAY)
 		+	GROUP_VAL_POS (group, wedge.Probe_delay) + BEAM_INFO(index + offset, beam_delay);//modified by hefan 
@@ -5054,13 +5058,13 @@ void data_135 (GtkSpinButton *spinbutton, gpointer data) /*gain offset */
 void data_140 (GtkSpinButton *spinbutton, gpointer data)
 {
 #if ARM
-	    pthread_t thread_id;
-	    int ret;
-		ret = pthread_create (&thread_id, NULL, (void*)thread_set_DB_eighty_percent, data);
-		if(ret){
-			perror("in1:");
-			return;
-		}
+	pthread_t thread_id;
+	int ret;
+	ret = pthread_create (&thread_id, NULL, (void*)thread_set_DB_eighty_percent, data);
+	if(ret){
+		perror("in1:");
+		return;
+	}
 #endif
 }
 
@@ -5068,7 +5072,7 @@ void data_140 (GtkSpinButton *spinbutton, gpointer data)
 
 void data_1431 (GtkSpinButton *spinbutton, gpointer data) /* point qty P143 */
 {
-    request_refresh() ;
+	request_refresh() ;
 
 	gint grp = get_current_group(pp->p_config);
 	//gint tt[4];
@@ -5305,7 +5309,7 @@ void data_203 (GtkSpinButton *spinbutton, gpointer data) /* 闸门宽度 P203 */
 		GROUP_GATE_POS(width) = (guint) (gtk_spin_button_get_value (spinbutton) * 1000.0) ; 
 		pp->gate_width_clb = gtk_spin_button_get_value (spinbutton) * 1000.0;
 	}
-	
+
 	update_gate_info();
 	if(!pp->clb_flag)
 		draw_area_all();
@@ -6265,6 +6269,7 @@ void data_501 (GtkMenuItem *menuitem, gpointer data) /* Probe/Part->Select->Grou
 {
 	gint temp_prf ;
 	gint group = get_current_group(pp->p_config);
+	//	GROUP *p_grp = get_group_by_id (pp->p_config, group);
 	GROUP_VAL(group_mode) = (gchar) (GPOINTER_TO_UINT (data));
 	TMP(group_spi[group]).UT2			= (GROUP_VAL_POS (group, group_mode) == 3) ? 1 : 0;		
 	TMP(group_spi[group]).UT1			= (GROUP_VAL_POS (group, group_mode) == 2) ? 1 : 0;		
@@ -6286,6 +6291,9 @@ void data_501 (GtkMenuItem *menuitem, gpointer data) /* Probe/Part->Select->Grou
 	}
 	else  //UT
 	{
+		//		set_group_val (p_grp, GROUP_PW_VAL, 40);//UT 脉宽100/2.5
+		TMP(group_spi[group]).tx_start	= 2;
+		TMP(group_spi[group]).tx_end	= 42;// pw/2.5
 		TMP(group_spi[group]).rx_time	= TMP(group_spi[group]).sample_range + TMP(group_spi[group]).compress_rato;
 		temp_prf = TMP(beam_qty[group]) * GROUP_VAL_POS(group, prf1);
 		TMP(group_spi[group]).idel_time	=
@@ -6537,9 +6545,9 @@ void data_6141 (GtkMenuItem *menuitem, gpointer data) /* 纵横波  P614 */
 /* focalpoint 聚焦点计算方法 P620 */
 void data_620 (GtkMenuItem *menuitem, gpointer data) 
 {
-    request_refresh() ;
+	request_refresh() ;
 
-    LAW_VAL(Focal_point_type) = (guchar) (GPOINTER_TO_UINT (data));
+	LAW_VAL(Focal_point_type) = (guchar) (GPOINTER_TO_UINT (data));
 	pp->pos_pos = MENU3_STOP;
 	draw_menu3(0, NULL);
 }
@@ -7088,21 +7096,19 @@ void generate_focallaw(int grp)
 			get_group_val (p_grp, GROUP_WEDGE_DELAY)) / 10 ;
 	TMP(group_spi[grp]).sample_range	= TMP(group_spi[grp]).sample_start +
 		get_group_val (p_grp, GROUP_RANGE) / 10 ;
-	
-	update_gate_info();
-	if(!pp->clb_count)
-	{
-		//每次计算之后gain_offset清零
-		for (i = 0; i < step; i++)
-		{
-			pp->tmp_gain_off[i + offset] = 0;
-		}
-	}
-	if(!pp->clb_flag)
-		draw_area_all ();
-	else
-		draw_area_calibration();
 
+	update_gate_info();
+	//每次计算之后gain_offset清零
+	for (i = 0; i < step; i++)
+	{
+		pp->tmp_gain_off[i + offset] = 0;
+	}
+	/*	
+		if(!pp->clb_flag)
+		draw_area_all ();
+		else
+		draw_area_calibration();
+		*/
 	pp->cscan_mark = 1;
 	pp->ccscan_mark = 1;
 	pp->cccscan_mark = 1;
@@ -7362,7 +7368,7 @@ void update_gate_info()
 	guint offset, k;
 	gint grp = get_current_group(pp->p_config);
 	guint beam_qty =TMP(beam_qty[grp]);
-	gint temp_prf ;
+	//	gint temp_prf ;
 	// get current beam Number
 	double current_angle ;
 	double max_angle     ;
@@ -7426,23 +7432,22 @@ void update_gate_info()
 		}
 
 	}
-
-	if(GROUP_VAL(group_mode) == 1) //PA
-	{
-		TMP(group_spi[grp]).rx_time	= TMP(group_spi[grp]).sample_range  + TMP(max_beam_delay[grp]) + TMP(group_spi[grp]).compress_rato;
-		temp_prf = TMP(beam_qty[grp]) * GROUP_VAL_POS(grp, prf1);
-		TMP(group_spi[grp]).idel_time	=
-			100000000 / (temp_prf / (10)) - 2048 - TMP(group_spi[grp]).rx_time;
-	}
-	else  //UT
-	{
-//		grp = 0;
-		TMP(group_spi[grp]).rx_time	= TMP(group_spi[grp]).sample_range + TMP(group_spi[grp]).compress_rato;
-		temp_prf = TMP(beam_qty[grp]) * GROUP_VAL_POS(grp, prf1);
-		TMP(group_spi[grp]).idel_time	=
-			100000000 / (temp_prf / (10)) - 2048 - TMP(group_spi[grp]).rx_time;
-	}
-
+	/*
+	   if(GROUP_VAL(group_mode) == 1) //PA
+	   {
+	   TMP(group_spi[grp]).rx_time	= TMP(group_spi[grp]).sample_range  + TMP(max_beam_delay[grp]) + TMP(group_spi[grp]).compress_rato;
+	   temp_prf = TMP(beam_qty[grp]) * GROUP_VAL_POS(grp, prf1);
+	   TMP(group_spi[grp]).idel_time	=
+	   100000000 / (temp_prf / (10)) - 2048 - TMP(group_spi[grp]).rx_time;
+	   }
+	   else  //UT
+	   {
+	   TMP(group_spi[grp]).rx_time	= TMP(group_spi[grp]).sample_range + TMP(group_spi[grp]).compress_rato;
+	   temp_prf = TMP(beam_qty[grp]) * GROUP_VAL_POS(grp, prf1);
+	   TMP(group_spi[grp]).idel_time	=
+	   100000000 / (temp_prf / (10)) - 2048 - TMP(group_spi[grp]).rx_time;
+	   }
+	   */
 }
 
 
