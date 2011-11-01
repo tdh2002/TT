@@ -2244,7 +2244,7 @@ if(!(prule->mask & 0x04))
 			interval = 10 * (end - start)/int_mark_qty ;
 			if (interval < 0.1 )
 				interval = 0.1 ;
-			else if( 0.1 <interval < 1.0)
+			else if( 0.1 <interval && interval < 1.0)
 				interval = ((int)(interval * 10.0)) / 10.0 ;
 			else if (interval >= 1.0 && interval <= 5.0)
 				interval = (int)interval               ;
@@ -2376,7 +2376,7 @@ if(!(prule->mask & 0x04))
 			interval = 10 * (end - start)/int_mark_qty ;
 			if (interval < 0.1 )
 				interval = 0.1 ;
-			else if( 0.1 <interval < 1.0)
+			else if( 0.1 <interval && interval < 1.0)
 				interval = ((int)(interval * 10.0)) / 10.0 ;
 			else if (interval >= 1.0 && interval <= 5.0)
 				interval = (int)interval               ;

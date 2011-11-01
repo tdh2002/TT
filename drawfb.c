@@ -673,9 +673,6 @@ void draw_c_scan (gushort *p, gint width, gint height, DOT_TYPE *data, DOT_TYPE 
 int CalcFanScan_new (gdouble startAngle, gdouble endAngle, gdouble stepAngle, double StartFocusDepth,
 		                     double FocusEnd, double JunctionOffset, int DataLength, int width, int height, guchar group)
 {
-       
-       //int endWave =   StartWave + WaveLength                ;
-       // 实际坐标
        gdouble xLeftmost              ;     //     扇形 最左点坐标
        gdouble xRightmost             ;     //     扇形 最右点坐标
        gdouble yTopmost               ;     //     最上点
@@ -1636,7 +1633,7 @@ void draw_scan(guchar scan_num, guchar scan_type, guchar group,
 					start = START * VELOCITY / 2000.0 ;
 				    range = RANGE * VELOCITY / 2000.0 ;
 				    calc_line_position(LAW_VAL(Angle_min)/100.0, LAW_VAL(Angle_max)/100.0, LAW_VAL(Angle_step)/100.0,
-						start, range, TMP(Junction), GROUP_VAL_POS(group, point_qty),TMP(s_scan_width),TMP(s_scan_height), group);
+						start, range, TMP(Junction[group]), GROUP_VAL_POS(group, point_qty),TMP(s_scan_width),TMP(s_scan_height), group);
 				}
 			}
 			pData = pData + TMP(beam_num[group]) * (GROUP_VAL_POS( group, point_qty) + 32) ;
@@ -1696,7 +1693,7 @@ void draw_scan(guchar scan_num, guchar scan_type, guchar group,
 				range = RANGE * VELOCITY / 2000.0 ;
 
 				CalcFanScan_new (LAW_VAL(Angle_min)/100.0, LAW_VAL(Angle_max)/100.0, LAW_VAL(Angle_step)/100.0,
-								start, range, TMP(Junction), GROUP_VAL_POS(group, point_qty),TMP(s_scan_width),TMP(s_scan_height), group);
+								start, range, TMP(Junction[group]), GROUP_VAL_POS(group, point_qty),TMP(s_scan_width),TMP(s_scan_height), group);
 				/* 清空这块显示区 背景暂定黑色 可以全部一起清空 */
 				pp->sscan_mark = 0;
 				for (i = 0; i < TMP(s_scan_height); i++)

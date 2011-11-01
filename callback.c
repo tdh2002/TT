@@ -537,6 +537,8 @@ static void save_cal_law(gint offset, gint group, PARAMETER_P p)
 			tmp_max_beam_delay = pp->G_delay[i] ;
 	}
 	TMP(max_beam_delay[group]) = tmp_max_beam_delay / 10 ;
+
+	TMP(Junction[group]) = p->Junction ;
 }
 
 void cal_focal_law (guint group)
