@@ -341,7 +341,7 @@ typedef struct tmp_config
     //GdkPixbuf *pixbuf_[18];
 	CALIBRATION wizard_calibration;
 
-	double Junction;
+	double Junction[setup_MAX_GROUP_QTY];
 } TMP_CONFIG, *TMP_CONFIG_P;
 
 /*画图区域*/
