@@ -36,8 +36,8 @@ typedef struct _Group_data
 	/* s_group_reg (1) */
 	unsigned int	tcg_point_qty:8;		/* bit:0-7 TCG点个数 */
 	unsigned int	tcg_en:1;				/* bit:8   TCG使能	 */
-	unsigned int	UT1:1;					/* bit:9  UT2		 */	
-	unsigned int	UT2:1;					/* bit:10 UT1		 */
+	unsigned int	UT1:1;					/* bit:9  UT1		 */	
+	unsigned int	UT2:1;					/* bit:10 UT2		 */
 	unsigned int	PA:1;					/* bit:11 PA	 	 */
 	unsigned int	_sample_start:20;		/* bit:12-31 采样起点*/
 
@@ -88,7 +88,8 @@ typedef struct _Group_data
 	/* s_group_reg (12) */
 	unsigned int	voltage:8;			/* bit:0-7 发射电压 */
 	unsigned int	damping:2;			/* bit:8-9 阻尼 */
-	unsigned int	TT8:10;				/**/
+	unsigned int	twin:2;			    /* bit:10-11 双晶 */
+	unsigned int	TT8:8;				/**/
 	unsigned int	reject:12;			/* bit:20-31 闸门C 结束 */
 
 	/* s_group_ref (13) */
@@ -98,8 +99,12 @@ typedef struct _Group_data
 	unsigned int    sample_range:21;
 	unsigned int    TT_V:11;
 
-	/* no used */
-	unsigned int	TT3[1];
+    /* s_group_ref  (15)*/
+	unsigned int    tx_end:14;
+	unsigned int    TT15:2;
+	unsigned int    tx_start:14;
+	unsigned int    TT16:2;
+
 
 } group_data_spi;
 
