@@ -2176,7 +2176,9 @@ if(!(prule->mask & 0x04))
 	int    int_mark_qty   ;
 	double pixel_per_mm   ;
 	double current_mark   ;
+	int first_mark_length ;
 	int first_mark_offset ;
+
 
 	double start          ;
 	double end            ;
@@ -2237,7 +2239,7 @@ if(!(prule->mask & 0x04))
 		{
 			start   = prule->hmax1 ;
 			end = prule->hmin1 ;
-			int_mark_qty = prule->hrule1_copies ;
+			int_mark_qty = (int)(prule->hrule1_copies * 0.8);
 
 			interval = 10 * (end - start)/int_mark_qty ;
 			if (interval < 0.1 )
@@ -2298,7 +2300,6 @@ if(!(prule->mask & 0x04))
 				i++;
 				current_mark = i * interval  ;
 			};
-            printf("first_mark_offset %d -- h %d \n", first_mark_offset , h);
 			if(first_mark_offset <= h - 50)
 			{
 				cairo_move_to (cr, 12, (h-25));	/*hruler1 单位位置(底端) ％*/
@@ -2308,7 +2309,8 @@ if(!(prule->mask & 0x04))
 			}
 			else
 			{
-				cairo_move_to(cr, 12, (first_mark_offset-20));/*hruler 单位 mm*/
+				first_mark_length = strlen(str) ;
+				cairo_move_to(cr, 12, (first_mark_offset-6*first_mark_length));/*hruler 单位 mm*/
 				cairo_rotate (cr, G_PI * 3/2);
 				cairo_show_text (cr, units[prule->h1_unit]);
 				cairo_restore (cr);
@@ -2409,7 +2411,7 @@ if(!(prule->mask & 0x04))
 					else
 						str=g_strdup_printf("%.1f", current_mark);
 					cairo_show_text(cr,str);   		/*标签*/
-					if(first_mark_offset == -1) first_mark_offset = k ;
+					if(first_mark_offset == -1) {first_mark_offset = k ; first_mark_length = strlen(str) ;}
 				}
 				else if(i%5 == 0)
 				{
@@ -2434,7 +2436,7 @@ if(!(prule->mask & 0x04))
 			}
 			else
 			{
-				cairo_move_to(cr,first_mark_offset  + 40, (h-5));/*hruler 单位 mm*/
+				cairo_move_to(cr,first_mark_offset + 23 +first_mark_length * 6 , (h-5));/*hruler 单位 mm*/
 				cairo_show_text(cr,units[prule->w_unit]);
 			}
         }
