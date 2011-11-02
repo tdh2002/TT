@@ -1052,11 +1052,21 @@ void init_group_spi (guint group)
 	TMP(group_spi[group]).UT2			= (GROUP_VAL_POS (group, group_mode) == 3) ? 1 : 0;		
 	TMP(group_spi[group]).UT1			= (GROUP_VAL_POS (group, group_mode) == 2) ? 1 : 0;		
 	TMP(group_spi[group]).PA			= (GROUP_VAL_POS (group, group_mode) == 1) ? 1 : 0;		
+	if(GROUP_VAL(group_mode) == 2) //UT1
+	{
+			TMP(group_spi[group]).twin_ut	= 0;
+			TMP(group_spi[group]).tx_start	= 2;
+			TMP(group_spi[group]).tx_end	= 42;// 2+pw/2.5
+	}
+	else if(GROUP_VAL(group_mode) == 3) //UT2
+	{
+			TMP(group_spi[group]).twin_ut	= 1;
+			TMP(group_spi[group]).tx_start	= 2;
+			TMP(group_spi[group]).tx_end	= 42;// 2+pw/2.5
+	}
 	TMP(group_spi[group]).sample_start	= 
 		(get_group_val (get_group_by_id (pp->p_config, group), GROUP_START) + 
 		 get_group_val (get_group_by_id(pp->p_config, group), GROUP_WEDGE_DELAY)) / 10 ;//+ TMP(max_beam_delay[group]) ;
-
-
 	if (LAW_VAL_POS(group, Elem_qty) == 1)	
 		TMP(group_spi[group]).sum_gain	= 4095;	
 	else 

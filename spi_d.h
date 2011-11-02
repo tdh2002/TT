@@ -89,7 +89,7 @@ typedef struct _Group_data
 	unsigned int	voltage:8;			/* bit:0-7 发射电压 */
 	unsigned int	damping:2;			/* bit:8-9 阻尼 */
 	unsigned int	twin_on_off:1;		/* bit:10 双晶 */
-	unsigned int	twin_ut:1;			/* bit:11 双晶 */
+	unsigned int	twin_ut:1;			/* bit:11 0:UT1 1:UT2 */
 	unsigned int	TT8:8;				/**/
 	unsigned int	reject:12;			/* bit:20-31 闸门C 结束 */
 
